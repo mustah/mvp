@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="#{users}"></title>
+</head>
+<body>
+<div id="react"></div>
+<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+<div th:each="u : ${users}">
+    <div>
+        <i th:text="${u.id}">ID</i>
+        <span th:text="${u.firstName}">First name</span>
+        <span th:text="${u.lastName}">Last name</span>
+    </div>
+
+</div>
+<div>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" th:value="#{logout}"/>
+    </form>
+</div>
+</body>
+</html>
