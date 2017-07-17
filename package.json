@@ -1,0 +1,47 @@
+{
+  "name": "mvp-web",
+  "version": "1.0.0",
+  "description": "The most accurate and versatile meter data source for your metering applications",
+  "main": "index.html",
+  "repository": {
+    "url": "git@dev6.elvaco.local:elvaco/mvp-web.git",
+    "type": "git"
+  },
+  "author": "Must Tahir <must.tahir@invencon.se>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node fuse",
+    "dist": "node fuse dist",
+    "dist-server": "node fuse dist-server",
+    "lint": "tslint 'src/**/*.ts'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^7.1.2",
+    "fuse-box": "^2.2.0",
+    "fuse-box-typechecker": "git://github.com/fuse-box/fuse-box-typechecker",
+    "graceful-fs": "^4.1.11",
+    "node-sass": "^4.5.3",
+    "postcss": "^6.0.6",
+    "tslint": "^5.5.0",
+    "tslint-react": "^3.0.0",
+    "typescript": "^2.4.1",
+    "uglify-js": "^3.0.25"
+  },
+  "dependencies": {
+    "@types/node": "^8.0.13",
+    "@types/react": "^15.0.38",
+    "@types/react-dom": "^15.5.1",
+    "@types/react-redux": "^4.4.46",
+    "@types/react-router-dom": "^4.0.7",
+    "@types/react-router-redux": "^5.0.3",
+    "@types/redux": "^3.6.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "react-redux-typescript": "^2.3.0",
+    "react-router-dom": "^4.1.2",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2"
+  }
+}

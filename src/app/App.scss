@@ -1,0 +1,12 @@
+@import "variables";
+
+html {
+  font-family: 'Roboto', sans-serif;
+  font-size: $normal;
+  color: $black;
+  height: 100%;
+}
+
+.App {
+  background-color: $grey;
+}
