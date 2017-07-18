@@ -20,6 +20,16 @@ $ yarn install
 $ yarn start
 ```
 
+## Tests
+
+```bash
+# single run
+$ yarn test 
+
+# TDD style
+$ yarn test:watch
+```
+
 # Resources
 
 * [Fusebox](http://fuse-box.org/) - FuseBox is a next generation bundler and module loader.

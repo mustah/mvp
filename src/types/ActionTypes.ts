@@ -1,1 +1,3 @@
 export const BOOTSTRAP = 'BOOTSTRAP';
+
+export const LOAD_DASHBOARD = 'LOAD_DASHBOARD';

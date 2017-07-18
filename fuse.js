@@ -12,6 +12,7 @@ const {
 
 const autoprefixer = require('autoprefixer');
 const TypeHelper = require('fuse-box-typechecker').TypeHelper;
+const {runCLI} = require('jest');
 
 const distDir = 'dist';
 const homeDir = 'src';
@@ -26,6 +27,14 @@ const typeHelper = TypeHelper({
   tsLint: './tslint.json',
   name: 'App type checker'
 });
+
+/**
+ * Run linting and tests.
+ */
+const onBeforeRun = () => {
+  typeHelper.runSync();
+  runCLI({}, ['src']);
+};
 
 const assets = ['assets/images/**/*.+(svg|png|jpg|jpeg|gif)', 'assets/fonts/*'];
 
@@ -72,19 +81,19 @@ Sparky.task('default', ['clean', 'config', 'copy:assets'], () => {
   fuse.dev();
   app.watch()
     .hmr()
-    .completed(process => typeHelper.runSync());
+    .completed(onBeforeRun);
   return fuse.run();
 });
 
 const distTasks = ['prod-env', 'config', 'copy:assets'];
 
 Sparky.task('dist', distTasks, () => {
-  typeHelper.runSync();
+  onBeforeRun();
   return fuse.run();
 });
 
 Sparky.task('dist-server', distTasks, () => {
   fuse.dev();
-  typeHelper.runSync();
+  onBeforeRun();
   return fuse.run();
 });
