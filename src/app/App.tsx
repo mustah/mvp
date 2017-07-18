@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {DashboardContainer} from '../usecases/dashboard/containers/DashboardContainer';
+import DashboardContainer from '../usecases/dashboard/containers/DashboardContainer';
 import {TopMenuContainer} from '../usecases/topmenu/containers/TopMenuContainer';
 import './App.scss';
 

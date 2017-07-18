@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import {dashboard, DashboardProps} from './dashboard';
+import {dashboard, DashboardProps} from '../usecases/dashboard/dashboardReducer';
 
 export interface RootState {
   dashboard: DashboardProps;

@@ -20,6 +20,20 @@ $ yarn install
 $ yarn start
 ```
 
+### Run Fake REST api 
+We use [json-server](https://github.com/typicode/json-server) to fake our api and store the data in db.json file. 
+This file is also included in the git repository for now. Note that the json-server must be installed globally and 
+run as a background task in another terminal window.
+
+```bash
+$ yarn global add json-server 
+
+# start JSON server
+$ cd [to-project-root]
+$ json-server --watch db.json
+```
+
+
 ## Tests
 
 ```bash

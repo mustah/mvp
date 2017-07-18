@@ -1,0 +1,22 @@
+{
+  "dashboards": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    },
+    {
+      "id": 2,
+      "title": "meter 2",
+      "author": "elvaco"
+    },
+    {
+      "id": 3,
+      "title": "meter 3",
+      "author": "elvaco - home"
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
