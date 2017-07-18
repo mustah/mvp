@@ -11,6 +11,10 @@
     ]
   },
   "rules": {
+    "no-trailing-whitespace": false,
+    "arrow-parens": [
+      false
+    ],
     "interface-name": [
       true,
       "never-prefix"

@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {Selectable} from '../common/types/Types';
+import {Selectable} from '../types/Types';
 
 export interface DashboardProps extends Selectable {
   title?: string;

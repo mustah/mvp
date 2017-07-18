@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {DashboardContainer} from '../usecases/dashboard/containers/DashboardContainer';
+import {TopMenuContainer} from '../usecases/topmenu/containers/TopMenuContainer';
 import './App.scss';
 
 /**
@@ -7,6 +9,12 @@ import './App.scss';
  */
 export class App extends React.Component<any, any> {
   render() {
-    return <div className="App">Welcome to MVP</div>;
+    return (
+      <div className="App">
+        <TopMenuContainer/>
+
+        <DashboardContainer/>
+      </div>
+    );
   }
 }
