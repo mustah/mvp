@@ -23,6 +23,8 @@ $ yarn start
 # Resources
 
 * [Fusebox](http://fuse-box.org/) - FuseBox is a next generation bundler and module loader.
+* [Presentational and Container Components](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0) - By Dan Abramov
+* [Container Components](https://medium.com/@learnreact/container-components-c0e67432e005) - Container Component Pattern
 * [Redux](http://redux.js.org/) - Predictable state container for JavaScript apps.
 * [Redux-Thunk](https://github.com/gaearon/redux-thunk) - Thunk middleware for redux (async actions)
 * [Jest](https://github.com/kulshekhar/ts-jest) - Test framework
