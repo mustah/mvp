@@ -2,11 +2,12 @@
 
 ## Table of Contents
 * [Prerequisite](#prerequisite)
-    * [Installing](#installation)
-    * [Running](#running-the-app)
-    * [Developing](#developing)
-    * [Testing](#testing)
-    * [Resources](#resources)
+* [Installing](#installation)
+* [Running](#running-the-app)
+  * [Run Fake REST api](#fake-api)
+* [Developing](#developing)
+* [Testing](#testing)
+* [Resources](#resources)
 
 ## Prerequisite
 First install latest version of node [Node](https://nodejs.org/en/) and then install Yarn, the package manage from 
@@ -51,4 +52,5 @@ $ yarn test:watch
 * [Container Components](https://medium.com/@learnreact/container-components-c0e67432e005) - Container Component Pattern
 * [Redux](http://redux.js.org/) - Predictable state container for JavaScript apps.
 * [Redux-Thunk](https://github.com/gaearon/redux-thunk) - Thunk middleware for redux (async actions)
+* [Axios](https://github.com/mzabriskie/axios) - Promise based HTTP client for the browser and node.js
 * [Jest](https://github.com/kulshekhar/ts-jest) - Test framework
