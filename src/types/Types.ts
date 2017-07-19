@@ -1,3 +1,7 @@
 export interface Selectable {
-  isSelected: boolean;
+  isSelected?: boolean;
+}
+
+export interface ClassNamed {
+  className?: string;
 }

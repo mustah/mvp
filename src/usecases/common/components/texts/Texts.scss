@@ -1,0 +1,17 @@
+@import "../../../app/variables";
+
+.Normal {
+  line-height: 1;
+}
+
+.Bold {
+  font-weight: bold;
+}
+
+.Small {
+  font-size: $sm;
+}
+
+.text-align-right {
+  text-align: right;
+}

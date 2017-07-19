@@ -1,0 +1,8 @@
+@import "../../../app/variables";
+
+.Icon {
+  border: 1px solid $grey;
+  margin: 0 $space;
+  width: $icon-size;
+  height: $icon-size;
+}
