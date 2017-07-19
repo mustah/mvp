@@ -1,16 +1,15 @@
 import {AnyAction} from 'redux';
 import * as actions from '../../types/ActionTypes';
-import {Selectable} from '../../types/Types';
 import {DashboardModel} from './models/DasboardModel';
 
-export interface DashboardProps extends Selectable {
+export interface DashboardProps {
   title?: string;
   isFetching: boolean;
   records: DashboardModel[];
+  error?: string;
 }
 
 const initialState = {
-  isSelected: false,
   isFetching: false,
   records: [],
 };
@@ -34,6 +33,7 @@ export const dashboard = (state: DashboardProps = initialState, action: AnyActio
       return {
         ...state,
         isFetching: false,
+        error: payload,
       };
     default:
       return state;

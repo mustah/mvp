@@ -5,30 +5,33 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionsOverview} from '../components/SelectionsOverview';
 import {fetchDashboard} from '../dashboardActions';
+import {DashboardProps} from '../dashboardReducer';
 
 export interface DashboardContainerProps {
-  fetchDashboard: any;
+  fetchDashboard: () => any;
+  dashboard: DashboardProps;
 }
 
-class DashboardContainer extends React.Component<DashboardContainerProps | any, any> {
-  render() {
-    const {fetchDashboard} = this.props;
-    return (
-      <div>
-        <SelectionsOverview/>
+const DashboardContainer: React.StatelessComponent<DashboardContainerProps> = (props) => {
+  const {fetchDashboard} = props;
+  return (
+    <div>
+      <SelectionsOverview title={'Allt'}/>
 
-        <div className="button" onClick={fetchDashboard}>DASHBOARD</div>
-      </div>
-    );
-  }
-}
-
-const mapStateToProps = (state: RootState) => ({...state});
-
-const mapDispatchToProps = dispatch => {
-  return bindActionCreators({
-    fetchDashboard,
-  }, dispatch);
+      <div className="button" onClick={fetchDashboard}>DASHBOARD</div>
+    </div>
+  );
 };
+
+const mapStateToProps = (state: RootState) => {
+  const {dashboard} = state;
+  return {
+    dashboard,
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  fetchDashboard,
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(DashboardContainer));

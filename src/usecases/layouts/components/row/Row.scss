@@ -1,0 +1,11 @@
+@import "../../../../app/variables";
+
+.Row {
+  display: flex;
+  flex-direction: row;
+}
+
+.Row-center {
+  align-items: center;
+  justify-content: center;
+}

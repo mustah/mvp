@@ -12,7 +12,7 @@ export const fetchDashboard = () => {
 
     restClient.get('/dashboards')
       .then(response => response.data)
-      .then(data => dispatch(dashboardSuccess(data)))
+      .then(dashboards => dispatch(dashboardSuccess(dashboards)))
       .catch(error => dispatch(dashboardFailure(error)));
   };
 };

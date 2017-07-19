@@ -1,8 +1,9 @@
 import * as React from 'react';
-import {MainLogo} from '../components/MainLogo';
+import {Row} from '../../layouts/components/row/Row';
+import {MainLogo} from '../components/mainlogo/MainLogo';
 
 export const TopMenuContainer = props => (
-  <div>
+  <Row>
     <MainLogo/>
-    TOP MENU
-  </div>);
+  </Row>
+);

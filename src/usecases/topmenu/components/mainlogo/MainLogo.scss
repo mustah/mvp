@@ -1,0 +1,17 @@
+@import "../../../../app/variables";
+
+.MainLogo {
+  padding: $space;
+
+  img {
+    height: 30px;
+  }
+
+  .MainLogo-title {
+    margin-left: $space;
+    font-size: 30px;
+    color: $blue;
+  }
+}
+
+
