@@ -36,7 +36,7 @@ const onBeforeRun = () => {
   runCLI({}, ['src']);
 };
 
-const assets = ['assets/images/**/*.+(svg|png|jpg|jpeg|gif)', 'assets/fonts/*'];
+const assets = ['**/*.+(svg|png|jpg|jpeg|gif)', 'assets/fonts/**/*'];
 
 Sparky.task('config', () => {
   fuse = new FuseBox({
