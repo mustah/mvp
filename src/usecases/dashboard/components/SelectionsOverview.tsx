@@ -3,6 +3,6 @@ import './SelectionsOverview.scss';
 
 export const SelectionsOverview = props => (
   <div className="SelectionsOverview">
-    {props.title}
+    Urval: {props.title}
   </div>
 );

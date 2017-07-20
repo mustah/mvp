@@ -8,6 +8,8 @@ export const Normal = (props) => {
   );
 };
 
+export const Bold = (props) => (<Normal className="Bold" {...props}/>);
+
 export const Small = (props) => (<Normal className="Small" {...props}/>);
 
-export const Bold = (props) => (<Normal className="Bold" {...props}/>);
+export const Xsmall = (props) => (<Normal className="Xsmall" {...props}/>);

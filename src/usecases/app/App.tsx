@@ -1,6 +1,9 @@
 import * as React from 'react';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
+import {Column} from '../layouts/components/column/Column';
 import {Layout} from '../layouts/components/layout/Layout';
+import {Row} from '../layouts/components/row/Row';
+import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import {TopMenuContainer} from '../topmenu/containers/TopMenuContainer';
 import './App.scss';
 
@@ -12,12 +15,23 @@ export class App extends React.Component<any, any> {
   render() {
     return (
       <div className="App">
-        <Layout>
-          <TopMenuContainer/>
-        </Layout>
-        <Layout>
-          <DashboardContainer/>
-        </Layout>
+        <Row>
+          <Layout>
+            <TopMenuContainer/>
+          </Layout>
+        </Row>
+        <Row>
+          <Column>
+            <Layout>
+              <SideMenuContainer/>
+            </Layout>
+          </Column>
+          <Column>
+            <Layout>
+              <DashboardContainer/>
+            </Layout>
+          </Column>
+        </Row>
       </div>
     );
   }
