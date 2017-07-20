@@ -1,11 +1,9 @@
 import * as React from 'react';
+import {Expandable} from '../../../types/Types';
 import {Icon} from '../../common/components/icons/Icons';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
 import './SideMenuItem.scss';
-
-interface Expandable {
-}
 
 export interface SideMenuItemProps extends Expandable {
   icon: string;

@@ -9,4 +9,3 @@ export interface Expandable {
 export interface Selectable {
   isSelected?: boolean;
 }
-
