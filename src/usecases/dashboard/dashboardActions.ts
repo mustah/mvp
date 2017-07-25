@@ -6,7 +6,7 @@ const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
 const dashboardSuccess = createPayloadAction(DASHBOARD_SUCCESS);
 const dashboardFailure = createPayloadAction(DASHBOARD_FAILURE);
 
-export const fetchDashboard = () => {
+export const fetchDashboards = () => {
   return (dispatch) => {
     dispatch(dashboardRequest());
 

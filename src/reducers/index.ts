@@ -1,10 +1,14 @@
 import {combineReducers} from 'redux';
-import {dashboard, DashboardProps} from '../usecases/dashboard/dashboardReducer';
+import {collection} from '../usecases/collection/collectionReducer';
+import {CollectionState} from '../usecases/collection/models/Collections';
+import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 
 export interface RootState {
-  dashboard: DashboardProps;
+  dashboard: DashboardState;
+  collection: CollectionState;
 }
 
 export const rootReducer = combineReducers<RootState>({
   dashboard,
+  collection,
 });
