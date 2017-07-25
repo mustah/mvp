@@ -1,7 +1,7 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {Expandable} from '../../../types/Types';
 import {Icon} from '../../common/components/icons/Icons';
-import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
 import './LinkItem.scss';
 
@@ -15,9 +15,8 @@ export const LinkItem = (props: LinkItemProps) => {
   return (
     <Row>
       <Icon name={icon} size="small"/>
-      <Column className="Column-center">
-        <div className="LinkItem">{name}</div>
-      </Column>
+      <div className={classNames('Row Row-center LinkItem')}>{name}</div>
+      <Icon name="chevron-left" className="Row-right flex-1" size="small"/>
     </Row>
   );
 };
