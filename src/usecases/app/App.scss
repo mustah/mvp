@@ -1,5 +1,6 @@
 @import "variables";
 @import "flex";
+@import "./node_modules/mdi/scss/materialdesignicons.scss";
 
 html {
   font-family: 'PT Sans', sans-serif;
@@ -11,4 +12,11 @@ html {
 body {
   padding: 0;
   margin: 0;
+}
+
+.App {
+  .side-menu-container {
+    background-color: $grey;
+    width: $side-menu-container-width;
+  }
 }

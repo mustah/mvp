@@ -5,7 +5,7 @@ import {MenuSeparator} from '../separators/MenuSeparator';
 import './MainLogo.scss';
 
 export const MainLogo = (props) => (
-  <Column>
+  <Column className="MainLogo-container">
     <Row className="MainLogo Row-center">
       <img src="usecases/topmenu/components/mainlogo/elvaco-logo.png"/>
       <div className="MainLogo-title">mvp</div>

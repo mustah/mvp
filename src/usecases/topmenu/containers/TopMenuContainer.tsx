@@ -8,10 +8,10 @@ export const TopMenuContainer = props => (
   <Row className="flex-1">
     <MainLogo/>
     <Row>
-      <MenuItem name="Dashboard" isSelected={true} icon="dashboard"/>
-      <MenuItem name="Insamling" isSelected={false} icon="collection"/>
-      <MenuItem name="Validering" isSelected={false} icon="validation"/>
-      <MenuItem name="Mätserier" isSelected={false} icon="data-analysis"/>
+      <MenuItem name="Dashboard" isSelected={true} icon="dialpad"/>
+      <MenuItem name="Insamling" isSelected={false} icon="dialpad"/>
+      <MenuItem name="Validering" isSelected={false} icon="dialpad"/>
+      <MenuItem name="Mätserier" isSelected={false} icon="dialpad"/>
     </Row>
     <ProfileContainer/>
   </Row>

@@ -1,8 +1,16 @@
 @import "../../../app/variables";
 
 .Icon {
-  border: 1px solid $grey;
   margin: 0 $space;
   width: $icon-size;
   height: $icon-size;
+
+  .mdi {
+    font-size: $xl;
+    line-height: 1;
+
+    &.small {
+      font-size: $normal;
+    }
+  }
 }

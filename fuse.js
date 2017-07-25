@@ -17,7 +17,7 @@ const {runCLI} = require('jest');
 const distDir = 'dist';
 const homeDir = 'src';
 const tmpDir = '.tmp';
-const appCss = 'app.css';
+const appCss = 'css/app.css';
 
 let fuse, app, vendor, isProduction = false;
 
@@ -36,6 +36,8 @@ const onBeforeRun = () => {
   runCLI({}, ['src']);
 };
 
+const materialDesign = './node_modules/mdi/';
+const materialDesignFonts = './fonts/**/*';
 const assets = ['**/*.+(svg|png|jpg|jpeg|gif)', 'assets/fonts/**/*'];
 
 Sparky.task('config', () => {
@@ -73,11 +75,13 @@ Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(dis
 
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
 
+Sparky.task('copy:external-assets', () => Sparky.src([materialDesignFonts], {base: materialDesign}).dest(distDir));
+
 Sparky.task('clean', () => Sparky.src(distDir).clean(distDir));
 
 Sparky.task('prod-env', ['clean'], () => isProduction = true);
 
-Sparky.task('default', ['clean', 'config', 'copy:assets'], () => {
+Sparky.task('default', ['clean', 'config', 'copy:assets', 'copy:external-assets'], () => {
   fuse.dev();
   app.watch()
     .hmr()
@@ -85,7 +89,7 @@ Sparky.task('default', ['clean', 'config', 'copy:assets'], () => {
   return fuse.run();
 });
 
-const distTasks = ['prod-env', 'config', 'copy:assets'];
+const distTasks = ['prod-env', 'config', 'copy:assets', 'copy:external-assets'];
 
 Sparky.task('dist', distTasks, () => {
   onBeforeRun();

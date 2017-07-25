@@ -1,6 +1,18 @@
 import * as React from 'react';
+import {ClassNamed} from '../../../../types/Types';
+import {Row} from '../../../layouts/components/row/Row';
 import './Icons.scss';
 
-export const Icon = (props) => (
-  <div className={`Icon ${props.className || ''}`}/>
-);
+export interface IconProps extends ClassNamed {
+  name: string;
+  size?: string;
+}
+
+export const Icon = (props: IconProps) => {
+  const {className, name, size} = props;
+  return (
+    <Row className={`Row-center Icon ${className || ''}`}>
+      <i className={`mdi mdi-${name} ${size || ''}`}/>
+    </Row>
+  );
+};

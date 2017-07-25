@@ -10,6 +10,6 @@ export interface NavigationItemProps extends Expandable {
 
 export const NavigationItem = (props: NavigationItemProps) => {
   return (
-    <Icon/>
+    <Icon name={props.icon}/>
   );
 };

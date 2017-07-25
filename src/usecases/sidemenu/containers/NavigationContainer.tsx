@@ -13,7 +13,7 @@ export const NavigationContainer = props => (
       <NavigationItem name="Framåt" icon="forward"/>
     </Column>
     <Column>
-      <Icon/>
+      <Icon name="dots-horizontal"/>
     </Column>
   </Row>
 );

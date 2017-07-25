@@ -22,7 +22,7 @@ export class App extends React.Component<any, any> {
         </Row>
         <Row>
           <Column>
-            <Layout>
+            <Layout className="side-menu-container">
               <SideMenuContainer/>
             </Layout>
           </Column>

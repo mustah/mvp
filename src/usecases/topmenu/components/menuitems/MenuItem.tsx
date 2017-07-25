@@ -13,11 +13,11 @@ export interface MenuItemProps extends Selectable {
 }
 
 export const MenuItem = (props: MenuItemProps) => {
-  const {name, isSelected} = props;
+  const {name, icon, isSelected} = props;
   return (
     <Column>
       <Row className="MenuItem Row-center">
-        <Icon className="MenuItem-icon"/>
+        <Icon className="MenuItem-icon" name={icon}/>
         <Bold className="MenuItem-name">{name}</Bold>
       </Row>
       <MenuSeparator isSelected={isSelected}/>

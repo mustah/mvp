@@ -1,16 +1,21 @@
 @import "../../../app/variables";
 
-.MainLogo {
-  padding: $space;
+.MainLogo-container {
+  width: $side-menu-container-width;
 
-  img {
-    height: 28px;
-  }
+  .MainLogo {
+    padding: $space;
+    justify-content: flex-start;
 
-  .MainLogo-title {
-    margin-left: $space;
-    font-size: 30px;
-    color: $blue;
-    line-height: 1;
+    img {
+      height: 28px;
+    }
+
+    .MainLogo-title {
+      margin-left: $space;
+      font-size: 30px;
+      color: $blue;
+      line-height: 1;
+    }
   }
 }

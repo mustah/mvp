@@ -11,14 +11,13 @@ export interface LinkItemProps extends Expandable {
 }
 
 export const LinkItem = (props: LinkItemProps) => {
-  const {name} = props;
-  /* TODO : add icon for showing if node is expanded or not*/
+  const {icon, name} = props;
   return (
-    <Column>
-      <Row>
-        <Icon/>
+    <Row>
+      <Icon name={icon} size="small"/>
+      <Column className="Column-center">
         <div className="LinkItem">{name}</div>
-      </Row>
-    </Column>
+      </Column>
+    </Row>
   );
 };

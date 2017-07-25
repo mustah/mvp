@@ -14,7 +14,7 @@ export const ProfileContainer = (props) => {
           <Bold>Anna Johansson</Bold>
           <Small className="text-align-right">Bostäder AB</Small>
         </Column>
-        <Icon/>
+        <Icon name="account-circle"/>
       </Row>
       <MenuSeparator/>
     </Column>
