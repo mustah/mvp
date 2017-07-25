@@ -13,7 +13,7 @@ export const Icon = (props: IconProps) => {
   const {className, name, size} = props;
   return (
     <Row className={classNames('Row-center Icon', className)}>
-      <i className={classNames(`mdi mdi-${name}`, size)}/>;
+      <i className={classNames(`mdi mdi-${name}`, size)}/>
     </Row>
   );
 };
