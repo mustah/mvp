@@ -1,10 +1,11 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import './Texts.scss';
 
 export const Normal = (props) => {
   const {className, children} = props;
   return (
-    <div className={`Normal ${className || ''}`}>{children}</div>
+    <div className={classNames('Normal', className)}>{children}</div>
   );
 };
 

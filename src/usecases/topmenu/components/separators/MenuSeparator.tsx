@@ -1,11 +1,11 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {ClassNamed, Selectable} from '../../../../types/Types';
 import './MenuSeparator.scss';
 
 export const MenuSeparator = (props: Selectable & ClassNamed) => {
-  const {isSelected} = props;
-  const selectedClassName = (isSelected && 'isSelected') || '';
+  const {isSelected, className} = props;
   return (
-    <div className={`MenuSeparator ${selectedClassName} ${props.className || ''}`}/>
+    <div className={classNames('MenuSeparator', className, {isSelected})}/>
   );
 };

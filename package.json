@@ -56,6 +56,7 @@
     "uglify-js": "^3.0.25"
   },
   "dependencies": {
+    "@types/classnames": "^2.2.0",
     "@types/node": "^8.0.13",
     "@types/react": "^15.0.38",
     "@types/react-dom": "^15.5.1",
@@ -65,6 +66,7 @@
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
     "axios": "^0.16.2",
+    "classnames": "^2.2.5",
     "mdi": "^1.9.33",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
