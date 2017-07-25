@@ -5,12 +5,12 @@ import {Row} from '../../layouts/components/row/Row';
 import {NavigationItem} from '../components/NavigationItem';
 
 export const NavigationContainer = props => (
-  <Row>
+  <Row className="Row-left">
     <Column>
-      <NavigationItem name="Tillbaka" icon="back"/>
+      <NavigationItem name="Tillbaka" icon="undo"/>
     </Column>
     <Column>
-      <NavigationItem name="Framåt" icon="forward"/>
+      <NavigationItem name="Framåt" icon="redo"/>
     </Column>
     <Column>
       <Icon name="dots-horizontal"/>
