@@ -5,7 +5,7 @@ import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import {Layout} from '../layouts/components/layout/Layout';
 import {Row} from '../layouts/components/row/Row';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
-import {TopMenuContainer} from '../topmenu/containers/TopMenuContainer';
+import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
 import './App.scss';
 import {routes} from './routes';
 

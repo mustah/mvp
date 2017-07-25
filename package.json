@@ -67,13 +67,14 @@
     "@types/redux-thunk": "^2.1.0",
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
+    "history": "^4.6.3",
     "mdi": "^1.9.33",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
     "react-redux-typescript": "^2.3.0",
     "react-router-dom": "^4.1.2",
-    "react-router-redux": "^4.0.8",
+    "react-router-redux": "next",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0"
   }

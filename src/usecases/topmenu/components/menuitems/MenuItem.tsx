@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
 import {Icon} from '../../../common/components/icons/Icons';
@@ -16,7 +17,7 @@ export const MenuItem = (props: MenuItemProps) => {
   const {name, icon, isSelected} = props;
   return (
     <Column>
-      <Row className="MenuItem Row-center">
+      <Row className={classNames('MenuItem Row-center', {isSelected})}>
         <Icon className="MenuItem-icon" name={icon}/>
         <Bold className="MenuItem-name">{name}</Bold>
       </Row>
