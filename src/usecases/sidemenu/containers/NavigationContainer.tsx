@@ -5,7 +5,7 @@ import {Row} from '../../layouts/components/row/Row';
 import {NavigationItem} from '../components/NavigationItem';
 
 export const NavigationContainer = props => (
-  <Row className="Row-left">
+  <Row className="Row-right">
     <Column>
       <NavigationItem name="Tillbaka" icon="undo"/>
     </Column>
