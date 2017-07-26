@@ -59,3 +59,21 @@ $ yarn test:watch
 * [Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/) - A Complete Guide to Flexbox.
 * [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) - React Developer Tools is a Chrome DevTools extension for the open-source React JavaScript library. 
 * [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) - Redux DevTools for debugging application's state changes.
+
+# Icons
+
+In the design report from BOID it's stated that we should us icons from the following sources:
+* Elvacos proprietary
+* [Material Icons](https://material.io/icons/)
+* [Material Design Icons](https://materialdesignicons.com/)
+
+Currently we have installed the Material Design Icons webfonts in this repo. To make the usage of these icons easy we have
+created the <Icon> tag. To use any of these fonts:
+* Search the Material Design Icons library for the icon you want.
+* Get the name of the icon, e.g. account-circle .
+* Add the icon, e.g. <Icon name="account-circle"/>.
+* Your done!
+
+So far we have not mapped Material Icons and will try to avoid this as long as possible.
+This will hopefully make the icon handling easy although we at some point most likely will have to decide
+how to handle the Elvaco proprietary icons.
