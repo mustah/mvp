@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
 import {VALIDATION_REQUEST} from '../../types/ActionTypes';
-import {ValidationState} from './models/Validation';
+import {ValidationState} from './models/Validations';
 
 const initialState: ValidationState = {
   title: 'ValidationState',

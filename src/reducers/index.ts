@@ -5,7 +5,7 @@ import {CollectionState} from '../usecases/collection/models/Collections';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {dataAnalysis} from '../usecases/dataAnalysis/dataAnalysisReducer';
 import {DataAnalysisState} from '../usecases/dataAnalysis/models/DataAnalysis';
-import {ValidationState} from '../usecases/validation/models/Validation';
+import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
 
 export interface RootState {

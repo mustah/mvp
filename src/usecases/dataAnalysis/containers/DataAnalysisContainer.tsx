@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {Bold} from '../../common/components/texts/Texts';
-import {ValidationState} from '../../validation/models/Validation';
+import {ValidationState} from '../../validation/models/Validations';
 import {fetchDataAnalysis} from '../dataAnalysisActions';
 
 export interface DataAnalysisContainerProps {
