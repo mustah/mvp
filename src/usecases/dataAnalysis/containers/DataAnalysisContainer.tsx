@@ -2,20 +2,22 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
-import {Bold} from '../../common/components/texts/Texts';
-import {ValidationState} from '../../validation/models/Validations';
+import {SelectionsOverview} from '../../dashboard/components/SelectionsOverview';
 import {fetchDataAnalysis} from '../dataAnalysisActions';
+import {DataAnalysisState} from '../models/DataAnalysis';
 
 export interface DataAnalysisContainerProps {
   fetchDataAnalysis: () => any;
-  dataAnalysis: ValidationState;
+  dataAnalysis: DataAnalysisState;
 }
 
 const DataAnalysisContainer = (props: DataAnalysisContainerProps) => {
-  const {title} = props.dataAnalysis;
+  const {fetchDataAnalysis} = props;
   return (
     <div>
-      <Bold>{title}</Bold>
+      <SelectionsOverview title={'Allt'}/>
+
+      <div className="button" onClick={fetchDataAnalysis}>DATA_ANALYSIS</div>
     </div>
   );
 };
