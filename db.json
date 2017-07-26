@@ -1,4 +1,21 @@
 {
+  "collections": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    },
+    {
+      "id": 2,
+      "title": "collection 2",
+      "author": "elvaco"
+    },
+    {
+      "id": 3,
+      "title": "collection 3",
+      "author": "elvaco - home"
+    }
+  ],
   "dashboards": [
     {
       "id": 1,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
-import {Bold} from '../../common/components/texts/Texts';
+import {SelectionsOverview} from '../../dashboard/components/SelectionsOverview';
 import {fetchCollections} from '../collectionActions';
 import {CollectionState} from '../models/Collections';
 
@@ -12,10 +12,12 @@ export interface CollectionContainerProps {
 }
 
 const CollectionContainer = (props: CollectionContainerProps) => {
-  const {title} = props.collection;
+  const {fetchCollections} = props;
   return (
     <div>
-      <Bold>{title}</Bold>
+      <SelectionsOverview title={'Allt'}/>
+
+      <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
     </div>
   );
 };
