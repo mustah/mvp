@@ -2,10 +2,12 @@ import * as React from 'react';
 import {Route} from 'react-router-dom';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
+import DataAnalysisContainer from '../dataAnalysis/containers/DataAnalysisContainer';
 import {Layout} from '../layouts/components/layout/Layout';
 import {Row} from '../layouts/components/row/Row';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
+import ValidationContainer from '../validation/containers/ValidationContainer';
 import './App.scss';
 import {routes} from './routes';
 
@@ -30,8 +32,8 @@ export class App extends React.Component<any, any> {
             <Route exact={true} path={routes.home} component={DashboardContainer}/>
             <Route exact={true} path={routes.dashboard} component={DashboardContainer}/>
             <Route exact={true} path={routes.collection} component={CollectionContainer}/>
-            <Route exact={true} path={routes.validation} component={DashboardContainer}/>
-            <Route exact={true} path={routes.dataAnalysis} component={DashboardContainer}/>
+            <Route exact={true} path={routes.validation} component={ValidationContainer}/>
+            <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisContainer}/>
           </Layout>
         </Row>
       </div>
