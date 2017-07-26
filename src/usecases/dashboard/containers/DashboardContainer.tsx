@@ -2,6 +2,8 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
+import {Column} from '../../layouts/components/column/Column';
+import {Layout} from '../../layouts/components/layout/Layout';
 import {SelectionsOverview} from '../components/SelectionsOverview';
 import {fetchDashboards} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
@@ -14,11 +16,13 @@ export interface DashboardContainerProps {
 const DashboardContainer = (props: DashboardContainerProps) => {
   const {fetchDashboards} = props;
   return (
-    <div>
-      <SelectionsOverview title={'Allt'}/>
+    <Layout>
+      <Column className="flex-1">
+        <SelectionsOverview title={'Allt'}/>
+        <div className="button" onClick={fetchDashboards}>DASHBOARD</div>
+      </Column>
+    </Layout>
 
-      <div className="button" onClick={fetchDashboards}>DASHBOARD</div>
-    </div>
   );
 };
 

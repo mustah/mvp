@@ -1,0 +1,18 @@
+@import "../../app/variables";
+
+.Summary {
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+
+}
+
+.Summary-name {
+  text-transform: uppercase;
+}
+
+.Summary-count {
+  text-transform: none;
+  font-size: $lg;
+}
