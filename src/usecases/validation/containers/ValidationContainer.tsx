@@ -7,6 +7,7 @@ import {Column} from '../../layouts/components/column/Column';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
+import {ValidationOverviewContainer} from './ValidationOverviewContainer';
 
 export interface ValidationContainerProps {
   fetchValidations: () => any;
@@ -19,6 +20,7 @@ const ValidationContainer = (props: ValidationContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
+        <ValidationOverviewContainer/>
         <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
       </Column>
     </Layout>

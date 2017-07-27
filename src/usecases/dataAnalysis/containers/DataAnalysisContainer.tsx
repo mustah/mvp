@@ -7,6 +7,7 @@ import {Column} from '../../layouts/components/column/Column';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {fetchDataAnalysis} from '../dataAnalysisActions';
 import {DataAnalysisState} from '../models/DataAnalysis';
+import {DataAnalysisOverviewContainer} from './DataAnalysisOverviewContainer';
 
 export interface DataAnalysisContainerProps {
   fetchDataAnalysis: () => any;
@@ -19,6 +20,7 @@ const DataAnalysisContainer = (props: DataAnalysisContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
+        <DataAnalysisOverviewContainer/>
         <div className="button" onClick={fetchDataAnalysis}>DATA_ANALYSIS</div>
       </Column>
     </Layout>

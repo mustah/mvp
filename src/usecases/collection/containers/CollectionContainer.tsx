@@ -7,6 +7,7 @@ import {Column} from '../../layouts/components/column/Column';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {fetchCollections} from '../collectionActions';
 import {CollectionState} from '../models/Collections';
+import {CollectionOverviewContainer} from './CollectionOverviewContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -19,6 +20,7 @@ const CollectionContainer = (props: CollectionContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
+        <CollectionOverviewContainer/>
         <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
       </Column>
     </Layout>
