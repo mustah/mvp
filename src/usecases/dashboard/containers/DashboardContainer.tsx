@@ -2,9 +2,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
+import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Column} from '../../layouts/components/column/Column';
 import {Layout} from '../../layouts/components/layout/Layout';
-import {SelectionsOverview} from '../components/SelectionsOverview';
 import {fetchDashboards} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewContainer} from './SystemOverviewContainer';
@@ -19,7 +19,7 @@ const DashboardContainer = (props: DashboardContainerProps) => {
   return (
     <Layout>
       <Column className="flex-1">
-        <SelectionsOverview title={'Allt'}/>
+        <SelectionOverview title={'Allt'}/>
         <SystemOverviewContainer/>
         <div className="button" onClick={fetchDashboards}>DASHBOARD</div>
       </Column>

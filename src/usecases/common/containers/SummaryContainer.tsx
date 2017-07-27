@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Row} from '../../layouts/components/row/Row';
-import {Summary} from '../components/Summary';
+import {Summary} from '../components/summary/Summary';
 
 export const SummaryContainer = props => (
   <Row className="Row-right flex-1">

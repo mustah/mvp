@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Bold, Normal} from '../../common/components/texts/Texts';
-import {Column} from '../../layouts/components/column/Column';
-import {Row} from '../../layouts/components/row/Row';
+import {Column} from '../../../layouts/components/column/Column';
+import {Row} from '../../../layouts/components/row/Row';
+import {Bold, Normal} from '../texts/Texts';
 import './Summary.scss';
 
 export interface SummaryProps {
