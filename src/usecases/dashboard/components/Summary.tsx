@@ -16,10 +16,10 @@ export const Summary = (props: SummaryProps) => {
     <div>
       <Column className="Summary">
         <Row className={classNames('Row-center Summary-name')}>
-          <Normal> {title}</Normal>
+          <Normal>{title}</Normal>
         </Row>
         <Row className={classNames('Row-center Summary-count')}>
-          <Bold> {count}</Bold>
+          <Bold>{count}</Bold>
         </Row>
       </Column>
     </div>

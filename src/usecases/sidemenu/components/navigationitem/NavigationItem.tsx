@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Expandable} from '../../../types/Types';
-import {Icon} from '../../common/components/icons/Icons';
+import {Expandable} from '../../../../types/Types';
+import {Icon} from '../../../common/components/icons/Icons';
 import './LinkItem.scss';
 
 export interface NavigationItemProps extends Expandable {

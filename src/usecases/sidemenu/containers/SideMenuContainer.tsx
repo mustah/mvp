@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
-import {LinkItem} from '../components/LinkItem';
+import {LinkItem} from '../components/linkitem/LinkItem';
 import {NavigationContainer} from './NavigationContainer';
 import {SearchContainer} from './SearchContainer';
 

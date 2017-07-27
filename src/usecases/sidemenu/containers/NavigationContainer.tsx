@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Icon} from '../../common/components/icons/Icons';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
-import {NavigationItem} from '../components/NavigationItem';
+import {NavigationItem} from '../components/navigationitem/NavigationItem';
 
 export const NavigationContainer = props => (
   <Row className="Row-right">
