@@ -72,7 +72,7 @@ created the <Icon> tag. To use any of these fonts:
 * Search the Material Design Icons library for the icon you want.
 * Get the name of the icon, e.g. account-circle .
 * Add the icon, e.g. <Icon name="account-circle"/>.
-* Your done!
+* You're done!
 
 So far we have not mapped Material Icons and will try to avoid this as long as possible.
 This will hopefully make the icon handling easy although we at some point most likely will have to decide
