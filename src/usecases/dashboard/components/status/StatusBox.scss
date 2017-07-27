@@ -1,0 +1,50 @@
+@import "../../../app/variables";
+
+.StatusBox {
+  height: $status-box-height;
+  width: $status-box-width;
+
+  margin-bottom: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 10px;
+
+  &.green {
+    background-color: $green;
+    color: white;
+  }
+
+  &.grey {
+    background-color: $grey;
+    color: black;
+  }
+
+  &.orange {
+    background-color: $orange;
+    color: white;
+  }
+
+  &.red {
+    background-color: red;
+    color: white;
+  }
+}
+
+.StatusBox-name {
+  font-size: $normal;
+  text-transform: uppercase;
+}
+
+.StatusBox-count {
+  font-size: $normal;
+  text-transform: none;
+}
+
+.StatusBox-value {
+  font-size: $xxl;
+  text-transform: none;
+}

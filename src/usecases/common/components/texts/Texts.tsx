@@ -11,6 +11,10 @@ export const Normal = (props) => {
 
 export const Bold = (props) => (<Normal className="Bold" {...props}/>);
 
+export const Large = (props) => (<Normal className="Large" {...props}/>);
+
 export const Small = (props) => (<Normal className="Small" {...props}/>);
+
+export const Xlarge = (props) => (<Normal className="Xlarge" {...props}/>);
 
 export const Xsmall = (props) => (<Normal className="Xsmall" {...props}/>);
