@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionsOverview} from '../../dashboard/components/SelectionsOverview';
+import {Column} from '../../layouts/components/column/Column';
+import {Layout} from '../../layouts/components/layout/Layout';
 import {fetchDataAnalysis} from '../dataAnalysisActions';
 import {DataAnalysisState} from '../models/DataAnalysis';
 
@@ -14,11 +16,12 @@ export interface DataAnalysisContainerProps {
 const DataAnalysisContainer = (props: DataAnalysisContainerProps) => {
   const {fetchDataAnalysis} = props;
   return (
-    <div>
-      <SelectionsOverview title={'Allt'}/>
-
-      <div className="button" onClick={fetchDataAnalysis}>DATA_ANALYSIS</div>
-    </div>
+    <Layout>
+      <Column className="flex-1">
+        <SelectionsOverview title={'Allt'}/>
+        <div className="button" onClick={fetchDataAnalysis}>DATA_ANALYSIS</div>
+      </Column>
+    </Layout>
   );
 };
 

@@ -3,6 +3,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionsOverview} from '../../dashboard/components/SelectionsOverview';
+import {Column} from '../../layouts/components/column/Column';
+import {Layout} from '../../layouts/components/layout/Layout';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
 
@@ -14,11 +16,12 @@ export interface ValidationContainerProps {
 const ValidationContainer = (props: ValidationContainerProps) => {
   const {fetchValidations} = props;
   return (
-    <div>
-      <SelectionsOverview title={'Allt'}/>
-
-      <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
-    </div>
+    <Layout>
+      <Column className="flex-1">
+        <SelectionsOverview title={'Allt'}/>
+        <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
+      </Column>
+    </Layout>
   );
 };
 
