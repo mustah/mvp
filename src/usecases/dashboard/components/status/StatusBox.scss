@@ -4,14 +4,9 @@
   height: $status-box-height;
   width: $status-box-width;
 
-  margin-bottom: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-
-  padding-bottom: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-top: 10px;
+  margin-bottom: $sm-space;
+  margin-right: $sm-space;
+  margin-top: $sm-space;
 
   &.green {
     background-color: $green;

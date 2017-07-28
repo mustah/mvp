@@ -21,10 +21,11 @@ body {
   }
   .selection-container {
     background-color: $grey;
-    padding-top: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;  }
+    padding-top: $sm-space;
+    padding-right: $sm-space;
+    padding-bottom: $sm-space;
+    padding-left: $sm-space;
+  }
 
   .link {
     color: $black;
