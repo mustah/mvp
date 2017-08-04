@@ -17,7 +17,9 @@ export interface DashboardContainerProps {
 }
 
 const DashboardContainer = (props: DashboardContainerProps) => {
-  const {fetchDashboards} = props;
+  const {fetchDashboards, dashboard} = props;
+  const now = new Date();
+
   return (
     <Layout>
       <Column className="flex-1">
@@ -25,7 +27,17 @@ const DashboardContainer = (props: DashboardContainerProps) => {
         <SystemOverviewContainer/>
         <Large><Bold>Bestånd</Bold></Large>
         <Map/>
-        <div className="button" onClick={fetchDashboards}>DASHBOARD</div>
+        <h3>
+          <div className="button" onClick={fetchDashboards}>
+            Click me to load dashboard data from json-server via Rest!!!
+          </div>
+        </h3>
+        <div>
+          {dashboard.records.map((record, index) => (<li>{record.title}</li>))}
+        </div>
+        <div>
+          <h3>Updated: {now.toLocaleString()} </h3>
+        </div>
       </Column>
     </Layout>
   );
