@@ -1,0 +1,81 @@
+{
+  "name": "mvp-web",
+  "version": "1.0.0",
+  "description": "The most accurate and versatile meter data source for your metering applications",
+  "main": "index.html",
+  "repository": {
+    "url": "git@dev6.elvaco.local:elvaco/mvp-web.git",
+    "type": "git"
+  },
+  "author": "Must Tahir <must.tahir@invencon.se>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node fuse",
+    "dist": "node fuse dist",
+    "dist-server": "node fuse dist-server",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testMatch": [
+      "**/__tests__/*.(ts|tsx|js)"
+    ],
+    "coverageReporters": [
+      "text"
+    ],
+    "coverageDirectory": "coverage-reports",
+    "collectCoverageFrom": [
+      "src/**/*.tsx",
+      "src/**/*.ts",
+      "!src/**/*.d.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^20.0.4",
+    "autoprefixer": "^7.1.2",
+    "fuse-box": "^2.2.0",
+    "fuse-box-typechecker": "git://github.com/fuse-box/fuse-box-typechecker",
+    "graceful-fs": "^4.1.11",
+    "jest": "^20.0.4",
+    "node-sass": "^4.5.3",
+    "postcss": "^6.0.6",
+    "redux-devtools": "^3.4.0",
+    "ts-jest": "^20.0.7",
+    "tslint": "^5.5.0",
+    "tslint-react": "^3.0.0",
+    "typescript": "^2.4.1",
+    "uglify-js": "^3.0.25"
+  },
+  "dependencies": {
+    "@types/classnames": "^2.2.0",
+    "@types/node": "^8.0.13",
+    "@types/react": "^15.0.38",
+    "@types/react-dom": "^15.5.1",
+    "@types/react-redux": "^4.4.46",
+    "@types/react-router-dom": "^4.0.7",
+    "@types/react-router-redux": "^5.0.3",
+    "@types/redux": "^3.6.0",
+    "@types/redux-thunk": "^2.1.0",
+    "axios": "^0.16.2",
+    "classnames": "^2.2.5",
+    "history": "^4.6.3",
+    "mdi": "^1.9.33",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "react-redux-typescript": "^2.3.0",
+    "react-router-dom": "^4.1.2",
+    "react-router-redux": "next",
+    "redux": "^3.7.2",
+    "redux-thunk": "^2.2.0"
+  }
+}

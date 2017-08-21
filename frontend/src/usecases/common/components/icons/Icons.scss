@@ -1,0 +1,15 @@
+@import "../../../app/variables";
+
+.Icon {
+  width: $icon-size;
+  height: $icon-size;
+
+  .mdi {
+    font-size: $xl;
+    line-height: 1;
+
+    &.small {
+      font-size: $normal;
+    }
+  }
+}

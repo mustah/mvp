@@ -1,0 +1,14 @@
+@import "../../../app/variables";
+
+.Column {
+  display: flex;
+  flex-direction: column;
+}
+
+.Column-center {
+  justify-content: center;
+}
+
+.Column-right {
+  justify-content: flex-end;
+}

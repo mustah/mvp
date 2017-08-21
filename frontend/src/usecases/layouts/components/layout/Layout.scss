@@ -1,0 +1,8 @@
+@import "../../../app/variables";
+
+.Layout {
+  display: flex;
+  margin-left: $sm-space;
+  margin-right: $sm-space;
+  width: 100%;
+}

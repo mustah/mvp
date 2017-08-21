@@ -1,0 +1,12 @@
+@import "../../../app/variables";
+
+.MenuSeparator {
+  height: 8px;
+  background-color: $dark-blue;
+
+  &.isSelected {
+    background-color: $blue;
+  }
+}
+
+

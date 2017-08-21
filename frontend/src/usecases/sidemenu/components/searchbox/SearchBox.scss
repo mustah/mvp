@@ -1,0 +1,9 @@
+@import "../../../app/variables";
+
+.SearchBox {
+  cursor: text;
+  font-size: $xs;
+  font-weight: normal;
+  margin: 0 $lg-space;
+  padding: $space 0 $space 0;
+}
