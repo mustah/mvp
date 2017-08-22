@@ -4,6 +4,7 @@ stages:
     - build
 
 before_script:
+    - env
     - apt-get update && apt-get -y install git
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
@@ -19,5 +20,10 @@ cache:
 build:
     stage: build
     script:
-        - ./gradlew build
+        - ./gradlew clean build
         - ./gradlew assemble
+    artifacts:
+        name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
+        paths:
+            - backend/build/distributions/
+        expire_in: 1 month

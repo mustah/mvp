@@ -20,9 +20,23 @@ jar {
 	baseName = 'mvp'
 }
 
-mainClassName = 'com.elvaco.mvp.MvpApplication'
+distributions {
+	main {
+		baseName = 'mvp'
+	}
+}
 
-version = '0.0.1-SNAPSHOT'
+def getVersion = { ->
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+		standardOutput = stdout
+	}
+	return stdout.toString().trim()
+}
+mainClassName = 'com.elvaco.mvp.MvpApplication'
+applicationName = 'mvp'
+version = getVersion()
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
