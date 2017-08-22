@@ -16,10 +16,15 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 
+jar {
+	baseName = 'mvp'
+}
+
 mainClassName = 'com.elvaco.mvp.MvpApplication'
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 	mavenCentral()
@@ -38,3 +43,11 @@ dependencies {
 	runtime('org.postgresql:postgresql')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+jar {
+	from('../frontend/dist') {
+		into 'static'
+	}
+}
+
+jar.dependsOn(':frontend:assemble')

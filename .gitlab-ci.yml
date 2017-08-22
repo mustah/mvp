@@ -2,21 +2,22 @@ image: sgrio/java-oracle:jdk_8
 
 stages:
     - build
-    - test
 
 before_script:
+    - apt-get update && apt-get -y install git
     - export GRADLE_USER_HOME=`pwd`/.gradle
+    - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 cache:
     paths:
         - .gradle/wrapper
         - .gradle/caches
+        - .yarn
+        - frontend/node_modules
+        - frontend/.fusebox
+
 build:
     stage: build
     script:
+        - ./gradlew build
         - ./gradlew assemble
-
-test:
-    stage: test
-    script:
-        - ./gradlew check

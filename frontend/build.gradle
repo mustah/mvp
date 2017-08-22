@@ -1,0 +1,31 @@
+plugins {
+	id "com.moowork.node" version "1.2.0"
+}
+
+apply plugin: 'base'
+version '0.0.1'
+
+buildDir = 'dist'
+
+node {
+	version = '6.11.2'
+	download = true
+}
+
+task bundle(type: YarnTask) {
+	inputs.dir(new File('src'))
+	outputs.dir(new File('dist'))
+	args  = ['dist']
+}
+
+task start(type: YarnTask) {
+	args = ['start']
+}
+
+task test(type: YarnTask) {
+	args = ['test']
+}
+
+check.dependsOn(test)
+bundle.dependsOn(yarn_install)
+assemble.dependsOn(bundle)
