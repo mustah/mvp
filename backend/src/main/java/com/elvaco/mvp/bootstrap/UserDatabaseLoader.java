@@ -1,4 +1,4 @@
-package com.elvaco.mvp.user;
+package com.elvaco.mvp.bootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.elvaco.mvp.user.User;
+import com.elvaco.mvp.user.UserRepository;
 
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {

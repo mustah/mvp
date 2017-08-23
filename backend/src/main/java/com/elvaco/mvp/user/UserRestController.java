@@ -27,7 +27,7 @@ public class UserRestController {
    */
   @RequestMapping("/users/{id}")
   public User user(@PathVariable Long id) {
-    return userRepository.findById(id);
+    return userRepository.findOne(id);
   }
 
   /**

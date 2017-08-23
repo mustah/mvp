@@ -1,4 +1,4 @@
-package com.elvaco.mvp.meteringpoint;
+package com.elvaco.mvp.bootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.elvaco.mvp.meteringpoint.MeteringPoint;
+import com.elvaco.mvp.meteringpoint.MeteringPointRepository;
 
 @Component
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
