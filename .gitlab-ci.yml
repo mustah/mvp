@@ -2,24 +2,24 @@ image: sgrio/java-oracle:jdk_8
 
 stages:
     - build
+    - deploy
 
 before_script:
-    - env
-    - apt-get update && apt-get -y install git
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
-cache:
-    paths:
-        - .gradle/wrapper
-        - .gradle/caches
-        - .yarn
-        - frontend/node_modules
-        - frontend/.fusebox
-
 build:
     stage: build
+    cache:
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+            - frontend/node_modules
+            - frontend/.fusebox
     script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew build
         - ./gradlew clean build
         - ./gradlew assemble
     artifacts:
@@ -27,3 +27,39 @@ build:
         paths:
             - backend/build/distributions/
         expire_in: 1 month
+
+deploy_review:
+    stage: deploy
+    before_script:
+        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
+        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
+    variables:
+        GIT_STRATEGY: none
+    tags:
+        - shell
+    environment:
+        name: review/$CI_COMMIT_REF_NAME
+        url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
+        on_stop: teardown_review
+    script:
+        - rm -rf app-root
+        - mkdir app-root
+        - tar -C app-root -xf backend/build/distributions/mvp-`git describe --abbrev=7`.tar --strip-components=1
+        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
+        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
+        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
+
+teardown_review:
+    stage: deploy
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - echo "Removing review container mvp-$CI_COMMIT_REF_SLUG"
+        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
+        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
+    when: manual
+    environment:
+        name: review/$CI_COMMIT_REF_NAME
+        action: stop
+    tags:
+        - shell
