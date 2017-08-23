@@ -31,25 +31,24 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
     mps.add(new MeteringPoint("9"));
     mps.add(new MeteringPoint("10"));
 
-    mps.stream().forEach((mp) -> {
-      switch (mp.getMoid()) {
+    mps.forEach(mp -> {
+      switch (mp.moid) {
         case "3":
-          mp.setStatus(200);
-          mp.setMessage("Low battery.");
-          mp.setLatitude(57.505267);
-          mp.setLongitude(12.069423);
+          mp.status = 200;
+          mp.message = "Low battery.";
+          mp.latitude = 57.505267;
+          mp.longitude = 12.069423;
           break;
         case "5":
-          mp.setStatus(300);
-          mp.setMessage("Failed to read meter.");
-          mp.setLatitude(57.49893);
-          mp.setLongitude(12.071531);
+          mp.status = 300;
+          mp.message = "Failed to read meter.";
+          mp.latitude = 57.49893;
+          mp.longitude = 12.071531;
           break;
         default:
-          mp.setStatus(0); // Not really needed since default is 0.
-          mp.setMessage("");
-          mp.setLatitude(57.505267);
-          mp.setLongitude(12.069423);
+          mp.message = "";
+          mp.latitude = 57.505267;
+          mp.longitude = 12.069423;
       }
       repository.save(mp);
     });

@@ -27,8 +27,8 @@ public class UserDatabaseLoader implements CommandLineRunner {
     users.add(new User("Erik", "Karlsson"));
     users.add(new User("Eva", "Nilsson"));
 
-    users.stream().forEach((user) -> {
-      user.setCompany("Bostäder AB");
+    users.forEach(user -> {
+      user.company = "Bostäder AB";
       repository.save(user);
     });
   }

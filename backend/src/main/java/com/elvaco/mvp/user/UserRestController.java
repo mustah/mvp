@@ -3,14 +3,12 @@ package com.elvaco.mvp.user;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @author petjan
- */
 @RestController
+@RequestMapping("/api")
 public class UserRestController {
 
   private final UserRepository userRepository;
@@ -23,13 +21,13 @@ public class UserRestController {
   /**
    * Get user object from user identifier.
    *
-   * @param uid user identifier
+   * @param id user identifier
    *
    * @return the user object if user exists with this user id
    */
-  @RequestMapping("/user")
-  public User user(@RequestParam(value = "uid", defaultValue = "0") Long uid) {
-    return userRepository.findById(uid);
+  @RequestMapping("/users/{id}")
+  public User user(@PathVariable Long id) {
+    return userRepository.findById(id);
   }
 
   /**
