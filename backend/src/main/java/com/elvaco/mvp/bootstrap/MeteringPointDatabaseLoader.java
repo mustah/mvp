@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.meteringpoint.MeteringPoint;
-import com.elvaco.mvp.meteringpoint.MeteringPointRepository;
+import com.elvaco.mvp.entities.meteringpoint.MeteringPoint;
+import com.elvaco.mvp.repositories.MeteringPointRepository;
 
 @Component
 public class MeteringPointDatabaseLoader implements CommandLineRunner {

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.user.User;
-import com.elvaco.mvp.user.UserRepository;
+import com.elvaco.mvp.entities.user.User;
+import com.elvaco.mvp.repositories.UserRepository;
 
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {
