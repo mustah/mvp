@@ -2,21 +2,28 @@ image: sgrio/java-oracle:jdk_8
 
 stages:
     - build
-    - test
 
 before_script:
+    - env
+    - apt-get update && apt-get -y install git
     - export GRADLE_USER_HOME=`pwd`/.gradle
+    - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 cache:
     paths:
         - .gradle/wrapper
         - .gradle/caches
+        - .yarn
+        - frontend/node_modules
+        - frontend/.fusebox
+
 build:
     stage: build
     script:
+        - ./gradlew clean build
         - ./gradlew assemble
-
-test:
-    stage: test
-    script:
-        - ./gradlew check
+    artifacts:
+        name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
+        paths:
+            - backend/build/distributions/
+        expire_in: 1 month
