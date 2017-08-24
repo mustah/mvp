@@ -1,5 +1,5 @@
 import * as React from 'react';
-import './LinkItem.scss';
+import './SearchBox.scss';
 
 export const SearchBox = (props) => {
   return (

@@ -33,7 +33,7 @@ const DashboardContainer = (props: DashboardContainerProps) => {
           </div>
         </h3>
         <div>
-          {dashboard.records.map((record, index) => (<li>{record.title}</li>))}
+          {dashboard.records.map((record, index) => (<li key={record.id}>{record.title}</li>))}
         </div>
         <div>
           <h3>Updated: {now.toLocaleString()} </h3>
