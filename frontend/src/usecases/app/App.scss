@@ -3,7 +3,7 @@
 @import "./node_modules/mdi/scss/materialdesignicons.scss";
 
 html {
-  font-family: 'PT Sans', sans-serif;
+  font-family: $font-family;
   font-size: $normal;
   color: $black;
   height: 100%;
