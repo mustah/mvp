@@ -22,9 +22,10 @@ public class DataAnalysisDatabaseLoader implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     Stream.of(
-      new DataAnalysisEntity("java-backend", "john"),
-      new DataAnalysisEntity("java-collection", "doh"),
-      new DataAnalysisEntity("metering", "bob"))
+      new DataAnalysisEntity("Nisse", "validated"),
+      new DataAnalysisEntity("Freddy", "not fully validated"),
+      new DataAnalysisEntity("Teddy", "has errors"),
+      new DataAnalysisEntity("Bear", "with warnings"))
       .forEach(repository::save);
   }
 }
