@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.elvaco.mvp.entities.dashboard.Dashboard;
+import com.elvaco.mvp.entities.dashboard.DashboardEntity;
 import com.elvaco.mvp.repositories.DashboardRepository;
 
 @RestController
@@ -21,7 +21,7 @@ public class DashboardController {
   }
 
   @RequestMapping("/dashboards")
-  public List<Dashboard> dashboards() {
+  public List<DashboardEntity> dashboards() {
     return dashboardRepository.findAll();
   }
 }

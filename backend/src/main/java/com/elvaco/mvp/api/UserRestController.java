@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.elvaco.mvp.repositories.UserRepository;
-import com.elvaco.mvp.entities.user.User;
+import com.elvaco.mvp.entities.user.UserEntity;
 
 @RestController
 @RequestMapping("/api")
@@ -29,7 +29,7 @@ public class UserRestController {
    * @return the user object if user exists with this user id
    */
   @RequestMapping("/users/{id}")
-  public User user(@PathVariable Long id) {
+  public UserEntity user(@PathVariable Long id) {
     return userRepository.findOne(id);
   }
 
@@ -39,7 +39,7 @@ public class UserRestController {
    * @return a list of all defined users.
    */
   @RequestMapping("/users")
-  public Collection<User> users() {
+  public Collection<UserEntity> users() {
     return userRepository.findAll();
   }
 }

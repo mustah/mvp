@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.meteringpoint.MeteringPoint;
+import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repositories.MeteringPointRepository;
 
 @Component
@@ -22,17 +22,17 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    List<MeteringPoint> mps = new ArrayList<>();
-    mps.add(new MeteringPoint("1"));
-    mps.add(new MeteringPoint("2"));
-    mps.add(new MeteringPoint("3"));
-    mps.add(new MeteringPoint("4"));
-    mps.add(new MeteringPoint("5"));
-    mps.add(new MeteringPoint("6"));
-    mps.add(new MeteringPoint("7"));
-    mps.add(new MeteringPoint("8"));
-    mps.add(new MeteringPoint("9"));
-    mps.add(new MeteringPoint("10"));
+    List<MeteringPointEntity> mps = new ArrayList<>();
+    mps.add(new MeteringPointEntity("1"));
+    mps.add(new MeteringPointEntity("2"));
+    mps.add(new MeteringPointEntity("3"));
+    mps.add(new MeteringPointEntity("4"));
+    mps.add(new MeteringPointEntity("5"));
+    mps.add(new MeteringPointEntity("6"));
+    mps.add(new MeteringPointEntity("7"));
+    mps.add(new MeteringPointEntity("8"));
+    mps.add(new MeteringPointEntity("9"));
+    mps.add(new MeteringPointEntity("10"));
 
     mps.forEach(mp -> {
       switch (mp.moid) {

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.dashboard.Dashboard;
+import com.elvaco.mvp.entities.dashboard.DashboardEntity;
 import com.elvaco.mvp.repositories.DashboardRepository;
 
 @Component
@@ -22,9 +22,9 @@ public class DashboardDatabaseLoader implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     Stream.of(
-      new Dashboard("java-backend", "john"),
-      new Dashboard("java-collection", "doh"),
-      new Dashboard("metering", "bob"))
+      new DashboardEntity("java-backend", "john"),
+      new DashboardEntity("java-collection", "doh"),
+      new DashboardEntity("metering", "bob"))
       .forEach(repository::save);
   }
 }

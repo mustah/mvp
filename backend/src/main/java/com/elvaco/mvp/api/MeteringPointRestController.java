@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.elvaco.mvp.entities.meteringpoint.MeteringPoint;
+import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repositories.MeteringPointRepository;
 
 @RestController
@@ -29,7 +29,7 @@ public class MeteringPointRestController {
    * @return the metering point object if it exists
    */
   @RequestMapping("/mps/{moid}")
-  public MeteringPoint meteringPoint(@PathVariable String moid) {
+  public MeteringPointEntity meteringPoint(@PathVariable String moid) {
     return repository.findByMoid(moid);
   }
 
@@ -39,7 +39,7 @@ public class MeteringPointRestController {
    * @return a list of all defined users.
    */
   @RequestMapping("/mps")
-  public Collection<MeteringPoint> meteringPoints() {
+  public Collection<MeteringPointEntity> meteringPoints() {
     return repository.findAll();
   }
 }

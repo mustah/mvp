@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 @Entity
 @Access(AccessType.FIELD)
-public class MeteringPoint {
+public class MeteringPointEntity {
 
   @Id
   @GeneratedValue
@@ -41,9 +41,9 @@ public class MeteringPoint {
   public Double latitude;
   public Double longitude;
 
-  public MeteringPoint() {}
+  public MeteringPointEntity() {}
 
-  public MeteringPoint(String moid) {
+  public MeteringPointEntity(String moid) {
     this.moid = moid;
   }
 }

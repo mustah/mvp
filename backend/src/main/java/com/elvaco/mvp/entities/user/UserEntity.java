@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 @Entity
 @Access(AccessType.FIELD)
-public class User {
+public class UserEntity {
 
    @Id
    @GeneratedValue
@@ -20,9 +20,9 @@ public class User {
     */
    public String company; // TODO : should be an instance of Company once we have such an object!
 
-   public User() {}
+   public UserEntity() {}
 
-   public User(String firstName, String lastName) {
+   public UserEntity(String firstName, String lastName) {
       this.firstName = firstName;
       this.lastName = lastName;
    }
