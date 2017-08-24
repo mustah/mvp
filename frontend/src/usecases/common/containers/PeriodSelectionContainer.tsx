@@ -9,7 +9,7 @@ export const PeriodSelectionContainer = props => (
   <Column>
     <Normal>Period</Normal>
     <Separator/>
-    <Row>
+    <Row className="Row-center">
       <Icon name="calendar-range" size="small" className="Row-left"/>
       <Normal>14 Mar till 13 Apr</Normal>
     </Row>
