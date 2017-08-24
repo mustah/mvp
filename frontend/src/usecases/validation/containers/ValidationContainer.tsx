@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Column} from '../../layouts/components/column/Column';
+import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
@@ -20,8 +21,10 @@ const ValidationContainer = (props: ValidationContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
-        <ValidationOverviewContainer/>
-        <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
+        <Content>
+          <ValidationOverviewContainer/>
+          <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
+        </Content>
       </Column>
     </Layout>
   );

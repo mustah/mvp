@@ -5,7 +5,7 @@ import {NavigationContainer} from './NavigationContainer';
 import {SearchContainer} from './SearchContainer';
 
 export const SideMenuContainer = props => (
-  <Column className="side-menu-container flex-1">
+  <Column className="side-menu-container flex-1 flex-fill-horizontally">
     <NavigationContainer/>
     <SearchContainer/>
     <LinkItem name="Sparade objekt" icon="star"/>

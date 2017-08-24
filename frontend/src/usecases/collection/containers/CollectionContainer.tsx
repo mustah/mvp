@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Column} from '../../layouts/components/column/Column';
+import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {fetchCollections} from '../collectionActions';
 import {CollectionState} from '../models/Collections';
@@ -20,8 +21,10 @@ const CollectionContainer = (props: CollectionContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
-        <CollectionOverviewContainer/>
-        <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
+        <Content>
+          <CollectionOverviewContainer/>
+          <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
+        </Content>
       </Column>
     </Layout>
   );
