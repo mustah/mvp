@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.elvaco.mvp.repositories.UserRepository;
 import com.elvaco.mvp.entities.user.UserEntity;
+import com.elvaco.mvp.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/api")
