@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Bold, Xlarge} from '../../common/components/texts/Texts';
+import {Xlarge} from '../../common/components/texts/Texts';
 import {PeriodSelectionContainer} from '../../common/containers/PeriodSelectionContainer';
 import {Row} from '../../layouts/components/row/Row';
 import {StatusBox} from '../components/status/StatusBox';
@@ -7,10 +7,10 @@ import {StatusBox} from '../components/status/StatusBox';
 export const SystemOverviewContainer = props => (
   <div>
     <Row>
-      <Xlarge><Bold>Systemöversikt</Bold></Xlarge>
+      <Xlarge className="Bold">Systemöversikt</Xlarge>
     </Row>
     <Row className="Row-right">
-        <PeriodSelectionContainer/>
+      <PeriodSelectionContainer/>
     </Row>
     <Row>
       <StatusBox title="Insamling (%)" count="3567 punkter" value="95.8" color="orange"/>

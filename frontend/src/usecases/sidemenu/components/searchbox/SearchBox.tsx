@@ -1,8 +1,10 @@
 import * as React from 'react';
-import './LinkItem.scss';
+import './SearchBox.scss';
 
-export const SearchBox = (props) => {
+export const SearchBox = () => {
   return (
-    <text>Sök i sidebar</text>
+    <div className="SearchBox">
+      <input type="text" placeholder="Sök i sidomenyn"/>
+    </div>
   );
 };

@@ -3,7 +3,7 @@
 @import "./node_modules/mdi/scss/materialdesignicons.scss";
 
 html {
-  font-family: 'PT Sans', sans-serif;
+  font-family: $font-family;
   font-size: $normal;
   color: $black;
   height: 100%;
@@ -15,20 +15,23 @@ body {
 }
 
 .App {
-  .side-menu-container {
-    background-color: $grey;
-    width: $side-menu-container-width;
-  }
   .selection-container {
     background-color: $grey;
-    padding-top: $sm-space;
-    padding-right: $sm-space;
-    padding-bottom: $sm-space;
-    padding-left: $sm-space;
+    padding: $sm-space $xl-space;
   }
 
   .link {
     color: $black;
     text-decoration: none;
   }
+
+  .side-menu-container {
+    background-color: $grey;
+    width: $side-menu-container-width;
+  }
+
+  .Content {
+    padding: $lg-space;
+  }
 }
+

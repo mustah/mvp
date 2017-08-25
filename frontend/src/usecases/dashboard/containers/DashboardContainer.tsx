@@ -3,8 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
-import {Bold, Large} from '../../common/components/texts/Texts';
+import {Xlarge} from '../../common/components/texts/Texts';
 import {Column} from '../../layouts/components/column/Column';
+import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {Map} from '../components/map/Map';
 import {fetchDashboards} from '../dashboardActions';
@@ -24,20 +25,22 @@ const DashboardContainer = (props: DashboardContainerProps) => {
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={'Allt'}/>
-        <SystemOverviewContainer/>
-        <Large><Bold>Bestånd</Bold></Large>
-        <Map/>
-        <h3>
-          <div className="button" onClick={fetchDashboards}>
-            Click me to load dashboard data from json-server via Rest!!!
+        <Content>
+          <SystemOverviewContainer/>
+          <Xlarge className="Bold">Bestånd</Xlarge>
+          <Map/>
+          <h3>
+            <div className="button" onClick={fetchDashboards}>
+              Click me to load dashboard data from json-server via Rest!!!
+            </div>
+          </h3>
+          <div>
+            {dashboard.records.map((record, index) => (<li key={record.id}>{record.title}</li>))}
           </div>
-        </h3>
-        <div>
-          {dashboard.records.map((record, index) => (<li>{record.title}</li>))}
-        </div>
-        <div>
-          <h3>Updated: {now.toLocaleString()} </h3>
-        </div>
+          <div>
+            <h3>Updated: {now.toLocaleString()} </h3>
+          </div>
+        </Content>
       </Column>
     </Layout>
   );

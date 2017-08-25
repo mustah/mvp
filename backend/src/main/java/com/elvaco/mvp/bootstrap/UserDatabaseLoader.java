@@ -1,4 +1,4 @@
-package com.elvaco.mvp.user;
+package com.elvaco.mvp.bootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.elvaco.mvp.entities.user.UserEntity;
+import com.elvaco.mvp.repositories.UserRepository;
 
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {
@@ -19,16 +22,16 @@ public class UserDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    List<User> users = new ArrayList<>();
-    users.add(new User("Elvis", "Cohan"));
-    users.add(new User("Anna", "Johansson"));
-    users.add(new User("Peter", "Eriksson"));
-    users.add(new User("Maria", "Svensson"));
-    users.add(new User("Erik", "Karlsson"));
-    users.add(new User("Eva", "Nilsson"));
+    List<UserEntity> users = new ArrayList<>();
+    users.add(new UserEntity("Elvis", "Cohan"));
+    users.add(new UserEntity("Anna", "Johansson"));
+    users.add(new UserEntity("Peter", "Eriksson"));
+    users.add(new UserEntity("Maria", "Svensson"));
+    users.add(new UserEntity("Erik", "Karlsson"));
+    users.add(new UserEntity("Eva", "Nilsson"));
 
-    users.stream().forEach((user) -> {
-      user.setCompany("Bostäder AB");
+    users.forEach(user -> {
+      user.company = "Bostäder AB";
       repository.save(user);
     });
   }

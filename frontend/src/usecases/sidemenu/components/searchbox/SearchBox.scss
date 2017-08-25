@@ -2,8 +2,14 @@
 
 .SearchBox {
   cursor: text;
-  font-size: $xs;
-  font-weight: normal;
-  margin: 0 $lg-space;
-  padding: $space 0 $space 0;
+  padding: $sm-space;
+
+  input {
+    width: 100%;
+    height: 30px;
+    border: none;
+    text-indent: $sm-space;
+    font-size: $normal;
+    font-family: $font-family;
+  }
 }
