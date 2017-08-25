@@ -4,6 +4,9 @@ stages:
     - build
     - deploy
 
+variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
@@ -19,8 +22,7 @@ build:
             - frontend/.fusebox
     script:
         - apt-get update && apt-get -y install git
-        - ./gradlew clean build
-        - ./gradlew assemble
+        - ./gradlew clean build assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
