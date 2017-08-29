@@ -42,6 +42,7 @@ deploy_review:
         name: review/$CI_COMMIT_REF_NAME
         url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
         on_stop: teardown_review
+    when: manual
     script:
         - rm -rf app-root
         - mkdir app-root
