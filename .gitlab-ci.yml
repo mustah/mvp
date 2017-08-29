@@ -49,7 +49,7 @@ deploy_review:
         - tar -C app-root -xf backend/build/distributions/mvp-`git describe --abbrev=7`.tar --strip-components=1
         - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
         - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
+        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e JAVA_OPTS="-XX:MaxMetaspaceSize=64m -Xmx64m" -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
 
 teardown_review:
     stage: deploy
