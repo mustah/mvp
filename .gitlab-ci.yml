@@ -4,6 +4,9 @@ stages:
     - build
     - deploy
 
+variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
@@ -19,8 +22,7 @@ build:
             - frontend/.fusebox
     script:
         - apt-get update && apt-get -y install git
-        - ./gradlew clean build
-        - ./gradlew assemble
+        - ./gradlew clean build assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
@@ -40,13 +42,14 @@ deploy_review:
         name: review/$CI_COMMIT_REF_NAME
         url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
         on_stop: teardown_review
+    when: manual
     script:
         - rm -rf app-root
         - mkdir app-root
         - tar -C app-root -xf backend/build/distributions/mvp-`git describe --abbrev=7`.tar --strip-components=1
         - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
         - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
+        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e JAVA_OPTS="-XX:MaxMetaspaceSize=64m -Xmx64m" -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
 
 teardown_review:
     stage: deploy
