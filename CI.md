@@ -25,11 +25,13 @@ server {
                 proxy_set_header        Host    $host;
         }
 }
-````
-This says that we want to redirect any requests to rv*.gitlab.elvaco.local to port `9080`.
-> Note that we've configured our DNS to route requests to the wildcard subdomain rv*.gitlab.elvaco.local to gitlab.elvaco.local.
+```
 
-At port `9080` we have an instance of [nginx-proxy](https://github.com/jwilder/nginx-proxy) running in a docker container. `nginx-proxy` is responsible for proxying requests to the `rv*.gitlab.elvaco.local` subdomains to the correct docker container. It finds the correct container based on the VIRTUAL_HOST environment variable being set for that container.
+This says that we want to redirect any requests to `rv*.gitlab.elvaco.local` to port `9080`.
+
+> Note that we've configured our DNS to route requests to the wildcard subdomain `rv*.gitlab.elvaco.local` to `gitlab.elvaco.local`.
+
+At port `9080` we have an instance of [nginx-proxy](https://github.com/jwilder/nginx-proxy) running in a docker container. `nginx-proxy` is responsible for proxying requests to the `rv*.gitlab.elvaco.local` subdomains to the correct docker container. It finds the correct container based on the `VIRTUAL_HOST` environment variable being set for that container.
 
 We start `nginx-proxy` through [systemd](https://www.freedesktop.org/wiki/Software/systemd/) (which is the init system used by default in Ubuntu 15.04 and upwards) - the following service file is used:
 
