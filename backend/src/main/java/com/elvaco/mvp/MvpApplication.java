@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -25,6 +26,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+@EnableWebSecurity
 @SpringBootApplication
 public class MvpApplication extends WebMvcConfigurerAdapter {
 
@@ -40,7 +42,42 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
       .addResolver(new PushStateResourceResolver());
   }
 
-  private class PushStateResourceResolver implements ResourceResolver {
+  @Bean
+  public LocaleResolver localeResolver() {
+    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
+    Locale sweLocale = new Locale.Builder().setLanguage("sv").setRegion("SE").build();
+    localeResolver.setDefaultLocale(sweLocale);
+    return localeResolver;
+  }
+
+  @Bean
+  public LocaleChangeInterceptor localeChangeInterceptor() {
+    LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+    lci.setParamName("lang");
+    return lci;
+  }
+
+  @Bean
+  public MessageSource messageSource() {
+    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    messageSource.setBasename("i18n/messages");
+    messageSource.setDefaultEncoding("UTF-8");
+    return messageSource;
+  }
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(localeChangeInterceptor());
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry
+      .addMapping("/**")
+      .maxAge(3600);
+  }
+
+  private static class PushStateResourceResolver implements ResourceResolver {
     private Resource index = new ClassPathResource("/static/index.html");
     private List<String> handledExtensions = Arrays.asList("html", "js", "json", "csv", "css", "png", "svg", "eot", "ttf", "woff", "appcache", "jpg", "jpeg", "gif", "ico");
     private List<String> ignoredPaths = Arrays.asList("api");
@@ -93,40 +130,5 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
       String extension = StringUtils.getFilenameExtension(path);
       return handledExtensions.stream().anyMatch(ext -> ext.equals(extension));
     }
-  }
-
-  @Bean
-  public LocaleResolver localeResolver() {
-    SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-    Locale sweLocale = new Locale.Builder().setLanguage("sv").setRegion("SE").build();
-    localeResolver.setDefaultLocale(sweLocale);
-    return localeResolver;
-  }
-
-  @Bean
-  public LocaleChangeInterceptor localeChangeInterceptor() {
-    LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-    lci.setParamName("lang");
-    return lci;
-  }
-
-  @Bean
-  public MessageSource messageSource() {
-    ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-    messageSource.setBasename("i18n/messages");
-    messageSource.setDefaultEncoding("UTF-8");
-    return messageSource;
-  }
-
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(localeChangeInterceptor());
-  }
-
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry
-      .addMapping("/**")
-      .maxAge(3600);
   }
 }
