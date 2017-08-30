@@ -14,7 +14,6 @@ build:
         paths:
             - .gradle/wrapper
             - .gradle/caches
-            - .yarn
             - frontend/.fusebox
     script:
         - apt-get update && apt-get -y install git
