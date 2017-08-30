@@ -10,12 +10,12 @@ import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repositories.MeteringPointRepository;
 
 @RestApi
-public class MeteringPointRestController {
+public class MeteringPointController {
 
   private final MeteringPointRepository repository;
 
   @Autowired
-  MeteringPointRestController(MeteringPointRepository repository) {
+  MeteringPointController(MeteringPointRepository repository) {
     this.repository = repository;
   }
 

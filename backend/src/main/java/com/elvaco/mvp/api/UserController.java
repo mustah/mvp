@@ -10,12 +10,12 @@ import com.elvaco.mvp.entities.user.UserEntity;
 import com.elvaco.mvp.repositories.UserRepository;
 
 @RestApi
-public class UserRestController {
+public class UserController {
 
   private final UserRepository userRepository;
 
   @Autowired
-  UserRestController(UserRepository userRepository) {
+  UserController(UserRepository userRepository) {
     this.userRepository = userRepository;
   }
 
