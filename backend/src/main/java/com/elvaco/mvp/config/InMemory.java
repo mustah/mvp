@@ -1,4 +1,4 @@
-package com.elvaco.mvp.spring;
+package com.elvaco.mvp.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

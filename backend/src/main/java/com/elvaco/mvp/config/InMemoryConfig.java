@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import com.elvaco.mvp.auth.Roles;
-import com.elvaco.mvp.spring.InMemory;
 
 @InMemory
 @Configuration
