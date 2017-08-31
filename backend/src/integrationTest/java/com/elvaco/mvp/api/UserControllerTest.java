@@ -12,7 +12,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import static com.elvaco.mvp.testdata.RestClient.restClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UserControllerTestIT extends IntegrationTest {
+public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void FindAllUsers() throws Exception {
@@ -46,7 +46,7 @@ public class UserControllerTestIT extends IntegrationTest {
 
   @Test
   public void UserIsNotFullyAuthorized() {
-    String path = "/users/1";
+    String path = "/users/2";
 
     UnauthorizedDTO errorMessage = restClient()
       .logout()
@@ -62,7 +62,7 @@ public class UserControllerTestIT extends IntegrationTest {
 
   @Test
   public void UserWithBadCredentials() {
-    String path = "/users/1";
+    String path = "/users/3";
 
     UnauthorizedDTO errorMessage = restClient()
       .loginWith("admin", "wrong-password")
