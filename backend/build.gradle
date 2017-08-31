@@ -49,6 +49,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile("org.springframework.boot:spring-boot-starter-actuator")
+	compile("org.springframework.boot:spring-boot-devtools")
 	runtime('org.liquibase:liquibase-core')
 	runtime('com.h2database:h2')
 	runtime('org.postgresql:postgresql')
