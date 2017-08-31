@@ -20,7 +20,8 @@ public class ApiExceptionHandler {
   @ResponseBody
   public ResponseEntity<ErrorMessageDTO> handle(Exception exception) {
     HttpStatus responseHttpStatus = resolveHttpStatus(exception);
-    return new ResponseEntity<>(new ErrorMessageDTO(exception.getMessage()), responseHttpStatus);
+    ErrorMessageDTO dto = new ErrorMessageDTO(exception.getMessage(), responseHttpStatus.value());
+    return new ResponseEntity<>(dto, responseHttpStatus);
   }
 
   private HttpStatus resolveHttpStatus(Exception exception) {
