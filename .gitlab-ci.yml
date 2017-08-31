@@ -26,6 +26,7 @@ build:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
             - backend/build/distributions/
+            - docs/drawio/mvp_components.png
         expire_in: 1 month
 
 deploy_review:
