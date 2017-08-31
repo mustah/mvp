@@ -7,8 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.collection.CollectionEntity;
-import com.elvaco.mvp.repositories.CollectionRepository;
+import com.elvaco.mvp.entity.collection.CollectionEntity;
+import com.elvaco.mvp.repository.CollectionRepository;
 
 @Component
 @Profile("default")

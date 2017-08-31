@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entities.dashboard;
+package com.elvaco.mvp.entity.dashboard;
 
 import javax.persistence.*;
 

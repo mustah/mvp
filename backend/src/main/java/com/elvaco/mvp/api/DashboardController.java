@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.elvaco.mvp.entities.dashboard.DashboardEntity;
-import com.elvaco.mvp.repositories.DashboardRepository;
+import com.elvaco.mvp.entity.dashboard.DashboardEntity;
+import com.elvaco.mvp.repository.DashboardRepository;
 
 @RestApi
 public class DashboardController {

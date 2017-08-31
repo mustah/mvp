@@ -7,8 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.dataanalysis.DataAnalysisEntity;
-import com.elvaco.mvp.repositories.DataAnalysisRepository;
+import com.elvaco.mvp.entity.dataanalysis.DataAnalysisEntity;
+import com.elvaco.mvp.repository.DataAnalysisRepository;
 
 @Component
 @Profile("default")

@@ -1,8 +1,8 @@
-package com.elvaco.mvp.repositories;
+package com.elvaco.mvp.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.elvaco.mvp.entities.dashboard.DashboardEntity;
+import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 
 public interface DashboardRepository extends JpaRepository<DashboardEntity, Long> {
 }

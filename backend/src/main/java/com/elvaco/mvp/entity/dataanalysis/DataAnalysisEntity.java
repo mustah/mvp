@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entities.dataanalysis;
+package com.elvaco.mvp.entity.dataanalysis;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;

@@ -1,10 +1,10 @@
-package com.elvaco.mvp.repositories;
+package com.elvaco.mvp.repository;
 
 import java.util.Collection;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.elvaco.mvp.entities.user.UserEntity;
+import com.elvaco.mvp.entity.user.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 

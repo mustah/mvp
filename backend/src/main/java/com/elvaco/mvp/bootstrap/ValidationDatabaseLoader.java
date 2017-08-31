@@ -7,8 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.validation.ValidationEntity;
-import com.elvaco.mvp.repositories.ValidationRepository;
+import com.elvaco.mvp.entity.validation.ValidationEntity;
+import com.elvaco.mvp.repository.ValidationRepository;
 
 @Component
 @Profile("default")

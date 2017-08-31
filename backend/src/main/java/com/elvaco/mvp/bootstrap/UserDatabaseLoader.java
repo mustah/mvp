@@ -8,8 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.user.UserEntity;
-import com.elvaco.mvp.repositories.UserRepository;
+import com.elvaco.mvp.entity.user.UserEntity;
+import com.elvaco.mvp.repository.UserRepository;
 
 @Component
 

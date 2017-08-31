@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entities.collection;
+package com.elvaco.mvp.entity.validation;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 @Entity
 @Access(AccessType.FIELD)
-public class CollectionEntity {
+public class ValidationEntity {
 
   @Id
   @GeneratedValue
@@ -16,9 +16,9 @@ public class CollectionEntity {
   public String author;
   public String title;
 
-  public CollectionEntity() {}
+  public ValidationEntity() {}
 
-  public CollectionEntity(String author, String title) {
+  public ValidationEntity(String author, String title) {
     this.author = author;
     this.title = title;
   }

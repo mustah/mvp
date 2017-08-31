@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.elvaco.mvp.entities.validation.ValidationEntity;
-import com.elvaco.mvp.repositories.ValidationRepository;
+import com.elvaco.mvp.entity.validation.ValidationEntity;
+import com.elvaco.mvp.repository.ValidationRepository;
 
 @RestApi
 public class ValidationController {

@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.elvaco.mvp.entities.dataanalysis.DataAnalysisEntity;
-import com.elvaco.mvp.repositories.DataAnalysisRepository;
+import com.elvaco.mvp.entity.dataanalysis.DataAnalysisEntity;
+import com.elvaco.mvp.repository.DataAnalysisRepository;
 
 @RestApi
 public class DataAnalysisController {

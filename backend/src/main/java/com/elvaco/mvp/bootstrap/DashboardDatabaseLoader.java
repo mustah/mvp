@@ -7,8 +7,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.dashboard.DashboardEntity;
-import com.elvaco.mvp.repositories.DashboardRepository;
+import com.elvaco.mvp.entity.dashboard.DashboardEntity;
+import com.elvaco.mvp.repository.DashboardRepository;
 
 @Component
 public class DashboardDatabaseLoader implements CommandLineRunner {

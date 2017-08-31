@@ -8,8 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repositories.MeteringPointRepository;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 
 @Component
 @Profile("default")

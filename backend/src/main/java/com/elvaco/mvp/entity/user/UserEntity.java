@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entities.user;
+package com.elvaco.mvp.entity.user;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;

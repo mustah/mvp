@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repositories.MeteringPointRepository;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 
 @RestApi
 public class MeteringPointController {

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entities.meteringpoint;
+package com.elvaco.mvp.entity.meteringpoint;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
