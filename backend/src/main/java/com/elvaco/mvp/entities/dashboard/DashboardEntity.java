@@ -1,17 +1,14 @@
 package com.elvaco.mvp.entities.dashboard;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Access(AccessType.FIELD)
+@Table(name = "dashboards")
 public class DashboardEntity {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
   public String title;
   public String author;

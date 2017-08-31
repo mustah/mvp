@@ -1,0 +1,48 @@
+databaseChangeLog:
+ - changeSet:
+    id: initial database schema
+    author: antlof
+    changes:
+      - createTable:
+          tableName: dashboards
+          columns:
+            - column:
+                name: id
+                type: int
+                autoIncrement: true
+                constraints:
+                  primaryKey: true
+                  nullable: false
+            - column:
+                name: title
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: author
+                type: varchar(255)
+                constraints:
+                  nullable: false
+ - changeSet:
+    id: add some initial data, for profit
+    author: antlof
+    changes:
+      - insert:
+          tableName: dashboards
+          columns:
+            - column:
+                name: title
+                value: One dashboard
+            - column:
+                name: author
+                value: The Dashboard Creator
+      - insert:
+          tableName: dashboards
+          columns:
+            - column:
+                name: title
+                value: The other dashboard
+            - column:
+                name: author
+                value: The Dashboard Creator
+
