@@ -14,6 +14,7 @@ before_script:
 build:
     stage: build
     cache:
+        key: "$CI_COMMIT_REF_NAME"
         paths:
             - .gradle/wrapper
             - .gradle/caches
