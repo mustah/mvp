@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.elvaco.mvp.entities.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repositories.MeteringPointRepository;
 
 @Component
+@Profile("default")
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   private final MeteringPointRepository repository;

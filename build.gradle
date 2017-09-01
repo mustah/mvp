@@ -1,0 +1,55 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "com.avast.gradle:gradle-docker-compose-plugin:0.5.1"
+	}
+}
+apply plugin: 'docker-compose'
+
+def getVersion = { ->
+	def stdout = new ByteArrayOutputStream()
+	exec {
+		commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+		standardOutput = stdout
+	}
+	return stdout.toString().trim()
+}
+version = getVersion()
+
+dockerCompose {
+	useComposeFiles = ['docker-compose.yml']
+	captureContainersOutput = true
+	removeContainers = true
+	removeVolumes = true
+	environment.put 'MVP_APPVER', version
+	environment.put 'MVP_OPTS', "-Dspring.profiles.active=compose"
+}
+
+composeUp {
+	doLast {
+		def applInfo = dockerCompose.servicesInfos.application.'application_1'
+		println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
+	}
+}
+
+task runFinalJar(type: JavaExec) {
+	group = 'application'
+	description = 'Run final jar artifact'
+	def finalJar = 'backend/build/libs/mvp-' + version + '.jar'
+	classpath = files(finalJar)
+	main = 'org.springframework.boot.loader.JarLauncher'
+}
+
+composeUp {
+	group = 'application'
+	description = 'Execute application with docker-compose against PostgreSQL'
+}
+composeDown {
+	group = 'application'
+	description = 'Destroy application running with docker-compose'
+}
+runFinalJar.dependsOn(':backend:assemble')
+composeUp.dependsOn(':backend:assemble')
+

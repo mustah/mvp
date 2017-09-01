@@ -1,0 +1,18 @@
+version: "2.1"
+services:
+  application:
+    environment:
+      MVP_OPTS: -Dspring.profiles.active=compose
+    build:
+      context: .
+      args:
+        MVP_APPVER: ${MVP_APPVER}
+    ports:
+      - "80"
+    links:
+      - postgresql
+  postgresql:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: mvp
+      POSTGRES_PASSWORD: mvp

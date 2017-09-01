@@ -42,13 +42,15 @@ Description=Nginx proxy container (for dynamic GitLab review environments)
 Requires=docker.service
 
 [Service]
+ExecStartPre=-/usr/bin/docker stop systemd-nginx-proxy
+ExecStartPre=-/usr/bin/docker rm -f systemd-nginx-proxy
 ExecStart=/usr/bin/docker run -p 9080:80 -v /var/run/docker.sock:/tmp/docker.sock --name systemd-nginx-proxy jwilder/nginx-proxy
 ExecStop=/usr/bin/docker stop systemd-nginx-proxy
 ExecStopPost=/usr/bin/docker rm -f systemd-nginx-proxy
 ExecReload=/usr/bin/docker restart systemd-nginx-proxy
 
 [Install]
-WantedBy=multi-user-target
+WantedBy=multi-user.target
 ```
 
 For example, given a request to rv-new-feature.gitlab.elvaco.local and a docker container started with `docker run -d -v $(pwd)/app-root:/app --expose 8080 -e VIRTUAL_HOST=rv-new-feature.gitlab.elvaco.local sgrio/java-oracle:server_jre_8 /app/bin/mvp`, GitLab's internal nginx would first proxy the request to nginx-proxy, which in turn would look for a docker container with `VIRTUAL_HOST=rv-new-feature.gitlab.elvaco.local`, find the container and redirect the request to that container's exposed port (`8080`, in this example).
