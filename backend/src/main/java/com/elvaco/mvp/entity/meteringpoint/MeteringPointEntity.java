@@ -1,17 +1,16 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
 
 @Entity
 @Access(AccessType.FIELD)
+@Table(name = "mps")
 public class MeteringPointEntity {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
   /**
@@ -37,10 +36,8 @@ public class MeteringPointEntity {
    */
   public String moid;
 
-  // TODO : should probably be a Location object or something later on (inlcuding address and other information)
-  public Double latitude;
-  public Double longitude;
-
+  @Type(type = "property-collection")
+  public MvpPropertyCollection propertyCollection;
   public MeteringPointEntity() {}
 
   public MeteringPointEntity(String moid) {
