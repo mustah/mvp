@@ -4,12 +4,13 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 import com.elvaco.mvp.repository.DashboardRepository;
 
+@InMemory
 @Component
 public class DashboardDatabaseLoader implements CommandLineRunner {
 

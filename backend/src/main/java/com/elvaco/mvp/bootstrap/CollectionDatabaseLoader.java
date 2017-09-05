@@ -4,14 +4,14 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.entity.collection.CollectionEntity;
 import com.elvaco.mvp.repository.CollectionRepository;
 
+@InMemory
 @Component
-@Profile("default")
 public class CollectionDatabaseLoader implements CommandLineRunner {
 
   private final CollectionRepository repository;

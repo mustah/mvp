@@ -5,15 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.UserRepository;
 
+@InMemory
 @Component
-
-@Profile("default")
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final UserRepository repository;
