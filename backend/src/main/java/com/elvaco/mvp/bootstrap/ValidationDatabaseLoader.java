@@ -4,14 +4,14 @@ import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.entities.validation.ValidationEntity;
-import com.elvaco.mvp.repositories.ValidationRepository;
+import com.elvaco.mvp.config.InMemory;
+import com.elvaco.mvp.entity.validation.ValidationEntity;
+import com.elvaco.mvp.repository.ValidationRepository;
 
+@InMemory
 @Component
-@Profile("default")
 public class ValidationDatabaseLoader implements CommandLineRunner {
 
   private final ValidationRepository repository;
