@@ -1,0 +1,17 @@
+@import "../../app/variables";
+
+.LoginContainer {
+  margin-top: $xl-space * 2;
+  flex: 1;
+  align-items: center;
+
+  input {
+    width: 250px;
+    margin-bottom: $space;
+  }
+
+  .error-message {
+    margin-top: $lg-space;
+    color: $red;
+  }
+}

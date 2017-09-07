@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../api/restClient';
+import {restClient} from '../../services/restClient';
 import {COLLECTION_FAILURE, COLLECTION_REQUEST, COLLECTION_SUCCESS} from '../../types/ActionTypes';
 
 const collectionRequest = createEmptyAction(COLLECTION_REQUEST);

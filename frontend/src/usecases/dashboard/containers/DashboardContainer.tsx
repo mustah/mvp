@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Xlarge} from '../../common/components/texts/Texts';
@@ -17,7 +18,7 @@ export interface DashboardContainerProps {
   dashboard: DashboardState;
 }
 
-const DashboardContainer = (props: DashboardContainerProps) => {
+const DashboardContainer = (props: DashboardContainerProps & InjectedAuthRouterProps) => {
   const {fetchDashboards, dashboard} = props;
   const now = new Date();
 

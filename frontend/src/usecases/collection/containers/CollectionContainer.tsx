@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Column} from '../../layouts/components/column/Column';
@@ -15,7 +16,7 @@ export interface CollectionContainerProps {
   collection: CollectionState;
 }
 
-const CollectionContainer = (props: CollectionContainerProps) => {
+const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRouterProps) => {
   const {fetchCollections} = props;
   return (
     <Layout>

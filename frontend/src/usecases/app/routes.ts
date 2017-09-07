@@ -4,4 +4,5 @@ export const routes = {
   collection: '/insamling',
   validation: '/validering',
   dataAnalysis: '/matserier',
+  login: '/login',
 };

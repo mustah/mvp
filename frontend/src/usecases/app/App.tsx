@@ -1,5 +1,10 @@
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {Switch} from 'react-router';
 import {Route} from 'react-router-dom';
+import {RootState} from '../../reducers/index';
+import {userIsAuthenticated, userIsNotAuthenticated} from '../auth/auth';
+import LoginContainer from '../auth/containers/LoginContainer';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import DataAnalysisContainer from '../dataAnalysis/containers/DataAnalysisContainer';
@@ -11,12 +16,19 @@ import ValidationContainer from '../validation/containers/ValidationContainer';
 import './App.scss';
 import {routes} from './routes';
 
+const LoginPage = userIsNotAuthenticated(LoginContainer);
+const DashboardPage = userIsAuthenticated(DashboardContainer);
+const CollectionPage = userIsAuthenticated(CollectionContainer);
+const ValidationPage = userIsAuthenticated(ValidationContainer);
+const DataAnalysisPage = userIsAuthenticated(DataAnalysisContainer);
+
 /**
  * The Application root component should extend React.Component in order
  * for HMR to work properly. Otherwise, prefer functional components.
  */
-export class App extends React.Component<any, any> {
+class App extends React.Component<RootState & any, any> {
   render() {
+    const {isAuthenticated} = this.props.auth;
     return (
       <div className="App">
         <Row>
@@ -25,18 +37,25 @@ export class App extends React.Component<any, any> {
           </Layout>
         </Row>
         <Row>
-          <Layout className="side-menu-container">
+          <Layout className="side-menu-container" hide={!isAuthenticated}>
             <SideMenuContainer/>
           </Layout>
           <Layout>
-            <Route exact={true} path={routes.home} component={DashboardContainer}/>
-            <Route exact={true} path={routes.dashboard} component={DashboardContainer}/>
-            <Route exact={true} path={routes.collection} component={CollectionContainer}/>
-            <Route exact={true} path={routes.validation} component={ValidationContainer}/>
-            <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisContainer}/>
+            <Switch>
+              <Route path={routes.login} component={LoginPage}/>
+              <Route exact={true} path={routes.home} component={DashboardPage}/>
+              <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
+              <Route exact={true} path={routes.collection} component={CollectionPage}/>
+              <Route exact={true} path={routes.validation} component={ValidationPage}/>
+              <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisPage}/>
+            </Switch>
           </Layout>
         </Row>
       </div>
     );
   }
 }
+
+const mapStateToProps = (state: RootState) => ({...state});
+
+export default connect(mapStateToProps, {})(App);

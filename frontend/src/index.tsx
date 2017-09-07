@@ -8,7 +8,7 @@ import {ConnectedRouter} from 'react-router-redux';
 import {Store} from 'redux';
 import {RootState} from './reducers/index';
 import {configureStore} from './store/configureStore';
-import {App} from './usecases/app/App';
+import App from './usecases/app/App';
 
 const history: History = createHashHistory();
 
