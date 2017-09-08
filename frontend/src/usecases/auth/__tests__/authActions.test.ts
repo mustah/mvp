@@ -4,22 +4,20 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {FakeStorage} from '../../../services/__tests__/FakeStorage';
 import {tokenService, TokenService} from '../../../services/TokenService';
-import {login, loginFailure, loginRequest, loginSuccess} from '../authActions';
+import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {UnauthorizedDTO} from '../authReducer';
 
-describe('loginActions', () => {
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
 
-  let middlewares;
-  let mockStore;
-  let initialState;
-  let store;
+describe('authActions', () => {
+
+  const user = {id: 1, firstName: 'clark', lastName: 'kent'};
   let mockRestClient;
+  let store;
 
   beforeEach(() => {
-    middlewares = [thunk];
-    mockStore = configureStore(middlewares);
-    initialState = {};
-    store = mockStore(initialState);
+    store = mockStore({});
     mockRestClient = new MockAdapter(axios);
 
     const fakeTokenService = new TokenService(new FakeStorage());
@@ -31,20 +29,44 @@ describe('loginActions', () => {
     tokenService.setToken = jest.fn((token: string) => {
       return fakeTokenService.setToken(token);
     });
+
+    tokenService.clear = jest.fn(() => {
+      return fakeTokenService.clear();
+    });
   });
 
   describe('authorized users', () => {
 
-    it('dispatches the login action', async () => {
-      const user = {id: 1, firstName: 'must'};
+    const dispatchLogin = async () => {
       mockRestClient.onGet('/users/1').reply(200, user);
 
-      await store.dispatch(login('the.batman@dc.com', 'test1234'));
+      return store.dispatch(login('the.batman@dc.com', 'test1234'));
+    };
+
+    it('dispatches the login action', async () => {
+      await dispatchLogin();
 
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token: tokenService.getToken(), user}),
       ]);
+    });
+
+    it('logs out logged in user', async () => {
+      await dispatchLogin();
+
+      const tokenBeforeLogout = tokenService.getToken();
+
+      await store.dispatch(logout());
+
+      expect(store.getActions()).toEqual([
+        loginRequest(),
+        loginSuccess({token: tokenBeforeLogout, user}),
+        logoutRequest(),
+        logoutSuccess(),
+      ]);
+
+      expect(tokenService.getToken()).toBeUndefined();
     });
   });
 
@@ -80,6 +102,17 @@ describe('loginActions', () => {
       await store.dispatch(login('foo', '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
+    });
+
+    it('logs out user without any side effect', async () => {
+      await store.dispatch(logout());
+
+      expect(store.getActions()).toEqual([
+        logoutRequest(),
+        logoutSuccess(),
+      ]);
+
+      expect(tokenService.getToken()).toBeUndefined();
     });
 
   });
