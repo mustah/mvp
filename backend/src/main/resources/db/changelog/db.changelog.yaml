@@ -23,6 +23,28 @@ databaseChangeLog:
                 type: varchar(255)
                 constraints:
                   nullable: false
+      - createTable:
+          tableName: mps
+          columns:
+            - column:
+                name: id
+                type: int
+                autoIncrement: true
+                constraints:
+                  primaryKey: true
+                  nullable: false
+            - column:
+                name: status
+                type: int
+            - column:
+                name: message
+                type: varchar(255)
+            - column:
+                name: moid
+                type: varchar(255)
+            - column:
+                name: property_collection
+                type: jsonb
  - changeSet:
     id: add some initial data, for profit
     author: antlof

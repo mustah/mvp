@@ -1,15 +1,15 @@
 package com.elvaco.mvp.bootstrap;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.elvaco.mvp.config.InMemory;
+import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.config.InMemory;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 @InMemory
 @Component
@@ -35,25 +35,27 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
     mps.add(new MeteringPointEntity("8"));
     mps.add(new MeteringPointEntity("9"));
     mps.add(new MeteringPointEntity("10"));
-
     mps.forEach(mp -> {
       switch (mp.moid) {
         case "3":
           mp.status = 200;
           mp.message = "Low battery.";
-          mp.latitude = 57.505267;
-          mp.longitude = 12.069423;
+          mp.propertyCollection = new MvpPropertyCollection();
+          mp.propertyCollection.put("foo", "bar");
+          mp.propertyCollection.put("baz", "bop");
           break;
         case "5":
           mp.status = 300;
           mp.message = "Failed to read meter.";
-          mp.latitude = 57.49893;
-          mp.longitude = 12.071531;
+          mp.propertyCollection = new MvpPropertyCollection();
+          List<Integer> intList = new ArrayList<>();
+          intList.add(12);
+          intList.add(9999);
+
+          mp.propertyCollection.put("numbers", intList);
           break;
         default:
           mp.message = "";
-          mp.latitude = 57.505267;
-          mp.longitude = 12.069423;
       }
       repository.save(mp);
     });

@@ -16,7 +16,10 @@ def getVersion = { ->
 	}
 	return stdout.toString().trim()
 }
-version = getVersion()
+
+allprojects {
+  version = getVersion()
+}
 
 dockerCompose {
 	useComposeFiles = ['docker-compose.yml']
