@@ -1,5 +1,5 @@
 plugins {
-	id "com.moowork.node" version "1.2.0"
+  id "com.moowork.node" version "1.2.0"
 }
 
 apply plugin: 'base'
@@ -8,22 +8,23 @@ version '0.0.1'
 buildDir = 'dist'
 
 node {
-	version = '8.1.4'
-	download = true
+  version = '8.1.4'
+  download = true
+  nodeModulesDir = file("${project.projectDir}")
 }
 
 task bundle(type: YarnTask) {
-	inputs.dir(new File('src'))
-	outputs.dir(new File('dist'))
-	args  = ['dist']
+  inputs.dir(new File('src'))
+  outputs.dir(new File('dist'))
+  args  = ['dist']
 }
 
 task start(type: YarnTask) {
-	args = ['start']
+  args = ['start']
 }
 
 task test(type: YarnTask) {
-	args = ['test']
+  args = ['test']
 }
 
 check.dependsOn(test)
