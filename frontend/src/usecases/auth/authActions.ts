@@ -1,8 +1,7 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
-import {makeToken, mvpAuthKey, saveAuthState} from '../../services/authService';
+import {makeToken, removeAuthState, saveAuthState} from '../../services/authService';
 import {createRestClient} from '../../services/restClient';
-import {storageService} from '../../services/StorageService';
 import {routes} from '../app/routes';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -38,7 +37,7 @@ export const logout = () => {
   return async (dispatch) => {
     dispatch(logoutRequest());
     dispatch(logoutSuccess());
-    storageService.removeItem(mvpAuthKey);
+    removeAuthState();
     dispatch(routerActions.push(routes.home));
   };
 };

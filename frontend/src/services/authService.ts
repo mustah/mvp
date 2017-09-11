@@ -5,6 +5,8 @@ import {routes} from '../usecases/app/routes';
 import {AuthState} from '../usecases/auth/authReducer';
 import {storageService} from './StorageService';
 
+const mvpAuthKey = 'mvpAuthKey';
+
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
 const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.isAuthenticated;
 
@@ -23,8 +25,6 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
 export const makeToken = (username: string, password: string): string => {
   return btoa(`${username}:${password}`);
 };
-
-export const mvpAuthKey = 'mvpAuthKey';
 
 export const saveAuthState = (state: AuthState): void => {
   if (state.isAuthenticated && state.token) {
@@ -45,4 +45,8 @@ export const loadAuthState = (): AuthState => {
   } catch (error) {
     return {...initialAuthState};
   }
+};
+
+export const removeAuthState = (): void => {
+  storageService.removeItem(mvpAuthKey);
 };
