@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS} from './authActions';
+import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS} from './authActions';
 
 export interface User {
   id: string;
@@ -51,14 +51,26 @@ export const auth = (state: AuthState = initialState, action: AnyAction): AuthSt
         token: payload.token,
         error: undefined,
       };
-    case LOGIN_FAILURE: {
+    case LOGIN_FAILURE:
       return {
         ...state,
         isLoading: false,
         isAuthenticated: false,
         error: {...payload},
       };
-    }
+    case LOGOUT_REQUEST:
+      return {
+        ...state,
+        isLoading: true,
+      };
+    case LOGOUT_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        isAuthenticated: false,
+        token: undefined,
+        user: undefined,
+      };
     default:
       return state;
   }

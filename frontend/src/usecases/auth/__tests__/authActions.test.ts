@@ -1,9 +1,11 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
+import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {FakeStorage} from '../../../services/__tests__/FakeStorage';
 import {tokenService, TokenService} from '../../../services/TokenService';
+import {routes} from '../../app/routes';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {UnauthorizedDTO} from '../authReducer';
 
@@ -64,6 +66,7 @@ describe('authActions', () => {
         loginSuccess({token: tokenBeforeLogout, user}),
         logoutRequest(),
         logoutSuccess(),
+        routerActions.push(routes.home),
       ]);
 
       expect(tokenService.getToken()).toBeUndefined();
@@ -104,12 +107,29 @@ describe('authActions', () => {
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
     });
 
+    it('does not persist the token if the user cannot login', async () => {
+      const internalServerError = 401;
+      const errorMessage: UnauthorizedDTO = {
+        timestamp: Date.now(),
+        status: internalServerError,
+        error: 'Bad credentials',
+        message: 'You are not allowed here',
+        path: '/api/users/1',
+      };
+      mockRestClient.onGet('/users/1').reply(internalServerError, errorMessage);
+
+      await store.dispatch(login('foo', '123123'));
+
+      expect(tokenService.getToken()).toBeUndefined();
+    });
+
     it('logs out user without any side effect', async () => {
       await store.dispatch(logout());
 
       expect(store.getActions()).toEqual([
         logoutRequest(),
         logoutSuccess(),
+        routerActions.push(routes.home),
       ]);
 
       expect(tokenService.getToken()).toBeUndefined();

@@ -3,4 +3,9 @@
 .ProfileContainer {
   padding: 17px $space $space 0;
   justify-content: flex-end;
+
+  .logout {
+    cursor: pointer;
+    align-self: center;
+  }
 }

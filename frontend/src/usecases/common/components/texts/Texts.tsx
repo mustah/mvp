@@ -5,7 +5,7 @@ import './Texts.scss';
 export const Normal = (props) => {
   const {className, children} = props;
   return (
-    <div className={classNames('Normal', className)}>{children}</div>
+    <div {...props} className={classNames('Normal', className)}>{children}</div>
   );
 };
 
