@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    springBootVersion = '1.5.4.RELEASE'
+    springBootVersion = '1.5.6.RELEASE'
   }
   repositories {
     mavenCentral()
@@ -10,32 +10,47 @@ buildscript {
   }
 }
 
-apply plugin: 'application'
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-
-jar {
-  baseName = 'mvp'
-}
-
-distributions {
-  main {
-    baseName = 'mvp'
-  }
-}
-
-
-mainClassName = 'com.elvaco.mvp.MvpApplication'
-applicationName = 'mvp'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
   mavenCentral()
 }
 
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'application'
+
+applicationName = 'mvp'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+/**
+ * The bootRepackage task creates a fat jar of the project and, by default,
+ * excludes devtools if it exists. However, it depends on the distTar & distZip
+ * tasks which are provided by the 'distribution' plugin (which is, in turn,
+ * applied implicitly by the 'application' plugin). This means that we can't
+ * make use of the artifact produced by distTar directly and have that include
+ * the fatjar. This is supposedly fixed in Spring Boot 2.0.0M1 Instead, we need
+ * the fatjar (and startscripts), or disable bootRepackage altogether and
+ * manually exclude devtools.
+ *
+ * The latter feels less intrusive and less involved, so let's go with that.
+ *
+ * See: https://github.com/spring-projects/spring-boot/issues/2679,
+ * https://github.com/spring-projects/spring-boot/issues/2622
+ *
+ * This is supposedly fixed in Spring Boot 2.0.0M1:
+ * https://github.com/spring-projects/spring-boot/issues/5861
+ */
+bootRepackage.enabled = false
+distributions {
+  main {
+    baseName = 'mvp'
+    contents {
+      exclude '**/spring-boot-devtools*.jar'
+    }
+  }
+}
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-data-jpa')
   compile('org.springframework.boot:spring-boot-starter-jdbc')
@@ -64,12 +79,12 @@ configurations {
 
 sourceSets {
   integrationTest {
-    java {
-      compileClasspath += main.output + test.output
-      runtimeClasspath += main.output + test.output
-      srcDir file('src/integrationTest/java')
-    }
-    resources.srcDir file('src/integrationTest/resources')
+  java {
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+    srcDir file('src/integrationTest/java')
+  }
+  resources.srcDir file('src/integrationTest/resources')
   }
 }
 
