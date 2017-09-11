@@ -1,58 +1,87 @@
+import com.avast.gradle.dockercompose.tasks.ComposeUp
+import com.avast.gradle.dockercompose.tasks.ComposeDown
+import com.avast.gradle.dockercompose.ComposeExtension
 buildscript {
-	repositories {
-		jcenter()
-	}
-	dependencies {
-		classpath "com.avast.gradle:gradle-docker-compose-plugin:0.5.1"
-	}
+  repositories {
+    jcenter()
+  }
+  dependencies {
+    classpath "com.avast.gradle:gradle-docker-compose-plugin:0.5.1"
+  }
 }
 apply plugin: 'docker-compose'
 
 def getVersion = { ->
-	def stdout = new ByteArrayOutputStream()
-	exec {
-		commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
-		standardOutput = stdout
-	}
-	return stdout.toString().trim()
+  def stdout = new ByteArrayOutputStream()
+    exec {
+      commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+      standardOutput = stdout
+    }
+  return stdout.toString().trim()
 }
 
 allprojects {
   version = getVersion()
 }
 
-dockerCompose {
-	useComposeFiles = ['docker-compose.yml']
-	captureContainersOutput = true
-	removeContainers = true
-	removeVolumes = true
-	environment.put 'MVP_APPVER', version
-	environment.put 'MVP_OPTS', "-Dspring.profiles.active=compose"
-}
-
-composeUp {
-	doLast {
-		def applInfo = dockerCompose.servicesInfos.application.'application_1'
-		println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
-	}
-}
-
 task runFinalJar(type: JavaExec) {
-	group = 'application'
-	description = 'Run final jar artifact'
-	def finalJar = 'backend/build/libs/mvp-' + version + '.jar'
-	classpath = files(finalJar)
-	main = 'org.springframework.boot.loader.JarLauncher'
+  group = 'application'
+  description = 'Run final jar artifact'
+  def finalJar = 'backend/build/libs/mvp-' + version + '.jar'
+  classpath = files(finalJar)
+  main = 'org.springframework.boot.loader.JarLauncher'
+}
+
+task composeDownAndRemovePostgres(type: ComposeDown) {
+  description = 'Bring down and remove a running PostgreSQL container'
+  extension = new ComposeExtension(project, null, composeDownAndRemovePostgres)
+  extension.stopContainers = true
+  extension.buildBeforeUp = false
+  extension.removeContainers = true
+  extension.removeVolumes = true
+  extension.startedServices = ['postgresql']
+}
+
+composeDown {
+  group = 'application'
+  description = 'Destroy application running with docker-compose'
+}
+
+// This is messy, but necessary since the docker-compose plugin assumes only
+// one task is desired. We should probably remove this once
+// https://github.com/avast/gradle-docker-compose-plugin/issues/36 is resolved.
+task composePostgres(type: ComposeUp, dependsOn: composeDownAndRemovePostgres) {
+  group = 'application'
+  description = 'Run PostgreSQL only with docker-compose'
+  extension = new ComposeExtension(project,
+    composePostgres, /*upTask (this task) */
+    composeDownAndRemovePostgres /*downTask*/
+  )
+  extension.stopContainers = true
+  extension.buildBeforeUp = false
+  extension.removeContainers = true
+  extension.removeVolumes = true
+  extension.startedServices = ['postgresql']
+  extension.environment.put 'DOCKER_POSTGRES_PORT', '5432:5432'
+}
+
+dockerCompose {
+  captureContainersOutput = true
+  buildBeforeUp = true
+  removeContainers = true
+  removeVolumes = true
+  environment.put 'MVP_APPVER', version
+  environment.put 'MVP_OPTS', "-Dspring.profiles.active=compose"
 }
 
 composeUp {
-	group = 'application'
-	description = 'Execute application with docker-compose against PostgreSQL'
+  group = 'application'
+  description = 'Execute application with docker-compose against PostgreSQL'
+  doLast {
+    def applInfo = dockerCompose.servicesInfos.application.'application_1'
+    println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
+  }
 }
-composeDown {
-	group = 'application'
-	description = 'Destroy application running with docker-compose'
-}
+
 runFinalJar.dependsOn(':backend:assemble')
 composeUp.dependsOn(':backend:assemble')
-
