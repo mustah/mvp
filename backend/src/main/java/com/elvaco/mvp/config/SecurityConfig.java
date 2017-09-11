@@ -2,6 +2,7 @@ package com.elvaco.mvp.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+  private static final String API = "/api/**";
+  private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;
 
@@ -28,12 +32,14 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
+    http.authorizeRequests()
+      .antMatchers(HttpMethod.OPTIONS, API).permitAll()
+      .antMatchers(H2_CONSOLE).permitAll();
     http.csrf().disable();
     http.headers().frameOptions().disable();
 
     http
-      .authorizeRequests().antMatchers("/api/**").fullyAuthenticated()
+      .authorizeRequests().antMatchers(API).fullyAuthenticated()
       .and()
       .httpBasic()
       .and()

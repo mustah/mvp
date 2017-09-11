@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../api/restClient';
+import {restClient} from '../../services/restClient';
 import {DATA_ANALYSIS_FAILURE, DATA_ANALYSIS_REQUEST, DATA_ANALYSIS_SUCCESS} from '../../types/ActionTypes';
 
 const dataAnalysisRequest = createEmptyAction(DATA_ANALYSIS_REQUEST);

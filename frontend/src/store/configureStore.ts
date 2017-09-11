@@ -9,10 +9,10 @@ const composeEnhancers = (
                            window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
                          ) || compose;
 
-export const configureStore = (history: History, initialState?: RootState): Store<RootState> => {
+export const configureStore = (history: History, initialState: RootState): Store<RootState> => {
   return createStore<RootState>(
     rootReducer,
-    initialState!,
+    initialState,
     composeEnhancers(applyMiddleware(...[thunk, routerMiddleware(history)])),
   );
 };

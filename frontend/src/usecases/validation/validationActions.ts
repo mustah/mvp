@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../api/restClient';
+import {restClient} from '../../services/restClient';
 import {VALIDATION_FAILURE, VALIDATION_REQUEST, VALIDATION_SUCCESS} from '../../types/ActionTypes';
 
 const validationRequest = createEmptyAction(VALIDATION_REQUEST);

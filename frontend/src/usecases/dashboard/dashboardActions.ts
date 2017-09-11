@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../api/restClient';
+import {restClient} from '../../services/restClient';
 import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
 
 const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
