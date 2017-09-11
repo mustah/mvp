@@ -13,19 +13,11 @@ export class StorageService {
   }
 
   setItem(key: string, data: string): void {
-    try {
-      this.storage.setItem(key, data);
-    } catch (error) {
-      // ignore write errors - just don't fail the app
-    }
+    this.storage.setItem(key, data);
   }
 
   removeItem(key: string): void {
-    try {
-      this.storage.removeItem(key);
-    } catch (error) {
-      // ignore remove errors - just don't fail the app
-    }
+    this.storage.removeItem(key);
   }
 
   clear(): void {

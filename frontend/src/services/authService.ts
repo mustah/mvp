@@ -28,11 +28,7 @@ export const makeToken = (username: string, password: string): string => {
 
 export const saveAuthState = (state: AuthState): void => {
   if (state.isAuthenticated && state.token) {
-    try {
-      storageService.setItem(mvpAuthKey, JSON.stringify(state));
-    } catch (error) {
-      // ignore write errors
-    }
+    storageService.setItem(mvpAuthKey, JSON.stringify(state));
   }
 };
 
