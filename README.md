@@ -5,7 +5,7 @@ There are a number of different ways to start the application - which one you
 choose to use depends entirely on what changes you are expecting to make, and
 subsequently test.
 
-#### full-stack with PostgreSQL (docker-compose)
+#### full-stack application and PostgreSQL in docker (docker-compose)
 This is the recommended way to verify your changes using a local setup as
 similar to production as possible (disregarding actual production data, of
 course). This execution mode is supported by
@@ -37,6 +37,26 @@ printed when everything is up and running. This URL may vary between runs and
 host systems.
 
 > Note: Currently, all data volumes (including the PostgreSQL data volume) is destroyed when you run the `composeDown` task.
+
+##### only PostgreSQL in docker
+As a convenience, there is also a gradle task that only starts the Postgres service. This allows you to use our primary database, while also taking advantage of Spring devtools, interactive debuggers and such.
+
+This uses the same [docker-compose.yml] file, but maps port 5432 (the default
+PostgreSQL port) to port 5432 on the host instead of dynamically mapping it.
+This allows us to preconfigure the datbase connection for the application
+without having to first figure out what port to connect to.
+
+The database is started by running
+
+```
+./gradlew composePostgres
+```
+
+and stopped by running
+
+```
+./gradlew composeDownAndRemovePostgres
+```
 
 #### backend only
 If the changes you're working on are isolated to the backend, and do not rely

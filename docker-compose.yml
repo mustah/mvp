@@ -6,7 +6,7 @@ services:
     build:
       context: .
       args:
-        MVP_APPVER: ${MVP_APPVER}
+        MVP_APPVER: ${MVP_APPVER:-unknown-version}
     ports:
       - "80"
     links:
@@ -16,3 +16,5 @@ services:
     environment:
       POSTGRES_USER: mvp
       POSTGRES_PASSWORD: mvp
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5432}"
