@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String API = "/api/**";
+  private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;
 
@@ -33,7 +34,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
-      .antMatchers("/h2-console/**").permitAll();
+      .antMatchers(H2_CONSOLE).permitAll();
     http.csrf().disable();
     http.headers().frameOptions().disable();
 
