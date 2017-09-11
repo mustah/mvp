@@ -58,7 +58,7 @@ describe('authActions', () => {
     it('logs out logged in user', async () => {
       await dispatchLogin();
 
-      const tokenBeforeLogout = loadAuthState()!.token;
+      const tokenBeforeLogout = loadAuthState().token;
 
       await store.dispatch(logout());
 
