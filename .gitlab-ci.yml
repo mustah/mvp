@@ -66,3 +66,27 @@ teardown_review:
         action: stop
     tags:
         - shell
+
+deploy_staging:
+    stage: deploy
+    environment:
+        name: staging
+        url: http://elvsealiweb02.elvaco.local
+    only:
+        - develop
+    before_script:
+        - apt-get update -y && apt-get install git openssh-client -y
+        - mkdir -p ~/.ssh
+        - echo "$DOCKER_ROOT_SSH_PRIVATE" > ~/.ssh/id_rsa
+        - chmod 0600 ~/.ssh/id_rsa
+        - echo "$DOCKER_ROOT_SSH_PUBLIC" > ~/.ssh/id_rsa.pub
+        - ssh-keygen -p -N '' -f ~/.ssh/id_rsa
+        - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\n" > ~/.ssh/config
+        - echo "Checking for a keystore stored in Gitlab"
+        - test -n "$STAGING_KEYSTORE_BASE64"
+        - echo "Checking for a keystore password stored in Gitlab"
+        - test -n "$STAGING_KEYSTORE_PASSWORD_BASE64"
+        - echo "Verifying certificate stored in Gitlab (note that the -passin argument is prefixed with 'pass:', so 'pass:the_real_password'):"
+        - openssl pkcs12 -in <(base64 -d <(echo "$STAGING_KEYSTORE_BASE64")) -nodes -passin pass:$(base64 -d <(echo "$STAGING_KEYSTORE_PASSWORD_BASE64")) | openssl x509 -checkend 3600 -startdate -enddate
+    script:
+        - ./deploy/deploy_to_staging.sh $WEB_STAGING_SSH_USER $WEB_STAGING_SSH_HOST $STAGING_KEYSTORE_BASE64 $STAGING_KEYSTORE_PASSWORD_BASE64 $STAGING_KEYSTORE_ALIAS_BASE64
