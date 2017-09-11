@@ -23,7 +23,7 @@ export class FakeStorage implements Storage {
   }
 
   removeItem(key: string): void {
-    throw new Error('Method not implemented.');
+    delete this.storage[key];
   }
 
 }

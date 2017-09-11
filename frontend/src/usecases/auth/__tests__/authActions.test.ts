@@ -4,7 +4,8 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {FakeStorage} from '../../../services/__tests__/FakeStorage';
-import {tokenService, TokenService} from '../../../services/TokenService';
+import {initialAuthState, loadAuthState} from '../../../services/authService';
+import {storageService, StorageService} from '../../../services/StorageService';
 import {routes} from '../../app/routes';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {UnauthorizedDTO} from '../authReducer';
@@ -22,18 +23,18 @@ describe('authActions', () => {
     store = mockStore({});
     mockRestClient = new MockAdapter(axios);
 
-    const fakeTokenService = new TokenService(new FakeStorage());
+    const fakeTokenService = new StorageService(new FakeStorage());
 
-    tokenService.getToken = jest.fn(() => {
-      return fakeTokenService.getToken();
+    storageService.getItem = jest.fn((key) => {
+      return fakeTokenService.getItem(key);
     });
 
-    tokenService.setToken = jest.fn((token: string) => {
-      return fakeTokenService.setToken(token);
+    storageService.setItem = jest.fn((key: string, data: string) => {
+      return fakeTokenService.setItem(key, data);
     });
 
-    tokenService.clear = jest.fn(() => {
-      return fakeTokenService.clear();
+    storageService.removeItem = jest.fn((key: string) => {
+      return fakeTokenService.removeItem(key);
     });
   });
 
@@ -50,14 +51,14 @@ describe('authActions', () => {
 
       expect(store.getActions()).toEqual([
         loginRequest(),
-        loginSuccess({token: tokenService.getToken(), user}),
+        loginSuccess({token: loadAuthState()!.token, user}),
       ]);
     });
 
     it('logs out logged in user', async () => {
       await dispatchLogin();
 
-      const tokenBeforeLogout = tokenService.getToken();
+      const tokenBeforeLogout = loadAuthState()!.token;
 
       await store.dispatch(logout());
 
@@ -69,7 +70,17 @@ describe('authActions', () => {
         routerActions.push(routes.home),
       ]);
 
-      expect(tokenService.getToken()).toBeUndefined();
+      expect(loadAuthState()).toEqual(initialAuthState);
+    });
+
+    it('saves auth state to local storage', async () => {
+      await dispatchLogin();
+
+      expect(loadAuthState()).toEqual({
+        isAuthenticated: true,
+        token: 'dGhlLmJhdG1hbkBkYy5jb206dGVzdDEyMzQ=',
+        user: {firstName: 'clark', id: 1, lastName: 'kent'},
+      });
     });
   });
 
@@ -89,6 +100,7 @@ describe('authActions', () => {
       await store.dispatch(login('foo', '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
+      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('cannot login when the server fails due to some unknown reason', async () => {
@@ -105,6 +117,7 @@ describe('authActions', () => {
       await store.dispatch(login('foo', '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
+      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('does not persist the token if the user cannot login', async () => {
@@ -120,7 +133,7 @@ describe('authActions', () => {
 
       await store.dispatch(login('foo', '123123'));
 
-      expect(tokenService.getToken()).toBeUndefined();
+      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('logs out user without any side effect', async () => {
@@ -132,9 +145,8 @@ describe('authActions', () => {
         routerActions.push(routes.home),
       ]);
 
-      expect(tokenService.getToken()).toBeUndefined();
+      expect(loadAuthState()).toEqual(initialAuthState);
     });
-
   });
 
 });

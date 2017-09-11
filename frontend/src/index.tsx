@@ -8,11 +8,12 @@ import {ConnectedRouter} from 'react-router-redux';
 import {Store} from 'redux';
 import {RootState} from './reducers/index';
 import {configureStore} from './store/configureStore';
+import {initialAppState} from './store/initialAppState';
 import App from './usecases/app/App';
 
 const history: History = createHashHistory();
 
-const appStore: Store<RootState> = configureStore(history);
+const appStore: Store<RootState> = configureStore(history, initialAppState);
 
 ReactDOM.render(
   <Provider store={appStore}>

@@ -1,12 +1,7 @@
 import {AnyAction} from 'redux';
+import {validation as initialState} from '../../store/initialAppState';
 import {VALIDATION_REQUEST} from '../../types/ActionTypes';
 import {ValidationState} from './models/Validations';
-
-const initialState: ValidationState = {
-  title: 'ValidationState',
-  records: [],
-  isFetching: false,
-};
 
 export const validation = (state: ValidationState = initialState, action: AnyAction): ValidationState => {
   switch (action.type) {

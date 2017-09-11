@@ -1,7 +1,8 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
+import {makeToken, mvpAuthKey, saveAuthState} from '../../services/authService';
 import {createRestClient} from '../../services/restClient';
-import {tokenService, TokenService} from '../../services/TokenService';
+import {storageService} from '../../services/StorageService';
 import {routes} from '../app/routes';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -22,10 +23,10 @@ export const login = (username: string, password: string) => {
   return async (dispatch) => {
     dispatch(loginRequest());
     try {
-      const token = TokenService.makeToken(username, password);
+      const token = makeToken(username, password);
       const {data: user} = await createRestClient(token).get('/users/1');
       dispatch(loginSuccess({token, user}));
-      tokenService.setToken(token);
+      saveAuthState({token, user, isAuthenticated: true});
     } catch (error) {
       const {response: {data}} = error;
       dispatch(loginFailure(data));
@@ -37,7 +38,7 @@ export const logout = () => {
   return async (dispatch) => {
     dispatch(logoutRequest());
     dispatch(logoutSuccess());
-    tokenService.clear();
+    storageService.removeItem(mvpAuthKey);
     dispatch(routerActions.push(routes.home));
   };
 };

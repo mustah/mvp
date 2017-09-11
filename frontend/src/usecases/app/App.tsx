@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {Switch} from 'react-router';
 import {Route} from 'react-router-dom';
 import {RootState} from '../../reducers/index';
-import {userIsAuthenticated, userIsNotAuthenticated} from '../auth/auth';
+import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
 import LoginContainer from '../auth/containers/LoginContainer';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
