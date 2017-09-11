@@ -1,0 +1,11 @@
+[Unit]
+Description=Elvaco MVP
+After=syslog.target network.target
+
+[Service]
+User=elvaco_mvp
+WorkingDirectory=/opt/elvaco/mvp/current
+ExecStart=/usr/bin/authbind --deep /opt/elvaco/mvp/current/bin/mvp --spring.profiles.active=in-memory,staging --server.port=443
+
+[Install]
+WantedBy=multi-user.target
