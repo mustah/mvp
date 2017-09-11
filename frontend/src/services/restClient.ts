@@ -1,15 +1,19 @@
 import axios, {AxiosInstance} from 'axios';
 
-export const baseURL = 'http://localhost:8080/api';
-
 const config = {
-  baseURL,
+  baseURL: 'http://localhost:8080/api',
   timeout: 30000,
 };
 
 export let restClient: AxiosInstance = axios.create(config);
 
-export const createRestClient = (token: string): AxiosInstance => {
+export const initRestClient = (token?: string): void => {
+  if (token) {
+    makeRestClient(token);
+  }
+};
+
+export const makeRestClient = (token: string): AxiosInstance => {
   restClient = axios.create({
     ...config,
     headers: {Authorization: `Basic ${token}`},
