@@ -12,7 +12,7 @@ import static java.util.Collections.singletonList;
 
 public final class RestClient {
 
-  private static final String BASE_URL = "http://localhost:8080/api";
+  private static final String BASE_URL = "http://localhost:8068/api";
 
   private final TestRestTemplate template;
 
