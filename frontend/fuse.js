@@ -16,7 +16,6 @@ const {runCLI} = require('jest');
 
 const distDir = 'dist';
 const homeDir = 'src';
-const tmpDir = '.tmp';
 const appCss = 'css/app.css';
 
 let fuse, app, vendor, isProduction = false;
@@ -33,7 +32,7 @@ const typeHelper = TypeHelper({
  */
 const onBeforeRun = () => {
   typeHelper.runSync();
-  runCLI({}, ['src']);
+  runCLI({bail: isProduction}, ['src']);
 };
 
 const materialDesign = './node_modules/mdi/';
