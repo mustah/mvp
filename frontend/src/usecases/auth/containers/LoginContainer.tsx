@@ -19,7 +19,7 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
   private emailComponent: HTMLInputElement | null;
   private passwordComponent: HTMLInputElement | null;
 
-  onClick = () => {
+  login = () => {
     this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
   }
 
@@ -27,16 +27,18 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
     const {auth} = this.props;
     return (
       <Column className={classNames('LoginContainer', 'Column-center')}>
-        <div>
-          <input type="text" placeholder="Email" ref={component => this.emailComponent = component}/>
-        </div>
-        <div>
-          <input type="password" placeholder="Lösenord" ref={component => this.passwordComponent = component}/>
-        </div>
-        <div>
-          <button onClick={this.onClick}>Login</button>
-        </div>
-        {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
+        <form onSubmit={this.login}>
+          <div>
+            <input type="text" placeholder="Email" ref={component => this.emailComponent = component}/>
+          </div>
+          <div>
+            <input type="password" placeholder="Lösenord" ref={component => this.passwordComponent = component}/>
+          </div>
+          <div>
+            <input type="submit" onClick={this.login} value="Login"/>
+          </div>
+          {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
+        </form>
       </Column>
     );
   }
