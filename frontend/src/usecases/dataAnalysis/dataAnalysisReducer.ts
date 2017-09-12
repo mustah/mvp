@@ -1,7 +1,12 @@
 import {AnyAction} from 'redux';
-import {dataAnalysis as initialState} from '../../store/initialAppState';
 import {DATA_ANALYSIS_REQUEST} from '../../types/ActionTypes';
 import {DataAnalysisState} from './models/DataAnalysis';
+
+const initialState: DataAnalysisState = {
+  title: 'DataAnalysisState',
+  records: [],
+  isFetching: false,
+};
 
 export const dataAnalysis = (state: DataAnalysisState = initialState, action: AnyAction): DataAnalysisState => {
   switch (action.type) {

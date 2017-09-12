@@ -3,9 +3,7 @@ import MockAdapter from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {FakeStorage} from '../../../services/__tests__/FakeStorage';
-import {initialAuthState, loadAuthState} from '../../../services/authService';
-import {storageService, StorageService} from '../../../services/StorageService';
+import {makeToken} from '../../../services/authService';
 import {routes} from '../../app/routes';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {UnauthorizedDTO} from '../authReducer';
@@ -18,24 +16,11 @@ describe('authActions', () => {
   const user = {id: 1, firstName: 'clark', lastName: 'kent'};
   let mockRestClient;
   let store;
+  let token: string;
 
   beforeEach(() => {
     store = mockStore({});
     mockRestClient = new MockAdapter(axios);
-
-    const fakeTokenService = new StorageService(new FakeStorage());
-
-    storageService.getItem = jest.fn((key) => {
-      return fakeTokenService.getItem(key);
-    });
-
-    storageService.setItem = jest.fn((key: string, data: string) => {
-      return fakeTokenService.setItem(key, data);
-    });
-
-    storageService.removeItem = jest.fn((key: string) => {
-      return fakeTokenService.removeItem(key);
-    });
   });
 
   describe('authorized users', () => {
@@ -43,7 +28,12 @@ describe('authActions', () => {
     const dispatchLogin = async () => {
       mockRestClient.onGet('/users/1').reply(200, user);
 
-      return store.dispatch(login('the.batman@dc.com', 'test1234'));
+      const username = 'the.batman@dc.com';
+      const password = 'test1234';
+      token = makeToken(username, password);
+
+      return store.dispatch(login(username, password));
+
     };
 
     it('dispatches the login action', async () => {
@@ -51,36 +41,22 @@ describe('authActions', () => {
 
       expect(store.getActions()).toEqual([
         loginRequest(),
-        loginSuccess({token: loadAuthState()!.token, user}),
+        loginSuccess({token, user}),
       ]);
     });
 
     it('logs out logged in user', async () => {
       await dispatchLogin();
 
-      const tokenBeforeLogout = loadAuthState().token;
-
       await store.dispatch(logout());
 
       expect(store.getActions()).toEqual([
         loginRequest(),
-        loginSuccess({token: tokenBeforeLogout, user}),
+        loginSuccess({token, user}),
         logoutRequest(),
         logoutSuccess(),
         routerActions.push(routes.home),
       ]);
-
-      expect(loadAuthState()).toEqual(initialAuthState);
-    });
-
-    it('saves auth state to local storage', async () => {
-      await dispatchLogin();
-
-      expect(loadAuthState()).toEqual({
-        isAuthenticated: true,
-        token: 'dGhlLmJhdG1hbkBkYy5jb206dGVzdDEyMzQ=',
-        user: {firstName: 'clark', id: 1, lastName: 'kent'},
-      });
     });
   });
 
@@ -100,7 +76,6 @@ describe('authActions', () => {
       await store.dispatch(login('foo', '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
-      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('cannot login when the server fails due to some unknown reason', async () => {
@@ -117,7 +92,6 @@ describe('authActions', () => {
       await store.dispatch(login('foo', '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
-      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('does not persist the token if the user cannot login', async () => {
@@ -132,8 +106,6 @@ describe('authActions', () => {
       mockRestClient.onGet('/users/1').reply(internalServerError, errorMessage);
 
       await store.dispatch(login('foo', '123123'));
-
-      expect(loadAuthState()).toEqual(initialAuthState);
     });
 
     it('logs out user without any side effect', async () => {
@@ -144,8 +116,6 @@ describe('authActions', () => {
         logoutSuccess(),
         routerActions.push(routes.home),
       ]);
-
-      expect(loadAuthState()).toEqual(initialAuthState);
     });
   });
 

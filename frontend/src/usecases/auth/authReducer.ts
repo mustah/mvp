@@ -1,5 +1,4 @@
 import {AnyAction} from 'redux';
-import {initialAuthState} from '../../services/authService';
 import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS} from './authActions';
 
 export interface User {
@@ -28,6 +27,8 @@ export interface AuthState extends Authenticated {
   isLoading?: boolean;
   error?: UnauthorizedDTO;
 }
+
+const initialAuthState: AuthState = {isAuthenticated: false};
 
 export const auth = (state: AuthState = initialAuthState, action: AnyAction): AuthState => {
   const {payload} = action;

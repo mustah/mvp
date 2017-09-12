@@ -1,7 +1,12 @@
 import {AnyAction} from 'redux';
-import {collection as initialState} from '../../store/initialAppState';
 import {COLLECTION_REQUEST} from '../../types/ActionTypes';
 import {CollectionState} from './models/Collections';
+
+const initialState: CollectionState = {
+  title: 'CollectionState',
+  records: [],
+  isFetching: false,
+};
 
 export const collection = (state: CollectionState = initialState, action: AnyAction): CollectionState => {
   switch (action.type) {

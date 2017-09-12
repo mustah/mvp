@@ -1,5 +1,4 @@
 import {AnyAction} from 'redux';
-import {dashboard as initialState} from '../../store/initialAppState';
 import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
 import {DashboardModel} from './models/DashboardModel';
 
@@ -9,6 +8,11 @@ export interface DashboardState {
   records: DashboardModel[];
   error?: string;
 }
+
+const initialState: DashboardState = {
+  isFetching: false,
+  records: [],
+};
 
 export const dashboard = (state: DashboardState = initialState, action: AnyAction): DashboardState => {
   const {payload} = action;
