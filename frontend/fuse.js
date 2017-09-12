@@ -20,19 +20,26 @@ const appCss = 'css/app.css';
 
 let fuse, app, vendor, isProduction = false;
 
-const typeHelper = TypeHelper({
-  tsConfig: './tsconfig.json',
-  basePath: './',
-  tsLint: './tslint.json',
-  name: 'App type checker'
-});
-
-/**
- * Run linting and tests.
- */
-const onBeforeRun = () => {
-  typeHelper.runSync();
+const runTests = () => {
   runCLI({bail: isProduction}, ['src']);
+};
+
+const runTypeChecker = () => {
+  const typeHelper = TypeHelper({
+    tsConfig: './tsconfig.json',
+    basePath: './',
+    tsLint: './tslint.json',
+    name: `MVP`,
+    throwOnGlobal: isProduction,
+    throwOnSyntactic: isProduction,
+    throwOnSemantic: isProduction,
+  });
+
+  if (isProduction) {
+    typeHelper.runSync();
+  } else {
+    typeHelper.runAsync();
+  }
 };
 
 const materialDesign = './node_modules/mdi/';
@@ -68,6 +75,8 @@ Sparky.task('config', () => {
   vendor = fuse.bundle('vendor').instructions('~ index.ts');
 
   app = fuse.bundle('app').instructions('> index.tsx');
+
+  runTypeChecker();
 });
 
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
@@ -78,25 +87,23 @@ Sparky.task('copy:external-assets', () => Sparky.src([materialDesignFonts], {bas
 
 Sparky.task('clean', () => Sparky.src(distDir).clean(distDir));
 
-Sparky.task('prod-env', ['clean'], () => isProduction = true);
+Sparky.task('set-production', ['clean'], () => isProduction = true);
+
+Sparky.task('tests', () => runTests());
 
 Sparky.task('default', ['clean', 'config', 'copy:assets', 'copy:external-assets'], () => {
   fuse.dev();
-  app.watch()
-    .hmr()
-    .completed(onBeforeRun);
+  app.watch().hmr().completed(runTests);
   return fuse.run();
 });
 
-const distTasks = ['prod-env', 'config', 'copy:assets', 'copy:external-assets'];
+const distTasks = ['set-production', 'config', 'tests', 'copy:assets', 'copy:external-assets'];
 
 Sparky.task('dist', distTasks, () => {
-  onBeforeRun();
   return fuse.run();
 });
 
 Sparky.task('dist-server', distTasks, () => {
   fuse.dev();
-  onBeforeRun();
   return fuse.run();
 });
