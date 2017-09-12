@@ -51,5 +51,5 @@ ssh "$SSH_USER@$SSH_HOST" << END
   sudo /bin/mv $SERVICE_FILE /etc/systemd/system
   sudo /bin/systemctl daemon-reload
   sudo /bin/systemctl enable elvaco-mvp
-  sudo /bin/systemctl start elvaco-mvp
+  sudo /bin/systemctl restart elvaco-mvp
 END
