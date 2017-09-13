@@ -1,7 +1,7 @@
 import axios, {AxiosInstance} from 'axios';
 
 const config = {
-  baseURL: 'http://localhost:8080/api',
+  baseURL: '//localhost:8080/api',
   timeout: 30000,
 };
 
