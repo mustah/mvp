@@ -25,7 +25,7 @@ const runTests = () => {
 };
 
 const runTypeChecker = () => {
-  const typeHelper = TypeHelper({
+  TypeHelper({
     tsConfig: './tsconfig.json',
     basePath: './',
     tsLint: './tslint.json',
@@ -33,13 +33,8 @@ const runTypeChecker = () => {
     throwOnGlobal: isProduction,
     throwOnSyntactic: isProduction,
     throwOnSemantic: isProduction,
-  });
-
-  if (isProduction) {
-    typeHelper.runSync();
-  } else {
-    typeHelper.runAsync();
-  }
+  })
+    .runSync();
 };
 
 const materialDesign = './node_modules/mdi/';
