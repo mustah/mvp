@@ -22,24 +22,25 @@ gradlew.bat
 
 ### IntelliJ IDEA ###
 # User-specific stuff:
-.idea/**/workspace.xml
-.idea/**/tasks.xml
-.idea/dictionaries
-.idea/inspectionProfiles
-.idea/sonarlint
+backend/.idea/libraries/
+backend/.idea/dictionaries
+backend/.idea/inspectionProfiles/
+backend/.idea/sonarlint/
+backend/.idea/**/tasks.xml
+backend/.idea/**/dataSources/
+backend/.idea/**/dataSources.ids
+backend/.idea/**/dataSources.xml
+backend/.idea/**/dataSources.local.xml
+backend/.idea/**/sqlDataSources.xml
+backend/.idea/**/dynamic.xml
+backend/.idea/**/uiDesigner.xml
+backend/.idea/compiler.xml
+backend/.idea/modules.xml
+backend/.idea/misc.xml
+backend/.idea/encodings.xml
+backend/.idea/gradle.xml
+backend/.idea/workspace.xml
 
-# Sensitive or high-churn files:
-.idea/**/dataSources/
-.idea/**/dataSources.ids
-.idea/**/dataSources.xml
-.idea/**/dataSources.local.xml
-.idea/**/sqlDataSources.xml
-.idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
-
-# Gradle:
-.idea/**/gradle.xml
-.idea/**/libraries
 *.iws
 *.iml
 
