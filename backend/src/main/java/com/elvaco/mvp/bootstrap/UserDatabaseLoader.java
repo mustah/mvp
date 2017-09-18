@@ -1,7 +1,6 @@
 package com.elvaco.mvp.bootstrap;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,17 +23,17 @@ public class UserDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    List<UserEntity> users = new ArrayList<>();
-    users.add(new UserEntity("Elvis", "Cohan"));
-    users.add(new UserEntity("Anna", "Johansson"));
-    users.add(new UserEntity("Peter", "Eriksson"));
-    users.add(new UserEntity("Maria", "Svensson"));
-    users.add(new UserEntity("Erik", "Karlsson"));
-    users.add(new UserEntity("Eva", "Nilsson"));
-
-    users.forEach(user -> {
-      user.company = "Bostäder AB";
-      repository.save(user);
-    });
+    Stream.of(
+      new UserEntity("User", "Fake", "user@elvaco.se", "Bostäder AB"),
+      new UserEntity("Elvis", "Cohan", "elvis.cohan@elvis.com", "Bostäder AB"),
+      new UserEntity("Anna", "Johansson", "annjoh@elvaco.se", "Bostäder AB"),
+      new UserEntity("Peter", "Eriksson", "peteri@elvaco.se", "Elvaco AB"),
+      new UserEntity("Maria", "Svensson", "marsve@elvaco.se", "Bostäder AB"),
+      new UserEntity("Erik", "Karlsson", "erikar@elvaco.se", "Bostäder AB"),
+      new UserEntity("Eva", "Nilsson", "evanil@elvaco.se", "Bostäder AB"),
+      new UserEntity("Emil", "Tirén", "emitir@elvaco.se", "Elvaco AB"),
+      new UserEntity("Hanna", "Sjöstedt", "hansjo@elvaco.se", "Elvaco AB")
+    )
+      .forEach(repository::save);
   }
 }
