@@ -1,11 +1,14 @@
 # MVP
 
-### Execution Modes
+## Execution Modes
 There are a number of different ways to start the application - which one you
 choose to use depends entirely on what changes you are expecting to make, and
 subsequently test.
 
-#### full-stack application and PostgreSQL in docker (docker-compose)
+Some of them requires Docker, see the bottom of this file for instructions on
+that.
+
+### full-stack application and PostgreSQL in docker (docker-compose)
 This is the recommended way to verify your changes using a local setup as
 similar to production as possible (disregarding actual production data, of
 course). This execution mode is supported by
@@ -36,10 +39,13 @@ When launched in this mode, the address on which the web server is available is
 printed when everything is up and running. This URL may vary between runs and
 host systems.
 
-> Note: Currently, all data volumes (including the PostgreSQL data volume) is destroyed when you run the `composeDown` task.
+> Note: Currently, all data volumes (including the PostgreSQL data volume) is
+> destroyed when you run the `composeDown` task.
 
-##### only PostgreSQL in docker
-As a convenience, there is also a gradle task that only starts the Postgres service. This allows you to use our primary database, while also taking advantage of Spring devtools, interactive debuggers and such.
+### only PostgreSQL in docker
+As a convenience, there is also a gradle task that only starts the Postgres
+service. This allows you to use our primary database, while also taking
+advantage of Spring devtools, interactive debuggers and such.
 
 This uses the same [docker-compose.yml] file, but maps port 5432 (the default
 PostgreSQL port) to port 5432 on the host instead of dynamically mapping it.
@@ -58,7 +64,7 @@ and stopped by running
 ./gradlew composeDownAndRemovePostgres
 ```
 
-#### backend only
+### backend only
 If the changes you're working on are isolated to the backend, and do not rely
 on any database changes, this is probably the mode you're looking for. It is
 most conveniently executed through your IDE of choice(MvpApplication is the
@@ -69,11 +75,11 @@ changes (i.e, when you rebuild your code), without having to do a full cold
 restart. This should allow you to trim your build-deploy-test cycle
 significantly.
 
-#### frontend only
+### frontend only
 For frontend-heavy work, you can make use of the infrastructure documented in
 [frontend/README] to achive a rapid build-deploy-test cycle.
 
-#### backend + frontend
+### backend + frontend
 Of course, most user-facing features will require both backend and frontend
 work. By virtue of isolating the frontend from the backend we are able to
 combine them to run both simultaneously. This works by letting the frontend run
@@ -87,7 +93,7 @@ server.
 When launched in this mode, the GUI is available at `http://localhost:4444`, and
 the backend/API is available at `http://localhost:8080`
 
-#### full-stack with H2
+### full-stack with H2
 If you are not directly interested in database modeling, schema design or
 similar, running a full-blown PostgreSQL server is probably overkill. Running
 in full-stack mode with H2 might be a convenient compromise. This mode differs
@@ -126,3 +132,40 @@ The H2 console is only intended for use during development so make sure that
 
 Navigate to `http://localhost:8080/h2-console` and use `Generic H2 (Server)`
 settings and the JDBC URL should be `jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1`.
+
+## Addendum
+
+### Installing Docker
+
+You want "Docker Community Edition". See
+https://store.docker.com/search?type=edition&offering=community for links for
+your desktop OS.
+
+This is how you do it on Ubuntu:
+https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/#install-using-the-repository
+
+Keeping it updated should be as simple as (assuming Ubuntu):
+
+    apt update
+    apt upgrade
+
+Don't forget to add yourself to the docker group, this would do for Ubuntu:
+
+    sudo usermod -aG docker your_username_here
+
+To let this take effect, logout of your session/reboot your computer.
+Afterwards, confirm that you are a member of the docker group:
+
+    groups
+    your_username_here some_other_groups docker
+
+### Installing Docker compose
+
+Docker compose is distributed through pip, which is the package manager for
+Python programs.
+
+To install compose:
+
+    sudo pip install docker-compose
+
+Keeping compose up to date by executing the previous command again.
