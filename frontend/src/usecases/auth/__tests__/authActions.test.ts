@@ -26,7 +26,7 @@ describe('authActions', () => {
   describe('authorized users', () => {
 
     const dispatchLogin = async () => {
-      mockRestClient.onGet('/users/1').reply(200, user);
+      mockRestClient.onGet('/authenticate').reply(200, user);
 
       const username = 'the.batman@dc.com';
       const password = 'test1234';
@@ -69,9 +69,9 @@ describe('authActions', () => {
         timestamp: Date.now(),
         error: 'Unauthorized',
         message: 'User is not authorized',
-        path: '/api/users/1',
+        path: '/api/authenticate',
       };
-      mockRestClient.onGet('/users/1').reply(unauthorized, errorMessage);
+      mockRestClient.onGet('/authenticate').reply(unauthorized, errorMessage);
 
       await store.dispatch(login('foo', '123123'));
 
@@ -85,9 +85,10 @@ describe('authActions', () => {
         status: internalServerError,
         error: 'Internal Server Error',
         message: 'Something when really wrong',
-        path: '/api/users/1',
+        path: '/api/authenticate',
       };
-      mockRestClient.onGet('/users/1').reply(internalServerError, errorMessage);
+
+      mockRestClient.onGet('/authenticate').reply(internalServerError, errorMessage);
 
       await store.dispatch(login('foo', '123123'));
 
@@ -101,9 +102,9 @@ describe('authActions', () => {
         status: internalServerError,
         error: 'Bad credentials',
         message: 'You are not allowed here',
-        path: '/api/users/1',
+        path: '/api/authenticate',
       };
-      mockRestClient.onGet('/users/1').reply(internalServerError, errorMessage);
+      mockRestClient.onGet('/authenticate').reply(internalServerError, errorMessage);
 
       await store.dispatch(login('foo', '123123'));
     });

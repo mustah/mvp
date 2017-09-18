@@ -37,7 +37,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void UnableToFindNoneExistingUser() {
     UserEntity user = restClient()
-      .loginWith("admin", "password")
+      .loginWith("user", "password")
       .get("/users/-999", UserEntity.class)
       .getBody();
 

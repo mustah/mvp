@@ -23,7 +23,7 @@ export const login = (username: string, password: string) => {
     dispatch(loginRequest());
     try {
       const token = makeToken(username, password);
-      const {data: user} = await makeRestClient(token).get('/users/1');
+      const {data: user} = await makeRestClient(token).get('/authenticate');
       dispatch(loginSuccess({token, user}));
     } catch (error) {
       const {response: {data}} = error;

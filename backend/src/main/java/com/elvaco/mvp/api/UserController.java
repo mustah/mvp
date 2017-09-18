@@ -19,25 +19,13 @@ public class UserController {
     this.userRepository = userRepository;
   }
 
-  /**
-   * Get user object from user identifier.
-   *
-   * @param id user identifier
-   *
-   * @return the user object if user exists with this user id
-   */
   @RequestMapping("/users/{id}")
-  public UserEntity user(@PathVariable Long id) {
+  public UserEntity userById(@PathVariable Long id) {
     return userRepository.findOne(id);
   }
 
-  /**
-   * Get a list of all users in system.
-   *
-   * @return a list of all defined users.
-   */
   @RequestMapping("/users")
-  public Collection<UserEntity> users() {
+  public Collection<UserEntity> allUsers() {
     return userRepository.findAll();
   }
 }
