@@ -1,18 +1,21 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.List;
-
 public class MvpPropertyCollection {
-  ObjectNode json;
-  public MvpPropertyCollection() {
-    json = new ObjectMapper().createObjectNode();
-  }
+
+  private final ObjectNode json;
+
   public MvpPropertyCollection(ObjectNode json) {
     this.json = json;
+  }
+
+  public MvpPropertyCollection() {
+    this(new ObjectMapper().createObjectNode());
   }
 
   public ObjectNode getJson() {
@@ -24,11 +27,9 @@ public class MvpPropertyCollection {
   }
 
   public void put(String name, List<Integer> l) {
-
     ArrayNode arrayNode = json.putArray(name);
-    for (Integer v : l ) {
+    for (Integer v : l) {
       arrayNode.add(v);
     }
   }
-
 }

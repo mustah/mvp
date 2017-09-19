@@ -1,20 +1,23 @@
 package com.elvaco.mvp.dialect.types;
 
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import javax.sql.rowset.serial.SerialClob;
+
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.SerializationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.sql.rowset.serial.SerialClob;
-import java.io.IOException;
-import java.sql.*;
+import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
-  private static final Logger logger = LoggerFactory.getLogger(H2MvpPropertyCollectionType.class);
 
   @Override
   public int[] sqlTypes() {
@@ -49,5 +52,4 @@ public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
     SerialClob clob = new SerialClob(json.toCharArray());
     st.setObject(index, clob, Types.CLOB);
   }
-
 }
