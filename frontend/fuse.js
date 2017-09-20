@@ -10,6 +10,9 @@ const {
   Sparky
 } = require('fuse-box');
 
+const {createPotFile} = require('./fuse-extract-translations');
+const {convertPoToJson} = require('./fuse-convert-po-to-json');
+
 const autoprefixer = require('autoprefixer');
 const TypeHelper = require('fuse-box-typechecker').TypeHelper;
 const {runCLI} = require('jest');
@@ -39,9 +42,9 @@ const runTypeChecker = () => {
 
 const materialDesign = './node_modules/mdi/';
 const materialDesignFonts = './fonts/**/*';
-const assets = ['**/*.+(svg|png|jpg|jpeg|gif)', 'assets/fonts/**/*'];
+const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
-Sparky.task('config', () => {
+Sparky.task('config', ['extract-translations', 'convert-po-to-json'], () => {
   fuse = new FuseBox({
     debug: true,
     homeDir: homeDir,
@@ -74,6 +77,10 @@ Sparky.task('config', () => {
   runTypeChecker();
 });
 
+Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
+
+Sparky.task('convert-po-to-json', () => convertPoToJson({base: homeDir}));
+
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
 
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
@@ -97,8 +104,8 @@ const distTasks = ['set-production', 'config', 'tests', 'copy:assets', 'copy:ext
 Sparky.task('dist', distTasks, () => {
   return fuse.run();
 });
-
 Sparky.task('dist-server', distTasks, () => {
   fuse.dev();
   return fuse.run();
 });
+
