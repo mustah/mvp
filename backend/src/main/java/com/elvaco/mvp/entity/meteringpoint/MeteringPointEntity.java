@@ -50,4 +50,15 @@ public class MeteringPointEntity {
   public MeteringPointEntity(String moid) {
     this.moid = moid;
   }
+
+  @Override
+  public String toString() {
+    return "MeteringPointEntity{" +
+           "id=" + id +
+           ", status=" + status +
+           ", message='" + message + '\'' +
+           ", moid='" + moid + '\'' +
+           ", propertyCollection=" + propertyCollection +
+           '}';
+  }
 }

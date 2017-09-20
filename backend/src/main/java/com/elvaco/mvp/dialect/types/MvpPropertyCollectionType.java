@@ -10,9 +10,10 @@ import org.springframework.util.ObjectUtils;
 import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class MvpPropertyCollectionType implements UserType {
+abstract class MvpPropertyCollectionType implements UserType {
+
   @Override
-  public Class returnedClass() {
+  public Class<MvpPropertyCollection> returnedClass() {
     return MvpPropertyCollection.class;
   }
 

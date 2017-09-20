@@ -12,8 +12,9 @@ import org.hibernate.type.SerializationException;
 import org.postgresql.util.PGobject;
 
 import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
 
 public class PostgreSQLMvpPropertyCollectionType extends MvpPropertyCollectionType {
 
@@ -28,10 +29,9 @@ public class PostgreSQLMvpPropertyCollectionType extends MvpPropertyCollectionTy
     if (value == null || value.getValue() == null) {
       return null;
     }
-    ObjectMapper mapper = new ObjectMapper();
     ObjectNode json;
     try {
-      json = (ObjectNode) mapper.readTree(value.getValue());
+      json = (ObjectNode) OBJECT_MAPPER.readTree(value.getValue());
     } catch (IOException e) {
       throw new SerializationException(e.getMessage(), e);
     }

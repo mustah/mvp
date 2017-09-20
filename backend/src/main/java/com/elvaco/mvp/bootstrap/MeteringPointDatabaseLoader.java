@@ -1,17 +1,16 @@
 package com.elvaco.mvp.bootstrap;
 
-import com.elvaco.mvp.config.InMemory;
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 
-@InMemory
 @Component
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 

@@ -14,8 +14,9 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.SerializationException;
 
 import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
 
 public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
 
@@ -30,10 +31,9 @@ public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
     if (value == null) {
       return null;
     }
-    ObjectMapper mapper = new ObjectMapper();
     ObjectNode json;
     try {
-      json = (ObjectNode) mapper.readTree(value.getCharacterStream());
+      json = (ObjectNode) OBJECT_MAPPER.readTree(value.getCharacterStream());
     } catch (IOException e) {
       throw new SerializationException(e.getMessage(), e);
     }
