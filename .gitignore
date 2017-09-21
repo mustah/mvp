@@ -20,6 +20,11 @@ gradlew.bat
 .settings
 .springBeans
 
+### i18next ###
+frontend/template.pot
+frontend/src/i18n/locales/*.json
+frontend/src/i18n/locales/*.mo
+
 ### IntelliJ IDEA ###
 # User-specific stuff:
 backend/.idea/libraries/

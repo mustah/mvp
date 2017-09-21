@@ -13,16 +13,23 @@
     "start": "node fuse",
     "dist": "node fuse dist",
     "dist-server": "node fuse dist-server",
+    "extract-translations": "node fuse extract-translations",
+    "convert-po-to-json": "node fuse convert-po-to-json",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
   },
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "skipBabel": true
+      }
+    },
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testMatch": [
-      "**/__tests__/*.test.(ts|tsx|js)"
+      "**/__tests__/*.test.(ts|tsx)"
     ],
     "coverageReporters": [
       "text"
@@ -47,6 +54,8 @@
     "fuse-box": "^2.2.0",
     "fuse-box-typechecker": "git://github.com/fuse-box/fuse-box-typechecker",
     "graceful-fs": "^4.1.11",
+    "i18next-conv": "^4.1.0",
+    "i18next-scanner": "^1.9.4",
     "jest": "^20.0.4",
     "node-sass": "^4.5.3",
     "postcss": "^6.0.6",
@@ -60,6 +69,7 @@
   },
   "dependencies": {
     "@types/classnames": "^2.2.0",
+    "@types/i18next": "^8.4.2",
     "@types/node": "^8.0.13",
     "@types/react": "^16.0.5",
     "@types/react-dom": "^15.5.1",
@@ -72,7 +82,12 @@
     "axios": "^0.16.2",
     "classnames": "^2.2.5",
     "history": "^4.6.3",
+    "i18next": "^9.0.0",
+    "i18next-browser-languagedetector": "^1.0.1",
+    "i18next-xhr-backend": "^1.3.0",
     "mdi": "^2.0.46",
+    "moment": "^2.18.1",
+    "numeral": "^2.0.6",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",

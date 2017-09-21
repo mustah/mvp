@@ -9,6 +9,7 @@ import {Store} from 'redux';
 import {persistStore} from 'redux-persist';
 import {RootState} from './reducers/index';
 import {initRestClient} from './services/restClient';
+import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
 import App from './usecases/app/App';
 
@@ -23,13 +24,15 @@ persistStore<RootState>(appStore, {whitelist: ['auth']}, (error?: any) => {
   }
 });
 
-ReactDOM.render(
-  <Provider store={appStore}>
-    <ConnectedRouter history={history}>
-      <HashRouter>
-        <App/>
-      </HashRouter>
-    </ConnectedRouter>
-  </Provider>,
-  document.getElementById('app'),
-);
+onTranslationInitialized(() => {
+  ReactDOM.render(
+    <Provider store={appStore}>
+      <ConnectedRouter history={history}>
+        <HashRouter>
+          <App/>
+        </HashRouter>
+      </ConnectedRouter>
+    </Provider>,
+    document.getElementById('app'),
+  );
+});

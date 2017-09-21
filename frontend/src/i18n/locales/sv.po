@@ -1,0 +1,79 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2017-09-18T10:58:53.061Z\n"
+"PO-Revision-Date: 2017-09-18 15:19+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: sv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.3\n"
+
+msgid "collection"
+msgstr "insamling"
+
+msgid "{{count}} data point"
+msgstr "{{count}} datapunkt"
+
+msgid "measurement quality"
+msgstr "mätvärdeskvalitet"
+
+msgid "connectors"
+msgstr "connectorer"
+
+msgid "{{count}} unit"
+msgstr "{{count}} enhet"
+
+msgid "a date: {{date}}"
+msgstr "ett datum: {{date}}"
+
+msgid "a number: {{num}}"
+msgstr "ett nummer: {{num}}"
+
+msgctxt "°plural"
+msgid "{{count}} data point°"
+msgstr "{{count}} datapunkter"
+
+msgctxt "°plural"
+msgid "{{count}} unit°"
+msgstr "{{count}} enheter"
+
+#~ msgid "systemOverview.collection"
+#~ msgstr "insamling"
+
+#~ msgid "systemOverview.dataPoint"
+#~ msgstr "{{count}} datapunkt"
+
+#~ msgid "systemOverview.connectors"
+#~ msgstr "connectorer"
+
+#~ msgid "systemOverview.unit"
+#~ msgstr "{{count}} st"
+
+#~ msgid "systemOverview.dateTest"
+#~ msgstr "ett datum: {{date}}"
+
+#~ msgid "test:test"
+#~ msgstr "test"
+
+#~ msgid "systemOverview.numberTest"
+#~ msgstr "ett nummer: {{num}}"
+
+#~ msgctxt "°plural"
+#~ msgid "systemOverview.dataPoint°"
+#~ msgstr "{{count}} datapunkter"
+
+#~ msgctxt "°plural"
+#~ msgid "systemOverview.unit°"
+#~ msgstr "{{count}} st"
+
+#~ msgctxt "*plural"
+#~ msgid "systemOverview.dataPoint*"
+#~ msgstr "{{count}} datapunkter"
+
+#~ msgctxt "*plural"
+#~ msgid "systemOverview.unit*"
+#~ msgstr "{{count}} st*"
