@@ -1,6 +1,5 @@
 import {AnyAction} from 'redux';
 import {CHANGE_LANGUAGE} from './languageActions';
-const {defaultLanguage} = require('../../../i18n/i18nextConfig');
 
 export interface LanguageState {
   language: Language;
@@ -23,7 +22,7 @@ export const supportedLanguages: {readonly [key: string]: Language} = {
 };
 
 const initialState: LanguageState = {
-  language: supportedLanguages[defaultLanguage],
+  language: supportedLanguages.sv,
 };
 
 export const language = (state: LanguageState = initialState, action: AnyAction) => {

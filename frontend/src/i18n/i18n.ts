@@ -7,7 +7,7 @@ export const initLanguage = (language: Language) => {
   i18n
     .use(Backend)
     .init({
-      lng: language && language.code || 'en',
+      lng: language.code,
       debug: true,
       ...i18nextConfig,
       backend: {
