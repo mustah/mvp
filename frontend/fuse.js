@@ -104,6 +104,7 @@ const distTasks = ['set-production', 'config', 'tests', 'copy:assets', 'copy:ext
 Sparky.task('dist', distTasks, () => {
   return fuse.run();
 });
+
 Sparky.task('dist-server', distTasks, () => {
   fuse.dev();
   return fuse.run();

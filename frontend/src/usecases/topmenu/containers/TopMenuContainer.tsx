@@ -8,17 +8,22 @@ import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
 import {Row} from '../../layouts/components/row/Row';
 import {ProfileContainer} from '../../profile/containers/ProfileContainer';
+import {Languages} from '../components/languages/Languages';
 import {MainLogo} from '../components/mainlogo/MainLogo';
 import {MenuItem} from '../components/menuitems/MenuItem';
+import {changeLanguage} from './languageActions';
+import {Language} from './languageReducer';
 
 export interface TopMenuContainerProps {
   pathname: string;
   auth: AuthState;
   logout: () => any;
+  language: Language;
+  changeLanguage: (language) => void;
 }
 
 const TopMenuContainer = (props: TopMenuContainerProps) => {
-  const {pathname, auth, logout} = props;
+  const {pathname, auth, logout, language, changeLanguage} = props;
   return (
     <Row className="flex-1">
       <MainLogo/>
@@ -40,6 +45,7 @@ const TopMenuContainer = (props: TopMenuContainerProps) => {
           <MenuItem name="Mätserier" isSelected={routes.dataAnalysis === pathname} icon="dialpad"/>
         </Link>
       </Row>
+      <Languages language={language} changeLanguage={changeLanguage}/>
       <ProfileContainer user={auth.user} logout={logout}/>
     </Row>
   );
@@ -49,9 +55,10 @@ const mapStateToProps = (state: RootState) => {
   return {
     pathname: state.routing.location!.pathname,
     auth: state.auth,
+    language: state.language.language,
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({logout}, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({logout, changeLanguage}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopMenuContainer);

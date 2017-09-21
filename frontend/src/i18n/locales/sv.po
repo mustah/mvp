@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-09-18T10:58:53.061Z\n"
-"PO-Revision-Date: 2017-09-18 15:19+0200\n"
+"POT-Creation-Date: 2017-09-19T14:07:17.911Z\n"
+"PO-Revision-Date: 2017-09-19 16:08+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -11,6 +11,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.3\n"
+
+msgid "email"
+msgstr "epost"
+
+msgid "password"
+msgstr "lösenord"
 
 msgid "collection"
 msgstr "insamling"
