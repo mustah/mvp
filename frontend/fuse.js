@@ -44,7 +44,7 @@ const materialDesign = './node_modules/mdi/';
 const materialDesignFonts = './fonts/**/*';
 const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
-Sparky.task('config', ['extract-translations', 'convert-po-to-json'], () => {
+Sparky.task('config', ['convert-po-to-json'], () => {
   fuse = new FuseBox({
     debug: true,
     homeDir: homeDir,
@@ -79,7 +79,7 @@ Sparky.task('config', ['extract-translations', 'convert-po-to-json'], () => {
 
 Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
 
-Sparky.task('convert-po-to-json', () => convertPoToJson({base: homeDir}));
+Sparky.task('convert-po-to-json', ['extract-translations'], () => convertPoToJson({base: homeDir}));
 
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
 
