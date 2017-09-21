@@ -6,10 +6,12 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "com.avast.gradle:gradle-docker-compose-plugin:0.5.1"
+    classpath 'com.avast.gradle:gradle-docker-compose-plugin:0.5.1'
+    classpath 'cz.alenkacz.gradle:json-validator:1.0.0'
   }
 }
 apply plugin: 'docker-compose'
+apply plugin: 'json-validator'
 
 def getVersion = { ->
   def stdout = new ByteArrayOutputStream()
@@ -81,6 +83,10 @@ composeUp {
     def applInfo = dockerCompose.servicesInfos.application.'application_1'
     println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
   }
+}
+
+jsonSchema { 
+  schemaFolder = 'docs/schema/'
 }
 
 runFinalJar.dependsOn(':backend:assemble')
