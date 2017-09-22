@@ -48,6 +48,7 @@ Take the output of the previous command and paste it as a value for the key *WEB
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl daemon-reload
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp.service /etc/systemd/system
 
