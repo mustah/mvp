@@ -10,6 +10,7 @@ buildscript {
     classpath 'cz.alenkacz.gradle:json-validator:1.0.0'
   }
 }
+
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
 
@@ -88,7 +89,12 @@ composeUp {
 jsonSchema { 
   schemaFolder = 'docs/schema/'
 }
-task check(dependsOn: ':validateJsonSchema')
 
+task check {
+  dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
+
+}
+
+task assemble(dependsOn: ':check')
 runFinalJar.dependsOn(':backend:assemble')
 composeUp.dependsOn(':backend:assemble')
