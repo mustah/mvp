@@ -1,0 +1,16 @@
+{
+  "message_type" : "Elvaco MVP MQ Message 1.0",
+  "gateway_id": "GW-CME3100-XXYYZZ",
+  "meter_id": "ABC-123-XYZ",
+  "organisation_id": "Elvaco AB",
+  "medium": "Electricity meter",
+  "source_system_id": "Elvaco Metering",
+  "values": [
+    {
+      "timestamp": 1506069947,
+      "value": 0.659,
+      "unit": "wH",
+      "quantity": "power"
+    }
+  ]
+}
