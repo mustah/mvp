@@ -9,3 +9,5 @@ export interface Expandable {
 export interface Selectable {
   isSelected?: boolean;
 }
+
+export type State = 'ok' | 'warning' | 'critical' | 'info';

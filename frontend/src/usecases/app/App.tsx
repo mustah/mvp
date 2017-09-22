@@ -24,7 +24,8 @@ const DataAnalysisPage = userIsAuthenticated(DataAnalysisContainer);
 
 /**
  * The Application root component should extend React.Component in order
- * for HMR to work properly. Otherwise, prefer functional components.
+ * for HMR (hot module reloading) to work properly. Otherwise, prefer
+ * functional components.
  */
 class App extends React.Component<RootState, any> {
 
