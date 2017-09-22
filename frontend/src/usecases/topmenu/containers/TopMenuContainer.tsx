@@ -49,6 +49,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     pathname: state.routing.location!.pathname,
     auth: state.auth,
+    language: state.language.language,
   };
 };
 

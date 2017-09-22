@@ -26,7 +26,8 @@ const DataAnalysisPage = userIsAuthenticated(DataAnalysisContainer);
  * The Application root component should extend React.Component in order
  * for HMR to work properly. Otherwise, prefer functional components.
  */
-class App extends React.Component<RootState & any, any> {
+class App extends React.Component<RootState, any> {
+
   render() {
     const {isAuthenticated} = this.props.auth;
     return (

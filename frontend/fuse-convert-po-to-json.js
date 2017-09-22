@@ -7,11 +7,11 @@ const utf8 = 'utf-8';
 const extractLangFromFileName = (file) => file.name.split('.', 1);
 
 const convertPoToJson = async ({base}) => {
-  const templatePot = fs.readFileSync('template.pot', utf8);
-  const templatePotJson = JSON.parse(await converter.gettextToI18next('en', templatePot, {quiet: true}));
 
   return Sparky.src('i18n/locales/*.po', {base})
-    .completed((files) => {
+    .completed(async (files) => {
+      const templatePot = fs.readFileSync('template.pot', utf8);
+      const templatePotJson = JSON.parse(await converter.gettextToI18next('en', templatePot, {quiet: true}));
       files.map(async (file) => {
         const language = extractLangFromFileName(file);
         const content = file.read().contents.toString(utf8);

@@ -1691,10 +1691,6 @@ http-signature@~1.1.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
-i18next-browser-languagedetector@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/i18next-browser-languagedetector/-/i18next-browser-languagedetector-1.0.1.tgz#73e43aa46fc1c909cac6178b9d1b803d02610faa"
-
 i18next-conv@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/i18next-conv/-/i18next-conv-4.1.0.tgz#fa551f8b490373ad72f11254f84e117182cb65e4"
