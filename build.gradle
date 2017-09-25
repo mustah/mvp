@@ -6,10 +6,13 @@ buildscript {
     jcenter()
   }
   dependencies {
-    classpath "com.avast.gradle:gradle-docker-compose-plugin:0.5.1"
+    classpath 'com.avast.gradle:gradle-docker-compose-plugin:0.5.1'
+    classpath 'cz.alenkacz.gradle:json-validator:1.0.0'
   }
 }
+
 apply plugin: 'docker-compose'
+apply plugin: 'json-validator'
 
 def getVersion = { ->
   def stdout = new ByteArrayOutputStream()
@@ -83,5 +86,15 @@ composeUp {
   }
 }
 
+jsonSchema { 
+  schemaFolder = 'docs/schema/'
+}
+
+task check {
+  dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
+
+}
+
+task assemble(dependsOn: ':check')
 runFinalJar.dependsOn(':backend:assemble')
 composeUp.dependsOn(':backend:assemble')
