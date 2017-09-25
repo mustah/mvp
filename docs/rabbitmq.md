@@ -76,3 +76,5 @@ Restarting RabbitMQ (for example, to let a configuration change take effect) is 
 systemctl restart rabbitmq-server.service
 ```
 as `root`.
+
+For more information regarding RabbitMQ and AMQP concepts and terminology, a good resource can be found [here](https://www.rabbitmq.com/tutorials/amqp-concepts.html)
