@@ -1,10 +1,10 @@
 .DS_Store
 .fusebox/
-
 coverage-reports/
 dist/
 node_modules/
 
+.version
 .gradle/
 build/
 out/

@@ -95,6 +95,12 @@ task check {
 
 }
 
+task dotVersion {
+  def file = new File(".version")
+  file.createNewFile()
+  file.text = "$version"
+}
+
 task assemble(dependsOn: ':check')
 runFinalJar.dependsOn(':backend:assemble')
 composeUp.dependsOn(':backend:assemble')
