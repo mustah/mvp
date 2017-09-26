@@ -48,6 +48,8 @@ ExecStart=/usr/bin/docker run -p 9080:80 -v /var/run/docker.sock:/tmp/docker.soc
 ExecStop=/usr/bin/docker stop systemd-nginx-proxy
 ExecStopPost=/usr/bin/docker rm -f systemd-nginx-proxy
 ExecReload=/usr/bin/docker restart systemd-nginx-proxy
+RestartSec=3
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
