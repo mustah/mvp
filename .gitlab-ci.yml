@@ -22,6 +22,7 @@ build:
             - frontend/.fusebox
     script:
         - apt-get update && apt-get -y install git
+        - ./gradlew dotVersion
         - ./gradlew clean build assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
@@ -29,6 +30,7 @@ build:
             - backend/build/distributions/
             - docs/drawio/mvp_components.png
             - frontend/template.pot
+            - .version
         expire_in: 1 month
 
 deploy_review:
@@ -48,7 +50,7 @@ deploy_review:
     script:
         - rm -rf app-root
         - mkdir app-root
-        - tar -C app-root -xf backend/build/distributions/mvp-`git describe --abbrev=7`.tar --strip-components=1
+        - tar -C app-root -xf backend/build/distributions/mvp-`cat .version`.tar --strip-components=1
         - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
         - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
         - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e JAVA_OPTS="-XX:MaxMetaspaceSize=64m -Xmx64m" -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
