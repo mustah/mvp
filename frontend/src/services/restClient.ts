@@ -1,11 +1,7 @@
 import axios, {AxiosInstance} from 'axios';
+import {config} from '../config';
 
-const config = {
-  baseURL: '//localhost:8080/api',
-  timeout: 30000,
-};
-
-export let restClient: AxiosInstance = axios.create(config);
+export let restClient: AxiosInstance = axios.create(config.axios);
 
 export const initRestClient = (token?: string): void => {
   if (token) {
@@ -15,7 +11,7 @@ export const initRestClient = (token?: string): void => {
 
 export const makeRestClient = (token: string): AxiosInstance => {
   restClient = axios.create({
-    ...config,
+    ...config.axios,
     headers: {Authorization: `Basic ${token}`},
   });
   return restClient;
