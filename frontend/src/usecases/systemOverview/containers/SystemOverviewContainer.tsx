@@ -23,13 +23,15 @@ export const SystemOverviewContainer = (props: SystemOverviewProps) => {
       </Row>
       <Row>
         {overview.widgets.map((widget: WidgetModel, index: number) => {
-          let rec;
           if(widget instanceof ColoredBoxModel) {
-            rec = <ColoredBox key={index} {...widget as ColoredBoxModel}/>;
-          } else if(widget instanceof DonutGraphModel) {
-            rec = <DonutGraph key={index} {...widget as DonutGraphModel}/>;
+            return <ColoredBox key={index} {...widget as ColoredBoxModel}/>;
           }
-          return rec;
+
+          if(widget instanceof DonutGraphModel) {
+            return <DonutGraph key={index} {...widget as DonutGraphModel}/>;
+          }
+
+          return null;
         })}
       </Row>
     </div>
