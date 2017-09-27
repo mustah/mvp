@@ -23,7 +23,7 @@ export class ColoredBoxModel extends WidgetModel {
   unit: string;
 }
 
-export function widgetFactory(properties: object): WidgetModel {
+export function widgetFactory(properties: WidgetModel[]): WidgetModel {
   let widget: WidgetModel;
 
   if (properties.hasOwnProperty('state')) {
