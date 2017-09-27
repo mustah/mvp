@@ -27,8 +27,11 @@ const runTests = () => {
   runCLI({bail: isProduction}, ['src']);
 };
 
+/**
+ * Returns the number of errors
+ */
 const runTypeChecker = () => {
-  TypeHelper({
+  return TypeHelper({
     tsConfig: './tsconfig.json',
     basePath: './',
     tsLint: './tslint.json',
@@ -36,8 +39,9 @@ const runTypeChecker = () => {
     throwOnGlobal: isProduction,
     throwOnSyntactic: isProduction,
     throwOnSemantic: isProduction,
+    throwOnTsLint: isProduction,
   })
-    .runSync();
+  .runSync();
 };
 
 const materialDesign = './node_modules/mdi/';
@@ -74,7 +78,12 @@ Sparky.task('config', ['convert-po-to-json'], () => {
 
   app = fuse.bundle('app').instructions('> index.tsx');
 
-  runTypeChecker();
+  try {
+    const numberOfTypeErrors = runTypeChecker();
+  } catch (error) {
+    console.error(error.stack);
+    process.exit(1);
+  }
 });
 
 Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
