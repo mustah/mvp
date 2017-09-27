@@ -6,11 +6,11 @@ const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
 const dashboardSuccess = createPayloadAction(DASHBOARD_SUCCESS);
 const dashboardFailure = createPayloadAction(DASHBOARD_FAILURE);
 
-export const fetchDashboards = () => {
+export const fetchDashboard = () => {
   return (dispatch) => {
     dispatch(dashboardRequest());
 
-    restClient.get('/dashboards')
+    restClient.get('/dashboards/current')
       .then(response => response.data)
       .then(dashboards => dispatch(dashboardSuccess(dashboards)))
       .catch(error => dispatch(dashboardFailure(error)));

@@ -83,3 +83,4 @@ how to handle the Elvaco proprietary icons.
 * [Redux Auth Wrapper](https://mjrussell.github.io/redux-auth-wrapper/) - Decouple your Authentication and Authorization from your components
 * [React Developer Tools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi) - React Developer Tools is a Chrome DevTools extension for the open-source React JavaScript library. 
 * [Redux DevTools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd) - Redux DevTools for debugging application's state changes.
+* [Recharts](http://recharts.org) - A composable charting library built on React components.

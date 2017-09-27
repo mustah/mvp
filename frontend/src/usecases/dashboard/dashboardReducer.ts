@@ -1,17 +1,16 @@
 import {AnyAction} from 'redux';
+import {widgetFactory} from '../../services/widgetService';
 import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
 import {DashboardModel} from './models/DashboardModel';
 
 export interface DashboardState {
-  title?: string;
   isFetching: boolean;
-  records: DashboardModel[];
+  record?: DashboardModel;
   error?: string;
 }
 
-const initialState: DashboardState = {
+export const initialState: DashboardState = {
   isFetching: false,
-  records: [],
 };
 
 export const dashboard = (state: DashboardState = initialState, action: AnyAction): DashboardState => {
@@ -24,10 +23,12 @@ export const dashboard = (state: DashboardState = initialState, action: AnyActio
         isFetching: true,
       };
     case DASHBOARD_SUCCESS:
+      const dashboard = payload;
+      dashboard.systemOverview.widgets = payload.systemOverview.widgets.map(widgetFactory);
       return {
         ...state,
         isFetching: false,
-        records: [...payload],
+        record: dashboard,
       };
     case DASHBOARD_FAILURE:
       return {
