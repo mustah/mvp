@@ -72,6 +72,7 @@ dependencies {
 }
 
 jar {
+  baseName = 'mvp'
   from('../frontend/dist') {
     into 'static'
   }
