@@ -8,10 +8,10 @@ import {Xlarge} from '../../common/components/texts/Texts';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
+import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
 import {Map} from '../components/map/Map';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
-import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
 
 export interface DashboardContainerProps {
   fetchDashboard: () => any;
@@ -20,8 +20,8 @@ export interface DashboardContainerProps {
 
 class DashboardContainer extends React.Component<DashboardContainerProps & InjectedAuthRouterProps, any> {
   componentDidMount() {
-    if(this.props.isAuthenticated) {
-     this.props.fetchDashboard();
+    if (this.props.isAuthenticated) {
+      this.props.fetchDashboard();
     }
   }
 
@@ -50,8 +50,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       </Layout>
     );
   }
-};
-
+}
 
 /**
  * React deals with both state and props, but when we introduce

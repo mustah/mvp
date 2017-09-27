@@ -1,5 +1,7 @@
 import {DASHBOARD_SUCCESS} from '../../../types/ActionTypes';
-import {ColoredBoxModel, DonutGraphModel, WidgetModel} from '../../widget/models/WidgetModels';
+import {ColoredBoxModel} from '../../widget/models/ColoredBoxModel';
+import {DonutGraphModel} from '../../widget/models/DonutGraphModel';
+import {WidgetModel} from '../../widget/models/WidgetModel';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 
 describe('Dashboard', () => {

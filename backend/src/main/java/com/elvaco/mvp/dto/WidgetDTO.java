@@ -6,5 +6,5 @@ import lombok.ToString;
 public abstract class WidgetDTO {
 
   public String title;
-  public String href;
+  public String url;
 }

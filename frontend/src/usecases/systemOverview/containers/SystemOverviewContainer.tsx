@@ -2,17 +2,32 @@ import * as React from 'react';
 import {Xlarge} from '../../common/components/texts/Texts';
 import {PeriodSelectionContainer} from '../../common/containers/PeriodSelectionContainer';
 import {Row} from '../../layouts/components/row/Row';
-import {SystemOverviewState} from '../types';
-import {ColoredBoxModel, DonutGraphModel, WidgetModel} from '../../widget/models/WidgetModels';
 import {ColoredBox} from '../../widget/containers/coloredBox/ColoredBox';
 import {DonutGraph} from '../../widget/containers/donutGraph/DonutGraph';
+import {ColoredBoxModel as ColoredBoxModel} from '../../widget/models/ColoredBoxModel';
+import {DonutGraphModel as DonutGraphModel} from '../../widget/models/DonutGraphModel';
+import {WidgetModel} from '../../widget/models/WidgetModel';
+import {SystemOverviewState} from '../types';
 
 interface SystemOverviewProps {
-  overview: SystemOverviewState,
-};
+  overview: SystemOverviewState;
+}
 
 export const SystemOverviewContainer = (props: SystemOverviewProps) => {
   const {overview} = props;
+
+  const renderWidget = (widget: WidgetModel, index: number) => {
+    if (widget instanceof ColoredBoxModel) {
+      return <ColoredBox key={index} {...widget as ColoredBoxModel}/>;
+    }
+
+    if (widget instanceof DonutGraphModel) {
+      return <DonutGraph key={index} {...widget as DonutGraphModel}/>;
+    }
+
+    return null;
+  };
+
   return (
     <div>
       <Row>
@@ -22,17 +37,7 @@ export const SystemOverviewContainer = (props: SystemOverviewProps) => {
         <PeriodSelectionContainer/>
       </Row>
       <Row>
-        {overview.widgets.map((widget: WidgetModel, index: number) => {
-          if(widget instanceof ColoredBoxModel) {
-            return <ColoredBox key={index} {...widget as ColoredBoxModel}/>;
-          }
-
-          if(widget instanceof DonutGraphModel) {
-            return <DonutGraph key={index} {...widget as DonutGraphModel}/>;
-          }
-
-          return null;
-        })}
+        {overview.widgets.map(renderWidget)}
       </Row>
     </div>
   );

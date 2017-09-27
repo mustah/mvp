@@ -24,7 +24,7 @@ public class DashboardController {
     return dashboardRepository.findAll();
   }
 
-  @RequestMapping("/dashboard/current")
+  @RequestMapping("/dashboards/current")
   public DashboardDTO myDashboard() {
     List<WidgetDTO> widgets = new ArrayList<>();
     ColoredBoxDTO warning = new ColoredBoxDTO();
@@ -33,7 +33,7 @@ public class DashboardController {
     warning.unit = "%";
     warning.subtitle = "3567 punkter";
     warning.title = "Insamling";
-    warning.href = "/collection";
+    warning.url = "/collection";
     widgets.add(warning);
 
     ColoredBoxDTO critical = new ColoredBoxDTO();
@@ -42,7 +42,7 @@ public class DashboardController {
     critical.unit = "%";
     critical.subtitle = "3481 punkter";
     critical.title = "Mätvärdeskvalitet";
-    critical.href = "/validation";
+    critical.url = "/validation";
     widgets.add(critical);
 
     ColoredBoxDTO ok = new ColoredBoxDTO();
@@ -51,12 +51,12 @@ public class DashboardController {
     ok.unit = "%";
     ok.subtitle = "4 st";
     ok.title = "Connectorer";
-    ok.href = "/404?connectorsAreTodo";
+    ok.url = "/404?connectorsAreTodo";
     widgets.add(ok);
 
     GraphDTO graph = new GraphDTO();
     graph.title = "Tidsupplösning";
-    graph.href = "/404?notSureWhatThisLinkShouldPointAt";
+    graph.url = "/404?notSureWhatThisLinkShouldPointAt";
     graph.records.add(new GraphValueDTO("15m", 23.0F));
     graph.records.add(new GraphValueDTO("1h", 10.0F));
     graph.records.add(new GraphValueDTO("24h", 4.0F));

@@ -1,6 +1,6 @@
-import {WidgetModel} from '../widget/models/WidgetModels';
+import {WidgetModel} from '../widget/models/WidgetModel';
 
 export interface SystemOverviewState {
-  title: string,
-  widgets: WidgetModel[],
+  title: string;
+  widgets: WidgetModel[];
 }
