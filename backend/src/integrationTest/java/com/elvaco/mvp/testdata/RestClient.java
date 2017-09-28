@@ -47,10 +47,6 @@ public final class RestClient {
     return restClient();
   }
 
-  private String apiUrlOf(String url) {
-    return API_URL + url;
-  }
-
   private RestClient authorization(String token) {
     return addHeader(AUTHORIZATION, "Basic " + token);
   }
@@ -62,6 +58,10 @@ public final class RestClient {
         return execution.execute(request, body);
       }));
     return restClient();
+  }
+
+  private static String apiUrlOf(String url) {
+    return API_URL + url;
   }
 
   private static final class InstanceHolder {
