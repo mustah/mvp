@@ -1,5 +1,5 @@
 import axios, {AxiosInstance} from 'axios';
-import {config} from '../config';
+import {config} from '../usecases/config/config';
 
 const axiosConfig = config().axios;
 
