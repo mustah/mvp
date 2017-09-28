@@ -15,12 +15,12 @@ buildscript {
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
 
-def getVersion = {->
+def getVersion = { ->
   def stdout = new ByteArrayOutputStream()
-  exec {
-    commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
-    standardOutput = stdout
-  }
+    exec {
+      commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+      standardOutput = stdout
+    }
   return stdout.toString().trim()
 }
 
@@ -84,7 +84,7 @@ composeUp {
   description = 'Execute application with docker-compose against PostgreSQL'
   doLast {
     def applInfo = dockerCompose.servicesInfos.application.'application_1'
-    println('The application is now running! Point your browser to: http://' + applInfo.host + ':' + applInfo.ports[80])
+    println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
   }
 }
 

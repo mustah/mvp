@@ -1,0 +1,1 @@
+{"message_type":"Elvaco MVP MQ Message 1.0","gateway_id":"30004481","meter_id":"11000477","organisation_id":"HEM","medium":"Water","source_system_id":"Elvaco Metering","values":[{"timestamp":"2017-10-17T07:00:00","value":39.36117,"unit":"m3","quantity":"Volume"}]}

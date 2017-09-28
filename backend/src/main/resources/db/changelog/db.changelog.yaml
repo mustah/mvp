@@ -3,6 +3,11 @@ databaseChangeLog:
     id: 1
     author: antlof
     changes:
+      - sqlFile:
+          encoding: utf8
+          path: sql/initial_db.sql
+          relativeToChangelogFile: true
+          stripComments: true
       - createTable:
           tableName: dashboards
           columns:
@@ -23,28 +28,6 @@ databaseChangeLog:
                 type: varchar(255)
                 constraints:
                   nullable: false
-      - createTable:
-          tableName: mps
-          columns:
-            - column:
-                name: id
-                type: int
-                autoIncrement: true
-                constraints:
-                  primaryKey: true
-                  nullable: false
-            - column:
-                name: status
-                type: int
-            - column:
-                name: message
-                type: varchar(255)
-            - column:
-                name: moid
-                type: varchar(255)
-            - column:
-                name: property_collection
-                type: jsonb
  - changeSet:
     id: 2
     author: antlof
