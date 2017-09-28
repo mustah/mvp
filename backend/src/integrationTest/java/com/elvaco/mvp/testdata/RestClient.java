@@ -12,24 +12,24 @@ import static java.util.Collections.singletonList;
 
 public final class RestClient {
 
-  private static final String BASE_URL = "http://localhost:8068/api";
+  private static final String API_URL = "http://localhost:8068/api";
 
   private final TestRestTemplate template;
 
-  private static final class InstanceHolder {
-    private static final RestClient INSTANCE = new RestClient();
+  private RestClient() {
+    this.template = new TestRestTemplate(new RestTemplate());
   }
 
   public static RestClient restClient() {
     return InstanceHolder.INSTANCE;
   }
 
-  private RestClient() {
-    this.template = new TestRestTemplate(new RestTemplate());
+  public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
+    return template.getForEntity(apiUrlOf(url), clazz);
   }
 
-  public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
-    return template.getForEntity(BASE_URL + url, clazz);
+  public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
+    return template.postForEntity(apiUrlOf(url), request, responseType);
   }
 
   public RestClient loginWith(String username, String password) {
@@ -47,6 +47,10 @@ public final class RestClient {
     return restClient();
   }
 
+  private String apiUrlOf(String url) {
+    return API_URL + url;
+  }
+
   private RestClient authorization(String token) {
     return addHeader(AUTHORIZATION, "Basic " + token);
   }
@@ -58,5 +62,9 @@ public final class RestClient {
         return execution.execute(request, body);
       }));
     return restClient();
+  }
+
+  private static final class InstanceHolder {
+    private static final RestClient INSTANCE = new RestClient();
   }
 }

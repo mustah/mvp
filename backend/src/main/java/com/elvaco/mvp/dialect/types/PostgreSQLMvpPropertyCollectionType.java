@@ -29,13 +29,11 @@ public class PostgreSQLMvpPropertyCollectionType extends MvpPropertyCollectionTy
     if (value == null || value.getValue() == null) {
       return null;
     }
-    ObjectNode json;
     try {
-      json = (ObjectNode) OBJECT_MAPPER.readTree(value.getValue());
+      return new MvpPropertyCollection((ObjectNode) OBJECT_MAPPER.readTree(value.getValue()));
     } catch (IOException e) {
       throw new SerializationException(e.getMessage(), e);
     }
-    return new MvpPropertyCollection(json);
   }
 
   @Override
@@ -44,9 +42,7 @@ public class PostgreSQLMvpPropertyCollectionType extends MvpPropertyCollectionTy
       st.setNull(index, Types.OTHER);
       return;
     }
-
     MvpPropertyCollection propertyCollection = (MvpPropertyCollection) value;
-    String json = propertyCollection.getJson().toString();
-    st.setObject(index, json, Types.OTHER);
+    st.setObject(index, propertyCollection.asJsonString(), Types.OTHER);
   }
 }

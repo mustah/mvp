@@ -31,13 +31,11 @@ public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
     if (value == null) {
       return null;
     }
-    ObjectNode json;
     try {
-      json = (ObjectNode) OBJECT_MAPPER.readTree(value.getCharacterStream());
+      return new MvpPropertyCollection((ObjectNode) OBJECT_MAPPER.readTree(value.getCharacterStream()));
     } catch (IOException e) {
       throw new SerializationException(e.getMessage(), e);
     }
-    return new MvpPropertyCollection(json);
   }
 
   @Override
@@ -48,8 +46,7 @@ public class H2MvpPropertyCollectionType extends MvpPropertyCollectionType {
     }
 
     MvpPropertyCollection propertyCollection = (MvpPropertyCollection) value;
-    String json = propertyCollection.getJson().toString();
-    SerialClob clob = new SerialClob(json.toCharArray());
+    SerialClob clob = new SerialClob(propertyCollection.asJsonString().toCharArray());
     st.setObject(index, clob, Types.CLOB);
   }
 }

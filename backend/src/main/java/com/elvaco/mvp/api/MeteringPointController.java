@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 @RestApi
 public class MeteringPointController {
@@ -33,8 +32,8 @@ public class MeteringPointController {
     return repository.findAll();
   }
 
-  @RequestMapping(value = "/mps/external-id", method = RequestMethod.POST)
-  public List<MeteringPointEntity> mpsByExternalIds(@RequestBody PropertyCollectionDTO requestModel) throws JsonProcessingException {
-    return repository.findByExternalId("{\"user\":{\"externalId\": \"abc\"}}");
+  @RequestMapping(value = "/mps/property-collections", method = RequestMethod.POST)
+  public List<MeteringPointEntity> containsInPropertyCollections(@RequestBody PropertyCollectionDTO requestModel) {
+    return repository.containsInPropertyCollection(requestModel);
   }
 }

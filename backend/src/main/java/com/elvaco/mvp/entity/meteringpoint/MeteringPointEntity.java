@@ -10,6 +10,9 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 
+import lombok.ToString;
+
+@ToString
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "mps")
@@ -49,16 +52,5 @@ public class MeteringPointEntity {
 
   public MeteringPointEntity(String moid) {
     this.moid = moid;
-  }
-
-  @Override
-  public String toString() {
-    return "MeteringPointEntity{" +
-           "id=" + id +
-           ", status=" + status +
-           ", message='" + message + '\'' +
-           ", moid='" + moid + '\'' +
-           ", propertyCollection=" + propertyCollection +
-           '}';
   }
 }

@@ -3,15 +3,22 @@ package com.elvaco.mvp.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.NoRepositoryBean;
 
+import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 
+@NoRepositoryBean
 public interface MeteringPointRepository extends JpaRepository<MeteringPointEntity, Long> {
 
   MeteringPointEntity findByMoid(String moid);
 
-  @Query(value = "SELECT * FROM mps WHERE jsonb_contains(property_collection, to_jsonb(:json))", nativeQuery = true)
-  List<MeteringPointEntity> findByExternalId(@Param("json") String json);
+  List<MeteringPointEntity> containsInPropertyCollection(PropertyCollectionDTO requestModel);
+
+  /**
+   * @param fieldName is the top-level json field name.
+   *
+   * @return a list of entities that has <code>fieldName</code> in the top-level, otherwise an empty list.
+   */
+  List<MeteringPointEntity> existsInPropertyCollection(String fieldName);
 }
