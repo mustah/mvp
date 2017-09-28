@@ -23,14 +23,14 @@ const TopMenuContainer = (props: TopMenuContainerProps) => {
     <Row className="flex-1">
       <MainLogo/>
       <Row>
-        <Link to={routes.dashboard} replace={true} className="link">
+        <Link to={routes.dashboard} className="link">
           <MenuItem
             name="Dashboard"
             isSelected={routes.dashboard === pathname || routes.home === pathname}
             icon="dialpad"
           />
         </Link>
-        <Link to={routes.collection} replace={true} className="link">
+        <Link to={routes.collection} className="link">
           <MenuItem name="Insamling" isSelected={routes.collection === pathname} icon="dialpad"/>
         </Link>
         <Link to={routes.validation} className="link">

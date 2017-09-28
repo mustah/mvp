@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {Switch} from 'react-router';
+import {withRouter} from 'react-router';
 import {Route} from 'react-router-dom';
 import {RootState} from '../../reducers/index';
 import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
@@ -43,14 +43,12 @@ class App extends React.Component<RootState, any> {
             <SideMenuContainer/>
           </Layout>
           <Layout>
-            <Switch>
-              <Route path={routes.login} component={LoginPage}/>
-              <Route exact={true} path={routes.home} component={DashboardPage}/>
-              <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
-              <Route exact={true} path={routes.collection} component={CollectionPage}/>
-              <Route exact={true} path={routes.validation} component={ValidationPage}/>
-              <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisPage}/>
-            </Switch>
+            <Route path={routes.login} component={LoginPage}/>
+            <Route exact={true} path={routes.home} component={DashboardPage}/>
+            <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
+            <Route exact={true} path={routes.collection} component={CollectionPage}/>
+            <Route exact={true} path={routes.validation} component={ValidationPage}/>
+            <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisPage}/>
           </Layout>
         </Row>
       </div>
@@ -60,4 +58,4 @@ class App extends React.Component<RootState, any> {
 
 const mapStateToProps = (state: RootState) => ({...state});
 
-export default connect(mapStateToProps, {})(App);
+export default withRouter(connect(mapStateToProps, {})(App));
