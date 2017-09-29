@@ -1,17 +1,19 @@
 package com.elvaco.mvp.dialect.types;
 
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.Serializable;
+
 import org.hibernate.HibernateException;
 import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
 
-import java.io.Serializable;
+import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class MvpPropertyCollectionType implements UserType{
+abstract class MvpPropertyCollectionType implements UserType {
+
   @Override
-  public Class returnedClass() {
+  public Class<MvpPropertyCollection> returnedClass() {
     return MvpPropertyCollection.class;
   }
 
@@ -20,20 +22,18 @@ public abstract class MvpPropertyCollectionType implements UserType{
     return ObjectUtils.nullSafeEquals(x, y);
   }
 
-   @Override
+  @Override
   public int hashCode(Object x) throws HibernateException {
     if (x == null) {
       return 0;
     }
-
     return x.hashCode();
-   }
+  }
 
-   @Override
+  @Override
   public boolean isMutable() {
     return true;
   }
-
 
   @Override
   public Object deepCopy(Object value) throws HibernateException {
@@ -67,5 +67,4 @@ public abstract class MvpPropertyCollectionType implements UserType{
   public Object replace(Object original, Object target, Object owner) throws HibernateException {
     return deepCopy(original);
   }
-
 }

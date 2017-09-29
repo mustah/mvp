@@ -1,17 +1,18 @@
 package com.elvaco.mvp.bootstrap;
 
-import com.elvaco.mvp.config.InMemory;
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import java.util.stream.Stream;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.elvaco.mvp.dto.properycollection.UserPropertyDTO;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 
-@InMemory
+import static java.util.Arrays.asList;
+
 @Component
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
@@ -24,40 +25,37 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    List<MeteringPointEntity> mps = new ArrayList<>();
-    mps.add(new MeteringPointEntity("1"));
-    mps.add(new MeteringPointEntity("2"));
-    mps.add(new MeteringPointEntity("3"));
-    mps.add(new MeteringPointEntity("4"));
-    mps.add(new MeteringPointEntity("5"));
-    mps.add(new MeteringPointEntity("6"));
-    mps.add(new MeteringPointEntity("7"));
-    mps.add(new MeteringPointEntity("8"));
-    mps.add(new MeteringPointEntity("9"));
-    mps.add(new MeteringPointEntity("10"));
-    mps.forEach(mp -> {
-      switch (mp.moid) {
-        case "3":
-          mp.status = 200;
-          mp.message = "Low battery.";
-          mp.propertyCollection = new MvpPropertyCollection();
-          mp.propertyCollection.put("foo", "bar");
-          mp.propertyCollection.put("baz", "bop");
-          break;
-        case "5":
-          mp.status = 300;
-          mp.message = "Failed to read meter.";
-          mp.propertyCollection = new MvpPropertyCollection();
-          List<Integer> intList = new ArrayList<>();
-          intList.add(12);
-          intList.add(9999);
-
-          mp.propertyCollection.put("numbers", intList);
-          break;
-        default:
-          mp.message = "";
-      }
-      repository.save(mp);
-    });
+    Stream.of(
+      new MeteringPointEntity("1"),
+      new MeteringPointEntity("2"),
+      new MeteringPointEntity("3"),
+      new MeteringPointEntity("4"),
+      new MeteringPointEntity("5"),
+      new MeteringPointEntity("6"),
+      new MeteringPointEntity("7"),
+      new MeteringPointEntity("8"),
+      new MeteringPointEntity("9"),
+      new MeteringPointEntity("10")
+    )
+      .forEach(mp -> {
+        switch (mp.moid) {
+          case "3":
+            mp.status = 200;
+            mp.message = "Low battery.";
+            mp.propertyCollection = new MvpPropertyCollection()
+              .put("user", new UserPropertyDTO("abc123", "Under construction"));
+            break;
+          case "5":
+            mp.status = 300;
+            mp.message = "Failed to read meter.";
+            mp.propertyCollection = new MvpPropertyCollection()
+              .put("user", new UserPropertyDTO("123123", "Building under construction"))
+              .putArray("numbers", asList(1, 2, 3, 17));
+            break;
+          default:
+            mp.message = "";
+        }
+        repository.save(mp);
+      });
   }
 }

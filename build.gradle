@@ -1,6 +1,7 @@
-import com.avast.gradle.dockercompose.tasks.ComposeUp
-import com.avast.gradle.dockercompose.tasks.ComposeDown
 import com.avast.gradle.dockercompose.ComposeExtension
+import com.avast.gradle.dockercompose.tasks.ComposeDown
+import com.avast.gradle.dockercompose.tasks.ComposeUp
+
 buildscript {
   repositories {
     jcenter()
@@ -14,12 +15,12 @@ buildscript {
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
 
-def getVersion = { ->
+def getVersion = {->
   def stdout = new ByteArrayOutputStream()
-    exec {
-      commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
-      standardOutput = stdout
-    }
+  exec {
+    commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+    standardOutput = stdout
+  }
   return stdout.toString().trim()
 }
 
@@ -56,7 +57,8 @@ composeDown {
 task composePostgres(type: ComposeUp, dependsOn: composeDownAndRemovePostgres) {
   group = 'application'
   description = 'Run PostgreSQL only with docker-compose'
-  extension = new ComposeExtension(project,
+  extension = new ComposeExtension(
+    project,
     composePostgres, /*upTask (this task) */
     composeDownAndRemovePostgres /*downTask*/
   )
@@ -82,7 +84,7 @@ composeUp {
   description = 'Execute application with docker-compose against PostgreSQL'
   doLast {
     def applInfo = dockerCompose.servicesInfos.application.'application_1'
-    println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
+    println('The application is now running! Point your browser to: http://' + applInfo.host + ':' + applInfo.ports[80])
   }
 }
 

@@ -1,11 +1,14 @@
 package com.elvaco.mvp.api;
 
-import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointRepository;
 
@@ -19,25 +22,18 @@ public class MeteringPointController {
     this.repository = repository;
   }
 
-  /**
-   * Get metering point object from MOID.
-   *
-   * @param moid the MOID
-   *
-   * @return the metering point object if it exists
-   */
   @RequestMapping("/mps/{moid}")
   public MeteringPointEntity meteringPoint(@PathVariable String moid) {
     return repository.findByMoid(moid);
   }
 
-  /**
-   * Get a list of all users in system. <p> TODO : Do we need this endpoint when going to production? </p>
-   *
-   * @return a list of all defined users.
-   */
   @RequestMapping("/mps")
-  public Collection<MeteringPointEntity> meteringPoints() {
+  public List<MeteringPointEntity> meteringPoints() {
     return repository.findAll();
+  }
+
+  @RequestMapping(value = "/mps/property-collections", method = RequestMethod.POST)
+  public List<MeteringPointEntity> containsInPropertyCollections(@RequestBody PropertyCollectionDTO requestModel) {
+    return repository.containsInPropertyCollection(requestModel);
   }
 }
