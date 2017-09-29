@@ -10,7 +10,7 @@ import {config} from '../config';
  */
 describe('Configuration', () => {
 
-  const originalEnv = Object.assign({}, process.env);
+  const originalEnv = {...process.env};
   const configByEnvironment = (env: string): LazyAppConfig => {
     process.env.NODE_ENV = env;
     return config;
@@ -20,7 +20,6 @@ describe('Configuration', () => {
     delete process.env.NODE_ENV;
     return config;
   };
-
 
   beforeEach(() => {
     process.env = originalEnv;
@@ -38,33 +37,25 @@ describe('Configuration', () => {
   });
 
   it('reacts to development environment', () => {
-    const config = configByEnvironment('development');
-    expect(config).toBeInstanceOf(Function);
-    const actualValues = config();
+    const actualValues = configByEnvironment('development')();
     expect(actualValues).toHaveProperty('environment');
     expect(actualValues.environment).toEqual('development');
   });
 
   it('reacts to production environment', () => {
-    const config = configByEnvironment('production');
-    expect(config).toBeInstanceOf(Function);
-    const actualValues = config();
+    const actualValues = configByEnvironment('production')();
     expect(actualValues).toHaveProperty('environment');
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if no environment given', () => {
-    const config = configWithoutEnvironment();
-    expect(config).toBeInstanceOf(Function);
-    const actualValues = config();
+    const actualValues = configWithoutEnvironment()();
     expect(actualValues).toHaveProperty('environment');
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if invalid environment given', () => {
-    const config = configByEnvironment('hakuna matata robocop marshmallow');
-    expect(config).toBeInstanceOf(Function);
-    const actualValues = config();
+    const actualValues = configByEnvironment('hakuna matata robocop marshmallow')();
     expect(actualValues).toHaveProperty('environment');
     expect(actualValues.environment).toEqual('production');
   });
