@@ -1,17 +1,6 @@
 import {LazyAppConfig} from '../AppConfig';
 import {config} from '../config';
 
-const originalEnv = process.env;
-const configByEnvironment = (env: string): LazyAppConfig => {
-  process.env.NODE_ENV = env;
-  return config;
-};
-
-const configWithoutEnvironment = (): LazyAppConfig => {
-  delete process.env.NODE_ENV;
-  return config;
-};
-
 /**
  * Some of these tests needs to be updated based on actual values
  * used in the production, a typically bad smell for a test. I
@@ -20,6 +9,19 @@ const configWithoutEnvironment = (): LazyAppConfig => {
  * switching between prod <=> dev, resulting in run time errors.
  */
 describe('Configuration', () => {
+
+  const originalEnv = Object.assign({}, process.env);
+  const configByEnvironment = (env: string): LazyAppConfig => {
+    process.env.NODE_ENV = env;
+    return config;
+  };
+
+  const configWithoutEnvironment = (): LazyAppConfig => {
+    delete process.env.NODE_ENV;
+    return config;
+  };
+
+
   beforeEach(() => {
     process.env = originalEnv;
   });
