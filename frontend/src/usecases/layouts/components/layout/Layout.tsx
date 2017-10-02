@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {LayoutProps} from '../layoutTypes';
+import {LayoutProps} from '../layoutModels';
 import './Layout.scss';
 
 export const Layout: React.StatelessComponent<LayoutProps> = (props) => {

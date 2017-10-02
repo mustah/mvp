@@ -1,7 +1,7 @@
 import {AnyAction} from 'redux';
 import {widgetFactory} from '../../services/widgetService';
 import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
-import {DashboardModel} from './models/DashboardModel';
+import {DashboardModel} from './models/dashboardModels';
 
 export interface DashboardState {
   isFetching: boolean;

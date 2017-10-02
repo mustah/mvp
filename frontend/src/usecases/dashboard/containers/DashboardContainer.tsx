@@ -15,6 +15,7 @@ import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
 import {Table} from '../../table/components/table/Table';
 import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';
+import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {Map} from '../components/map/Map';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
@@ -82,7 +83,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
         <Column className="flex-1">
           <SelectionOverview title={'Allt'}/>
           <Content>
-            {dashboard.record && <SystemOverviewContainer overview={dashboard.record.systemOverview}/>}
+            {dashboard.record && <SystemOverview overview={dashboard.record.systemOverview}/>}
             <Xlarge className="Bold">Bestånd</Xlarge>
             <Map/>
             <Table data={normalizedData.meteringPoints}>
