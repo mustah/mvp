@@ -18,7 +18,23 @@ Install all dependencies.
 
 ```bash
 $ yarn install
+```
+
+Run the server in development mode, featuring:
+- live reload on source code change
+- configuration based on the config.dev.ts file
+
+```bash
 $ yarn start
+```
+
+Or,
+Run the server in production mode, featuring:
+- live reload on source code change
+- configuration based on the config.prod.ts file
+
+```bash
+$ yarn dist-server
 ```
 
 ### Run Fake REST api 

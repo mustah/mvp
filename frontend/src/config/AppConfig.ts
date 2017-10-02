@@ -9,6 +9,7 @@ interface AxiosConfig {
  */
 export interface AppConfig {
   axios: AxiosConfig;
+  environment: 'development' | 'production';
 }
 
 /**
