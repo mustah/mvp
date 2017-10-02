@@ -1,0 +1,29 @@
+@import "../../app/variables";
+
+// TODO Extract color into variables? how many greys are there..?!
+
+.Table {
+  background: white;
+  color: $lightest-black;
+  width: 100%;
+
+  th {
+    font-weight: normal;
+    text-align: left;
+  }
+
+  thead {
+    tr {
+      background: $light-grey;
+      border-color: $light-grey;
+      color: #94a4aa;
+      text-transform: uppercase;
+    }
+  }
+
+  th, td {
+    border-bottom: #e6e6e6;
+    padding: 10px;
+    vertical-align: top;
+  }
+}
