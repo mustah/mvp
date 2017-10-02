@@ -1,4 +1,4 @@
-import {LazyAppConfig} from '../AppConfig';
+import {AppConfig, LazyAppConfig} from '../AppConfig';
 import {config} from '../config';
 
 /**
@@ -29,34 +29,30 @@ describe('Configuration', () => {
     process.env = originalEnv;
   });
 
-  it('is a function that returns an object of configuration settings', () => {
-    const config = configByEnvironment('development');
+  it('has to be executed in order to retrieve actual values', () => {
+    const config: LazyAppConfig = configByEnvironment('development');
     expect(config).toBeInstanceOf(Function);
     const actualValues = config();
     expect(actualValues).toHaveProperty('environment');
   });
 
   it('reacts to development environment', () => {
-    const actualValues = configByEnvironment('development')();
-    expect(actualValues).toHaveProperty('environment');
+    const actualValues: AppConfig = configByEnvironment('development')();
     expect(actualValues.environment).toEqual('development');
   });
 
   it('reacts to production environment', () => {
-    const actualValues = configByEnvironment('production')();
-    expect(actualValues).toHaveProperty('environment');
+    const actualValues: AppConfig = configByEnvironment('production')();
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if no environment given', () => {
-    const actualValues = configWithoutEnvironment()();
-    expect(actualValues).toHaveProperty('environment');
+    const actualValues: AppConfig = configWithoutEnvironment()();
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if invalid environment given', () => {
-    const actualValues = configByEnvironment('hakuna matata robocop marshmallow')();
-    expect(actualValues).toHaveProperty('environment');
+    const actualValues: AppConfig = configByEnvironment('hakuna matata robocop marshmallow')();
     expect(actualValues.environment).toEqual('production');
   });
 });
