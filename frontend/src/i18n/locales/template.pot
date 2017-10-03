@@ -1,0 +1,39 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"POT-Creation-Date: 2017-10-05T12:18:05.458Z\n"
+"PO-Revision-Date: 2017-10-05T12:18:05.458Z\n"
+
+msgid "email"
+msgstr ""
+
+msgid "password"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "common errors & warnings"
+msgstr ""
+
+msgid "gateway"
+msgstr ""
+
+msgid "collection"
+msgstr ""
+
+msgid "consumption"
+msgstr ""
+
+msgid "common alarms"
+msgstr ""
+
+msgid "meter"
+msgstr ""
+
+msgid "validation"
+msgstr ""
