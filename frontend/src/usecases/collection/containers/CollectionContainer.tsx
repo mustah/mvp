@@ -3,7 +3,11 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
+import {Image} from '../../common/components/images/Image';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
+import {MainTitle} from '../../common/components/texts/MainTitle';
+import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
@@ -24,6 +28,11 @@ const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRoute
         <SelectionOverview title={'Allt'}/>
         <Content>
           <CollectionOverview/>
+          <Image src="usecases/collection/img/collections-errors-warnings.png"/>
+
+          <Title>{translate('gateways')}</Title>
+          <Image src="usecases/collection/img/gateways.png"/>
+
           <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
         </Content>
       </Column>

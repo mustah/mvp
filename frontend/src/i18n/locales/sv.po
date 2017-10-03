@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T13:25:39.350Z\n"
-"PO-Revision-Date: 2017-10-05 15:28+0200\n"
+"POT-Creation-Date: 2017-10-03T12:05:52.480Z\n"
+"PO-Revision-Date: 2017-10-03 14:06+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -111,6 +111,33 @@ msgstr "sortera stigande"
 #~ msgstr "graf"
 
 #~ msgid "collection"
+#~ msgstr "insamling"
+msgid "gateways"
+msgstr "gateways"
+
+#, fuzzy
+#| msgid "collection"
+msgid "collections"
+msgstr "insamling"
+
+msgid "system overview"
+msgstr "systemöversikt"
+
+msgid "consumption"
+msgstr "förbrukning"
+
+msgid "common alarms"
+msgstr "vanliga alarm"
+
+msgid "meters"
+msgstr "mätare"
+
+msgid "validations"
+msgstr "validering"
+
+#, fuzzy
+#~| msgid "collection"
+#~ msgid "population"
 #~ msgstr "insamling"
 
 #~ msgid "{{count}} data point"

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {PeriodSelection} from '../../../common/components/dates/PeriodSelection';
 import {Xlarge} from '../../../common/components/texts/Texts';
+import {Column} from '../../../layouts/components/column/Column';
 import {Row} from '../../../layouts/components/row/Row';
 import {ColoredBox} from '../../../widget/components/coloredBox/ColoredBox';
 import {DonutGraph} from '../../../widget/components/donutGraph/DonutGraph';
@@ -8,6 +9,7 @@ import {ColoredBoxModel as ColoredBoxModel} from '../../../widget/models/Colored
 import {DonutGraphModel as DonutGraphModel} from '../../../widget/models/DonutGraphModel';
 import {WidgetModel} from '../../../widget/models/WidgetModel';
 import {SystemOverviewState} from '../../models/dashboardModels';
+import './SystemOverview.scss';
 
 interface SystemOverviewProps {
   overview: SystemOverviewState;
@@ -29,7 +31,7 @@ export const SystemOverview = (props: SystemOverviewProps) => {
   };
 
   return (
-    <div>
+    <Column className="SystemOverview">
       <Row>
         <Xlarge className="Bold">{overview.title}</Xlarge>
       </Row>
@@ -39,6 +41,6 @@ export const SystemOverview = (props: SystemOverviewProps) => {
       <Row>
         {overview.widgets.map(renderWidget)}
       </Row>
-    </div>
+    </Column>
   );
 };

@@ -7,6 +7,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "POT-Creation-Date: 2017-10-05T12:18:05.458Z\n"
 "PO-Revision-Date: 2017-10-05T12:18:05.458Z\n"
+"POT-Creation-Date: 2017-10-03T12:05:52.480Z\n"
+"PO-Revision-Date: 2017-10-03T12:05:52.480Z\n"
 
 msgid "email"
 msgstr ""
@@ -20,7 +22,13 @@ msgstr ""
 msgid "common errors & warnings"
 msgstr ""
 
+msgid "gateways"
+msgstr ""
+
 msgid "gateway"
+msgstr ""
+
+msgid "system overview"
 msgstr ""
 
 msgid "collection"
@@ -30,6 +38,9 @@ msgid "consumption"
 msgstr ""
 
 msgid "common alarms"
+msgstr ""
+
+msgid "meters"
 msgstr ""
 
 msgid "meter"

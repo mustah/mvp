@@ -102,7 +102,7 @@ Sparky.task('set-production', ['clean'], () => isProduction = true);
 
 Sparky.task('tests', () => runTests());
 
-Sparky.task('default', ['clean', 'config', 'copy:assets', 'copy:external-assets'], () => {
+Sparky.task('default', ['clean', 'config', 'watch:assets', 'copy:external-assets'], () => {
   fuse.dev();
   app.watch().hmr().completed(runTests);
   return fuse.run();

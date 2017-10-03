@@ -5,7 +5,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
-import {Xlarge} from '../../common/components/texts/Texts';
+import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
@@ -83,8 +83,9 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
         <Column className="flex-1">
           <SelectionOverview title={'Allt'}/>
           <Content>
-            {dashboard.record && <SystemOverview overview={dashboard.record.systemOverview}/>}
-            <Xlarge className="Bold">Bestånd</Xlarge>
+            {record && <SystemOverview overview={record.systemOverview}/>}
+            <Title>{translate('collections')}</Title>
+
             <Map/>
             <Table data={normalizedData.meteringPoints}>
               <TableColumn
