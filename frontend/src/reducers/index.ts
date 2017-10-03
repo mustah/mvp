@@ -8,7 +8,7 @@ import {TabsState} from '../usecases/tabs/models/TabsModel';
 import {tabs} from '../usecases/tabs/tabsReducer';
 import {dataAnalysis} from '../usecases/data-analysis/dataAnalysisReducer';
 import {DataAnalysisState} from '../usecases/data-analysis/models/DataAnalysis';
-import {language, LanguageState} from '../usecases/topmenu/containers/languageReducer';
+import {language, LanguageState} from '../usecases/topmenu/languageReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
 

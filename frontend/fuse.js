@@ -79,7 +79,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
   app = fuse.bundle('app').instructions('> index.tsx');
 
   try {
-    const numberOfTypeErrors = runTypeChecker();
+    runTypeChecker();
   } catch (error) {
     console.error(error.stack);
     process.exit(1);

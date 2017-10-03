@@ -35,7 +35,7 @@ const createPotFile = async ({base}) => {
       const json = parser.get()[defaultLanguage][defaultNamespace];
       const data = await converter.i18nextToPot(defaultLanguage, JSON.stringify(json), {quiet: true});
 
-      fs.writeFileSync('./template.pot', data, utf8)
+      fs.writeFileSync('./src/i18n/locales/template.pot', data, utf8)
     })
     .exec();
 };
