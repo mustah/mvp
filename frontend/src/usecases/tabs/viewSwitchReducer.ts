@@ -1,23 +1,23 @@
 import {AnyAction} from 'redux';
-import {VIEW_SWITCH_CHANGE_TAB} from './viewSwitchActions';
+import {CHANGE_TAB} from './viewSwitchActions';
 
 export interface TabView {
   selectedTab: string;
 }
 
-export interface ViewSwitchState {
+export interface TabsState {
   [key: string]: TabView;
 }
 
-const viewSwitchInitialState: ViewSwitchState = {
+const tabsInitialState: TabsState = {
   validation: {selectedTab: 'list'},
   dashboard: {selectedTab: 'map'},
 };
 
-export const viewSwitch = (state: ViewSwitchState = viewSwitchInitialState, action: AnyAction) => {
+export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => {
   const {payload} = action;
   switch (action.type) {
-    case VIEW_SWITCH_CHANGE_TAB:
+    case CHANGE_TAB:
       return {
         ...state,
         [payload.useCase]: {selectedTab: payload.tab},

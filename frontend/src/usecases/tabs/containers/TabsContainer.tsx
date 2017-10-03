@@ -10,7 +10,7 @@ interface ViewSwitchContainerProps {
   tabView: TabView;
 }
 
-export const ViewSwitchContainer = (props: ViewSwitchContainerProps) => {
+export const TabsContainer = (props: ViewSwitchContainerProps) => {
   const {children, tabView} = props;
   const Tabs = children;
   const SelectedTab = children.filter(child => child.props.tabName === tabView.selectedTab);

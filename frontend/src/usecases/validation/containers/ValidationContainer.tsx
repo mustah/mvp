@@ -7,11 +7,11 @@ import {SelectionOverview} from '../../common/components/selectionoverview/Selec
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
-import {TabItem} from '../../viewSwitch/components/tabItem/TabItem';
-import {ViewSwitchContainer} from '../../viewSwitch/containers/ViewSwitchContainer';
-import {TabTypes} from '../../viewSwitch/models/Tabs';
-import {viewSwitchChangeTab} from '../../viewSwitch/viewSwitchActions';
-import {TabView} from '../../viewSwitch/viewSwitchReducer';
+import {TabItem} from '../../tabs/components/tabItem/TabItem';
+import {TabsContainer} from '../../tabs/containers/TabsContainer';
+import {TabTypes} from '../../tabs/models/Tabs';
+import {ChangeTab} from '../../tabs/viewSwitchActions';
+import {TabView} from '../../tabs/viewSwitchReducer';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
 import {ValidationOverviewContainer} from './ValidationOverviewContainer';
@@ -39,14 +39,14 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
           <ValidationOverviewContainer/>
           <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
 
-          <ViewSwitchContainer tabView={tabView}>
+          <TabsContainer tabView={tabView}>
             <TabItem tabName={TabTypes.map} isSelected={tabView.selectedTab === TabTypes.map} changeTab={changeTab}>
               <TmpComponent options={['Test1', 'Test2']}/>
             </TabItem>
             <TabItem tabName={TabTypes.list} isSelected={tabView.selectedTab === TabTypes.list} changeTab={changeTab}>
               <div>Tab content 2</div>
             </TabItem>
-          </ViewSwitchContainer>
+          </TabsContainer>
 
         </Content>
       </Column>
@@ -72,7 +72,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchValidations,
-  viewSwitchChangeTab,
+  viewSwitchChangeTab: ChangeTab,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ValidationContainer);

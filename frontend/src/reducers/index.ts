@@ -9,7 +9,7 @@ import {DataAnalysisState} from '../usecases/dataAnalysis/models/DataAnalysis';
 import {language, LanguageState} from '../usecases/topmenu/containers/languageReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
-import {viewSwitch, ViewSwitchState} from '../usecases/viewSwitch/viewSwitchReducer';
+import {tabs, TabsState} from '../usecases/tabs/viewSwitchReducer';
 
 export interface RootState {
   auth: AuthState;
@@ -19,7 +19,7 @@ export interface RootState {
   validation: ValidationState;
   dataAnalysis: DataAnalysisState;
   language: LanguageState;
-  viewSwitch: ViewSwitchState;
+  viewSwitch: TabsState;
 }
 
 export const rootReducer = combineReducers<RootState>({
@@ -30,5 +30,5 @@ export const rootReducer = combineReducers<RootState>({
   validation,
   dataAnalysis,
   language,
-  viewSwitch,
+  viewSwitch: tabs,
 });
