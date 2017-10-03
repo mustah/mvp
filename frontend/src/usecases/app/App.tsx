@@ -13,6 +13,7 @@ import {Row} from '../layouts/components/row/Row';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
 import ValidationContainer from '../validation/containers/ValidationContainer';
+import './_common.scss';
 import './App.scss';
 import {routes} from './routes';
 

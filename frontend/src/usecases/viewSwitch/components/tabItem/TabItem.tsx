@@ -18,7 +18,7 @@ export const TabItem = (props: TabItemProps) => {
   };
 
   return (
-    <Column onClick={onClick}>
+    <Column onClick={onClick} className={'clickable'}>
       <div className={classNames('TabItem', {isSelected})}>
         {translate(tabName)}
       </div>
