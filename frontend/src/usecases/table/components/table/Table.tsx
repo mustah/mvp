@@ -9,6 +9,7 @@ export interface TableColumn {
   // this is useful for passing metadata, for example status codes
   formatted?: string;
   renderCell?: (value: any, index: number) => any;
+  order?: 'asc' | 'desc';
 }
 
 interface TableProps {
@@ -18,6 +19,17 @@ interface TableProps {
 
 export const Table = (props: TableProps) => {
   const {columns, rows} = props;
+
+  const renderHeader = (col, index) => {
+    if (!col.formatted) {
+      return null;
+    }
+    if (col.order) {
+      const order =  col.order === 'asc' ? '▲' : '▼';
+      return <th key={index} className={classNames('sort', col.order)}>{translate(col.formatted)}{order}</th>;
+    }
+    return <th key={index}>{translate(col.formatted)}</th>;
+  };
 
   const renderCell = (cell, cellIndex) => {
     const decorator = columns[cellIndex % columns.length].renderCell;
@@ -35,7 +47,7 @@ export const Table = (props: TableProps) => {
     <table className={classNames('Table')} cellPadding={0} cellSpacing={0}>
       <thead>
       <tr>
-        {columns.map((col, index) => col.formatted ? <th key={index}>{translate(col.formatted)}</th> : null)}
+        {columns.map(renderHeader)}
       </tr>
       </thead>
       <tbody>

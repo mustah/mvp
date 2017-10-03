@@ -62,6 +62,8 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       {
         index: 'status',
         formatted: 'Status',
+        order: 'asc',
+        orderable: true,
         renderCell: (value, index) => {
           return (
             <div>
