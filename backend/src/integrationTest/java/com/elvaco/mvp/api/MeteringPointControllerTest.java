@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
-import com.elvaco.mvp.dto.properycollection.UserPropertyDTO;
+import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
+import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 

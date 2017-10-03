@@ -1,4 +1,4 @@
-package com.elvaco.mvp.dto.properycollection;
+package com.elvaco.mvp.dto.propertycollection;
 
 public class UserPropertyDTO {
 
