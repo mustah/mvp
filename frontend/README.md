@@ -78,6 +78,14 @@ So far we have not mapped Material Icons and will try to avoid this as long as p
 This will hopefully make the icon handling easy although we at some point most likely will have to decide
 how to handle the Elvaco proprietary icons.
 
+# Fonts
+
+We are using *PT Sans* as the font of choice for most text in the application. More specifically, we are using both the regular and the bold versions.
+
+The font is available in [Google Fonts](https://fonts.google.com/specimen/PT+Sans?selection.family=PT+Sans:400,700).
+
+For easier local hosting, we use [Google Webfonts Helper](https://google-webfonts-helper.herokuapp.com/fonts/pt-sans?subsets=latin) which has copy & paste instructions for when you want to host the font files together with the application.
+
 # Resources
 
 ### Bundlers and module loaders
