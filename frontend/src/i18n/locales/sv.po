@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "email"
 msgstr "epost"
@@ -18,30 +18,56 @@ msgstr "epost"
 msgid "password"
 msgstr "lösenord"
 
+msgid "map"
+msgstr "karta"
 msgid "meter"
 msgstr "mätare"
 
+msgid "list"
+msgstr "lista"
 msgid "type"
 msgstr "typ"
 
+#~ msgid "collection"
+#~ msgstr "insamling"
 msgid "location"
 msgstr "plats"
 
+#~ msgid "{{count}} data point"
+#~ msgstr "{{count}} datapunkt"
 msgid "gateway"
 msgstr "gateway"
 
+#~ msgid "measurement quality"
+#~ msgstr "mätvärdeskvalitet"
 msgid "status"
 msgstr "status"
 
+#~ msgid "connectors"
+#~ msgstr "connectorer"
 #~ msgid "Meter"
 #~ msgstr "Mätare"
 
+#~ msgid "{{count}} unit"
+#~ msgstr "{{count}} enhet"
 #~ msgid "Type"
 #~ msgstr "Typ"
 
+#~ msgid "a date: {{date}}"
+#~ msgstr "ett datum: {{date}}"
 #~ msgid "Location"
 #~ msgstr "Plats"
 
+#~ msgid "a number: {{num}}"
+#~ msgstr "ett nummer: {{num}}"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} data point°"
+#~ msgstr "{{count}} datapunkter"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} unit°"
+#~ msgstr "{{count}} enheter"
 #~ msgid "Gateway"
 #~ msgstr "Gateway"
 
