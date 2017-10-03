@@ -6,7 +6,7 @@ import {TabUnderline} from '../tabUnderline/TabUnderliner';
 
 export const TabOptions = (props) => {
   return (
-    <Column className="flex-1">
+    <Column>
       <Row className={'flex-1 Row-right'}>
         <Icon name={'magnify'} size="medium"/>
         <Icon name={'dots-vertical'} size="medium"/>

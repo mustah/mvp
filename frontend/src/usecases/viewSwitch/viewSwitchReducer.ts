@@ -11,6 +11,7 @@ export interface ViewSwitchState {
 
 const viewSwitchInitialState: ViewSwitchState = {
   validation: {selectedTab: 'list'},
+  dashboard: {selectedTab: 'map'},
 };
 
 export const viewSwitch = (state: ViewSwitchState = viewSwitchInitialState, action: AnyAction) => {
