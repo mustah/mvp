@@ -1,6 +1,6 @@
-import * as React from 'react';
-import {translate} from '../../../services/translationService';
 import * as classNames from 'classnames';
+import * as React from 'react';
+import {translate} from '../../../../services/translationService';
 import './Table.scss';
 
 export interface TableColumn {
@@ -17,23 +17,25 @@ interface TableProps {
 }
 
 export const Table = (props: TableProps) => {
-  let {columns, rows} = props;
+  const {columns, rows} = props;
 
-  const renderRow = function (row, rowIndex) {
-    if(!columns[rowIndex % columns.length].formatted) {
+  const renderCell = (cell, cellIndex) => {
+    const decorator = columns[cellIndex % columns.length].renderCell;
+    return <td key={cellIndex}>{decorator ? decorator(cell, cellIndex) : cell}</td>;
+  };
+
+  const renderRow = (row, rowIndex) => {
+    if (!columns[rowIndex % columns.length].formatted) {
       return null;
     }
-    return <tr>{row.map(function (cell, cellIndex) {
-      const decorator = columns[cellIndex % columns.length].renderCell;
-      return <td>{decorator ? decorator(cell, cellIndex) : cell}</td>;
-    })}</tr>;
+    return <tr key={rowIndex}>{row.map(renderCell)}</tr>;
   };
 
   return (
     <table className={classNames('Table')} cellPadding={0} cellSpacing={0}>
       <thead>
       <tr>
-        {columns.map(col => col.formatted ? <th>{translate(col.formatted)}</th> : null)}
+        {columns.map((col, index) => col.formatted ? <th key={index}>{translate(col.formatted)}</th> : null)}
       </tr>
       </thead>
       <tbody>

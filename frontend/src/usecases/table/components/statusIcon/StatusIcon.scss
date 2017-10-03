@@ -1,0 +1,21 @@
+@import "../../../app/variables";
+
+.StatusIcon {
+  display: inline-block;
+  height: 18px;
+  margin-right: 4px;
+  width: 18px;
+
+  &.ok {
+    background: $green;
+  }
+
+  &.warning {
+    background: $orange;
+  }
+
+  &.critical {
+    background: $red;
+  }
+}
+

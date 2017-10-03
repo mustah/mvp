@@ -10,7 +10,8 @@ import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
-import {Table, TableColumn} from '../../table/components/Table';
+import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
+import {Table, TableColumn} from '../../table/components/table/Table';
 import {Map} from '../components/map/Map';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
@@ -40,11 +41,11 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       {
         index: 'meter',
         formatted: 'Meter',
-        renderCell: function (value, index) {
-          return (<Link to={'/meter/' + value}>
+        renderCell: (value, index) => (
+          <Link to={'/meter/' + value}>
             {value}
-          </Link>);
-        }
+          </Link>
+        ),
       },
       {
         index: 'type',
@@ -61,9 +62,14 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       {
         index: 'status',
         formatted: 'Status',
-      },
-      {
-        index: 'statusCode',
+        renderCell: (value, index) => {
+          return (
+            <div>
+              <StatusIcon statusCode={value.code}/>
+              {value.text}
+            </div>
+          );
+        },
       },
     ];
 
@@ -73,35 +79,50 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
         'UNICOcoder',
         'Område 1 fast 12',
         'YY',
-        'OK',
+        {
+          code: 0,
+          text: 'ok',
+        },
       ],
       [
         '1234 1234 1234',
         'UNICOcoder',
         'Område 1 fast 12',
         'YY',
-        'Mätare går baklänges',
+        {
+          code: 3,
+          text: 'Mätare går baklänges',
+        },
       ],
       [
         '1234 1234 1234',
         'UNICOcoder',
         'Område 1 fast 12',
         'YY',
-        'Mätare går baklänges',
+        {
+          code: 2,
+          text: 'Mätare går baklänges',
+        },
       ],
       [
         '1234 1234 1234',
         'UNICOcoder',
         'Område 1 fast 12',
         'YY',
-        'Mätare går baklänges',
+        {
+          code: 2,
+          text: 'Mätare går baklänges',
+        },
       ],
       [
         '1234 1234 1234',
         'UNICOcoder',
         'Område 1 fast 12',
         'YY',
-        'Mätare går baklänges',
+        {
+          code: 2,
+          text: 'Mätare går baklänges',
+        },
       ],
     ];
 
