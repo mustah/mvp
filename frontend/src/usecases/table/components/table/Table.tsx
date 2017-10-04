@@ -15,6 +15,11 @@ interface TableProps {
 export const Table = (props: TableProps) => {
   const {data, children} = props;
 
+  /**
+   * TODO the alternative to 'any' below is to create and maintain our
+   * own typescript file (X.d.ts). I don't feel like it's worth the
+   * investment when refactoring & renaming things all over.
+   */
   const ths = React.Children.map(children, (child: any) => child.props.header);
 
   const columnCallbacks = {};
