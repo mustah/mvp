@@ -4,7 +4,7 @@ export const TabTypes = {
   graph: 'graph',
 };
 
-interface Tabs {
+export interface Tabs {
   [key: string]: {
     selectedOption: string | null;
   };

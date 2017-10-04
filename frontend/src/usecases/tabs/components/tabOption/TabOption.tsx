@@ -11,9 +11,7 @@ export interface TabOptionProps extends Selectable {
 
 export const TabOption = (props: TabOptionProps) => {
   const {tab, tabOptionAction, isSelected, option} = props;
-  const onClick = () => {
-    tabOptionAction(tab, option);
-  };
+  const onClick = () => tabOptionAction(tab, option);
   return (
     <div className={classNames('TabOption', {isSelected}, 'clickable')} onClick={onClick}>
       {option}

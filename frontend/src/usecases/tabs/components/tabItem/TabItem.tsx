@@ -13,9 +13,7 @@ interface TabItemProps extends Selectable {
 
 export const TabItem = (props: TabItemProps) => {
   const {tabName, isSelected, changeTab} = props;
-  const onClick = () => {
-    changeTab(tabName);
-  };
+  const onClick = () => changeTab(tabName);
 
   return (
     <Column onClick={onClick} className={'clickable'}>
