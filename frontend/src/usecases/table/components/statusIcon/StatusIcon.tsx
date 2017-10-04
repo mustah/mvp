@@ -4,16 +4,20 @@ import {States} from '../../../../types/Types';
 import './StatusIcon.scss';
 
 interface StatusIconProps {
-  statusCode: number;
+  code: number;
+  content?: string;
 }
 
 export const StatusIcon = (props: StatusIconProps) => {
-  const {statusCode} = props;
-  const status = States(statusCode);
+  const {code, content} = props;
+  const status = States(code);
   if (!status.valid) {
     return null;
   }
   return (
-    <div className={classNames('StatusIcon', status.state)}/>
+    <div>
+      <div className={classNames('StatusIcon', status.state)}/>
+      {content}
+    </div>
   );
 };

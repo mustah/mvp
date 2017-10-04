@@ -5,4 +5,5 @@ export const routes = {
   validation: '/validation',
   dataAnalysis: '/metering-series',
   login: '/login',
+  mp: '/mp',
 };
