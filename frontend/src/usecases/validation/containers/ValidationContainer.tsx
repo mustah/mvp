@@ -8,7 +8,7 @@ import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {TabItem} from '../../tabs/components/tabItem/TabItem';
-import {TabOption} from '../../tabs/components/tabOptions/TabOption';
+import {TabOption} from '../../tabs/components/tabOption/TabOption';
 import {TabsContainer} from '../../tabs/containers/TabsContainer';
 import {TabTypes, TabView} from '../../tabs/models/Tabs';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
