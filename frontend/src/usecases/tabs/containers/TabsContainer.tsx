@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
-import {TabModes} from '../components/tabModes/TabModes';
 import {TabOptions} from '../components/tabOptions/TabOptions';
-import {TabView} from '../viewSwitchReducer';
+import {TabSettings} from '../components/tabSettings/TabSettings';
+import {TabView} from '../models/Tabs';
 
 interface ViewSwitchContainerProps {
   children: any;
@@ -15,14 +15,14 @@ export const TabsContainer = (props: ViewSwitchContainerProps) => {
   const Tabs = children;
   const SelectedTab = children.filter(child => child.props.tabName === tabView.selectedTab);
   const TabContent = SelectedTab[0].props.children;
-  const TabModeHeaders = TabContent.props.options;
+  const TabModeHeaders = TabContent.props.children;
 
   return (
   <Column>
     <Row>
       {Tabs}
-      <TabModes headers={TabModeHeaders}/>
-      <TabOptions/>
+      <TabOptions headers={TabModeHeaders}/>
+      <TabSettings/>
     </Row>
     {TabContent}
   </Column>

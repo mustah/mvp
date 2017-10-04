@@ -2,12 +2,12 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import 'TabItem.scss';
 import {translate} from '../../../../services/translationService';
+import {Selectable} from '../../../../types/Types';
 import {Column} from '../../../layouts/components/column/Column';
 import {TabUnderline} from '../tabUnderline/TabUnderliner';
 
-interface TabItemProps {
+interface TabItemProps extends Selectable {
   tabName: string;
-  isSelected: boolean;
   changeTab: (tab: string) => void;
 }
 

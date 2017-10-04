@@ -1,0 +1,12 @@
+@import '../../../app/variables';
+
+.TabOption {
+  font-size: $normal;
+  background-color: $dark-grey;
+  margin-right: $xs-space;
+  text-transform: uppercase;
+
+  &.isSelected {
+    font-weight: bold;
+  }
+}

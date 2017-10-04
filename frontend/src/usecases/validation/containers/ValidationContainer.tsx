@@ -8,10 +8,10 @@ import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {TabItem} from '../../tabs/components/tabItem/TabItem';
+import {TabOption} from '../../tabs/components/tabOptions/TabOption';
 import {TabsContainer} from '../../tabs/containers/TabsContainer';
-import {TabTypes} from '../../tabs/models/Tabs';
-import {ChangeTab} from '../../tabs/viewSwitchActions';
-import {TabView} from '../../tabs/viewSwitchReducer';
+import {TabTypes, TabView} from '../../tabs/models/Tabs';
+import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
 import {ValidationOverviewContainer} from './ValidationOverviewContainer';
@@ -20,15 +20,23 @@ export interface ValidationContainerProps {
   fetchValidations: () => any;
   validation: ValidationState;
   tabView: TabView;
-  viewSwitchChangeTab: (payload) => any;
+  changeTab: (payload) => any;
+  changeTabOption: (payload) => any;
 }
 
 const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRouterProps) => {
-  const {fetchValidations, tabView, viewSwitchChangeTab} = props;
-  const changeTab = (tab: string) => {
-    viewSwitchChangeTab({
+  const {fetchValidations, tabView, changeTab, changeTabOption} = props;
+  const onChangeTab = (tab: string) => {
+    changeTab({
       useCase: 'validation',
       tab,
+    });
+  };
+  const onChangeTabOption = (tab: string, option: string): void => {
+    changeTabOption({
+      useCase: 'validation',
+      tab,
+      option,
     });
   };
   return (
@@ -40,11 +48,41 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
           <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
 
           <TabsContainer tabView={tabView}>
-            <TabItem tabName={TabTypes.map} isSelected={tabView.selectedTab === TabTypes.map} changeTab={changeTab}>
-              <TmpComponent options={['Test1', 'Test2']}/>
+            <TabItem tabName={TabTypes.map} isSelected={tabView.selectedTab === TabTypes.map} changeTab={onChangeTab}>
+              <TmpComponent content={'hej hej'}>
+                <TabOption
+                  tab={TabTypes.map}
+                  tabOptionAction={onChangeTabOption}
+                  option={'OptionA'}
+                  key={1}
+                  isSelected={tabView.tabs[TabTypes.map].selectedOption === 'OptionA'}
+                />
+                <TabOption
+                  tab={TabTypes.map}
+                  tabOptionAction={onChangeTabOption}
+                  option={'OptionB'}
+                  key={2}
+                  isSelected={tabView.tabs[TabTypes.map].selectedOption === 'OptionB'}
+                />
+              </TmpComponent>
             </TabItem>
-            <TabItem tabName={TabTypes.list} isSelected={tabView.selectedTab === TabTypes.list} changeTab={changeTab}>
-              <div>Tab content 2</div>
+            <TabItem tabName={TabTypes.list} isSelected={tabView.selectedTab === TabTypes.list} changeTab={onChangeTab}>
+              <TmpComponent content={'Another content'}>
+                <TabOption
+                  tab={TabTypes.list}
+                  tabOptionAction={onChangeTabOption}
+                  option={'Option1'}
+                  key={1}
+                  isSelected={tabView.tabs[TabTypes.list].selectedOption === 'Option1'}
+                />
+                <TabOption
+                  tab={TabTypes.list}
+                  tabOptionAction={onChangeTabOption}
+                  option={'Option2'}
+                  key={2}
+                  isSelected={tabView.tabs[TabTypes.list].selectedOption === 'Option2'}
+                />
+              </TmpComponent>
             </TabItem>
           </TabsContainer>
 
@@ -54,25 +92,25 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
   );
 };
 
-const TmpComponent = (props) => {
+const TmpComponent = (props: {content: string}) => {
   return (
     <div>
-      Hej hej
+      {props.content}
     </div>);
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {validation, viewSwitch} = state;
+  const {validation, tabs} = state;
   return {
     validation,
-    tabView: viewSwitch.validation,
-  }
-    ;
+    tabView: tabs.validation,
+  };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchValidations,
-  viewSwitchChangeTab: ChangeTab,
+  changeTab,
+  changeTabOption,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ValidationContainer);
