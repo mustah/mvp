@@ -27,7 +27,7 @@ export const Table = (props: TableProps) => {
     const cb = child.props.cell ? child.props.cell : (value) => value;
     columnCallbacks[child.props.id] = cb;
   });
-  const columns: string[] = React.Children.map(children, (child: any) => child.props.id);
+  const orderedColumns: string[] = React.Children.map(children, (child: any) => child.props.id);
 
   const rows = (data, columns: string[], columnCallbacks) => {
     if (data.allIds.length === 0) {
@@ -48,7 +48,7 @@ export const Table = (props: TableProps) => {
       <tr>{ths}</tr>
       </thead>
       <tbody>
-      {rows(data, columns, columnCallbacks!)}
+      {rows(data, orderedColumns, columnCallbacks!)}
       </tbody>
     </table>
   );
