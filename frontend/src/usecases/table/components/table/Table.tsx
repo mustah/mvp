@@ -35,15 +35,9 @@ export const Table = (props: TableProps) => {
       return null;
     }
 
-    const dataToRow = (id) => (
-      <tr key={id}>
-        {columns.map((column, index) => {
-          const cb = columnCallbacks[column];
-          const value = data.byId[id][column];
-          return <td key={index}>
-            {cb(value)}
-          </td>;
-        })}
+    const dataToRow = (rowId) => (
+      <tr key={rowId}>
+        {columns.map((column, index) => <td key={index}>{columnCallbacks[column](data.byId[rowId][column])}</td>)}
       </tr>);
 
     return data.allIds.map(dataToRow);

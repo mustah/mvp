@@ -7,5 +7,5 @@ interface TableColumnProps {
 }
 
 export const TableColumn = (props: TableColumnProps) => {
-  return <td></td>;
+  return <td/>;
 };

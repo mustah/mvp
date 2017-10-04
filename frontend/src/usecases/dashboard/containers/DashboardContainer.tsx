@@ -102,9 +102,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
               />
               <TableColumn
                 id={'status'}
-                header={(<TableHead sortable={true} currentSort={'asc'}>
-                  {translate('Status')}
-                </TableHead>)}
+                header={<TableHead sortable={true} currentSort={'asc'}>{translate('Status')}</TableHead>}
                 cell={(value, index) => <StatusIcon code={value.code} content={value.text}/>}
               />
             </Table>
