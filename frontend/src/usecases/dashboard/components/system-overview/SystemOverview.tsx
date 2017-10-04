@@ -1,46 +1,28 @@
 import * as React from 'react';
-import {PeriodSelection} from '../../../common/components/dates/PeriodSelection';
-import {Xlarge} from '../../../common/components/texts/Texts';
+import {DonutGraphWidget} from '../../../common/components/indicators/DonutGraphWidget';
+import {IndicatorWidgetProps, IndicatorWidgets} from '../../../common/components/indicators/IndicatorWidgets';
+import {DonutGraph} from '../../../common/components/indicators/models/DonutGraphModels';
+import {MainTitle} from '../../../common/components/texts/MainTitle';
 import {Column} from '../../../layouts/components/column/Column';
-import {Row} from '../../../layouts/components/row/Row';
-import {ColoredBox} from '../../../widget/components/coloredBox/ColoredBox';
-import {DonutGraph} from '../../../widget/components/donutGraph/DonutGraph';
-import {ColoredBoxModel as ColoredBoxModel} from '../../../widget/models/ColoredBoxModel';
-import {DonutGraphModel as DonutGraphModel} from '../../../widget/models/DonutGraphModel';
-import {WidgetModel} from '../../../widget/models/WidgetModel';
-import {SystemOverviewState} from '../../models/dashboardModels';
 import './SystemOverview.scss';
 
-interface SystemOverviewProps {
-  overview: SystemOverviewState;
+interface SystemOverviewProps extends IndicatorWidgetProps {
+  title: string;
+  donutGraphs: DonutGraph[];
 }
 
 export const SystemOverview = (props: SystemOverviewProps) => {
-  const {overview} = props;
-
-  const renderWidget = (widget: WidgetModel, index: number) => {
-    if (widget instanceof ColoredBoxModel) {
-      return <ColoredBox key={index} {...widget as ColoredBoxModel}/>;
-    }
-
-    if (widget instanceof DonutGraphModel) {
-      return <DonutGraph key={index} {...widget as DonutGraphModel}/>;
-    }
-
-    return null;
-  };
-
+  const {indicators, donutGraphs, selectIndicatorWidget, selectedWidget, title} = props;
   return (
     <Column className="SystemOverview">
-      <Row>
-        <Xlarge className="Bold">{overview.title}</Xlarge>
-      </Row>
-      <Row className="Row-right">
-        <PeriodSelection/>
-      </Row>
-      <Row>
-        {overview.widgets.map(renderWidget)}
-      </Row>
+      <MainTitle title={title}/>
+      <IndicatorWidgets
+        selectIndicatorWidget={selectIndicatorWidget}
+        selectedWidget={selectedWidget}
+        indicators={indicators}
+      >
+        <DonutGraphWidget donutGraph={donutGraphs[0]}/>
+      </IndicatorWidgets>
     </Column>
   );
 };

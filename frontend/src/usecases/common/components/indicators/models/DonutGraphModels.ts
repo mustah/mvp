@@ -1,10 +1,9 @@
-import {WidgetModel} from './WidgetModel';
-
 export interface GraphRecord {
   name: string;
   value: number;
 }
 
-export class DonutGraphModel extends WidgetModel {
+export interface DonutGraph {
+  title: string;
   records: GraphRecord[];
 }

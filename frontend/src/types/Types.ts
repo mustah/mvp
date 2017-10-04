@@ -10,6 +10,8 @@ export interface Selectable {
   isSelected?: boolean;
 }
 
+export type uuid = string;
+
 export type State = 'ok' | 'warning' | 'critical' | 'info';
 
 // TODO this is up for refactoring:

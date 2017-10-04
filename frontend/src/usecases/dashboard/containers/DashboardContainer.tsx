@@ -4,11 +4,13 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
 import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
+import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
 import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
 import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
@@ -19,8 +21,9 @@ import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {Map} from '../components/map/Map';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
+import {SystemOverviewState} from '../models/dashboardModels';
 
-export interface DashboardContainerProps {
+export interface DashboardContainerProps extends SelectedIndicatorWidgetProps {
   fetchDashboard: () => any;
   dashboard: DashboardState;
 }
@@ -33,8 +36,21 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
   }
 
   render() {
-    const {fetchDashboard, dashboard} = this.props;
-    const now = new Date();
+    const {
+      dashboard: {record},
+      selectIndicatorWidget,
+      selectedWidget,
+    } = this.props;
+
+    const renderSystemOverview = (systemOverview: SystemOverviewState) => (
+      <SystemOverview
+        title={systemOverview.title}
+        indicators={systemOverview.indicators}
+        donutGraphs={systemOverview.donutGraphs}
+        selectedWidget={selectedWidget}
+        selectIndicatorWidget={selectIndicatorWidget}
+      />
+    );
 
     // this format is what we can expect from https://github.com/paularmstrong/normalizr
     const normalizedData = {
@@ -78,12 +94,14 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
     const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
     const renderStatusCell = (value, index) => <StatusIcon code={value.code} content={value.text}/>;
 
+
     return (
       <Layout>
         <Column className="flex-1">
           <SelectionOverview title={'Allt'}/>
           <Content>
-            {record && <SystemOverview overview={record.systemOverview}/>}
+            {record && renderSystemOverview(record.systemOverview)}
+
             <Title>{translate('collections')}</Title>
 
             <Map/>
@@ -140,6 +158,7 @@ const mapStateToProps = (state: RootState) => {
   const {dashboard} = state;
   return {
     dashboard,
+    selectedWidget: state.ui.selectedIndicators.dashboard,
   };
 };
 
@@ -150,6 +169,7 @@ const mapStateToProps = (state: RootState) => {
  */
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchDashboard,
+  selectIndicatorWidget: selectDashboardIndicatorWidget,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardContainer);

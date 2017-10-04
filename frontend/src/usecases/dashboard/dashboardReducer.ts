@@ -1,5 +1,4 @@
 import {AnyAction} from 'redux';
-import {widgetFactory} from '../../services/widgetService';
 import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
 import {DashboardModel} from './models/dashboardModels';
 
@@ -23,12 +22,15 @@ export const dashboard = (state: DashboardState = initialState, action: AnyActio
         isFetching: true,
       };
     case DASHBOARD_SUCCESS:
-      const dashboard = payload;
-      dashboard.systemOverview.widgets = payload.systemOverview.widgets.map(widgetFactory);
       return {
         ...state,
         isFetching: false,
-        record: dashboard,
+        record: {
+          ...payload,
+          systemOverview: {
+            ...payload.systemOverview,
+          },
+        },
       };
     case DASHBOARD_FAILURE:
       return {

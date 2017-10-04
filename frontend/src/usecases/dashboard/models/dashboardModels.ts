@@ -1,8 +1,10 @@
-import {WidgetModel} from '../../widget/models/WidgetModel';
+import {DonutGraph} from '../../common/components/indicators/models/DonutGraphModels';
+import {Indicator} from '../../common/components/indicators/models/IndicatorModels';
 
 export interface SystemOverviewState {
   title: string;
-  widgets: WidgetModel[];
+  indicators: Indicator[];
+  donutGraphs: DonutGraph[];
 }
 
 export interface DashboardModel {
