@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {TabItem} from '../../tabs/components/tabItem/TabItem';
-import {TabOption} from '../../tabs/components/tabOption/TabOption';
+import {TabOption, TabOptionProps} from '../../tabs/components/tabOption/TabOption';
 import {TabsContainer} from '../../tabs/containers/TabsContainer';
 import {Tabs, TabTypes} from '../../tabs/models/Tabs';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
@@ -69,7 +69,14 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   );
 };
 
-const TabContent = (props: {content: string}) => {
+export interface TabContentProps {
+  content: string;
+  children: Array<React.ReactElement<TabOptionProps>>;
+  // TODO: Perhaps create a common type for typing children without using so not have to write out Array<> and
+  // React.ReactElement all the time.
+}
+
+const TabContent = (props: TabContentProps) => {
   return (
     <div>
       {props.content}
@@ -85,8 +92,8 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    changeTab,
-    changeTabOption,
-  }, dispatch);
+  changeTab,
+  changeTabOption,
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

@@ -4,11 +4,14 @@ import 'TabItem.scss';
 import {translate} from '../../../../services/translationService';
 import {Selectable} from '../../../../types/Types';
 import {Column} from '../../../layouts/components/column/Column';
+import {TabContentProps} from '../../../validation/containers/ValidationTabsContainer';
 import {TabUnderline} from '../tabUnderline/TabUnderliner';
 
-interface TabItemProps extends Selectable {
+export interface TabItemProps extends Selectable {
   tabName: string;
   changeTab: (tab: string) => void;
+  children: React.ReactElement<TabContentProps>;
+  // TODO: Should replace any with a type that specifies either LIST, MAP or GRAPH.
 }
 
 export const TabItem = (props: TabItemProps) => {

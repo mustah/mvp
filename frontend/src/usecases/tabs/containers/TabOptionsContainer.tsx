@@ -5,7 +5,7 @@ import {TabOptionProps} from '../components/tabOption/TabOption';
 import {TabUnderline} from '../components/tabUnderline/TabUnderliner';
 
 interface TabOptionsContainerProps {
-  options: TabOptionProps[];
+  options: Array<React.ReactElement<TabOptionProps>>;
 }
 
 export const TabOptionsContainer = (props: TabOptionsContainerProps) => {

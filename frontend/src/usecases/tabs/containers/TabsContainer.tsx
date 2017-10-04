@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
+import {TabItemProps} from '../components/tabItem/TabItem';
 import {TabSettings} from '../components/tabSettings/TabSettings';
 import {TabOptionsContainer} from './TabOptionsContainer';
 
 interface TabsContainerProps {
-  children: any;
+  children: Array<React.ReactElement<TabItemProps>>;
   selectedTab: string;
 }
 
@@ -17,13 +18,13 @@ export const TabsContainer = (props: TabsContainerProps) => {
   const TabModeHeaders = TabContent.props.children;
 
   return (
-  <Column>
-    <Row>
-      {Tabs}
-      <TabOptionsContainer options={TabModeHeaders}/>
-      <TabSettings/>
-    </Row>
-    {TabContent}
-  </Column>
+    <Column>
+      <Row>
+        {Tabs}
+        <TabOptionsContainer options={TabModeHeaders}/>
+        <TabSettings/>
+      </Row>
+      {TabContent}
+    </Column>
   );
 };
