@@ -48,6 +48,9 @@ const runTypeChecker = () => {
   }
 };
 
+const materialDesignFonts = './node_modules/mdi/fonts/**/*';
+const googleFonts = './fonts/*';
+
 const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
 Sparky.task('config', ['convert-po-to-json'], () => {
@@ -80,7 +83,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
         removeExportsInterop: false,
         uglify: true,
       }),
-    ]
+    ],
   });
 
   fuse.bundle('vendor').instructions(`~ ${indexFile}`);
@@ -99,6 +102,7 @@ Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(dis
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
 
 Sparky.task('clean', ['remove-fusebox-cache'], () => Sparky.src(distDir).clean(distDir));
+Sparky.task('copy:external-assets', () => Sparky.src([assets], {base: homeDir}).dest(distDir));
 
 Sparky.task('set-production', () => isProduction = true);
 
