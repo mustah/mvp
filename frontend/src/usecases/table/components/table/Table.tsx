@@ -2,19 +2,13 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import './Table.scss';
 
-/*
-
 interface NormalizedObject {
   byId: object;
-  allId: string[];
+  allIds: string[];
 }
-*/
 
 interface TableProps {
-  data: any;
-  /*
   data: NormalizedObject;
-  */
   children: React.ReactNode[];
 }
 
