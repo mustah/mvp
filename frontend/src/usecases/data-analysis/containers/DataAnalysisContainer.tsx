@@ -21,7 +21,7 @@ export interface DataAnalysisContainerProps extends SelectedIndicatorWidgetProps
 }
 
 const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthRouterProps) => {
-  const {fetchDataAnalysis, selectedWidget, selectIndicatorWidget} = props;
+  const {selectedWidget, selectIndicatorWidget} = props;
   return (
     <Layout>
       <Column className="flex-1">
@@ -39,8 +39,6 @@ const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthR
           <Column className="Section">
             <Image src="usecases/data-analysis/img/graph-map.png"/>
           </Column>
-
-          <div className="button" onClick={fetchDataAnalysis}>DATA_ANALYSIS</div>
         </Content>
       </Column>
     </Layout>
