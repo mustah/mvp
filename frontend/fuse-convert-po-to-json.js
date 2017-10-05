@@ -10,7 +10,7 @@ const convertPoToJson = async ({base}) => {
 
   return Sparky.src('i18n/locales/*.po', {base})
     .completed(async (files) => {
-      const templatePot = fs.readFileSync('template.pot', utf8);
+      const templatePot = fs.readFileSync('./src/i18n/locales/template.pot', utf8);
       const templatePotJson = JSON.parse(await converter.gettextToI18next('en', templatePot, {quiet: true}));
       files.map(async (file) => {
         const language = extractLangFromFileName(file);
