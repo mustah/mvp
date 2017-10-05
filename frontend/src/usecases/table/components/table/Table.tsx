@@ -12,6 +12,10 @@ interface TableProps {
   children: React.ReactNode[];
 }
 
+interface Callbacks {
+  [fnName: string]: (...args) => any;
+}
+
 export const Table = (props: TableProps) => {
   const {data, children} = props;
 
@@ -22,14 +26,14 @@ export const Table = (props: TableProps) => {
    */
   const ths = React.Children.map(children, (child: any) => child.props.header);
 
-  const columnCallbacks = {};
+  const columnCallbacks: Callbacks = {};
   React.Children.forEach(children, (child: any) => {
     const cb = child.props.cell ? child.props.cell : (value) => value;
     columnCallbacks[child.props.id] = cb;
   });
   const orderedColumns: string[] = React.Children.map(children, (child: any) => child.props.id);
 
-  const rows = (data, columns: string[], columnCallbacks) => {
+  const rows = (data, columns: string[], columnCallbacks: Callbacks) => {
     if (data.allIds.length === 0) {
       return null;
     }
