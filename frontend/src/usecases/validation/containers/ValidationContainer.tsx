@@ -31,6 +31,7 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
           <Image src="usecases/validation/img/alarms.png"/>
 
           <Title>{translate('meter')}</Title>
+
           <ValidationTabsContainer/>
 
           <div className="button" onClick={fetchValidations}>{translate('validation')}</div>

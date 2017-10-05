@@ -21,7 +21,7 @@ const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(CollectionContainer);
 const ValidationPage = userIsAuthenticated(ValidationContainer);
-const DataAnalysisPage = userIsAuthenticated(DataAnalysisContainer);
+const ReportPage = userIsAuthenticated(DataAnalysisContainer);
 
 /**
  * The Application root component should extend React.Component in order
@@ -49,7 +49,7 @@ class App extends React.Component<RootState, any> {
             <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
             <Route exact={true} path={routes.collection} component={CollectionPage}/>
             <Route exact={true} path={routes.validation} component={ValidationPage}/>
-            <Route exact={true} path={routes.dataAnalysis} component={DataAnalysisPage}/>
+            <Route exact={true} path={routes.report} component={ReportPage}/>
           </Layout>
         </Row>
       </div>

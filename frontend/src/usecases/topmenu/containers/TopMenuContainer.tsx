@@ -36,8 +36,8 @@ const TopMenuContainer = (props: TopMenuContainerProps) => {
         <Link to={routes.validation} className="link">
           <MenuItem name="Validering" isSelected={routes.validation === pathname} icon="dialpad"/>
         </Link>
-        <Link to={routes.dataAnalysis} className="link">
-          <MenuItem name="Mätserier" isSelected={routes.dataAnalysis === pathname} icon="dialpad"/>
+        <Link to={routes.report} className="link">
+          <MenuItem name="Rapport" isSelected={routes.report === pathname} icon="dialpad"/>
         </Link>
       </Row>
       <ProfileContainer user={auth.user} logout={logout}/>

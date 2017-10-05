@@ -51,7 +51,6 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       />
     );
 
-    // this format is what we can expect from https://github.com/paularmstrong/normalizr
     const normalizedData = {
       meteringPoints: {
         byId: {
