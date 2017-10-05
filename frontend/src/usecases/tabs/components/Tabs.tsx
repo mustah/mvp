@@ -14,7 +14,7 @@ interface TabsProps {
 export const Tabs = (props: TabsProps) => {
   const {children, selectedTab} = props;
   const Tabs = children;
-  const SelectedTab = children.filter(child => child.props.tabName === selectedTab);
+  const SelectedTab = children.filter(child => child.props.tab === selectedTab);
   const TabContent = SelectedTab[0].props.children;
   const TabModeHeaders = TabContent.props.children;
 

@@ -1,16 +1,16 @@
 import {AnyAction} from 'redux';
-import {TabsState, TabTypes} from './models/TabsModel';
+import {TabsState, tabTypes} from './models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {
   validation: {
-    selectedTab: TabTypes.list,
+    selectedTab: tabTypes.list,
     tabs: {
-      [TabTypes.map]: {
-        selectedOption: null,
+      [tabTypes.map]: {
+        selectedOption: '',
       },
-      [TabTypes.list]: {
-        selectedOption: null,
+      [tabTypes.list]: {
+        selectedOption: '',
       },
     },
   },

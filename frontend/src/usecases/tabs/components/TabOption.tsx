@@ -1,19 +1,23 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Selectable} from '../../../types/Types';
 
-export interface TabOptionProps extends Selectable {
+type OptionIdentifier = string;
+
+export interface TabOptionProps {
   tab: string;
   tabOptionAction: (tab: string, option: string) => void;
-  option: string;
+  optionName: string;
+  option: OptionIdentifier;
+  selectedOption: OptionIdentifier;
 }
 
 export const TabOption = (props: TabOptionProps) => {
-  const {tab, tabOptionAction, isSelected, option} = props;
+  const {tab, tabOptionAction, optionName, option, selectedOption} = props;
+  const isSelected = selectedOption === option;
   const onClick = () => tabOptionAction(tab, option);
   return (
     <div className={classNames('TabOption', {isSelected}, 'clickable')} onClick={onClick}>
-      {option}
+      {optionName}
     </div>
   );
 };

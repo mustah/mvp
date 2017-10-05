@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T07:33:35.489Z\n"
-"PO-Revision-Date: 2017-10-05 09:34+0200\n"
+"POT-Creation-Date: 2017-10-05T09:19:03.699Z\n"
+"PO-Revision-Date: 2017-10-05 11:20+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -28,8 +28,23 @@ msgstr "type"
 msgid "list"
 msgstr "list"
 
-msgid "graph"
-msgstr "graph"
+msgid "option a"
+msgstr "option a"
+
+msgid "option b"
+msgstr "option b"
+
+msgid "list"
+msgstr "list"
+
+msgid "option 1"
+msgstr "option 1"
+
+msgid "option 2"
+msgstr "option 2"
+
+#~ msgid "graph"
+#~ msgstr "graph"
 
 #~ msgid "collection"
 #~ msgstr "collection"

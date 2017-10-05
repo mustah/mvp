@@ -1,26 +1,28 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {translate} from '../../../services/translationService';
-import {Selectable} from '../../../types/Types';
 import {Column} from '../../layouts/components/column/Column';
 import {TabContentProps} from '../../validation/containers/ValidationTabsContainer';
 import {TabUnderline} from './TabUnderliner';
 
-export interface TabItemProps extends Selectable {
+type TabIdentifier = string;
+
+export interface TabItemProps {
   tabName: string;
+  tab: TabIdentifier;
+  selectedTab: TabIdentifier;
   changeTab: (tab: string) => void;
   children: React.ReactElement<TabContentProps>;
   // TODO: Should replace any with a type that specifies either LIST, MAP or GRAPH.
 }
 
 export const TabItem = (props: TabItemProps) => {
-  const {tabName, isSelected, changeTab} = props;
-  const onClick = () => changeTab(tabName);
-
+  const {tabName, tab, changeTab, selectedTab} = props;
+  const isSelected = selectedTab === tab;
+  const onClick = () => changeTab(tab);
   return (
     <Column onClick={onClick} className={'clickable'}>
       <div className={classNames('TabItem', {isSelected})}>
-        {translate(tabName)}
+        {tabName}
       </div>
       <TabUnderline isSelected={isSelected}/>
     </Column>

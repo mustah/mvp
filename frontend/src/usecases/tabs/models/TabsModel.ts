@@ -1,4 +1,4 @@
-export const TabTypes = {
+export const tabTypes = {
   list: 'list',
   map: 'map',
   graph: 'graph',
@@ -6,7 +6,7 @@ export const TabTypes = {
 
 export interface Tab {
   [key: string]: {
-    selectedOption: string | null;
+    selectedOption: string;
   };
 }
 

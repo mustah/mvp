@@ -2,10 +2,11 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
 import {TabItem} from '../../tabs/components/TabItem';
 import {TabOption, TabOptionProps} from '../../tabs/components/TabOption';
 import {Tabs} from '../../tabs/components/Tabs';
-import {Tab, TabTypes} from '../../tabs/models/TabsModel';
+import {Tab, tabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 
 interface ValidationTabsContainerProps {
@@ -33,35 +34,39 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
 
   return (
     <Tabs selectedTab={selectedTab}>
-      <TabItem tabName={TabTypes.map} isSelected={selectedTab === TabTypes.map} changeTab={onChangeTab}>
+      <TabItem tabName={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} changeTab={onChangeTab}>
         <TabContent content={'hej hej'}>
           <TabOption
-            tab={TabTypes.map}
+            tab={tabTypes.map}
             tabOptionAction={onChangeTabOption}
-            option={'OptionA'}
-            isSelected={tabs[TabTypes.map].selectedOption === 'OptionA'}
+            optionName={translate('option a')}
+            option={'option a'}
+            selectedOption={tabs[tabTypes.map].selectedOption}
           />
           <TabOption
-            tab={TabTypes.map}
+            tab={tabTypes.map}
             tabOptionAction={onChangeTabOption}
-            option={'OptionB'}
-            isSelected={tabs[TabTypes.map].selectedOption === 'OptionB'}
+            optionName={translate('option b')}
+            option={'option b'}
+            selectedOption={tabs[tabTypes.map].selectedOption}
           />
         </TabContent>
       </TabItem>
-      <TabItem tabName={TabTypes.list} isSelected={selectedTab === TabTypes.list} changeTab={onChangeTab}>
+      <TabItem tabName={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} changeTab={onChangeTab}>
         <TabContent content={'Another content'}>
           <TabOption
-            tab={TabTypes.list}
+            tab={tabTypes.list}
             tabOptionAction={onChangeTabOption}
-            option={'Option1'}
-            isSelected={tabs[TabTypes.list].selectedOption === 'Option1'}
+            optionName={translate('option 1')}
+            option={'option 1'}
+            selectedOption={tabs[tabTypes.list].selectedOption}
           />
           <TabOption
-            tab={TabTypes.list}
+            tab={tabTypes.list}
             tabOptionAction={onChangeTabOption}
-            option={'Option2'}
-            isSelected={tabs[TabTypes.list].selectedOption === 'Option2'}
+            optionName={translate('option 2')}
+            option={'option 2'}
+            selectedOption={tabs[tabTypes.list].selectedOption}
           />
         </TabContent>
       </TabItem>
