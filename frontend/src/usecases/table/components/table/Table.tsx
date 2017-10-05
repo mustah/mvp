@@ -34,12 +34,18 @@ export const Table = (props: TableProps) => {
       return null;
     }
 
-    const dataToRow = (rowId) => (
+    const renderCell = (column, index, rowId) => {
+      const content = data.byId[rowId][column];
+      const callback = columnCallbacks[column];
+      return <td key={index}>{callback(content)}</td>;
+    };
+
+    const renderRow = (rowId) => (
       <tr key={rowId}>
-        {columns.map((column, index) => <td key={index}>{columnCallbacks[column](data.byId[rowId][column])}</td>)}
+        {columns.map((column, index) => renderCell(column, index, rowId))}
       </tr>);
 
-    return data.allIds.map(dataToRow);
+    return data.allIds.map(renderRow);
   };
 
   return (
