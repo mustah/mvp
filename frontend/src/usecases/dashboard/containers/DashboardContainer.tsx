@@ -96,7 +96,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
     return (
       <Layout>
         <Column className="flex-1">
-          <SelectionOverview title={'Allt'}/>
+          <SelectionOverview title={translate('all')}/>
           <Content>
             {record && renderSystemOverview(record.systemOverview)}
 

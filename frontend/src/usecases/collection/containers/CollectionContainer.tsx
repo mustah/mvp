@@ -24,7 +24,7 @@ const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRoute
   return (
     <Layout>
       <Column className="flex-1">
-        <SelectionOverview title={'Allt'}/>
+        <SelectionOverview title={translate('all')}/>
         <Content>
           <CollectionOverview/>
           <Image src="usecases/collection/img/collections-errors-warnings.png"/>

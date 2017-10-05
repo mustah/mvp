@@ -7,7 +7,6 @@ import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
-import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
@@ -29,7 +28,6 @@ const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthR
         <SelectionOverview title={translate('all')}/>
         <Content>
           <DataAnalysisOverviewContainer/>
-          <Title>{translate('consumption')}</Title>
 
           <IndicatorWidgets
             indicators={indicators}
