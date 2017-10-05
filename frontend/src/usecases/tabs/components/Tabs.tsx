@@ -1,16 +1,17 @@
 import * as React from 'react';
+import 'Tabs.scss';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
-import {TabItemProps} from '../components/tabItem/TabItem';
-import {TabSettings} from '../components/tabSettings/TabSettings';
-import {TabOptionsContainer} from './TabOptionsContainer';
+import {TabItemProps} from './TabItem';
+import {TabOptions} from './TabOptions';
+import {TabSettings} from './TabSettings';
 
-interface TabsContainerProps {
+interface TabsProps {
   children: Array<React.ReactElement<TabItemProps>>;
   selectedTab: string;
 }
 
-export const TabsContainer = (props: TabsContainerProps) => {
+export const Tabs = (props: TabsProps) => {
   const {children, selectedTab} = props;
   const Tabs = children;
   const SelectedTab = children.filter(child => child.props.tabName === selectedTab);
@@ -18,10 +19,10 @@ export const TabsContainer = (props: TabsContainerProps) => {
   const TabModeHeaders = TabContent.props.children;
 
   return (
-    <Column>
-      <Row>
+    <Column className="Tabs">
+      <Row className="Tabs-Row">
         {Tabs}
-        <TabOptionsContainer options={TabModeHeaders}/>
+        <TabOptions options={TabModeHeaders}/>
         <TabSettings/>
       </Row>
       {TabContent}

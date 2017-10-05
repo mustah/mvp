@@ -1,9 +1,0 @@
-@import '../../../app/variables';
-
-.TabUnderline {
-  border-bottom: solid 3px $dark-blue;
-
-  &.isSelected {
-    border-bottom: solid 3px $blue;
-  }
-}

@@ -1,7 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'TabOption.scss';
-import {Selectable} from '../../../../types/Types';
+import {Selectable} from '../../../types/Types';
 
 export interface TabOptionProps extends Selectable {
   tab: string;

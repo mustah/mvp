@@ -6,7 +6,7 @@ import {CollectionState} from '../usecases/collection/models/Collections';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {dataAnalysis} from '../usecases/dataAnalysis/dataAnalysisReducer';
 import {DataAnalysisState} from '../usecases/dataAnalysis/models/DataAnalysis';
-import {TabsState} from '../usecases/tabs/models/Tabs';
+import {TabsState} from '../usecases/tabs/models/TabsModel';
 import {tabs} from '../usecases/tabs/tabsReducer';
 import {language, LanguageState} from '../usecases/topmenu/containers/languageReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';

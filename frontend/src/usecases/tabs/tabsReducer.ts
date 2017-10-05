@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {TabsState, TabTypes} from './models/Tabs';
+import {TabsState, TabTypes} from './models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {

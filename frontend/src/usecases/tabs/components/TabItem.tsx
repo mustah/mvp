@@ -1,11 +1,10 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'TabItem.scss';
-import {translate} from '../../../../services/translationService';
-import {Selectable} from '../../../../types/Types';
-import {Column} from '../../../layouts/components/column/Column';
-import {TabContentProps} from '../../../validation/containers/ValidationTabsContainer';
-import {TabUnderline} from '../tabUnderline/TabUnderliner';
+import {translate} from '../../../services/translationService';
+import {Selectable} from '../../../types/Types';
+import {Column} from '../../layouts/components/column/Column';
+import {TabContentProps} from '../../validation/containers/ValidationTabsContainer';
+import {TabUnderline} from './TabUnderliner';
 
 export interface TabItemProps extends Selectable {
   tabName: string;

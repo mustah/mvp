@@ -4,7 +4,7 @@ export const TabTypes = {
   graph: 'graph',
 };
 
-export interface Tabs {
+export interface Tab {
   [key: string]: {
     selectedOption: string | null;
   };
@@ -12,7 +12,7 @@ export interface Tabs {
 
 export interface TabView {
   selectedTab: string;
-  tabs: Tabs;
+  tabs: Tab;
 }
 
 export interface TabsState {

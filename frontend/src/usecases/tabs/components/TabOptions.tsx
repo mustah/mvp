@@ -1,14 +1,14 @@
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
 import {Row} from '../../layouts/components/row/Row';
-import {TabOptionProps} from '../components/tabOption/TabOption';
-import {TabUnderline} from '../components/tabUnderline/TabUnderliner';
+import {TabOptionProps} from './TabOption';
+import {TabUnderline} from './TabUnderliner';
 
-interface TabOptionsContainerProps {
+interface TabOptionsProps {
   options: Array<React.ReactElement<TabOptionProps>>;
 }
 
-export const TabOptionsContainer = (props: TabOptionsContainerProps) => {
+export const TabOptions = (props: TabOptionsProps) => {
   const {options} = props;
   return (
     <Column className={'flex-1'}>

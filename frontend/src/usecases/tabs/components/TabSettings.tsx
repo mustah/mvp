@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {Icon} from '../../../common/components/icons/Icons';
-import {Column} from '../../../layouts/components/column/Column';
-import {Row} from '../../../layouts/components/row/Row';
-import {TabUnderline} from '../tabUnderline/TabUnderliner';
+import {Icon} from '../../common/components/icons/Icons';
+import {Column} from '../../layouts/components/column/Column';
+import {Row} from '../../layouts/components/row/Row';
+import {TabUnderline} from './TabUnderliner';
 
 export const TabSettings = (props) => {
   return (

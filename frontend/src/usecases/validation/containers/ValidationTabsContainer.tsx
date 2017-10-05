@@ -2,14 +2,14 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
-import {TabItem} from '../../tabs/components/tabItem/TabItem';
-import {TabOption, TabOptionProps} from '../../tabs/components/tabOption/TabOption';
-import {TabsContainer} from '../../tabs/containers/TabsContainer';
-import {Tabs, TabTypes} from '../../tabs/models/Tabs';
+import {TabItem} from '../../tabs/components/TabItem';
+import {TabOption, TabOptionProps} from '../../tabs/components/TabOption';
+import {Tabs} from '../../tabs/components/Tabs';
+import {Tab, TabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 
 interface ValidationTabsContainerProps {
-  tabs: Tabs;
+  tabs: Tab;
   selectedTab: string;
   changeTab: (payload) => any;
   changeTabOption: (payload) => any;
@@ -32,7 +32,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   };
 
   return (
-    <TabsContainer selectedTab={selectedTab}>
+    <Tabs selectedTab={selectedTab}>
       <TabItem tabName={TabTypes.map} isSelected={selectedTab === TabTypes.map} changeTab={onChangeTab}>
         <TabContent content={'hej hej'}>
           <TabOption
@@ -65,7 +65,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
           />
         </TabContent>
       </TabItem>
-    </TabsContainer>
+    </Tabs>
   );
 };
 

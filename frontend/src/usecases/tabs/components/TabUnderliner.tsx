@@ -1,11 +1,10 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'TabUnderline.scss';
-import {ClassNamed, Selectable} from '../../../../types/Types';
+import {ClassNamed, Selectable} from '../../../types/Types';
 
 export const TabUnderline = (props: Selectable & ClassNamed) => {
   const {isSelected, className} = props;
   return (
-    <div className={classNames('TabUnderline', className, {isSelected}, 'flex-1')}/>
+    <div className={classNames('TabUnderline', className, {isSelected})}/>
   );
 };
