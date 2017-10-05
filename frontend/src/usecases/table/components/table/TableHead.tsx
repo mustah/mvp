@@ -12,5 +12,5 @@ export const TableHead = (props: TableHeadProps) => {
   const {children, sortable, currentSort} = props;
   const toggle = (order: SortOrder) => order === 'asc' ? ' ▲' : ' ▼';
   // TODO render link here, for switching order
-  return <th>{children}{sortable ? toggle(currentSort!) : null}</th>;
+  return <th>{children}{sortable && toggle(currentSort!)}</th>;
 };
