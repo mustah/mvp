@@ -88,24 +88,24 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
             <Table data={normalizedData.meteringPoints}>
               <TableColumn
                 id={'id'}
-                header={<TableHead>{translate('Meter')}</TableHead>}
+                header={<TableHead>{translate('meter')}</TableHead>}
                 cell={renderMeteringPointCell}
               />
               <TableColumn
                 id={'type'}
-                header={<TableHead>{translate('Type')}</TableHead>}
+                header={<TableHead>{translate('type')}</TableHead>}
               />
               <TableColumn
                 id={'location'}
-                header={<TableHead>{translate('Location')}</TableHead>}
+                header={<TableHead>{translate('location')}</TableHead>}
               />
               <TableColumn
                 id={'gateway'}
-                header={<TableHead>{translate('Gateway')}</TableHead>}
+                header={<TableHead>{translate('gateway')}</TableHead>}
               />
               <TableColumn
                 id={'status'}
-                header={<TableHead sortable={true} currentSort={'asc'}>{translate('Status')}</TableHead>}
+                header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
                 cell={renderStatusCell}
               />
             </Table>

@@ -8,6 +8,7 @@
   th {
     font-weight: normal;
     text-align: left;
+    text-transform: uppercase;
   }
 
   thead {
@@ -15,7 +16,6 @@
       background: $light-grey;
       border-color: $light-grey;
       color: $table-header-color;
-      text-transform: uppercase;
     }
   }
 

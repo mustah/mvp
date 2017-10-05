@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-04 14:17+0200\n"
-"PO-Revision-Date: 2017-10-04 14:18+0200\n"
+"POT-Creation-Date: 2017-10-05 13:46+0200\n"
+"PO-Revision-Date: 2017-10-05 13:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -18,20 +18,35 @@ msgstr "email"
 msgid "password"
 msgstr "password"
 
-msgid "Meter"
-msgstr "Meter"
+msgid "meter"
+msgstr "meter"
 
-msgid "Type"
-msgstr "Type"
+msgid "type"
+msgstr "type"
 
-msgid "Location"
-msgstr "Location"
+msgid "location"
+msgstr "location"
 
-msgid "Gateway"
-msgstr "Gateway"
+msgid "gateway"
+msgstr "gateway"
 
-msgid "Status"
-msgstr "Status"
+msgid "status"
+msgstr "status"
+
+#~ msgid "Meter"
+#~ msgstr "Meter"
+
+#~ msgid "Type"
+#~ msgstr "Type"
+
+#~ msgid "Location"
+#~ msgstr "Location"
+
+#~ msgid "Gateway"
+#~ msgstr "Gateway"
+
+#~ msgid "Status"
+#~ msgstr "Status"
 
 #~ msgid "collection"
 #~ msgstr "collection"
