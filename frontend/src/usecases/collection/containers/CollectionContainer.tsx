@@ -6,7 +6,6 @@ import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
-import {MainTitle} from '../../common/components/texts/MainTitle';
 import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';

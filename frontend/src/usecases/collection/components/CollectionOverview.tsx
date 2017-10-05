@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Bold, Xlarge} from '../../common/components/texts/Texts';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
+import {Bold, Xlarge} from '../../common/components/texts/Texts';
 import {Row} from '../../layouts/components/row/Row';
 
 export const CollectionOverview = props => (

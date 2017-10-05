@@ -25,15 +25,13 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
   return (
     <Layout>
       <Column className="flex-1">
-        <SelectionOverview title={'Allt'}/>
+        <SelectionOverview title={translate('all')}/>
         <Content>
           <ValidationOverview/>
           <Image src="usecases/validation/img/alarms.png"/>
 
           <Title>{translate('meter')}</Title>
-          <Image src="usecases/validation/img/meters.png"/>
-
-          <ValidationTabsContainer />
+          <ValidationTabsContainer/>
 
           <div className="button" onClick={fetchValidations}>{translate('validation')}</div>
         </Content>

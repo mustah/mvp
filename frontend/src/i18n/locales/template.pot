@@ -5,10 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2017-10-05T12:18:05.458Z\n"
-"PO-Revision-Date: 2017-10-05T12:18:05.458Z\n"
-"POT-Creation-Date: 2017-10-03T12:05:52.480Z\n"
-"PO-Revision-Date: 2017-10-03T12:05:52.480Z\n"
+"POT-Creation-Date: 2017-10-05T16:03:04.986Z\n"
+"PO-Revision-Date: 2017-10-05T16:03:04.986Z\n"
 
 msgid "email"
 msgstr ""
@@ -16,35 +14,50 @@ msgstr ""
 msgid "password"
 msgstr ""
 
-msgid "all"
-msgstr ""
-
-msgid "common errors & warnings"
-msgstr ""
-
-msgid "gateways"
-msgstr ""
-
 msgid "gateway"
-msgstr ""
-
-msgid "system overview"
 msgstr ""
 
 msgid "collection"
 msgstr ""
 
-msgid "consumption"
-msgstr ""
-
-msgid "common alarms"
-msgstr ""
-
-msgid "meters"
-msgstr ""
-
 msgid "meter"
 msgstr ""
 
+msgid "type"
+msgstr ""
+
+msgid "location"
+msgstr ""
+
+msgid "status"
+msgstr ""
+
+msgid "all"
+msgstr ""
+
+msgid "consumption"
+msgstr ""
+
 msgid "validation"
+msgstr ""
+
+msgid "map"
+msgstr ""
+
+msgid "area"
+msgstr ""
+
+msgid "object"
+msgstr ""
+
+msgid "facility"
+msgstr ""
+
+msgid "list"
+msgstr ""
+
+msgid "sort descending"
+msgstr ""
+
+msgid "sort ascending"
 msgstr ""

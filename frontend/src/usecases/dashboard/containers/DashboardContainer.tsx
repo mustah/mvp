@@ -10,15 +10,14 @@ import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
-import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
-import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
 import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
 import {Table} from '../../table/components/table/Table';
 import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';
-import {SystemOverview} from '../components/system-overview/SystemOverview';
+import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
 import {Map} from '../components/map/Map';
+import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
@@ -94,7 +93,6 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
     const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
     const renderStatusCell = (value, index) => <StatusIcon code={value.code} content={value.text}/>;
 
-
     return (
       <Layout>
         <Column className="flex-1">
@@ -105,6 +103,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
             <Title>{translate('collection')}</Title>
 
             <Map/>
+
             <Table data={normalizedData.meteringPoints}>
               <TableColumn
                 id={'id'}
@@ -129,14 +128,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
                 cell={renderStatusCell}
               />
             </Table>
-            <h3>
-              <div className="button" onClick={fetchDashboard}>
-                Click me to load dashboard data from json-server via Rest!!!
-              </div>
-            </h3>
-            <div>
-              <h3>Updated: {now.toLocaleString()} </h3>
-            </div>
+
           </Content>
         </Column>
       </Layout>
