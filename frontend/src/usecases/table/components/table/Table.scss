@@ -1,7 +1,5 @@
 @import "../../../app/variables";
 
-// TODO Extract color into variables? how many greys are there..?!
-
 .Table {
   background: white;
   color: $lightest-black;
@@ -16,13 +14,13 @@
     tr {
       background: $light-grey;
       border-color: $light-grey;
-      color: #94a4aa;
+      color: $table-header-color;
       text-transform: uppercase;
     }
   }
 
   th, td {
-    border-bottom: #e6e6e6;
+    border-bottom: $table-row-border-color;
     padding: 10px;
     vertical-align: top;
   }
