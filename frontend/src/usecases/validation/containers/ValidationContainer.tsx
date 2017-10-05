@@ -21,7 +21,6 @@ export interface ValidationContainerProps {
 }
 
 const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRouterProps) => {
-  const {fetchValidations} = props;
   return (
     <Layout>
       <Column className="flex-1">
@@ -33,8 +32,6 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
           <Title>{translate('meter')}</Title>
 
           <ValidationTabsContainer/>
-
-          <div className="button" onClick={fetchValidations}>{translate('validation')}</div>
         </Content>
       </Column>
     </Layout>
