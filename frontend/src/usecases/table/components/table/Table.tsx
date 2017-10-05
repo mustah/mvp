@@ -2,13 +2,13 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import './Table.scss';
 
-interface NormalizedObject {
+interface NormalizedRows {
   byId: object;
   allIds: string[];
 }
 
 interface TableProps {
-  data: NormalizedObject;
+  data: NormalizedRows;
   children: React.ReactNode[];
 }
 
