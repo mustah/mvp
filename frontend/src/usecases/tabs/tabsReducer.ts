@@ -24,7 +24,7 @@ export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => 
         ...state,
         [payload.useCase]: {
           ...state[payload.useCase],
-          selectedTab: payload.tab,
+          selectedTab: {...payload.tab},
         },
       };
     case TABS_CHANGE_TAB_OPTION:
@@ -36,7 +36,7 @@ export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => 
             ...state[payload.useCase].tabs,
             [payload.tab]: {
               ...state[payload.useCase][payload.tab],
-              selectedOption: payload.option,
+              selectedOption: {...payload.option},
             },
           },
         },

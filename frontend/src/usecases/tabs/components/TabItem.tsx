@@ -18,9 +18,9 @@ export interface TabItemProps {
 export const TabItem = (props: TabItemProps) => {
   const {tabName, tab, changeTab, selectedTab} = props;
   const isSelected = selectedTab === tab;
-  const onClick = () => changeTab(tab);
+  const selectTab = () => changeTab(tab);
   return (
-    <Column onClick={onClick} className={'clickable'}>
+    <Column onClick={selectTab} className="clickable">
       <div className={classNames('TabItem', {isSelected})}>
         {tabName}
       </div>

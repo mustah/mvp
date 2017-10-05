@@ -12,8 +12,8 @@ import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 interface ValidationTabsContainerProps {
   tabs: Tab;
   selectedTab: string;
-  changeTab: (payload) => any;
-  changeTabOption: (payload) => any;
+  changeTab: (payload: {useCase: string; tab: string; }) => any;
+  changeTabOption: (payload: {useCase: string; tab: string; option: string; }) => any;
 }
 
 const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
@@ -38,16 +38,23 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         <TabContent content={'hej hej'}>
           <TabOption
             tab={tabTypes.map}
-            tabOptionAction={onChangeTabOption}
-            optionName={translate('option a')}
-            option={'option a'}
+            select={onChangeTabOption}
+            optionName={translate('area')}
+            option={'area'}
             selectedOption={tabs[tabTypes.map].selectedOption}
           />
           <TabOption
             tab={tabTypes.map}
-            tabOptionAction={onChangeTabOption}
-            optionName={translate('option b')}
-            option={'option b'}
+            select={onChangeTabOption}
+            optionName={translate('object')}
+            option={'object'}
+            selectedOption={tabs[tabTypes.map].selectedOption}
+          />
+          <TabOption
+            tab={tabTypes.map}
+            select={onChangeTabOption}
+            optionName={translate('facility')}
+            option={'facility'}
             selectedOption={tabs[tabTypes.map].selectedOption}
           />
         </TabContent>
@@ -56,16 +63,16 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         <TabContent content={'Another content'}>
           <TabOption
             tab={tabTypes.list}
-            tabOptionAction={onChangeTabOption}
-            optionName={translate('option 1')}
-            option={'option 1'}
+            select={onChangeTabOption}
+            optionName={translate('sort descending')}
+            option={'sort descending'}
             selectedOption={tabs[tabTypes.list].selectedOption}
           />
           <TabOption
             tab={tabTypes.list}
-            tabOptionAction={onChangeTabOption}
-            optionName={translate('option 2')}
-            option={'option 2'}
+            select={onChangeTabOption}
+            optionName={translate('sort ascending')}
+            option={'sort ascending'}
             selectedOption={tabs[tabTypes.list].selectedOption}
           />
         </TabContent>

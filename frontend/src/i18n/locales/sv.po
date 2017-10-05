@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T09:19:03.699Z\n"
-"PO-Revision-Date: 2017-10-05 11:21+0200\n"
+"POT-Creation-Date: 2017-10-05T13:25:39.350Z\n"
+"PO-Revision-Date: 2017-10-05 15:28+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -77,20 +77,35 @@ msgstr "status"
 msgid "map"
 msgstr "karta"
 
-msgid "option a"
-msgstr "val a"
+msgid "area"
+msgstr "område"
 
-msgid "option b"
-msgstr "val b"
+msgid "object"
+msgstr "objekt"
+
+msgid "facility"
+msgstr "anläggning"
 
 msgid "list"
 msgstr "lista"
 
-msgid "option 1"
-msgstr "val 1"
+msgid "sort descending"
+msgstr "sortera fallande"
 
-msgid "option 2"
-msgstr "val 2"
+msgid "sort ascending"
+msgstr "sortera stigande"
+
+#~ msgid "option a"
+#~ msgstr "val a"
+
+#~ msgid "option b"
+#~ msgstr "val b"
+
+#~ msgid "option 1"
+#~ msgstr "val 1"
+
+#~ msgid "option 2"
+#~ msgstr "val 2"
 
 #~ msgid "graph"
 #~ msgstr "graf"

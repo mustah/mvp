@@ -7,9 +7,9 @@ import {TabUnderline} from './TabUnderliner';
 export const TabSettings = (props) => {
   return (
     <Column>
-      <Row className={'flex-1 Row-right'}>
-        <Icon name={'magnify'} size="medium"/>
-        <Icon name={'dots-vertical'} size="medium"/>
+      <Row className="flex-1 Row-right">
+        <Icon name="magnify" size="medium"/>
+        <Icon name="dots-vertical" size="medium"/>
       </Row>
       <TabUnderline/>
     </Column>
