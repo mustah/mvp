@@ -10,6 +10,7 @@ import {Layout} from '../../layouts/components/layout/Layout';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
 import {ValidationOverviewContainer} from './ValidationOverviewContainer';
+import ValidationTabsContainer from './ValidationTabsContainer';
 
 export interface ValidationContainerProps {
   fetchValidations: () => any;
@@ -18,6 +19,7 @@ export interface ValidationContainerProps {
 
 const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRouterProps) => {
   const {fetchValidations} = props;
+
   return (
     <Layout>
       <Column className="flex-1">
@@ -25,6 +27,7 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
         <Content>
           <ValidationOverviewContainer/>
           <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
+          <ValidationTabsContainer />
         </Content>
       </Column>
     </Layout>

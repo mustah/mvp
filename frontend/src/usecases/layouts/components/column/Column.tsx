@@ -5,7 +5,7 @@ import './Column.scss';
 
 export const Column = (props: LayoutProps) => {
   return (
-    <div className={classNames('Column', props.className)}>
+    <div className={classNames('Column', props.className)} onClick={props.onClick}>
       {props.children}
     </div>
   );

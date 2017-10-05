@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05 13:46+0200\n"
-"PO-Revision-Date: 2017-10-05 13:47+0200\n"
+"POT-Creation-Date: 2017-10-05T13:25:39.350Z\n"
+"PO-Revision-Date: 2017-10-05 15:27+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "email"
 msgstr "email"
@@ -18,30 +18,89 @@ msgstr "email"
 msgid "password"
 msgstr "password"
 
+msgid "map"
+msgstr "map"
 msgid "meter"
 msgstr "meter"
 
 msgid "type"
 msgstr "type"
+msgid "list"
+msgstr "list"
 
+msgid "area"
+msgstr "area"
+
+msgid "object"
+msgstr "object"
+
+msgid "facility"
+msgstr "facility"
+
+msgid "list"
+msgstr "list"
+
+msgid "sort descending"
+msgstr "sort descending"
+
+msgid "sort ascending"
+msgstr "sort ascending"
+
+#~ msgid "option a"
+#~ msgstr "option a"
+
+#~ msgid "option b"
+#~ msgstr "option b"
+
+#~ msgid "option 1"
+#~ msgstr "option 1"
+
+#~ msgid "option 2"
+#~ msgstr "option 2"
+
+#~ msgid "graph"
+#~ msgstr "graph"
+
+#~ msgid "collection"
+#~ msgstr "collection"
 msgid "location"
 msgstr "location"
 
+#~ msgid "{{count}} data point"
+#~ msgstr "{{count}} data point"
 msgid "gateway"
 msgstr "gateway"
 
+#~ msgid "measurement quality"
+#~ msgstr "measurement quality"
 msgid "status"
 msgstr "status"
 
+#~ msgid "connectors"
+#~ msgstr "connectors"
 #~ msgid "Meter"
 #~ msgstr "Meter"
 
+#~ msgid "{{count}} unit"
+#~ msgstr "{{count}} unit"
 #~ msgid "Type"
 #~ msgstr "Type"
 
+#~ msgid "a date: {{date}}"
+#~ msgstr "a date: {{date}}"
 #~ msgid "Location"
 #~ msgstr "Location"
 
+#~ msgid "a number: {{num}}"
+#~ msgstr "a number: {{num}}"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} data point°"
+#~ msgstr "{{count}} data points"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} unit°"
+#~ msgstr "{{count}} units"
 #~ msgid "Gateway"
 #~ msgstr "Gateway"
 

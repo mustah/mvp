@@ -1,0 +1,35 @@
+@import '../../app/variables';
+
+.Tabs {
+  .Tabs-Row {
+    align-items: flex-end;
+  }
+
+  .TabItem {
+    font-weight: bold;
+    font-size: $normal;
+    text-transform: capitalize;
+    padding-right: $xs-space;
+  }
+
+  .TabOption {
+    font-size: $xs;
+    background-color: $dark-grey;
+    margin-right: $xs-space;
+    margin-bottom: $xs-space;
+    text-transform: uppercase;
+
+    &.isSelected {
+      font-weight: bold;
+    }
+  }
+
+  .TabUnderline {
+    border-bottom: solid 3px $dark-blue;
+
+    &.isSelected {
+      border-bottom: solid 3px $blue;
+    }
+  }
+}
+

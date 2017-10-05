@@ -19,7 +19,7 @@ const history: History = createHashHistory();
 
 const appStore: Store<RootState> = configureStore(history);
 
-persistStore<RootState>(appStore, {whitelist: ['auth', 'language']}, (error?: any) => {
+persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'tabs']}, (error?: any) => {
   if (!error) {
     const state = appStore.getState();
     const {token} = state.auth;
