@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.elvaco.mvp.dto.properycollection.UserPropertyDTO;
+import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
 import com.elvaco.mvp.repository.MeteringPointRepository;

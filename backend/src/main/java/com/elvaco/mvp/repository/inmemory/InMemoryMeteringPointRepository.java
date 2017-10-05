@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.elvaco.mvp.config.InMemory;
-import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
-import com.elvaco.mvp.dto.properycollection.UserPropertyDTO;
+import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
+import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointBaseRepository;
 import com.fasterxml.jackson.databind.node.ObjectNode;

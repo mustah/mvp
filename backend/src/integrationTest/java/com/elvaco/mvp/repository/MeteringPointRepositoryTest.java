@@ -3,8 +3,8 @@ package com.elvaco.mvp.repository;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.elvaco.mvp.dto.properycollection.PropertyCollectionDTO;
-import com.elvaco.mvp.dto.properycollection.UserPropertyDTO;
+import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
+import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import static org.assertj.core.api.Assertions.assertThat;

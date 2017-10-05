@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-09-19T14:07:17.911Z\n"
-"PO-Revision-Date: 2017-09-19 16:08+0200\n"
+"POT-Creation-Date: 2017-10-05 13:47+0200\n"
+"PO-Revision-Date: 2017-10-05 13:48+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid "email"
 msgstr "epost"
@@ -18,34 +18,64 @@ msgstr "epost"
 msgid "password"
 msgstr "lösenord"
 
-msgid "collection"
-msgstr "insamling"
+msgid "meter"
+msgstr "mätare"
 
-msgid "{{count}} data point"
-msgstr "{{count}} datapunkt"
+msgid "type"
+msgstr "typ"
 
-msgid "measurement quality"
-msgstr "mätvärdeskvalitet"
+msgid "location"
+msgstr "plats"
 
-msgid "connectors"
-msgstr "connectorer"
+msgid "gateway"
+msgstr "gateway"
 
-msgid "{{count}} unit"
-msgstr "{{count}} enhet"
+msgid "status"
+msgstr "status"
 
-msgid "a date: {{date}}"
-msgstr "ett datum: {{date}}"
+#~ msgid "Meter"
+#~ msgstr "Mätare"
 
-msgid "a number: {{num}}"
-msgstr "ett nummer: {{num}}"
+#~ msgid "Type"
+#~ msgstr "Typ"
 
-msgctxt "°plural"
-msgid "{{count}} data point°"
-msgstr "{{count}} datapunkter"
+#~ msgid "Location"
+#~ msgstr "Plats"
 
-msgctxt "°plural"
-msgid "{{count}} unit°"
-msgstr "{{count}} enheter"
+#~ msgid "Gateway"
+#~ msgstr "Gateway"
+
+#~ msgid "Status"
+#~ msgstr "Status"
+
+#~ msgid "collection"
+#~ msgstr "insamling"
+
+#~ msgid "{{count}} data point"
+#~ msgstr "{{count}} datapunkt"
+
+#~ msgid "measurement quality"
+#~ msgstr "mätvärdeskvalitet"
+
+#~ msgid "connectors"
+#~ msgstr "connectorer"
+
+#~ msgid "{{count}} unit"
+#~ msgstr "{{count}} enhet"
+
+#~ msgid "a date: {{date}}"
+#~ msgstr "ett datum: {{date}}"
+
+#~ msgid "a number: {{num}}"
+#~ msgstr "ett nummer: {{num}}"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} data point°"
+#~ msgstr "{{count}} datapunkter"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} unit°"
+#~ msgstr "{{count}} enheter"
 
 #~ msgid "systemOverview.collection"
 #~ msgstr "insamling"

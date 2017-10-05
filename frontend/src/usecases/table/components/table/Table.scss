@@ -1,0 +1,27 @@
+@import "../../../app/variables";
+
+.Table {
+  background: white;
+  color: $lightest-black;
+  width: 100%;
+
+  th {
+    font-weight: normal;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  thead {
+    tr {
+      background: $light-grey;
+      border-color: $light-grey;
+      color: $table-header-color;
+    }
+  }
+
+  th, td {
+    border-bottom: $table-row-border-color;
+    padding: 10px;
+    vertical-align: top;
+  }
+}
