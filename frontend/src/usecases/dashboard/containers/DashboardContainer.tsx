@@ -102,7 +102,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
           <Content>
             {record && renderSystemOverview(record.systemOverview)}
 
-            <Title>{translate('collections')}</Title>
+            <Title>{translate('collection')}</Title>
 
             <Map/>
             <Table data={normalizedData.meteringPoints}>

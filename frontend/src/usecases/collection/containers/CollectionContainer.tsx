@@ -30,10 +30,10 @@ const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRoute
           <CollectionOverview/>
           <Image src="usecases/collection/img/collections-errors-warnings.png"/>
 
-          <Title>{translate('gateways')}</Title>
+          <Title>{translate('gateway')}</Title>
           <Image src="usecases/collection/img/gateways.png"/>
 
-          <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
+          <div className="button" onClick={fetchCollections}>{translate('collection')}</div>
         </Content>
       </Column>
     </Layout>
