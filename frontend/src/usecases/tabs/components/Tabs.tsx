@@ -17,7 +17,6 @@ export const Tabs = (props: TabsProps) => {
   const SelectedTab = children.filter(child => child.props.tab === selectedTab);
   const TabContent = SelectedTab[0].props.children;
   const TabModeHeaders = TabContent.props.children;
-
   return (
     <Column className="Tabs">
       <Row className="Tabs-Row">

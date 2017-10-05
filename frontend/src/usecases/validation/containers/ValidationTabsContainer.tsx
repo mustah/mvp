@@ -3,8 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {Image} from '../../common/components/images/Image';
 import {TabItem} from '../../tabs/components/TabItem';
-import {TabOption, TabOptionProps} from '../../tabs/components/TabOption';
+import {TabOption} from '../../tabs/components/TabOption';
 import {Tabs} from '../../tabs/components/Tabs';
 import {Tab, tabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
@@ -35,7 +36,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   return (
     <Tabs selectedTab={selectedTab}>
       <TabItem tabName={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} changeTab={onChangeTab}>
-        <TabContent content={'hej hej'}>
+        <Image src="usecases/validation/img/map.png">
           <TabOption
             tab={tabTypes.map}
             select={onChangeTabOption}
@@ -57,10 +58,10 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             option={'facility'}
             selectedOption={tabs[tabTypes.map].selectedOption}
           />
-        </TabContent>
+        </Image>
       </TabItem>
       <TabItem tabName={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} changeTab={onChangeTab}>
-        <TabContent content={'Another content'}>
+        <Image src="usecases/validation/img/meters.png">
           <TabOption
             tab={tabTypes.list}
             select={onChangeTabOption}
@@ -75,24 +76,10 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             option={'sort ascending'}
             selectedOption={tabs[tabTypes.list].selectedOption}
           />
-        </TabContent>
+        </Image>
       </TabItem>
     </Tabs>
   );
-};
-
-export interface TabContentProps {
-  content: string;
-  children: Array<React.ReactElement<TabOptionProps>>;
-  // TODO: Perhaps create a common type for typing children without using so not have to write out Array<> and
-  // React.ReactElement all the time.
-}
-
-const TabContent = (props: TabContentProps) => {
-  return (
-    <div>
-      {props.content}
-    </div>);
 };
 
 const mapStateToProps = (state: RootState) => {
