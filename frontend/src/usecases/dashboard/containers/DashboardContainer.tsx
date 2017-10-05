@@ -74,6 +74,9 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       },
     };
 
+    const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
+    const renderStatusCell = (value, index) => <StatusIcon code={value.code} content={value.text}/>;
+
     return (
       <Layout>
         <Column className="flex-1">
@@ -86,7 +89,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
               <TableColumn
                 id={'id'}
                 header={<TableHead>{translate('Meter')}</TableHead>}
-                cell={(value, index) => <MeteringPoint id={value}/>}
+                cell={renderMeteringPointCell}
               />
               <TableColumn
                 id={'type'}
@@ -103,7 +106,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
               <TableColumn
                 id={'status'}
                 header={<TableHead sortable={true} currentSort={'asc'}>{translate('Status')}</TableHead>}
-                cell={(value, index) => <StatusIcon code={value.code} content={value.text}/>}
+                cell={renderStatusCell}
               />
             </Table>
             <h3>

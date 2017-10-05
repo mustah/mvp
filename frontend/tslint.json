@@ -36,8 +36,7 @@
       true,
       "single",
       "jsx-double"
-    ],
-    "jsx-no-lambda": false
+    ]
   },
   "rulesDirectory": []
 }
