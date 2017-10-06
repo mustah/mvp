@@ -1,6 +1,6 @@
 databaseChangeLog:
  - changeSet:
-    id: initial database schema
+    id: 1
     author: antlof
     changes:
       - createTable:
@@ -46,7 +46,7 @@ databaseChangeLog:
                 name: property_collection
                 type: jsonb
  - changeSet:
-    id: add some initial data, for profit
+    id: 2
     author: antlof
     changes:
       - insert:
@@ -67,4 +67,38 @@ databaseChangeLog:
             - column:
                 name: author
                 value: The Dashboard Creator
+ - changeSet:
+    id: 3
+    author: chelmertz
+    changes:
+      - createTable:
+          tableName: users
+          columns:
+            - column:
+                name: id
+                type: int
+                autoIncrement: true
+                constraints:
+                  primaryKey: true
+                  nullable: false
+            - column:
+                name: first_name
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: last_name
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: company
+                type: varchar(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: email
+                type: varchar(255)
+                constraints:
+                  nullable: false
 
