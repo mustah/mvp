@@ -1,0 +1,9 @@
+@import "../../../app/variables";
+
+.DonutGraph {
+  background: $grey;
+
+  .recharts-wrapper {
+    margin: 0 auto;
+  }
+}

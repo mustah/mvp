@@ -8,5 +8,5 @@ interface MeteringPointProps {
 
 export const MeteringPoint = (props: MeteringPointProps) => (
   <div>
-    <Link to={routes.mp + '/' + props.id}>{props.id}</Link>
+    <Link to={routes.report}>{props.id}</Link>
   </div>);

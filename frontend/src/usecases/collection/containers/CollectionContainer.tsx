@@ -3,13 +3,16 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
+import {Image} from '../../common/components/images/Image';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
+import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {fetchCollections} from '../collectionActions';
+import {CollectionOverview} from '../components/CollectionOverview';
 import {CollectionState} from '../models/Collections';
-import {CollectionOverviewContainer} from './CollectionOverviewContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -21,10 +24,15 @@ const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRoute
   return (
     <Layout>
       <Column className="flex-1">
-        <SelectionOverview title={'Allt'}/>
+        <SelectionOverview title={translate('all')}/>
         <Content>
-          <CollectionOverviewContainer/>
-          <div className="button" onClick={fetchCollections}>COLLECTIONS</div>
+          <CollectionOverview/>
+          <Image src="usecases/collection/img/collections-errors-warnings.png"/>
+
+          <Title>{translate('gateway')}</Title>
+          <Image src="usecases/collection/img/gateways.png"/>
+
+          <div className="button" onClick={fetchCollections}>{translate('collection')}</div>
         </Content>
       </Column>
     </Layout>

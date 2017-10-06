@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
 import {Column} from '../../../layouts/components/column/Column';
 import {Row} from '../../../layouts/components/row/Row';
-import {Language, supportedLanguages} from '../../containers/languageReducer';
+import {Language, supportedLanguages} from '../../languageReducer';
 import {MenuSeparator} from '../separators/MenuSeparator';
 import './Languages.scss';
 

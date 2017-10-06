@@ -1,7 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
-import {TabContentProps} from '../../validation/containers/ValidationTabsContainer';
 import {TabUnderline} from './TabUnderliner';
 
 type TabIdentifier = string;
@@ -11,8 +10,8 @@ export interface TabItemProps {
   tab: TabIdentifier;
   selectedTab: TabIdentifier;
   changeTab: (tab: string) => void;
-  children: React.ReactElement<TabContentProps>;
   // TODO: Should replace any with a type that specifies either LIST, MAP or GRAPH.
+  children: React.ReactElement<any>;
 }
 
 export const TabItem = (props: TabItemProps) => {

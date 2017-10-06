@@ -1,0 +1,86 @@
+@import "../../../app/variables";
+
+.Indicators {
+
+  .Indicator-wrapper {
+    margin-right: $sm-space;
+    margin-top: $sm-space;
+
+    .ok {
+      background-color: $green;
+      color: white;
+    }
+
+    .info {
+      background-color: $grey;
+      color: black;
+    }
+
+    .warning {
+      background-color: $orange;
+      color: white;
+    }
+
+    .critical {
+      background-color: $red;
+      color: white;
+    }
+
+    .Indicator {
+      cursor: pointer;
+      height: $status-box-height;
+      width: $status-box-width;
+      margin-bottom: $sm-space;
+
+      .Indicator-name {
+        font-size: $normal;
+        text-transform: uppercase;
+      }
+
+      .Indicator-unit {
+        font-size: $sm;
+        text-transform: none;
+      }
+
+      .Indicator-subtitle {
+        font-size: $normal;
+        text-transform: none;
+      }
+
+      .Indicator-value {
+        font-size: $xxl;
+        text-transform: none;
+      }
+    }
+
+    .Indicator-separator {
+      height: 8px;
+      background-color: transparent;
+
+      &.isSelected {
+        &.ok {
+          @extend .ok;
+        }
+
+        &.info {
+          @extend .info;
+        }
+
+        &.warning {
+          @extend .warning;
+        }
+
+        &.critical {
+          @extend .critical;
+        }
+      }
+    }
+  }
+
+  &.small {
+    .Indicator {
+      height: 150px;
+      width: 160px;
+    }
+  }
+}

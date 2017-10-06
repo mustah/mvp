@@ -1,8 +1,5 @@
 @import "../../../app/variables";
 
 .Map {
-  background-color: $grey;
-  height: $map-height;
-  margin-bottom: $sm-space;
-  margin-top: $sm-space;
+  margin: $lg-space 0;
 }

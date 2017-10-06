@@ -1,9 +1,9 @@
 package com.elvaco.mvp.dto;
 
-import lombok.ToString;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.ToString;
 
 @ToString
 public class GraphDTO extends WidgetDTO {
@@ -11,6 +11,6 @@ public class GraphDTO extends WidgetDTO {
   public List<GraphValueDTO> records;
 
   public GraphDTO() {
-    records = new ArrayList<>();
+    this.records = new ArrayList<>();
   }
 }

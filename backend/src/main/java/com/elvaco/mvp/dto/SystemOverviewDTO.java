@@ -1,12 +1,13 @@
 package com.elvaco.mvp.dto;
 
-import lombok.ToString;
-
 import java.util.List;
+
+import lombok.ToString;
 
 @ToString
 public class SystemOverviewDTO {
 
   public String title;
-  public List<WidgetDTO> widgets;
+  public List<GraphDTO> donutGraphs;
+  public List<ColoredBoxDTO> indicators;
 }

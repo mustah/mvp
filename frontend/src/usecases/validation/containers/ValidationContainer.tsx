@@ -3,13 +3,16 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
+import {Image} from '../../common/components/images/Image';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
+import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
+import {ValidationOverview} from '../components/ValidationOverview';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
-import {ValidationOverviewContainer} from './ValidationOverviewContainer';
 import ValidationTabsContainer from './ValidationTabsContainer';
 
 export interface ValidationContainerProps {
@@ -18,16 +21,17 @@ export interface ValidationContainerProps {
 }
 
 const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRouterProps) => {
-  const {fetchValidations} = props;
-
   return (
     <Layout>
       <Column className="flex-1">
-        <SelectionOverview title={'Allt'}/>
+        <SelectionOverview title={translate('all')}/>
         <Content>
-          <ValidationOverviewContainer/>
-          <div className="button" onClick={fetchValidations}>VALIDATIONS</div>
-          <ValidationTabsContainer />
+          <ValidationOverview/>
+          <Image src="usecases/validation/img/alarms.png"/>
+
+          <Title>{translate('meter')}</Title>
+
+          <ValidationTabsContainer/>
         </Content>
       </Column>
     </Layout>

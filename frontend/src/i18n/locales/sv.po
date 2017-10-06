@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T13:25:39.350Z\n"
-"PO-Revision-Date: 2017-10-05 15:28+0200\n"
+"POT-Creation-Date: 2017-10-05T12:16:15.845Z\n"
+"PO-Revision-Date: 2017-10-05 14:17+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: sv\n"
@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.4\n"
+
+msgid "all"
+msgstr "alla"
 
 msgid "email"
 msgstr "epost"
@@ -111,6 +114,37 @@ msgstr "sortera stigande"
 #~ msgstr "graf"
 
 #~ msgid "collection"
+#~ msgstr "insamling"
+msgid "gateway"
+msgstr "gateway"
+
+#, fuzzy
+#| msgid "collection"
+msgid "collection"
+msgstr "insamling"
+
+msgid "consumption"
+msgstr "förbrukning"
+
+msgid "common alarms"
+msgstr "vanliga alarm"
+
+#, fuzzy
+#| msgid "meters"
+msgid "meter"
+msgstr "mätare"
+
+#, fuzzy
+#| msgid "validations"
+msgid "validation"
+msgstr "validering"
+
+#~ msgid "system overview"
+#~ msgstr "systemöversikt"
+
+#, fuzzy
+#~| msgid "collection"
+#~ msgid "population"
 #~ msgstr "insamling"
 
 #~ msgid "{{count}} data point"

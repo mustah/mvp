@@ -4,22 +4,25 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {SelectionOverview} from '../../common/components/selectionoverview/SelectionOverview';
-import {Xlarge} from '../../common/components/texts/Texts';
+import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
-import {SystemOverviewContainer} from '../../systemOverview/containers/SystemOverviewContainer';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
 import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
 import {Table} from '../../table/components/table/Table';
 import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';
+import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
 import {Map} from '../components/map/Map';
+import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
+import {SystemOverviewState} from '../models/dashboardModels';
 
-export interface DashboardContainerProps {
+export interface DashboardContainerProps extends SelectedIndicatorWidgetProps {
   fetchDashboard: () => any;
   dashboard: DashboardState;
 }
@@ -32,10 +35,22 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
   }
 
   render() {
-    const {fetchDashboard, dashboard} = this.props;
-    const now = new Date();
+    const {
+      dashboard: {record},
+      selectIndicatorWidget,
+      selectedWidget,
+    } = this.props;
 
-    // this format is what we can expect from https://github.com/paularmstrong/normalizr
+    const renderSystemOverview = (systemOverview: SystemOverviewState) => (
+      <SystemOverview
+        title={systemOverview.title}
+        indicators={systemOverview.indicators}
+        donutGraphs={systemOverview.donutGraphs}
+        selectedWidget={selectedWidget}
+        selectIndicatorWidget={selectIndicatorWidget}
+      />
+    );
+
     const normalizedData = {
       meteringPoints: {
         byId: {
@@ -80,11 +95,14 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
     return (
       <Layout>
         <Column className="flex-1">
-          <SelectionOverview title={'Allt'}/>
+          <SelectionOverview title={translate('all')}/>
           <Content>
-            {dashboard.record && <SystemOverviewContainer overview={dashboard.record.systemOverview}/>}
-            <Xlarge className="Bold">Bestånd</Xlarge>
+            {record && renderSystemOverview(record.systemOverview)}
+
+            <Title>{translate('collection')}</Title>
+
             <Map/>
+
             <Table data={normalizedData.meteringPoints}>
               <TableColumn
                 id={'id'}
@@ -109,14 +127,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
                 cell={renderStatusCell}
               />
             </Table>
-            <h3>
-              <div className="button" onClick={fetchDashboard}>
-                Click me to load dashboard data from json-server via Rest!!!
-              </div>
-            </h3>
-            <div>
-              <h3>Updated: {now.toLocaleString()} </h3>
-            </div>
+
           </Content>
         </Column>
       </Layout>
@@ -138,6 +149,7 @@ const mapStateToProps = (state: RootState) => {
   const {dashboard} = state;
   return {
     dashboard,
+    selectedWidget: state.ui.selectedIndicators.dashboard,
   };
 };
 
@@ -148,6 +160,7 @@ const mapStateToProps = (state: RootState) => {
  */
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchDashboard,
+  selectIndicatorWidget: selectDashboardIndicatorWidget,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardContainer);

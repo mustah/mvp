@@ -3,7 +3,7 @@ export const routes = {
   dashboard: '/dashboard',
   collection: '/collection',
   validation: '/validation',
-  dataAnalysis: '/metering-series',
+  report: '/report',
   login: '/login',
   mp: '/mp',
 };

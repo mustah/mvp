@@ -22,7 +22,7 @@ gradlew.bat
 .springBeans
 
 ### i18next ###
-frontend/template.pot
+frontend/src/i18n/locales/template.pot
 frontend/src/i18n/locales/*.json
 frontend/src/i18n/locales/*.mo
 
