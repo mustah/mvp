@@ -7,14 +7,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.elvaco.mvp.dto.ColoredBoxDTO;
 import com.elvaco.mvp.dto.DashboardDTO;
-import com.elvaco.mvp.dto.GraphDTO;
-import com.elvaco.mvp.dto.GraphValueDTO;
 import com.elvaco.mvp.dto.SystemOverviewDTO;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 import com.elvaco.mvp.repository.DashboardRepository;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 @RestApi
 public class DashboardController {
@@ -49,16 +46,9 @@ public class DashboardController {
     critical.subtitle = "3481 punkter";
     critical.title = "Mätvärdeskvalitet";
 
-    GraphDTO graph = new GraphDTO();
-    graph.title = "Tidsupplösning";
-    graph.records.add(new GraphValueDTO("15m", 23.0F));
-    graph.records.add(new GraphValueDTO("1h", 10.0F));
-    graph.records.add(new GraphValueDTO("24h", 4.0F));
-
     SystemOverviewDTO systemOverviewDTO = new SystemOverviewDTO();
     systemOverviewDTO.title = "Sven's system overview from the DashboardController";
     systemOverviewDTO.indicators = asList(warning, critical);
-    systemOverviewDTO.donutGraphs = singletonList(graph);
 
     DashboardDTO dashboard = new DashboardDTO();
     dashboard.author = "Sven";

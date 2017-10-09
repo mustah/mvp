@@ -1,5 +1,4 @@
 import {DASHBOARD_SUCCESS} from '../../../types/ActionTypes';
-import {DonutGraph} from '../../common/components/indicators/models/DonutGraphModels';
 import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
@@ -34,17 +33,6 @@ describe('Dashboard', () => {
       },
     ];
 
-    const donutGraphs: DonutGraph[] = [
-      {
-        title: 'Tidsupplösning',
-        records: [
-          {name: '15m', value: 23},
-          {name: '1h', value: 10},
-          {name: '24h', value: 4},
-        ],
-      },
-    ];
-
     const capturedApiResponse: DashboardModel = {
       id: 3,
       author: 'Sven',
@@ -52,7 +40,6 @@ describe('Dashboard', () => {
       systemOverview: {
         title: 'Sven system overview from the DashboardController',
         indicators,
-        donutGraphs,
       },
     };
 
@@ -69,7 +56,6 @@ describe('Dashboard', () => {
         systemOverview: {
           title: 'Sven system overview from the DashboardController',
           indicators,
-          donutGraphs,
         },
         title: 'Sven dashboard from the DashboardController',
       },

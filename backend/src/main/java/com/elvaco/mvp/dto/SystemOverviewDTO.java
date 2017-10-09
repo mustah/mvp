@@ -8,6 +8,5 @@ import lombok.ToString;
 public class SystemOverviewDTO {
 
   public String title;
-  public List<GraphDTO> donutGraphs;
   public List<ColoredBoxDTO> indicators;
 }
