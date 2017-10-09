@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Row} from '../../../layouts/components/row/Row';
+import {Row} from '../layouts/row/Row';
 import {Xlarge} from './Texts';
 import './Title.scss';
 

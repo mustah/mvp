@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {LayoutProps} from '../layoutModels';
+import {LayoutProps} from '../layout/Layout';
 import './Column.scss';
 
 export const Column = (props: LayoutProps) => {

@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Row} from '../../../layouts/components/row/Row';
+import {Row} from '../layouts/row/Row';
 import {IndicatorWidget} from './IndicatorWidget';
 import {Indicator, IndicatorType} from './models/IndicatorModels';
 

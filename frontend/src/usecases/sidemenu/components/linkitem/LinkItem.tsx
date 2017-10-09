@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {Expandable} from '../../../../types/Types';
 import {Icon} from '../../../common/components/icons/Icons';
-import {Row} from '../../../layouts/components/row/Row';
+import {Row} from '../../../common/components/layouts/row/Row';
 import './LinkItem.scss';
 
 export interface LinkItemProps extends Expandable {

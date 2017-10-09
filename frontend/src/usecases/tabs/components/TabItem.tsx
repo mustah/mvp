@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Column} from '../../layouts/components/column/Column';
+import {Column} from '../../common/components/layouts/column/Column';
 import {TabUnderline} from './TabUnderliner';
 
 type TabIdentifier = string;
