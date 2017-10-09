@@ -1,14 +1,16 @@
-package com.elvaco.mvp.entity.dataanalysis;
+package com.elvaco.mvp.entity.report;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Access(AccessType.FIELD)
-public class DataAnalysisEntity {
+@Table(name = "reports")
+public class ReportEntity {
 
   @Id
   @GeneratedValue
@@ -16,9 +18,9 @@ public class DataAnalysisEntity {
   public String author;
   public String title;
 
-  public DataAnalysisEntity() {}
+  public ReportEntity() {}
 
-  public DataAnalysisEntity(String author, String title) {
+  public ReportEntity(String author, String title) {
     this.author = author;
     this.title = title;
   }

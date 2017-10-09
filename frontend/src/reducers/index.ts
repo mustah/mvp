@@ -4,8 +4,8 @@ import {auth, AuthState} from '../usecases/auth/authReducer';
 import {collection} from '../usecases/collection/collectionReducer';
 import {CollectionState} from '../usecases/collection/models/Collections';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
-import {dataAnalysis} from '../usecases/data-analysis/dataAnalysisReducer';
-import {DataAnalysisState} from '../usecases/data-analysis/models/DataAnalysis';
+import {ReportState} from '../usecases/report/models/ReportModels';
+import {report} from '../usecases/report/reportReducer';
 import {TabsState} from '../usecases/tabs/models/TabsModel';
 import {tabs} from '../usecases/tabs/tabsReducer';
 import {language, LanguageState} from '../usecases/topmenu/languageReducer';
@@ -19,7 +19,7 @@ export interface RootState {
   collection: CollectionState;
   routing: RouterState;
   validation: ValidationState;
-  dataAnalysis: DataAnalysisState;
+  report: ReportState;
   language: LanguageState;
   ui: UiState;
   tabs: TabsState;
@@ -31,7 +31,7 @@ export const rootReducer = combineReducers<RootState>({
   collection,
   routing,
   validation,
-  dataAnalysis,
+  report,
   language,
   ui,
   tabs,

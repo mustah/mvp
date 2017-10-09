@@ -7,9 +7,9 @@ import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authSe
 import LoginContainer from '../auth/containers/LoginContainer';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
-import DataAnalysisContainer from '../data-analysis/containers/DataAnalysisContainer';
 import {Layout} from '../layouts/components/layout/Layout';
 import {Row} from '../layouts/components/row/Row';
+import ReportContainer from '../report/containers/ReportContainer';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
 import ValidationContainer from '../validation/containers/ValidationContainer';
@@ -21,7 +21,7 @@ const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(CollectionContainer);
 const ValidationPage = userIsAuthenticated(ValidationContainer);
-const ReportPage = userIsAuthenticated(DataAnalysisContainer);
+const ReportPage = userIsAuthenticated(ReportContainer);
 
 /**
  * The Application root component should extend React.Component in order

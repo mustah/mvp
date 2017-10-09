@@ -12,6 +12,7 @@ import org.hibernate.annotations.Type;
 
 import lombok.ToString;
 
+
 @ToString
 @Entity
 @Access(AccessType.FIELD)
