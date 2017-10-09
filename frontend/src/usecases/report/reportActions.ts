@@ -10,12 +10,14 @@ const reportsSuccess = createPayloadAction(REPORTS_SUCCESS);
 const reportsFailure = createPayloadAction(REPORTS_FAILURE);
 
 export const fetchReports = () => {
-  return (dispatch) => {
+  return async (dispatch) => {
     dispatch(reportsRequest());
-
-    restClient.get('/reports')
-      .then(response => response.data)
-      .then(reports => dispatch(reportsSuccess(reports)))
-      .catch(error => dispatch(reportsFailure(error)));
+    try {
+      const {data: reports} = await restClient.get('/reports');
+      dispatch(reportsSuccess(reports));
+    } catch (error) {
+      const {response: {data}} = error;
+      dispatch(reportsFailure(data));
+    }
   };
 };
