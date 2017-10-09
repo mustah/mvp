@@ -16,19 +16,19 @@ import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
+import {TabIdentifier, TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: string) => {
+  const onChangeTab = (tab: TabIdentifier) => {
     changeTab({
       useCase: 'dashboard',
       tab,
     });
   };
-  const onChangeTabOption = (tab: string, option: string): void => {
+  const onChangeTabOption = (tab: TabIdentifier, option: string): void => {
     changeTabOption({
       useCase: 'dashboard',
       tab,
