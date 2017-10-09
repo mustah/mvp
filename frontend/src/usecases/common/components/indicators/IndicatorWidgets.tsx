@@ -1,7 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Row} from '../../../layouts/components/row/Row';
-import {DonutGraphProps} from './DonutGraphWidget';
 import {IndicatorWidget} from './IndicatorWidget';
 import {Indicator, IndicatorType} from './models/IndicatorModels';
 
@@ -12,7 +11,7 @@ export interface SelectedIndicatorWidgetProps {
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps {
   indicators: Indicator[];
-  children?: React.ReactElement<DonutGraphProps>;
+  children?: React.ReactElement<any>;
   className?: string;
 }
 

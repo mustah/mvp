@@ -45,7 +45,6 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       <SystemOverview
         title={systemOverview.title}
         indicators={systemOverview.indicators}
-        donutGraphs={systemOverview.donutGraphs}
         selectedWidget={selectedWidget}
         selectIndicatorWidget={selectIndicatorWidget}
       />
