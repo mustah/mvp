@@ -11,3 +11,41 @@ export interface DashboardModel {
   author: string;
   systemOverview: SystemOverviewState;
 }
+
+export const normalizedData = {
+  meteringPoints: {
+    byId: {
+      '1234 1234 1234': {
+        id: '1234 1234 1234',
+        type: 'UNICOcoder',
+        location: 'Område 1 fast 12',
+        gateway: 'YY',
+        status: {
+          code: 0,
+          text: 'ok',
+        },
+      },
+      '1234 1234 1235': {
+        id: '1234 1234 1235',
+        type: 'UNICOcoder',
+        location: 'Område 1 fast 12',
+        gateway: 'YY',
+        status: {
+          code: 2,
+          text: 'Mätare går baklänges',
+        },
+      },
+      '1234 1234 1236': {
+        id: '1234 1234 1236',
+        type: 'UNICOcoder',
+        location: 'Område 1 fast 12',
+        gateway: 'YY',
+        status: {
+          code: 3,
+          text: 'Mätare går inte alls',
+        },
+      },
+    },
+    allIds: ['1234 1234 1234', '1234 1234 1235', '1234 1234 1236'],
+  },
+};

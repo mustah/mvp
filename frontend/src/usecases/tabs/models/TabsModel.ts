@@ -4,17 +4,24 @@ export const tabTypes = {
   graph: 'graph',
 };
 
-export interface Tab {
+export interface TabModel {
   [key: string]: {
     selectedOption: string;
   };
 }
 
-export interface TabView {
+export interface SelectedTabs {
   selectedTab: string;
-  tabs: Tab;
+  tabs: TabModel;
 }
 
 export interface TabsState {
-  [key: string]: TabView;
+  [key: string]: SelectedTabs;
+}
+
+export interface TabsContainerProps {
+  tabs: TabModel;
+  selectedTab: string;
+  changeTab: (payload: {useCase: string; tab: string; }) => any;
+  changeTabOption: (payload: {useCase: string; tab: string; option: string; }) => any;
 }

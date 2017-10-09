@@ -4,20 +4,17 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
-import {TabItem} from '../../tabs/components/TabItem';
+import {Tab} from '../../tabs/components/Tab';
+import {TabContent} from '../../tabs/components/TabContent';
+import {TabList} from '../../tabs/components/TabList';
 import {TabOption} from '../../tabs/components/TabOption';
 import {Tabs} from '../../tabs/components/Tabs';
-import {Tab, tabTypes} from '../../tabs/models/TabsModel';
+import {TabSettings} from '../../tabs/components/TabSettings';
+import {TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
+import {TabOptions} from '../../tabs/components/TabOptions';
 
-interface ValidationTabsContainerProps {
-  tabs: Tab;
-  selectedTab: string;
-  changeTab: (payload: {useCase: string; tab: string; }) => any;
-  changeTabOption: (payload: {useCase: string; tab: string; option: string; }) => any;
-}
-
-const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
+const ValidationTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
   const onChangeTab = (tab: string) => {
     changeTab({
@@ -34,9 +31,11 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   };
 
   return (
-    <Tabs selectedTab={selectedTab}>
-      <TabItem tabName={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} changeTab={onChangeTab}>
-        <Image src="usecases/validation/img/map.png">
+    <Tabs>
+      <TabList>
+        <Tab title={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <Tab title={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <TabOptions forTab={tabTypes.map} selectedTab={selectedTab}>
           <TabOption
             tab={tabTypes.map}
             select={onChangeTabOption}
@@ -58,10 +57,8 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             option={'facility'}
             selectedOption={tabs[tabTypes.map].selectedOption}
           />
-        </Image>
-      </TabItem>
-      <TabItem tabName={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} changeTab={onChangeTab}>
-        <Image src="usecases/validation/img/meters.png">
+        </TabOptions>
+        <TabOptions forTab={tabTypes.list} selectedTab={selectedTab}>
           <TabOption
             tab={tabTypes.list}
             select={onChangeTabOption}
@@ -76,8 +73,15 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             option={'sort ascending'}
             selectedOption={tabs[tabTypes.list].selectedOption}
           />
-        </Image>
-      </TabItem>
+        </TabOptions>
+        <TabSettings/>
+      </TabList>
+      <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
+        <Image src="usecases/validation/img/map.png" />
+      </TabContent>
+      <TabContent tab={tabTypes.list} selectedTab={selectedTab}>
+        <Image src="usecases/validation/img/meters.png" />
+      </TabContent>
     </Tabs>
   );
 };
