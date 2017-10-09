@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Image} from '../../../common/components/images/Image';
-import {Column} from '../../../layouts/components/column/Column';
+import {Column} from '../../../common/components/layouts/column/Column';
 import './Map.scss';
 
 export interface MapProps {

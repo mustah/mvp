@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'Tabs.scss';
-import {Column} from '../../layouts/components/column/Column';
-import {Row} from '../../layouts/components/row/Row';
+import {Column} from '../../common/components/layouts/column/Column';
+import {Row} from '../../common/components/layouts/row/Row';
 import {TabItemProps} from './TabItem';
 import {TabOptions} from './TabOptions';
 import {TabSettings} from './TabSettings';

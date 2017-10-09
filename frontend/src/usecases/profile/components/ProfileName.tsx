@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {User} from '../../auth/authReducer';
 import {Bold, Small} from '../../common/components/texts/Texts';
-import {Column} from '../../layouts/components/column/Column';
+import {Column} from '../../common/components/layouts/column/Column';
 
 export interface ProfileNameProps {
   user: User;

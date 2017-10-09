@@ -21,6 +21,7 @@
     "object-literal-sort-keys": false,
     "no-var-requires": false,
     "no-trailing-whitespace": false,
+    "ordered-imports": false,
     "arrow-parens": [
       false
     ],

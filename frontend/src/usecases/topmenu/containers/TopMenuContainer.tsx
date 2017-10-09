@@ -6,7 +6,7 @@ import {RootState} from '../../../reducers/index';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
-import {Row} from '../../layouts/components/row/Row';
+import {Row} from '../../common/components/layouts/row/Row';
 import {ProfileContainer} from '../../profile/containers/ProfileContainer';
 import {MainLogo} from '../components/mainlogo/MainLogo';
 import {MenuItem} from '../components/menuitems/MenuItem';

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Separator} from '../../../dashboard/components/separators/Separator';
-import {Column} from '../../../layouts/components/column/Column';
-import {Row} from '../../../layouts/components/row/Row';
 import {Icon} from '../icons/Icons';
+import {Column} from '../layouts/column/Column';
+import {Row} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 
 export const PeriodSelection = props => (

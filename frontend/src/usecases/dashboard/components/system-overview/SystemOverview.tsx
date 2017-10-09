@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {IndicatorWidgetProps, IndicatorWidgets} from '../../../common/components/indicators/IndicatorWidgets';
 import {Title} from '../../../common/components/texts/Title';
-import {Column} from '../../../layouts/components/column/Column';
+import {Column} from '../../../common/components/layouts/column/Column';
 import './SystemOverview.scss';
 
 interface SystemOverviewProps extends IndicatorWidgetProps {
