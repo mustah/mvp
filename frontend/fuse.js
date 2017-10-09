@@ -20,6 +20,7 @@ const {runCLI} = require('jest');
 const distDir = 'dist';
 const homeDir = 'src';
 const appCss = 'css/app.css';
+const fuseboxCacheDir = '.fusebox/cache';
 
 let fuse, app, vendor, isProduction = false;
 
@@ -84,6 +85,8 @@ Sparky.task('config', ['convert-po-to-json'], () => {
   app = fuse.bundle('app').instructions('> index.tsx');
 });
 
+Sparky.task('remove-fusebox-cache', () => Sparky.src(fuseboxCacheDir).clean(fuseboxCacheDir));
+
 Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
 
 Sparky.task('convert-po-to-json', ['extract-translations'], () => convertPoToJson({base: homeDir}));
@@ -94,9 +97,9 @@ Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDi
 
 Sparky.task('copy:external-assets', () => Sparky.src([materialDesignFonts], {base: materialDesign}).dest(distDir));
 
-Sparky.task('clean', () => Sparky.src(distDir).clean(distDir));
+Sparky.task('clean', ['remove-fusebox-cache'], () => Sparky.src(distDir).clean(distDir));
 
-Sparky.task('set-production', ['clean'], () => isProduction = true);
+Sparky.task('set-production', () => isProduction = true);
 
 Sparky.task('tests', runTests);
 
@@ -113,7 +116,15 @@ Sparky.task('default', ['clean', 'config', 'watch:assets', 'copy:external-assets
   return fuse.run();
 });
 
-const distTasks = ['set-production', 'config', 'run-type-checker', 'tests', 'copy:assets', 'copy:external-assets'];
+const distTasks = [
+  'set-production',
+  'clean',
+  'config',
+  'run-type-checker',
+  'tests',
+  'copy:assets',
+  'copy:external-assets',
+];
 
 Sparky.task('dist', distTasks, () => {
   return fuse.run();
