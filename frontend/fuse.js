@@ -31,17 +31,22 @@ const runTests = () => {
  * Returns the number of errors
  */
 const runTypeChecker = () => {
-  return TypeHelper({
-    tsConfig: './tsconfig.json',
-    basePath: './',
-    tsLint: './tslint.json',
-    name: `MVP`,
-    throwOnGlobal: isProduction,
-    throwOnSyntactic: isProduction,
-    throwOnSemantic: isProduction,
-    throwOnTsLint: isProduction,
-  })
-  .runSync();
+  try {
+    TypeHelper({
+      tsConfig: './tsconfig.json',
+      basePath: './',
+      tsLint: './tslint.json',
+      name: `MVP`,
+      throwOnGlobal: isProduction,
+      throwOnSyntactic: isProduction,
+      throwOnSemantic: isProduction,
+      throwOnTsLint: isProduction,
+    })
+      .runSync();
+  } catch (error) {
+    console.error(error, error.stack);
+    process.exit(1);
+  }
 };
 
 const materialDesign = './node_modules/mdi/';
@@ -77,13 +82,6 @@ Sparky.task('config', ['convert-po-to-json'], () => {
   vendor = fuse.bundle('vendor').instructions('~ index.ts');
 
   app = fuse.bundle('app').instructions('> index.tsx');
-
-  try {
-    runTypeChecker();
-  } catch (error) {
-    console.error(error.stack);
-    process.exit(1);
-  }
 });
 
 Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
@@ -100,15 +98,22 @@ Sparky.task('clean', () => Sparky.src(distDir).clean(distDir));
 
 Sparky.task('set-production', ['clean'], () => isProduction = true);
 
-Sparky.task('tests', () => runTests());
+Sparky.task('tests', runTests);
+
+Sparky.task('run-type-checker', runTypeChecker);
 
 Sparky.task('default', ['clean', 'config', 'watch:assets', 'copy:external-assets'], () => {
   fuse.dev();
-  app.watch().hmr().completed(runTests);
+  app.watch()
+    .hmr()
+    .completed(() => {
+      runTypeChecker();
+      runTests();
+    });
   return fuse.run();
 });
 
-const distTasks = ['set-production', 'config', 'tests', 'copy:assets', 'copy:external-assets'];
+const distTasks = ['set-production', 'config', 'run-type-checker', 'tests', 'copy:assets', 'copy:external-assets'];
 
 Sparky.task('dist', distTasks, () => {
   return fuse.run();
