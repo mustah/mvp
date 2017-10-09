@@ -1,9 +1,13 @@
 import * as React from 'react';
 import 'Tabs.scss';
 import {Column} from '../../layouts/components/column/Column';
+import {TabContentProps} from './TabContent';
+import {TabListProps} from './TabList';
+
+type TabsChildren = TabListProps | TabContentProps;
 
 interface TabsProps {
-  children: any; // TODO: Make list more specific.
+  children: Array<React.ReactElement<TabsChildren>>;
 }
 
 export const Tabs = (props: TabsProps) => {

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {TabIdentifier} from '../models/TabsModel';
+import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
 
-interface TabOptionsProps {
-  children: any;
-  forTab: string;
-  selectedTab: string;
+export interface TabOptionsProps {
+  children: Array<React.ReactElement<TabOptionProps>>;
+  forTab: TabIdentifier;
+  selectedTab: TabIdentifier;
 }
 
 export const TabOptions = (props: TabOptionsProps) => {

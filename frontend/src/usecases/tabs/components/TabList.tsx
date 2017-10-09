@@ -1,8 +1,13 @@
 import * as React from 'react';
 import {Row} from '../../layouts/components/row/Row';
+import {TabProps} from './Tab';
+import {TabOptionsProps} from './TabOptions';
+import {TabSettingsProps} from './TabSettings';
 
-interface TabListProps {
-  children: any; // TODO: Make type more specific.
+type TabListChild = TabProps | TabOptionsProps | TabSettingsProps;
+
+export interface TabListProps {
+  children: Array<React.ReactElement<TabListChild>>;
 }
 
 export const TabList = (props: TabListProps) => {

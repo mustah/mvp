@@ -1,8 +1,10 @@
-export const tabTypes = {
-  list: 'list',
-  map: 'map',
-  graph: 'graph',
-};
+export enum tabTypes {
+  list = 'list',
+  map = 'map',
+  graph = 'graph',
+}
+
+export type TabIdentifier = tabTypes;
 
 export interface TabModel {
   [key: string]: {
@@ -21,7 +23,7 @@ export interface TabsState {
 
 export interface TabsContainerProps {
   tabs: TabModel;
-  selectedTab: string;
-  changeTab: (payload: {useCase: string; tab: string; }) => any;
-  changeTabOption: (payload: {useCase: string; tab: string; option: string; }) => any;
+  selectedTab: TabIdentifier;
+  changeTab: (payload: {useCase: string; tab: TabIdentifier; }) => any;
+  changeTabOption: (payload: {useCase: string; tab: TabIdentifier; option: string; }) => any;
 }

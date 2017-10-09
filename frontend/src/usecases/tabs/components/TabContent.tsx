@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
+import {TabIdentifier} from '../models/TabsModel';
 
-interface TabContentProps {
-  tab: string;
-  selectedTab: string;
+export interface TabContentProps {
+  tab: TabIdentifier;
+  selectedTab: TabIdentifier;
   children: any;
 }
 

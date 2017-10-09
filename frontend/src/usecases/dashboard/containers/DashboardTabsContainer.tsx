@@ -41,8 +41,8 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
   return (
     <Tabs>
       <TabList>
-        <Tab tab="list" title={translate('list')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab tab="map" title={translate('map')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <Tab tab={tabTypes.list} title={translate('list')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <Tab tab={tabTypes.map} title={translate('map')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
         <TabOptions forTab={tabTypes.map} selectedTab={selectedTab} >
           <TabOption
             tab={tabTypes.map}
@@ -66,9 +66,9 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
             selectedOption={tabs[tabTypes.map].selectedOption}
           />
         </TabOptions>
-        <TabSettings/>
+        <TabSettings useCase="dashboard"/>
       </TabList>
-      <TabContent tab="list" selectedTab={selectedTab}>
+      <TabContent tab={tabTypes.list} selectedTab={selectedTab}>
         <Table data={normalizedData.meteringPoints}>
           <TableColumn
             id={'id'}
@@ -94,7 +94,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
           />
         </Table>
       </TabContent>
-      <TabContent tab="map" selectedTab={selectedTab}>
+      <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
     </Tabs>

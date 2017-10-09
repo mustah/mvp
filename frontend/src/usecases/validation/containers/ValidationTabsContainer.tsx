@@ -8,21 +8,21 @@ import {Tab} from '../../tabs/components/Tab';
 import {TabContent} from '../../tabs/components/TabContent';
 import {TabList} from '../../tabs/components/TabList';
 import {TabOption} from '../../tabs/components/TabOption';
+import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
+import {TabIdentifier, TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
-import {TabOptions} from '../../tabs/components/TabOptions';
 
 const ValidationTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: string) => {
+  const onChangeTab = (tab: TabIdentifier) => {
     changeTab({
       useCase: 'validation',
       tab,
     });
   };
-  const onChangeTabOption = (tab: string, option: string): void => {
+  const onChangeTabOption = (tab: TabIdentifier, option: string): void => {
     changeTabOption({
       useCase: 'validation',
       tab,
@@ -74,7 +74,7 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
             selectedOption={tabs[tabTypes.list].selectedOption}
           />
         </TabOptions>
-        <TabSettings/>
+        <TabSettings useCase="validation"/>
       </TabList>
       <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
         <Image src="usecases/validation/img/map.png" />

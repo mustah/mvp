@@ -1,9 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
+import {TabIdentifier} from '../models/TabsModel';
 import {TabUnderline} from './TabUnderliner';
-
-type TabIdentifier = string;
 
 export interface TabProps {
   title: string;

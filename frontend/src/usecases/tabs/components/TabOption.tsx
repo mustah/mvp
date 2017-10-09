@@ -1,11 +1,12 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {TabIdentifier} from '../models/TabsModel';
 
 type OptionIdentifier = string;
 
 export interface TabOptionProps {
-  tab: string;
-  select: (tab: string, option: string) => void;
+  tab: TabIdentifier;
+  select: (tab: TabIdentifier, option: string) => void;
   optionName: string;
   option: OptionIdentifier;
   selectedOption: OptionIdentifier;

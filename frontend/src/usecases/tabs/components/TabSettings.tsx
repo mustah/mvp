@@ -4,7 +4,11 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {TabUnderline} from './TabUnderliner';
 
-export const TabSettings = (props) => {
+export interface TabSettingsProps {
+  useCase: string;
+}
+
+export const TabSettings = (props: TabSettingsProps) => {
   return (
     <Column className="TabSettings">
       <Row className="flex-1 Row-right clickable">
