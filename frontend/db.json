@@ -33,7 +33,7 @@
       "author": "elvaco - home"
     }
   ],
-  "report": [
+  "reports": [
     {
       "id": 1,
       "title": "json-server",
@@ -41,12 +41,12 @@
     },
     {
       "id": 2,
-      "title": "dataAnalysis 2",
+      "title": "report 2",
       "author": "elvaco"
     },
     {
       "id": 3,
-      "title": "dataAnalysis 3",
+      "title": "report 3",
       "author": "elvaco - home"
     }
   ],

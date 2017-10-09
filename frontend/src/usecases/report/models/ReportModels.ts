@@ -1,8 +1,8 @@
 import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 
-export interface DataAnalysisState {
+export interface ReportState {
   title: string;
-  records: DataAnalysisState[];
+  records: ReportState[];
   error?: string;
   isFetching: boolean;
 }

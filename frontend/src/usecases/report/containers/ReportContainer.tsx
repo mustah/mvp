@@ -11,23 +11,23 @@ import {Column} from '../../layouts/components/column/Column';
 import {Content} from '../../layouts/components/content/Content';
 import {Layout} from '../../layouts/components/layout/Layout';
 import {selectReportIndicatorWidget} from '../../ui/uiActions';
-import {fetchDataAnalysis} from '../dataAnalysisActions';
-import {DataAnalysisState, indicators} from '../models/DataAnalysis';
-import {DataAnalysisOverviewContainer} from './DataAnalysisOverviewContainer';
+import {ReportOverview} from '../components/ReportOverview';
+import {indicators, ReportState} from '../models/ReportModels';
+import {fetchReports} from '../reportActions';
 
-export interface DataAnalysisContainerProps extends SelectedIndicatorWidgetProps {
-  fetchDataAnalysis: () => any;
-  dataAnalysis: DataAnalysisState;
+export interface ReportContainerProps extends SelectedIndicatorWidgetProps {
+  fetchReports: () => any;
+  report: ReportState;
 }
 
-const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthRouterProps) => {
+const ReportContainer = (props: ReportContainerProps & InjectedAuthRouterProps) => {
   const {selectedWidget, selectIndicatorWidget} = props;
   return (
     <Layout>
       <Column className="flex-1">
         <SelectionOverview title={translate('all')}/>
         <Content>
-          <DataAnalysisOverviewContainer/>
+          <ReportOverview/>
 
           <IndicatorWidgets
             indicators={indicators}
@@ -37,7 +37,7 @@ const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthR
           />
 
           <Column className="Section">
-            <Image src="usecases/data-analysis/img/graph-map.png"/>
+            <Image src="usecases/report/img/graph-map.png"/>
           </Column>
         </Content>
       </Column>
@@ -46,16 +46,16 @@ const DataAnalysisContainer = (props: DataAnalysisContainerProps & InjectedAuthR
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {dataAnalysis} = state;
+  const {report} = state;
   return {
-    dataAnalysis,
+    report,
     selectedWidget: state.ui.selectedIndicators.report,
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchDataAnalysis,
+  fetchReports,
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataAnalysisContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ReportContainer);
