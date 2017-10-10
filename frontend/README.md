@@ -37,23 +37,15 @@ Run the server in production mode, featuring:
 $ yarn dist-server
 ```
 
-### Run Fake REST api 
+### Run Fake REST API
 We use [json-server](https://github.com/typicode/json-server) to fake our api and store the data in db.json file. 
 This file is also included in the git repository for now. 
 
-**Note** that the json-server must be installed globally and run as a background task in another terminal window.
+**Note** the json-server runs in the foreground, which means that you should leave it up and running in a terminal
+as long as you need it, or run it in the background by suffixing the json-server call with `&` (i.e. `... --port 8080 &`).
 
 ```bash
-$ yarn global add json-server 
-
-# start JSON server
-$ cd [to-project-root]
-$ json-server --watch db.json
-```
-By default json-server listens on port 3000 but can be told to listen to another if needed:
-
-```bash
-$ json-server --watch db.json --port [port num]
+$ ./node_modules/json-server/bin/index.js --watch db.json --routes routes.json --port 8080
 ```
 
 ## Tests

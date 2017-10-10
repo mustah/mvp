@@ -1,0 +1,4 @@
+{
+  "/api/dashboards/current": "/dashboards/3",
+  "/api/*": "/$1"
+}
