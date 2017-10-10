@@ -4,6 +4,10 @@ export enum tabType {
   graph = 'graph',
 }
 
+export interface ListProps {
+  data: any;
+}
+
 export interface TabModel {
   [key: string]: {
     selectedOption: string;

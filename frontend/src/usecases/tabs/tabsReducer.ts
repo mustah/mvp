@@ -16,6 +16,10 @@ const tabsInitialState: TabsState = {
     selectedTab: tabType.map,
     tabs: {...useCaseTabs},
   },
+  collection: {
+    selectedTab: tabType.map,
+    tabs: {...useCaseTabs},
+  },
 };
 
 export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => {

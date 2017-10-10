@@ -13,6 +13,8 @@ import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
 import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
+import {ValidationList} from '../components/ValidationList';
+import {normalizedValidationData} from '../models/normalizedValidationData';
 
 const ValidationTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
@@ -64,7 +66,7 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/meters.png"/>
+        <ValidationList data={normalizedValidationData.meteringPoints} />
       </TabContent>
     </Tabs>
   );

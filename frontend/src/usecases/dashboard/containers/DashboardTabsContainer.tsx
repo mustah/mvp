@@ -5,7 +5,7 @@ import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
-import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
+import {StatusIcon} from '../../table/components/status/StatusIcon';
 import {Table} from '../../table/components/table/Table';
 import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';

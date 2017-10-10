@@ -13,6 +13,7 @@ import {Layout} from '../../common/components/layouts/layout/Layout';
 import {fetchCollections} from '../collectionActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {CollectionState} from '../models/Collections';
+import CollectionTabsContainer from './CollectionTabsContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -30,8 +31,7 @@ const CollectionContainer = (props: CollectionContainerProps & InjectedAuthRoute
           <Image src="usecases/collection/img/collections-errors-warnings.png"/>
 
           <Title>{translate('gateway')}</Title>
-          <Image src="usecases/collection/img/gateways.png"/>
-
+          <CollectionTabsContainer/>
           <div className="button" onClick={fetchCollections}>{translate('collection')}</div>
         </Content>
       </Column>
