@@ -7,8 +7,8 @@ import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authSe
 import LoginContainer from '../auth/containers/LoginContainer';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
-import {Layout} from '../layouts/components/layout/Layout';
-import {Row} from '../layouts/components/row/Row';
+import {Layout} from '../common/components/layouts/layout/Layout';
+import {Row} from '../common/components/layouts/row/Row';
 import ReportContainer from '../report/containers/ReportContainer';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import TopMenuContainer from '../topmenu/containers/TopMenuContainer';

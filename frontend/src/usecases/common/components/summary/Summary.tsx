@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Column} from '../../../layouts/components/column/Column';
-import {Row} from '../../../layouts/components/row/Row';
+import {Column} from '../layouts/column/Column';
+import {Row} from '../layouts/row/Row';
 import {Bold, Normal} from '../texts/Texts';
 import './Summary.scss';
 

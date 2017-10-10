@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Icon} from '../../common/components/icons/Icons';
-import {Column} from '../../layouts/components/column/Column';
-import {Row} from '../../layouts/components/row/Row';
+import {Column} from '../../common/components/layouts/column/Column';
+import {Row} from '../../common/components/layouts/row/Row';
 import {NavigationItem} from '../components/navigationitem/NavigationItem';
 
 export const NavigationContainer = props => (

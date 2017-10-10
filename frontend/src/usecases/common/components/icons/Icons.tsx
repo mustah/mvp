@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {ClassNamed} from '../../../../types/Types';
-import {Row} from '../../../layouts/components/row/Row';
+import {Row} from '../layouts/row/Row';
 import './Icons.scss';
 
 export interface IconProps extends ClassNamed {
