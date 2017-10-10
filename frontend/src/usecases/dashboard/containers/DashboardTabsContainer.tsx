@@ -11,11 +11,12 @@ import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';
 import {Tab} from '../../tabs/components/Tab';
 import {TabContent} from '../../tabs/components/TabContent';
-import {TabList} from '../../tabs/components/TabList';
+import {TabHeaders} from '../../tabs/components/TabHeaders';
 import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
+import {TabTopBar} from '../../tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
@@ -40,10 +41,12 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
 
   return (
     <Tabs>
-      <TabList>
-        <Tab tab={tabType.list} title={translate('list')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab tab={tabType.map} title={translate('map')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <TabOptions forTab={tabType.map} selectedTab={selectedTab} >
+      <TabTopBar>
+        <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+          <Tab tab={tabType.list} title={translate('list')} />
+          <Tab tab={tabType.map} title={translate('map')} />
+        </TabHeaders>
+        <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
           <TabOption
             tab={tabType.map}
             select={onChangeTabOption}
@@ -67,7 +70,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
           />
         </TabOptions>
         <TabSettings useCase="dashboard"/>
-      </TabList>
+      </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <Table data={normalizedData.meteringPoints}>
           <TableColumn

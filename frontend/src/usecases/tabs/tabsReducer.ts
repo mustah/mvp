@@ -1,24 +1,31 @@
 import {AnyAction} from 'redux';
 import {TabsState, tabType} from './models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
-const useCaseTabs = {
-  [tabType.map]: {
-    selectedOption: 'area',
-  },
-};
 
 const tabsInitialState: TabsState = {
   validation: {
     selectedTab: tabType.list,
-    tabs: {...useCaseTabs},
+    tabs: {
+      [tabType.map]: {
+        selectedOption: 'area',
+      },
+    },
   },
   dashboard: {
     selectedTab: tabType.map,
-    tabs: {...useCaseTabs},
+    tabs: {
+      [tabType.map]: {
+        selectedOption: 'area',
+      },
+    },
   },
   collection: {
     selectedTab: tabType.map,
-    tabs: {...useCaseTabs},
+    tabs: {
+      [tabType.map]: {
+        selectedOption: 'area',
+      },
+    },
   },
 };
 

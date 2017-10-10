@@ -6,25 +6,26 @@ import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {Tab} from '../../tabs/components/Tab';
 import {TabContent} from '../../tabs/components/TabContent';
-import {TabList} from '../../tabs/components/TabList';
+import {TabHeaders} from '../../tabs/components/TabHeaders';
 import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabIdentifier, TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
+import {TabTopBar} from '../../tabs/components/TabTopBar';
+import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {gateways} from '../../validation/models/normalizedValidationData';
 import {CollectionList} from '../components/CollectionList';
 
 const CollectionTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: TabIdentifier) => {
+  const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'collection',
       tab,
     });
   };
-  const onChangeTabOption = (tab: TabIdentifier, option: string): void => {
+  const onChangeTabOption = (tab: tabType, option: string): void => {
     changeTabOption({
       useCase: 'collection',
       tab,
@@ -34,54 +35,40 @@ const CollectionTabsContainer = (props: TabsContainerProps) => {
 
   return (
     <Tabs>
-      <TabList>
-        <Tab title={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab title={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <TabOptions forTab={tabTypes.map} selectedTab={selectedTab}>
+      <TabTopBar>
+        <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+          <Tab title={translate('map')} tab={tabType.map}/>
+          <Tab title={translate('list')} tab={tabType.list}/>
+        </TabHeaders>
+        <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('area')}
-            option={'area'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('area')}
+            id={'area'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('object')}
-            option={'object'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('object')}
+            id={'object'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('facility')}
-            option={'facility'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
-          />
-        </TabOptions>
-        <TabOptions forTab={tabTypes.list} selectedTab={selectedTab}>
-          <TabOption
-            tab={tabTypes.list}
-            select={onChangeTabOption}
-            optionName={translate('sort descending')}
-            option={'sort descending'}
-            selectedOption={tabs[tabTypes.list].selectedOption}
-          />
-          <TabOption
-            tab={tabTypes.list}
-            select={onChangeTabOption}
-            optionName={translate('sort ascending')}
-            option={'sort ascending'}
-            selectedOption={tabs[tabTypes.list].selectedOption}
+            title={translate('facility')}
+            id={'facility'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
         </TabOptions>
         <TabSettings useCase="collection"/>
-      </TabList>
-      <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png" />
+      </TabTopBar>
+      <TabContent tab={tabType.map} selectedTab={selectedTab}>
+        <Image src="usecases/validation/img/map.png"/>
       </TabContent>
-      <TabContent tab={tabTypes.list} selectedTab={selectedTab}>
+      <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <CollectionList data={gateways}/>
       </TabContent>
     </Tabs>

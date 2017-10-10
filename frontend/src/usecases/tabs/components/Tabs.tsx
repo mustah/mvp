@@ -2,9 +2,9 @@ import * as React from 'react';
 import 'Tabs.scss';
 import {Column} from '../../layouts/components/column/Column';
 import {TabContentProps} from './TabContent';
-import {TabListProps} from './TabList';
+import {TabTopBarProps} from './TabTopBar';
 
-type TabsChildren = TabListProps | TabContentProps;
+type TabsChildren = TabTopBarProps | TabContentProps;
 
 interface TabsProps {
   children: Array<React.ReactElement<TabsChildren>>;

@@ -6,11 +6,12 @@ import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {Tab} from '../../tabs/components/Tab';
 import {TabContent} from '../../tabs/components/TabContent';
-import {TabList} from '../../tabs/components/TabList';
+import {TabHeaders} from '../../tabs/components/TabHeaders';
 import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
+import {TabTopBar} from '../../tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {ValidationList} from '../components/ValidationList';
@@ -34,9 +35,11 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
 
   return (
     <Tabs>
-      <TabList>
-        <Tab title={translate('map')} tab={tabType.map} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab title={translate('list')} tab={tabType.list} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+      <TabTopBar>
+        <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+          <Tab title={translate('map')} tab={tabType.map} />
+          <Tab title={translate('list')} tab={tabType.list}/>
+        </TabHeaders>
         <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
           <TabOption
             tab={tabType.map}
@@ -61,12 +64,12 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
           />
         </TabOptions>
         <TabSettings useCase="validation"/>
-      </TabList>
+      </TabTopBar>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <ValidationList data={normalizedValidationData.meteringPoints} />
+        <ValidationList data={normalizedValidationData.meteringPoints}/>
       </TabContent>
     </Tabs>
   );

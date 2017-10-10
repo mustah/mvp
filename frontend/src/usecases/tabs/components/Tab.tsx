@@ -7,13 +7,13 @@ import {TabUnderline} from './TabUnderliner';
 export interface TabProps {
   title: string;
   tab: tabType;
-  selectedTab: tabType;
-  onChangeTab: (tab: string) => void;
+  selectedTab?: tabType;
+  onChangeTab?: (tab: string) => void;
 }
 
 export const Tab = (props: TabProps) => {
   const {title, tab, selectedTab, onChangeTab} = props;
-  const selectTab = () => onChangeTab(tab);
+  const selectTab = onChangeTab ? () => onChangeTab(tab) : () => null;
   const isSelected = tab === selectedTab;
   return (
     <Column className={classNames('Tab', {isSelected})} onClick={selectTab}>
