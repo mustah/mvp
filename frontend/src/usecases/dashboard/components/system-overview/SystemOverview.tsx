@@ -1,5 +1,8 @@
 import * as React from 'react';
-import {IndicatorWidgetProps, IndicatorWidgets} from '../../../common/components/indicators/IndicatorWidgets';
+import {
+  IndicatorWidgetProps,
+  IndicatorWidgets,
+} from '../../../common/components/indicators/components/IndicatorWidgets';
 import {Title} from '../../../common/components/texts/Title';
 import {Column} from '../../../common/components/layouts/column/Column';
 import './SystemOverview.scss';

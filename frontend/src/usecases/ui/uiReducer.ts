@@ -1,36 +1,14 @@
-import {AnyAction} from 'redux';
-import {IndicatorType} from '../common/components/indicators/models/IndicatorModels';
-import {SELECT_INDICATOR_WIDGET} from './uiActions';
-
-export interface SelectedIndicators {
-  dashboard?: IndicatorType | null;
-  report?: IndicatorType | null;
-}
+import {combineReducers} from 'redux';
+import {indicator, IndicatorState} from '../common/components/indicators/indicatorReducer';
+import {TabsState} from '../tabs/models/TabsModel';
+import {tabs} from '../tabs/tabsReducer';
 
 export interface UiState {
-  selectedIndicators: SelectedIndicators;
+  tabs: TabsState;
+  indicator: IndicatorState;
 }
 
-export const initialState = {
-  selectedIndicators: {
-    dashboard: null,
-    report: null,
-  },
-};
-
-export const ui = (state: UiState = initialState, action: AnyAction): UiState => {
-  const {payload, type} = action;
-
-  switch (type) {
-    case SELECT_INDICATOR_WIDGET:
-      return {
-        ...state,
-        selectedIndicators: {
-          ...state.selectedIndicators,
-          ...payload,
-        },
-      };
-    default:
-      return state;
-  }
-};
+export const ui = combineReducers<UiState>({
+  tabs,
+  indicator,
+});

@@ -95,7 +95,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
   );
 };
 const mapStateToProps = (state: RootState) => {
-  const {tabs: {dashboard: {tabs, selectedTab}}} = state;
+  const {ui: {tabs: {dashboard: {tabs, selectedTab}}}} = state;
   return {
     selectedTab,
     tabs,

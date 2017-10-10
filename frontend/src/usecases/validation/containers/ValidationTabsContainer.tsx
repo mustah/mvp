@@ -67,7 +67,7 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {tabs: {validation: {tabs, selectedTab}}} = state;
+  const {ui: {tabs: {validation: {tabs, selectedTab}}}} = state;
   return {
     selectedTab,
     tabs,

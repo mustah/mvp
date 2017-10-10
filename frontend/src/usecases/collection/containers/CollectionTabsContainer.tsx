@@ -67,7 +67,7 @@ const CollectionTabsContainer = (props: TabsContainerProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {tabs: {collection: {tabs, selectedTab}}} = state;
+  const {ui: {tabs: {collection: {tabs, selectedTab}}}} = state;
   return {
     selectedTab,
     tabs,

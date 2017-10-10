@@ -49,7 +49,7 @@ const mapStateToProps = (state: RootState) => {
   const {report} = state;
   return {
     report,
-    selectedWidget: state.ui.selectedIndicators.report,
+    selectedWidget: state.ui.indicator.selectedIndicators.report,
   };
 };
 

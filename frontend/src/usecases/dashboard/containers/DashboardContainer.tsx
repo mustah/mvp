@@ -4,13 +4,13 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
-import {SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
+import {SelectedIndicatorWidgetProps} from '../../common/components/indicators/components/IndicatorWidgets';
+import {selectDashboardIndicatorWidget} from '../../common/components/indicators/indicatorActions';
 import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
 import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Content} from '../../common/components/layouts/content/Content';
 import {Layout} from '../../common/components/layouts/layout/Layout';
-import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
@@ -77,7 +77,7 @@ const mapStateToProps = (state: RootState) => {
   const {dashboard} = state;
   return {
     dashboard,
-    selectedWidget: state.ui.selectedIndicators.dashboard,
+    selectedWidget: state.ui.indicator.selectedIndicators.dashboard,
   };
 };
 

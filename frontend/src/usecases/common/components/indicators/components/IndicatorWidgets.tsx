@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {Row} from '../layouts/row/Row';
 import {IndicatorWidget} from './IndicatorWidget';
-import {Indicator, IndicatorType} from './models/IndicatorModels';
+import {Indicator, IndicatorType} from '../models/IndicatorModels';
 
 export interface SelectedIndicatorWidgetProps {
   selectIndicatorWidget: (type: IndicatorType) => any;
