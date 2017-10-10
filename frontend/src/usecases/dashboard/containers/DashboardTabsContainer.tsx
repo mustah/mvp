@@ -5,7 +5,7 @@ import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
-import {StatusIcon} from '../../table/components/status/StatusIcon';
+import {Status} from '../../table/components/status/Status';
 import {Table} from '../../table/components/table/Table';
 import {TableHead} from '../../table/components/table/TableHead';
 import {TableColumn} from '../../table/components/tableColumn/TableColumn';
@@ -36,7 +36,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
     });
   };
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
-  const renderStatusCell = (value, index) => <StatusIcon code={value.code} content={value.text}/>;
+  const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
 
   return (
     <Tabs>
