@@ -1,13 +1,13 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Column} from '../../layouts/components/column/Column';
-import {TabIdentifier} from '../models/TabsModel';
+import {tabType} from '../models/TabsModel';
 import {TabUnderline} from './TabUnderliner';
 
 export interface TabProps {
   title: string;
-  tab: TabIdentifier;
-  selectedTab: TabIdentifier;
+  tab: tabType;
+  selectedTab: tabType;
   onChangeTab: (tab: string) => void;
 }
 

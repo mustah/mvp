@@ -11,18 +11,18 @@ import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabIdentifier, TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
+import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 
 const ValidationTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: TabIdentifier) => {
+  const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'validation',
       tab,
     });
   };
-  const onChangeTabOption = (tab: TabIdentifier, option: string): void => {
+  const onChangeTabOption = (tab: tabType, option: string): void => {
     changeTabOption({
       useCase: 'validation',
       tab,
@@ -33,54 +33,38 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
   return (
     <Tabs>
       <TabList>
-        <Tab title={translate('map')} tab={tabTypes.map} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab title={translate('list')} tab={tabTypes.list} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <TabOptions forTab={tabTypes.map} selectedTab={selectedTab}>
+        <Tab title={translate('map')} tab={tabType.map} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <Tab title={translate('list')} tab={tabType.list} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('area')}
-            option={'area'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('area')}
+            id={'area'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('object')}
-            option={'object'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('object')}
+            id={'object'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('facility')}
-            option={'facility'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
-          />
-        </TabOptions>
-        <TabOptions forTab={tabTypes.list} selectedTab={selectedTab}>
-          <TabOption
-            tab={tabTypes.list}
-            select={onChangeTabOption}
-            optionName={translate('sort descending')}
-            option={'sort descending'}
-            selectedOption={tabs[tabTypes.list].selectedOption}
-          />
-          <TabOption
-            tab={tabTypes.list}
-            select={onChangeTabOption}
-            optionName={translate('sort ascending')}
-            option={'sort ascending'}
-            selectedOption={tabs[tabTypes.list].selectedOption}
+            title={translate('facility')}
+            id={'facility'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
         </TabOptions>
         <TabSettings useCase="validation"/>
       </TabList>
-      <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png" />
+      <TabContent tab={tabType.map} selectedTab={selectedTab}>
+        <Image src="usecases/validation/img/map.png"/>
       </TabContent>
-      <TabContent tab={tabTypes.list} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/meters.png" />
+      <TabContent tab={tabType.list} selectedTab={selectedTab}>
+        <Image src="usecases/validation/img/meters.png"/>
       </TabContent>
     </Tabs>
   );

@@ -16,19 +16,19 @@ import {TabOption} from '../../tabs/components/TabOption';
 import {TabOptions} from '../../tabs/components/TabOptions';
 import {Tabs} from '../../tabs/components/Tabs';
 import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabIdentifier, TabsContainerProps, tabTypes} from '../../tabs/models/TabsModel';
+import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: TabIdentifier) => {
+  const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'dashboard',
       tab,
     });
   };
-  const onChangeTabOption = (tab: TabIdentifier, option: string): void => {
+  const onChangeTabOption = (tab: tabType, option: string): void => {
     changeTabOption({
       useCase: 'dashboard',
       tab,
@@ -41,34 +41,34 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
   return (
     <Tabs>
       <TabList>
-        <Tab tab={tabTypes.list} title={translate('list')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <Tab tab={tabTypes.map} title={translate('map')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
-        <TabOptions forTab={tabTypes.map} selectedTab={selectedTab} >
+        <Tab tab={tabType.list} title={translate('list')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <Tab tab={tabType.map} title={translate('map')} selectedTab={selectedTab} onChangeTab={onChangeTab}/>
+        <TabOptions forTab={tabType.map} selectedTab={selectedTab} >
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('area')}
-            option={'area'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('area')}
+            id={'area'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('object')}
-            option={'object'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('object')}
+            id={'object'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabTypes.map}
+            tab={tabType.map}
             select={onChangeTabOption}
-            optionName={translate('facility')}
-            option={'facility'}
-            selectedOption={tabs[tabTypes.map].selectedOption}
+            title={translate('facility')}
+            id={'facility'}
+            selectedOption={tabs[tabType.map].selectedOption}
           />
         </TabOptions>
         <TabSettings useCase="dashboard"/>
       </TabList>
-      <TabContent tab={tabTypes.list} selectedTab={selectedTab}>
+      <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <Table data={normalizedData.meteringPoints}>
           <TableColumn
             id={'id'}
@@ -94,7 +94,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
           />
         </Table>
       </TabContent>
-      <TabContent tab={tabTypes.map} selectedTab={selectedTab}>
+      <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
     </Tabs>

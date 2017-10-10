@@ -1,10 +1,8 @@
-export enum tabTypes {
+export enum tabType {
   list = 'list',
   map = 'map',
   graph = 'graph',
 }
-
-export type TabIdentifier = tabTypes;
 
 export interface TabModel {
   [key: string]: {
@@ -23,7 +21,7 @@ export interface TabsState {
 
 export interface TabsContainerProps {
   tabs: TabModel;
-  selectedTab: TabIdentifier;
-  changeTab: (payload: {useCase: string; tab: TabIdentifier; }) => any;
-  changeTabOption: (payload: {useCase: string; tab: TabIdentifier; option: string; }) => any;
+  selectedTab: tabType;
+  changeTab: (payload: {useCase: string; tab: tabType; }) => any;
+  changeTabOption: (payload: {useCase: string; tab: tabType; option: string; }) => any;
 }
