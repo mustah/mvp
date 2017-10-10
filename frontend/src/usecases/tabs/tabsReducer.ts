@@ -3,12 +3,10 @@ import {TabsState, tabType} from './models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 const useCaseTabs = {
   [tabType.map]: {
-    selectedOption: '',
-  },
-  [tabType.list]: {
-    selectedOption: '',
+    selectedOption: 'area',
   },
 };
+
 const tabsInitialState: TabsState = {
   validation: {
     selectedTab: tabType.list,
@@ -19,6 +17,7 @@ const tabsInitialState: TabsState = {
     tabs: {...useCaseTabs},
   },
 };
+
 export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => {
   const {payload} = action;
   switch (action.type) {
