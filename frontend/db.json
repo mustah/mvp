@@ -18,19 +18,30 @@
   ],
   "dashboards": [
     {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    },
-    {
-      "id": 2,
-      "title": "meter 2",
-      "author": "elvaco"
-    },
-    {
-      "id": 3,
-      "title": "meter 3",
-      "author": "elvaco - home"
+      "id": "3",
+      "author": "Sven",
+      "title": "Sven's dashboard from the DashboardController",
+      "systemOverview": {
+        "title": "Sven's system overview from the DashboardController",
+        "indicators": [
+          {
+            "title": "Insamling",
+            "type": "collection",
+            "subtitle": "3567 punkter",
+            "state": "warning",
+            "value": "95.8",
+            "unit": "%"
+          },
+          {
+            "title": "Mätvärdeskvalitet",
+            "type": "measurementQuality",
+            "subtitle": "3481 punkter",
+            "state": "critical",
+            "value": "93.5",
+            "unit": "%"
+          }
+        ]
+      }
     }
   ],
   "reports": [
