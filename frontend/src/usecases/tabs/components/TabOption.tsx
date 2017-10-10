@@ -3,17 +3,17 @@ import * as React from 'react';
 import {tabType} from '../models/TabsModel';
 
 export interface TabOptionProps {
-  tab: tabType;
-  select: (tab: tabType, option: string) => void;
+  tab?: tabType;
+  select?: (tab: tabType, option: string) => void;
   title: string;
   id: string;
-  selectedOption: string;
+  selectedOption?: string;
 }
 
 export const TabOption = (props: TabOptionProps) => {
   const {tab, select, title, id, selectedOption} = props;
   const isSelected = selectedOption === id;
-  const selectTabOption = () => select(tab, id);
+  const selectTabOption = select && tab ? () => select(tab, id) : () => null;
   return (
     <div className={classNames('TabOption', {isSelected}, 'clickable')} onClick={selectTabOption}>
       {title}

@@ -11,10 +11,10 @@ export interface TabHeadersProps {
 
 export const TabHeaders = (props: TabHeadersProps) => {
   const {children, selectedTab, onChangeTab} = props;
-  const addPropsToChild = (child, index) => React.cloneElement(child, {selectedTab, onChangeTab, key: index});
+  const passDownProps = (child, index) => React.cloneElement(child, {selectedTab, onChangeTab, key: index});
   return (
     <Row className="TabHeaders">
-      {children.map(addPropsToChild)}
+      {children.map(passDownProps)}
     </Row>
   );
 };

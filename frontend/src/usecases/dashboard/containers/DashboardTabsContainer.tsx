@@ -46,27 +46,18 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
           <Tab tab={tabType.list} title={translate('list')} />
           <Tab tab={tabType.map} title={translate('map')} />
         </TabHeaders>
-        <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
+        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('area')}
             id={'area'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('object')}
             id={'object'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('facility')}
             id={'facility'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
         </TabOptions>
         <TabSettings useCase="dashboard"/>

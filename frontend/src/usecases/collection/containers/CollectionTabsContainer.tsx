@@ -40,27 +40,18 @@ const CollectionTabsContainer = (props: TabsContainerProps) => {
           <Tab title={translate('map')} tab={tabType.map}/>
           <Tab title={translate('list')} tab={tabType.list}/>
         </TabHeaders>
-        <TabOptions forTab={tabType.map} selectedTab={selectedTab}>
+        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('area')}
             id={'area'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('object')}
             id={'object'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
           <TabOption
-            tab={tabType.map}
-            select={onChangeTabOption}
             title={translate('facility')}
             id={'facility'}
-            selectedOption={tabs[tabType.map].selectedOption}
           />
         </TabOptions>
         <TabSettings useCase="collection"/>
