@@ -10,31 +10,32 @@ export interface Selectable {
   isSelected?: boolean;
 }
 
-export type uuid = string;
-
-export type State = 'ok' | 'warning' | 'critical' | 'info';
+export enum State {
+  ok = 'ok',
+  warning = 'warning',
+  crititcal = 'critical',
+  info = 'info',
+}
 
 // TODO this is up for refactoring:
 // - we want a more solid number -> string, and also string -> number connection
 // - this implementation uses an ad-hoc Maybe structure, which is not used
 //   in other places throughout the code
-export const States = (numeric: number): { valid: boolean, state?: State } => {
-  let maybeState: State;
+export const states = (numeric: number): { valid: boolean, state?: State } => {
   switch (numeric) {
     case 0:
-      maybeState = 'ok';
-      break;
+      return {valid: true, state: State.ok};
     case 1:
-      maybeState = 'info';
-      break;
+      return {valid: true, state: State.info};
     case 2:
-      maybeState = 'warning';
-      break;
+      return {valid: true, state: State.warning};
     case 3:
-      maybeState = 'critical';
-      break;
+      return {valid: true, state: State.crititcal};
+    case 10:
+      return {valid: true, state: State.ok};
+    case 11:
+      return {valid: true, state: State.warning};
     default:
       return {valid: false};
   }
-  return {valid: true, state: maybeState};
 };

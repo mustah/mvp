@@ -1,20 +1,20 @@
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
-import {selectIndicatorWidget} from '../uiActions';
-import {initialState, ui, UiState} from '../uiReducer';
+import {selectIndicatorWidget} from '../indicatorActions';
+import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('uiReducer', () => {
 
-  describe('selectedIndicators', () => {
+  describe('indicators -> selectedIndicators', () => {
 
     it('will have initial state when the action is not matched', () => {
-      const state: UiState = ui(initialState, {type: 'UNKNOWN_ACTION'});
+      const state: IndicatorState = indicator(initialState, {type: 'UNKNOWN_ACTION'});
 
       expect(state).toBe(initialState);
     });
 
-    it('will have dashboard ui state after initial state', () => {
+    it('will have dashboard indicator state after initial state', () => {
       const action = selectIndicatorWidget({dashboard: IndicatorType.collection});
-      const state: UiState = ui(initialState, action);
+      const state: IndicatorState = indicator(initialState, action);
 
       const selectedIndicators = {
         dashboard: IndicatorType.collection,
@@ -24,9 +24,9 @@ describe('uiReducer', () => {
       expect(state).toEqual({selectedIndicators});
     });
 
-    it('will have report ui state after initial state', () => {
+    it('will have report indicator state after initial state', () => {
       const action = selectIndicatorWidget({report: IndicatorType.districtHeating});
-      const state: UiState = ui(initialState, action);
+      const state: IndicatorState = indicator(initialState, action);
 
       const selectedIndicators = {
         dashboard: null,
@@ -36,9 +36,11 @@ describe('uiReducer', () => {
       expect(state).toEqual({selectedIndicators});
     });
 
-    it('updates ui state after many action dispatches', () => {
-      const oldState: UiState = ui(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
-      const state: UiState = ui(oldState, selectIndicatorWidget({dashboard: IndicatorType.measurementQuality}));
+    it('updates indicator state after many action dispatches', () => {
+      const oldState: IndicatorState =
+        indicator(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
+      const state: IndicatorState =
+        indicator(oldState, selectIndicatorWidget({dashboard: IndicatorType.measurementQuality}));
 
       const selectedIndicators = {
         dashboard: IndicatorType.measurementQuality,
@@ -49,8 +51,10 @@ describe('uiReducer', () => {
     });
 
     it('clears any previous selections', () => {
-      const oldState: UiState = ui(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
-      const state: UiState = ui(oldState, selectIndicatorWidget({report: null}));
+      const oldState: IndicatorState =
+        indicator(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
+      const state: IndicatorState =
+        indicator(oldState, selectIndicatorWidget({report: null}));
 
       const selectedIndicators = {
         dashboard: null,

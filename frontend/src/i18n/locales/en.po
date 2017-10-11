@@ -1,22 +1,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T12:16:15.845Z\n"
-"PO-Revision-Date: 2017-10-05 14:17+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2017-10-10T11:14:44.247Z\n"
+"PO-Revision-Date: 2017-10-10 13:22+0200\n"
+"Language-Team: \n"
 "X-Generator: Poedit 2.0.4\n"
-
-msgid "all"
-msgstr "alla"
-
-msgid "area"
-msgstr "area"
+"Last-Translator: \n"
+"Language: en\n"
 
 msgid "email"
 msgstr "email"
@@ -24,22 +18,34 @@ msgstr "email"
 msgid "password"
 msgstr "password"
 
-msgid "map"
-msgstr "map"
-msgid "meter"
-msgstr "meter"
-
-msgid "type"
-msgstr "type"
-msgid "list"
-msgstr "list"
-
 msgid "gateway"
 msgstr "gateway"
 
-#, fuzzy
-#| msgid "area"
+msgid "type"
+msgstr "type"
+
+msgid "meter"
+msgstr "meter"
+
+msgid "status"
+msgstr "status"
+
+msgid "action"
+msgstr "action"
+
+msgid "all"
+msgstr "all"
+
 msgid "collection"
+msgstr "collection"
+
+msgid "map"
+msgstr "map"
+
+msgid "list"
+msgstr "list"
+
+msgid "area"
 msgstr "area"
 
 msgid "object"
@@ -48,151 +54,15 @@ msgstr "object"
 msgid "facility"
 msgstr "facility"
 
-msgid "list"
-msgstr "list"
-msgid "consumption"
-msgstr "consumption"
-
 msgid "sort descending"
 msgstr "sort descending"
 
-msgid "meter"
-msgstr "meter"
-
-msgid "validation"
-msgstr "validation"
-
-#~ msgid "system overview"
-#~ msgstr "system overview"
 msgid "sort ascending"
 msgstr "sort ascending"
 
-#~ msgid "option a"
-#~ msgstr "option a"
-
-#~ msgid "option b"
-#~ msgstr "option b"
-
-#~ msgid "option 1"
-#~ msgstr "option 1"
-
-#~ msgid "option 2"
-#~ msgstr "option 2"
-
-#~ msgid "graph"
-#~ msgstr "graph"
-
-#~ msgid "collection"
-#~ msgstr "collection"
 msgid "location"
 msgstr "location"
 
-#~ msgid "{{count}} data point"
-#~ msgstr "{{count}} data point"
-msgid "gateway"
-msgstr "gateway"
-
-#~ msgid "measurement quality"
-#~ msgstr "measurement quality"
-msgid "status"
-msgstr "status"
-
-#~ msgid "connectors"
-#~ msgstr "connectors"
-#~ msgid "Meter"
-#~ msgstr "Meter"
-
-#~ msgid "{{count}} unit"
-#~ msgstr "{{count}} unit"
-#~ msgid "Type"
-#~ msgstr "Type"
-
-#~ msgid "a date: {{date}}"
-#~ msgstr "a date: {{date}}"
-#~ msgid "Location"
-#~ msgstr "Location"
-
-#~ msgid "a number: {{num}}"
-#~ msgstr "a number: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} data point°"
-#~ msgstr "{{count}} data points"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} unit°"
-#~ msgstr "{{count}} units"
-#~ msgid "Gateway"
-#~ msgstr "Gateway"
-
-#~ msgid "Status"
-#~ msgstr "Status"
-
-#~ msgid "collection"
-#~ msgstr "collection"
-
-#~ msgid "population"
-#~ msgstr "population"
-
-#~ msgid "{{count}} data point"
-#~ msgstr "{{count}} data point"
-
-#~ msgid "measurement quality"
-#~ msgstr "measurement quality"
-
-#~ msgid "connectors"
-#~ msgstr "connectors"
-
-#~ msgid "{{count}} unit"
-#~ msgstr "{{count}} unit"
-
-#~ msgid "a date: {{date}}"
-#~ msgstr "a date: {{date}}"
-
-#~ msgid "a number: {{num}}"
-#~ msgstr "a number: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} data point°"
-#~ msgstr "{{count}} data points"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} unit°"
-#~ msgstr "{{count}} units"
-
-#~ msgid "systemOverview.collection"
-#~ msgstr "collection"
-
-#~ msgid "systemOverview.dataPoint"
-#~ msgstr "{{count}} data point"
-
-#~ msgid "systemOverview.connectors"
-#~ msgstr "connectors"
-
-#~ msgid "systemOverview.unit"
-#~ msgstr "{{count}} unit"
-
-#~ msgid "systemOverview.dateTest"
-#~ msgstr "a date: {{date}}"
-
-#~ msgid "test:test"
-#~ msgstr "test"
-
-#~ msgid "systemOverview.numberTest"
-#~ msgstr "a number: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "systemOverview.dataPoint°"
-#~ msgstr "{{count}} data points"
-
-#~ msgctxt "°plural"
-#~ msgid "systemOverview.unit°"
-#~ msgstr "{{count}} units"
-
-#~ msgctxt "*plural"
-#~ msgid "systemOverview.dataPoint*"
-#~ msgstr "{{count}} data point*"
-
-#~ msgctxt "*plural"
-#~ msgid "systemOverview.unit*"
-#~ msgstr "{{count}} unit*"
+msgctxt "°plural"
+msgid "meter°"
+msgstr "meters"

@@ -1,4 +1,5 @@
 import {DASHBOARD_SUCCESS} from '../../../types/ActionTypes';
+import {State} from '../../../types/Types';
 import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
@@ -9,7 +10,7 @@ describe('Dashboard', () => {
     const indicators: Indicator[] = [
       {
         type: IndicatorType.coldWater,
-        state: 'warning',
+        state: State.warning,
         subtitle: '-_-3567 punkter',
         title: 'Insamling',
         unit: '%',
@@ -17,7 +18,7 @@ describe('Dashboard', () => {
       },
       {
         type: IndicatorType.current,
-        state: 'ok',
+        state: State.ok,
         subtitle: '-_-3567 punkter',
         title: '-_-Insamling',
         unit: '%',
@@ -25,7 +26,7 @@ describe('Dashboard', () => {
       },
       {
         type: IndicatorType.districtHeating,
-        state: 'critical',
+        state: State.crititcal,
         subtitle: '-_-3567 punkter',
         title: '-_-Insamling',
         unit: '%',

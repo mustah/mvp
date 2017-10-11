@@ -1,3 +1,4 @@
+import {State} from '../../../types/Types';
 import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 
 export interface ReportState {
@@ -12,7 +13,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.current,
     title: 'El',
-    state: 'ok',
+    state: State.ok,
     value: '123',
     unit: 'kWh/m2',
     subtitle: '(+5)',
@@ -20,7 +21,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.coldWater,
     title: 'Kallvatten',
-    state: 'warning',
+    state: State.warning,
     value: '53',
     unit: 'l/m2',
     subtitle: '(+6)',
@@ -28,7 +29,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.warmWater,
     title: 'Varmvatten',
-    state: 'warning',
+    state: State.warning,
     value: '13',
     unit: 'l/m2',
     subtitle: '(-2)',
@@ -36,7 +37,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.districtHeating,
     title: 'Fjärrvärme',
-    state: 'ok',
+    state: State.ok,
     value: '1.1',
     unit: 'kWh/m2',
     subtitle: '(-2)',
@@ -44,7 +45,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.temperatureInside,
     title: 'Temp Inomhus',
-    state: 'ok',
+    state: State.ok,
     value: '22.4',
     unit: '°C',
     subtitle: '(+0.2)',
@@ -52,7 +53,7 @@ export const indicators: Indicator[] = [
   {
     type: IndicatorType.temperatureOutside,
     title: 'Temp Utomhus',
-    state: 'info',
+    state: State.info,
     value: '13',
     unit: '°C',
     subtitle: '(+2)',

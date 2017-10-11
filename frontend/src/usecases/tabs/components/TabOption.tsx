@@ -1,23 +1,22 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-
-type OptionIdentifier = string;
+import {tabType} from '../models/TabsModel';
 
 export interface TabOptionProps {
-  tab: string;
-  select: (tab: string, option: string) => void;
-  optionName: string;
-  option: OptionIdentifier;
-  selectedOption: OptionIdentifier;
+  tab?: tabType;
+  select?: (tab: tabType, option: string) => void;
+  title: string;
+  id: string;
+  selectedOption?: string;
 }
 
 export const TabOption = (props: TabOptionProps) => {
-  const {tab, select, optionName, option, selectedOption} = props;
-  const isSelected = selectedOption === option;
-  const selectTabOption = () => select(tab, option);
+  const {tab, select, title, id, selectedOption} = props;
+  const isSelected = selectedOption === id;
+  const selectTabOption = select && tab ? () => select(tab, id) : () => null;
   return (
     <div className={classNames('TabOption', {isSelected}, 'clickable')} onClick={selectTabOption}>
-      {optionName}
+      {title}
     </div>
   );
 };

@@ -1,84 +1,49 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-05T12:16:15.845Z\n"
-"PO-Revision-Date: 2017-10-05 14:17+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2017-10-10T11:14:44.247Z\n"
+"PO-Revision-Date: 2017-10-10 13:20+0200\n"
+"Language-Team: \n"
 "X-Generator: Poedit 2.0.4\n"
-
-msgid "all"
-msgstr "alla"
+"Last-Translator: \n"
+"Language: sv\n"
 
 msgid "email"
-msgstr "epost"
+msgstr "email"
 
 msgid "password"
 msgstr "lösenord"
 
-msgid "map"
-msgstr "karta"
-msgid "meter"
-msgstr "mätare"
-
-msgid "list"
-msgstr "lista"
-msgid "type"
-msgstr "typ"
-
-#~ msgid "collection"
-#~ msgstr "insamling"
-msgid "location"
-msgstr "plats"
-
-#~ msgid "{{count}} data point"
-#~ msgstr "{{count}} datapunkt"
 msgid "gateway"
 msgstr "gateway"
 
-#~ msgid "measurement quality"
-#~ msgstr "mätvärdeskvalitet"
+msgid "type"
+msgstr "typ"
+
+msgid "meter"
+msgstr "mätare"
+
 msgid "status"
 msgstr "status"
 
-#~ msgid "connectors"
-#~ msgstr "connectorer"
-#~ msgid "Meter"
-#~ msgstr "Mätare"
+msgid "action"
+msgstr "åtgärd"
 
-#~ msgid "{{count}} unit"
-#~ msgstr "{{count}} enhet"
-#~ msgid "Type"
-#~ msgstr "Typ"
+msgid "all"
+msgstr "allt"
 
-#~ msgid "a date: {{date}}"
-#~ msgstr "ett datum: {{date}}"
-#~ msgid "Location"
-#~ msgstr "Plats"
-
-#~ msgid "a number: {{num}}"
-#~ msgstr "ett nummer: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} data point°"
-#~ msgstr "{{count}} datapunkter"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} unit°"
-#~ msgstr "{{count}} enheter"
-#~ msgid "Gateway"
-#~ msgstr "Gateway"
-
-#~ msgid "Status"
-#~ msgstr "Status"
+msgid "collection"
+msgstr "insamling"
 
 msgid "map"
 msgstr "karta"
+
+msgid "list"
+msgstr "lista"
 
 msgid "area"
 msgstr "område"
@@ -89,123 +54,15 @@ msgstr "objekt"
 msgid "facility"
 msgstr "anläggning"
 
-msgid "list"
-msgstr "lista"
-
 msgid "sort descending"
 msgstr "sortera fallande"
 
 msgid "sort ascending"
 msgstr "sortera stigande"
 
-#~ msgid "option a"
-#~ msgstr "val a"
+msgid "location"
+msgstr "plats"
 
-#~ msgid "option b"
-#~ msgstr "val b"
-
-#~ msgid "option 1"
-#~ msgstr "val 1"
-
-#~ msgid "option 2"
-#~ msgstr "val 2"
-
-#~ msgid "graph"
-#~ msgstr "graf"
-
-#~ msgid "collection"
-#~ msgstr "insamling"
-msgid "gateway"
-msgstr "gateway"
-
-#, fuzzy
-#| msgid "collection"
-msgid "collection"
-msgstr "insamling"
-
-msgid "consumption"
-msgstr "förbrukning"
-
-msgid "common alarms"
-msgstr "vanliga alarm"
-
-#, fuzzy
-#| msgid "meters"
-msgid "meter"
+msgctxt "°plural"
+msgid "meter°"
 msgstr "mätare"
-
-#, fuzzy
-#| msgid "validations"
-msgid "validation"
-msgstr "validering"
-
-#~ msgid "system overview"
-#~ msgstr "systemöversikt"
-
-#, fuzzy
-#~| msgid "collection"
-#~ msgid "population"
-#~ msgstr "insamling"
-
-#~ msgid "{{count}} data point"
-#~ msgstr "{{count}} datapunkt"
-
-#~ msgid "measurement quality"
-#~ msgstr "mätvärdeskvalitet"
-
-#~ msgid "connectors"
-#~ msgstr "connectorer"
-
-#~ msgid "{{count}} unit"
-#~ msgstr "{{count}} enhet"
-
-#~ msgid "a date: {{date}}"
-#~ msgstr "ett datum: {{date}}"
-
-#~ msgid "a number: {{num}}"
-#~ msgstr "ett nummer: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} data point°"
-#~ msgstr "{{count}} datapunkter"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} unit°"
-#~ msgstr "{{count}} enheter"
-
-#~ msgid "systemOverview.collection"
-#~ msgstr "insamling"
-
-#~ msgid "systemOverview.dataPoint"
-#~ msgstr "{{count}} datapunkt"
-
-#~ msgid "systemOverview.connectors"
-#~ msgstr "connectorer"
-
-#~ msgid "systemOverview.unit"
-#~ msgstr "{{count}} st"
-
-#~ msgid "systemOverview.dateTest"
-#~ msgstr "ett datum: {{date}}"
-
-#~ msgid "test:test"
-#~ msgstr "test"
-
-#~ msgid "systemOverview.numberTest"
-#~ msgstr "ett nummer: {{num}}"
-
-#~ msgctxt "°plural"
-#~ msgid "systemOverview.dataPoint°"
-#~ msgstr "{{count}} datapunkter"
-
-#~ msgctxt "°plural"
-#~ msgid "systemOverview.unit°"
-#~ msgstr "{{count}} st"
-
-#~ msgctxt "*plural"
-#~ msgid "systemOverview.dataPoint*"
-#~ msgstr "{{count}} datapunkter"
-
-#~ msgctxt "*plural"
-#~ msgid "systemOverview.unit*"
-#~ msgstr "{{count}} st*"

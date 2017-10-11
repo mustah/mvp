@@ -10,10 +10,10 @@ import {SelectionOverview} from '../../common/components/selection-overview/Sele
 import {Column} from '../../common/components/layouts/column/Column';
 import {Content} from '../../common/components/layouts/content/Content';
 import {Layout} from '../../common/components/layouts/layout/Layout';
-import {selectReportIndicatorWidget} from '../../ui/uiActions';
 import {ReportOverview} from '../components/ReportOverview';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
+import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
 
 export interface ReportContainerProps extends SelectedIndicatorWidgetProps {
   fetchReports: () => any;
@@ -49,7 +49,7 @@ const mapStateToProps = (state: RootState) => {
   const {report} = state;
   return {
     report,
-    selectedWidget: state.ui.selectedIndicators.report,
+    selectedWidget: state.ui.indicator.selectedIndicators.report,
   };
 };
 

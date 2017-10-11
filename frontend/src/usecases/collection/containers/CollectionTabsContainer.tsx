@@ -14,20 +14,20 @@ import {TabSettings} from '../../tabs/components/TabSettings';
 import {TabTopBar} from '../../tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
-import {ValidationList} from '../components/ValidationList';
-import {normalizedValidationData} from '../models/normalizedValidationData';
+import {gateways} from '../../validation/models/normalizedValidationData';
+import {CollectionList} from '../components/CollectionList';
 
-const ValidationTabsContainer = (props: TabsContainerProps) => {
+const CollectionTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
-      useCase: 'validation',
+      useCase: 'collection',
       tab,
     });
   };
   const onChangeTabOption = (tab: tabType, option: string): void => {
     changeTabOption({
-      useCase: 'validation',
+      useCase: 'collection',
       tab,
       option,
     });
@@ -37,7 +37,7 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-          <Tab title={translate('map')} tab={tabType.map} />
+          <Tab title={translate('map')} tab={tabType.map}/>
           <Tab title={translate('list')} tab={tabType.list}/>
         </TabHeaders>
         <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
@@ -54,20 +54,20 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
             id={'facility'}
           />
         </TabOptions>
-        <TabSettings useCase="validation"/>
+        <TabSettings useCase="collection"/>
       </TabTopBar>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <ValidationList data={normalizedValidationData.meteringPoints}/>
+        <CollectionList data={gateways}/>
       </TabContent>
     </Tabs>
   );
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui: {tabs: {validation: {tabs, selectedTab}}}} = state;
+  const {ui: {tabs: {collection: {tabs, selectedTab}}}} = state;
   return {
     selectedTab,
     tabs,
@@ -79,4 +79,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   changeTabOption,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);

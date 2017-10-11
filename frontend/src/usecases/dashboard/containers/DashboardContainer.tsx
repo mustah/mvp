@@ -10,17 +10,12 @@ import {Title} from '../../common/components/texts/Title';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Content} from '../../common/components/layouts/content/Content';
 import {Layout} from '../../common/components/layouts/layout/Layout';
-import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
-import {StatusIcon} from '../../table/components/statusIcon/StatusIcon';
-import {Table} from '../../table/components/table/Table';
-import {TableHead} from '../../table/components/table/TableHead';
-import {TableColumn} from '../../table/components/tableColumn/TableColumn';
-import {selectDashboardIndicatorWidget} from '../../ui/uiActions';
-import {Map} from '../components/map/Map';
+import {selectDashboardIndicatorWidget} from '../../ui/indicatorActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
+import DashboardTabsContainer from './DashboardTabsContainer';
 
 export interface DashboardContainerProps extends SelectedIndicatorWidgetProps {
   fetchDashboard: () => any;
@@ -50,47 +45,6 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
       />
     );
 
-    const normalizedData = {
-      meteringPoints: {
-        byId: {
-          '1234 1234 1234': {
-            id: '1234 1234 1234',
-            type: 'UNICOcoder',
-            location: 'Område 1 fast 12',
-            gateway: 'YY',
-            status: {
-              code: 0,
-              text: 'ok',
-            },
-          },
-          '1234 1234 1235': {
-            id: '1234 1234 1235',
-            type: 'UNICOcoder',
-            location: 'Område 1 fast 12',
-            gateway: 'YY',
-            status: {
-              code: 2,
-              text: 'Mätare går baklänges',
-            },
-          },
-          '1234 1234 1236': {
-            id: '1234 1234 1236',
-            type: 'UNICOcoder',
-            location: 'Område 1 fast 12',
-            gateway: 'YY',
-            status: {
-              code: 3,
-              text: 'Mätare går inte alls',
-            },
-          },
-        },
-        allIds: ['1234 1234 1234', '1234 1234 1235', '1234 1234 1236'],
-      },
-    };
-
-    const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
-    const renderStatusCell = (value, index) => <StatusIcon code={value.code} content={value.text}/>;
-
     return (
       <Layout>
         <Column className="flex-1">
@@ -100,32 +54,7 @@ class DashboardContainer extends React.Component<DashboardContainerProps & Injec
 
             <Title>{translate('collection')}</Title>
 
-            <Map/>
-
-            <Table data={normalizedData.meteringPoints}>
-              <TableColumn
-                id={'id'}
-                header={<TableHead>{translate('meter')}</TableHead>}
-                cell={renderMeteringPointCell}
-              />
-              <TableColumn
-                id={'type'}
-                header={<TableHead>{translate('type')}</TableHead>}
-              />
-              <TableColumn
-                id={'location'}
-                header={<TableHead>{translate('location')}</TableHead>}
-              />
-              <TableColumn
-                id={'gateway'}
-                header={<TableHead>{translate('gateway')}</TableHead>}
-              />
-              <TableColumn
-                id={'status'}
-                header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
-                cell={renderStatusCell}
-              />
-            </Table>
+            <DashboardTabsContainer/>
 
           </Content>
         </Column>
@@ -148,7 +77,7 @@ const mapStateToProps = (state: RootState) => {
   const {dashboard} = state;
   return {
     dashboard,
-    selectedWidget: state.ui.selectedIndicators.dashboard,
+    selectedWidget: state.ui.indicator.selectedIndicators.dashboard,
   };
 };
 
