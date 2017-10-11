@@ -63,6 +63,9 @@ msgstr "sortera stigande"
 msgid "location"
 msgstr "plats"
 
+msgid "saved search"
+msgstr "sparad sökning"
+
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"

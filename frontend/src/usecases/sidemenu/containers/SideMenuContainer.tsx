@@ -1,16 +1,57 @@
+import AppBar from 'material-ui/AppBar';
+import Drawer from 'material-ui/Drawer';
+import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
+import ToggleStar from 'material-ui/svg-icons/toggle/star';
 import * as React from 'react';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Content} from '../../common/components/layouts/content/Content';
-import {LinkItem} from '../components/linkitem/LinkItem';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
+import {NavigationMenuIcon} from '../../common/components/icons/NavigationMenuIcon';
+import {toggleShowHideSideMenu} from '../sideMenuActions';
+import {SideMenuState} from '../sideMenuReducer';
 
-export const SideMenuContainer = props => (
-  <Column className="side-menu-container flex-1 flex-fill-horizontally">
-    <Content>
-      <LinkItem name="Sparade objekt" icon="star"/>
-      <LinkItem name="Sparade filter" icon="folder-star"/>
-      <LinkItem name="Dynamiska grupper" icon="autorenew"/>
-      <LinkItem name="Statiska grupper" icon="format-list-bulleted"/>
-      <LinkItem name="Fullständig katalog" icon="home-modern"/>
-    </Content>
-  </Column>
-);
+interface SideMenuContainerProps {
+  sideMenu: SideMenuState;
+  toggleShowHideSideMenu: () => void;
+}
+
+const SideMenuContainer = (props: SideMenuContainerProps) => {
+  const listItems = [
+    <ListItem primaryText="Göteborg - Centrum" key={1}/>,
+    <ListItem primaryText="Gateways med fel" key={2}/>,
+  ];
+
+  return (
+    <Drawer open={props.sideMenu.isOpen} docked={true}>
+      <AppBar
+        title="MVP"
+        iconElementRight={<NavigationMenuIcon onClick={props.toggleShowHideSideMenu}/>}
+        showMenuIconButton={false}
+      />
+      <List>
+        <ListItem
+          className="ListItem"
+          primaryText={translate('saved search')}
+          leftIcon={<ToggleStar/>}
+          initiallyOpen={true}
+          nestedItems={listItems}
+        />
+      </List>
+    </Drawer>
+  );
+};
+
+const mapStateToProps = (state: RootState) => {
+  const {ui: {sideMenu}} = state;
+  return {
+    sideMenu,
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  toggleShowHideSideMenu,
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(SideMenuContainer);
