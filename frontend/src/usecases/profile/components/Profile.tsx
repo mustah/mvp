@@ -1,23 +1,23 @@
 import * as React from 'react';
 import {User} from '../../auth/authReducer';
 import {Icon} from '../../common/components/icons/Icons';
-import {Normal} from '../../common/components/texts/Texts';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {Normal} from '../../common/components/texts/Texts';
 import {MenuSeparator} from '../../topmenu/components/separators/MenuSeparator';
-import {ProfileName} from '../components/ProfileName';
-import './ProfileContainer.scss';
+import './Profile.scss';
+import {ProfileName} from './ProfileName';
 
-export interface ProfileContainerProps {
+export interface ProfileProps {
   user?: User;
   logout: () => any;
 }
 
-export const ProfileContainer = (props: ProfileContainerProps) => {
+export const Profile = (props: ProfileProps) => {
   const {user, logout} = props;
   return (
     <Column className="flex-1">
-      <Row className="ProfileContainer">
+      <Row className="Profile">
         {user && <ProfileName user={user}/>}
         <Icon name="account-circle"/>
         {user && <Normal className="logout" onClick={logout}>Logout</Normal>}
