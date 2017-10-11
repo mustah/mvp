@@ -58,7 +58,10 @@ $ yarn test
 $ yarn test:watch
 ```
 
-# Icons
+# Material Design
+We are using the material design react components from [material-ui](http://www.material-ui.com/#/) library.
+
+## Icons
 
 In the design report from BOID it's stated that we should us icons from the following sources:
 * Elvacos proprietary

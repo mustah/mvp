@@ -18,7 +18,7 @@ body {
 .App {
   .selection-container {
     background-color: $grey;
-    padding: $sm-space $xl-space;
+    padding: $sm-space;
   }
 
   .link {
@@ -26,9 +26,12 @@ body {
     text-decoration: none;
   }
 
-  .side-menu-container {
-    background-color: $grey;
-    width: $side-menu-container-width;
+  .SideMenuContainer {
+    width: 0;
+
+    &.isOpen {
+      width: $side-menu-container-width
+    }
   }
 
   .Content {
@@ -38,5 +41,8 @@ body {
   .Section {
     margin: $lg-space 0;
   }
+
+  @import "material-design";
+
 }
 

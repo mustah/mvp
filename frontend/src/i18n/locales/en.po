@@ -63,6 +63,9 @@ msgstr "sort ascending"
 msgid "location"
 msgstr "location"
 
+msgid "saved search"
+msgstr "saved search"
+
 msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"

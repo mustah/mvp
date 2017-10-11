@@ -8,20 +8,28 @@ import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {ProfileContainer} from '../../profile/containers/ProfileContainer';
-import {MainLogo} from '../components/mainlogo/MainLogo';
+import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
+import {SideMenuState} from '../../sidemenu/sideMenuReducer';
+import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
 
 export interface TopMenuContainerProps {
   pathname: string;
   auth: AuthState;
   logout: () => any;
+  toggleShowHideSideMenu: () => any;
+  sideMenu: SideMenuState;
 }
 
 const TopMenuContainer = (props: TopMenuContainerProps) => {
-  const {pathname, auth, logout} = props;
+  const {pathname, auth, logout, sideMenu, toggleShowHideSideMenu} = props;
   return (
     <Row className="flex-1">
-      <MainLogo/>
+      <MainNavigationMenu
+        isOpen={sideMenu.isOpen}
+        disabled={!auth.isAuthenticated}
+        toggleShowHideSideMenu={toggleShowHideSideMenu}
+      />
       <Row>
         <Link to={routes.dashboard} className="link">
           <MenuItem
@@ -46,13 +54,24 @@ const TopMenuContainer = (props: TopMenuContainerProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
+  const {
+    routing: {location},
+    auth,
+    language: {language},
+    ui: {sideMenu},
+  } = state;
+
   return {
-    pathname: state.routing.location!.pathname,
-    auth: state.auth,
-    language: state.language.language,
+    pathname: location!.pathname,
+    auth,
+    language,
+    sideMenu,
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({logout}, dispatch);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  logout,
+  toggleShowHideSideMenu,
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopMenuContainer);

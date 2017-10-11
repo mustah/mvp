@@ -1,62 +1,48 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
-import {Route} from 'react-router-dom';
 import {RootState} from '../../reducers/index';
-import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
-import LoginContainer from '../auth/containers/LoginContainer';
-import CollectionContainer from '../collection/containers/CollectionContainer';
-import DashboardContainer from '../dashboard/containers/DashboardContainer';
+import {AuthState} from '../auth/authReducer';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import {Row} from '../common/components/layouts/row/Row';
-import ReportContainer from '../report/containers/ReportContainer';
-import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
+import SideMenuContainer from '../sidemenu/containers/SideMenuContainer';
+import {SideMenuState} from '../sidemenu/sideMenuReducer';
 import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
-import ValidationContainer from '../validation/containers/ValidationContainer';
 import './_common.scss';
 import './App.scss';
-import {routes} from './routes';
-
-const LoginPage = userIsNotAuthenticated(LoginContainer);
-const DashboardPage = userIsAuthenticated(DashboardContainer);
-const CollectionPage = userIsAuthenticated(CollectionContainer);
-const ValidationPage = userIsAuthenticated(ValidationContainer);
-const ReportPage = userIsAuthenticated(ReportContainer);
+import {Pages} from './Pages';
 
 /**
  * The Application root component should extend React.Component in order
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-class App extends React.Component<RootState, any> {
-
+class App extends React.Component<{auth: AuthState, sideMenu: SideMenuState}, any> {
   render() {
     const {isAuthenticated} = this.props.auth;
+    const {isOpen} = this.props.sideMenu;
+
     return (
       <div className="App">
+        <TopMenuContainer/>
         <Row>
-          <Layout>
-            <TopMenuContainer/>
-          </Layout>
-        </Row>
-        <Row>
-          <Layout className="side-menu-container" hide={!isAuthenticated}>
+          <Layout className={classNames('SideMenuContainer', {isOpen})} hide={!isAuthenticated}>
             <SideMenuContainer/>
           </Layout>
-          <Layout>
-            <Route path={routes.login} component={LoginPage}/>
-            <Route exact={true} path={routes.home} component={DashboardPage}/>
-            <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
-            <Route exact={true} path={routes.collection} component={CollectionPage}/>
-            <Route exact={true} path={routes.validation} component={ValidationPage}/>
-            <Route exact={true} path={routes.report} component={ReportPage}/>
-          </Layout>
+          <Pages/>
         </Row>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state: RootState) => ({...state});
+const mapStateToProps = (state: RootState) => {
+  const {auth, ui: {sideMenu}} = state;
+  return {
+    auth,
+    sideMenu,
+  };
+};
 
 export default withRouter(connect(mapStateToProps, {})(App));
