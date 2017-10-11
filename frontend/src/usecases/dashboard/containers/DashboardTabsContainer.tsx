@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
 import {Status} from '../../table/components/status/Status';
 import {Table} from '../../table/components/table/Table';
