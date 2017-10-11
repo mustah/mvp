@@ -18,11 +18,11 @@ export const CollectionList = (props: ListProps) => {
         header={<TableHead>{translate('gateway')}</TableHead>}
       />
       <TableColumn
-        id={'type'}
-        header={<TableHead>{translate('type')}</TableHead>}
+        id={'product_model'}
+        header={<TableHead>{translate('product model')}</TableHead>}
       />
       <TableColumn
-        id={'connectedMeters'}
+        id={'connected_meters'}
         header={<TableHead>{translate('meter', {context: 'plural'})}</TableHead>}
       />
       <TableColumn
