@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Column} from '../../layouts/components/column/Column';
 import {tabType} from '../models/TabsModel';
+import {Column} from '../../common/components/layouts/column/Column';
 
 export interface TabContentProps {
   tab: tabType;

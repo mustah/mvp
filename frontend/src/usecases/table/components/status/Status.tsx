@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {states} from '../../../../types/Types';
-import {Row} from '../../../layouts/components/row/Row';
 import './Status.scss';
 import {StatusIcon} from './StatusIcon';
+import {Row} from '../../../common/components/layouts/row/Row';
 
 interface StatusProps {
   code: number;
