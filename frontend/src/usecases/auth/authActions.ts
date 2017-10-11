@@ -1,5 +1,6 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
+import {config} from '../../config/config';
 import {makeToken} from '../../services/authService';
 import {makeRestClient} from '../../services/restClient';
 import {routes} from '../app/routes';
@@ -21,13 +22,39 @@ export const logoutSuccess = createEmptyAction(LOGOUT_SUCCESS);
 export const login = (username: string, password: string) => {
   return async (dispatch) => {
     dispatch(loginRequest());
-    try {
-      const token = makeToken(username, password);
-      const {data: user} = await makeRestClient(token).get('/authenticate');
-      dispatch(loginSuccess({token, user}));
-    } catch (error) {
-      const {response: {data}} = error;
-      dispatch(loginFailure(data));
+
+    if (config().useJsonServerInsteadOfJavaBackend) {
+      // TODO remove this mocking layer
+      const mockedUsers = {
+        adam: {
+          id: 7,
+          firstName: 'Adam',
+          lastName: 'Johnsson',
+          email: 'adam@varme.se',
+          company: 'Värme för alla AB',
+        },
+        default: {
+          id: 7,
+          firstName: 'Eva',
+          lastName: 'Nilsson',
+          email: 'evanil@elvaco.se',
+          company: 'Bostäder AB',
+        },
+      };
+      const user = mockedUsers.hasOwnProperty(username) ? mockedUsers[username] : mockedUsers.default;
+      dispatch(loginSuccess({
+        token: 'one two freddy is coming for you',
+        user,
+      }));
+    } else {
+      try {
+        const token = makeToken(username, password);
+        const {data: user} = await makeRestClient(token).get('/authenticate');
+        dispatch(loginSuccess({token, user}));
+      } catch (error) {
+        const {response: {data}} = error;
+        dispatch(loginFailure(data));
+      }
     }
   };
 };

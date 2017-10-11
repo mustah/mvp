@@ -9,6 +9,7 @@ interface AxiosConfig {
  */
 export interface AppConfig {
   axios: AxiosConfig;
+  useJsonServerInsteadOfJavaBackend: boolean;
   environment: 'development' | 'production';
 }
 
