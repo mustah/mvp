@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
+import {IndicatorType} from '../common/components/indicators/models/IndicatorModels';
 import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
-import {IndicatorType} from './models/IndicatorModels';
 
 export interface SelectedIndicators {
   dashboard?: IndicatorType | null;

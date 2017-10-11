@@ -1,6 +1,6 @@
-import {selectIndicatorWidget} from '../../common/components/indicators/indicatorActions';
-import {indicator, IndicatorState, initialState} from '../../common/components/indicators/indicatorReducer';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
+import {selectIndicatorWidget} from '../indicatorActions';
+import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 
 describe('uiReducer', () => {
 

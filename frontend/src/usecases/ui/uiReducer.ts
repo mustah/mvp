@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux';
-import {indicator, IndicatorState} from '../common/components/indicators/indicatorReducer';
 import {TabsState} from '../tabs/models/TabsModel';
 import {tabs} from '../tabs/tabsReducer';
+import {indicator, IndicatorState} from './indicatorReducer';
 
 export interface UiState {
   tabs: TabsState;
