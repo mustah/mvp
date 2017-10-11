@@ -1,6 +1,7 @@
 import {History} from 'history';
 import createHashHistory from 'history/createHashHistory';
 import {InitOptions} from 'i18next';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
@@ -14,6 +15,7 @@ import {initRestClient} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
 import App from './usecases/app/App';
+import {mvpTheme} from './usecases/app/themes';
 
 const history: History = createHashHistory();
 
@@ -33,7 +35,9 @@ onTranslationInitialized((options: InitOptions) => {
     <Provider store={appStore}>
       <ConnectedRouter history={history}>
         <HashRouter>
-          <App/>
+          <MuiThemeProvider muiTheme={mvpTheme}>
+            <App/>
+          </MuiThemeProvider>
         </HashRouter>
       </ConnectedRouter>
     </Provider>,

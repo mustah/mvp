@@ -15,7 +15,8 @@
     "no-submodule-imports": [
       true,
       "redux-auth-wrapper",
-      "history"
+      "history",
+      "material-ui"
     ],
     "no-shadowed-variable": false,
     "object-literal-sort-keys": false,
