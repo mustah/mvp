@@ -29,6 +29,7 @@ build:
             - backend/build/distributions/
             - docs/drawio/mvp_components.png
             - frontend/template.pot
+            - frontend/mockup
             - .version
         expire_in: 1 month
 

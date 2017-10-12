@@ -3,7 +3,6 @@ plugins {
 }
 
 apply plugin: 'base'
-version '0.0.1'
 
 buildDir = 'dist'
 
@@ -27,6 +26,38 @@ task test(type: YarnTask) {
   args = ['test']
 }
 
+task cleanMockup(type: Delete) {
+  delete 'mockup'
+}
+
+task assembleMockup(type: Tar) {
+  archiveName = 'elvaco-mvp-mockup-' + getVersion() +'.tar.gz'
+  destinationDir = file('mockup/')
+
+  into('/') {
+    from('dist')
+    include('*')
+  }
+
+  into('/') {
+    from('.')
+    include('db.json')
+    include('routes.json')
+  }
+
+  into('/') {
+    from('../deploy')
+    include('elvaco-mvp-mockup.service')
+  }
+
+  compression = Compression.GZIP
+  extension 'tar'
+}
+
+clean.dependsOn(cleanMockup)
 check.dependsOn(test)
 bundle.dependsOn(yarn_install)
+assembleMockup.dependsOn(cleanMockup)
+assembleMockup.dependsOn(bundle)
 assemble.dependsOn(bundle)
+assemble.dependsOn(assembleMockup)

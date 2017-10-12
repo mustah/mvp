@@ -18,6 +18,9 @@ STAGING_KEYSTORE_ALIAS_BASE64=$5
 : ${KEYSTORE_FILENAME:="keystore_staging.p12"}
 : ${SERVICE_FILE:="/opt/elvaco/mvp/elvaco-mvp.service"}
 : ${PROPERTIES_FILENAME:="application-staging.properties"}
+: ${MOCKUP_BASE_FOLDER:="/opt/elvaco/mvp-mockup"}
+: ${MOCKUP_DIST_FOLDER:="$MOCKUP_BASE_FOLDER/dist"}
+: ${MOCKUP_ARCHIVE:="/tmp/mvp-mockup.tar.gz"}
 
 LOCAL_TAR=backend/build/distributions/mvp-$GIT_VERSION.tar
 
@@ -53,3 +56,21 @@ ssh "$SSH_USER@$SSH_HOST" << END
   sudo /bin/systemctl enable elvaco-mvp
   sudo /bin/systemctl restart elvaco-mvp
 END
+
+function deploy_mockup {
+scp frontend/mockup/elvaco-mvp-mockup*.tar.gz "$SSH_USER@$SSH_HOST:$MOCKUP_ARCHIVE"
+ssh "$SSH_USER@$SSH_HOST" << END
+  set -ex
+  rm -rf $MOCKUP_DIST_FOLDER
+  mkdir $MOCKUP_DIST_FOLDER
+  cd $MOCKUP_DIST_FOLDER
+  tar zxvf $MOCKUP_ARCHIVE
+  sudo /bin/mv elvaco-mvp-mockup.service /etc/systemd/system
+  sudo /bin/systemctl daemon-reload
+  sudo /bin/systemctl enable elvaco-mvp-mockup
+  sudo /bin/systemctl restart elvaco-mvp-mockup
+  rm -rf $MOCKUP_ARCHIVE
+END
+}
+
+deploy_mockup
