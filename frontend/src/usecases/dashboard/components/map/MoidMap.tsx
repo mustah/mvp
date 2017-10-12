@@ -16,6 +16,10 @@ export class MoidMap extends React.Component<MapProps, any> {
     // const mapToken = 'pk.eyJ1IjoiZGFuc3ZlIiwiYSI6ImNqOGthZmk5azBiaXQydnVhMGI0cHQwaDUifQ.T4PeUHZoHl0dSpjO8RPJiQ';
   }
 
+  clusterClick() {
+    alert('Popup goes here');
+  }
+
   render() {
     const position: [number, number] = [57.504935, 12.069482];
 
@@ -42,7 +46,7 @@ export class MoidMap extends React.Component<MapProps, any> {
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            onClusterClick={()=> {alert("Popup goes here")}}
+            onClusterClick={this.clusterClick}
             markers={markers}
             options={{zoomToBoundsOnClick: false}}
             wrapperOptions={{enableDefaultStyle: false}}
