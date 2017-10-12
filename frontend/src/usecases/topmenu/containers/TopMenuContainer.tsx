@@ -7,7 +7,7 @@ import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
 import {Row} from '../../common/components/layouts/row/Row';
-import {ProfileContainer} from '../../profile/containers/ProfileContainer';
+import {Profile} from '../../profile/components/Profile';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
@@ -48,7 +48,7 @@ const TopMenuContainer = (props: TopMenuContainerProps) => {
           <MenuItem name="Rapport" isSelected={routes.report === pathname} icon="dialpad"/>
         </Link>
       </Row>
-      <ProfileContainer user={auth.user} logout={logout}/>
+      <Profile user={auth.user} logout={logout}/>
     </Row>
   );
 };
