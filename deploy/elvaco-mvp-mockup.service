@@ -1,0 +1,11 @@
+[Unit]
+Description=Elvaco MVP Mockup (frontend only)
+After=syslog.target network.target
+
+[Service]
+User=elvaco_mvp
+WorkingDirectory=/opt/elvaco/mvp-mockup
+ExecStart=/opt/elvaco/mvp-mockup/node-v8.7.0-linux-x64/lib/node_modules/json-server/bin/index.js --watch dist/db.json --port 3000 --routes dist/routes.json --static dist
+
+[Install]
+WantedBy=multi-user.target

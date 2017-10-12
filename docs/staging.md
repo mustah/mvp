@@ -27,6 +27,32 @@ SSH to the staging server (ask someone for the credentials if you do not know th
 
 Take the output of the previous command and paste it as a value for the key *WEB_STAGING_SSH_PRIVATE_KEY* into the [Gitlab settings for the MVP project](http://gitlab.elvaco.local/elvaco/mvp/settings/ci_cd)
 
+### During mockup/design phase
+
+*Temporary solution, before November demo*
+
+We want to run JSON server because it's easier to mock demo data with the live reload environment the front end requires.
+
+Neither the "review app" logic nor the https://mvpstaging.elvaco.se services are working during this phase.
+
+On the staging server, install Node and Yarn, as described by [frontend/README.md](../frontend/README.md).
+
+Make sure that a port (any port) that is neither 8080 nor 443 is open, so that we can start a separate web server.
+
+#### Steps to take when/if we EOL the mockup phase
+
+- On the staging server
+  - `systemctl stop elvaco-mvp-mockup.service`
+  - `rm -r /opt/elvaco/mvp-mockup`
+  - `rm /etc/systemd/system/elvaco-mvp-mockup.service`
+  - `rm /usr/bin/node`
+- In the code
+  - Remove `deploy_mockup` in *deploy/deploy_to_staging.sh*
+  - Remove the sudoers rules related to the mockup
+  - Remove the mockup related targets in *frontend/build.gradle*
+- Communication
+  - Email johanness.magnusson@unibase.se and tell him to close the port that was used for the JSON server.
+
 ### Installing Java 8
 
 1. SSH to the staging server (ask someone for the credentials if you do not know them)
@@ -46,11 +72,18 @@ Take the output of the previous command and paste it as a value for the key *WEB
 1. Create `/etc/sudoers.d/elvaco_mvp` and fill it with this content:
 
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl daemon-reload
+
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp
     %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp.service /etc/systemd/system
+
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp-mockup
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp-mockup
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp-mockup
+    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp-mockup
+    %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp-mockup.service /etc/systemd/system
 
 This will allow us to autostart the newly deployed artifact.
 
