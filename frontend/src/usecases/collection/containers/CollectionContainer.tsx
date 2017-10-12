@@ -18,7 +18,7 @@ export interface CollectionContainerProps {
   fetchCollections: () => any;
   fetchGateways: () => any;
   collection: CollectionState;
-  gateways: Gateway[];
+  gateways: Gateway;
   categories: Category;
 }
 
@@ -31,19 +31,6 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
   render() {
     const {gateways, categories} = this.props;
 
-    // TODO the mapping between back and front end needs to be more formal
-
-    const gatewaysById = {};
-    let allGatewayIds: any = [];
-    if (gateways) {
-      gateways.map((g) => gatewaysById[g.id] = g);
-      allGatewayIds = gateways.map((g) => g.id);
-    }
-    const normalizedGateways = {
-      allIds: allGatewayIds,
-      byId: gatewaysById,
-    };
-
     return (
       <Layout>
         <Column className="flex-1">
@@ -51,7 +38,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
           <Content>
             <CollectionOverview/>
             <ProblemOverview categories={categories}/>
-            <CollectionTabsContainer normalizedGateways={normalizedGateways}/>
+            <CollectionTabsContainer normalizedGateways={gateways}/>
           </Content>
         </Column>
       </Layout>

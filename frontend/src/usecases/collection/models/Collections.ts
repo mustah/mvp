@@ -1,14 +1,19 @@
+import {NormalizedRows} from '../../common/components/table/table/Table';
+
 export interface CollectionState {
   title: string;
   records: CollectionState[];
   error?: string;
   isFetching: boolean;
-  gateways: Gateway[];
-  categories: Category[];
+  gateways: Gateway;
+  categories: Category;
 }
 
 // TODO we must give gateways a type
-export type Gateway = any;
+export type Gateway = NormalizedRows;
 
 // TODO we must give categories a type
-export type Category = any;
+export interface Category {
+  handled: NormalizedRows;
+  unhandled: NormalizedRows;
+}

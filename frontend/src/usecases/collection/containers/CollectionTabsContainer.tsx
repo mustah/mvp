@@ -13,9 +13,10 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../ui/tabsActions';
 import {CollectionList} from '../components/CollectionList';
+import {Gateway} from '../models/Collections';
 
 interface CollectionTabsContainer extends TabsContainerProps {
-  normalizedGateways: {allIds: any; byId: any};
+  normalizedGateways: Gateway;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
