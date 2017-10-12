@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
 import {MeteringPoint} from '../../table/components/meteringPoint/MeteringPoint';
 import {Status} from '../../table/components/status/Status';
 import {Table} from '../../table/components/table/Table';
@@ -20,6 +19,7 @@ import {TabTopBar} from '../../tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../tabs/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
+import {MoidMap} from '../components/map/MoidMap';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
@@ -89,7 +89,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
         </Table>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png"/>
+        <MoidMap/>
       </TabContent>
     </Tabs>
   );
