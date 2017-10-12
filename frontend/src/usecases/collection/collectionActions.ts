@@ -1,15 +1,17 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {restClient} from '../../services/restClient';
-import {
-  COLLECTION_FAILURE,
-  COLLECTION_REQUEST,
-  COLLECTION_SUCCESS,
-  GATEWAY_FAILURE,
-  GATEWAY_REQUEST,
-  GATEWAY_SUCCESS,
-} from '../../types/ActionTypes';
 import {NormalizedRows} from '../common/components/table/table/Table';
 import {Category, Gateway} from './models/Collections';
+
+export const COLLECTION_REQUEST = 'COLLECTION_REQUEST';
+export const COLLECTION_SUCCESS = 'COLLECTION_SUCCESS';
+export const COLLECTION_FAILURE = 'COLLECTION_FAILURE';
+
+export const GATEWAY_REQUEST = 'GATEWAY_REQUEST';
+export const GATEWAY_SUCCESS = 'GATEWAY_SUCCESS';
+export const GATEWAY_FAILURE = 'GATEWAY_FAILURE';
+
+export const COLLECTION_SET_FILTER = 'COLLECTION_SET_FILTER';
 
 const collectionRequest = createEmptyAction(COLLECTION_REQUEST);
 const collectionSuccess = createPayloadAction(COLLECTION_SUCCESS);
@@ -18,6 +20,9 @@ const collectionFailure = createPayloadAction(COLLECTION_FAILURE);
 const gatewayRequest = createEmptyAction(GATEWAY_REQUEST);
 const gatewaySuccess = createPayloadAction(GATEWAY_SUCCESS);
 const gatewayFailure = createPayloadAction(GATEWAY_FAILURE);
+
+// TODO: should be a backend request and not a frontend filter.
+export const collectionSetFilter = createPayloadAction(COLLECTION_SET_FILTER);
 
 export const fetchCollections = () => {
   return (dispatch) => {

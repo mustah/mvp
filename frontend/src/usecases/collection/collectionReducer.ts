@@ -1,6 +1,9 @@
 import {AnyAction} from 'redux';
-import {COLLECTION_REQUEST, COLLECTION_SUCCESS, GATEWAY_REQUEST, GATEWAY_SUCCESS} from '../../types/ActionTypes';
 import {CollectionState} from './models/Collections';
+import {
+  COLLECTION_REQUEST, COLLECTION_SET_FILTER, COLLECTION_SUCCESS, GATEWAY_REQUEST,
+  GATEWAY_SUCCESS,
+} from './collectionActions';
 
 const initialState: CollectionState = {
   title: 'CollectionState',
@@ -38,6 +41,8 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         gateways: action.payload,
         isFetching: false,
       };
+    case COLLECTION_SET_FILTER:
+      return state; // TODO: Update to set a filter in state.
     default:
       return state;
   }
