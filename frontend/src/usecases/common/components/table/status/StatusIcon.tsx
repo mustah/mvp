@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {states} from '../../../../types/Types';
+import {states} from '../../../../../types/Types';
 
 interface StatusIconProps {
   code: number;

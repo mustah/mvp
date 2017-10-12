@@ -6,7 +6,7 @@ type SortOrder = 'asc' | 'desc';
 interface TableHeadProps {
   sortable?: boolean;
   currentSort?: SortOrder;
-  children?: React.ReactNode[];
+  children?: string | React.ReactNode[];
 }
 
 export const TableHead = (props: TableHeadProps) => {

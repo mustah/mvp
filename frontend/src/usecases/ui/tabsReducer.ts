@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {TabsState, tabType} from './models/TabsModel';
+import {TabsState, tabType} from '../common/components/tabs/models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {
@@ -20,12 +20,8 @@ const tabsInitialState: TabsState = {
     },
   },
   collection: {
-    selectedTab: tabType.map,
-    tabs: {
-      [tabType.map]: {
-        selectedOption: 'area',
-      },
-    },
+    selectedTab: tabType.list,
+    tabs: {},
   },
 };
 

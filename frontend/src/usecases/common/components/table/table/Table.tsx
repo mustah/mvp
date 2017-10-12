@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import './Table.scss';
 
-interface NormalizedRows {
+export interface NormalizedRows {
   byId: object;
   allIds: string[];
 }
@@ -28,8 +28,7 @@ export const Table = (props: TableProps) => {
 
   const columnCallbacks: Callbacks = {};
   React.Children.forEach(children, (child: any) => {
-    const cb = child.props.cell ? child.props.cell : (value) => value;
-    columnCallbacks[child.props.id] = cb;
+    columnCallbacks[child.props.id] = child.props.cell ? child.props.cell : (value) => value;
   });
   const orderedColumns: string[] = React.Children.map(children, (child: any) => child.props.id);
 

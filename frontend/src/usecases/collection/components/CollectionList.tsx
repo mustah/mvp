@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
-import {Status} from '../../table/components/status/Status';
-import {Table} from '../../table/components/table/Table';
-import {TableHead} from '../../table/components/table/TableHead';
-import {TableColumn} from '../../table/components/tableColumn/TableColumn';
-import {ListProps} from '../../tabs/models/TabsModel';
+import {Status} from '../../common/components/table/status/Status';
+import {Table} from '../../common/components/table/table/Table';
+import {TableHead} from '../../common/components/table/table/TableHead';
+import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
+import {ListProps} from '../../common/components/tabs/models/TabsModel';
 
 export const CollectionList = (props: ListProps) => {
 
@@ -18,11 +18,11 @@ export const CollectionList = (props: ListProps) => {
         header={<TableHead>{translate('gateway')}</TableHead>}
       />
       <TableColumn
-        id={'type'}
-        header={<TableHead>{translate('type')}</TableHead>}
+        id={'product_model'}
+        header={<TableHead>{translate('product model')}</TableHead>}
       />
       <TableColumn
-        id={'connectedMeters'}
+        id={'connected_meters'}
         header={<TableHead>{translate('meter', {context: 'plural'})}</TableHead>}
       />
       <TableColumn

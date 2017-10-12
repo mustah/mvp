@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {tabType} from '../models/TabsModel';
 import {TabUnderline} from './TabUnderliner';
-import {Column} from '../../common/components/layouts/column/Column';
+import {Column} from '../../layouts/column/Column';
 
 export interface TabProps {
   title: string;

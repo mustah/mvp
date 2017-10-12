@@ -1,21 +1,29 @@
 {
-  "collections": [
-    {
-      "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    },
-    {
-      "id": 2,
-      "title": "collection 2",
-      "author": "elvaco"
-    },
-    {
-      "id": 3,
-      "title": "collection 3",
-      "author": "elvaco - home"
-    }
+  "todos": [
+    "translate unhandled and handled collections in the right place"
   ],
+  "collections": {
+    "unhandled": [
+      {
+        "category": "Område",
+        "count": 1
+      },
+      {
+        "category": "Produktmodell",
+        "count": 1
+      }
+    ],
+    "handled": [
+      {
+        "category": "Område",
+        "count": 2
+      },
+      {
+        "category": "Produktmodell",
+        "count": 1
+      }
+    ]
+  },
   "dashboards": [
     {
       "id": "3",
@@ -42,6 +50,86 @@
           }
         ]
       }
+    }
+  ],
+  "mps": [
+    {
+      "gateway_id": "30001599",
+      "id": "8654",
+      "medium": "Heat, Return temp",
+      "status": 0,
+      "area": "Göteborg",
+      "product_model": "Kamstrup Multical 403"
+    },
+    {
+      "gateway_id": "30001600",
+      "id": "7795",
+      "medium": "Heat, Return temp",
+      "status": 2,
+      "area": "Göteborg",
+      "product_model": "Kamstrup Multical 603"
+    },
+    {
+      "gateway_id": "6002880",
+      "id": "7795",
+      "medium": "Heat, Return temp",
+      "status": 2,
+      "area": "Göteborg",
+      "product_model": "Kamstrup Multical 603"
+    },
+    {
+      "gateway_id": "30000531",
+      "id": "7541",
+      "medium": "Heat, Return temp",
+      "status": 3,
+      "area": "Kungsbacka",
+      "product_model": "Kamstrup Multical 603"
+    }
+  ],
+  "gateways": [
+    {
+      "id": "30001599",
+      "area": "Göteborg",
+      "product_model": "CMe2100",
+      "status": {
+        "code": 0,
+        "text": "OK"
+      },
+      "connected_meters": 1,
+      "action": ""
+    },
+    {
+      "id": "30001600",
+      "area": "Göteborg",
+      "product_model": "CMe2100",
+      "status": {
+        "code": 2,
+        "text": "Grus i maskineriet"
+      },
+      "connected_meters": 1,
+      "action": ""
+    },
+    {
+      "id": "6002880",
+      "area": "Göteborg",
+      "product_model": "CMe3100",
+      "status": {
+        "code": 2,
+        "text": "Grus i maskineriet"
+      },
+      "connected_meters": 1,
+      "action": "Felanmäld"
+    },
+    {
+      "id": "30000531",
+      "area": "Kungsbacka",
+      "product_model": "CMe3100",
+      "status": {
+        "code": 3,
+        "text": "Allt är sönder"
+      },
+      "connected_meters": 1,
+      "action": "Åtgärdas"
     }
   ],
   "reports": [
@@ -82,3 +170,4 @@
     "name": "typicode"
   }
 }
+
