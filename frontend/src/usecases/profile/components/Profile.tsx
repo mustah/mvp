@@ -1,13 +1,12 @@
-import IconButton from 'material-ui/IconButton';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {User} from '../../auth/authReducer';
-import {Icon} from '../../common/components/icons/Icons';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MenuSeparator} from '../../topmenu/components/separators/MenuSeparator';
+import {Avatar} from './Avatar';
 import './Profile.scss';
 import {ProfileName} from './ProfileName';
 
@@ -20,12 +19,6 @@ interface ProfileState {
   isOpen: boolean;
   anchorElement?: React.ReactInstance;
 }
-
-const avatarStyle = {
-  padding: '0 0 0 10px',
-  height: '24px',
-  width: '34px',
-};
 
 export class Profile extends React.Component<ProfileProps, ProfileState> {
 
@@ -43,13 +36,7 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
       <Column className="flex-1">
         <Row className="Profile">
           {user && <ProfileName user={user}/>}
-          <IconButton
-            disabled={!user}
-            style={avatarStyle}
-            onClick={this.openMenu}
-          >
-            <Icon name="account-circle"/>
-          </IconButton>
+          <Avatar user={user} onClick={this.openMenu}/>
           <Popover
             open={isOpen}
             anchorEl={this.state.anchorElement}
