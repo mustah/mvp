@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {Table} from '../../../table/components/table/Table';
-import {TableHead} from '../../../table/components/table/TableHead';
-import {TableColumn} from '../../../table/components/tableColumn/TableColumn';
+import {Table} from '../table/table/Table';
+import {TableHead} from '../table/table/TableHead';
+import {TableColumn} from '../table/tableColumn/TableColumn';
 import {Column} from '../layouts/column/Column';
 import {Layout} from '../layouts/layout/Layout';
 import {Row} from '../layouts/row/Row';

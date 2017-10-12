@@ -10,9 +10,9 @@ import {Layout} from '../../common/components/layouts/layout/Layout';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
 import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
 import {fetchCollections, fetchGateways} from '../collectionActions';
-import {CollectionList} from '../components/CollectionList';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState, Gateway} from '../models/Collections';
+import CollectionTabsContainer from './CollectionTabsContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -51,7 +51,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
           <Content>
             <CollectionOverview/>
             <ProblemOverview categories={categories}/>
-            <CollectionList data={normalizedGateways}/>
+            <CollectionTabsContainer normalizedGateways={normalizedGateways}/>
           </Content>
         </Column>
       </Layout>
@@ -61,6 +61,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
 
 const mapStateToProps = (state: RootState) => {
   const {collection} = state;
+
   return {
     collection,
     gateways: collection.gateways,

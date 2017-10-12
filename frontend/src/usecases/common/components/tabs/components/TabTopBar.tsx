@@ -2,7 +2,7 @@ import * as React from 'react';
 import {TabHeadersProps} from './TabHeaders';
 import {TabOptionsProps} from './TabOptions';
 import {TabSettingsProps} from './TabSettings';
-import {Row} from '../../common/components/layouts/row/Row';
+import {Row} from '../../layouts/row/Row';
 
 type TabTopBarChild = TabHeadersProps | TabOptionsProps | TabSettingsProps;
 

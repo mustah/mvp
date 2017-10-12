@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row} from '../../common/components/layouts/row/Row';
+import {Column} from '../../layouts/column/Column';
+import {Row} from '../../layouts/row/Row';
 import {TabModel, tabType} from '../models/TabsModel';
 import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
