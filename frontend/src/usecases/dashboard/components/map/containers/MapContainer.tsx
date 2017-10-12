@@ -1,26 +1,35 @@
 import * as React from 'react';
-import {Column} from '../../../common/components/layouts/column/Column';
-import './Map.scss';
+import {Column} from '../../../../common/components/layouts/column/Column';
+import '../Map.scss';
 import {Map, Marker, Popup, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
+import Dialog from 'material-ui/Dialog';
+import {FlatButton} from 'material-ui';
+import {bindActionCreators} from 'redux';
+import {toggleClusterDialog} from '../MapActions';
+import {RootState} from '../../../../../reducers/index';
+import {MapState} from '../MapReducer';
+import {connect} from 'react-redux';
+import {translate} from '../../../../../services/translationService';
 
-export interface MapProps {
-  name?: string;
+interface MapContainerProps {
+  map: MapState;
+  toggleClusterDialog: () => void;
 }
 
-export class MoidMap extends React.Component<MapProps, any> {
+const MapContainer = (props: MapContainerProps) => {
+    const actions = [
+      (
+        <FlatButton
+          label={translate('close')}
+          primary={true}
+          onClick={props.toggleClusterDialog}
+          keyboardFocused={true}
+          key={1}
+        />
+      ),
+    ];
 
-  componentDidMount() {
-    // const myMap = L.map('dashboardMap').setView([57.504935, 12.069482], 14);
-    // TODO The token needs to be replaced with one that allows commercial use
-    // const mapToken = 'pk.eyJ1IjoiZGFuc3ZlIiwiYSI6ImNqOGthZmk5azBiaXQydnVhMGI0cHQwaDUifQ.T4PeUHZoHl0dSpjO8RPJiQ';
-  }
-
-  clusterClick() {
-    alert('Popup goes here');
-  }
-
-  render() {
     const position: [number, number] = [57.504935, 12.069482];
 
     const markers = [
@@ -46,7 +55,7 @@ export class MoidMap extends React.Component<MapProps, any> {
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            onClusterClick={this.clusterClick}
+            onClusterClick={props.toggleClusterDialog}
             markers={markers}
             options={{zoomToBoundsOnClick: false}}
             wrapperOptions={{enableDefaultStyle: false}}
@@ -57,7 +66,31 @@ export class MoidMap extends React.Component<MapProps, any> {
             </Popup>
           </Marker>
         </Map>
+        <Dialog
+          title="Scrollable Dialog"
+          actions={actions}
+          modal={false}
+          open={props.map.isClusterDialogOpen}
+          onRequestClose={props.toggleClusterDialog}
+          autoScrollBodyContent={true}
+        >
+          Test
+        </Dialog>
       </Column>
     );
-  }
-}
+  };
+
+const mapStateToProps = (state: RootState) => {
+  const {map} = state;
+
+  return {
+    map,
+    isClusterDialogOpen: map.isClusterDialogOpen,
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    toggleClusterDialog,
+  }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);

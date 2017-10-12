@@ -120,3 +120,6 @@ msgstr "{{count}} produkter"
 
 #~ msgid "sort ascending"
 #~ msgstr "sortera stigande"
+
+msgid "close"
+msgstr "stäng"
