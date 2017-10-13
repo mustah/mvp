@@ -8,19 +8,19 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {Content} from '../../common/components/layouts/content/Content';
 import {Layout} from '../../common/components/layouts/layout/Layout';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
+import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
 import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
-import {collectionSetFilter, fetchCollections, fetchGateways} from '../collectionActions';
+import {collectionAddFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
-import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
   fetchGateways: () => any;
   collection: CollectionState;
   categories: Category;
-  collectionSetFilter: (filter) => any;
+  filterAction: (filter) => any;
 }
 
 class CollectionContainer extends React.Component<CollectionContainerProps & InjectedAuthRouterProps, any> {
@@ -30,7 +30,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
   }
 
   render() {
-    const {categories, collectionSetFilter} = this.props;
+    const {categories, filterAction} = this.props;
 
     return (
       <Layout>
@@ -38,9 +38,9 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
           <SelectionOverview title={translate('all')}/>
           <Content>
             <CollectionOverview/>
-            <SelectionDropdown setFilter={collectionSetFilter}/>
+            <SelectionDropdown filterAction={filterAction}/>
             <ProblemOverview categories={categories}/>
-            <CollectionTabsContainer />
+            <CollectionTabsContainer/>
           </Content>
         </Column>
       </Layout>
@@ -60,7 +60,7 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchCollections,
   fetchGateways,
-  collectionSetFilter,
+  filterAction: collectionAddFilter,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollectionContainer);

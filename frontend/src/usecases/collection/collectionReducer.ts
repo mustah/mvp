@@ -1,15 +1,21 @@
 import {AnyAction} from 'redux';
-import {CollectionState} from './models/Collections';
 import {
-  COLLECTION_REQUEST, COLLECTION_SET_FILTER, COLLECTION_SUCCESS, GATEWAY_REQUEST,
+  COLLECTION_ADD_FILTER,
+  COLLECTION_REMOVE_FILTER,
+  COLLECTION_REQUEST,
+  COLLECTION_SET_FILTER,
+  COLLECTION_SUCCESS,
+  GATEWAY_REQUEST,
   GATEWAY_SUCCESS,
 } from './collectionActions';
+import {CollectionState} from './models/Collections';
 
 const initialState: CollectionState = {
   title: 'CollectionState',
   records: [],
   isFetching: false,
   gateways: {allIds: [], byId: {}},
+  filter: {},
   categories: {
     handled: {allIds: [], byId: {}},
     unhandled: {allIds: [], byId: {}},
@@ -43,7 +49,27 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
       };
     case COLLECTION_SET_FILTER:
       console.log('SetFilter: ', action.payload);
-      return state; // TODO: Update to set a filter in state.
+      return {
+        ...state,
+        filter: {
+          ...action.payload
+        }
+      };
+    case COLLECTION_ADD_FILTER:
+      console.log('AddFilter: ', action.payload);
+      return {
+        ...state,
+        filter: {
+          ...state.filter,
+          ...action.payload
+        }
+      };
+    case COLLECTION_REMOVE_FILTER:
+      console.log('RemoveFilter: ', action.payload);
+      // TODO implement removal of filter
+      return {
+        ...state,
+      };
     default:
       return state;
   }

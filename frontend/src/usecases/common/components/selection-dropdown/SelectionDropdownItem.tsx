@@ -3,20 +3,21 @@ import MenuItem from 'material-ui/MenuItem';
 import {Row} from '../layouts/row/Row';
 
 interface SelectionDropdownItemProps {
-  title: any;
-  setFilter: (filter) => void;
+  criteria: any;
+  filterAction: (filter) => void;
+  value: string;
 }
 
 export const SelectionDropdownItem = (props: SelectionDropdownItemProps) => {
-  const {setFilter, title} = props;
+  const {filterAction, criteria, value} = props;
   const handleFilterClick = () => {
-    setFilter(title);
+    filterAction(criteria);
   };
 
   return (
     <MenuItem>
       <Row className="Row-center" onClick={handleFilterClick}>
-        {title}
+        {value}
       </Row>
     </MenuItem>
   );
