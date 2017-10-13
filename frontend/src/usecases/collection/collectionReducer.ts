@@ -53,22 +53,27 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         ...state,
         filter: {
           ...action.payload
-        }
+        },
       };
     case COLLECTION_ADD_FILTER:
-      console.log('AddFilter: ', action.payload);
       return {
         ...state,
         filter: {
           ...state.filter,
           ...action.payload
-        }
+        },
       };
     case COLLECTION_REMOVE_FILTER:
       console.log('RemoveFilter: ', action.payload);
-      // TODO implement removal of filter
+      const {filterCategory, value} = action.payload;
+      const filter = {...state.filter};
+      // TODO Allow the filter "area = GBG OR area = KBA" to be used, and only one of the values to be removed at a time
+      if(filter.hasOwnProperty(filterCategory) && filter[filterCategory] === value) {
+        delete filter[filterCategory];
+      }
       return {
         ...state,
+        filter: filter,
       };
     default:
       return state;

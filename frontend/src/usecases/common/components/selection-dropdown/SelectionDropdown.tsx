@@ -8,6 +8,8 @@ interface SelectionDropdownProps {
 
 export const SelectionDropdown = (props: SelectionDropdownProps) => {
   const {filterAction} = props;
+  // TODO fetch real values from the backend
+  // TODO support values for more than one property (currently "city")
   return (
     <DropDownMenu
       anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}

@@ -10,7 +10,8 @@ import {Layout} from '../../common/components/layouts/layout/Layout';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
 import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
 import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
-import {collectionAddFilter, fetchCollections, fetchGateways} from '../collectionActions';
+import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
+import {ChosenFilter} from '../components/ChosenFilter';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
@@ -21,6 +22,7 @@ export interface CollectionContainerProps {
   collection: CollectionState;
   categories: Category;
   filterAction: (filter) => any;
+  filterDelete: (something) => any;
 }
 
 class CollectionContainer extends React.Component<CollectionContainerProps & InjectedAuthRouterProps, any> {
@@ -30,7 +32,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
   }
 
   render() {
-    const {categories, filterAction} = this.props;
+    const {categories, filterAction, filterDelete, collection: {filter}} = this.props;
 
     return (
       <Layout>
@@ -40,6 +42,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
             <CollectionOverview/>
             <SelectionDropdown filterAction={filterAction}/>
             <ProblemOverview categories={categories}/>
+            <ChosenFilter onDelete={filterDelete} filter={filter}/>
             <CollectionTabsContainer/>
           </Content>
         </Column>
@@ -61,6 +64,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchCollections,
   fetchGateways,
   filterAction: collectionAddFilter,
+  filterDelete: collectionRemoveFilter,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollectionContainer);

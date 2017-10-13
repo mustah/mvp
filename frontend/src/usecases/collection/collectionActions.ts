@@ -25,8 +25,16 @@ const gatewayFailure = createPayloadAction(GATEWAY_FAILURE);
 
 // TODO: should be a backend request and not a frontend filter.
 export const collectionSetFilter = createPayloadAction(COLLECTION_SET_FILTER);
-export const collectionRemoveFilter = createPayloadAction(COLLECTION_REMOVE_FILTER);
 
+export const collectionRemoveFilter = (filterCategory, value) => {
+  return (dispatch) => {
+    // make sure that the wanted collection filter is set in the global state
+    dispatch(createPayloadAction(COLLECTION_REMOVE_FILTER)({filterCategory, value}));
+
+    // TODO request new data for the table
+    // dispatch(fetchGateways(filterCriteria));
+  };
+};
 
 export const collectionAddFilter = (filterCriteria) => {
   return (dispatch) => {
@@ -37,7 +45,6 @@ export const collectionAddFilter = (filterCriteria) => {
     dispatch(fetchGateways(filterCriteria));
   };
 };
-
 
 export const fetchCollections = () => {
   return (dispatch) => {
