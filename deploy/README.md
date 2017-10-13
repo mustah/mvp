@@ -55,7 +55,7 @@ Make sure that a port (any port) that is neither 8080 nor 443 is open, so that w
 
 ### Installing Java 8
 
-1. SSH to the staging server (ask someone for the credentials if you do not know them)
+SSH to the staging server (ask someone for the credentials if you do not know them)
 
     sudo -s
     apt-add-repository -y ppa:webupd8team/java
@@ -69,27 +69,13 @@ Make sure that a port (any port) that is neither 8080 nor 443 is open, so that w
 
 1. SSH to the staging server (ask someone for the credentials if you do not know them)
 1. Login as root
-1. Create `/etc/sudoers.d/elvaco_mvp` and fill it with this content:
-
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl daemon-reload
-
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp
-    %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp.service /etc/systemd/system
-
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp-mockup
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp-mockup
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp-mockup
-    %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp-mockup
-    %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp-mockup/elvaco-mvp-mockup.service /etc/systemd/system
+1. Create `/etc/sudoers.d/elvaco_mvp` and fill it with the content of [elvaco_mvp](elvaco_mvp).
 
 This will allow us to autostart the newly deployed artifact.
 
 ### Allowing our `elvaco_mvp` user to bind to port 443
 
-1. As root on the server
+As root on the server
 
     apt install authbind
     touch /etc/authbind/byport/443
