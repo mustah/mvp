@@ -16,8 +16,8 @@ export const SelectionDropdown = (props: SelectionDropdownProps) => {
       maxHeight={300}
       multiple={true}
     >
-      <SelectionDropdownItem value="Göteborg" criteria={{area: "Göteborg"}} filterAction={filterAction}/>
-      <SelectionDropdownItem value="Kungsbacka" criteria={{area: "Kungsbacka"}} filterAction={filterAction}/>
+      <SelectionDropdownItem value="Göteborg" criteria={{area: 'Göteborg'}} filterAction={filterAction}/>
+      <SelectionDropdownItem value="Kungsbacka" criteria={{area: 'Kungsbacka'}} filterAction={filterAction}/>
     </DropDownMenu>
   );
 };

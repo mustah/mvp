@@ -26,7 +26,7 @@ export const filterToUri = (endpoint: string, filter: any): string => {
     // TODO replace the "I think every value in the filter object is a string" with typing,
     // when we set the real format of filter.. because this will
     // blow up if typeof filter[key] !== 'string'
-    filters.push(key + "=" + encodeURIComponent(filter[key]));
+    filters.push(key + '=' + encodeURIComponent(filter[key]));
   });
   return endpoint + '?' + filters!.join('&');
 };

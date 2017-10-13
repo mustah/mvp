@@ -11,7 +11,7 @@ import {ProblemOverview} from '../../common/components/problem-overview/ProblemO
 import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
 import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
-import {ChosenFilter} from '../components/ChosenFilter';
+import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
