@@ -17,7 +17,7 @@ import CollectionTabsContainer from './CollectionTabsContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
-  fetchGateways: () => any;
+  fetchGateways: (filter) => any;
   collection: CollectionState;
   categories: Category;
   filterAction: (filter) => any;
@@ -26,7 +26,7 @@ export interface CollectionContainerProps {
 class CollectionContainer extends React.Component<CollectionContainerProps & InjectedAuthRouterProps, any> {
   componentDidMount() {
     this.props.fetchCollections();
-    this.props.fetchGateways();
+    this.props.fetchGateways(this.props.collection.filter);
   }
 
   render() {

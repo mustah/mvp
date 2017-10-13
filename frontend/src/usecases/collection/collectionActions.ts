@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../services/restClient';
+import {filterToUri, restClient} from '../../services/restClient';
 import {NormalizedRows} from '../common/components/table/table/Table';
 import {Category, Gateway} from './models/Collections';
 
@@ -30,10 +30,11 @@ export const collectionRemoveFilter = createPayloadAction(COLLECTION_REMOVE_FILT
 
 export const collectionAddFilter = (filterCriteria) => {
   return (dispatch) => {
-    // manipulate the front end state
+    // make sure that the wanted collection filter is set in the global state
     dispatch(createPayloadAction(COLLECTION_ADD_FILTER)(filterCriteria));
+
     // request new data for the table
-    fetchGateways();
+    dispatch(fetchGateways(filterCriteria));
   };
 };
 
@@ -49,11 +50,11 @@ export const fetchCollections = () => {
   };
 };
 
-export const fetchGateways = () => {
+export const fetchGateways = (filter) => {
   return (dispatch) => {
     dispatch(gatewayRequest());
 
-    restClient.get('/gateways')
+    restClient.get(filterToUri('/gateways', filter))
       .then(response => response.data)
       .then(gateways => dispatch(gatewaySuccess(normalizeGateways(gateways))))
       .catch(error => dispatch(gatewayFailure(error)));
