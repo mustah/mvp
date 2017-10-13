@@ -4,7 +4,7 @@ import {Xlarge} from './Texts';
 import './Title.scss';
 
 interface TitleProps {
-  children: React.ReactNode[] | string;
+  children: React.ReactNode[] | React.ReactNode;
 }
 
 export const Title = (props: TitleProps) => (

@@ -5,11 +5,8 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
-import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
+import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Title} from '../../common/components/texts/Title';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Content} from '../../common/components/layouts/content/Content';
-import {Layout} from '../../common/components/layouts/layout/Layout';
 import {ValidationOverview} from '../components/ValidationOverview';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
@@ -22,19 +19,14 @@ export interface ValidationContainerProps {
 
 const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRouterProps) => {
   return (
-    <Layout>
-      <Column className="flex-1">
-        <SelectionOverview title={translate('all')}/>
-        <Content>
-          <ValidationOverview/>
-          <Image src="usecases/validation/img/alarms.png"/>
+    <PageContainer>
+      <ValidationOverview/>
+      <Image src="usecases/validation/img/alarms.png"/>
 
-          <Title>{translate('meter')}</Title>
+      <Title>{translate('meter')}</Title>
 
-          <ValidationTabsContainer/>
-        </Content>
-      </Column>
-    </Layout>
+      <ValidationTabsContainer/>
+    </PageContainer>
   );
 };
 

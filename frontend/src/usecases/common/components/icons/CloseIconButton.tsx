@@ -2,12 +2,12 @@ import IconButton from 'material-ui/IconButton';
 import * as React from 'react';
 import {Icon} from './Icons';
 
-interface SearchIconButtonProps {
+interface OwnProps {
   onClick?: (...args) => any;
 }
 
-export const SearchIconButton = (props: SearchIconButtonProps) => (
+export const CloseIconButton = (props: OwnProps) => (
   <IconButton onClick={props.onClick}>
-    <Icon name="magnify" size="large" className="Icon-Button"/>
+    <Icon name="close" size="large" className="Icon-Button"/>
   </IconButton>
 );

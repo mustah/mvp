@@ -5,11 +5,14 @@ import {IndicatorWidget} from './IndicatorWidget';
 import {Indicator, IndicatorType} from './models/IndicatorModels';
 
 export interface SelectedIndicatorWidgetProps {
-  selectIndicatorWidget: (type: IndicatorType) => any;
-  selectedWidget: IndicatorType | null;
+  selectedWidget?: IndicatorType | null;
 }
 
-export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps {
+export interface IndicatorWidgetsDispatchProps {
+  selectIndicatorWidget: (type: IndicatorType) => any;
+}
+
+export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {
   indicators: Indicator[];
   children?: React.ReactElement<any>;
   className?: string;

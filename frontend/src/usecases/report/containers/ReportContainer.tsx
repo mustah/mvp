@@ -3,49 +3,46 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
-import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
-import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
+import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Column} from '../../common/components/layouts/column/Column';
-import {Content} from '../../common/components/layouts/content/Content';
-import {Layout} from '../../common/components/layouts/layout/Layout';
+import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
 import {ReportOverview} from '../components/ReportOverview';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
-import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
 
-export interface ReportContainerProps extends SelectedIndicatorWidgetProps {
-  fetchReports: () => any;
+interface StateProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
 }
 
-const ReportContainer = (props: ReportContainerProps & InjectedAuthRouterProps) => {
+interface DispatchProps {
+  fetchReports: () => any;
+  selectIndicatorWidget: (type: IndicatorType) => any;
+}
+
+const ReportContainer = (props: StateProps & DispatchProps & InjectedAuthRouterProps) => {
   const {selectedWidget, selectIndicatorWidget} = props;
   return (
-    <Layout>
-      <Column className="flex-1">
-        <SelectionOverview title={translate('all')}/>
-        <Content>
-          <ReportOverview/>
+    <PageContainer>
+      <ReportOverview/>
 
-          <IndicatorWidgets
-            indicators={indicators}
-            selectedWidget={selectedWidget}
-            selectIndicatorWidget={selectIndicatorWidget}
-            className="small"
-          />
+      <IndicatorWidgets
+        indicators={indicators}
+        selectedWidget={selectedWidget}
+        selectIndicatorWidget={selectIndicatorWidget}
+        className="small"
+      />
 
-          <Column className="Section">
-            <Image src="usecases/report/img/graph-map.png"/>
-          </Column>
-        </Content>
+      <Column className="Section">
+        <Image src="usecases/report/img/graph-map.png"/>
       </Column>
-    </Layout>
+    </PageContainer>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
+const mapStateToProps = (state: RootState): StateProps => {
   const {report} = state;
   return {
     report,
@@ -58,4 +55,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReportContainer);
+export default connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(ReportContainer);
