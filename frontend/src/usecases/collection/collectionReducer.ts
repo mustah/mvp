@@ -42,6 +42,7 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         isFetching: false,
       };
     case COLLECTION_SET_FILTER:
+      console.log('SetFilter: ', action.payload);
       return state; // TODO: Update to set a filter in state.
     default:
       return state;

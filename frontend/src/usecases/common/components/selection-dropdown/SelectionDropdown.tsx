@@ -14,10 +14,8 @@ export const SelectionDropdown = (props: SelectionDropdownProps) => {
       maxHeight={300}
       multiple={true}
     >
-      <SelectionDropdownItem setFilter={setFilter}>Test</SelectionDropdownItem>
-      <SelectionDropdownItem setFilter={setFilter}>Test</SelectionDropdownItem>
-      <SelectionDropdownItem setFilter={setFilter}>Test</SelectionDropdownItem>
-      <SelectionDropdownItem setFilter={setFilter}>Test</SelectionDropdownItem>
+      <SelectionDropdownItem title="test1" setFilter={setFilter}/>
+      <SelectionDropdownItem title="test2" setFilter={setFilter}/>
     </DropDownMenu>
   );
 };
