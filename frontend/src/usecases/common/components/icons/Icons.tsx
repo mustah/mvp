@@ -4,9 +4,11 @@ import {ClassNamed} from '../../../../types/Types';
 import {Row} from '../layouts/row/Row';
 import './Icons.scss';
 
+type IconSize = 'small' | 'normal' | 'medium' | 'large';
+
 export interface IconProps extends ClassNamed {
   name: string;
-  size?: string;
+  size?: IconSize;
 }
 
 export const Icon = (props: IconProps) => {

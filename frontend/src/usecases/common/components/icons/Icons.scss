@@ -9,11 +9,13 @@
     line-height: 1;
 
     &.small {
-      font-size: $lg-icon;
+      width: $sm-icon;
+      height: $sm-icon;
+      font-size: $sm-icon;
     }
 
     &.large {
-      font-size: 30px;
+      font-size: $lg-icon;
     }
   }
 

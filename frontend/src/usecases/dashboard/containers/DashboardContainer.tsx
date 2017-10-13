@@ -17,15 +17,15 @@ import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
 import DashboardTabsContainer from './DashboardTabsContainer';
 
-interface StateProps extends SelectedIndicatorWidgetProps {
+interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
 }
 
-export interface DispatchProps extends IndicatorWidgetsDispatchProps {
+export interface DispatchToProps extends IndicatorWidgetsDispatchProps {
   fetchDashboard: () => any;
 }
 
-class DashboardContainer extends React.Component<StateProps & DispatchProps & InjectedAuthRouterProps, any> {
+class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps, any> {
 
   componentDidMount() {
     if (this.props.isAuthenticated) {
@@ -71,7 +71,7 @@ class DashboardContainer extends React.Component<StateProps & DispatchProps & In
  * @param {RootState} state
  * @returns {{dashboard: DashboardState}}
  */
-const mapStateToProps = (state: RootState): StateProps => {
+const mapStateToProps = (state: RootState): StateToProps => {
   const {dashboard} = state;
   return {
     dashboard,
@@ -89,4 +89,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   selectIndicatorWidget: selectDashboardIndicatorWidget,
 }, dispatch);
 
-export default connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(DashboardContainer);
+export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(DashboardContainer);

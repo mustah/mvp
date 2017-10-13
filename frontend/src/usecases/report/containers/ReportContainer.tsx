@@ -13,16 +13,16 @@ import {ReportOverview} from '../components/ReportOverview';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 
-interface StateProps extends SelectedIndicatorWidgetProps {
+interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
 }
 
-interface DispatchProps {
+interface DispatchToProps {
   fetchReports: () => any;
   selectIndicatorWidget: (type: IndicatorType) => any;
 }
 
-const ReportContainer = (props: StateProps & DispatchProps & InjectedAuthRouterProps) => {
+const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRouterProps) => {
   const {selectedWidget, selectIndicatorWidget} = props;
   return (
     <PageContainer>
@@ -42,7 +42,7 @@ const ReportContainer = (props: StateProps & DispatchProps & InjectedAuthRouterP
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
+const mapStateToProps = (state: RootState): StateToProps => {
   const {report} = state;
   return {
     report,
@@ -55,4 +55,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 
-export default connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(ReportContainer);
+export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(ReportContainer);

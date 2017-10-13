@@ -1,0 +1,20 @@
+@import "../../app/variables";
+
+.DropDownSelector {
+  margin-right: $lg-space;
+
+  .DropDownSelector-Text {
+    color: rgba($black, 0.87);
+    padding: 4px 4px 3px 10px;
+    border: 2px solid transparent;
+
+    &.isOpen {
+      border: 2px solid $dark-blue;
+      border-radius: 3px;
+    }
+
+    .Icon {
+      margin-left: $sm-space;
+    }
+  }
+}
