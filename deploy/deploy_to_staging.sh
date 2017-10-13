@@ -65,7 +65,7 @@ ssh "$SSH_USER@$SSH_HOST" << END
   mkdir $MOCKUP_DIST_FOLDER
   cd $MOCKUP_DIST_FOLDER
   tar zxvf $MOCKUP_ARCHIVE
-  sudo /bin/mv $MOCKUP_BASE_FOLDER/elvaco-mvp-mockup.service /etc/systemd/system
+  sudo /bin/mv $MOCKUP_DIST_FOLDER/elvaco-mvp-mockup.service /etc/systemd/system
   sudo /bin/systemctl daemon-reload
   sudo /bin/systemctl enable elvaco-mvp-mockup
   sudo /bin/systemctl restart elvaco-mvp-mockup
