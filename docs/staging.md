@@ -83,7 +83,7 @@ Make sure that a port (any port) that is neither 8080 nor 443 is open, so that w
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp-mockup
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp-mockup
     %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp-mockup
-    %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp-mockup.service /etc/systemd/system
+    %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp-mockup/elvaco-mvp-mockup.service /etc/systemd/system
 
 This will allow us to autostart the newly deployed artifact.
 
