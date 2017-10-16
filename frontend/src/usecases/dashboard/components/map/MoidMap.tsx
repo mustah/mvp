@@ -36,7 +36,7 @@ export class MoidMap extends React.Component<MapProps, any> {
     return (
       <Column>
         {/*TODO move this*/}
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css"/>
+        <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.5/leaflet.css"/>
 
         <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" rel="stylesheet" />
         <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" rel="stylesheet" />
