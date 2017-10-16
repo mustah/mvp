@@ -16,11 +16,11 @@ import {CollectionList} from '../components/CollectionList';
 import {Gateway} from '../models/Collections';
 
 interface CollectionTabsContainer extends TabsContainerProps {
-  normalizedGateways: Gateway;
+  gateways: Gateway;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
-  const {selectedTab, changeTab, normalizedGateways} = props;
+  const {selectedTab, changeTab, gateways} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'collection',
@@ -40,17 +40,18 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <Image src="usecases/validation/img/map.png"/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <CollectionList data={normalizedGateways}/>
+        <CollectionList data={gateways}/>
       </TabContent>
     </Tabs>
   );
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui: {tabs: {collection: {tabs, selectedTab}}}} = state;
+  const {ui: {tabs: {collection: {tabs, selectedTab}}}, collection} = state;
   return {
     selectedTab,
     tabs,
+    gateways: collection.gateways,
   };
 };
 

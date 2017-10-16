@@ -7,6 +7,7 @@ export interface CollectionState {
   isFetching: boolean;
   gateways: Gateway;
   categories: Category;
+  filter: any;
 }
 
 // TODO we must give gateways a type
