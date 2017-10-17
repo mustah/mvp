@@ -18,8 +18,8 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../ui/tabsActions';
-import {normalizedData} from '../models/dashboardModels';
 import {MoidMap} from '../components/map/MoidMap';
+import {normalizedData} from '../models/dashboardModels';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {tabs, selectedTab, changeTab, changeTabOption} = props;
@@ -43,8 +43,8 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-          <Tab tab={tabType.list} title={translate('list')} />
-          <Tab tab={tabType.map} title={translate('map')} />
+          <Tab tab={tabType.list} title={translate('list')}/>
+          <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
         <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
           <TabOption
@@ -94,6 +94,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
     </Tabs>
   );
 };
+
 const mapStateToProps = (state: RootState) => {
   const {ui: {tabs: {dashboard: {tabs, selectedTab}}}} = state;
   return {
@@ -101,8 +102,10 @@ const mapStateToProps = (state: RootState) => {
     tabs,
   };
 };
+
 const mapDispatchToProps = dispatch => bindActionCreators({
   changeTab,
   changeTabOption,
 }, dispatch);
+
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardTabsContainer);

@@ -1,15 +1,29 @@
 @import "../../../app/variables";
 
 .Icon {
-  width: $icon-size;
-  height: $icon-size;
+  width: $normal-icon;
+  height: $normal-icon;
 
   .mdi {
-    font-size: $xl;
+    font-size: $normal-icon;
     line-height: 1;
 
     &.small {
-      font-size: $normal;
+      width: $sm-icon;
+      height: $sm-icon;
+      font-size: $sm-icon;
+    }
+
+    &.large {
+      font-size: $lg-icon;
+    }
+  }
+
+  &.Icon-Button {
+    color: rgba($black, 0.7);
+
+    &:hover {
+      color: rgba($black, 1);
     }
   }
 }

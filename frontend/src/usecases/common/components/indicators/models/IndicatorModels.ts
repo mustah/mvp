@@ -1,4 +1,4 @@
-import {State} from '../../../../../types/Types';
+import {Status} from '../../../../../types/Types';
 
 export enum IndicatorType {
   collection = 'collection',
@@ -14,7 +14,7 @@ export enum IndicatorType {
 export interface Indicator {
   type: IndicatorType;
   title: string;
-  state: State;
+  state: Status;
   subtitle: string;
   value: string;
   // quantity?: string; // Quantity is something measured, like "energy", "water"

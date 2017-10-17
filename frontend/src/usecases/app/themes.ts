@@ -6,6 +6,7 @@ export const mvpTheme = getMuiTheme({
     height: 68,
     color: '#006da3',
   },
+  fontFamily: 'PT Sans, sans-serif',
   palette: {
     primary1Color: fullBlack,
     textColor: darkBlack,

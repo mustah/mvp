@@ -1,6 +1,6 @@
 import IconButton from 'material-ui/IconButton';
-import ActionSearch from 'material-ui/svg-icons/action/search';
 import * as React from 'react';
+import {Icon} from './Icons';
 
 interface SearchIconButtonProps {
   onClick?: (...args) => any;
@@ -8,6 +8,6 @@ interface SearchIconButtonProps {
 
 export const SearchIconButton = (props: SearchIconButtonProps) => (
   <IconButton onClick={props.onClick}>
-    <ActionSearch/>
+    <Icon name="magnify" size="large" className="Icon-Button"/>
   </IconButton>
 );

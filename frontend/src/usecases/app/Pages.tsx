@@ -6,6 +6,7 @@ import CollectionContainer from '../collection/containers/CollectionContainer';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import ReportContainer from '../report/containers/ReportContainer';
+import {SearchContainer} from '../search/containers/SearchContainer';
 import ValidationContainer from '../validation/containers/ValidationContainer';
 import {routes} from './routes';
 
@@ -14,6 +15,7 @@ const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(CollectionContainer);
 const ValidationPage = userIsAuthenticated(ValidationContainer);
 const ReportPage = userIsAuthenticated(ReportContainer);
+const SearchPage = userIsAuthenticated(SearchContainer);
 
 export const Pages = (props) => (
   <Layout className="flex-1">
@@ -23,5 +25,6 @@ export const Pages = (props) => (
     <Route exact={true} path={routes.collection} component={CollectionPage}/>
     <Route exact={true} path={routes.validation} component={ValidationPage}/>
     <Route exact={true} path={routes.report} component={ReportPage}/>
+    <Route exact={true} path="/:page/search" component={SearchPage}/>
   </Layout>
 );

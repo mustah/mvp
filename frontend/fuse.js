@@ -56,7 +56,7 @@ const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
 Sparky.task('config', ['convert-po-to-json'], () => {
   fuse = new FuseBox({
-    debug: true,
+    debug: false,
     homeDir: homeDir,
     sourceMaps: !isProduction,
     hash: isProduction,
