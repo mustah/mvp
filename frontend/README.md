@@ -38,14 +38,13 @@ $ yarn dist-server
 ```
 
 ### Run Fake REST API
-We use [json-server](https://github.com/typicode/json-server) to fake our api and store the data in db.json file. 
-This file is also included in the git repository for now. 
+We use [json-server](https://github.com/typicode/json-server) to fake our API.
 
-**Note** the json-server runs in the foreground, which means that you should leave it up and running in a terminal
-as long as you need it, or run it in the background by suffixing the json-server call with `&` (i.e. `... --port 8080 &`).
+**Note** the JSON server runs in the foreground, which means that you should leave it up and running in a terminal
+as long as you need it, or run it in the background by suffixing the JSON server call with `&` (i.e. `... --port 8080 &`).
 
 ```bash
-$ ./node_modules/json-server/bin/index.js --watch db.json --routes routes.json --port 8080
+$ ./node_modules/json-server/bin/index.js --watch mockdata.js --routes routes.json --port 8080
 ```
 
 ## Tests
