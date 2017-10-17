@@ -48,5 +48,5 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 export const SearchOptionsLoaderContainer =
-  connect<StateToProps, DispatchToProps>
+  connect<StateToProps, DispatchToProps, {}>
   (mapStateToProps, mapDispatchToProps)(SearchOptionsLoaderContainerComponent);

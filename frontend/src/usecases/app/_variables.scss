@@ -1,4 +1,5 @@
 // colors
+$blackest: #000000;
 $black: #0f2228;
 $light-black: #3c3c3c;
 $lightest-black: #7b7b7b;
@@ -36,6 +37,10 @@ $lg-icon: 30px;
 // layout dimensions
 $map-height: 300px;
 $map-width: 800px;
+
+$main-menu-height: 60px;
+$main-menu-width: 64px;
+$main-menu-z-index: 1400; // slightly larger than material design's app bar
 
 // tables
 $table-row-border-color: #e6e6e6;

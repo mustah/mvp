@@ -6,9 +6,9 @@ import {RootState} from '../../reducers/index';
 import {AuthState} from '../auth/authReducer';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import {Row} from '../common/components/layouts/row/Row';
+import {MainMenuContainer} from '../main-menu/containers/MainMenuContainer';
 import SideMenuContainer from '../sidemenu/containers/SideMenuContainer';
 import {SideMenuState} from '../sidemenu/sideMenuReducer';
-import TopMenuContainer from '../topmenu/containers/TopMenuContainer';
 import './_common.scss';
 import './App.scss';
 import {Pages} from './Pages';
@@ -18,15 +18,17 @@ import {Pages} from './Pages';
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-class App extends React.Component<{auth: AuthState, sideMenu: SideMenuState}, any> {
+class App extends React.Component<{auth: AuthState, sideMenu: SideMenuState}> {
+
   render() {
-    const {isAuthenticated} = this.props.auth;
+    const {auth} = this.props;
+    const {isAuthenticated} = auth;
     const {isOpen} = this.props.sideMenu;
 
     return (
       <div className="App">
-        <TopMenuContainer/>
         <Row>
+          <MainMenuContainer/>
           <Layout className={classNames('SideMenuContainer', {isOpen})} hide={!isAuthenticated}>
             <SideMenuContainer/>
           </Layout>

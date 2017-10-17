@@ -2,13 +2,9 @@
 
 .Summary {
   padding: 0 $sm-space;
+  color: $light-black;
 }
 
 .Summary-name {
   text-transform: uppercase;
-}
-
-.Summary-count {
-  text-transform: none;
-  font-size: $lg;
 }

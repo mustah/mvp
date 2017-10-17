@@ -1,0 +1,19 @@
+@import "../../../app/variables";
+
+.MenuItem {
+  color: $grey;
+  margin: $lg-space 0;
+  cursor: pointer;
+
+  &:hover {
+    color: $white;
+  }
+
+  &.isSelected {
+    color: #F50057;
+  }
+
+  .MenuItem-icon {
+    margin-bottom: 5px;
+  }
+}

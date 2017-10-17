@@ -8,6 +8,6 @@ interface SearchIconButtonProps {
 
 export const SearchIconButton = (props: SearchIconButtonProps) => (
   <IconButton onClick={props.onClick}>
-    <Icon name="magnify" size="large" className="Icon-Button"/>
+    <Icon name="filter-variant" size="large" className="Icon-Button"/>
   </IconButton>
 );

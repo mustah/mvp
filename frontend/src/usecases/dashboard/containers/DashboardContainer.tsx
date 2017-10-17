@@ -25,7 +25,7 @@ export interface DispatchToProps extends IndicatorWidgetsDispatchProps {
   fetchDashboard: () => any;
 }
 
-class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps, any> {
+class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps> {
 
   componentDidMount() {
     if (this.props.isAuthenticated) {

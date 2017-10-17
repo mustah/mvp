@@ -3,7 +3,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 export const mvpTheme = getMuiTheme({
   appBar: {
-    height: 68,
+    height: 60,
     color: '#006da3',
   },
   fontFamily: 'PT Sans, sans-serif',
@@ -12,3 +12,5 @@ export const mvpTheme = getMuiTheme({
     textColor: darkBlack,
   },
 });
+
+export const drawerWidth = 64;

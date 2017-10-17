@@ -4,7 +4,6 @@ import {Selectable} from '../../../../types/Types';
 import {Column} from '../../../common/components/layouts/column/Column';
 import {Row} from '../../../common/components/layouts/row/Row';
 import {Language, supportedLanguages} from '../../languageReducer';
-import {MenuSeparator} from '../separators/MenuSeparator';
 import './Languages.scss';
 
 export interface LanguagesProps {
@@ -30,7 +29,6 @@ export const Languages = (props: LanguagesProps) => {
           isSelected={language.code === en.code}
         />
       </Row>
-      <MenuSeparator/>
     </Column>
   );
 };

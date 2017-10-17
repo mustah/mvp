@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import './Row.scss';
 import {LayoutProps} from '../layout/Layout';
+import './Row.scss';
 
 export const Row = (props: LayoutProps) => {
   const {className, onClick} = props;
@@ -12,6 +12,8 @@ export const Row = (props: LayoutProps) => {
   );
 };
 
-export const RowCenter = (props) => <Row {...props} className={classNames(props.className, 'Row-center')}/>;
+export const RowCenter = (props: LayoutProps) =>
+  <Row {...props} className={classNames(props.className, 'Row-center')}/>;
 
-export const RowMiddle = (props) => <Row {...props} className={classNames(props.className, 'Row-middle')}/>;
+export const RowMiddle = (props: LayoutProps) =>
+  <Row {...props} className={classNames(props.className, 'Row-middle')}/>;
