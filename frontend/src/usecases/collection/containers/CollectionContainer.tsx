@@ -9,22 +9,24 @@ import {SelectionDropdown} from '../../common/components/selection-dropdown/Sele
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {CollectionOverview} from '../components/CollectionOverview';
-import {Category, CollectionState} from '../models/Collections';
+import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
-  fetchGateways: (filter) => any;
+  fetchGateways: (filter, page: number, limit: number) => any;
   collection: CollectionState;
   categories: Category;
   filterAction: (filter) => any;
   filterDelete: (something) => any;
+  pagination: Pagination;
 }
 
 class CollectionContainer extends React.Component<CollectionContainerProps & InjectedAuthRouterProps, any> {
   componentDidMount() {
+    const {pagination: {page, limit}} = this.props;
     this.props.fetchCollections();
-    this.props.fetchGateways(this.props.collection.filter);
+    this.props.fetchGateways(this.props.collection.filter, page, limit);
   }
 
   render() {
@@ -48,6 +50,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     collection,
     categories: collection.categories,
+    pagination: collection.pagination,
   };
 };
 

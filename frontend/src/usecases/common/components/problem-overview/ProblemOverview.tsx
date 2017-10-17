@@ -1,14 +1,11 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {Table} from '../table/table/Table';
-import {TableHead} from '../table/table/TableHead';
-import {TableColumn} from '../table/tableColumn/TableColumn';
+import {Category} from '../../../collection/models/Collections';
 import {Column} from '../layouts/column/Column';
 import {Layout} from '../layouts/layout/Layout';
 import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './ProblemOverview.scss';
-import {Category} from '../../../collection/models/Collections';
 
 interface ProblemOverviewProps {
   categories: Category;
@@ -21,17 +18,54 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
       <Row className="ProblemOverview">
         <Column className="ProblemOverview-grouping">
           <Bold className="ProblemOverview-title">{translate('unhandled problems')}</Bold>
-          <Table data={unhandled}>
-            <TableColumn header={<TableHead>{translate('grouping')}</TableHead>} id="category"/>
-            <TableColumn header={<TableHead>{translate('count')}</TableHead>} id="count"/>
-          </Table>
+          <table className="Table" cellPadding={0} cellSpacing={0}>
+            <thead>
+            <tr>
+              <th>{translate('grouping')}</th>
+              <th>{translate('count')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{translate('errands')}</td>
+              <td>{translate('{{count}} errand', {count: unhandled.total})}</td>
+            </tr>
+            <tr>
+              <td>{translate('residential areas')}</td>
+              <td>{translate('{{count}} residential area', {count: unhandled.area.count})}</td>
+            </tr>
+            <tr>
+              <td>{translate('product model')}</td>
+              <td>{translate('{{count}} product', {count: unhandled.product_model.count})}</td>
+            </tr>
+            </tbody>
+          </table>
         </Column>
         <Column className="ProblemOverview-grouping">
           <Bold className="ProblemOverview-title">{translate('action pending')}</Bold>
-          <Table data={handled}>
-            <TableColumn header={<TableHead>{translate('grouping')}</TableHead>} id="category"/>
-            <TableColumn header={<TableHead>{translate('count')}</TableHead>} id="count"/>
-          </Table>
+          <table className="Table" cellPadding={0} cellSpacing={0}>
+            <thead>
+            <tr>
+              <th>{translate('grouping')}</th>
+              <th>{translate('count')}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>{translate('errands')}</td>
+              <td>{translate('{{count}} errand', {count: handled.total})}</td>
+            </tr>
+            <tr>
+              <td>{translate('residential areas')}</td>
+              <td>{translate('{{count}} residential area', {count: handled.area.count})}</td>
+            </tr>
+            <tr>
+              <td>{translate('product model')}</td>
+              <td>{translate('{{count}} product', {count: handled.product_model.count})}</td>
+            </tr>
+            </tbody>
+          </table>
+
         </Column>
       </Row>
     </Layout>

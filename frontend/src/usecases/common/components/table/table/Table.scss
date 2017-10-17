@@ -19,6 +19,12 @@
     }
   }
 
+  tbody {
+    td:first-letter {
+      text-transform: uppercase;
+    }
+  }
+
   th, td {
     border-bottom: $table-row-border-color;
     padding: 10px;

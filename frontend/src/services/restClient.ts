@@ -20,13 +20,17 @@ export const makeRestClient = (token: string): AxiosInstance => {
 };
 
 // TODO this is adapted for JSON server, will need to remake it for the real MVP back end
-export const filterToUri = (endpoint: string, filter: any): string => {
+export const filterToUri = (endpoint: string, parameters: any): string => {
   const filters: string[] = [];
-  Object.keys(filter).forEach((key) => {
-    // TODO replace the "I think every value in the filter object is a string" with typing,
-    // when we set the real format of filter.. because this will
-    // blow up if typeof filter[key] !== 'string'
-    filters.push(key + '=' + encodeURIComponent(filter[key]));
+
+  Object.keys(parameters).forEach((key) => {
+    if (parameters[key] instanceof Set) {
+      parameters[key].forEach((value) => {
+        filters.push(key + '=' + encodeURIComponent(value));
+      });
+    } else {
+      filters.push(key + '=' + encodeURIComponent(parameters[key]));
+    }
   });
   return endpoint + '?' + filters!.join('&');
 };

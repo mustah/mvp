@@ -14,10 +14,31 @@ const initialState: CollectionState = {
   records: [],
   isFetching: false,
   gateways: {allIds: [], byId: {}},
+  pagination: {page: 1, limit: 20, total: 0},
   filter: {},
   categories: {
-    handled: {allIds: [], byId: {}},
-    unhandled: {allIds: [], byId: {}},
+    handled: {
+      total: 0,
+      area: {
+        count: 0,
+        entities: [],
+      },
+      product_model: {
+        count: 0,
+        entities: [],
+      },
+    },
+    unhandled: {
+      total: 0,
+      area: {
+        count: 0,
+        entities: [],
+      },
+      product_model: {
+        count: 0,
+        entities: [],
+      },
+    },
   },
 };
 
@@ -41,9 +62,17 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         isFetching: true,
       };
     case GATEWAY_SUCCESS:
+      const {gateways, filter, page, limit, total} = action.payload;
       return {
         ...state,
-        gateways: action.payload,
+        gateways,
+        filter,
+        pagination: {
+          ...state.pagination,
+          page,
+          limit,
+          total,
+        },
         isFetching: false,
       };
     case COLLECTION_SET_FILTER:

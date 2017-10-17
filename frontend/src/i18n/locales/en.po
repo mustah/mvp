@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-13 16:06+0200\n"
-"PO-Revision-Date: 2017-10-13 16:06+0200\n"
+"POT-Creation-Date: 2017-10-17T09:28:06.061Z\n"
+"PO-Revision-Date: 2017-10-17 11:28+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "new search"
 msgstr "new search"
@@ -20,9 +20,6 @@ msgstr "email"
 
 msgid "password"
 msgstr "password"
-
-msgid "current filter"
-msgstr "current filter"
 
 msgid "gateway"
 msgstr "gateway"
@@ -42,6 +39,9 @@ msgstr "action"
 msgid "collection"
 msgstr "collection"
 
+msgid "current filter"
+msgstr "current filter"
+
 msgid "all"
 msgstr "all"
 
@@ -56,6 +56,21 @@ msgstr "grouping"
 
 msgid "count"
 msgstr "count"
+
+msgid "errands"
+msgstr "errands"
+
+msgid "{{count}} errand"
+msgstr "{{count}} errand"
+
+msgid "residential areas"
+msgstr "residential areas"
+
+msgid "{{count}} residential area"
+msgstr "{{count}} residential area"
+
+msgid "{{count}} product"
+msgstr "{{count}} product"
 
 msgid "action pending"
 msgstr "action pending"
@@ -85,8 +100,29 @@ msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
 
-#~ msgid "sort descending"
-#~ msgstr "sort descending"
+msgctxt "°plural"
+msgid "{{count}} errand°"
+msgstr "{{count}} errands"
 
-#~ msgid "sort ascending"
-#~ msgstr "sort ascending"
+msgctxt "°plural"
+msgid "{{count}} residential area°"
+msgstr "{{count}} residential areas"
+
+msgctxt "°plural"
+msgid "{{count}} product°"
+msgstr "{{count}} products"
+
+#~ msgid "errand"
+#~ msgstr "errand"
+
+#, fuzzy
+#~| msgid "{{count}} product"
+#~ msgid "{{count}} errands"
+#~ msgstr "{{count}} product"
+
+#, fuzzy
+#~| msgctxt "°plural"
+#~| msgid "{{count}} product°"
+#~ msgctxt "°plural"
+#~ msgid "{{count}} errands°"
+#~ msgstr "{{count}} products"

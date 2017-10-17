@@ -1,7 +1,7 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
+import {RootState} from '../../reducers/index';
 import {filterToUri, restClient} from '../../services/restClient';
-import {NormalizedRows} from '../common/components/table/table/Table';
-import {Category, Gateway} from './models/Collections';
+import {Gateway} from './models/Collections';
 
 export const COLLECTION_REQUEST = 'COLLECTION_REQUEST';
 export const COLLECTION_SUCCESS = 'COLLECTION_SUCCESS';
@@ -13,7 +13,6 @@ export const GATEWAY_FAILURE = 'GATEWAY_FAILURE';
 
 export const COLLECTION_SET_FILTER = 'COLLECTION_SET_FILTER';
 export const COLLECTION_ADD_FILTER = 'COLLECTION_ADD_FILTER';
-export const COLLECTION_REMOVE_FILTER = 'COLLECTION_REMOVE_FILTER';
 
 const collectionRequest = createEmptyAction(COLLECTION_REQUEST);
 const collectionSuccess = createPayloadAction(COLLECTION_SUCCESS);
@@ -23,33 +22,37 @@ const gatewayRequest = createEmptyAction(GATEWAY_REQUEST);
 const gatewaySuccess = createPayloadAction(GATEWAY_SUCCESS);
 const gatewayFailure = createPayloadAction(GATEWAY_FAILURE);
 
-// TODO: should be a backend request and not a frontend filter.
-export const collectionSetFilter = createPayloadAction(COLLECTION_SET_FILTER);
-
-export const collectionRemoveFilter = (filterCategory, value, allFilters) => {
-  return (dispatch) => {
-
-    const updatedFilter = {...allFilters};
-    // TODO Allow the filter "area = GBG OR area = KBA" to be used, and only one of the values to be removed at a time
-    if (updatedFilter.hasOwnProperty(filterCategory) && updatedFilter[filterCategory] === value) {
-      delete updatedFilter[filterCategory];
-    }
-
-    // make sure that the wanted collection filter is set in the global state
-    dispatch(collectionSetFilter(updatedFilter));
-
-    // TODO request new data for the table
-    dispatch(fetchGateways(updatedFilter));
+export const collectionChangePage = (page) => {
+  return (dispatch, getState: () => RootState) => {
+    const {collection: {filter, pagination: {limit}}} = getState();
+    return dispatch(fetchGateways(filter, page, limit));
   };
 };
 
-export const collectionAddFilter = (filterCriteria) => {
-  return (dispatch) => {
-    // make sure that the wanted collection filter is set in the global state
-    dispatch(createPayloadAction(COLLECTION_ADD_FILTER)(filterCriteria));
+export const collectionRemoveFilter = (filterCategory, value) => {
+  return (dispatch, getState: () => RootState) => {
+    const {collection: {pagination: {limit}, filter}} = getState();
 
-    // request new data for the table
-    dispatch(fetchGateways(filterCriteria));
+    if (filter.hasOwnProperty(filterCategory)) {
+      filter[filterCategory].delete(value);
+    }
+
+    dispatch(fetchGateways(filter, 1, limit));
+  };
+};
+
+export const collectionAddFilter = (filterToAdd) => {
+  return (dispatch, getState: () => RootState) => {
+    const {collection: {pagination: {limit}, filter}} = getState();
+
+    Object.keys(filterToAdd).forEach((category) => {
+      if (!filter.hasOwnProperty(category)) {
+        filter[category] = new Set();
+      }
+      filter[category].add(filterToAdd[category]);
+    });
+
+    dispatch(fetchGateways(filter, 1, limit));
   };
 };
 
@@ -59,18 +62,53 @@ export const fetchCollections = () => {
 
     restClient.get('/collections')
       .then(response => response.data)
-      .then(collections => dispatch(collectionSuccess(normalizeCategories(collections))))
+      .then(collections => dispatch(collectionSuccess(collections)))
       .catch(error => dispatch(collectionFailure(error)));
   };
 };
 
-export const fetchGateways = (filter) => {
+export const fetchGateways = (filter, page, limit) => {
   return (dispatch) => {
     dispatch(gatewayRequest());
 
-    restClient.get(filterToUri('/gateways', filter))
-      .then(response => response.data)
-      .then(gateways => dispatch(gatewaySuccess(normalizeGateways(gateways))))
+    const parameters = {
+      ...filter,
+      _page: page,
+      _limit: limit,
+    };
+
+    restClient.get(filterToUri('/gateways', parameters))
+      .then(response => {
+        const gateways = response.data;
+
+        // JSON server exposes links to first, last, prev, next, but
+        // we're not sure the real backend implementation does that,
+        // so we're "normalizing" it a tiny bit. If our real implementation
+        // actually does provide those links - sweet - let's use them!
+
+        // an example Link header is (without the line breaks, sorry - linter):
+        // Link: <http://localhost:8080/api/gateways?_page=1&_limit=20>; rel="first",
+        // <http://localhost:8080/api/gateways?_page=2&_limit=20>; rel="next",
+        // <http://localhost:8080/api/gateways?_page=500&_limit=20>; rel="last"
+
+        // TODO the following calculation breaks if the query includes a ',',
+        // but so does all the implementations I've seen online as well for JS..
+        const total = response.headers.link.split(',').reduce((result, header) => {
+          const matches = header.trim().match(/<.*_page=(\d+)&_limit=(\d+)>; rel="last"/);
+          if (matches) {
+            return parseInt(matches[1], 10) * parseInt(matches[2], 10);
+          }
+          return result;
+        }, '');
+
+        return dispatch(gatewaySuccess({
+          gateways: normalizeGateways(gateways),
+          filter,
+          page,
+          limit,
+          total,
+        }));
+      })
       .catch(error => dispatch(gatewayFailure(error)));
   };
 };
@@ -82,32 +120,5 @@ const normalizeGateways = (gatewaysFromBackend): Gateway => {
   return {
     allIds: gatewaysFromBackend.map((g) => g.id),
     byId: gatewaysById,
-  };
-};
-
-const normalizeCategories = (categoriesFromBackEnd): Category => {
-  const {handled, unhandled} = categoriesFromBackEnd;
-
-  const normalize = (category): NormalizedRows => {
-    const byId = {};
-    const allIds: any = [];
-    Object.keys(category).map((c, i) => {
-      allIds.push(i);
-      byId[i] = category[i];
-    });
-    return {
-      allIds,
-      byId,
-    };
-  };
-  const normalizedHandled = normalize(handled);
-  const normalizedUnhandled = normalize(unhandled);
-  return {
-    handled: {
-      ...normalizedHandled,
-    },
-    unhandled: {
-      ...normalizedUnhandled,
-    },
   };
 };
