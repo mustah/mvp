@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Column} from '../../../../common/components/layouts/column/Column';
 import '../Map.scss';
-import {Map, Marker, Popup, TileLayer} from 'react-leaflet';
+import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Dialog from 'material-ui/Dialog';
 import {FlatButton} from 'material-ui';
@@ -32,16 +32,6 @@ const MapContainer = (props: MapContainerProps) => {
 
     const position: [number, number] = [57.504935, 12.069482];
 
-    const markers = [
-      {lat: 49.8397, lng: 24.0297},
-      {lat: 49.8394, lng: 24.0294},
-      {lat: 49.7394, lng: 24.0274},
-      {lat: 47.7394, lng: 23.0274},
-      {lat: 44.7394, lng: 23.0274},
-      {lat: 52.2297, lng: 21.0122},
-      {lat: 51.5074, lng: -0.0901},
-    ];
-
     return (
       <Column>
         {/*TODO move this*/}
@@ -55,14 +45,10 @@ const MapContainer = (props: MapContainerProps) => {
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            markers={markers}
+            markers={props.map.markerPositions}
             wrapperOptions={{enableDefaultStyle: false}}
+            onMarkerClick={(marker) => props.map.selectedMarker = marker}
           />
-          <Marker position={position}>
-            <Popup>
-              <span>A pretty CSS3 popup.<br/>Easily customizable.</span>
-            </Popup>
-          </Marker>
         </Map>
         <Dialog
           title="Scrollable Dialog"
@@ -72,7 +58,7 @@ const MapContainer = (props: MapContainerProps) => {
           onRequestClose={props.toggleClusterDialog}
           autoScrollBodyContent={true}
         >
-          Test
+          {props.map.selectedMarker}
         </Dialog>
       </Column>
     );
@@ -83,6 +69,8 @@ const mapStateToProps = (state: RootState) => {
 
   return {
     map,
+    markerPositions: map.markerPositions,
+    selectedMarker: map.selectedMarker,
     isClusterDialogOpen: map.isClusterDialogOpen,
   };
 };
