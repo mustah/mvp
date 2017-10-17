@@ -55,9 +55,7 @@ const MapContainer = (props: MapContainerProps) => {
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            onClusterClick={props.toggleClusterDialog}
             markers={markers}
-            options={{zoomToBoundsOnClick: false}}
             wrapperOptions={{enableDefaultStyle: false}}
           />
           <Marker position={position}>
