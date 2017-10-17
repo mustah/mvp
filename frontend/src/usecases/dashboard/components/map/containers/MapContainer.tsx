@@ -2,11 +2,12 @@ import * as React from 'react';
 import {Column} from '../../../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {Map, TileLayer} from 'react-leaflet';
+import {Marker} from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Dialog from 'material-ui/Dialog';
 import {FlatButton} from 'material-ui';
 import {bindActionCreators} from 'redux';
-import {toggleClusterDialog} from '../MapActions';
+import {openClusterDialog, toggleClusterDialog} from '../MapActions';
 import {RootState} from '../../../../../reducers/index';
 import {MapState} from '../MapReducer';
 import {connect} from 'react-redux';
@@ -15,6 +16,7 @@ import {translate} from '../../../../../services/translationService';
 interface MapContainerProps {
   map: MapState;
   toggleClusterDialog: () => void;
+  openClusterDialog: (marker: Marker) => void;
 }
 
 const MapContainer = (props: MapContainerProps) => {
@@ -47,7 +49,7 @@ const MapContainer = (props: MapContainerProps) => {
           <MarkerClusterGroup
             markers={props.map.markerPositions}
             wrapperOptions={{enableDefaultStyle: false}}
-            onMarkerClick={(marker) => props.map.selectedMarker = marker}
+            onMarkerClick={props.openClusterDialog}
           />
         </Map>
         <Dialog
@@ -58,7 +60,7 @@ const MapContainer = (props: MapContainerProps) => {
           onRequestClose={props.toggleClusterDialog}
           autoScrollBodyContent={true}
         >
-          {props.map.selectedMarker}
+          {props.map.selectedMarker? props.map.selectedMarker.getLatLng().toString(): null}
         </Dialog>
       </Column>
     );
@@ -77,6 +79,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
     toggleClusterDialog,
+    openClusterDialog,
   }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);

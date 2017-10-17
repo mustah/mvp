@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
-import {TOGGLE_CLUSTER_DIALOG} from './MapActions';
-import {Marker} from 'react-leaflet';
+import {TOGGLE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from './MapActions';
+import {Marker} from 'leaflet';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
@@ -34,8 +34,14 @@ export const map = (state: MapState = {isClusterDialogOpen : false, markerPositi
     case TOGGLE_CLUSTER_DIALOG:
       return {
         ...state,
-        isClusterDialogOpen: !state.isClusterDialogOpen,
+        isClusterDialogOpen: false,
       };
+    case OPEN_CLUSTER_DIALOG:
+      return {
+        ...state,
+        isClusterDialogOpen: true,
+        selectedMarker: action.payload
+      }
     default:
       return state;
   }
