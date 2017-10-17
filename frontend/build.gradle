@@ -36,7 +36,7 @@ task assembleMockup(type: Tar) {
 
   into('/') {
     from('dist')
-    include('*')
+    include('**/*')
   }
 
   into('/') {
