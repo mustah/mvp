@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -13,14 +12,18 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../ui/tabsActions';
 import {CollectionList} from '../components/CollectionList';
-import {Gateway} from '../models/Collections';
+import {Gateway, Pagination} from '../models/Collections';
+import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
+import {collectionChangePage} from '../collectionActions';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   gateways: Gateway;
+  pagination: Pagination;
+  collectionChangePage: (page) => any;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
-  const {selectedTab, changeTab, gateways} = props;
+  const {selectedTab, changeTab, gateways, pagination, collectionChangePage} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'collection',
@@ -36,11 +39,9 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         </TabHeaders>
         <TabSettings useCase="collection"/>
       </TabTopBar>
-      <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png"/>
-      </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <CollectionList data={gateways}/>
+        <PaginationControl pagination={pagination} changePage={collectionChangePage}/>
       </TabContent>
     </Tabs>
   );
@@ -52,12 +53,14 @@ const mapStateToProps = (state: RootState) => {
     selectedTab,
     tabs,
     gateways: collection.gateways,
+    pagination: collection.pagination,
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   changeTab,
   changeTabOption,
+  collectionChangePage,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);

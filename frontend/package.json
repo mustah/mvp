@@ -61,6 +61,7 @@
     "postcss": "^6.0.13",
     "redux-devtools": "^3.4.0",
     "redux-mock-store": "^1.2.3",
+    "seedrandom": "^2.4.3",
     "ts-jest": "^21.1.1",
     "tslint": "^5.5.0",
     "tslint-react": "^3.0.0",

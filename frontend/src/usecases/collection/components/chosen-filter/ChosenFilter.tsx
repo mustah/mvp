@@ -2,10 +2,11 @@ import {Chip} from 'material-ui';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Bold} from '../../../common/components/texts/Texts';
+import {Filter} from '../../models/Collections';
 import './ChosenFilter.scss';
 
 interface ChosenFilterProps {
-  filter: any;
+  filter: Filter;
   onDelete: (category: string, value: string) => any;
 }
 
@@ -16,18 +17,17 @@ export const ChosenFilter = (props: ChosenFilterProps) => {
   }
 
   const chips: any = [];
-  Object.keys(filter).forEach((filterCategory, index) => {
-    const filterSpecificDeletion = () => {
-      return onDelete(filterCategory, filter[filterCategory]);
-    };
-    // TODO replace the "I think every value in the filter object is a string" with typing,
-    // when we set the real format of filter.. because this will
-    // blow up if typeof filter[key] !== 'string'
-    chips.push((
-      <Chip key={index} onRequestDelete={filterSpecificDeletion}>
-        {filterCategory}: {filter[filterCategory]}
-      </Chip>
-    ));
+  Object.keys(filter).forEach((filterCategory) => {
+    filter[filterCategory].forEach((value) => {
+      const filterSpecificDeletion = () => {
+        return onDelete(filterCategory, value);
+      };
+      chips.push((
+        <Chip key={filterCategory + '-' + value} onRequestDelete={filterSpecificDeletion}>
+          {filterCategory}: {value}
+        </Chip>
+      ));
+    });
   });
 
   return (

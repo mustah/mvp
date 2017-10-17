@@ -41,7 +41,7 @@ task assembleMockup(type: Tar) {
 
   into('/') {
     from('.')
-    include('db.json')
+    include('mockdata.js')
     include('routes.json')
   }
 
