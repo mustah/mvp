@@ -3,20 +3,16 @@ import 'DropDownSelector.scss';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
-import {Clickable} from '../../../types/Types';
+import {Clickable, IdNamed} from '../../../types/Types';
 import {Icon} from '../../common/components/icons/Icons';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row, RowMiddle} from '../../common/components/layouts/row/Row';
 import {Normal} from '../../common/components/texts/Texts';
-import {CheckboxList, CheckboxProps} from './CheckboxList';
-
-interface OwnProps extends Clickable {
-  name: string;
-}
+import {CheckboxList} from './CheckboxList';
 
 interface Props {
   selectionText: string;
-  list: CheckboxProps[];
+  list: IdNamed[];
 }
 
 interface State extends Props {
@@ -24,7 +20,7 @@ interface State extends Props {
   anchorElement?: React.ReactInstance;
 }
 
-export class DropDownSelector extends React.Component<Props & OwnProps, State> {
+export class DropDownSelector extends React.Component<Props & Clickable, State> {
 
   constructor(props) {
     super(props);
@@ -57,17 +53,12 @@ export class DropDownSelector extends React.Component<Props & OwnProps, State> {
         >
           <Menu>
             <Column>
-              <CheckboxList onClick={this.onClick} list={list}/>
+              <CheckboxList onClick={this.props.onClick} list={list}/>
             </Column>
           </Menu>
         </Popover>
       </Row>
     );
-  }
-
-  onClick = (args): void => {
-    const {onClick, name} = this.props;
-    onClick({...args, name});
   }
 
   openMenu = (event: React.SyntheticEvent<any>): void => {

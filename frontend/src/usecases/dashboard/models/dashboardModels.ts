@@ -1,4 +1,5 @@
 import {Indicator} from '../../common/components/indicators/models/IndicatorModels';
+import {uuid} from '../../../types/Types';
 
 export interface SystemOverviewState {
   title: string;
@@ -6,7 +7,7 @@ export interface SystemOverviewState {
 }
 
 export interface DashboardModel {
-  id: string | number;
+  id: uuid;
   title: string;
   author: string;
   systemOverview: SystemOverviewState;

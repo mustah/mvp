@@ -5,12 +5,13 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {RootState} from '../../../reducers/index';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {SearchContentBox} from '../components/SearchContentBox';
-import {SearchParameter} from '../models/searchParameterModels';
+import {SearchParameter} from '../models/searchModels';
 import {selectSearchOption} from '../searchActions';
-import {SearchParametersState} from '../searchReducer';
+import {SearchState} from '../searchReducer';
+import {SearchOptionsLoaderContainer} from './SearchOptionsLoaderContainer';
 
 export interface SearchStateToProps {
-  searchParameters: SearchParametersState;
+  search: SearchState;
 }
 
 export interface SearchDispatchToProps {
@@ -20,17 +21,18 @@ export interface SearchDispatchToProps {
 export const SearchContainerComponent = (props: SearchStateToProps & SearchDispatchToProps & InjectedAuthRouterProps) =>
   (
     <PageContainer>
-      <SearchContentBox
-        searchParameters={props.searchParameters}
-        selectSearchOption={props.selectSearchOption}
-      />
+      <SearchOptionsLoaderContainer>
+        <SearchContentBox
+          search={props.search}
+          selectSearchOption={props.selectSearchOption}
+        />
+      </SearchOptionsLoaderContainer>
     </PageContainer>
   );
 
-const mapStateToProps = (state: RootState): SearchStateToProps => {
-  const {searchParameters} = state;
+const mapStateToProps = ({search}: RootState): SearchStateToProps => {
   return {
-    searchParameters,
+    search,
   };
 };
 

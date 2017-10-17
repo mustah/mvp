@@ -1,48 +1,40 @@
 import 'Checkbox.scss';
 import * as React from 'react';
-import {Clickable} from '../../../types/Types';
+import {Clickable, IdNamed} from '../../../types/Types';
 import {RowMiddle} from '../../common/components/layouts/row/Row';
 import {Normal} from '../../common/components/texts/Texts';
 
-export interface CheckboxProps {
-  isChecked?: boolean;
-  label: string;
-  data?: any;
-}
-
 interface CheckboxListProps extends Clickable {
-  list: CheckboxProps[];
+  list: IdNamed[];
 }
 
-export const Checkbox = (props: CheckboxProps & Clickable) => {
-  const onClick = () => props.onClick(
-    {
-      value: props.label,
-      isChecked: !props.isChecked,
+export const Checkbox = (props: IdNamed & Clickable) => {
+  const {id, name} = props;
+  const onClick = () => props.onClick({name, id});
+  const htmlId = `id-${id}`;
 
-    });
   return (
     <RowMiddle className="Checkbox">
       <input
         type="checkbox"
-        checked={props.isChecked}
-        id={props.label}
+        id={htmlId}
         onClick={onClick}
       />
-      <label htmlFor={props.label} className="clickable">
-        <Normal>{props.label}</Normal>
+      <label htmlFor={htmlId} className="clickable">
+        <Normal>{name}</Normal>
       </label>
     </RowMiddle>
   );
 };
 
 export const CheckboxList = (props: CheckboxListProps) => {
-  const renderCheckbox = (checkbox: CheckboxProps, index: number) => (
+  const renderCheckbox = (checkbox: IdNamed) => (
     <Checkbox
-      key={index}
+      key={checkbox.id}
       {...checkbox}
       onClick={props.onClick}
     />);
+
   return (
     <div className="CheckboxList">
       {props.list.map(renderCheckbox)}

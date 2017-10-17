@@ -1,3 +1,5 @@
+export type uuid = string | number;
+
 export interface ClassNamed {
   className?: string;
 }
@@ -12,6 +14,11 @@ export interface Selectable {
 
 export interface Clickable {
   onClick: (...args) => void;
+}
+
+export interface IdNamed {
+  id: uuid;
+  name: string;
 }
 
 export enum Status {

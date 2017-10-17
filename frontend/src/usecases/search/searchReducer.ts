@@ -1,37 +1,61 @@
 import {AnyAction} from 'redux';
-import {SearchParameter} from './models/searchParameterModels';
-import {SELECT_SEARCH_OPTION} from './searchActions';
+import {SearchOptionResult, SearchOptions} from './models/searchModels';
+import {
+  SEARCH_OPTIONS_FAILURE,
+  SEARCH_OPTIONS_REQUEST,
+  SEARCH_OPTIONS_SUCCESS,
+  SELECT_SEARCH_OPTION,
+} from './searchActions';
 
-export interface SearchParametersState {
-  area: string[];
-  status: string[];
-  property: string[];
+export interface SearchState extends SearchOptions {
+  isFetching: boolean;
+  selected: SearchOptionResult;
 }
 
-const initialState = {
-  area: [],
-  status: [],
-  property: [],
+export const initialState: SearchState = {
+  isFetching: false,
+  entities: {},
+  result: {
+    cities: [],
+    addresses: [],
+  },
+  selected: {
+    cities: [],
+    addresses: [],
+  },
 };
 
-const filterSelectedSearchOption = (state: SearchParametersState, payload: SearchParameter): string[] => {
-  const {isChecked, name, value} = payload;
-  return isChecked
-    ? [...state[name], value]
-    : [...state[name]].filter((s: string) => s !== value);
+export const search = (state: SearchState = initialState, action: AnyAction): SearchState => {
+  const {payload} = action;
+
+  switch (action.type) {
+    case SEARCH_OPTIONS_REQUEST:
+      return {
+        ...state,
+        isFetching: true,
+      };
+    case SEARCH_OPTIONS_SUCCESS:
+      return {
+        ...state,
+        isFetching: false,
+        ...payload,
+      };
+    case SEARCH_OPTIONS_FAILURE:
+      return {
+        ...state,
+        isFetch: false,
+        ...payload,
+      };
+    case SELECT_SEARCH_OPTION:
+      const {entity, id} = payload;
+      return {
+        ...state,
+        selected: {
+          ...state.selected,
+          [entity]: [...state.selected[entity], id],
+        },
+      };
+    default:
+      return state;
+  }
 };
-
-export const searchParameters =
-  (state: SearchParametersState = initialState, action: AnyAction): SearchParametersState => {
-    const {payload} = action;
-
-    switch (action.type) {
-      case SELECT_SEARCH_OPTION:
-        return {
-          ...state,
-          [payload.name]: filterSelectedSearchOption(state, payload),
-        };
-      default:
-        return state;
-    }
-  };
