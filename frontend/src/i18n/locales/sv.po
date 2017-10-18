@@ -16,7 +16,7 @@ msgid "selection"
 msgstr "urval"
 
 msgid "new search"
-msgstr "nytt urlval"
+msgstr "nytt urval"
 
 msgid "email"
 msgstr "email"
