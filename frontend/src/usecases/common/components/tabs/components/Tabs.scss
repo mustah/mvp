@@ -21,10 +21,11 @@
 
     }
     .TabUnderline {
-      border-bottom: solid 3px $dark-blue;
+      border-bottom: solid 3px $dark-grey;
+      margin-top: 3px;
 
       &.isSelected {
-        border-bottom: solid 3px $blue;
+        border-bottom-color: $blue;
       }
     }
 
