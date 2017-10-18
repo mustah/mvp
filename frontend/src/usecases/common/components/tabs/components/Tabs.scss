@@ -7,6 +7,10 @@
     .Tab {
       cursor: pointer;
 
+      &:hover {
+        background: $light-grey;
+      }
+
       .Tab-header {
         font-weight: bold;
         font-size: $normal;
