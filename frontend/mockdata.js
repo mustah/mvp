@@ -230,6 +230,10 @@ const areas = [
   "Borås",
 ];
 
+const position = [
+  {lat: 49.8397, lng: 24.0297}
+];
+
 const gatewayModels = [
   "CMe2100",
   "CMi2110",
@@ -257,7 +261,7 @@ module.exports = () => {
 
   const appRandom = new Math.seedrandom("this is a seed");
 
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 10; i++) {
     const numberOfMeters = Math.floor(appRandom() * 7);
     const gwId = 23 + i;
     const gwStatus = statuses[Math.floor(appRandom() * statuses.length)];
@@ -279,6 +283,7 @@ module.exports = () => {
         "medium": "Heat, Return temp",
         "status": Math.floor(appRandom() * 3),
         "area": area,
+        "position": position[0],
         "product_model": meterModels[Math.floor(appRandom() * meterModels.length)],
       };
       returnValues['mps'].push(meter);
