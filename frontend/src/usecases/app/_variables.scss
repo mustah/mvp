@@ -11,6 +11,7 @@ $dark-blue: #006da3;
 $blue: #00b6f7;
 $green: #b7e000;
 $orange: #f7be29;
+$dark-orange: #ff8900;
 $red: #ed4200;
 
 // interaction
@@ -21,6 +22,14 @@ $primary-bg-hover: $blue;
 $primary-fg: $white;
 $primary-fg-active: $white;
 $primary-fg-hover: $white;
+
+$secondary-bg: $orange;
+$secondary-bg-active: $orange;
+$secondary-bg-hover: $dark-orange;
+
+$secondary-fg: $white;
+$secondary-fg-active: $white;
+$secondary-fg-hover: $white;
 
 // font sizes
 $xs: 11px;
