@@ -227,11 +227,19 @@ const areas = [
   "Stockholm",
   "Alvesta",
   "Höganäs",
+  "Varberg",
   "Borås",
 ];
 
 const position = [
-  {lat: 49.8397, lng: 24.0297}
+  {lat: 57.715954, lng: 11.974855},
+  {lat: 57.487614, lng: 12.076706},
+  {lat: 57.650215, lng: 12.016228},
+  {lat: 59.330270, lng: 18.069251},
+  {lat: 56.899273, lng: 14.556001},
+  {lat: 56.200461, lng: 12.555504},
+  {lat: 57.107967, lng: 12.272229},
+  {lat: 57.721190, lng: 12.940214},
 ];
 
 const gatewayModels = [
@@ -261,7 +269,7 @@ module.exports = () => {
 
   const appRandom = new Math.seedrandom("this is a seed");
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 10000; i++) {
     const numberOfMeters = Math.floor(appRandom() * 7);
     const gwId = 23 + i;
     const gwStatus = statuses[Math.floor(appRandom() * statuses.length)];
@@ -283,7 +291,7 @@ module.exports = () => {
         "medium": "Heat, Return temp",
         "status": Math.floor(appRandom() * 3),
         "area": area,
-        "position": position[0],
+        "position": getPostition(area),
         "product_model": meterModels[Math.floor(appRandom() * meterModels.length)],
       };
       returnValues['mps'].push(meter);
@@ -293,3 +301,42 @@ module.exports = () => {
   }
   return returnValues;
 };
+
+getPostition = (area) => {
+  switch (area) {
+    case   "Göteborg": {
+      return randomize(position[0]);
+    };
+    case "Mölndal": {
+      return randomize(position[1]);
+    };
+    case "Stockholm": {
+      return randomize(position[2]);
+    };
+    case "Alvesta": {
+      return randomize(position[3]);
+    };
+    case "Höganäs": {
+      return randomize(position[4]);
+    };
+    case "Varberg": {
+      return randomize(position[5]);
+    }
+    case "Borås": {
+      return randomize(position[6]);
+    };
+    default:
+      return randomize(position[6]);
+  }
+}
+
+randomize = (a) => {
+  return {
+    lat: getRandomArbitrary(a.lat - 0.05, a.lat + 0.05),
+    lng: getRandomArbitrary(a.lng - 0.05, a.lng + 0.05)
+  };
+}
+
+getRandomArbitrary = (min, max) => {
+  return Math.random() * (max - min) + min;
+}
