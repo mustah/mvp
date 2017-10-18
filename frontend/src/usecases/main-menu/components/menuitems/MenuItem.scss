@@ -1,18 +1,20 @@
 @import "../../../app/variables";
 
 .MenuItem {
-  color: $grey;
+  background: $primary-bg;
+  color: $primary-fg;
   cursor: pointer;
   margin: $sm-space 0;
   padding: $sm-space 0;
 
   &:hover {
-    color: $white;
+    background: $primary-bg-hover;
+    color: $primary-fg-hover;
   }
 
   &.isSelected {
-    background: $blue;
-    color: white;
+    background: $primary-bg-active;
+    color: $primary-fg-active;
   }
 
   .MenuItem-icon {
