@@ -2,15 +2,17 @@
 
 .MenuItem {
   color: $grey;
-  margin: $lg-space 0;
   cursor: pointer;
+  margin: $sm-space 0;
+  padding: $sm-space 0;
 
   &:hover {
     color: $white;
   }
 
   &.isSelected {
-    color: #F50057;
+    background: $blue;
+    color: white;
   }
 
   .MenuItem-icon {
