@@ -12,6 +12,7 @@ import {RootState} from '../../../../../reducers/index';
 import {MapState} from '../MapReducer';
 import {connect} from 'react-redux';
 import {translate} from '../../../../../services/translationService';
+import * as L from 'leaflet';
 
 interface MapContainerProps {
   map: MapState;
@@ -26,7 +27,7 @@ interface MapDispatchToProps {
 
 class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
   componentDidMount() {
-    this.props.fetchPositions();
+    //this.props.fetchPositions();
   }
 
   render() {
@@ -49,7 +50,25 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         ),
       ];
 
-      const position: [number, number] = [57.504935, 12.069482];
+    const startPosition: [number, number] = [57.504935, 12.069482];
+
+    const okMarker = L.icon({
+      iconUrl: 'marker-icon-ok.png',
+    });
+
+    const errorMarker = L.icon({
+      iconUrl: 'marker-icon-error.png',
+    });
+
+    const warningMarker = L.icon({
+      iconUrl: 'marker-icon-warning.png',
+    });
+
+    const qwer = [
+      {lat: 57.715954, lng: 11.974855, options: { icon: warningMarker }},
+      {lat: 57.487614, lng: 12.076706, options: { icon: okMarker } },
+      {lat: 59.330270, lng: 18.069251, options: { icon: errorMarker }},
+    ];
 
       return (
         <Column>
@@ -58,14 +77,13 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
           <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" rel="stylesheet"/>
           <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" rel="stylesheet"/>
-          <Map center={position} maxZoom={50} zoom={3} className="Map">
+          <Map center={startPosition} maxZoom={50} zoom={3} className="Map">
             <TileLayer
               url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
               attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
             />
             <MarkerClusterGroup
-              markers={map.markerPosition}
-              wrapperOptions={{enableDefaultStyle: false}}
+              markers={qwer}
               onMarkerClick={openClusterDialog}
             />
           </Map>
