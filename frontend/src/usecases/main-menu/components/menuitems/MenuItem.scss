@@ -4,9 +4,7 @@
   background: $primary-bg;
   color: $primary-fg;
   cursor: pointer;
-  margin: 0 4px $sm-space 4px;
-  padding: 4px;
-  border-radius: 2px;
+  padding: $sm-space;
 
   &:hover {
     background: $primary-bg-hover;
