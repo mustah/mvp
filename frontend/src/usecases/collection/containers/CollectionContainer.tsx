@@ -10,9 +10,10 @@ import {SelectionDropdown} from '../../common/components/selection-dropdown/Sele
 import {MainTitle} from '../../common/components/texts/Title';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
-import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
+import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
+import {Row} from '../../common/components/layouts/row/Row';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -36,9 +37,11 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
 
     return (
       <PageContainer>
-        <MainTitle>{translate('collection')}</MainTitle>
+        <Row className="space-between">
+          <MainTitle>{translate('collection')}</MainTitle>
+          <PeriodSelection/>
+        </Row>
 
-        <CollectionOverview/>
         <SelectionDropdown filterAction={filterAction}/>
         <ProblemOverview categories={categories}/>
         <ChosenFilter onDelete={filterDelete} filter={filter}/>

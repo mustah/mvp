@@ -4,14 +4,15 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Column} from '../../common/components/layouts/column/Column';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
 import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
-import {ReportOverview} from '../components/ReportOverview';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 
@@ -28,9 +29,10 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
   const {selectedWidget, selectIndicatorWidget} = props;
   return (
     <PageContainer>
-      <MainTitle>{translate('report')}</MainTitle>
-
-      <ReportOverview/>
+      <Row className="space-between">
+        <MainTitle>{translate('report')}</MainTitle>
+        <PeriodSelection/>
+      </Row>
 
       <IndicatorWidgets
         indicators={indicators}
