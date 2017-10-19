@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {NavigationMenuIcon} from '../../../common/components/icons/NavigationMenuIcon';
+import {IconNavigationMenu} from '../../../common/components/icons/IconNavigationMenu';
 import {RowCenter} from '../../../common/components/layouts/row/Row';
 import './MainNavigationMenu.scss';
 
@@ -13,7 +13,7 @@ export const MainNavigationMenu = (props: MainNavigationMenuProps) => {
   const {isOpen, toggleShowHideSideMenu, disabled} = props;
   return (
     <RowCenter className="MainNavigationMenu">
-      <NavigationMenuIcon
+      <IconNavigationMenu
         color="white"
         onClick={toggleShowHideSideMenu}
         disabled={disabled}

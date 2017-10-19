@@ -9,7 +9,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
 import {drawerWidth} from '../../app/themes';
-import {NavigationMenuIcon} from '../../common/components/icons/NavigationMenuIcon';
+import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
 import {SideMenuState} from '../sideMenuReducer';
 
@@ -30,7 +30,7 @@ const SideMenuContainer = (props: SideMenuContainerProps) => {
     <Drawer open={isOpen} docked={true} containerStyle={{left: isOpen ? drawerWidth : 0}}>
       <AppBar
         title="MVP"
-        iconElementRight={<NavigationMenuIcon onClick={props.toggleShowHideSideMenu}/>}
+        iconElementRight={<IconNavigationMenu onClick={props.toggleShowHideSideMenu}/>}
         showMenuIconButton={false}
       />
       <List>

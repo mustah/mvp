@@ -1,15 +1,15 @@
 import IconButton from 'material-ui/IconButton';
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import * as React from 'react';
+import {Clickable} from '../../../../types/Types';
 
-interface NavigationMenuIconProps {
+interface OwnProps extends Clickable {
   disabled?: boolean;
   isOpen?: boolean;
   color?: string;
-  onClick?: (...args) => void;
 }
 
-export const NavigationMenuIcon = (props: NavigationMenuIconProps) => (
+export const IconNavigationMenu = (props: OwnProps) => (
   <IconButton
     onClick={props.onClick}
     disabled={props.disabled}

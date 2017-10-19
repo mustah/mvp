@@ -45,7 +45,8 @@
       }
     }
 
-    .TabHeaders + .TabSettings{ //To get correct placement of TabSettings if there are no options.
+    // To get correct placement of TabSettings if there are no options.
+    .TabHeaders + .TabSettings {
       flex: 1;
     }
 

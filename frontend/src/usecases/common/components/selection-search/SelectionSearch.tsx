@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {CloseIconButton} from '../icons/CloseIconButton';
+import {CloseIconButton} from '../icons/IconClose';
 import {Row, RowCenter} from '../layouts/row/Row';
 import {Summary} from '../summary/Summary';
 import {Normal} from '../texts/Texts';

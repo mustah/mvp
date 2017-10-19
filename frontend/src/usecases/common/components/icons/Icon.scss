@@ -20,13 +20,14 @@
   }
 
   &.Icon-Button {
-    background: $secondary-bg;
     border-radius: 3px;
+    padding: 3px 3px 0 3px;
+    background-color: $secondary-bg;
     color: $secondary-fg;
-    padding: 3px;
+    cursor: pointer;
 
     &:hover {
-      background: $secondary-bg-hover;
+      background-color: $secondary-bg-hover;
       color: $secondary-fg-hover;
     }
   }

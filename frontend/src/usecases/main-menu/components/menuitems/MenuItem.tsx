@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
-import {Icon} from '../../../common/components/icons/Icons';
+import {Icon} from '../../../common/components/icons/Icon';
 import {ColumnCenter} from '../../../common/components/layouts/column/Column';
 import {Xsmall} from '../../../common/components/texts/Texts';
 import './MenuItem.scss';

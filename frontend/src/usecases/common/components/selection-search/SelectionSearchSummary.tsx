@@ -2,7 +2,7 @@ import {Location} from 'history';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {translate} from '../../../../services/translationService';
-import {SearchIconButton} from '../icons/SearchIconButton';
+import {SelectionIconButton} from '../icons/IconSelection';
 import {Row} from '../layouts/row/Row';
 import {Summary} from '../summary/Summary';
 import {Normal} from '../texts/Texts';
@@ -16,7 +16,7 @@ export const SelectionSearchSummary = (props: SelectionSearchSummaryProps) => (
   <Row className="SelectionSearch-Container Row-center">
     <Row className="SelectionSearch">
       <Link to={`${props.location.pathname}/search`}>
-        <SearchIconButton/>
+        <SelectionIconButton/>
       </Link>
       <Normal>{translate('selection')}: </Normal>
       <Normal className="Italic">{translate('all')}</Normal>

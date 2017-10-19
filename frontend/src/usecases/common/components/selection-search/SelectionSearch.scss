@@ -1,7 +1,7 @@
 @import "../../../app/variables";
 
 .SelectionSearch-Container {
-  padding-left: $sm-space;
+  padding: 0 $lg-space;
   background-color: $white;
   height: $main-menu-height;
 
@@ -17,10 +17,6 @@
         text-transform: uppercase;
       }
     }
-  }
-
-  .Summaries {
-    margin-right: $sm-space;
   }
 }
 
