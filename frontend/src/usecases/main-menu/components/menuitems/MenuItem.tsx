@@ -16,7 +16,7 @@ export const MenuItem = (props: MenuItemProps) => {
   return (
     <ColumnCenter className={classNames('MenuItem', {isSelected})}>
       <Icon className="MenuItem-icon" name={icon}/>
-      <Xsmall>{name}</Xsmall>
+      <Xsmall className="Bold">{name}</Xsmall>
     </ColumnCenter>
   );
 };
