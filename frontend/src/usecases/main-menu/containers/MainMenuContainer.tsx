@@ -1,8 +1,10 @@
+import 'MainMenuContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
@@ -11,7 +13,6 @@ import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
-import 'MainMenuContainer.scss';
 
 export interface TopMenuContainerProps {
   pathname: string;
@@ -33,19 +34,19 @@ const MainMenuContainerComponent = (props: TopMenuContainerProps) => {
 
       <Link to={routes.dashboard} className="link">
         <MenuItem
-          name="Dashboard"
+          name={translate('dashboard')}
           isSelected={routes.dashboard === pathname || routes.home === pathname}
           icon="view-dashboard"
         />
       </Link>
       <Link to={routes.collection} className="link">
-        <MenuItem name="Insamling" isSelected={routes.collection === pathname} icon="nfc-variant"/>
+        <MenuItem name={translate('collection')} isSelected={routes.collection === pathname} icon="nfc-variant"/>
       </Link>
       <Link to={routes.validation} className="link">
-        <MenuItem name="Validering" isSelected={routes.validation === pathname} icon="thermometer-lines"/>
+        <MenuItem name={translate('validation')} isSelected={routes.validation === pathname} icon="thermometer-lines"/>
       </Link>
       <Link to={routes.report} className="link">
-        <MenuItem name="Rapport" isSelected={routes.report === pathname} icon="dialpad"/>
+        <MenuItem name={translate('report')} isSelected={routes.report === pathname} icon="dialpad"/>
       </Link>
     </Column>
   );

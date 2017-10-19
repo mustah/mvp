@@ -9,7 +9,7 @@ import {
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
-import {Title} from '../../common/components/texts/Title';
+import {MainTitle, Title} from '../../common/components/texts/Title';
 import {selectDashboardIndicatorWidget} from '../../ui/indicatorActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
@@ -42,7 +42,6 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
 
     const renderSystemOverview = (systemOverview: SystemOverviewState) => (
       <SystemOverview
-        title={systemOverview.title}
         indicators={systemOverview.indicators}
         selectedWidget={selectedWidget}
         selectIndicatorWidget={selectIndicatorWidget}
@@ -51,10 +50,10 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
 
     return (
       <PageContainer>
+        <MainTitle>{translate('dashboard')}</MainTitle>
         {record && renderSystemOverview(record.systemOverview)}
 
         <Title>{translate('collection')}</Title>
-
         <DashboardTabsContainer/>
       </PageContainer>
     );

@@ -12,3 +12,9 @@ export const Title = (props: TitleProps) => (
     <Xlarge className="Bold">{props.children}</Xlarge>
   </Row>
 );
+
+export const MainTitle = (props: TitleProps) => (
+  <Row className="MainTitle">
+    <Xlarge className="Bold">{props.children}</Xlarge>
+  </Row>
+);

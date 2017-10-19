@@ -12,6 +12,15 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "dashboard"
+msgstr "dashboard"
+
+msgid "validation"
+msgstr "validation"
+
+msgid "report"
+msgstr "report"
+
 msgid "selection"
 msgstr "selection"
 

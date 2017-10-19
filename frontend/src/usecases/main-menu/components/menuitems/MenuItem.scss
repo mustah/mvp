@@ -5,6 +5,7 @@
   color: $primary-fg;
   cursor: pointer;
   padding: $sm-space;
+  text-transform: capitalize;
 
   &:hover {
     background: $primary-bg-hover;

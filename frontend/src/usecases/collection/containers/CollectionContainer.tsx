@@ -3,9 +3,11 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
 import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
+import {MainTitle} from '../../common/components/texts/Title';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {CollectionOverview} from '../components/CollectionOverview';
@@ -34,6 +36,8 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
 
     return (
       <PageContainer>
+        <MainTitle>{translate('collection')}</MainTitle>
+
         <CollectionOverview/>
         <SelectionDropdown filterAction={filterAction}/>
         <ProblemOverview categories={categories}/>
