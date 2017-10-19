@@ -269,7 +269,7 @@ module.exports = () => {
 
   const appRandom = new Math.seedrandom("this is a seed");
 
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 1000; i++) {
     const numberOfMeters = Math.floor(appRandom() * 7);
     const gwId = 23 + i;
     const gwStatus = statuses[Math.floor(appRandom() * statuses.length)];

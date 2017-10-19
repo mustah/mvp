@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Column} from '../../../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {Map, TileLayer} from 'react-leaflet';
-import {Marker} from 'leaflet';
+import {Marker, marker} from 'leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import Dialog from 'material-ui/Dialog';
 import {FlatButton} from 'material-ui';
@@ -27,7 +27,7 @@ interface MapDispatchToProps {
 
 class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
   componentDidMount() {
-    //this.props.fetchPositions();
+    this.props.fetchPositions();
   }
 
   render() {
@@ -52,25 +52,45 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     const startPosition: [number, number] = [57.504935, 12.069482];
 
-    const okMarker = L.icon({
-      iconUrl: 'marker-icon-ok.png',
-    });
+    let markers = [];
+    let tmpIcon;
 
-    const errorMarker = L.icon({
-      iconUrl: 'marker-icon-error.png',
-    });
+    //TODO break up marker icon logic into methods and add tests
 
-    const warningMarker = L.icon({
-      iconUrl: 'marker-icon-warning.png',
-    });
+    if(map != null && map.moids != null) {
+      for(var x = 0; x < map.moids.length; x++) {
 
-    const qwer = [
-      {lat: 57.715954, lng: 11.974855, options: { icon: warningMarker }},
-      {lat: 57.487614, lng: 12.076706, options: { icon: okMarker } },
-      {lat: 59.330270, lng: 18.069251, options: { icon: errorMarker }},
-    ];
+        //TODO change status to a enumeration!
+        switch (map.moids[x].status) {
+          case 0: {
+            tmpIcon = 'marker-icon-ok.png';
+            break;
+          };
+          case 1: {
+            tmpIcon = 'marker-icon-error.png';
+            break;
+          }
+          case 2: {
+            tmpIcon = 'marker-icon-warning.png';
+            break;
+          }
+          default: {
+            tmpIcon = 'marker-icon.png';
+          }
+        }
 
-      return (
+        markers.push(
+          {
+            lat: map.moids[x].position.lat,
+            lng: map.moids[x].position.lng,
+            options: { icon: L.icon({
+              iconUrl: tmpIcon,
+            }) }
+          }
+          );
+      }
+    }
+    return (
         <Column>
           {/*TODO move this*/}
           <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.5/leaflet.css"/>
@@ -83,7 +103,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
               attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
             />
             <MarkerClusterGroup
-              markers={qwer}
+              markers={markers}
               onMarkerClick={openClusterDialog}
             />
           </Map>
