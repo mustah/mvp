@@ -60,13 +60,14 @@ Sparky.task('config', ['convert-po-to-json'], () => {
     homeDir: homeDir,
     sourceMaps: !isProduction,
     hash: isProduction,
+    target: 'browser',
     output: `${distDir}/$name.js`,
     plugins: [
       TypeScriptHelpers(),
       SVGPlugin(),
       [
         SassPlugin({outputStyle: 'compressed',}),
-        PostCSSPlugin({plugins: [autoprefixer(),]}),
+        PostCSSPlugin([autoprefixer()]),
         CSSPlugin({
           group: `${appCss}`,
           outFile: `${distDir}/${appCss}`,
