@@ -13,7 +13,7 @@ export interface Selectable {
 }
 
 export interface Clickable {
-  onClick?: (...args) => void;
+  onClick: (...args) => void;
 }
 
 export interface IdNamed {
