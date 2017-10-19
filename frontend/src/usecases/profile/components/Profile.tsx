@@ -5,7 +5,6 @@ import * as React from 'react';
 import {User} from '../../auth/authReducer';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MenuSeparator} from '../../topmenu/components/separators/MenuSeparator';
 import {Avatar} from './Avatar';
 import './Profile.scss';
 import {ProfileName} from './ProfileName';
@@ -49,7 +48,6 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
             </Menu>
           </Popover>
         </Row>
-        <MenuSeparator/>
       </Column>
     );
   }

@@ -22,10 +22,10 @@ body {
   }
 
   .SideMenuContainer {
-    width: 0;
+    width: $main-menu-width;
 
     &.isOpen {
-      width: $side-menu-container-width
+      width: $side-menu-container-width + $main-menu-width
     }
   }
 

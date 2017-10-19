@@ -1,13 +1,14 @@
+import 'MainMenuContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
-import {Row} from '../../common/components/layouts/row/Row';
-import {Profile} from '../../profile/components/Profile';
+import {Column} from '../../common/components/layouts/column/Column';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
@@ -21,35 +22,33 @@ export interface TopMenuContainerProps {
   sideMenu: SideMenuState;
 }
 
-const TopMenuContainer = (props: TopMenuContainerProps) => {
-  const {pathname, auth, logout, sideMenu, toggleShowHideSideMenu} = props;
+const MainMenuContainerComponent = (props: TopMenuContainerProps) => {
+  const {pathname, auth, sideMenu, toggleShowHideSideMenu} = props;
   return (
-    <Row className="flex-1">
+    <Column className="MainMenuContainer">
       <MainNavigationMenu
         isOpen={sideMenu.isOpen}
         disabled={!auth.isAuthenticated}
         toggleShowHideSideMenu={toggleShowHideSideMenu}
       />
-      <Row>
-        <Link to={routes.dashboard} className="link">
-          <MenuItem
-            name="Dashboard"
-            isSelected={routes.dashboard === pathname || routes.home === pathname}
-            icon="dialpad"
-          />
-        </Link>
-        <Link to={routes.collection} className="link">
-          <MenuItem name="Insamling" isSelected={routes.collection === pathname} icon="dialpad"/>
-        </Link>
-        <Link to={routes.validation} className="link">
-          <MenuItem name="Validering" isSelected={routes.validation === pathname} icon="dialpad"/>
-        </Link>
-        <Link to={routes.report} className="link">
-          <MenuItem name="Rapport" isSelected={routes.report === pathname} icon="dialpad"/>
-        </Link>
-      </Row>
-      <Profile user={auth.user} logout={logout}/>
-    </Row>
+
+      <Link to={routes.dashboard} className="link">
+        <MenuItem
+          name={translate('dashboard')}
+          isSelected={routes.dashboard === pathname || routes.home === pathname}
+          icon="view-dashboard"
+        />
+      </Link>
+      <Link to={routes.collection} className="link">
+        <MenuItem name={translate('collection')} isSelected={routes.collection === pathname} icon="nfc-variant"/>
+      </Link>
+      <Link to={routes.validation} className="link">
+        <MenuItem name={translate('validation')} isSelected={routes.validation === pathname} icon="thermometer-lines"/>
+      </Link>
+      <Link to={routes.report} className="link">
+        <MenuItem name={translate('report')} isSelected={routes.report === pathname} icon="dialpad"/>
+      </Link>
+    </Column>
   );
 };
 
@@ -74,4 +73,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleShowHideSideMenu,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopMenuContainer);
+export const MainMenuContainer = connect(mapStateToProps, mapDispatchToProps)(MainMenuContainerComponent);

@@ -1,0 +1,11 @@
+@import "../../app/variables";
+
+.MainMenuContainer {
+  top: 0;
+  left: 0;
+  position: fixed;
+  height: 100%;
+  width: $main-menu-width;
+  background-color: $dark-blue;
+  z-index: $main-menu-z-index;
+}

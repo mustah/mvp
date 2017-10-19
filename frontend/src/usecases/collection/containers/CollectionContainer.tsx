@@ -3,14 +3,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
+import {translate} from '../../../services/translationService';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
 import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
+import {MainTitle} from '../../common/components/texts/Title';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
-import {CollectionOverview} from '../components/CollectionOverview';
 import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
+import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
+import {Row} from '../../common/components/layouts/row/Row';
 
 export interface CollectionContainerProps {
   fetchCollections: () => any;
@@ -34,7 +37,11 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
 
     return (
       <PageContainer>
-        <CollectionOverview/>
+        <Row className="space-between">
+          <MainTitle>{translate('collection')}</MainTitle>
+          <PeriodSelection/>
+        </Row>
+
         <SelectionDropdown filterAction={filterAction}/>
         <ProblemOverview categories={categories}/>
         <ChosenFilter onDelete={filterDelete} filter={filter}/>

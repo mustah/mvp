@@ -1,0 +1,23 @@
+@import "../../../app/variables";
+
+.MenuItem {
+  background: $primary-bg;
+  color: $primary-fg;
+  cursor: pointer;
+  padding: $sm-space;
+  text-transform: capitalize;
+
+  &:hover {
+    background: $primary-bg-hover;
+    color: $primary-fg-hover;
+  }
+
+  &.isSelected {
+    background: $primary-bg-active;
+    color: $primary-fg-active;
+  }
+
+  .MenuItem-icon {
+    margin-bottom: 5px;
+  }
+}

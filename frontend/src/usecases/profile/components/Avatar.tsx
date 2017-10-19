@@ -1,7 +1,7 @@
 import IconButton from 'material-ui/IconButton';
 import * as React from 'react';
 import {User} from '../../auth/authReducer';
-import {Icon} from '../../common/components/icons/Icons';
+import {Icon} from '../../common/components/icons/Icon';
 
 const avatarStyle = {
   padding: '0 0 0 10px',

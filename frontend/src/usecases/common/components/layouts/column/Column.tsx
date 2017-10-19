@@ -3,10 +3,13 @@ import * as React from 'react';
 import {LayoutProps} from '../layout/Layout';
 import './Column.scss';
 
-export const Column = (props: LayoutProps) => {
+export const Column = ({className, onClick, children}: LayoutProps) => {
   return (
-    <div className={classNames('Column', props.className)} onClick={props.onClick}>
-      {props.children}
+    <div className={classNames('Column', className)} onClick={onClick}>
+      {children}
     </div>
   );
 };
+
+export const ColumnCenter = (props: LayoutProps) =>
+  <Column {...props} className={classNames(props.className, 'Row-center')}/>;

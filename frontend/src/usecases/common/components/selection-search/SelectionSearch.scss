@@ -1,16 +1,21 @@
 @import "../../../app/variables";
 
 .SelectionSearch-Container {
-  background-color: $grey;
-  padding: $sm-space;
+  padding: 0 $lg-space;
+  background-color: $white;
+  height: $main-menu-height;
 
   .SelectionSearch {
-
-    background-color: $grey;
+    color: $blackest;
     align-items: center;
 
     .Normal {
-      text-transform: capitalize;
+      margin-left: $sm-space;
+      text-transform: lowercase;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
     }
   }
 }

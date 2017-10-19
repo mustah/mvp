@@ -4,12 +4,14 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
-import {Title} from '../../common/components/texts/Title';
+import {Row} from '../../common/components/layouts/row/Row';
+import {MainTitle, Title} from '../../common/components/texts/Title';
 import {selectDashboardIndicatorWidget} from '../../ui/indicatorActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
@@ -25,7 +27,7 @@ export interface DispatchToProps extends IndicatorWidgetsDispatchProps {
   fetchDashboard: () => any;
 }
 
-class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps, any> {
+class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps> {
 
   componentDidMount() {
     if (this.props.isAuthenticated) {
@@ -42,7 +44,6 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
 
     const renderSystemOverview = (systemOverview: SystemOverviewState) => (
       <SystemOverview
-        title={systemOverview.title}
         indicators={systemOverview.indicators}
         selectedWidget={selectedWidget}
         selectIndicatorWidget={selectIndicatorWidget}
@@ -51,10 +52,14 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
 
     return (
       <PageContainer>
+        <Row className="space-between">
+          <MainTitle>{translate('dashboard')}</MainTitle>
+          <PeriodSelection/>
+        </Row>
+
         {record && renderSystemOverview(record.systemOverview)}
 
         <Title>{translate('collection')}</Title>
-
         <DashboardTabsContainer/>
       </PageContainer>
     );

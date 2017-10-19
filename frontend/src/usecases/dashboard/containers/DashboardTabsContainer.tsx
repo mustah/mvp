@@ -11,8 +11,6 @@ import {TableColumn} from '../../common/components/table/tableColumn/TableColumn
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
-import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
@@ -22,18 +20,11 @@ import {normalizedData} from '../models/dashboardModels';
 import MapContainer from '../components/map/containers/MapContainer';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
-  const {tabs, selectedTab, changeTab, changeTabOption} = props;
+  const {selectedTab, changeTab} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'dashboard',
       tab,
-    });
-  };
-  const onChangeTabOption = (tab: tabType, option: string): void => {
-    changeTabOption({
-      useCase: 'dashboard',
-      tab,
-      option,
     });
   };
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
@@ -46,20 +37,6 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
-        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
-          <TabOption
-            title={translate('area')}
-            id={'area'}
-          />
-          <TabOption
-            title={translate('object')}
-            id={'object'}
-          />
-          <TabOption
-            title={translate('facility')}
-            id={'facility'}
-          />
-        </TabOptions>
         <TabSettings useCase="dashboard"/>
       </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>

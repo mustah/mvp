@@ -8,7 +8,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
-import {NavigationMenuIcon} from '../../common/components/icons/NavigationMenuIcon';
+import {drawerWidth} from '../../app/themes';
+import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
 import {SideMenuState} from '../sideMenuReducer';
 
@@ -18,16 +19,18 @@ interface SideMenuContainerProps {
 }
 
 const SideMenuContainer = (props: SideMenuContainerProps) => {
+  const {sideMenu: {isOpen}} = props;
+
   const listItems = [
     <ListItem primaryText="Göteborg - Centrum" key={1}/>,
     <ListItem primaryText="Gateways med fel" key={2}/>,
   ];
 
   return (
-    <Drawer open={props.sideMenu.isOpen} docked={true}>
+    <Drawer open={isOpen} docked={true} containerStyle={{left: isOpen ? drawerWidth : 0}}>
       <AppBar
         title="MVP"
-        iconElementRight={<NavigationMenuIcon onClick={props.toggleShowHideSideMenu}/>}
+        iconElementRight={<IconNavigationMenu onClick={props.toggleShowHideSideMenu}/>}
         showMenuIconButton={false}
       />
       <List>

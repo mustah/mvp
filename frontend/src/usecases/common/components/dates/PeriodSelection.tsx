@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Separator} from '../../../dashboard/components/separators/Separator';
-import {Icon} from '../icons/Icons';
+import {Icon} from '../icons/Icon';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
