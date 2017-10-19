@@ -11,6 +11,7 @@ import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {ui, UiState} from '../usecases/ui/uiReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
+import {map, MapState} from '../usecases/dashboard/components/map/MapReducer';
 
 export interface RootState {
   auth: AuthState;
@@ -22,6 +23,7 @@ export interface RootState {
   language: LanguageState;
   search: SearchState;
   ui: UiState;
+  map: MapState;
 }
 
 export const rootReducer = combineReducers<RootState>({
@@ -34,4 +36,5 @@ export const rootReducer = combineReducers<RootState>({
   language,
   search,
   ui,
+  map,
 });

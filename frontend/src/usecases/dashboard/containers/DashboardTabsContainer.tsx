@@ -16,8 +16,8 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../ui/tabsActions';
-import {MoidMap} from '../components/map/MoidMap';
 import {normalizedData} from '../models/dashboardModels';
+import MapContainer from '../components/map/containers/MapContainer';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {selectedTab, changeTab} = props;
@@ -66,7 +66,7 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
         </Table>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MoidMap/>
+        <MapContainer/>
       </TabContent>
     </Tabs>
   );

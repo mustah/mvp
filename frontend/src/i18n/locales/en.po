@@ -138,3 +138,6 @@ msgstr "{{count}} products"
 #~ msgctxt "°plural"
 #~ msgid "{{count}} errands°"
 #~ msgstr "{{count}} products"
+
+msgid "close"
+msgstr "close"
