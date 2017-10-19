@@ -49,6 +49,34 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
       ),
     ];
 
+    const markerclusterOptions = {
+      // Setting custom icon for cluster group
+      iconCreateFunction: (cluster) => {
+        // TODO Test performance!
+        // TODO Find status of the marker instead of guessing by checking iconUrl
+        // Set cluster css class depending on underlying marker icons
+        let cssClass = '';
+        for (const child of cluster.getAllChildMarkers()) {
+          if (child.options.icon.options.iconUrl === 'marker-icon-error.png') {
+            cssClass = 'marker-cluster-custom-error';
+            break;
+          } else if (child.options.icon.options.iconUrl === 'marker-icon-warning.png') {
+            cssClass = 'marker-cluster-custom-warning';
+          } else if (cssClass === '') {
+            cssClass = 'marker-cluster-custom-ok';
+          }
+        }
+
+        return L.divIcon({
+          html: `<span>${cluster.getChildCount()}</span>`,
+          className: cssClass,
+          iconSize: L.point(40, 40, true),
+        });
+      },
+      chunkedLoading: true,
+      showCoverageOnHover: true,
+    };
+
     const startPosition: [number, number] = [57.504935, 12.069482];
 
     // TODO type array
@@ -88,6 +116,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
                 iconUrl: tmpIcon,
               }),
             },
+            status: moid.status,
           },
         );
       }
@@ -107,6 +136,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
           <MarkerClusterGroup
             markers={markers}
             onMarkerClick={openClusterDialog}
+            options={markerclusterOptions}
           />
         </Map>
         <Dialog

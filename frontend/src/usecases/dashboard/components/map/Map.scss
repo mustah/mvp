@@ -4,3 +4,28 @@
   margin: $lg-space 0;
   height: 800px;
 }
+
+.marker-cluster {
+  border: 3px solid #ededed;
+  border-radius: 50%;
+  color: #ededed;
+  height: 40px;
+  line-height: 37px;
+  text-align: center;
+  width: 40px;
+}
+
+.marker-cluster-custom-warning {
+  @extend .marker-cluster;
+  background: $dark-orange;
+}
+
+.marker-cluster-custom-ok {
+  @extend .marker-cluster;
+  background: $green;
+}
+
+.marker-cluster-custom-error {
+  @extend .marker-cluster;
+  background: $red;
+}
