@@ -8,7 +8,7 @@ import {Marker} from 'leaflet';
 export interface MapState {
   isClusterDialogOpen: boolean;
 
-  //TODO type
+  // TODO type
   moids?: any;
   selectedMarker?: Marker;
 }
@@ -40,7 +40,7 @@ export const map = (state: MapState = {isClusterDialogOpen : false}, action: Any
 
       return {
         ...state,
-        moids: payload
+        moids: payload,
       };
     case MAP_POSITION_FAILURE:
       return {
