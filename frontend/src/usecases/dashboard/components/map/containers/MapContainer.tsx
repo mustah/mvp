@@ -95,11 +95,11 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
             break;
           }
           case 1: {
-            tmpIcon = 'marker-icon-error.png';
+            tmpIcon = 'marker-icon-warning.png';
             break;
           }
           case 2: {
-            tmpIcon = 'marker-icon-warning.png';
+            tmpIcon = 'marker-icon-error.png';
             break;
           }
           default: {

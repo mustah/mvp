@@ -289,7 +289,7 @@ module.exports = () => {
         "gateway_id": gwId,
         "id": Math.floor(appRandom() * 100000),
         "medium": "Heat, Return temp",
-        "status": Math.floor(appRandom() * 3),
+        "status": getWeightedRandomStatus(),
         "area": area,
         "position": getPostition(area),
         "product_model": meterModels[Math.floor(appRandom() * meterModels.length)],
@@ -301,6 +301,16 @@ module.exports = () => {
   }
   return returnValues;
 };
+
+getWeightedRandomStatus = () => {
+  const a = getRandomArbitrary(0, 100);
+  if(a < 1)
+    return 2;
+  else if (a < 5)
+    return 1
+  else
+    return 0
+}
 
 getPostition = (area) => {
   switch (area) {
