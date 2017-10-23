@@ -16,12 +16,12 @@ interface ProblemOverviewProps {
   categories: Category;
   search: SearchState;
   filterAction: (filter) => void;
-  selectSearchOption: (searchParameters: SearchParameter) => void;
+  toggleSearchOption: (searchParameters: SearchParameter) => void;
 }
 
 export const ProblemOverview = (props: ProblemOverviewProps) => {
-  const {categories: {handled, unhandled}, search, selectSearchOption} = props;
-  const selectCity = (selection: IdNamed) => selectSearchOption({...selection, entity: 'cities'});
+  const {categories: {handled, unhandled}, search, toggleSearchOption} = props;
+  const selectCity = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'cities'});
 
   return (
     <Layout>

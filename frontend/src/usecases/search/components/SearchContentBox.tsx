@@ -9,9 +9,9 @@ import {DropDownSelector} from './DropDownSelector';
 import {SearchResultList} from './SearchResultList';
 
 export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToProps) => {
-  const {selectSearchOption, search} = props;
-  const selectCity = (selection: IdNamed) => selectSearchOption({...selection, entity: 'cities'});
-  const selectAddress = (selection: IdNamed) => selectSearchOption({...selection, entity: 'addresses'});
+  const {toggleSearchOption, search} = props;
+  const selectCity = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'cities'});
+  const selectAddress = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'addresses'});
 
   return (
     <Column className="SearchContentBox">

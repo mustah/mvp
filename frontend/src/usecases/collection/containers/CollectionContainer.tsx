@@ -22,7 +22,7 @@ interface DispatchToProps {
   fetchGateways: (filter, page: number, limit: number) => void;
   filterAction: (filter) => void;
   filterDelete: (something, value) => void;
-  selectSearchOption: (searchParameters: SearchParameter) => void;
+  toggleSearchOption: (searchParameters: SearchParameter) => void;
 }
 
 interface StateToProps {
@@ -43,7 +43,7 @@ class CollectionContainer extends React.Component<Props> {
   }
 
   render() {
-    const {categories, filterAction, filterDelete, collection: {filter}, search, selectSearchOption} = this.props;
+    const {categories, filterAction, filterDelete, collection: {filter}, search, toggleSearchOption} = this.props;
 
     return (
       <PageContainer>
@@ -55,7 +55,7 @@ class CollectionContainer extends React.Component<Props> {
         <ProblemOverview
           search={search}
           categories={categories}
-          selectSearchOption={selectSearchOption}
+          toggleSearchOption={toggleSearchOption}
           filterAction={filterAction}
         />
         <ChosenFilter onDelete={filterDelete} filter={filter}/>
@@ -81,7 +81,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchGateways,
   filterAction: collectionAddFilter,
   filterDelete: collectionRemoveFilter,
-  selectSearchOption: toggleSearchOption,
+  toggleSearchOption,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(CollectionContainer);
