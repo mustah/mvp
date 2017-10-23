@@ -9,23 +9,23 @@
   border: 3px solid #ededed;
   border-radius: 50%;
   color: #ededed;
-  height: 40px;
-  line-height: 37px;
-  text-align: center;
-  width: 40px;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
-.marker-cluster-custom-warning {
+.marker-cluster-warning {
   @extend .marker-cluster;
   background: $dark-orange;
 }
 
-.marker-cluster-custom-ok {
+.marker-cluster-ok {
   @extend .marker-cluster;
   background: $green;
 }
 
-.marker-cluster-custom-error {
+.marker-cluster-error {
   @extend .marker-cluster;
   background: $red;
 }

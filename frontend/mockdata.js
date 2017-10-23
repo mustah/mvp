@@ -278,32 +278,32 @@ const mpDistrictHeatingErrors = [
 const getPosition = (area) => {
   switch (area) {
     case   'Göteborg': {
-      return randomize(position[0]);
+      return randomizeLatLng(position[0]);
     }
     case 'Mölndal': {
-      return randomize(position[1]);
+      return randomizeLatLng(position[1]);
     }
     case 'Stockholm': {
-      return randomize(position[2]);
+      return randomizeLatLng(position[2]);
     }
     case 'Alvesta': {
-      return randomize(position[3]);
+      return randomizeLatLng(position[3]);
     }
     case 'Höganäs': {
-      return randomize(position[4]);
+      return randomizeLatLng(position[4]);
     }
     case 'Varberg': {
-      return randomize(position[5]);
+      return randomizeLatLng(position[5]);
     }
     case 'Borås': {
-      return randomize(position[6]);
+      return randomizeLatLng(position[6]);
     }
     default:
-      return randomize(position[6]);
+      return randomizeLatLng(position[6]);
   }
 };
 
-const randomize = (a) => {
+const randomizeLatLng = (a) => {
   return {
     lat: getRandomArbitrary(a.lat - 0.05, a.lat + 0.05),
     lng: getRandomArbitrary(a.lng - 0.05, a.lng + 0.05)
@@ -315,10 +315,10 @@ const getRandomArbitrary = (min, max) => {
 };
 
 const getWeightedRandomStatus = () => {
-  const a = getRandomArbitrary(0, 100);
-  if(a < 1)
+  const x = getRandomArbitrary(0, 100);
+  if(x < 1)
     return 2;
-  else if (a < 5)
+  else if (x < 5)
     return 1;
   else
     return 0;
@@ -366,4 +366,3 @@ module.exports = () => {
   }
   return returnValues;
 };
-

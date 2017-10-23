@@ -59,21 +59,36 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         // TODO Find status of the marker instead of guessing by checking iconUrl
         // Set cluster css class depending on underlying marker icons
         let cssClass = '';
+        let errorCount = 0;
+        let warningCount = 0;
         for (const child of cluster.getAllChildMarkers()) {
           if (child.options.icon.options.iconUrl === 'marker-icon-error.png') {
-            cssClass = 'marker-cluster-custom-error';
-            break;
+            errorCount ++;
           } else if (child.options.icon.options.iconUrl === 'marker-icon-warning.png') {
-            cssClass = 'marker-cluster-custom-warning';
-          } else if (cssClass === '') {
-            cssClass = 'marker-cluster-custom-ok';
+            warningCount ++;
           }
+        }
+
+        let x = cluster.getChildCount() / 9;
+        if (x > 90) {
+          x = 100;
+        } else if (x < 30) {
+          x = 30;
+        }
+
+        const percent = Math.round((cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100);
+        if (percent == 100) {
+          cssClass = 'marker-cluster-ok';
+        } else if (percent > 90) {
+          cssClass = 'marker-cluster-warning';
+        } else {
+          cssClass = 'marker-cluster-error';
         }
 
         return L.divIcon({
           html: `<span>${cluster.getChildCount()}</span>`,
           className: cssClass,
-          iconSize: L.point(40, 40, true),
+          iconSize: L.point(x, x, true),
         });
       },
       chunkedLoading: true,
@@ -126,9 +141,9 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     }
     return (
       <Column>
-        <Map center={startPosition} maxZoom={50} zoom={3} className="Map">
+        <Map center={startPosition} maxZoom={19} zoom={7} className="Map">
           <TileLayer
-            url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
+            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
