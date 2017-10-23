@@ -49,14 +49,13 @@ export const Logo = (props: LogoProps) => {
       shape-rendering="geometricPrecision"
       x="0px"
       y="0px"
-      width="508.246px"
+      width="200px"
       height="148.344px"
       viewBox="0 0 508.246 148.344"
       enable-background="new 0 0 508.246 148.344"
     >
-      <g id="Ebene_x0020_1" transform="translate(-6.041939e-2,0.147204)">
+      <g transform="translate(-6.041939e-2,0.147204)">
         <path
-          id="path2006"
           fill={fill}
           d={eonSvg}
         />
