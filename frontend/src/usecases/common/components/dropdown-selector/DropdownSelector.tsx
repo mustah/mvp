@@ -26,6 +26,9 @@ interface State {
   localList: IdNamed[];
 }
 
+const filterListOnExpr = (list: any[], exp: string) =>
+  list.filter((value: IdNamed) => value.name.match(new RegExp(exp, 'i')));
+
 export class DropdownSelector extends React.Component<Props & Clickable, State> {
 
   constructor(props) {
@@ -47,6 +50,8 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
 
     const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
 
+    const filteredLocalList = filterListOnExpr(this.state.localList, this.state.searchText);
+    const filteredLocalSelectedList = filterListOnExpr(this.state.localSelectedList, this.state.searchText);
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
@@ -68,9 +73,9 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
           <Menu>
             <Column className="DropdownSelector-menu">
               <SearchBox value={this.state.searchText} onUpdateSearch={this.handleSearchUpdate}/>
-              <CheckboxList onClick={onClick} list={this.state.localSelectedList} allChecked={true}/>
+              <CheckboxList onClick={onClick} list={filteredLocalSelectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-              <CheckboxList onClick={onClick} list={this.state.localList}/>
+              <CheckboxList onClick={onClick} list={filteredLocalList}/>
             </Column>
           </Menu>
         </Popover>
@@ -85,11 +90,12 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
   }
 
   closeMenu = (): void => {
-    this.setState({isOpen: false});
+    this.setState({isOpen: false, searchText: ''});
   }
 
   handleSearchUpdate = (event) => { // TODO: add typing to event?
-      event.preventDefault();
-      this.setState({searchText: event.target.value });
+    event.preventDefault();
+    this.setState({searchText: event.target.value});
   }
+
 }
