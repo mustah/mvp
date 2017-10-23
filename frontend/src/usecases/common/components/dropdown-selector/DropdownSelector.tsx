@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-import './DropdownSelector.scss';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
@@ -9,7 +8,9 @@ import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import {CheckboxList} from './CheckboxList';
+import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
+import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectionText: string;
@@ -38,11 +39,17 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
   render() {
     const {anchorElement, isOpen} = this.state;
     const {selectionText, list, selectedList, onClick} = this.props;
+
+    const selectedOptions = selectedList.length;
+    const totalNumberOfOptions = selectedOptions + list.length;
+
+    const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
+
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal>{selectionText}</Normal>
+            <Normal>{selectionText}{selectedOverview}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>

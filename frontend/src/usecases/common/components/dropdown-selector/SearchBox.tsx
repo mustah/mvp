@@ -5,7 +5,7 @@ export const SearchBox = (props) => {
   return (
     <div className="SearchBox">
       <input type="textfield" className="SearchBox-input"/>
-      <ActionSearch style={{position: 'absolute', right: '10px', top: '2px', color: '#7b7b7b'}}/>
+      <ActionSearch style={{position: 'absolute', right: '12px', top: '5px', color: '#7b7b7b'}}/>
     </div>
   );
 };

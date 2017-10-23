@@ -29,20 +29,19 @@
 .DropdownSelector-menu {
 
   .SearchBox {
-    position: relative;
-
+    position: relative; // Used to position the search icon.
+    margin-bottom: $sm-space;
 
     .SearchBox-input {
       $border-focused: 2px;
       $border-unfocused: 1px;
 
       margin: $border-focused - $border-unfocused 5px;
-      padding: 5px 20px 5px 5px;
+      padding: 8px 20px 8px 5px;
       border: $border-unfocused solid $grey;
-      border-radius: 7px;
+      border-radius: 4px;
       &:focus {
         border: $border-focused solid $blue;
-        border-radius: 7px;
         outline: none;
         margin: 0 5px;
       }

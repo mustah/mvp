@@ -19,13 +19,13 @@ export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToPro
         <DropdownSelector
           selectedList={getSelectedCities(search)}
           list={getDeselectedCities(search)}
-          selectionText="Stad: Alla"
+          selectionText="Stad: "
           onClick={selectCity}
         />
         <DropdownSelector
           selectedList={getSelectedAddresses(search)}
           list={getDeselectedAddresses(search)}
-          selectionText="Address: Alla"
+          selectionText="Address: "
           onClick={selectAddress}
         />
       </Row>
