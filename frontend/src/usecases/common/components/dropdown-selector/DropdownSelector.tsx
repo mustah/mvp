@@ -9,6 +9,7 @@ import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import {CheckboxList} from './CheckboxList';
+import {SearchBox} from './SearchBox';
 
 interface Props {
   selectionText: string;
@@ -57,6 +58,7 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
+              <SearchBox/>
               <CheckboxList onClick={onClick} list={selectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
               <CheckboxList onClick={onClick} list={list}/>

@@ -27,6 +27,28 @@
 }
 
 .DropdownSelector-menu {
+
+  .SearchBox {
+    position: relative;
+
+
+    .SearchBox-input {
+      $border-focused: 2px;
+      $border-unfocused: 1px;
+
+      margin: $border-focused - $border-unfocused 5px;
+      padding: 5px 20px 5px 5px;
+      border: $border-unfocused solid $grey;
+      border-radius: 7px;
+      &:focus {
+        border: $border-focused solid $blue;
+        border-radius: 7px;
+        outline: none;
+        margin: 0 5px;
+      }
+    }
+  }
+
   .separation-border {
     margin: 0 5px;
     border-bottom: 1px solid $grey;
