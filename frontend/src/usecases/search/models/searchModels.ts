@@ -4,15 +4,20 @@ export interface SearchParameter extends IdNamed {
   entity: string;
 }
 
-export interface SearchOption {
+export interface SearchOptionEntity {
   [key: string]: IdNamed;
 }
 
-export interface SearchOptionResult {
+export interface SearchResult {
   [key: string]: uuid[];
 }
 
 export interface SearchOptions {
-  entities: SearchOption;
-  result: SearchOptionResult;
+  entities: SearchOptionEntity;
+  result: SearchResult;
+}
+
+export interface SearchSelection {
+  selected: uuid[];
+  unselected: uuid[];
 }

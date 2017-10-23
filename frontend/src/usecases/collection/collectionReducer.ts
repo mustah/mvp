@@ -19,7 +19,7 @@ const initialState: CollectionState = {
   categories: {
     handled: {
       total: 0,
-      area: {
+      city: {
         count: 0,
         entities: [],
       },
@@ -30,7 +30,7 @@ const initialState: CollectionState = {
     },
     unhandled: {
       total: 0,
-      area: {
+      city: {
         count: 0,
         entities: [],
       },

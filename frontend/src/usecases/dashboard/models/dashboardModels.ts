@@ -33,7 +33,7 @@ export const normalizedData = {
         gateway: 'YY',
         status: {
           code: 2,
-          text: 'Mätare går baklänges',
+          text: 'Batteri lågt',
         },
       },
       '1234 1234 1236': {
@@ -43,7 +43,7 @@ export const normalizedData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'Mätare går inte alls',
+          text: 'Batteri slut',
         },
       },
     },

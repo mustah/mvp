@@ -18,7 +18,7 @@ export const normalizedValidationData = {
         gateway: 'XX',
         status: {
           code: 2,
-          text: 'mätare går baklänges',
+          text: 'batteri lågt',
         },
       },
       '1234 1234 1236': {
@@ -28,7 +28,7 @@ export const normalizedValidationData = {
         gateway: 'XX',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
       '1234 1234 1237': {
@@ -38,7 +38,7 @@ export const normalizedValidationData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
       '1234 1234 1238': {
@@ -48,7 +48,7 @@ export const normalizedValidationData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
       '1234 1234 1239': {
@@ -58,7 +58,7 @@ export const normalizedValidationData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
       '1234 1234 1240': {
@@ -68,7 +68,7 @@ export const normalizedValidationData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
       '1234 1234 1241': {
@@ -77,8 +77,8 @@ export const normalizedValidationData = {
         location: 'Område 1 fast 12',
         gateway: 'YY',
         status: {
-          code: 3,
-          text: 'mätare går inte alls',
+          code: 2,
+          text: 'batteri lågt',
         },
       },
       '1234 1234 1242': {
@@ -88,7 +88,7 @@ export const normalizedValidationData = {
         gateway: 'YY',
         status: {
           code: 3,
-          text: 'mätare går inte alls',
+          text: 'batteri slut',
         },
       },
     },

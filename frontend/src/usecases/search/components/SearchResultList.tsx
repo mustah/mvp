@@ -3,12 +3,12 @@ import 'SearchResultList.scss';
 import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {Summary} from '../../common/components/summary/Summary';
 import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
 import {Status} from '../../common/components/table/status/Status';
 import {Table} from '../../common/components/table/table/Table';
 import {TableHead} from '../../common/components/table/table/TableHead';
 import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
-import {Bold, Normal} from '../../common/components/texts/Texts';
 import {normalizedData} from '../../dashboard/models/dashboardModels';
 
 const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
@@ -17,8 +17,11 @@ const renderStatusCell = (value, index) => <Status code={value.code} content={va
 export const SearchResultList = (props) => (
   <Column className="SearchResultList">
     <Row className="SearchResultList-Summary">
-      <Bold>1 - 100</Bold>
-      <Normal>av 3456</Normal>
+      <Row className="Summaries">
+        <Summary title="Städer" count="1"/>
+        <Summary title="Adresser" count="2"/>
+        <Summary title="Mätpunkter" count="4"/>
+      </Row>
     </Row>
     <Table data={normalizedData.meteringPoints}>
       <TableColumn

@@ -15,7 +15,11 @@ export const CollectionList = (props: ListProps) => {
     <Table data={data}>
       <TableColumn
         id={'id'}
-        header={<TableHead>{translate('gateway')}</TableHead>}
+        header={<TableHead sortable={true} currentSort={'asc'}>{translate('gateway')}</TableHead>}
+      />
+      <TableColumn
+        id={'city'}
+        header={<TableHead>{translate('city')}</TableHead>}
       />
       <TableColumn
         id={'product_model'}
@@ -27,7 +31,7 @@ export const CollectionList = (props: ListProps) => {
       />
       <TableColumn
         id={'status'}
-        header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
+        header={<TableHead>{translate('status')}</TableHead>}
         cell={renderStatusCell}
       />
       <TableColumn

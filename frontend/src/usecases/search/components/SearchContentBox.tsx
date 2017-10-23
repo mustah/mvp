@@ -4,24 +4,27 @@ import {IdNamed} from '../../../types/Types';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {SearchDispatchToProps, SearchStateToProps} from '../containers/SearchContainer';
-import {getAddresses, getCities} from '../searchSelectors';
+import {getDeselectedAddresses, getDeselectedCities, getSelectedAddresses, getSelectedCities} from '../searchSelectors';
 import {DropDownSelector} from './DropDownSelector';
 import {SearchResultList} from './SearchResultList';
 
 export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToProps) => {
-  const {selectSearchOption, search} = props;
-  const selectCity = (selection: IdNamed) => selectSearchOption({...selection, entity: 'cities'});
-  const selectAddress = (selection: IdNamed) => selectSearchOption({...selection, entity: 'addresses'});
+  const {toggleSearchOption, search} = props;
+  const selectCity = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'cities'});
+  const selectAddress = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'addresses'});
+
   return (
     <Column className="SearchContentBox">
       <Row>
         <DropDownSelector
-          list={getCities(search)}
+          selectedList={getSelectedCities(search)}
+          list={getDeselectedCities(search)}
           selectionText="Stad: Alla"
           onClick={selectCity}
         />
         <DropDownSelector
-          list={getAddresses(search)}
+          selectedList={getSelectedAddresses(search)}
+          list={getDeselectedAddresses(search)}
           selectionText="Address: Alla"
           onClick={selectAddress}
         />

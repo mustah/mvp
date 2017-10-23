@@ -6,7 +6,7 @@ import {RootState} from '../../../reducers/index';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {SearchContentBox} from '../components/SearchContentBox';
 import {SearchParameter} from '../models/searchModels';
-import {selectSearchOption} from '../searchActions';
+import {toggleSearchOption} from '../searchActions';
 import {SearchState} from '../searchReducer';
 import {SearchOptionsLoaderContainer} from './SearchOptionsLoaderContainer';
 
@@ -15,7 +15,7 @@ export interface SearchStateToProps {
 }
 
 export interface SearchDispatchToProps {
-  selectSearchOption: (searchParameters: SearchParameter) => void;
+  toggleSearchOption: (searchParameters: SearchParameter) => void;
 }
 
 export const SearchContainerComponent = (props: SearchStateToProps & SearchDispatchToProps & InjectedAuthRouterProps) =>
@@ -24,7 +24,7 @@ export const SearchContainerComponent = (props: SearchStateToProps & SearchDispa
       <SearchOptionsLoaderContainer>
         <SearchContentBox
           search={props.search}
-          selectSearchOption={props.selectSearchOption}
+          toggleSearchOption={props.toggleSearchOption}
         />
       </SearchOptionsLoaderContainer>
     </PageContainer>
@@ -37,7 +37,7 @@ const mapStateToProps = ({search}: RootState): SearchStateToProps => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  selectSearchOption,
+  toggleSearchOption,
 }, dispatch);
 
 export const SearchContainer =

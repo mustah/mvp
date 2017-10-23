@@ -11,20 +11,18 @@ interface PaginationControlProps {
 export const PaginationControl = (props: PaginationControlProps) => {
   const {pagination: {page, total, limit}, changePage} = props;
   const pages = Math.floor(total / limit);
-  const minusPage = () => changePage(page - 1);
-  const plusPage = () => changePage(page + 1);
-
+  const changePageNext = () => changePage(page + 1);
+  const changePagePrev = () => changePage(page - 1);
   const prevPage = page === 1 ? null : (
-    <div onClick={minusPage}>
+    <div onClick={changePagePrev}>
       Previous page
     </div>
   );
   const nextPage = (page >= pages) ? null : (
-    <div onClick={plusPage}>
+    <div onClick={changePageNext}>
       Next page
     </div>
   );
-
   return (
     <Row>
       {prevPage}

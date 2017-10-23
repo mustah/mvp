@@ -4,28 +4,38 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/index';
 import {translate} from '../../../services/translationService';
+import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {Row} from '../../common/components/layouts/row/Row';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
-import {SelectionDropdown} from '../../common/components/selection-dropdown/SelectionDropdown';
 import {MainTitle} from '../../common/components/texts/Title';
+import {SearchParameter} from '../../search/models/searchModels';
+import {toggleSearchOption} from '../../search/searchActions';
+import {SearchState} from '../../search/searchReducer';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
-import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {Row} from '../../common/components/layouts/row/Row';
 
-export interface CollectionContainerProps {
-  fetchCollections: () => any;
-  fetchGateways: (filter, page: number, limit: number) => any;
+interface DispatchToProps {
+  fetchCollections: () => void;
+  fetchGateways: (filter, page: number, limit: number) => void;
+  filterAction: (filter) => void;
+  filterDelete: (something, value) => void;
+  toggleSearchOption: (searchParameters: SearchParameter) => void;
+}
+
+interface StateToProps {
+  search: SearchState;
   collection: CollectionState;
   categories: Category;
-  filterAction: (filter) => any;
-  filterDelete: (something) => any;
   pagination: Pagination;
 }
 
-class CollectionContainer extends React.Component<CollectionContainerProps & InjectedAuthRouterProps, any> {
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class CollectionContainer extends React.Component<Props> {
+
   componentDidMount() {
     const {pagination: {page, limit}} = this.props;
     this.props.fetchCollections();
@@ -33,7 +43,7 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
   }
 
   render() {
-    const {categories, filterAction, filterDelete, collection: {filter}} = this.props;
+    const {categories, filterAction, filterDelete, collection: {filter}, search, toggleSearchOption} = this.props;
 
     return (
       <PageContainer>
@@ -42,8 +52,12 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
           <PeriodSelection/>
         </Row>
 
-        <SelectionDropdown filterAction={filterAction}/>
-        <ProblemOverview categories={categories}/>
+        <ProblemOverview
+          search={search}
+          categories={categories}
+          toggleSearchOption={toggleSearchOption}
+          filterAction={filterAction}
+        />
         <ChosenFilter onDelete={filterDelete} filter={filter}/>
         <CollectionTabsContainer/>
       </PageContainer>
@@ -52,12 +66,13 @@ class CollectionContainer extends React.Component<CollectionContainerProps & Inj
 }
 
 const mapStateToProps = (state: RootState) => {
-  const {collection} = state;
-
+  const {collection, search} = state;
+  const {categories, pagination} = collection;
   return {
     collection,
-    categories: collection.categories,
-    pagination: collection.pagination,
+    categories,
+    pagination,
+    search,
   };
 };
 
@@ -66,6 +81,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchGateways,
   filterAction: collectionAddFilter,
   filterDelete: collectionRemoveFilter,
+  toggleSearchOption,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionContainer);
+export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(CollectionContainer);
