@@ -1,10 +1,12 @@
 import {AnyAction} from 'redux';
-import {SearchResult, SearchOptions} from './models/searchModels';
+import {uuid} from '../../types/Types';
+import {SearchOptions, SearchResult} from './models/searchModels';
 import {
+  DESELECT_SEARCH_OPTION,
   SEARCH_OPTIONS_FAILURE,
   SEARCH_OPTIONS_REQUEST,
   SEARCH_OPTIONS_SUCCESS,
-  SELECT_SEARCH_OPTION, DESELECT_SEARCH_OPTION,
+  SELECT_SEARCH_OPTION,
 } from './searchActions';
 
 export interface SearchState extends SearchOptions {
@@ -25,7 +27,7 @@ export const initialState: SearchState = {
   },
 };
 
-const filterOutUnselected = (selected, id) => selected.filter(sel => sel !== id);
+const filterOutUnselected = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
 
 export const search = (state: SearchState = initialState, action: AnyAction): SearchState => {
   const {payload} = action;

@@ -22,9 +22,8 @@ const searchOptionsRequest = createEmptyAction(SEARCH_OPTIONS_REQUEST);
 const searchOptionsSuccess = createPayloadAction<string, SearchOptions>(SEARCH_OPTIONS_SUCCESS);
 const searchOptionsFailure = createPayloadAction<string, SearchParameter>(SEARCH_OPTIONS_FAILURE);
 
-// TODO: Fix the type of any in the typing of function signature.
-export const selectSearchOption = createPayloadAction<string, any>(SELECT_SEARCH_OPTION);
-export const deselectSearchOption = createPayloadAction<string, any>(DESELECT_SEARCH_OPTION);
+export const selectSearchOption = createPayloadAction<string, SearchParameter>(SELECT_SEARCH_OPTION);
+export const deselectSearchOption = createPayloadAction<string, SearchParameter>(DESELECT_SEARCH_OPTION);
 
 export const closeSearch = () => dispatch => {
   dispatch(closeSearchAction());
