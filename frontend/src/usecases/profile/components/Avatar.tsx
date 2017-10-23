@@ -1,7 +1,7 @@
 import IconButton from 'material-ui/IconButton';
+import ActionAccountCircle from 'material-ui/svg-icons/action/account-circle';
 import * as React from 'react';
 import {User} from '../../auth/authReducer';
-import {Icon} from '../../common/components/icons/Icon';
 
 const avatarStyle = {
   padding: '0 0 0 10px',
@@ -22,7 +22,7 @@ export const Avatar = (props: AvatarProps) => {
       style={avatarStyle}
       onClick={onClick}
     >
-      <Icon name="account-circle"/>
+      <ActionAccountCircle/>
     </IconButton>
   );
 };

@@ -4,7 +4,7 @@ import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {Clickable, IdNamed} from '../../../types/Types';
-import {Icon} from '../../common/components/icons/Icon';
+import {IconDropDown} from '../../common/components/icons/IconDropDown';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row, RowMiddle} from '../../common/components/layouts/row/Row';
 import {Normal} from '../../common/components/texts/Texts';
@@ -42,7 +42,7 @@ export class DropDownSelector extends React.Component<Props & Clickable, State> 
         <div onClick={this.openMenu} className={classNames('DropDownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
             <Normal>{selectionText}</Normal>
-            <Icon name="chevron-down" size="small"/>
+            <IconDropDown/>
           </RowMiddle>
         </div>
 

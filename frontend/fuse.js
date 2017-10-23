@@ -8,7 +8,7 @@ const {
   SassPlugin,
   TypeScriptHelpers,
   WebIndexPlugin,
-  Sparky
+  Sparky,
 } = require('fuse-box');
 
 const {createPotFile} = require('./fuse-extract-translations');
@@ -48,8 +48,6 @@ const runTypeChecker = () => {
   }
 };
 
-const materialDesign = './node_modules/mdi/';
-const materialDesignFonts = './fonts/**/*';
 const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
 Sparky.task('config', ['convert-po-to-json'], () => {
@@ -100,8 +98,6 @@ Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(dis
 
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
 
-Sparky.task('copy:external-assets', () => Sparky.src([materialDesignFonts], {base: materialDesign}).dest(distDir));
-
 Sparky.task('clean', ['remove-fusebox-cache'], () => Sparky.src(distDir).clean(distDir));
 
 Sparky.task('set-production', () => isProduction = true);
@@ -139,4 +135,3 @@ Sparky.task('dist-server', distTasks, () => {
   fuse.dev();
   return fuse.run();
 });
-

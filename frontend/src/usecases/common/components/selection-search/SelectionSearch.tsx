@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {CloseIconButton} from '../icons/IconClose';
+import {CloseIcon} from '../icons/IconClose';
 import {Row, RowCenter} from '../layouts/row/Row';
 import {Summary} from '../summary/Summary';
 import {Normal} from '../texts/Texts';
@@ -13,7 +13,7 @@ interface OwnProps {
 export const SelectionSearch = (props: OwnProps) => (
   <RowCenter className="SelectionSearch-Container">
     <Row className="SelectionSearch">
-      <CloseIconButton onClick={props.close}/>
+      <CloseIcon onClick={props.close}/>
       <Normal className="Italic clickable">{translate('new search')}*</Normal>
     </Row>
     <Row className="Row-right flex-1 Summaries">

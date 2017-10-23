@@ -8,13 +8,14 @@ import {translate} from '../../../services/translationService';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
+import {IconCollection, IconDashboard, IconReport, IconValidation} from '../../common/components/icons/Icons';
 import {Column} from '../../common/components/layouts/column/Column';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
 
-export interface TopMenuContainerProps {
+interface TopMenuContainerProps {
   pathname: string;
   auth: AuthState;
   logout: () => any;
@@ -31,22 +32,33 @@ const MainMenuContainerComponent = (props: TopMenuContainerProps) => {
         disabled={!auth.isAuthenticated}
         toggleShowHideSideMenu={toggleShowHideSideMenu}
       />
-
       <Link to={routes.dashboard} className="link">
         <MenuItem
           name={translate('dashboard')}
           isSelected={routes.dashboard === pathname || routes.home === pathname}
-          icon="view-dashboard"
+          icon={<IconDashboard/>}
         />
       </Link>
       <Link to={routes.collection} className="link">
-        <MenuItem name={translate('collection')} isSelected={routes.collection === pathname} icon="nfc-variant"/>
+        <MenuItem
+          name={translate('collection')}
+          isSelected={routes.collection === pathname}
+          icon={<IconCollection/>}
+        />
       </Link>
       <Link to={routes.validation} className="link">
-        <MenuItem name={translate('validation')} isSelected={routes.validation === pathname} icon="thermometer-lines"/>
+        <MenuItem
+          name={translate('validation')}
+          isSelected={routes.validation === pathname}
+          icon={<IconValidation/>}
+        />
       </Link>
       <Link to={routes.report} className="link">
-        <MenuItem name={translate('report')} isSelected={routes.report === pathname} icon="dialpad"/>
+        <MenuItem
+          name={translate('report')}
+          isSelected={routes.report === pathname}
+          icon={<IconReport/>}
+        />
       </Link>
     </Column>
   );

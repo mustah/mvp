@@ -14,3 +14,10 @@ export const mvpTheme = getMuiTheme({
 });
 
 export const drawerWidth = 64;
+
+export const iconSize = {
+  large: {
+    width: 28,
+    height: 28,
+  },
+};
