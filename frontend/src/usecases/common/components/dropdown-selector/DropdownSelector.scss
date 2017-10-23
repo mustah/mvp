@@ -1,9 +1,9 @@
-@import "../../app/variables";
+@import "../../../app/variables";
 
-.DropDownSelector {
+.DropdownSelector {
   margin-right: $lg-space;
 
-  .DropDownSelector-Text {
+  .DropdownSelector-Text {
     color: rgba($black, 0.87);
     background-color: $secondary-bg;
     padding: 4px 4px 3px 10px;

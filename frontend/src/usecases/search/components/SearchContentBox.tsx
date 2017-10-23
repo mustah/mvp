@@ -4,9 +4,9 @@ import {IdNamed} from '../../../types/Types';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {SearchDispatchToProps, SearchStateToProps} from '../containers/SearchContainer';
-import {getDeselectedAddresses, getDeselectedCities, getSelectedAddresses, getSelectedCities} from '../searchSelectors';
-import {DropDownSelector} from './DropDownSelector';
+import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
 import {SearchResultList} from './SearchResultList';
+import {getDeselectedAddresses, getDeselectedCities, getSelectedAddresses, getSelectedCities} from '../searchSelectors';
 
 export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToProps) => {
   const {toggleSearchOption, search} = props;
@@ -16,13 +16,13 @@ export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToPro
   return (
     <Column className="SearchContentBox">
       <Row>
-        <DropDownSelector
+        <DropdownSelector
           selectedList={getSelectedCities(search)}
           list={getDeselectedCities(search)}
           selectionText="Stad: Alla"
           onClick={selectCity}
         />
-        <DropDownSelector
+        <DropdownSelector
           selectedList={getSelectedAddresses(search)}
           list={getDeselectedAddresses(search)}
           selectionText="Address: Alla"
