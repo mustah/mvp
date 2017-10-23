@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-19T07:57:13.675Z\n"
-"PO-Revision-Date: 2017-10-19 09:59+0200\n"
+"POT-Creation-Date: 2017-10-23 11:10+0200\n"
+"PO-Revision-Date: 2017-10-23 11:10+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,28 +10,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.4\n"
-
-msgid "dashboard"
-msgstr "dashboard"
-
-msgid "validation"
-msgstr "validation"
-
-msgid "report"
-msgstr "report"
-
-msgid "selection"
-msgstr "selection"
-
-msgid "new search"
-msgstr "new search"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid "email"
 msgstr "email"
 
 msgid "password"
 msgstr "password"
+
+msgid "current filter"
+msgstr "current filter"
 
 msgid "gateway"
 msgstr "gateway"
@@ -53,9 +41,6 @@ msgstr "action"
 
 msgid "collection"
 msgstr "collection"
-
-msgid "current filter"
-msgstr "current filter"
 
 msgid "list"
 msgstr "list"
@@ -90,11 +75,38 @@ msgstr "action pending"
 msgid "new search"
 msgstr "new search"
 
+msgid "selection"
+msgstr "selection"
+
 msgid "all"
 msgstr "all"
 
+msgid "close"
+msgstr "close"
+
+msgid "dashboard"
+msgstr "dashboard"
+
 msgid "map"
 msgstr "map"
+
+msgid "type"
+msgstr "type"
+
+msgid "location"
+msgstr "location"
+
+msgid "validation"
+msgstr "validation"
+
+msgid "report"
+msgstr "report"
+
+msgid "metering"
+msgstr "metering"
+
+msgid "saved search"
+msgstr "saved search"
 
 msgid "area"
 msgstr "area"
@@ -104,15 +116,6 @@ msgstr "object"
 
 msgid "facility"
 msgstr "facility"
-
-msgid "type"
-msgstr "type"
-
-msgid "location"
-msgstr "location"
-
-msgid "saved search"
-msgstr "saved search"
 
 msgctxt "°plural"
 msgid "meter°"
@@ -129,31 +132,3 @@ msgstr "{{count}} cities"
 msgctxt "°plural"
 msgid "{{count}} product°"
 msgstr "{{count}} products"
-
-#~ msgid "residential areas"
-#~ msgstr "residential areas"
-
-#~ msgid "{{count}} residential area"
-#~ msgstr "{{count}} residential area"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} residential area°"
-#~ msgstr "{{count}} residential areas"
-
-#~ msgid "errand"
-#~ msgstr "errand"
-
-#, fuzzy
-#~| msgid "{{count}} product"
-#~ msgid "{{count}} errands"
-#~ msgstr "{{count}} product"
-
-#, fuzzy
-#~| msgctxt "°plural"
-#~| msgid "{{count}} product°"
-#~ msgctxt "°plural"
-#~ msgid "{{count}} errands°"
-#~ msgstr "{{count}} products"
-
-msgid "close"
-msgstr "close"

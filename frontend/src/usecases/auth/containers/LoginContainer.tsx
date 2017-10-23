@@ -9,6 +9,7 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
+import {Logo} from '../../branding/components/Logo';
 
 export interface LoginProps {
   login: (email: string, password: string) => any;
@@ -28,6 +29,9 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
     const {auth} = this.props;
     return (
       <Column className={classNames('LoginContainer', 'Column-center')}>
+        <div className="customerLogo">
+          <Logo fill="#f21c0a" />
+        </div>
         <form onSubmit={this.login}>
           <div>
             <input type="text" placeholder={translate('email')} ref={component => this.emailComponent = component}/>

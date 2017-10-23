@@ -12,6 +12,7 @@ import {drawerWidth} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
 import {SideMenuState} from '../sideMenuReducer';
+import 'SideMenuContainer.scss';
 
 interface SideMenuContainerProps {
   sideMenu: SideMenuState;
@@ -29,7 +30,8 @@ const SideMenuContainer = (props: SideMenuContainerProps) => {
   return (
     <Drawer open={isOpen} docked={true} containerStyle={{left: isOpen ? drawerWidth : 0}}>
       <AppBar
-        title="MVP"
+        className="AppTitle"
+        title={translate('metering')}
         iconElementRight={<IconNavigationMenu onClick={props.toggleShowHideSideMenu}/>}
         showMenuIconButton={false}
       />
