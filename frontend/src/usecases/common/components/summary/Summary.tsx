@@ -13,7 +13,7 @@ export const Summary = (props: SummaryProps) => {
   const {count, title} = props;
   return (
     <Column className="Summary">
-      <RowCenter>
+      <RowCenter className="Summary-title">
         <Small className="uppercase">{title}</Small>
       </RowCenter>
       <RowCenter>

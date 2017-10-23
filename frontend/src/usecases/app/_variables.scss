@@ -23,9 +23,9 @@ $primary-fg: $white;
 $primary-fg-active: $white;
 $primary-fg-hover: $white;
 
-$secondary-bg: $grey;
-$secondary-bg-active: $dark-grey;
-$secondary-bg-hover: $dark-grey;
+$secondary-bg: $light-grey;
+$secondary-bg-active: $grey;
+$secondary-bg-hover: $grey;
 
 $secondary-fg: $light-black;
 $secondary-fg-active: $black;
@@ -62,7 +62,7 @@ $main-menu-z-index: 1400; // slightly larger than material design's app bar
 
 // tables
 $table-row-border-color: #e6e6e6;
-$table-header-color: #94a4aa;
+$table-header-color: $light-black;
 
 $side-menu-container-width: 256px;
 

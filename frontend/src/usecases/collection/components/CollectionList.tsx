@@ -31,7 +31,7 @@ export const CollectionList = (props: ListProps) => {
       />
       <TableColumn
         id={'status'}
-        header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
+        header={<TableHead>{translate('status')}</TableHead>}
         cell={renderStatusCell}
       />
       <TableColumn

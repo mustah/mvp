@@ -6,7 +6,7 @@
   width: 100%;
 
   th {
-    font-weight: normal;
+    font-weight: bold;
     text-align: left;
     text-transform: uppercase;
   }
@@ -15,7 +15,7 @@
     tr {
       background: $light-grey;
       border-color: $light-grey;
-      color: $table-header-color;
+      color: $light-black;
     }
   }
 

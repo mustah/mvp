@@ -86,8 +86,8 @@ export const fetchGateways = (filter, page, limit) => {
         // so we're "normalizing" it a tiny bit. If our real implementation
         // actually does provide those links - sweet - let's use them!
 
-        // an example Link header is (without the line breaks, sorry - linter):
-        // Link: <http://localhost:8080/api/gateways?_page=1&_limit=20>; rel="first",
+        // an example Link header is:
+        // Link:<http://localhost:8080/api/gateways?_page=1&_limit=20>; rel="first",
         // <http://localhost:8080/api/gateways?_page=2&_limit=20>; rel="next",
         // <http://localhost:8080/api/gateways?_page=500&_limit=20>; rel="last"
 

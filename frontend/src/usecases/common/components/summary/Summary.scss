@@ -3,8 +3,10 @@
 .Summary {
   padding-left: $sm-space;
   color: $light-black;
+
+  .Summary-title {
+    margin-bottom: 5px;
+  }
 }
 
-.Summary-name {
-  text-transform: uppercase;
-}
+
