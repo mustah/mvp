@@ -1,6 +1,11 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
+import {IdNamed} from '../../../../types/Types';
 import {Category} from '../../../collection/models/Collections';
+import {DropDownSelector} from '../../../search/components/DropDownSelector';
+import {SearchParameter} from '../../../search/models/searchModels';
+import {SearchState} from '../../../search/searchReducer';
+import {getDeselectedCities, getSelectedCities} from '../../../search/searchSelectors';
 import {Column} from '../layouts/column/Column';
 import {Layout} from '../layouts/layout/Layout';
 import {Row} from '../layouts/row/Row';

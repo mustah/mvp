@@ -6,19 +6,22 @@ import {Normal} from '../../common/components/texts/Texts';
 
 interface CheckboxListProps extends Clickable {
   list: IdNamed[];
+  allChecked?: boolean;
 }
 
-export const Checkbox = (props: IdNamed & Clickable) => {
-  const {id, name} = props;
+type CheckBox = IdNamed & Clickable & {checked?: boolean};
+
+export const Checkbox = (props: CheckBox) => {
+  const {id, name, checked} = props;
   const onClick = () => props.onClick({name, id});
   const htmlId = `id-${id}`;
-
   return (
     <RowMiddle className="Checkbox">
       <input
         type="checkbox"
         id={htmlId}
         onClick={onClick}
+        defaultChecked={checked}
       />
       <label htmlFor={htmlId} className="clickable">
         <Normal>{name}</Normal>
@@ -33,6 +36,7 @@ export const CheckboxList = (props: CheckboxListProps) => {
       key={checkbox.id}
       {...checkbox}
       onClick={props.onClick}
+      checked={props.allChecked}
     />);
 
   return (

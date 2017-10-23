@@ -6,7 +6,7 @@ import {RootState} from '../../../reducers/index';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {SearchContentBox} from '../components/SearchContentBox';
 import {SearchParameter} from '../models/searchModels';
-import {selectSearchOption} from '../searchActions';
+import {toggleSearchOption} from '../searchActions';
 import {SearchState} from '../searchReducer';
 import {SearchOptionsLoaderContainer} from './SearchOptionsLoaderContainer';
 
@@ -37,7 +37,7 @@ const mapStateToProps = ({search}: RootState): SearchStateToProps => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  selectSearchOption,
+  selectSearchOption: toggleSearchOption,
 }, dispatch);
 
 export const SearchContainer =

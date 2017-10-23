@@ -1,15 +1,15 @@
 import {AnyAction} from 'redux';
-import {SearchOptionResult, SearchOptions} from './models/searchModels';
+import {SearchResult, SearchOptions} from './models/searchModels';
 import {
   SEARCH_OPTIONS_FAILURE,
   SEARCH_OPTIONS_REQUEST,
   SEARCH_OPTIONS_SUCCESS,
-  SELECT_SEARCH_OPTION,
+  SELECT_SEARCH_OPTION, DESELECT_SEARCH_OPTION,
 } from './searchActions';
 
 export interface SearchState extends SearchOptions {
   isFetching: boolean;
-  selected: SearchOptionResult;
+  selected: SearchResult;
 }
 
 export const initialState: SearchState = {
@@ -25,9 +25,10 @@ export const initialState: SearchState = {
   },
 };
 
+const filterOutUnselected = (selected, id) => selected.filter(sel => sel !== id);
+
 export const search = (state: SearchState = initialState, action: AnyAction): SearchState => {
   const {payload} = action;
-
   switch (action.type) {
     case SEARCH_OPTIONS_REQUEST:
       return {
@@ -47,12 +48,19 @@ export const search = (state: SearchState = initialState, action: AnyAction): Se
         ...payload,
       };
     case SELECT_SEARCH_OPTION:
-      const {entity, id} = payload;
       return {
         ...state,
         selected: {
           ...state.selected,
-          [entity]: [...state.selected[entity], id],
+          [payload.entity]: [...state.selected[payload.entity], payload.id],
+        },
+      };
+    case DESELECT_SEARCH_OPTION:
+      return {
+        ...state,
+        selected: {
+          ...state.selected,
+          [payload.entity]: filterOutUnselected(state.selected[payload.entity], payload.id),
         },
       };
     default:

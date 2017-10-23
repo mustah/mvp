@@ -6,6 +6,7 @@ import {restClient} from '../../services/restClient';
 import {SearchOptions, SearchParameter} from './models/searchModels';
 import {SearchState} from './searchReducer';
 import {searchOptionsSchema} from './searchSchemas';
+import {RootState} from '../../reducers/index';
 
 export const SEARCH_OPTIONS_REQUEST = 'SEARCH_OPTIONS_REQUEST';
 export const SEARCH_OPTIONS_SUCCESS = 'SEARCH_OPTIONS_SUCCESS';
@@ -13,6 +14,7 @@ export const SEARCH_OPTIONS_FAILURE = 'SEARCH_OPTIONS_FAILURE';
 
 export const CLOSE_SEARCH = 'CLOSE_SEARCH';
 export const SELECT_SEARCH_OPTION = 'SELECT_SEARCH_OPTION';
+export const DESELECT_SEARCH_OPTION = 'DESELECT_SEARCH_OPTION';
 
 const closeSearchAction = createEmptyAction(CLOSE_SEARCH);
 
@@ -20,16 +22,25 @@ const searchOptionsRequest = createEmptyAction(SEARCH_OPTIONS_REQUEST);
 const searchOptionsSuccess = createPayloadAction<string, SearchOptions>(SEARCH_OPTIONS_SUCCESS);
 const searchOptionsFailure = createPayloadAction<string, SearchParameter>(SEARCH_OPTIONS_FAILURE);
 
-export const selectSearchOptionAction = createPayloadAction<string, SearchParameter>(SELECT_SEARCH_OPTION);
+// TODO: Fix the type of any in the typing of function signature.
+export const selectSearchOption = createPayloadAction<string, any>(SELECT_SEARCH_OPTION);
+export const deselectSearchOption = createPayloadAction<string, any>(DESELECT_SEARCH_OPTION);
 
 export const closeSearch = () => dispatch => {
   dispatch(closeSearchAction());
   dispatch(routerActions.goBack());
 };
 
-export const selectSearchOption = (searchParameter: SearchParameter) =>
-  (dispatch: Dispatch<SearchState>) => {
-    dispatch(selectSearchOptionAction(searchParameter));
+export const toggleSearchOption = (searchParameter: SearchParameter) =>
+  (dispatch: Dispatch<SearchState>, getState: () => RootState) => {
+
+    const {entity, id} = searchParameter;
+    const selected = getState().search.selected[entity];
+
+    // TODO: Perhaps consider getting a boolean for selected unselected from caller.
+    selected.includes(id)
+      ? dispatch(deselectSearchOption(searchParameter))
+      : dispatch(selectSearchOption(searchParameter));
   };
 
 export const fetchSearchOptions = () =>

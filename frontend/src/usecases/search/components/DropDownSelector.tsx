@@ -12,10 +12,11 @@ import {CheckboxList} from './CheckboxList';
 
 interface Props {
   selectionText: string;
+  selectedList: IdNamed[];
   list: IdNamed[];
 }
 
-interface State extends Props {
+interface State {
   isOpen: boolean;
   anchorElement?: React.ReactInstance;
 }
@@ -26,13 +27,16 @@ export class DropDownSelector extends React.Component<Props & Clickable, State> 
     super(props);
     this.state = {
       isOpen: false,
-      selectionText: props.selectionText,
-      list: props.list,
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+      return this.state.isOpen !== nextState.isOpen;
+  }
+
   render() {
-    const {anchorElement, isOpen, list, selectionText} = this.state;
+    const {anchorElement, isOpen} = this.state;
+    const {selectionText, list, selectedList, onClick} = this.props;
     return (
       <Row className="DropDownSelector">
         <div onClick={this.openMenu} className={classNames('DropDownSelector-Text clickable', {isOpen})}>
@@ -52,8 +56,10 @@ export class DropDownSelector extends React.Component<Props & Clickable, State> 
           animated={false}
         >
           <Menu>
-            <Column>
-              <CheckboxList onClick={this.props.onClick} list={list}/>
+            <Column className="DropdownSelector-menu">
+              <CheckboxList onClick={onClick} list={selectedList} allChecked={true}/>
+              {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
+              <CheckboxList onClick={onClick} list={list}/>
             </Column>
           </Menu>
         </Popover>

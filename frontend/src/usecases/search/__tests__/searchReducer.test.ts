@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
 import {SearchParameter} from '../models/searchModels';
-import {selectSearchOptionAction} from '../searchActions';
+import {selectSearchOption} from '../searchActions';
 import {initialState, search} from '../searchReducer';
 import {searchOptionsSchema} from '../searchSchemas';
 
@@ -98,7 +98,7 @@ describe('searchReducer', () => {
       id: 'sto',
       entity: 'cities',
     };
-    expect(search(state!, selectSearchOptionAction(searchParameters))).toEqual({
+    expect(search(state!, selectSearchOption(searchParameters))).toEqual({
       ...initialState,
       selected: {
         ...state.selected,

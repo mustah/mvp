@@ -3,12 +3,12 @@ import 'SearchResultList.scss';
 import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {Summary} from '../../common/components/summary/Summary';
 import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
 import {Status} from '../../common/components/table/status/Status';
 import {Table} from '../../common/components/table/table/Table';
 import {TableHead} from '../../common/components/table/table/TableHead';
 import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
-import {Bold, Normal} from '../../common/components/texts/Texts';
 import {normalizedData} from '../../dashboard/models/dashboardModels';
 
 const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
