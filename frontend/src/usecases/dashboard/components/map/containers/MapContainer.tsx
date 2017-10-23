@@ -76,8 +76,10 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
           x = 30;
         }
 
-        const percent = Math.round((cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100);
-        if (percent == 100) {
+        let percent = (cluster.getChildCount() - errorCount - warningCount) / (cluster.getChildCount() * 100);
+        percent = Math.round(percent);
+
+        if (percent === 100) {
           cssClass = 'marker-cluster-ok';
         } else if (percent > 90) {
           cssClass = 'marker-cluster-warning';
