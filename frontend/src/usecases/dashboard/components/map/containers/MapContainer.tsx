@@ -1,17 +1,20 @@
+import * as L from 'leaflet';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
+import 'leaflet/dist/leaflet.css';
+import {FlatButton} from 'material-ui';
+import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
-import {Column} from '../../../../common/components/layouts/column/Column';
-import '../Map.scss';
 import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
-import Dialog from 'material-ui/Dialog';
-import {FlatButton} from 'material-ui';
-import {bindActionCreators} from 'redux';
-import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../MapActions';
-import {RootState} from '../../../../../reducers/index';
-import {MapState} from '../MapReducer';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {RootState} from '../../../../../reducers/index';
 import {translate} from '../../../../../services/translationService';
-import * as L from 'leaflet';
+import {Column} from '../../../../common/components/layouts/column/Column';
+import '../Map.scss';
+import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../MapActions';
+import {MapState} from '../MapReducer';
 
 interface MapContainerProps {
   map: MapState;
@@ -123,11 +126,6 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     }
     return (
       <Column>
-        {/* TODO move this*/}
-        <link rel="stylesheet" href="//cdn.leafletjs.com/leaflet-0.5/leaflet.css"/>
-
-        <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" rel="stylesheet"/>
-        <link href="https://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" rel="stylesheet"/>
         <Map center={startPosition} maxZoom={50} zoom={3} className="Map">
           <TileLayer
             url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"
@@ -163,9 +161,9 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    toggleClusterDialog,
-    openClusterDialog,
-    fetchPositions,
-  }, dispatch);
+  toggleClusterDialog,
+  openClusterDialog,
+  fetchPositions,
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
