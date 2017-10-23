@@ -29,9 +29,6 @@ const runTests = () => {
   runCLI({bail: isProduction}, ['src']);
 };
 
-/**
- * Returns the number of errors
- */
 const runTypeChecker = () => {
   try {
     TypeHelper({
