@@ -28,6 +28,9 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
     const {auth} = this.props;
     return (
       <Column className={classNames('LoginContainer', 'Column-center')}>
+        <div className="customerLogo">
+          <img src="eon.svg"/>
+        </div>
         <form onSubmit={this.login}>
           <div>
             <input type="text" placeholder={translate('email')} ref={component => this.emailComponent = component}/>

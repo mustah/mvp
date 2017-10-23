@@ -5,6 +5,14 @@
   flex: 1;
   align-items: center;
 
+  .customerLogo {
+    margin-bottom: 20px;
+
+    img {
+      max-width: 200px;
+    }
+  }
+
   input {
     cursor: pointer;
     margin-bottom: $space;
