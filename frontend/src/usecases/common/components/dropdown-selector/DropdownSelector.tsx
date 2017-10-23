@@ -20,7 +20,10 @@ interface Props {
 
 interface State {
   isOpen: boolean;
+  searchText: string;
   anchorElement?: React.ReactInstance;
+  localSelectedList: IdNamed[];
+  localList: IdNamed[];
 }
 
 export class DropdownSelector extends React.Component<Props & Clickable, State> {
@@ -29,11 +32,10 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
     super(props);
     this.state = {
       isOpen: false,
+      searchText: '',
+      localSelectedList: [],
+      localList: [],
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-      return this.state.isOpen !== nextState.isOpen;
   }
 
   render() {
@@ -65,10 +67,10 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
-              <SearchBox/>
-              <CheckboxList onClick={onClick} list={selectedList} allChecked={true}/>
+              <SearchBox value={this.state.searchText} onUpdateSearch={this.handleSearchUpdate}/>
+              <CheckboxList onClick={onClick} list={this.state.localSelectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-              <CheckboxList onClick={onClick} list={list}/>
+              <CheckboxList onClick={onClick} list={this.state.localList}/>
             </Column>
           </Menu>
         </Popover>
@@ -77,11 +79,17 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
   }
 
   openMenu = (event: React.SyntheticEvent<any>): void => {
+    const {list, selectedList} = this.props;
     event.preventDefault();
-    this.setState({isOpen: true, anchorElement: event.currentTarget});
+    this.setState({isOpen: true, anchorElement: event.currentTarget, localList: list, localSelectedList: selectedList});
   }
 
   closeMenu = (): void => {
     this.setState({isOpen: false});
+  }
+
+  handleSearchUpdate = (event) => { // TODO: add typing to event?
+      event.preventDefault();
+      this.setState({searchText: event.target.value });
   }
 }
