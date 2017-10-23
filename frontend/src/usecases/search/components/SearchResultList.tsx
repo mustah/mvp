@@ -17,8 +17,11 @@ const renderStatusCell = (value, index) => <Status code={value.code} content={va
 export const SearchResultList = (props) => (
   <Column className="SearchResultList">
     <Row className="SearchResultList-Summary">
-      <Bold>1 - 100</Bold>
-      <Normal>av 3456</Normal>
+      <Row className="Summaries">
+        <Summary title="Städer" count="1"/>
+        <Summary title="Adresser" count="2"/>
+        <Summary title="Mätpunkter" count="4"/>
+      </Row>
     </Row>
     <Table data={normalizedData.meteringPoints}>
       <TableColumn

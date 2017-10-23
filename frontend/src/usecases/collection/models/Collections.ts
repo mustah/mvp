@@ -33,7 +33,7 @@ export interface Category {
 
 interface CollectionCategories {
   total: number;
-  area: {
+  city: {
     count: number;
     entities: Array<{id: string; count: number}>;
   };

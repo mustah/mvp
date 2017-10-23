@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-17T09:28:06.061Z\n"
-"PO-Revision-Date: 2017-10-17 11:28+0200\n"
+"POT-Creation-Date: 2017-10-19T07:57:13.675Z\n"
+"PO-Revision-Date: 2017-10-19 09:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -36,6 +36,9 @@ msgstr "password"
 msgid "gateway"
 msgstr "gateway"
 
+msgid "city"
+msgstr "city"
+
 msgid "product model"
 msgstr "product model"
 
@@ -53,9 +56,6 @@ msgstr "collection"
 
 msgid "current filter"
 msgstr "current filter"
-
-msgid "all"
-msgstr "all"
 
 msgid "list"
 msgstr "list"
@@ -75,17 +75,23 @@ msgstr "errands"
 msgid "{{count}} errand"
 msgstr "{{count}} errand"
 
-msgid "residential areas"
-msgstr "residential areas"
+msgid "cities"
+msgstr "cities"
 
-msgid "{{count}} residential area"
-msgstr "{{count}} residential area"
+msgid "{{count}} city"
+msgstr "{{count}} city"
 
 msgid "{{count}} product"
 msgstr "{{count}} product"
 
 msgid "action pending"
 msgstr "action pending"
+
+msgid "new search"
+msgstr "new search"
+
+msgid "all"
+msgstr "all"
 
 msgid "map"
 msgstr "map"
@@ -117,12 +123,22 @@ msgid "{{count}} errand°"
 msgstr "{{count}} errands"
 
 msgctxt "°plural"
-msgid "{{count}} residential area°"
-msgstr "{{count}} residential areas"
+msgid "{{count}} city°"
+msgstr "{{count}} cities"
 
 msgctxt "°plural"
 msgid "{{count}} product°"
 msgstr "{{count}} products"
+
+#~ msgid "residential areas"
+#~ msgstr "residential areas"
+
+#~ msgid "{{count}} residential area"
+#~ msgstr "{{count}} residential area"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} residential area°"
+#~ msgstr "{{count}} residential areas"
 
 #~ msgid "errand"
 #~ msgstr "errand"

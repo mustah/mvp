@@ -9,10 +9,15 @@ import './ProblemOverview.scss';
 
 interface ProblemOverviewProps {
   categories: Category;
+  search: SearchState;
+  filterAction: (filter) => void;
+  selectSearchOption: (searchParameters: SearchParameter) => void;
 }
 
 export const ProblemOverview = (props: ProblemOverviewProps) => {
-  const {categories: {handled, unhandled}} = props;
+  const {categories: {handled, unhandled}, search, selectSearchOption} = props;
+  const selectCity = (selection: IdNamed) => selectSearchOption({...selection, entity: 'cities'});
+
   return (
     <Layout>
       <Row className="ProblemOverview">
@@ -31,8 +36,15 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
               <td>{translate('{{count}} errand', {count: unhandled.total})}</td>
             </tr>
             <tr>
-              <td>{translate('residential areas')}</td>
-              <td>{translate('{{count}} residential area', {count: unhandled.area.count})}</td>
+              <td>{translate('cities')}</td>
+              <td>
+                <DropDownSelector
+                  selectedList={getSelectedCities(search)}
+                  list={getDeselectedCities(search)}
+                  selectionText={translate('{{count}} city', {count: unhandled.city.count})}
+                  onClick={selectCity}
+                />
+              </td>
             </tr>
             <tr>
               <td>{translate('product model')}</td>
@@ -56,8 +68,8 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
               <td>{translate('{{count}} errand', {count: handled.total})}</td>
             </tr>
             <tr>
-              <td>{translate('residential areas')}</td>
-              <td>{translate('{{count}} residential area', {count: handled.area.count})}</td>
+              <td>{translate('cities')}</td>
+              <td>{translate('{{count}} city', {count: handled.city.count})}</td>
             </tr>
             <tr>
               <td>{translate('product model')}</td>
