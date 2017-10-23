@@ -2,6 +2,7 @@ const {
   FuseBox,
   SVGPlugin,
   CSSPlugin,
+  CSSResourcePlugin,
   PostCSSPlugin,
   QuantumPlugin,
   SassPlugin,
@@ -17,12 +18,12 @@ const autoprefixer = require('autoprefixer');
 const TypeHelper = require('fuse-box-typechecker').TypeHelper;
 const {runCLI} = require('jest');
 
+const indexFile = 'index.tsx';
 const distDir = 'dist';
 const homeDir = 'src';
-const appCss = 'css/app.css';
 const fuseboxCacheDir = '.fusebox/cache';
 
-let fuse, app, vendor, isProduction = false;
+let fuse, app, isProduction = false;
 
 const runTests = () => {
   runCLI({bail: isProduction}, ['src']);
@@ -56,7 +57,7 @@ const assets = ['**/*.+(svg|png|jpg|jpeg|gif|json)', 'assets/fonts/**/*'];
 
 Sparky.task('config', ['convert-po-to-json'], () => {
   fuse = new FuseBox({
-    debug: false,
+    debug: !isProduction,
     homeDir: homeDir,
     sourceMaps: !isProduction,
     hash: isProduction,
@@ -66,12 +67,18 @@ Sparky.task('config', ['convert-po-to-json'], () => {
       TypeScriptHelpers(),
       SVGPlugin(),
       [
-        SassPlugin({outputStyle: 'compressed',}),
+        SassPlugin({outputStyle: isProduction && 'compressed',}),
         PostCSSPlugin([autoprefixer()]),
         CSSPlugin({
-          group: `${appCss}`,
-          outFile: `${distDir}/${appCss}`,
+          group: 'css/app.css',
+          outFile: `${distDir}/css/app.css`,
         }),
+      ],
+      [
+        CSSResourcePlugin({
+          dist: `${distDir}/css`,
+        }),
+        CSSPlugin(),
       ],
       WebIndexPlugin({template: `${homeDir}/index.html`}),
       isProduction && QuantumPlugin({
@@ -81,9 +88,9 @@ Sparky.task('config', ['convert-po-to-json'], () => {
     ]
   });
 
-  vendor = fuse.bundle('vendor').instructions('~ index.ts');
+  fuse.bundle('vendor').instructions(`~ ${indexFile}`);
 
-  app = fuse.bundle('app').instructions('> index.tsx');
+  app = fuse.bundle('app').instructions(`!> ${indexFile}`);
 });
 
 Sparky.task('remove-fusebox-cache', () => Sparky.src(fuseboxCacheDir).clean(fuseboxCacheDir));
