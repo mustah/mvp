@@ -14,7 +14,7 @@ node {
 
 task bundle(type: YarnTask) {
   inputs.dir(new File('src'))
-  outputs.dir(new File('dist'))
+  outputs.dir(buildDir)
   args  = ['dist']
 }
 
@@ -35,19 +35,13 @@ task assembleMockup(type: Tar) {
   destinationDir = file('mockup/')
 
   into('/') {
-    from('dist')
+    from(buildDir)
     include('**/*')
   }
 
   into('/') {
     from('.')
-    include('mockdata.js')
     include('routes.json')
-  }
-
-  into('/') {
-    from('../deploy')
-    include('elvaco-mvp-mockup.service')
   }
 
   compression = Compression.GZIP
