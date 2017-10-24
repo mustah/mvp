@@ -62,7 +62,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
       TypeScriptHelpers(),
       SVGPlugin(),
       [
-        SassPlugin({outputStyle: isProduction && 'compressed',}),
+        SassPlugin({outputStyle: isProduction && 'compressed'}),
         PostCSSPlugin([autoprefixer()]),
         CSSPlugin({
           group: 'css/app.css',
@@ -80,7 +80,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
         removeExportsInterop: false,
         uglify: true,
       }),
-    ]
+    ],
   });
 
   fuse.bundle('vendor').instructions(`~ ${indexFile}`);
@@ -106,7 +106,7 @@ Sparky.task('tests', runTests);
 
 Sparky.task('run-type-checker', runTypeChecker);
 
-Sparky.task('default', ['clean', 'config', 'watch:assets', 'copy:external-assets'], () => {
+Sparky.task('default', ['clean', 'config', 'watch:assets'], () => {
   fuse.dev();
   app.watch()
     .hmr()
@@ -124,7 +124,6 @@ const distTasks = [
   'run-type-checker',
   'tests',
   'copy:assets',
-  'copy:external-assets',
 ];
 
 Sparky.task('dist', distTasks, () => {

@@ -44,15 +44,15 @@ export const Logo = (props: LogoProps) => {
     <svg
       version="1.1"
       id="svg2002"
-      image-rendering="optimizeQuality"
-      text-rendering="geometricPrecision"
-      shape-rendering="geometricPrecision"
+      imageRendering="optimizeQuality"
+      textRendering="geometricPrecision"
+      shapeRendering="geometricPrecision"
       x="0px"
       y="0px"
       width="200px"
       height="148.344px"
       viewBox="0 0 508.246 148.344"
-      enable-background="new 0 0 508.246 148.344"
+      enableBackground="new 0 0 508.246 148.344"
     >
       <g transform="translate(-6.041939e-2,0.147204)">
         <path
