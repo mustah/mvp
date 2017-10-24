@@ -20,8 +20,14 @@ interface Props {
 
 interface State {
   isOpen: boolean;
+  searchText: string;
   anchorElement?: React.ReactInstance;
+  selectedList: IdNamed[];
+  list: IdNamed[];
 }
+
+const filterListOnExpr = (list: IdNamed[], exp: string) =>
+  list.filter((value: IdNamed) => value.name.match(new RegExp(exp, 'i')));
 
 export class DropdownSelector extends React.Component<Props & Clickable, State> {
 
@@ -29,22 +35,23 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
     super(props);
     this.state = {
       isOpen: false,
+      searchText: '',
+      selectedList: [],
+      list: [],
     };
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-      return this.state.isOpen !== nextState.isOpen;
-  }
-
   render() {
-    const {anchorElement, isOpen} = this.state;
-    const {selectionText, list, selectedList, onClick} = this.props;
+    const {anchorElement, isOpen, searchText, list, selectedList} = this.state;
+    const {selectionText, onClick} = this.props;
 
-    const selectedOptions = selectedList.length;
-    const totalNumberOfOptions = selectedOptions + list.length;
+    const selectedOptions = this.props.selectedList.length;
+    const totalNumberOfOptions = selectedOptions + this.props.list.length;
 
     const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
 
+    const filteredList = filterListOnExpr(list, searchText);
+    const filteredSelectedList = filterListOnExpr(selectedList, searchText);
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
@@ -65,10 +72,10 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
-              <SearchBox/>
-              <CheckboxList onClick={onClick} list={selectedList} allChecked={true}/>
+              <SearchBox value={searchText} onUpdateSearch={this.handleSearchUpdate}/>
+              <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-              <CheckboxList onClick={onClick} list={list}/>
+              <CheckboxList onClick={onClick} list={filteredList}/>
             </Column>
           </Menu>
         </Popover>
@@ -78,10 +85,21 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
 
   openMenu = (event: React.SyntheticEvent<any>): void => {
     event.preventDefault();
-    this.setState({isOpen: true, anchorElement: event.currentTarget});
+    this.setState({
+      isOpen: true,
+      anchorElement: event.currentTarget,
+      list: [...this.props.list],
+      selectedList: [...this.props.selectedList],
+    });
   }
 
   closeMenu = (): void => {
-    this.setState({isOpen: false});
+    this.setState({isOpen: false, searchText: ''});
   }
+
+  handleSearchUpdate = (event) => { // TODO: add typing to event?
+    event.preventDefault();
+    this.setState({searchText: event.target.value});
+  }
+
 }
