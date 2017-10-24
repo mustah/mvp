@@ -22,11 +22,11 @@ interface State {
   isOpen: boolean;
   searchText: string;
   anchorElement?: React.ReactInstance;
-  localSelectedList: IdNamed[];
-  localList: IdNamed[];
+  selectedList: IdNamed[];
+  list: IdNamed[];
 }
 
-const filterListOnExpr = (list: any[], exp: string) =>
+const filterListOnExpr = (list: IdNamed[], exp: string) =>
   list.filter((value: IdNamed) => value.name.match(new RegExp(exp, 'i')));
 
 export class DropdownSelector extends React.Component<Props & Clickable, State> {
@@ -36,22 +36,22 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
     this.state = {
       isOpen: false,
       searchText: '',
-      localSelectedList: [],
-      localList: [],
+      selectedList: [],
+      list: [],
     };
   }
 
   render() {
-    const {anchorElement, isOpen} = this.state;
-    const {selectionText, list, selectedList, onClick} = this.props;
+    const {anchorElement, isOpen, searchText, list, selectedList} = this.state;
+    const {selectionText, onClick} = this.props;
 
-    const selectedOptions = selectedList.length;
-    const totalNumberOfOptions = selectedOptions + list.length;
+    const selectedOptions = this.props.selectedList.length;
+    const totalNumberOfOptions = selectedOptions + this.props.list.length;
 
     const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
 
-    const filteredLocalList = filterListOnExpr(this.state.localList, this.state.searchText);
-    const filteredLocalSelectedList = filterListOnExpr(this.state.localSelectedList, this.state.searchText);
+    const filteredList = filterListOnExpr(list, searchText);
+    const filteredSelectedList = filterListOnExpr(selectedList, searchText);
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
@@ -72,10 +72,10 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
-              <SearchBox value={this.state.searchText} onUpdateSearch={this.handleSearchUpdate}/>
-              <CheckboxList onClick={onClick} list={filteredLocalSelectedList} allChecked={true}/>
+              <SearchBox value={searchText} onUpdateSearch={this.handleSearchUpdate}/>
+              <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-              <CheckboxList onClick={onClick} list={filteredLocalList}/>
+              <CheckboxList onClick={onClick} list={filteredList}/>
             </Column>
           </Menu>
         </Popover>
@@ -84,13 +84,12 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
   }
 
   openMenu = (event: React.SyntheticEvent<any>): void => {
-    const {list, selectedList} = this.props;
     event.preventDefault();
     this.setState({
       isOpen: true,
       anchorElement: event.currentTarget,
-      localList: [...list],
-      localSelectedList: [...selectedList],
+      list: [...this.props.list],
+      selectedList: [...this.props.selectedList],
     });
   }
 
