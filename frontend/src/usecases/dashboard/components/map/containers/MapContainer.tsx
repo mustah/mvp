@@ -76,7 +76,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
           x = 30;
         }
 
-        let percent = (cluster.getChildCount() - errorCount - warningCount) / (cluster.getChildCount() * 100);
+        let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
         percent = Math.round(percent);
 
         if (percent === 100) {
@@ -145,7 +145,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
       <Column>
         <Map center={startPosition} maxZoom={19} zoom={7} className="Map">
           <TileLayer
-            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
