@@ -2,7 +2,7 @@ const seedrandom = require('seedrandom');
 
 const fromDbJson = {
   'todos': [
-    'translate unhandled and handled collections in the right place'
+    'translate unhandled and handled collections in the right place',
   ],
   'collections': {
     'unhandled': {
@@ -17,8 +17,8 @@ const fromDbJson = {
             {'id': 'Stockholm', 'count': 44},
             {'id': 'Alvesta', 'count': 55},
             {'id': 'Höganäs', 'count': 345},
-            {'id': 'Borås', 'count': 250}
-          ]
+            {'id': 'Borås', 'count': 250},
+          ],
       },
       'product_model':
         {
@@ -26,9 +26,9 @@ const fromDbJson = {
           'entities': [
             {'id': 'CMe2100', 'count': 273},
             {'id': 'CMi2100', 'count': 1576},
-            {'id': 'CMe3100', 'count': 1134}
-          ]
-        }
+            {'id': 'CMe3100', 'count': 1134},
+          ],
+        },
     },
     'handled': {
       'total': 2627,
@@ -42,8 +42,8 @@ const fromDbJson = {
             {'id': 'Stockholm', 'count': 423},
             {'id': 'Alvesta', 'count': 916},
             {'id': 'Höganäs', 'count': 44},
-            {'id': 'Borås', 'count': 252}
-          ]
+            {'id': 'Borås', 'count': 252},
+          ],
         },
       'product_model':
         {
@@ -51,9 +51,9 @@ const fromDbJson = {
           'entities': [
             {'id': 'CMe2100', 'count': 573},
             {'id': 'CMi2100', 'count': 176},
-            {'id': 'CMe3100', 'count': 1878}
-          ]
-        }
+            {'id': 'CMe3100', 'count': 1878},
+          ],
+        },
     },
   },
   'dashboards': [
@@ -70,7 +70,7 @@ const fromDbJson = {
             'subtitle': '3567 punkter',
             'state': 'warning',
             'value': '95.8',
-            'unit': '%'
+            'unit': '%',
           },
           {
             'title': 'Mätvärdeskvalitet',
@@ -78,142 +78,141 @@ const fromDbJson = {
             'subtitle': '3481 punkter',
             'state': 'critical',
             'value': '93.5',
-            'unit': '%'
-          }
-        ]
-      }
-    }
+            'unit': '%',
+          },
+        ],
+      },
+    },
   ],
   'reports': [
     {
       'id': 1,
       'title': 'json-server',
-      'author': 'typicode'
+      'author': 'typicode',
     },
     {
       'id': 2,
       'title': 'report 2',
-      'author': 'elvaco'
+      'author': 'elvaco',
     },
     {
       'id': 3,
       'title': 'report 3',
-      'author': 'elvaco - home'
-    }
+      'author': 'elvaco - home',
+    },
   ],
   'validations': [
     {
       'id': 1,
       'title': 'json-server',
-      'author': 'typicode'
+      'author': 'typicode',
     },
     {
       'id': 2,
       'title': 'validation 2',
-      'author': 'elvaco'
+      'author': 'elvaco',
     },
     {
       'id': 3,
       'title': 'validation 3',
-      'author': 'elvaco - home'
-    }
+      'author': 'elvaco - home',
+    },
   ],
   'profile': {
-    'name': 'typicode'
+    'name': 'typicode',
   },
   'search-options': {
     'cities': [
       {
         'id': 'got',
-        'name': 'Göteborg'
+        'name': 'Göteborg',
       },
       {
         'id': 'sto',
-        'name': 'Stockholm'
+        'name': 'Stockholm',
       },
       {
         'id': 'mmx',
-        'name': 'Malmö'
+        'name': 'Malmö',
       },
       {
         'id': 'kub',
-        'name': 'Kungsbacka'
-      }
+        'name': 'Kungsbacka',
+      },
     ],
     'addresses': [
       {
         'id': 1,
-        'name': 'Stampgatan 46'
+        'name': 'Stampgatan 46',
       },
       {
         'id': 2,
-        'name': 'Stampgatan 33'
+        'name': 'Stampgatan 33',
       },
       {
         'id': 3,
-        'name': 'Kungsgatan 44'
+        'name': 'Kungsgatan 44',
       },
       {
         'id': 4,
-        'name': 'Drottninggatan 1'
+        'name': 'Drottninggatan 1',
       },
       {
         'id': 5,
-        'name': 'Åvägen 9'
-      }
+        'name': 'Åvägen 9',
+      },
     ],
     'statuses': [
       {
         'id': 'ok',
-        'name': 'Ok'
+        'name': 'Ok',
       },
       {
         'id': 'warning',
-        'name': 'Varning'
+        'name': 'Varning',
       },
       {
         'id': 'info',
-        'name': 'Info'
+        'name': 'Info',
       },
       {
         'id': 'critical',
-        'name': 'Kritisk'
-      }
+        'name': 'Kritisk',
+      },
     ],
     'meteringPoints': [
       {
         'id': 'm1',
-        'name': 'UNICOcoder'
+        'name': 'UNICOcoder',
       },
       {
         'id': 'm2',
-        'name': '3100'
+        'name': '3100',
       },
       {
         'id': 'm3',
-        'name': 'xxx2233'
+        'name': 'xxx2233',
       },
       {
         'id': 'm4',
-        'name': '3100'
+        'name': '3100',
       },
       {
         'id': 'm5',
-        'name': 'Test kit'
-      }
-    ]
-  }
+        'name': 'Test kit',
+      },
+    ],
+  },
 };
-
 
 const gatewayStatuses = [
   {
     'code': 0,
-    'text': 'OK'
+    'text': 'OK',
   },
   {
     'code': 3,
-    'text': 'Gateway kunde inte avläsas'
+    'text': 'Gateway kunde inte avläsas',
   },
 ];
 
@@ -306,7 +305,7 @@ const getPosition = (area) => {
 const randomizeLatLng = (a) => {
   return {
     lat: getRandomArbitrary(a.lat - 0.05, a.lat + 0.05),
-    lng: getRandomArbitrary(a.lng - 0.05, a.lng + 0.05)
+    lng: getRandomArbitrary(a.lng - 0.05, a.lng + 0.05),
   };
 };
 
@@ -316,20 +315,21 @@ const getRandomArbitrary = (min, max) => {
 
 const getWeightedRandomStatus = () => {
   const x = getRandomArbitrary(0, 100);
-  if(x < 1)
+  if (x < 1) {
     return 2;
-  else if (x < 5)
+  } else if (x < 5) {
     return 1;
-  else
+  } else {
     return 0;
+  }
 };
 
 module.exports = () => {
   const returnValues = Object.assign({}, fromDbJson);
 
   // remove the entire endpoint from fromDbJson once we're done with the generation logic
-  returnValues['gateways'] = [];
-  returnValues['mps'] = [];
+  returnValues.gateways = [];
+  returnValues.mps = [];
 
   const appRandom = new Math.seedrandom('this is a seed');
 
@@ -345,11 +345,10 @@ module.exports = () => {
       'product_model': gatewayModels[Math.floor(appRandom() * gatewayModels.length)],
       'status': gwStatus,
       'connected_meters': numberOfMeters,
-      'action': (gwStatus['code'] === 0 ? '' : actions[Math.floor(appRandom() * actions.length)]),
+      'action': (gwStatus.code === 0 ? '' : actions[Math.floor(appRandom() * actions.length)]),
     };
 
     for (let j = 0; j < numberOfMeters; j++) {
-      const status = Math.floor(appRandom() * 3);
       const meter = {
         'gateway_id': gwId,
         'id': Math.floor(appRandom() * 100000),
@@ -359,10 +358,10 @@ module.exports = () => {
         'position': getPosition(city),
         'product_model': meterModels[Math.floor(appRandom() * meterModels.length)],
       };
-      returnValues['mps'].push(meter);
+      returnValues.mps.push(meter);
     }
 
-    returnValues['gateways'].push(gw);
+    returnValues.gateways.push(gw);
   }
   return returnValues;
 };

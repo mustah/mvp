@@ -2,7 +2,7 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {IdNamed} from '../../../../types/Types';
 import {Category} from '../../../collection/models/Collections';
-import {DropDownSelector} from '../../../search/components/DropDownSelector';
+import {DropdownSelector} from '../dropdown-selector/DropdownSelector';
 import {SearchParameter} from '../../../search/models/searchModels';
 import {SearchState} from '../../../search/searchReducer';
 import {getDeselectedCities, getSelectedCities} from '../../../search/searchSelectors';
@@ -43,7 +43,7 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
             <tr>
               <td>{translate('cities')}</td>
               <td>
-                <DropDownSelector
+                <DropdownSelector
                   selectedList={getSelectedCities(search)}
                   list={getDeselectedCities(search)}
                   selectionText={translate('{{count}} city', {count: unhandled.city.count})}

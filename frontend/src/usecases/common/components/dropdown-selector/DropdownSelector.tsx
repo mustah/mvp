@@ -1,14 +1,16 @@
 import * as classNames from 'classnames';
-import 'DropDownSelector.scss';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
-import {Clickable, IdNamed} from '../../../types/Types';
-import {IconDropDown} from '../../common/components/icons/IconDropDown';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row, RowMiddle} from '../../common/components/layouts/row/Row';
-import {Normal} from '../../common/components/texts/Texts';
+import {Clickable, IdNamed} from '../../../../types/Types';
+import {IconDropDown} from '../icons/IconDropDown';
+import {Column} from '../layouts/column/Column';
+import {Row, RowMiddle} from '../layouts/row/Row';
+import {Normal} from '../texts/Texts';
 import {CheckboxList} from './CheckboxList';
+import './DropdownSelector.scss';
+import {SearchBox} from './SearchBox';
+import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectionText: string;
@@ -21,7 +23,7 @@ interface State {
   anchorElement?: React.ReactInstance;
 }
 
-export class DropDownSelector extends React.Component<Props & Clickable, State> {
+export class DropdownSelector extends React.Component<Props & Clickable, State> {
 
   constructor(props) {
     super(props);
@@ -37,11 +39,17 @@ export class DropDownSelector extends React.Component<Props & Clickable, State> 
   render() {
     const {anchorElement, isOpen} = this.state;
     const {selectionText, list, selectedList, onClick} = this.props;
+
+    const selectedOptions = selectedList.length;
+    const totalNumberOfOptions = selectedOptions + list.length;
+
+    const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
+
     return (
-      <Row className="DropDownSelector">
-        <div onClick={this.openMenu} className={classNames('DropDownSelector-Text clickable', {isOpen})}>
+      <Row className="DropdownSelector">
+        <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal>{selectionText}</Normal>
+            <Normal>{selectionText}{selectedOverview}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>
@@ -57,6 +65,7 @@ export class DropDownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
+              <SearchBox/>
               <CheckboxList onClick={onClick} list={selectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
               <CheckboxList onClick={onClick} list={list}/>

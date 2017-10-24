@@ -1,8 +1,8 @@
-import 'Checkbox.scss';
+import './Checkbox.scss';
 import * as React from 'react';
-import {Clickable, IdNamed} from '../../../types/Types';
-import {RowMiddle} from '../../common/components/layouts/row/Row';
-import {Normal} from '../../common/components/texts/Texts';
+import {Clickable, IdNamed} from '../../../../types/Types';
+import {RowMiddle} from '../layouts/row/Row';
+import {Normal} from '../texts/Texts';
 
 interface CheckboxListProps extends Clickable {
   list: IdNamed[];

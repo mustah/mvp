@@ -1,11 +1,11 @@
 import * as React from 'react';
 import 'SearchContentBox.scss';
+import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
 import {IdNamed} from '../../../types/Types';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {SearchDispatchToProps, SearchStateToProps} from '../containers/SearchContainer';
 import {getDeselectedAddresses, getDeselectedCities, getSelectedAddresses, getSelectedCities} from '../searchSelectors';
-import {DropDownSelector} from './DropDownSelector';
 import {SearchResultList} from './SearchResultList';
 
 export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToProps) => {
@@ -16,16 +16,16 @@ export const SearchContentBox = (props: SearchStateToProps & SearchDispatchToPro
   return (
     <Column className="SearchContentBox">
       <Row>
-        <DropDownSelector
+        <DropdownSelector
           selectedList={getSelectedCities(search)}
           list={getDeselectedCities(search)}
-          selectionText="Stad: Alla"
+          selectionText="Stad: "
           onClick={selectCity}
         />
-        <DropDownSelector
+        <DropdownSelector
           selectedList={getSelectedAddresses(search)}
           list={getDeselectedAddresses(search)}
-          selectionText="Address: Alla"
+          selectionText="Address: "
           onClick={selectAddress}
         />
       </Row>
