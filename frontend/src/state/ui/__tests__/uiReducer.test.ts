@@ -1,4 +1,4 @@
-import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
+import {IndicatorType} from '../../../usecases/common/components/indicators/models/IndicatorModels';
 import {selectIndicatorWidget} from '../indicatorActions';
 import {indicator, IndicatorState, initialState} from '../indicatorReducer';
 

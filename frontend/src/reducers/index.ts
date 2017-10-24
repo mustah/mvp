@@ -8,7 +8,7 @@ import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
 import {search, SearchState} from '../usecases/search/searchReducer';
 import {language, LanguageState} from '../usecases/main-menu/languageReducer';
-import {ui, UiState} from '../usecases/ui/uiReducer';
+import {ui, UiState} from '../state/ui/uiReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
 import {map, MapState} from '../usecases/dashboard/components/map/MapReducer';

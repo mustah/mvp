@@ -1,5 +1,5 @@
 import {createPayloadAction} from 'react-redux-typescript';
-import {IndicatorType} from '../common/components/indicators/models/IndicatorModels';
+import {IndicatorType} from '../../usecases/common/components/indicators/models/IndicatorModels';
 import {SelectedIndicators} from './indicatorReducer';
 
 export const SELECT_INDICATOR_WIDGET = 'SELECT_INDICATOR_WIDGET';

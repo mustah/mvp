@@ -15,7 +15,7 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../ui/tabsActions';
+import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
 import MapContainer from '../components/map/containers/MapContainer';
 

@@ -12,7 +12,7 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
-import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
+import {selectReportIndicatorWidget} from '../../../state/ui/indicatorActions';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 
