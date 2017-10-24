@@ -328,49 +328,48 @@ const getWeightedRandomStatus = () => {
 
 module.exports = () => {
   const returnValues = Object.assign({}, fromDbJson);
-    returnValues.meters = [];
-    returnValues.gateways = [];
-    glob('data/seed_data/*.csv', {}, (er, files) => {
-        if (er) {
-            throw er;
-        }
-        files.forEach((seedFile) => {
-            const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
-  const options = {
-    delimiter : ';',
-                headers   : 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-                'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
-            };
-  const obj = csvjson.toObject(meter_data, options);
-            obj.forEach((row) => {
-                returnValues.meters.push({
-                    'id': row.gateway_id,
-                    'facility': row.facility,
-                    'address': row.address,
-                    'city': row.city,
-                    'product_model': row.gateway_product_model,
-                    'telephone_no': row.tel,
-                    'ip': row.ip,
-                    'port': row.port,
-                    'status': row.gateway_status,
-  });
-            });
-            obj.forEach((row) => {
-                returnValues.gateways.push({
-                    'id': row.meter_id,
-                    'facility': row.facility,
-                    'address': row.address,
-                    'city': row.city,
-                    'medium': row.medium,
-                    'manufacturer': row.meter_manufacturer,
-                    'status': row.meter_status,
-                    'gateway_id': row.gateway_id,
-                    'position': getPosition(row.city),
-                });
-            });
+  returnValues.meters = [];
+  returnValues.gateways = [];
+  glob('data/seed_data/*.csv', {}, (er, files) => {
+    if (er) {
+      throw er;
+    }
+    files.forEach((seedFile) => {
+      const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
+      const options = {
+        delimiter: ';',
+        headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
+        'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      };
+      const obj = csvjson.toObject(meterData, options);
+      obj.forEach((row) => {
+        returnValues.meters.push({
+          'id': row.gateway_id,
+          'facility': row.facility,
+          'address': row.address,
+          'city': row.city,
+          'product_model': row.gateway_product_model,
+          'telephone_no': row.tel,
+          'ip': row.ip,
+          'port': row.port,
+          'status': row.gateway_status,
         });
+      });
+      obj.forEach((row) => {
+        returnValues.gateways.push({
+          'id': row.meter_id,
+          'facility': row.facility,
+          'address': row.address,
+          'city': row.city,
+          'medium': row.medium,
+          'manufacturer': row.meter_manufacturer,
+          'status': row.meter_status,
+          'gateway_id': row.gateway_id,
+          'position': getPosition(row.city),
+        });
+      });
+    });
   });
-
 
   // remove the entire endpoint from fromDbJson once we're done with the generation logic
   returnValues.random_gateways = [];
@@ -403,10 +402,10 @@ module.exports = () => {
         'position': getPosition(city),
         'product_model': meterModels[Math.floor(appRandom() * meterModels.length)],
       };
-      returnValues['random_meters'].push(meter);
+      returnValues.random_meters.push(meter);
     }
 
-    returnValues['random_gateways'].push(gw);
+    returnValues.random_gateways.push(gw);
   }
   return returnValues;
 };
