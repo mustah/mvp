@@ -35,11 +35,13 @@ build:
 
 deploy_review:
     stage: deploy
-    before_script:
-        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
     variables:
         GIT_STRATEGY: none
+        CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG  
+    before_script:
+        - echo "Removing review container $CONTAINER_NAME"
+        - docker stop $CONTAINER_NAME || true
+        - docker rm $CONTAINER_NAME || true
     tags:
         - shell
     environment:
@@ -50,19 +52,23 @@ deploy_review:
     script:
         - rm -rf app-root
         - mkdir app-root
-        - tar -C app-root -xf backend/build/distributions/mvp-`cat .version`.tar --strip-components=1
-        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker run --expose 8080 -v $(pwd)/app-root/:/app/ -d -e JAVA_OPTS="-XX:MaxMetaspaceSize=64m -Xmx64m" -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name review-mvp-$CI_COMMIT_REF_SLUG sgrio/java-oracle:server_jre_8 /app/bin/mvp
+        - tar -C app-root -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
+        - docker stop $CONTAINER_NAME || true
+        - docker rm $CONTAINER_NAME || true
+        - docker run -v $(pwd)/app-root/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
+        - sleep 1
+        - docker logs $CONTAINER_NAME
+        - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
 
 teardown_review:
     stage: deploy
     variables:
         GIT_STRATEGY: none
+        CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG  
     script:
-        - echo "Removing review container mvp-$CI_COMMIT_REF_SLUG"
-        - docker stop review-mvp-$CI_COMMIT_REF_SLUG || true
-        - docker rm review-mvp-$CI_COMMIT_REF_SLUG || true
+        - echo "Removing review container $CONTAINER_NAME"
+        - docker stop $CONTAINER_NAME || true
+        - docker rm $CONTAINER_NAME || true
     when: manual
     environment:
         name: review/$CI_COMMIT_REF_NAME
