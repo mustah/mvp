@@ -1,20 +1,20 @@
 import {AnyAction} from 'redux';
 import {uuid} from '../../types/Types';
-import {SearchOptions, SearchResult} from './models/searchModels';
+import {SelectionOptions, SelectionResult} from './models/selectionModels';
 import {
-  DESELECT_SEARCH_OPTION,
-  SEARCH_OPTIONS_FAILURE,
-  SEARCH_OPTIONS_REQUEST,
-  SEARCH_OPTIONS_SUCCESS,
-  SELECT_SEARCH_OPTION,
-} from './searchActions';
+  DESELECT_SELECTION,
+  SELECTION_FAILURE,
+  SELECTION_REQUEST,
+  SELECTION_SUCCESS,
+  SET_SELECTION,
+} from './selectionActions';
 
-export interface SearchState extends SearchOptions {
+export interface SelectionState extends SelectionOptions {
   isFetching: boolean;
-  selected: SearchResult;
+  selected: SelectionResult;
 }
 
-export const initialState: SearchState = {
+export const initialState: SelectionState = {
   isFetching: false,
   entities: {},
   result: {
@@ -29,27 +29,27 @@ export const initialState: SearchState = {
 
 const filterOutUnselected = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
 
-export const search = (state: SearchState = initialState, action: AnyAction): SearchState => {
+export const selection = (state: SelectionState = initialState, action: AnyAction): SelectionState => {
   const {payload} = action;
   switch (action.type) {
-    case SEARCH_OPTIONS_REQUEST:
+    case SELECTION_REQUEST:
       return {
         ...state,
         isFetching: true,
       };
-    case SEARCH_OPTIONS_SUCCESS:
+    case SELECTION_SUCCESS:
       return {
         ...state,
         isFetching: false,
         ...payload,
       };
-    case SEARCH_OPTIONS_FAILURE:
+    case SELECTION_FAILURE:
       return {
         ...state,
         isFetch: false,
         ...payload,
       };
-    case SELECT_SEARCH_OPTION:
+    case SET_SELECTION:
       return {
         ...state,
         selected: {
@@ -57,7 +57,7 @@ export const search = (state: SearchState = initialState, action: AnyAction): Se
           [payload.entity]: [...state.selected[payload.entity], payload.id],
         },
       };
-    case DESELECT_SEARCH_OPTION:
+    case DESELECT_SELECTION:
       return {
         ...state,
         selected: {

@@ -4,8 +4,8 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
-import {fetchSearchOptions} from '../searchActions';
-import {isFetching} from '../searchSelectors';
+import {fetchSelections} from '../selectionActions';
+import {isFetching} from '../selectionSelectors';
 
 interface OwnProps {
   children: React.ReactElement<any> | null;
@@ -21,7 +21,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-class SearchOptionsLoaderContainerComponent extends React.Component<Props> {
+class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
 
   componentWillMount() {
     this.props.fetchSearchOptions();
@@ -37,16 +37,16 @@ class SearchOptionsLoaderContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({search}: RootState): StateToProps => {
+const mapStateToProps = ({selection}: RootState): StateToProps => {
   return {
-    isFetching: isFetching(search),
+    isFetching: isFetching(selection),
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchSearchOptions,
+  fetchSearchOptions: fetchSelections,
 }, dispatch);
 
-export const SearchOptionsLoaderContainer =
+export const SelectionOptionsLoaderContainer =
   connect<StateToProps, DispatchToProps, {}>
-  (mapStateToProps, mapDispatchToProps)(SearchOptionsLoaderContainerComponent);
+  (mapStateToProps, mapDispatchToProps)(SelectionOptionsLoaderContainerComponent);

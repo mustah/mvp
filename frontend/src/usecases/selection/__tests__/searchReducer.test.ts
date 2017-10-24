@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
-import {SearchParameter} from '../models/searchModels';
-import {selectSearchOption} from '../searchActions';
-import {initialState, search} from '../searchReducer';
-import {searchOptionsSchema} from '../searchSchemas';
+import {SelectionParameter} from '../models/selectionModels';
+import {setSelection} from '../selectionActions';
+import {initialState, selection} from '../selectionReducer';
+import {selectionSchema} from '../selectionSchemas';
 
 describe('searchReducer', () => {
 
@@ -93,12 +93,12 @@ describe('searchReducer', () => {
     const state = {
       ...initialState,
     };
-    const searchParameters: SearchParameter = {
+    const searchParameters: SelectionParameter = {
       name: 'Stockholm',
       id: 'sto',
       entity: 'cities',
     };
-    expect(search(state!, selectSearchOption(searchParameters))).toEqual({
+    expect(selection(state!, setSelection(searchParameters))).toEqual({
       ...initialState,
       selected: {
         ...state.selected,
@@ -108,7 +108,7 @@ describe('searchReducer', () => {
   });
 
   it('normalizr', () => {
-    const normalizedData = normalize(data, searchOptionsSchema);
+    const normalizedData = normalize(data, selectionSchema);
 
     expect(normalizedData).toEqual({
       entities: {

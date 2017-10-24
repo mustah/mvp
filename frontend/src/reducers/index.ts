@@ -6,7 +6,7 @@ import {CollectionState} from '../usecases/collection/models/Collections';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
-import {search, SearchState} from '../usecases/search/searchReducer';
+import {selection, SelectionState} from '../usecases/selection/selectionReducer';
 import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
@@ -21,7 +21,7 @@ export interface RootState {
   validation: ValidationState;
   report: ReportState;
   language: LanguageState;
-  search: SearchState;
+  selection: SelectionState;
   ui: UiState;
   map: MapState;
 }
@@ -34,7 +34,7 @@ export const rootReducer = combineReducers<RootState>({
   validation,
   report,
   language,
-  search,
+  selection,
   ui,
   map,
 });

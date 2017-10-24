@@ -3,9 +3,9 @@ import {translate} from '../../../../services/translationService';
 import {IdNamed} from '../../../../types/Types';
 import {Category} from '../../../collection/models/Collections';
 import {DropdownSelector} from '../dropdown-selector/DropdownSelector';
-import {SearchParameter} from '../../../search/models/searchModels';
-import {SearchState} from '../../../search/searchReducer';
-import {getDeselectedCities, getSelectedCities} from '../../../search/searchSelectors';
+import {SelectionParameter} from '../../../selection/models/selectionModels';
+import {SelectionState} from '../../../selection/selectionReducer';
+import {getDeselectedCities, getSelectedCities} from '../../../selection/selectionSelectors';
 import {Column} from '../layouts/column/Column';
 import {Layout} from '../layouts/layout/Layout';
 import {Row} from '../layouts/row/Row';
@@ -14,13 +14,13 @@ import './ProblemOverview.scss';
 
 interface ProblemOverviewProps {
   categories: Category;
-  search: SearchState;
+  selection: SelectionState;
   filterAction: (filter) => void;
-  toggleSearchOption: (searchParameters: SearchParameter) => void;
+  toggleSearchOption: (searchParameters: SelectionParameter) => void;
 }
 
 export const ProblemOverview = (props: ProblemOverviewProps) => {
-  const {categories: {handled, unhandled}, search, toggleSearchOption} = props;
+  const {categories: {handled, unhandled}, selection, toggleSearchOption} = props;
   const selectCity = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'cities'});
 
   return (
@@ -44,8 +44,8 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
               <td>{translate('cities')}</td>
               <td>
                 <DropdownSelector
-                  selectedList={getSelectedCities(search)}
-                  list={getDeselectedCities(search)}
+                  selectedList={getSelectedCities(selection)}
+                  list={getDeselectedCities(selection)}
                   selectionText={translate('{{count}} city', {count: unhandled.city.count})}
                   onClick={selectCity}
                 />

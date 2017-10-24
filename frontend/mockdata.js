@@ -123,7 +123,7 @@ const fromDbJson = {
   'profile': {
     'name': 'typicode',
   },
-  'search-options': {
+  'selections': {
     'cities': [
       {
         'id': 'got',
