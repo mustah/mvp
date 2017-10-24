@@ -86,7 +86,12 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
   openMenu = (event: React.SyntheticEvent<any>): void => {
     const {list, selectedList} = this.props;
     event.preventDefault();
-    this.setState({isOpen: true, anchorElement: event.currentTarget, localList: list, localSelectedList: selectedList});
+    this.setState({
+      isOpen: true,
+      anchorElement: event.currentTarget,
+      localList: [...list],
+      localSelectedList: [...selectedList],
+    });
   }
 
   closeMenu = (): void => {
