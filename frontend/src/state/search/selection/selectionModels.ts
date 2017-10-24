@@ -16,3 +16,5 @@ export interface SelectionOptions {
   entities: SelectionOptionEntity;
   result: SelectionResult;
 }
+
+export interface SearchParameterState {}

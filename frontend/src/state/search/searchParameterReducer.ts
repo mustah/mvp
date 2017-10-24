@@ -1,4 +1,6 @@
 import {combineReducers} from 'redux';
-import {selection} from 'state/search/selection/selectionReducer';
+import {filter} from './filter/filterReducer';
+import {SearchParameterState} from './selection/selectionModels';
+import {selection} from './selection/selectionReducer';
 
-export const searchParameters = combineReducers<SearchParameterState>(selection, filter);
+export const searchParameters = combineReducers<SearchParameterState>({selection, filter});
