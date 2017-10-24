@@ -25,6 +25,11 @@ interface TopMenuContainerProps {
 
 const MainMenuContainerComponent = (props: TopMenuContainerProps) => {
   const {pathname, auth, sideMenu, toggleShowHideSideMenu} = props;
+
+  if (!auth.isAuthenticated) {
+    return null;
+  }
+
   return (
     <Column className="MainMenuContainer">
       <MainNavigationMenu
