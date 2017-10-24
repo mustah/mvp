@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
-import {uuid} from '../../types/Types';
-import {SelectionOptions, SelectionResult} from './models/selectionModels';
+import {uuid} from '../../../types/Types';
+import {SelectionOptions, SelectionResult} from './selectionModels';
 import {
   DESELECT_SELECTION,
   SELECTION_FAILURE,

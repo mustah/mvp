@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
-import {IdNamed, uuid} from '../../types/Types';
-import {SelectionOptionEntity, SelectionResult} from './models/selectionModels';
+import {IdNamed, uuid} from '../../../types/Types';
+import {SelectionOptionEntity, SelectionResult} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 
 export const isFetching = (state: SelectionState): boolean => state.isFetching;

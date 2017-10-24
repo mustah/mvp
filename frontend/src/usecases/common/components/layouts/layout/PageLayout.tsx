@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../../reducers/index';
 import {getLocation, isSearchPage} from '../../../../../selectors/routerSelector';
-import {closeSearch} from '../../../../selection/selectionActions';
+import {closeSearch} from '../../../../../state/search/selection/selectionActions';
 import {SelectionSearch} from '../../selection-search/SelectionSearch';
 import {SelectionSearchSummary} from '../../selection-search/SelectionSearchSummary';
 import {Column} from '../column/Column';

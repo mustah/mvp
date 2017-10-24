@@ -5,9 +5,9 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {RootState} from '../../../reducers/index';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {SelectionContentBox} from '../components/SelectionContentBox';
-import {SelectionParameter} from '../models/selectionModels';
-import {toggleSelection} from '../selectionActions';
-import {SelectionState} from '../selectionReducer';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {toggleSelection} from '../../../state/search/selection/selectionActions';
+import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {SelectionOptionsLoaderContainer} from './SelectionOptionsLoaderContainer';
 
 export interface SelectionStateToProps {

@@ -1,16 +1,4 @@
-import {AnyAction} from 'redux';
+import {combineReducers} from 'redux';
+import {selection} from 'state/search/selection/selectionReducer';
 
-interface SearchParameterState {
-  selection: any;
-}
-
-const initialState = {};
-
-export const searchParameter =
-  (state: SearchParameterState = initialState, action: AnyAction): SearchParameterState => {
-    switch (action.type) {
-      case
-      default:
-        return state;
-    }
-  };
+export const searchParameters = combineReducers<SearchParameterState>(selection, filter);

@@ -10,7 +10,7 @@ import {
   getDeselectedCities,
   getSelectedAddresses,
   getSelectedCities,
-} from '../selectionSelectors';
+} from '../../../state/search/selection/selectionSelectors';
 import {SearchResultList} from './SelectionResultList';
 
 export const SelectionContentBox = (props: SelectionStateToProps & SelectionDispatchToProps) => {

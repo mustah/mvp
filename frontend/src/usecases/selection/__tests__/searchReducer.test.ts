@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
-import {SelectionParameter} from '../models/selectionModels';
-import {setSelection} from '../selectionActions';
-import {initialState, selection} from '../selectionReducer';
-import {selectionSchema} from '../selectionSchemas';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {setSelection} from '../../../state/search/selection/selectionActions';
+import {initialState, selection} from '../../../state/search/selection/selectionReducer';
+import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 
 describe('searchReducer', () => {
 

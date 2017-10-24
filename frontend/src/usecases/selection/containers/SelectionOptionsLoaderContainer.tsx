@@ -4,8 +4,8 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/index';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
-import {fetchSelections} from '../selectionActions';
-import {isFetching} from '../selectionSelectors';
+import {fetchSelections} from '../../../state/search/selection/selectionActions';
+import {isFetching} from '../../../state/search/selection/selectionSelectors';
 
 interface OwnProps {
   children: React.ReactElement<any> | null;

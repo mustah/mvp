@@ -2,11 +2,11 @@ import {normalize} from 'normalizr';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Dispatch} from 'redux';
-import {restClient} from '../../services/restClient';
-import {SelectionOptions, SelectionParameter} from './models/selectionModels';
+import {restClient} from '../../../services/restClient';
+import {SelectionOptions, SelectionParameter} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 import {selectionSchema} from './selectionSchemas';
-import {RootState} from '../../reducers/index';
+import {RootState} from '../../../reducers/index';
 
 export const SELECTION_REQUEST = 'SELECTION_REQUEST';
 export const SELECTION_SUCCESS = 'SELECTION_SUCCESS';
