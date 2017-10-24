@@ -2,7 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {SelectionContentBox} from '../components/SelectionContentBox';
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
 import {fetchSelections} from '../../../state/search/selection/selectionActions';

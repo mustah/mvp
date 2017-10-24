@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
-import {RootState} from '../../reducers/index';
+import {RootState} from '../../reducers/rootReducer';
 import {AuthState} from '../auth/authReducer';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import {Row} from '../common/components/layouts/row/Row';

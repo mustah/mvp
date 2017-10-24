@@ -2,7 +2,7 @@ import {Location} from 'history';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../../../reducers/index';
+import {RootState} from '../../../../../reducers/rootReducer';
 import {getLocation, isSearchPage} from '../../../../../selectors/routerSelector';
 import {closeSearch} from '../../../../../state/search/selection/selectionActions';
 import {SelectionSearch} from '../../selection-search/SelectionSearch';

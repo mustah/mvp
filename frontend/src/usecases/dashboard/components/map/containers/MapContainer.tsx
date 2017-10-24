@@ -9,7 +9,7 @@ import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../../../reducers/index';
+import {RootState} from '../../../../../reducers/rootReducer';
 import {translate} from '../../../../../services/translationService';
 import {Column} from '../../../../common/components/layouts/column/Column';
 import '../Map.scss';

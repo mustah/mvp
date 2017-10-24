@@ -10,7 +10,7 @@ import {ConnectedRouter} from 'react-router-redux';
 import {Store} from 'redux';
 import {persistStore} from 'redux-persist';
 import {initLanguage} from './i18n/i18n';
-import {RootState} from './reducers/index';
+import {RootState} from './reducers/rootReducer';
 import {initRestClient} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';

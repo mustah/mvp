@@ -6,7 +6,7 @@ import {restClient} from '../../../services/restClient';
 import {SelectionOptions, SelectionParameter} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 import {selectionSchema} from './selectionSchemas';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 
 export const SELECTION_REQUEST = 'SELECTION_REQUEST';
 export const SELECTION_SUCCESS = 'SELECTION_SUCCESS';

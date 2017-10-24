@@ -6,7 +6,7 @@ import ToggleStar from 'material-ui/svg-icons/toggle/star';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {drawerWidth} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';

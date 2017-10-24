@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
 import {Status} from '../../common/components/table/status/Status';
