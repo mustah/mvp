@@ -1,17 +1,19 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
 import {combineReducers} from 'redux';
+import {searchParameters} from '../state/search/searchParameterReducer';
+import {SearchParameterState} from '../state/search/selection/selectionModels';
+import {selection, SelectionState} from '../state/search/selection/selectionReducer';
+import {ui, UiState} from '../state/ui/uiReducer';
 import {auth, AuthState} from '../usecases/auth/authReducer';
 import {collection} from '../usecases/collection/collectionReducer';
 import {CollectionState} from '../usecases/collection/models/Collections';
+import {map, MapState} from '../usecases/dashboard/components/map/MapReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
+import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
-import {search, SearchState} from '../usecases/search/searchReducer';
-import {language, LanguageState} from '../usecases/main-menu/languageReducer';
-import {ui, UiState} from '../usecases/ui/uiReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
-import {map, MapState} from '../usecases/dashboard/components/map/MapReducer';
 
 export interface RootState {
   auth: AuthState;
@@ -21,7 +23,8 @@ export interface RootState {
   validation: ValidationState;
   report: ReportState;
   language: LanguageState;
-  search: SearchState;
+  selection: SelectionState;
+  searchParameters: SearchParameterState;
   ui: UiState;
   map: MapState;
 }
@@ -34,7 +37,8 @@ export const rootReducer = combineReducers<RootState>({
   validation,
   report,
   language,
-  search,
+  selection,
+  searchParameters,
   ui,
   map,
 });

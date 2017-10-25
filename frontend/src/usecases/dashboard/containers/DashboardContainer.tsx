@@ -2,7 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {
@@ -12,7 +12,7 @@ import {
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
-import {selectDashboardIndicatorWidget} from '../../ui/indicatorActions';
+import {selectDashboardIndicatorWidget} from '../../../state/ui/indicatorActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';

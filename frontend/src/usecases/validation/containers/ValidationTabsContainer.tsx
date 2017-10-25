@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Image} from '../../common/components/images/Image';
 import {Tab} from '../../common/components/tabs/components/Tab';
@@ -13,7 +13,7 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../ui/tabsActions';
+import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
 import {ValidationList} from '../components/ValidationList';
 import {normalizedValidationData} from '../models/normalizedValidationData';
 

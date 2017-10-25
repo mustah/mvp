@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
-import {sideMenu, SideMenuState} from '../sidemenu/sideMenuReducer';
-import {TabsState} from '../common/components/tabs/models/TabsModel';
+import {sideMenu, SideMenuState} from '../../usecases/sidemenu/sideMenuReducer';
+import {TabsState} from '../../usecases/common/components/tabs/models/TabsModel';
 import {tabs} from './tabsReducer';
 import {indicator, IndicatorState} from './indicatorReducer';
 

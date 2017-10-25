@@ -1,5 +1,5 @@
 import * as React from 'react';
-import 'SearchResultList.scss';
+import 'SelectionResultList.scss';
 import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';

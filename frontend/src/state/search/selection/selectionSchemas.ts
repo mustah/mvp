@@ -5,7 +5,7 @@ const address = new schema.Entity('addresses');
 const status = new schema.Entity('statuses');
 const meteringPoint = new schema.Entity('meteringPoints');
 
-export const searchOptionsSchema = {
+export const selectionSchema = {
   cities: [city],
   addresses: [address],
   statuses: [status],

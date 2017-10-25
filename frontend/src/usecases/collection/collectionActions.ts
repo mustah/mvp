@@ -1,5 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {RootState} from '../../reducers/index';
+import {RootState} from '../../reducers/rootReducer';
 import {filterToUri, restClient} from '../../services/restClient';
 import {Gateway} from './models/Collections';
 

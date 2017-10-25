@@ -2,16 +2,16 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/index';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
 import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
 import {MainTitle} from '../../common/components/texts/Title';
-import {SearchParameter} from '../../search/models/searchModels';
-import {toggleSearchOption} from '../../search/searchActions';
-import {SearchState} from '../../search/searchReducer';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {toggleSelection} from '../../../state/search/selection/selectionActions';
+import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
 import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {Category, CollectionState, Pagination} from '../models/Collections';
@@ -22,11 +22,11 @@ interface DispatchToProps {
   fetchGateways: (filter, page: number, limit: number) => void;
   filterAction: (filter) => void;
   filterDelete: (something, value) => void;
-  toggleSearchOption: (searchParameters: SearchParameter) => void;
+  toggleSearchOption: (searchParameters: SelectionParameter) => void;
 }
 
 interface StateToProps {
-  search: SearchState;
+  selection: SelectionState;
   collection: CollectionState;
   categories: Category;
   pagination: Pagination;
@@ -43,7 +43,7 @@ class CollectionContainer extends React.Component<Props> {
   }
 
   render() {
-    const {categories, filterAction, filterDelete, collection: {filter}, search, toggleSearchOption} = this.props;
+    const {categories, filterAction, filterDelete, collection: {filter}, selection, toggleSearchOption} = this.props;
 
     return (
       <PageContainer>
@@ -53,7 +53,7 @@ class CollectionContainer extends React.Component<Props> {
         </Row>
 
         <ProblemOverview
-          search={search}
+          selection={selection}
           categories={categories}
           toggleSearchOption={toggleSearchOption}
           filterAction={filterAction}
@@ -66,13 +66,13 @@ class CollectionContainer extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: RootState) => {
-  const {collection, search} = state;
+  const {collection, selection} = state;
   const {categories, pagination} = collection;
   return {
     collection,
     categories,
     pagination,
-    search,
+    selection,
   };
 };
 
@@ -81,7 +81,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchGateways,
   filterAction: collectionAddFilter,
   filterDelete: collectionRemoveFilter,
-  toggleSearchOption,
+  toggleSearchOption: toggleSelection,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(CollectionContainer);

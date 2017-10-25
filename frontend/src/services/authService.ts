@@ -1,6 +1,6 @@
 import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper';
 import {connectedRouterRedirect} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../reducers/index';
+import {RootState} from '../reducers/rootReducer';
 import {routes} from '../usecases/app/routes';
 
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;

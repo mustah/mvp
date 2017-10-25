@@ -4,10 +4,11 @@ import {translate} from '../../../../services/translationService';
 import {Bold} from '../../../common/components/texts/Texts';
 import {Filter} from '../../models/Collections';
 import './ChosenFilter.scss';
+import {uuid} from '../../../../types/Types';
 
 interface ChosenFilterProps {
   filter: Filter;
-  onDelete: (category: string, value: string) => any;
+  onDelete: (category: string, value: uuid) => any;
 }
 
 export const ChosenFilter = (props: ChosenFilterProps) => {

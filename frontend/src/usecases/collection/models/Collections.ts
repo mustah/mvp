@@ -1,4 +1,5 @@
 import {NormalizedRows} from '../../common/components/table/table/Table';
+import {uuid} from '../../../types/Types';
 
 export interface CollectionState {
   title: string;
@@ -13,7 +14,7 @@ export interface CollectionState {
 
 // TODO manually test that Set is being compiled properly for older browsers
 export interface Filter {
-  [category: string]: Set<string>;
+  [category: string]: Set<uuid>;
 }
 
 export interface Pagination {
