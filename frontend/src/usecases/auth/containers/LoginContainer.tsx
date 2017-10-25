@@ -30,7 +30,7 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
     return (
       <Column className={classNames('LoginContainer', 'Column-center')}>
         <div className="customerLogo">
-          <Logo fill="#f21c0a" />
+          <Logo/>
         </div>
         <form onSubmit={this.login}>
           <div>
