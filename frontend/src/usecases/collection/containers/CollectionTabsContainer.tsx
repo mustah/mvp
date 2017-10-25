@@ -15,6 +15,7 @@ import {CollectionList} from '../components/CollectionList';
 import {Gateway, Pagination} from '../models/Collections';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {collectionChangePage} from '../collectionActions';
+import MapContainer from '../../map/containers/MapContainer';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   gateways: Gateway;
@@ -35,13 +36,17 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-          <Tab title={translate('list')} tab={tabType.list}/>
+          <Tab tab={tabType.list} title={translate('list')}/>
+          <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
         <TabSettings useCase="collection"/>
       </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <CollectionList data={gateways}/>
         <PaginationControl pagination={pagination} changePage={collectionChangePage}/>
+      </TabContent>
+      <TabContent tab={tabType.map} selectedTab={selectedTab}>
+        <MapContainer/>
       </TabContent>
     </Tabs>
   );
