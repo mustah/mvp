@@ -7,7 +7,7 @@ import {TableHead} from '../../common/components/table/table/TableHead';
 import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
 
-export const CollectionList = (props: ListProps) => {
+export const GatewayList = (props: ListProps) => {
 
   const {data} = props;
   const renderStatusCell = (value, index) => <Status code={0} content={value}/>;
