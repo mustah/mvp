@@ -12,13 +12,13 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
 import {CollectionList} from '../components/CollectionList';
-import {Gateway, Pagination} from '../models/Collections';
+import {Gateways, Pagination} from '../models/Collections';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {collectionChangePage} from '../collectionActions';
 import MapContainer from '../../map/containers/MapContainer';
 
 interface CollectionTabsContainer extends TabsContainerProps {
-  gateways: Gateway;
+  gateways: Gateways;
   pagination: Pagination;
   collectionChangePage: (page) => any;
 }
@@ -42,7 +42,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <TabSettings useCase="collection"/>
       </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <CollectionList data={gateways}/>
+        <CollectionList data={{allIds: gateways.result, byId: gateways.entities.gateways}}/>
         <PaginationControl pagination={pagination} changePage={collectionChangePage}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>

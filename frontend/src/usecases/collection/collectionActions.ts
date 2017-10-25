@@ -1,7 +1,8 @@
+import {normalize} from 'normalizr';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {RootState} from '../../reducers/rootReducer';
 import {filterToUri, restClient} from '../../services/restClient';
-import {Gateway} from './models/Collections';
+import {gatewaySchema} from './colllectionSchemas';
 
 export const COLLECTION_REQUEST = 'COLLECTION_REQUEST';
 export const COLLECTION_SUCCESS = 'COLLECTION_SUCCESS';
@@ -102,7 +103,7 @@ export const fetchGateways = (filter, page, limit) => {
         }, '');
 
         return dispatch(gatewaySuccess({
-          gateways: normalizeGateways(gateways),
+          gateways: normalize(gateways, gatewaySchema),
           filter,
           page,
           limit,
@@ -110,15 +111,5 @@ export const fetchGateways = (filter, page, limit) => {
         }));
       })
       .catch(error => dispatch(gatewayFailure(error)));
-  };
-};
-
-// TODO the mapping between back and front end needs to be more formal
-const normalizeGateways = (gatewaysFromBackend): Gateway => {
-  const gatewaysById = {};
-  gatewaysFromBackend.map((g) => gatewaysById[g.id] = g);
-  return {
-    allIds: gatewaysFromBackend.map((g) => g.id),
-    byId: gatewaysById,
   };
 };

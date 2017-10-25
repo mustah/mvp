@@ -11,9 +11,8 @@ import {CollectionState} from './models/Collections';
 
 const initialState: CollectionState = {
   title: 'CollectionState',
-  records: [],
   isFetching: false,
-  gateways: {allIds: [], byId: {}},
+  gateways: {result: [], entities: {gateways: {}}},
   pagination: {page: 1, limit: 20, total: 0},
   filter: {},
   categories: {

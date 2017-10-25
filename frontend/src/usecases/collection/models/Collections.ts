@@ -1,12 +1,11 @@
-import {NormalizedRows} from '../../common/components/table/table/Table';
 import {uuid} from '../../../types/Types';
 
 export interface CollectionState {
   title: string;
-  records: CollectionState[];
+
   error?: string;
   isFetching: boolean;
-  gateways: Gateway;
+  gateways: Gateways;
   categories: Category;
   filter: Filter;
   pagination: Pagination;
@@ -23,8 +22,27 @@ export interface Pagination {
   total: number;
 }
 
-// TODO we must give gateways a type
-export type Gateway = NormalizedRows;
+interface Gateway {
+  [key: string]: {
+    id: string;
+    facility: string;
+    address: string;
+    city: string;
+    product_model: string;
+    telephone_no: string;
+    ip: string;
+    port: string;
+    status: string;
+    position: string;
+  };
+}
+
+export interface Gateways {
+  result: string[];
+  entities: {
+    gateways: Gateway;
+  };
+}
 
 // TODO we must give categories a type
 export interface Category {
