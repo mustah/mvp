@@ -26,8 +26,10 @@ interface State {
   list: IdNamed[];
 }
 
-const filterListOnExpr = (list: IdNamed[], exp: string) =>
-  list.filter((value: IdNamed) => value.name.match(new RegExp(exp, 'i')));
+const filterBy = (list: IdNamed[], exp: string) => {
+  const re = new RegExp(exp, 'i');
+  return list.filter((value: IdNamed) => value.name.match(re));
+};
 
 export class DropdownSelector extends React.Component<Props & Clickable, State> {
 
@@ -50,8 +52,8 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
 
     const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
 
-    const filteredList = filterListOnExpr(list, searchText);
-    const filteredSelectedList = filterListOnExpr(selectedList, searchText);
+    const filteredList = filterBy(list, searchText);
+    const filteredSelectedList = filterBy(selectedList, searchText);
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
@@ -72,7 +74,7 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
         >
           <Menu>
             <Column className="DropdownSelector-menu">
-              <SearchBox value={searchText} onUpdateSearch={this.handleSearchUpdate}/>
+              <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
               <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
               {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
               <CheckboxList onClick={onClick} list={filteredList}/>
@@ -97,7 +99,7 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
     this.setState({isOpen: false, searchText: ''});
   }
 
-  handleSearchUpdate = (event) => { // TODO: add typing to event?
+  whenSearchUpdate = (event) => { // TODO: add typing to event?
     event.preventDefault();
     this.setState({searchText: event.target.value});
   }
