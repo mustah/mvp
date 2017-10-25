@@ -2,6 +2,7 @@ import {Location} from 'history';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {translate} from '../../../../services/translationService';
+import {Logo} from '../../../branding/components/Logo';
 import {SelectionIconButton} from '../icons/IconSelection';
 import {Row} from '../layouts/row/Row';
 import {Summary} from '../summary/Summary';
@@ -25,6 +26,7 @@ export const SelectionSearchSummary = (props: SelectionSearchSummaryProps) => (
       <Summary title="Städer" count="10"/>
       <Summary title="Adresser" count="22"/>
       <Summary title="Mätpunkter" count="2321"/>
+      <Logo small={true}/>
     </Row>
   </Row>
 );

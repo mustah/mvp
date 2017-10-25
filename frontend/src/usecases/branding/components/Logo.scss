@@ -1,14 +1,10 @@
 .EonLogo {
+  height: 148.344px;
+  margin-left: 20px;
+  width: 200px;
 
-  &.white {
-    path {
-      fill: #fff;
-    }
-  }
-
-  &.red {
-    path {
-      fill: #f21c0a;
-    }
+  &.small {
+    height: 148.344px;
+    width: 100px;
   }
 }

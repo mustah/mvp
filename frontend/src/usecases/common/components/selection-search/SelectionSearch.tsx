@@ -5,6 +5,7 @@ import {Row, RowCenter} from '../layouts/row/Row';
 import {Summary} from '../summary/Summary';
 import {Normal} from '../texts/Texts';
 import './SelectionSearch.scss';
+import {Logo} from '../../../branding/components/Logo';
 
 interface OwnProps {
   close: (...args) => void;
@@ -20,6 +21,7 @@ export const SelectionSearch = (props: OwnProps) => (
       <Summary title="Städer" count="10"/>
       <Summary title="Adresser" count="22"/>
       <Summary title="Mätpunkter" count="2321"/>
+      <Logo small={true}/>
     </Row>
   </RowCenter>
 );
