@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal} from '../texts/Texts';
+import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {Indicator, IndicatorType} from './models/IndicatorModels';
 
@@ -22,13 +22,11 @@ export const IndicatorWidget = (props: IndicatorProps) => {
       <Column className="Indicator-wrapper">
         <Column className={classNames('Indicator Column-center', state)}>
           <Row className={classNames('Indicator-name Row-center')}>
-            <Normal>{title}</Normal>
+            <Bold>{title}</Bold>
           </Row>
-          <Row className={classNames('Indicator-value Row-center')}>
-            <Bold>{value}</Bold>
-          </Row>
-          <Row className={classNames('Indicator-unit Row-center')}>
-            <Bold>{unit}</Bold>
+          <Row className="Row-center Row-bottom">
+            <Xlarge className="Indicator-value">{value}</Xlarge>
+            <Normal className="Indicator-unit">{unit}</Normal>
           </Row>
           <Row className={classNames('Indicator-subtitle Row-center')}>
             <Bold>{subtitle}</Bold>

@@ -27,7 +27,10 @@
 
     .Indicator {
       cursor: pointer;
+      border-radius: 3px;
+      box-shadow: $box-shadow;
       height: $status-box-height;
+      justify-content: space-around;
       width: $status-box-width;
       margin-bottom: $sm-space;
 
@@ -37,8 +40,7 @@
       }
 
       .Indicator-unit {
-        font-size: $sm;
-        text-transform: none;
+        padding-bottom: 5px;
       }
 
       .Indicator-subtitle {
@@ -53,6 +55,7 @@
     }
 
     .Indicator-separator {
+      border-radius: 3px;
       height: 8px;
       background-color: transparent;
 
@@ -76,10 +79,4 @@
     }
   }
 
-  &.small {
-    .Indicator {
-      height: 150px;
-      width: 160px;
-    }
-  }
 }
