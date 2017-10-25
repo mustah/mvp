@@ -350,7 +350,8 @@ module.exports = () => {
       };
       const obj = csvjson.toObject(meterData, options);
       obj.forEach((row) => {
-        returnValues.meters.push({
+        const pos = getPosition(row.city);
+        returnValues.gateways.push({
           'id': row.gateway_id,
           'facility': row.facility,
           'address': row.address,
@@ -360,11 +361,9 @@ module.exports = () => {
           'ip': row.ip,
           'port': row.port,
           'status': row.gateway_status,
-          'position': getPosition(row.city),
+          'position': pos,
         });
-      });
-      obj.forEach((row) => {
-        returnValues.gateways.push({
+        returnValues.meters.push({
           'id': row.meter_id,
           'facility': row.facility,
           'address': row.address,
@@ -373,7 +372,7 @@ module.exports = () => {
           'manufacturer': row.meter_manufacturer,
           'status': row.meter_status,
           'gateway_id': row.gateway_id,
-          'position': getPosition(row.city),
+          'position': pos,
         });
       });
     });
