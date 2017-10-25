@@ -17,4 +17,6 @@ export interface SelectionOptions {
   result: SelectionResult;
 }
 
-export interface SearchParameterState {}
+export interface SearchParameterState {
+  selected?: any; // TODO[!must!] fix this
+}
