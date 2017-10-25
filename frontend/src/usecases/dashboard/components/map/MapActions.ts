@@ -21,7 +21,7 @@ export const fetchPositions = () => {
     return (dispatch) => {
       dispatch(createEmptyAction(MAP_POSITION_REQUEST));
 
-      restClient.get('/mps')
+      restClient.get('/meters')
         .then(response => response.data)
         .then(positions => dispatch(mapPositionSuccess(positions)))
         .catch(error => dispatch(mapPositionFailure(error)));
