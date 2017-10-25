@@ -141,9 +141,25 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         );
       }
     }
+
+    const toggleScrollWheelZoom = (e) =>  {
+      if (e.target.scrollWheelZoom.enabled()) {
+        e.target.scrollWheelZoom.disable();
+      } else {
+        e.target.scrollWheelZoom.enable();
+      }
+    };
+
     return (
       <Column>
-        <Map center={startPosition} maxZoom={19} zoom={7} className="Map">
+        <Map
+          center={startPosition}
+          maxZoom={19}
+          zoom={7}
+          className="Map"
+          scrollWheelZoom={false}
+          onclick={toggleScrollWheelZoom}
+        >
           <TileLayer
             url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
