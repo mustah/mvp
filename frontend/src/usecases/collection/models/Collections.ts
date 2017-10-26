@@ -28,8 +28,8 @@ interface Gateway {
     facility: string;
     address: string;
     city: string;
-    product_model: string;
-    telephone_no: string;
+    productModel: string;
+    telephoneNo: string;
     ip: string;
     port: string;
     status: string;

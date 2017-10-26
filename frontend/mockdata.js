@@ -345,33 +345,35 @@ module.exports = () => {
       const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
       const options = {
         delimiter: ';',
-        headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-                 'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+        headers: 'facility;address;city;medium;meterId;meterManufacturer;' +
+                 'gatewayId;gatewayProductModel;tel;ip;port;gatewayStatus;meterStatus',
       };
       const obj = csvjson.toObject(meterData, options);
       obj.forEach((row) => {
         const pos = getPosition(row.city);
+        const {facility, address, city, medium, meterId, meterManufacturer,
+        gatewayId, gatewayProductModel, tel, ip, port, gatewayStatus, meterStatus} = row;
         returnValues.gateways.push({
-          'id': row.gateway_id,
-          'facility': row.facility,
-          'address': row.address,
-          'city': row.city,
-          'product_model': row.gateway_product_model,
-          'telephone_no': row.tel,
-          'ip': row.ip,
-          'port': row.port,
-          'status': row.gateway_status,
+          'id': gatewayId,
+          facility,
+          address,
+          city,
+          'productModel': gatewayProductModel,
+          'telephoneNo': tel,
+          ip,
+          port,
+          'status': gatewayStatus,
           'position': pos,
         });
         returnValues.meters.push({
-          'id': row.meter_id,
-          'facility': row.facility,
-          'address': row.address,
-          'city': row.city,
-          'medium': row.medium,
-          'manufacturer': row.meter_manufacturer,
-          'status': row.meter_status,
-          'gateway_id': row.gateway_id,
+          'id': meterId,
+          facility,
+          address,
+          city,
+          medium,
+          'manufacturer': meterManufacturer,
+          'status': meterStatus,
+          gatewayId,
           'position': pos,
         });
       });

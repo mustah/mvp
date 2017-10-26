@@ -27,10 +27,10 @@ export const GatewayList = (props: ListProps) => {
       />
       <TableColumn
         id={'address'}
-        header={<TableHead>{translate('address', {context: 'plural'})}</TableHead>}
+        header={<TableHead>{translate('address')}</TableHead>}
       />
       <TableColumn
-        id={'product_model'}
+        id={'productModel'}
         header={<TableHead>{translate('product model')}</TableHead>}
       />
       <TableColumn
