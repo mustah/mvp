@@ -4,16 +4,16 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {toggleSelection} from '../../../state/search/selection/selectionActions';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {SelectionState} from '../../../state/search/selection/selectionReducer';
+import {uuid} from '../../../types/Types';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
-import {ProblemOverview} from '../../common/components/problem-overview/ProblemOverview';
+import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {MainTitle} from '../../common/components/texts/Title';
-import {SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {toggleSelection} from '../../../state/search/selection/selectionActions';
-import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
-import {ChosenFilter} from '../components/chosen-filter/ChosenFilter';
 import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
 
@@ -43,7 +43,32 @@ class CollectionContainer extends React.Component<Props> {
   }
 
   render() {
-    const {categories, filterAction, filterDelete, collection: {filter}, selection, toggleSearchOption} = this.props;
+    const cities = [
+      {name: 'Älmhult', value: 822},
+      {name: 'Perstorp', value: 893},
+    ];
+
+    // TODO the city is maybe not an uuid here, but a string.. yikes
+    const selectCity: PieClick = (city: uuid) => alert('You selected the city ' + city);
+
+    const productModels = [
+      {name: 'CMe2100', value: 66},
+      {name: 'CMi2110', value: 1649},
+    ];
+
+    // TODO the city is maybe not an uuid here, but a string.. yikes
+    const selectProductModel: PieClick =
+      (productModel: uuid) => alert('You selected the product model ' + productModel);
+
+    /**
+     * We want the pie charts to differentiate against each other
+     * We can use a service like https://www.sessions.edu/color-calculator/
+     * to find sets of "splít complimentary", "triadic" or "tetriadic" colors.
+     */
+    const colors: [string[]] = [
+      ['#E8A090', '#FCE8CC'],
+      ['#588E95', '#CCD9CE'],
+    ];
 
     return (
       <PageContainer>
@@ -52,13 +77,9 @@ class CollectionContainer extends React.Component<Props> {
           <PeriodSelection/>
         </Row>
 
-        <ProblemOverview
-          selection={selection}
-          categories={categories}
-          toggleSearchOption={toggleSearchOption}
-          filterAction={filterAction}
-        />
-        <ChosenFilter onDelete={filterDelete} filter={filter}/>
+        <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
+        <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+
         <CollectionTabsContainer/>
       </PageContainer>
     );
