@@ -9,13 +9,16 @@ import {translate} from '../../../services/translationService';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
-import {IconCollection, IconDashboard, IconReport, IconValidation} from '../../common/components/icons/Icons';
+import {IconCollection} from '../../common/components/icons/IconCollection';
+import {IconDashboard} from '../../common/components/icons/IconDashboard';
+import {IconValidation} from '../../common/components/icons/IconValidation';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Profile} from '../../profile/components/Profile';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
+import {IconReport} from '../../common/components/icons/IconReport';
 
 interface StateToProps {
   pathname: string;
@@ -47,28 +50,28 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
             <MenuItem
               name={translate('dashboard')}
               isSelected={routes.dashboard === pathname || routes.home === pathname}
-              icon={<IconDashboard/>}
+              icon={<IconDashboard className="MenuItem-icon"/>}
             />
           </Link>
           <Link to={routes.collection} className="link">
             <MenuItem
               name={translate('collection')}
               isSelected={routes.collection === pathname}
-              icon={<IconCollection/>}
+              icon={<IconCollection className="MenuItem-icon"/>}
             />
           </Link>
           <Link to={routes.validation} className="link">
             <MenuItem
               name={translate('validation')}
               isSelected={routes.validation === pathname}
-              icon={<IconValidation/>}
+              icon={<IconValidation className="MenuItem-icon"/>}
             />
           </Link>
           <Link to={routes.report} className="link">
             <MenuItem
               name={translate('report')}
               isSelected={routes.report === pathname}
-              icon={<IconReport/>}
+              icon={<IconReport className="MenuItem-icon"/>}
             />
           </Link>
         </Column>
