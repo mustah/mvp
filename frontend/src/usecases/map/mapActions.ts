@@ -1,7 +1,7 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {Marker} from 'leaflet';
 import {restClient} from '../../services/restClient';
-import {MapState} from './MapReducer';
+import {MapState} from './mapReducer';
 
 export const TOGGLE_CLUSTER_DIALOG = 'TOGGLE_CLUSTER_DIALOG';
 export const OPEN_CLUSTER_DIALOG = 'OPEN_CLUSTER_DIALOG';
