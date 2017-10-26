@@ -105,7 +105,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
-    if (map != null && map.moids != null) {
+    if (map !== null && map.moids !== null) {
       for (const moid of map.moids) {
         if (moid.position == null) {
           continue;
