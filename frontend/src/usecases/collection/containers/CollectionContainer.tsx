@@ -31,7 +31,7 @@ interface StateToProps {
   pagination: Pagination;
 }
 
-type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps ;
 
 class CollectionContainer extends React.Component<Props> {
 
@@ -72,7 +72,7 @@ class CollectionContainer extends React.Component<Props> {
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('collection')}</MainTitle>
-          <PeriodSelection/>
+          <PeriodSelection selectedPeriod={} periods={} />
         </Row>
 
         <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
