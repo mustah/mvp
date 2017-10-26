@@ -106,8 +106,8 @@
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.5.tgz#d713cf67cc211dea20463d2a0b66005c22070c4b"
 
 "@types/recharts@^0.22.7":
-  version "0.22.7"
-  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-0.22.7.tgz#74ce62efea568da4aa961ec15397199af67c2929"
+  version "0.22.10"
+  resolved "https://registry.yarnpkg.com/@types/recharts/-/recharts-0.22.10.tgz#bb8104e7bb621165adb7e1938a934e8fa18ed471"
   dependencies:
     "@types/react" "*"
 
