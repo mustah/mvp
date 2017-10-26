@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Gateway} from '../../../state/domain-models/gateway/gatewayReducer';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {getPaginationList} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
 import {uuid} from '../../../types/Types';
@@ -15,13 +15,13 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
+import MapContainer from '../../map/containers/MapContainer';
 import {collectionChangePage} from '../collectionActions';
 import {GatewayList} from '../components/GatewayList';
 import {Pagination} from '../models/Collections';
-import MapContainer from '../../map/containers/MapContainer';
 
 interface CollectionTabsContainer extends TabsContainerProps {
-  nrOfGateways: number;
+  numOfGateways: number;
   gateways: Gateway;
   paginatedList: uuid[];
   pagination: Pagination;
@@ -29,7 +29,7 @@ interface CollectionTabsContainer extends TabsContainerProps {
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
-  const {selectedTab, changeTab, gateways, pagination, collectionChangePage, paginatedList, nrOfGateways} = props;
+  const {selectedTab, changeTab, gateways, pagination, collectionChangePage, paginatedList, numOfGateways} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'collection',
@@ -48,7 +48,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
-        <PaginationControl pagination={pagination} changePage={collectionChangePage} nrOfEntities={nrOfGateways}/>
+        <PaginationControl pagination={pagination} changePage={collectionChangePage} nrOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>
@@ -63,7 +63,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     selectedTab,
     tabs,
-    nrOfGateways: total,
+    numOfGateways: total,
     gateways: entities.gateways,
     paginatedList: getPaginationList({pagination, gateways: result}),
     pagination,

@@ -14,11 +14,11 @@ import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
-import {domainModels, DomainModels} from '../state/domain-models/domainModelsReducer';
+import {domainModels, DomainModelsState} from '../state/domain-models/domainModelsReducer';
 
 export interface RootState {
   auth: AuthState;
-  domainModels: DomainModels;
+  domainModels: DomainModelsState;
   dashboard: DashboardState;
   collection: CollectionState;
   routing: RouterState;

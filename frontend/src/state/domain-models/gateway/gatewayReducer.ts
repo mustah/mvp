@@ -1,33 +1,6 @@
 import {AnyAction} from 'redux';
 import {GATEWAY_REQUEST, GATEWAY_SUCCESS} from './gatewayActions';
-import {uuid} from '../../../types/Types';
-
-export interface Gateway {
-  [key: string]: {
-    id: string;
-    facility: string;
-    address: string;
-    city: string;
-    productModel: string;
-    telephoneNo: string;
-    ip: string;
-    port: string;
-    status: string;
-    position: string;
-  };
-}
-
-export interface Gateways {
-  result: uuid[];
-  entities: {
-    gateways: Gateway;
-  };
-}
-
-export interface GatewaysState extends Gateways {
-  isFetching: boolean;
-  total: number;
-}
+import {GatewaysState} from './gatewayModels';
 
 const initialState: GatewaysState = {
   isFetching: false,

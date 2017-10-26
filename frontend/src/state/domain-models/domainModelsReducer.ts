@@ -1,10 +1,11 @@
-import {gateways, GatewaysState} from './gateway/gatewayReducer';
 import {combineReducers} from 'redux';
+import {GatewaysState} from './gateway/gatewayModels';
+import {gateways} from './gateway/gatewayReducer';
 
-export interface DomainModels {
+export interface DomainModelsState {
   gateways: GatewaysState;
 }
 
-export const domainModels = combineReducers<DomainModels>({
+export const domainModels = combineReducers<DomainModelsState>({
   gateways,
 });
