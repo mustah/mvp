@@ -13,7 +13,7 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
+import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {ValidationList} from '../components/ValidationList';
 import {normalizedValidationData} from '../models/normalizedValidationData';
 

@@ -4,8 +4,13 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {getPaginationList} from '../../../state/domain-models/gateway/gatewaySelectors';
-import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
+import {
+  getGatewayEntities,
+  getGatewaysTotal,
+  getPaginationList,
+} from '../../../state/domain-models/gateway/gatewaySelectors';
+import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
+import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {Tab} from '../../common/components/tabs/components/Tab';
@@ -22,7 +27,7 @@ import {Pagination} from '../models/Collections';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
-  gateways: Gateway;
+  gateways: {[key: string]: Gateway};
   paginatedList: uuid[];
   pagination: Pagination;
   collectionChangePage: (page) => any;
@@ -58,15 +63,14 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui: {tabs: {collection: {tabs, selectedTab}}}, collection: {pagination}} = state;
-  const {domainModels: {gateways: {result, entities, total}}} = state;
+  const {ui, collection: {pagination}, domainModels: {gateways}} = state;
   return {
-    selectedTab,
-    tabs,
-    numOfGateways: total,
-    gateways: entities.gateways,
-    paginatedList: getPaginationList({pagination, gateways: result}),
-    pagination,
+    selectedTab: getSelectedTab(ui.tabs.collection),
+    tabs: getTabs(ui.tabs.collection),
+    numOfGateways: getGatewaysTotal(gateways),
+    gateways: getGatewayEntities(gateways),
+    paginatedList: getPaginationList({pagination, gateways}),
+    pagination, // TODO: make a selector for pagination, for all usecases.
   };
 };
 

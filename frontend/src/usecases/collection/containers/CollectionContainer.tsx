@@ -37,7 +37,7 @@ class CollectionContainer extends React.Component<Props> {
 
   componentDidMount() {
     this.props.fetchCollections();
-    this.props.fetchGateways(this.props.collection.filter);
+    this.props.fetchGateways(this.props.collection.filter); // TODO: Only fetch if needed.
   }
 
   render() {

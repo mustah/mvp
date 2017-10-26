@@ -12,7 +12,7 @@ import {
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
-import {selectDashboardIndicatorWidget} from '../../../state/ui/indicatorActions';
+import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';

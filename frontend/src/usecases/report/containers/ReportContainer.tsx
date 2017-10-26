@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {selectReportIndicatorWidget} from '../../../state/ui/indicatorActions';
+import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';

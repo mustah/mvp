@@ -1,13 +1,17 @@
 import {createSelector} from 'reselect';
 import {uuid} from '../../../types/Types';
 import {Pagination} from '../../../usecases/collection/models/Collections';
+import {Gateway, Gateways, GatewaysState} from './gatewayModels';
 
 interface PaginatedGateways {
-  gateways: uuid[];
+  gateways: Gateways;
   pagination: Pagination;
 }
 
-const getResult = (state: PaginatedGateways): uuid[] => state.gateways;
+const getResult = (state: PaginatedGateways): uuid[] => state.gateways.result;
+export const getGatewaysTotal = (state: GatewaysState): number => state.total;
+export const getGatewayEntities = (state: GatewaysState): {[key: string]: Gateway} => state.entities.gateways;
+
 const getPagination = (state: PaginatedGateways): Pagination => state.pagination;
 
 export const getPaginationList = createSelector<PaginatedGateways, uuid[], Pagination, uuid[]>(
