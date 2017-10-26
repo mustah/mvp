@@ -13,8 +13,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
-import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../MapActions';
-import {MapState} from '../MapReducer';
+import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../mapActions';
+import {MapState} from '../mapReducer';
 
 interface MapContainerProps {
   map: MapState;

@@ -7,7 +7,7 @@ import {ui, UiState} from '../state/ui/uiReducer';
 import {auth, AuthState} from '../usecases/auth/authReducer';
 import {collection} from '../usecases/collection/collectionReducer';
 import {CollectionState} from '../usecases/collection/models/Collections';
-import {map, MapState} from '../usecases/map/MapReducer';
+import {map, MapState} from '../usecases/map/mapReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {ReportState} from '../usecases/report/models/ReportModels';

@@ -1,23 +1,27 @@
+import {Marker} from 'leaflet';
 import {AnyAction} from 'redux';
 import {
-  TOGGLE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG, MAP_POSITION_REQUEST, MAP_POSITION_SUCCESS,
   MAP_POSITION_FAILURE,
-} from './MapActions';
-import {Marker} from 'leaflet';
+  MAP_POSITION_REQUEST,
+  MAP_POSITION_SUCCESS,
+  OPEN_CLUSTER_DIALOG,
+  TOGGLE_CLUSTER_DIALOG,
+} from './mapActions';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
 
   // TODO type
-  moids?: any;
+  moids: any[];
   selectedMarker?: Marker;
 }
 
 export const initialState: MapState = {
   isClusterDialogOpen: false,
+  moids: [],
 };
 
-export const map = (state: MapState = {isClusterDialogOpen : false}, action: AnyAction): MapState => {
+export const map = (state: MapState = initialState, action: AnyAction): MapState => {
   const {payload} = action;
 
   switch (action.type) {
@@ -37,10 +41,9 @@ export const map = (state: MapState = {isClusterDialogOpen : false}, action: Any
         ...state,
       };
     case MAP_POSITION_SUCCESS:
-
       return {
         ...state,
-        moids: payload,
+        moids: [...payload],
       };
     case MAP_POSITION_FAILURE:
       return {
