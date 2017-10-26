@@ -107,7 +107,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     if (map !== null && map.moids !== null) {
       for (const moid of map.moids) {
-        if (moid.position == null) {
+        if (moid.position === null) {
           continue;
         }
 
