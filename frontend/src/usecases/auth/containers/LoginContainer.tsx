@@ -26,10 +26,6 @@ class LoginContainerComponent extends React.Component<Props> {
   private emailComponent: HTMLInputElement | null;
   private passwordComponent: HTMLInputElement | null;
 
-  login = () => {
-    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
-  }
-
   render() {
     const {auth} = this.props;
     return (
@@ -37,9 +33,13 @@ class LoginContainerComponent extends React.Component<Props> {
         <div className="customerLogo">
           <Logo/>
         </div>
-        <form onSubmit={this.login}>
+        <form onSubmit={this.onSubmit}>
           <div>
-            <input type="text" placeholder={translate('email')} ref={component => this.emailComponent = component}/>
+            <input
+              type="text"
+              placeholder={translate('email')}
+              ref={component => this.emailComponent = component}
+            />
           </div>
           <div>
             <input
@@ -49,7 +49,7 @@ class LoginContainerComponent extends React.Component<Props> {
             />
           </div>
           <div>
-            <input type="submit" onClick={this.login} value="Login"/>
+            <input type="submit" value="Login"/>
           </div>
           {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
         </form>
@@ -57,6 +57,10 @@ class LoginContainerComponent extends React.Component<Props> {
     );
   }
 
+  onSubmit = (event: any): void => {
+    event.preventDefault();
+    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
+  }
 }
 
 const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
