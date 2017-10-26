@@ -5,13 +5,6 @@ const glob = require('glob');
 const fromDbJson = {
   authenticate: [
     {
-      id: 7,
-      firstName: 'Adam',
-      lastName: 'Johnsson',
-      email: 'adam@varme.se',
-      company: 'Värme för alla AB',
-    },
-    {
       id: 8,
       firstName: 'Eva',
       lastName: 'Nilsson',
