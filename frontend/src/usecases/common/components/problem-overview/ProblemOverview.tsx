@@ -15,7 +15,6 @@ import './ProblemOverview.scss';
 interface ProblemOverviewProps {
   categories: Category;
   selection: SelectionState;
-  filterAction: (filter) => void;
   toggleSearchOption: (searchParameters: SelectionParameter) => void;
 }
 

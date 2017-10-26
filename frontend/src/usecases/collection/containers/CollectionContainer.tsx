@@ -4,24 +4,23 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {fetchGateways} from '../../../state/domain-models/gateway/gatewayActions';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {SelectionState} from '../../../state/search/selection/selectionReducer';
-import {uuid} from '../../../types/Types';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {MainTitle} from '../../common/components/texts/Title';
-import {collectionAddFilter, collectionRemoveFilter, fetchCollections, fetchGateways} from '../collectionActions';
+import {fetchCollections} from '../collectionActions';
 import {Category, CollectionState, Pagination} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
+import {uuid} from '../../../types/Types';
 
 interface DispatchToProps {
   fetchCollections: () => void;
-  fetchGateways: (filter, page: number, limit: number) => void;
-  filterAction: (filter) => void;
-  filterDelete: (something, value) => void;
+  fetchGateways: (filter) => void;
   toggleSearchOption: (searchParameters: SelectionParameter) => void;
 }
 
@@ -37,9 +36,8 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class CollectionContainer extends React.Component<Props> {
 
   componentDidMount() {
-    const {pagination: {page, limit}} = this.props;
     this.props.fetchCollections();
-    this.props.fetchGateways(this.props.collection.filter, page, limit);
+    this.props.fetchGateways(this.props.collection.filter);
   }
 
   render() {
@@ -69,6 +67,7 @@ class CollectionContainer extends React.Component<Props> {
       ['#E8A090', '#FCE8CC'],
       ['#588E95', '#CCD9CE'],
     ];
+    const {categories, selection, toggleSearchOption} = this.props;
 
     return (
       <PageContainer>
@@ -100,8 +99,6 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchCollections,
   fetchGateways,
-  filterAction: collectionAddFilter,
-  filterDelete: collectionRemoveFilter,
   toggleSearchOption: toggleSelection,
 }, dispatch);
 

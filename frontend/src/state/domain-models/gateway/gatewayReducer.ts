@@ -1,7 +1,8 @@
 import {AnyAction} from 'redux';
 import {GATEWAY_REQUEST, GATEWAY_SUCCESS} from './gatewayActions';
+import {uuid} from '../../../types/Types';
 
-interface Gateway {
+export interface Gateway {
   [key: string]: {
     id: string;
     facility: string;
@@ -17,22 +18,22 @@ interface Gateway {
 }
 
 export interface Gateways {
-  result: string[];
+  result: uuid[];
   entities: {
     gateways: Gateway;
   };
 }
 
-export interface GatewaysState {
+export interface GatewaysState extends Gateways {
   isFetching: boolean;
   total: number;
-  gateways: Gateways;
 }
 
 const initialState: GatewaysState = {
   isFetching: false,
   total: 0,
-  gateways: {result: [], entities: {gateways: {}}},
+  result: [],
+  entities: {gateways: {}},
 };
 
 export const gateways = (state: GatewaysState = initialState, action: AnyAction) => {
@@ -42,12 +43,13 @@ export const gateways = (state: GatewaysState = initialState, action: AnyAction)
         ...state,
         isFetching: true,
       };
-    case GATEWAY_SUCCESS: // TODO: should add fetched data to existing gateways.
-      const {gateways, total} = action.payload;
+    case GATEWAY_SUCCESS:
+      const {gateways} = action.payload;
       return {
         isFetching: false,
-        total,
-        gateways, // TODO: Does this need to use spread?
+        total: gateways.result.length, // TODO: a work around since we don't use pagination form db.json.
+        // Got total from that before
+        ...gateways,
       };
     default:
       return state;

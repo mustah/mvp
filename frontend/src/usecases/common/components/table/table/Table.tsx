@@ -1,10 +1,11 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {uuid} from '../../../../../types/Types';
 import './Table.scss';
 
 export interface NormalizedRows {
   byId: object;
-  allIds: string[];
+  allIds: uuid[];
 }
 
 interface TableProps {
