@@ -30,11 +30,10 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     const open = (event: any): void => {
       event.preventDefault();
-      this.setState((current) => ({...current, displayDialog: true}));
+      this.setState({displayDialog: true});
     };
 
-    const close = (): void =>
-      this.setState((current) => ({...current, displayDialog: false}));
+    const close = (): void => this.setState({displayDialog: false});
 
     const actions = [
       (
