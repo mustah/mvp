@@ -1,13 +1,17 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
+import {IconCurrent} from '../icons/IconCurrent';
+import {IconDistrictHeating} from '../icons/IconDistrictHeating';
+import {IconReport} from '../icons/IconReport';
+import {IconTemperature} from '../icons/IconTemperature';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {Indicator, IndicatorType} from './models/IndicatorModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
-import {IconReport} from '../icons/IconReport';
 
 interface IndicatorIcon {
   [type: string]: React.ReactElement<SvgIconProps>;
@@ -16,6 +20,12 @@ interface IndicatorIcon {
 const iconFor: IndicatorIcon = {
   [IndicatorType.collection]: <IconCollection className="Indicator-icon"/>,
   [IndicatorType.measurementQuality]: <IconReport className="Indicator-icon"/>,
+  [IndicatorType.current]: <IconCurrent className="Indicator-icon"/>,
+  [IndicatorType.coldWater]: <IconColdWater className="Indicator-icon"/>,
+  [IndicatorType.warmWater]: <IconColdWater className="Indicator-icon"/>,
+  [IndicatorType.districtHeating]: <IconDistrictHeating className="Indicator-icon"/>,
+  [IndicatorType.temperatureInside]: <IconTemperature className="Indicator-icon"/>,
+  [IndicatorType.temperatureOutside]: <IconTemperature className="Indicator-icon" color="black"/>,
 };
 
 interface IndicatorProps {
