@@ -3,6 +3,22 @@ const fs = require('fs');
 const csvjson = require('csvjson');
 const glob = require('glob');
 const fromDbJson = {
+  authenticate: [
+    {
+      id: 7,
+      firstName: 'Adam',
+      lastName: 'Johnsson',
+      email: 'adam@varme.se',
+      company: 'Värme för alla AB',
+    },
+    {
+      id: 8,
+      firstName: 'Eva',
+      lastName: 'Nilsson',
+      email: 'evanil@elvaco.se',
+      company: 'Bostäder AB',
+    },
+  ],
   'todos': [
     'translate unhandled and handled collections in the right place',
   ],
@@ -339,7 +355,7 @@ module.exports = () => {
       const options = {
         delimiter: ';',
         headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-        'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+                 'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
       };
       const obj = csvjson.toObject(meterData, options);
       obj.forEach((row) => {

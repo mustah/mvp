@@ -11,6 +11,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.9\n"
+
+msgid "logout"
+msgstr "logga ut"
+
 msgid "email"
 msgstr "email"
 
