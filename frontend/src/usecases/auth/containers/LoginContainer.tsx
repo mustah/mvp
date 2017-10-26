@@ -5,25 +5,26 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {Logo} from '../../branding/components/Logo';
 import {Column} from '../../common/components/layouts/column/Column';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
-import {Logo} from '../../branding/components/Logo';
 
-export interface LoginProps {
-  login: (email: string, password: string) => any;
+interface StateToProps {
   auth: AuthState;
 }
 
-class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProps> {
+interface DispatchToProps {
+  login: (email: string, password: string) => any;
+}
+
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class LoginContainerComponent extends React.Component<Props> {
 
   private emailComponent: HTMLInputElement | null;
   private passwordComponent: HTMLInputElement | null;
-
-  login = () => {
-    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
-  }
 
   render() {
     const {auth} = this.props;
@@ -32,9 +33,13 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
         <div className="customerLogo">
           <Logo/>
         </div>
-        <form onSubmit={this.login}>
+        <form onSubmit={this.onSubmit}>
           <div>
-            <input type="text" placeholder={translate('email')} ref={component => this.emailComponent = component}/>
+            <input
+              type="text"
+              placeholder={translate('email')}
+              ref={component => this.emailComponent = component}
+            />
           </div>
           <div>
             <input
@@ -44,7 +49,7 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
             />
           </div>
           <div>
-            <input type="submit" onClick={this.login} value="Login"/>
+            <input type="submit" value="Login"/>
           </div>
           {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
         </form>
@@ -52,12 +57,17 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
     );
   }
 
+  onSubmit = (event: any): void => {
+    event.preventDefault();
+    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
+  }
 }
 
-const mapStateToProps = (state: RootState) => ({auth: state.auth});
+const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   login,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export const LoginContainer =
+  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);

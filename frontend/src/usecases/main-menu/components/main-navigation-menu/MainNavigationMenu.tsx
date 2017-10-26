@@ -5,18 +5,16 @@ import './MainNavigationMenu.scss';
 
 interface MainNavigationMenuProps {
   isOpen: boolean;
-  disabled: boolean;
   toggleShowHideSideMenu: () => any;
 }
 
 export const MainNavigationMenu = (props: MainNavigationMenuProps) => {
-  const {isOpen, toggleShowHideSideMenu, disabled} = props;
+  const {isOpen, toggleShowHideSideMenu} = props;
   return (
     <RowCenter className="MainNavigationMenu">
       <IconNavigationMenu
         color="white"
         onClick={toggleShowHideSideMenu}
-        disabled={disabled}
         isOpen={isOpen}
       />
     </RowCenter>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Route} from 'react-router';
 import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
-import LoginContainer from '../auth/containers/LoginContainer';
+import {LoginContainer} from '../auth/containers/LoginContainer';
 import CollectionContainer from '../collection/containers/CollectionContainer';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';

@@ -33,6 +33,16 @@
   text-transform: uppercase;
 }
 
+.first-uppercase {
+  :first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
 .Italic {
   font-style: italic;
 }
