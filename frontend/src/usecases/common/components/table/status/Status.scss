@@ -2,30 +2,30 @@
 
 .Status {
   align-items: center;
-
-  .StatusIcon {
-    display: inline-block;
-    height: 18px;
-    margin-right: 4px;
-    text-indent: -99999em;
-    width: 18px;
-
-    &.ok {
-      background: $green;
-    }
-
-    &.warning {
-      background: $orange;
-    }
-
-    &.critical {
-      background: $red;
-    }
-  }
   .Status-text {
 
     &:first-letter {
       text-transform: uppercase;
     }
+  }
+}
+
+.StatusIcon {
+  display: inline-block;
+  height: 18px;
+  margin-right: 4px;
+  text-indent: -99999em;
+  width: 18px;
+
+  &.ok {
+    background: $green;
+  }
+
+  &.warning {
+    background: $orange;
+  }
+
+  &.critical {
+    background: $red;
   }
 }

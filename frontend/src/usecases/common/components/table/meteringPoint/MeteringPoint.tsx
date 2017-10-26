@@ -4,7 +4,7 @@ import 'MeteringPoint.scss';
 import * as React from 'react';
 import {translate} from '../../../../../services/translationService';
 import {Column} from '../../layouts/column/Column';
-import {Row} from '../../layouts/row/Row';
+import {Row, RowCenter} from '../../layouts/row/Row';
 import {StatusIcon} from '../status/StatusIcon';
 
 interface MeteringPointProps {
@@ -63,70 +63,70 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
             <Column>
               <Row>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('meter id')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     12000747
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('product model')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     KAM
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('city')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     Perstorp
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('address')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     Duvstigen 5
-                  </Row>
+                  </RowCenter>
                 </Column>
               </Row>
               <Row>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('collection')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     <StatusIcon code={0}/>
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('validation')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     <StatusIcon code={3}/>
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('status')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     Läckage
-                  </Row>
+                  </RowCenter>
                 </Column>
                 <Column>
-                  <Row>
+                  <RowCenter>
                     {translate('status')}
-                  </Row>
-                  <Row>
+                  </RowCenter>
+                  <RowCenter>
                     {translate('action pending')}
-                  </Row>
+                  </RowCenter>
                 </Column>
               </Row>
             </Column>
