@@ -1,7 +1,8 @@
-import {Location} from 'history';
+import {Pathname} from 'history';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {translate} from '../../../../services/translationService';
+import {routes} from '../../../app/routes';
 import {Logo} from '../../../branding/components/Logo';
 import {SelectionIconButton} from '../icons/IconSelection';
 import {Row} from '../layouts/row/Row';
@@ -10,13 +11,16 @@ import {Normal} from '../texts/Texts';
 import './SelectionSearch.scss';
 
 interface SelectionSearchSummaryProps {
-  location: Location;
+  pathname: Pathname;
 }
+
+const resolveSearchPath = (pathname: Pathname): Pathname =>
+  pathname === routes.home ? `search` : `${pathname}/search`;
 
 export const SelectionSearchSummary = (props: SelectionSearchSummaryProps) => (
   <Row className="SelectionSearch-Container Row-center">
     <Row className="SelectionSearch">
-      <Link to={`${props.location.pathname}/search`}>
+      <Link to={resolveSearchPath(props.pathname)}>
         <SelectionIconButton/>
       </Link>
       <Normal>{translate('selection')}: </Normal>

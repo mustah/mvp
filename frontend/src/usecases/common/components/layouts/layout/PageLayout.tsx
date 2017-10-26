@@ -1,9 +1,9 @@
-import {Location} from 'history';
+import {Pathname} from 'history';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../../reducers/rootReducer';
-import {getLocation, isSearchPage} from '../../../../../selectors/routerSelector';
+import {getPathname, isSearchPage} from '../../../../../selectors/routerSelector';
 import {closeSearch} from '../../../../../state/search/selection/selectionActions';
 import {SelectionSearch} from '../../selection-search/SelectionSearch';
 import {SelectionSearchSummary} from '../../selection-search/SelectionSearchSummary';
@@ -13,7 +13,7 @@ import {Layout} from './Layout';
 
 interface StateToProps {
   children?: React.ReactNode[] | React.ReactNode;
-  location: Location;
+  pathname: Pathname;
   isSearchPage: boolean;
 }
 
@@ -22,11 +22,11 @@ interface DispatchToProps {
 }
 
 const PageLayoutContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {children, closeSearch, isSearchPage, location} = props;
+  const {children, closeSearch, isSearchPage, pathname} = props;
 
   const renderSelectionSearch = isSearchPage
     ? <SelectionSearch close={closeSearch}/>
-    : <SelectionSearchSummary location={location}/>;
+    : <SelectionSearchSummary pathname={pathname}/>;
 
   return (
     <Layout>
@@ -43,7 +43,7 @@ const PageLayoutContainerComponent = (props: StateToProps & DispatchToProps) => 
 const mapStateToProps = (state: RootState): StateToProps => {
   return {
     isSearchPage: isSearchPage(state.routing),
-    location: getLocation(state.routing),
+    pathname: getPathname(state.routing),
   };
 };
 
