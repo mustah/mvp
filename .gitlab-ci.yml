@@ -33,11 +33,11 @@ build:
             - .version
         expire_in: 1 month
 
-deploy_review:
+.review_app_job_template: &review_app
     stage: deploy
     variables:
-        GIT_STRATEGY: none
-        CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG  
+      GIT_STRATEGY: none
+      CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG
     before_script:
         - echo "Removing review container $CONTAINER_NAME"
         - docker stop $CONTAINER_NAME || true
@@ -48,7 +48,6 @@ deploy_review:
         name: review/$CI_COMMIT_REF_NAME
         url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
         on_stop: teardown_review
-    when: manual
     script:
         - rm -rf app-root
         - mkdir app-root
@@ -60,15 +59,34 @@ deploy_review:
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
 
+
+
+deploy_protected:
+  <<: *review_app
+  only:
+    - eon
+    - develop
+    - master
+
+deploy_review:
+  <<: *review_app
+  when: manual
+  only:
+    - branches
+  except:
+    - eon
+    - develop
+    - master
+
 teardown_review:
     stage: deploy
     variables:
-        GIT_STRATEGY: none
-        CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG  
+      GIT_STRATEGY: none
+      CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG
     script:
-        - echo "Removing review container $CONTAINER_NAME"
-        - docker stop $CONTAINER_NAME || true
-        - docker rm $CONTAINER_NAME || true
+      - echo "Removing review container $CONTAINER_NAME"
+      - docker stop $CONTAINER_NAME || true
+      - docker rm $CONTAINER_NAME || true
     when: manual
     environment:
         name: review/$CI_COMMIT_REF_NAME
