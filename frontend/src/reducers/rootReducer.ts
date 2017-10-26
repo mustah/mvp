@@ -14,16 +14,18 @@ import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
 import {ValidationState} from '../usecases/validation/models/Validations';
 import {validation} from '../usecases/validation/validationReducer';
+import {domainModels, DomainModels} from '../state/domain-models/domainModelsReducer';
 
 export interface RootState {
   auth: AuthState;
+  domainModels: DomainModels;
   dashboard: DashboardState;
   collection: CollectionState;
   routing: RouterState;
   validation: ValidationState;
   report: ReportState;
   language: LanguageState;
-  selection: SelectionState;
+  selection: SelectionState; // TODO: remove since it's in searchParameters?
   searchParameters: SearchParameterState;
   ui: UiState;
   map: MapState;
@@ -31,13 +33,14 @@ export interface RootState {
 
 export const rootReducer = combineReducers<RootState>({
   auth,
+  domainModels,
   dashboard,
   collection,
   routing,
   validation,
   report,
   language,
-  selection,
+  selection, // TODO: remove since it's in searchParameters?
   searchParameters,
   ui,
   map,

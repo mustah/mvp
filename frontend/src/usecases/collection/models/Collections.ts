@@ -2,10 +2,8 @@ import {uuid} from '../../../types/Types';
 
 export interface CollectionState {
   title: string;
-
   error?: string;
   isFetching: boolean;
-  gateways: Gateways;
   categories: Category;
   filter: Filter;
   pagination: Pagination;
@@ -19,29 +17,6 @@ export interface Filter {
 export interface Pagination {
   page: number;
   limit: number;
-  total: number;
-}
-
-interface Gateway {
-  [key: string]: {
-    id: string;
-    facility: string;
-    address: string;
-    city: string;
-    productModel: string;
-    telephoneNo: string;
-    ip: string;
-    port: string;
-    status: string;
-    position: string;
-  };
-}
-
-export interface Gateways {
-  result: string[];
-  entities: {
-    gateways: Gateway;
-  };
 }
 
 // TODO we must give categories a type

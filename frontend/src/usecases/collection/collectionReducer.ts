@@ -4,16 +4,13 @@ import {
   COLLECTION_REQUEST,
   COLLECTION_SET_FILTER,
   COLLECTION_SUCCESS,
-  GATEWAY_REQUEST,
-  GATEWAY_SUCCESS,
 } from './collectionActions';
 import {CollectionState} from './models/Collections';
 
 const initialState: CollectionState = {
   title: 'CollectionState',
   isFetching: false,
-  gateways: {result: [], entities: {gateways: {}}},
-  pagination: {page: 1, limit: 20, total: 0},
+  pagination: {page: 1, limit: 20},
   filter: {},
   categories: {
     handled: {
@@ -53,25 +50,6 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
       return {
         ...state,
         categories: action.payload,
-        isFetching: false,
-      };
-    case GATEWAY_REQUEST:
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case GATEWAY_SUCCESS:
-      const {gateways, filter, page, limit, total} = action.payload;
-      return {
-        ...state,
-        gateways,
-        filter,
-        pagination: {
-          ...state.pagination,
-          page,
-          limit,
-          total,
-        },
         isFetching: false,
       };
     case COLLECTION_SET_FILTER:
