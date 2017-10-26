@@ -1,20 +1,15 @@
 import {AnyAction} from 'redux';
 import {
-  COLLECTION_ADD_FILTER,
+  COLLECTION_CHANGE_PAGE,
   COLLECTION_REQUEST,
-  COLLECTION_SET_FILTER,
   COLLECTION_SUCCESS,
-  GATEWAY_REQUEST,
-  GATEWAY_SUCCESS,
 } from './collectionActions';
 import {CollectionState} from './models/Collections';
 
 const initialState: CollectionState = {
   title: 'CollectionState',
-  records: [],
   isFetching: false,
-  gateways: {allIds: [], byId: {}},
-  pagination: {page: 1, limit: 20, total: 0},
+  pagination: {page: 1, limit: 20},
   filter: {},
   categories: {
     handled: {
@@ -56,38 +51,12 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         categories: action.payload,
         isFetching: false,
       };
-    case GATEWAY_REQUEST:
+    case COLLECTION_CHANGE_PAGE:
       return {
         ...state,
-        isFetching: true,
-      };
-    case GATEWAY_SUCCESS:
-      const {gateways, filter, page, limit, total} = action.payload;
-      return {
-        ...state,
-        gateways,
-        filter,
         pagination: {
           ...state.pagination,
-          page,
-          limit,
-          total,
-        },
-        isFetching: false,
-      };
-    case COLLECTION_SET_FILTER:
-      return {
-        ...state,
-        filter: {
-          ...action.payload,
-        },
-      };
-    case COLLECTION_ADD_FILTER:
-      return {
-        ...state,
-        filter: {
-          ...state.filter,
-          ...action.payload,
+          page: action.payload,
         },
       };
     default:

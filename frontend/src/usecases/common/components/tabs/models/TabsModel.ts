@@ -1,3 +1,5 @@
+import {NormalizedRows} from '../../table/table/Table';
+
 export enum tabType {
   list = 'list',
   map = 'map',
@@ -5,7 +7,7 @@ export enum tabType {
 }
 
 export interface ListProps {
-  data: any;
+  data: NormalizedRows;
 }
 
 export interface TabModel {

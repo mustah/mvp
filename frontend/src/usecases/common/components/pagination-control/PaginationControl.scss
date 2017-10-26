@@ -1,0 +1,9 @@
+@import '../../../app/variables';
+
+.PaginationControl {
+  align-items: center;
+  .PaginationControl-button {
+    margin: 0 5px;
+    background-color: $grey;
+  }
+}

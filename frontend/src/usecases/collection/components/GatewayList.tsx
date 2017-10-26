@@ -7,10 +7,10 @@ import {TableHead} from '../../common/components/table/table/TableHead';
 import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
 
-export const CollectionList = (props: ListProps) => {
+export const GatewayList = (props: ListProps) => {
 
   const {data} = props;
-  const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
+  const renderStatusCell = (value, index) => <Status code={0} content={value}/>;
   // TODO abstract out MeteringPoint <> Gateway
   const renderGateway = (value, index) => <MeteringPoint id={value}/>;
 
@@ -26,12 +26,12 @@ export const CollectionList = (props: ListProps) => {
         header={<TableHead>{translate('city')}</TableHead>}
       />
       <TableColumn
-        id={'product_model'}
-        header={<TableHead>{translate('product model')}</TableHead>}
+        id={'address'}
+        header={<TableHead>{translate('address')}</TableHead>}
       />
       <TableColumn
-        id={'connected_meters'}
-        header={<TableHead>{translate('meter', {context: 'plural'})}</TableHead>}
+        id={'productModel'}
+        header={<TableHead>{translate('product model')}</TableHead>}
       />
       <TableColumn
         id={'status'}

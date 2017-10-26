@@ -1,6 +1,6 @@
 import {IndicatorType} from '../../../usecases/common/components/indicators/models/IndicatorModels';
-import {selectIndicatorWidget} from '../indicatorActions';
-import {indicator, IndicatorState, initialState} from '../indicatorReducer';
+import {selectIndicatorWidget} from '../indicator/indicatorActions';
+import {indicator, IndicatorState, initialState} from '../indicator/indicatorReducer';
 
 describe('uiReducer', () => {
 

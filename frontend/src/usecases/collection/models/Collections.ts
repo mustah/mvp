@@ -1,12 +1,9 @@
-import {NormalizedRows} from '../../common/components/table/table/Table';
 import {uuid} from '../../../types/Types';
 
 export interface CollectionState {
   title: string;
-  records: CollectionState[];
   error?: string;
   isFetching: boolean;
-  gateways: Gateway;
   categories: Category;
   filter: Filter;
   pagination: Pagination;
@@ -20,11 +17,7 @@ export interface Filter {
 export interface Pagination {
   page: number;
   limit: number;
-  total: number;
 }
-
-// TODO we must give gateways a type
-export type Gateway = NormalizedRows;
 
 // TODO we must give categories a type
 export interface Category {
