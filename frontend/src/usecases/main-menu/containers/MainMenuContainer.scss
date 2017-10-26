@@ -8,4 +8,18 @@
   width: $main-menu-width;
   background-color: $dark-blue;
   z-index: $main-menu-z-index;
+
+  .MenuItems {
+    flex: 1;
+  }
+
+  .ProfileWrapper {
+    padding: $sm-space 0;
+    color: $white;
+
+    &:hover {
+      background: $primary-bg-hover;
+      color: $primary-fg-hover;
+    }
+  }
 }

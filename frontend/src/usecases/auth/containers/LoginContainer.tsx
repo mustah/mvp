@@ -5,18 +5,23 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {Logo} from '../../branding/components/Logo';
 import {Column} from '../../common/components/layouts/column/Column';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
-import {Logo} from '../../branding/components/Logo';
 
-export interface LoginProps {
-  login: (email: string, password: string) => any;
+interface StateToProps {
   auth: AuthState;
 }
 
-class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProps> {
+interface DispatchToProps {
+  login: (email: string, password: string) => any;
+}
+
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class LoginContainerComponent extends React.Component<Props> {
 
   private emailComponent: HTMLInputElement | null;
   private passwordComponent: HTMLInputElement | null;
@@ -54,10 +59,11 @@ class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProp
 
 }
 
-const mapStateToProps = (state: RootState) => ({auth: state.auth});
+const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   login,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export const LoginContainer =
+  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);

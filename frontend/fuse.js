@@ -96,6 +96,7 @@ Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
 Sparky.task('convert-po-to-json', ['extract-translations'], () => convertPoToJson({base: homeDir}));
 
 Sparky.task('build-mock-database', ['config'], () => buildMockDatabase({dist: distDir}));
+
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
 
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
