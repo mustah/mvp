@@ -1,6 +1,6 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {Marker} from 'leaflet';
-import {restClient} from '../../../../services/restClient';
+import {restClient} from '../../services/restClient';
 import {MapState} from './MapReducer';
 
 export const TOGGLE_CLUSTER_DIALOG = 'TOGGLE_CLUSTER_DIALOG';
@@ -21,7 +21,7 @@ export const fetchPositions = () => {
     return (dispatch) => {
       dispatch(createEmptyAction(MAP_POSITION_REQUEST));
 
-      restClient.get('/mps')
+      restClient.get('/meters')
         .then(response => response.data)
         .then(positions => dispatch(mapPositionSuccess(positions)))
         .catch(error => dispatch(mapPositionFailure(error)));

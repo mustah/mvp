@@ -17,7 +17,7 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {changeTab, changeTabOption} from '../../../state/ui/tabsActions';
 import {normalizedData} from '../models/dashboardModels';
-import MapContainer from '../components/map/containers/MapContainer';
+import MapContainer from '../../map/containers/MapContainer';
 
 const DashboardTabsContainer = (props: TabsContainerProps) => {
   const {selectedTab, changeTab} = props;

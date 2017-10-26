@@ -9,9 +9,9 @@ import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../../../reducers/rootReducer';
-import {translate} from '../../../../../services/translationService';
-import {Column} from '../../../../common/components/layouts/column/Column';
+import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
+import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../MapActions';
 import {MapState} from '../MapReducer';
@@ -76,7 +76,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
           x = 30;
         }
 
-        let percent = (cluster.getChildCount() - errorCount - warningCount) / (cluster.getChildCount() * 100);
+        let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
         percent = Math.round(percent);
 
         if (percent === 100) {
@@ -105,8 +105,11 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
-    if (map != null && map.moids != null) {
+    if (map !== null && map.moids !== null) {
       for (const moid of map.moids) {
+        if (moid.position === null) {
+          continue;
+        }
 
         // TODO change status to a enumeration!
         switch (moid.status) {
@@ -141,11 +144,27 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         );
       }
     }
+
+    const toggleScrollWheelZoom = (e) =>  {
+      if (e.target.scrollWheelZoom.enabled()) {
+        e.target.scrollWheelZoom.disable();
+      } else {
+        e.target.scrollWheelZoom.enable();
+      }
+    };
+
     return (
       <Column>
-        <Map center={startPosition} maxZoom={19} zoom={7} className="Map">
+        <Map
+          center={startPosition}
+          maxZoom={19}
+          zoom={7}
+          className="Map"
+          scrollWheelZoom={false}
+          onclick={toggleScrollWheelZoom}
+        >
           <TileLayer
-            url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png"
+            url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup

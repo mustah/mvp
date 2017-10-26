@@ -360,6 +360,7 @@ module.exports = () => {
           'ip': row.ip,
           'port': row.port,
           'status': row.gateway_status,
+          'position': getPosition(row.city),
         });
       });
       obj.forEach((row) => {
