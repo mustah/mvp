@@ -67,7 +67,6 @@ class CollectionContainer extends React.Component<Props> {
       ['#E8A090', '#FCE8CC'],
       ['#588E95', '#CCD9CE'],
     ];
-    const {categories, selection, toggleSearchOption} = this.props;
 
     return (
       <PageContainer>
