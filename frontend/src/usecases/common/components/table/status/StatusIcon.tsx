@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import 'Status.scss';
 import {statusFor} from '../../../../../types/Types';
 
 interface StatusIconProps {
@@ -12,5 +13,5 @@ export const StatusIcon = (props: StatusIconProps) => {
   if (!status) {
     return null;
   }
-  return <div className={classNames('StatusIcon', status)}/>;
+  return <div className={classNames('StatusIcon', status)}>{status}</div>;
 };
