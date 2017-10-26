@@ -12,6 +12,7 @@ const style = {
 
 export const IconMore = (props: Clickable) => (
   <IconButton
+    className="IconButton"
     style={style}
     onClick={props.onClick}
   >
