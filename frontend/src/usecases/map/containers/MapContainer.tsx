@@ -105,45 +105,38 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
-    if (map && map.moids) {
-      for (const moid of map.moids) {
-        if (moid.position === null) {
-          continue;
+    map.moids.forEach(moid => {
+      switch (moid.status) {
+        case 0: {
+          tmpIcon = 'marker-icon-ok.png';
+          break;
         }
-
-        // TODO change status to a enumeration!
-        switch (moid.status) {
-          case 0: {
-            tmpIcon = 'marker-icon-ok.png';
-            break;
-          }
-          case 1: {
-            tmpIcon = 'marker-icon-warning.png';
-            break;
-          }
-          case 2: {
-            tmpIcon = 'marker-icon-error.png';
-            break;
-          }
-          default: {
-            tmpIcon = 'marker-icon.png';
-          }
+        case 1: {
+          tmpIcon = 'marker-icon-warning.png';
+          break;
         }
-
-        markers.push(
-          {
-            lat: moid.position.lat,
-            lng: moid.position.lng,
-            options: {
-              icon: L.icon({
-                iconUrl: tmpIcon,
-              }),
-            },
-            status: moid.status,
-          },
-        );
+        case 2: {
+          tmpIcon = 'marker-icon-error.png';
+          break;
+        }
+        default: {
+          tmpIcon = 'marker-icon.png';
+        }
       }
-    }
+
+      markers.push(
+        {
+          lat: moid.position.lat,
+          lng: moid.position.lng,
+          options: {
+            icon: L.icon({
+              iconUrl: tmpIcon,
+            }),
+          },
+          status: moid.status,
+        },
+      );
+    });
 
     const toggleScrollWheelZoom = (e) =>  {
       if (e.target.scrollWheelZoom.enabled()) {
