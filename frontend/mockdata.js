@@ -3,15 +3,13 @@ const fs = require('fs');
 const csvjson = require('csvjson');
 const glob = require('glob');
 const fromDbJson = {
-  authenticate: [
-    {
-      id: 8,
-      firstName: 'Eva',
-      lastName: 'Nilsson',
-      email: 'evanil@elvaco.se',
-      company: 'Bostäder AB',
-    },
-  ],
+  authenticate: {
+    id: 8,
+    firstName: 'Eva',
+    lastName: 'Nilsson',
+    email: 'evanil@elvaco.se',
+    company: 'Bostäder AB',
+  },
   'todos': [
     'translate unhandled and handled collections in the right place',
   ],

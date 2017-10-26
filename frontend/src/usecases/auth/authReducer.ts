@@ -45,7 +45,7 @@ export const auth = (state: AuthState = initialAuthState, action: AnyAction): Au
         ...state,
         isLoading: false,
         isAuthenticated: true,
-        user: {...payload.user[0]}, // TODO[!must!] remove after demo
+        user: {...payload.user},
         token: payload.token,
         error: undefined,
       };
