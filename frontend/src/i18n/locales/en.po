@@ -1,19 +1,15 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-19T07:57:13.675Z\n"
-"PO-Revision-Date: 2017-10-19 09:59+0200\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-10-26 13:51+0200\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 1.8.9\n"
-
-msgid "logout"
-msgstr "logout"
 
 msgid "email"
 msgstr "email"
@@ -45,11 +41,11 @@ msgstr "action"
 msgid "collection"
 msgstr "collection"
 
-msgid "current filter"
-msgstr "current filter"
-
 msgid "list"
 msgstr "list"
+
+msgid "all"
+msgstr "all"
 
 msgid "unhandled problems"
 msgstr "unhandled problems"
@@ -84,11 +80,17 @@ msgstr "new search"
 msgid "selection"
 msgstr "selection"
 
-msgid "all"
-msgstr "all"
-
 msgid "close"
 msgstr "close"
+
+msgid "meter details"
+msgstr "meter details"
+
+msgid "meter id"
+msgstr "meter id"
+
+msgid "address"
+msgstr "address"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -108,6 +110,9 @@ msgstr "validation"
 msgid "report"
 msgstr "report"
 
+msgid "logout"
+msgstr "logout"
+
 msgid "metering"
 msgstr "metering"
 
@@ -125,16 +130,16 @@ msgstr "facility"
 
 msgctxt "°plural"
 msgid "meter°"
-msgstr "meters"
+msgstr "meter°"
 
 msgctxt "°plural"
 msgid "{{count}} errand°"
-msgstr "{{count}} errands"
+msgstr "{{count}} errand°"
 
 msgctxt "°plural"
 msgid "{{count}} city°"
-msgstr "{{count}} cities"
+msgstr "{{count}} city°"
 
 msgctxt "°plural"
 msgid "{{count}} product°"
-msgstr "{{count}} products"
+msgstr "{{count}} product°"
