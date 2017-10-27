@@ -381,6 +381,9 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
           console.log('found position', pos, 'for', geoKey);
         }
       }
+
+      const nullOr = (s) => s === 'NULL' ? null : s;
+
       r.gateways.push({
         id: row.gateway_id,
         facility: row.facility,
@@ -388,8 +391,8 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         city: row.city,
         productModel: row.gateway_product_model,
         telephoneNumber: row.tel,
-        ip: row.ip,
-        port: row.port,
+        ip: nullOr(row.ip),
+        port: nullOr(row.port),
         status: row.gateway_status,
         position: objPosition,
       });
