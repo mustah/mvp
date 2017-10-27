@@ -125,12 +125,12 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         }
       }
 
-      const {lat, lng} = moid.position;
-      if (lat && lng) {
+      const {latitude, longitude} = moid.position;
+      if (latitude && longitude) {
         markers.push(
           {
-            lat,
-            lng,
+            lat: latitude,
+            lng: longitude,
             options: {
               icon: L.icon({
                 iconUrl: tmpIcon,
