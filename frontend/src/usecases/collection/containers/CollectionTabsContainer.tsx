@@ -48,7 +48,6 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     {name: 'Perstorp', value: 893},
   ];
 
-  // TODO the city is maybe not an uuid here, but a string.. yikes
   const selectCity: PieClick = (city: uuid) => alert('You selected the city ' + city);
 
   const productModels = [
@@ -56,18 +55,22 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     {name: 'CMi2110', value: 1649},
   ];
 
-  // TODO the city is maybe not an uuid here, but a string.. yikes
   const selectProductModel: PieClick =
     (productModel: uuid) => alert('You selected the product model ' + productModel);
 
-  /**
-   * We want the pie charts to differentiate against each other
-   * We can use a service like https://www.sessions.edu/color-calculator/
-   * to find sets of "splít complimentary", "triadic" or "tetriadic" colors.
-   */
+  const statuses = [
+    {name: translate('ok'), value: 1713},
+    {name: translate('reported'), value: 2},
+    {name: translate('unhandled problems'), value: 0},
+  ];
+
+  const selectStatus: PieClick =
+    (status: uuid) => alert('You selected the status ' + status);
+
   const colors: [string[]] = [
-    ['#E8A090', '#FCE8CC'],
-    ['#588E95', '#CCD9CE'],
+    ['#e8a090', '#fce8cc'],
+    ['#588e95', '#ccd9ce'],
+    ['#b7e000', '#f7be29', '#ed4200'],
   ];
 
   return (
@@ -83,6 +86,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
         <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
         <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+        <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>

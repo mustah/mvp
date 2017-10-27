@@ -1,7 +1,7 @@
+import 'PieChartSelector.scss';
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {uuid} from '../../../../types/Types';
-import 'PieChartSelector.scss';
 
 interface PieData {
   name: string;
@@ -39,12 +39,14 @@ export const PieChartSelector = (props: PieChartSelector) => {
   */
 
   return (
-    <PieChart width={300} height={300}>
-      <Pie data={data} activeIndex={[]} activeShape={null}>
-        {data.map(renderCell)}
-      </Pie>
-      <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
-      <Legend/>
-    </PieChart>
+    <div className="ChartWrapper">
+      <PieChart width={300} height={300}>
+        <Pie data={data} activeIndex={[]} activeShape={null}>
+          {data.map(renderCell)}
+        </Pie>
+        <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
+        <Legend/>
+      </PieChart>
+    </div>
   );
 };
