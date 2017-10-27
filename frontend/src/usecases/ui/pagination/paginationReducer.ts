@@ -3,10 +3,10 @@ import {PaginationState} from './paginationModels';
 import {PAGINATION_CHANGE_PAGE} from './paginationActions';
 
 const initialState: PaginationState = {
-  dashboard: {page: 0, limit: 20},
-  collection: {page: 0, limit: 20},
-  validation: {page: 0, limit: 20},
-  selection: {page: 0, limit: 20},
+  dashboard: {page: 1, limit: 20},
+  collection: {page: 1, limit: 20},
+  validation: {page: 1, limit: 20},
+  selection: {page: 1, limit: 20},
 };
 
 export const pagination = (state: PaginationState = initialState, action: AnyAction) => {
@@ -17,6 +17,7 @@ export const pagination = (state: PaginationState = initialState, action: AnyAct
         ...state,
         [payload.useCase]: {
           ...state[payload.useCase],
+          page: payload.page,
         },
       };
     default:

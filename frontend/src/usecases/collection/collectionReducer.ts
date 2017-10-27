@@ -9,7 +9,6 @@ import {CollectionState} from './models/Collections';
 const initialState: CollectionState = {
   title: 'CollectionState',
   isFetching: false,
-  pagination: {page: 1, limit: 20},
   filter: {},
   categories: {
     handled: {
@@ -50,14 +49,6 @@ export const collection = (state: CollectionState = initialState, action: AnyAct
         ...state,
         categories: action.payload,
         isFetching: false,
-      };
-    case COLLECTION_CHANGE_PAGE:
-      return {
-        ...state,
-        pagination: {
-          ...state.pagination,
-          page: action.payload,
-        },
       };
     default:
       return state;

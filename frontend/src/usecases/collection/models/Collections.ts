@@ -1,5 +1,4 @@
 import {uuid} from '../../../types/Types';
-import {Pagination} from '../../ui/pagination/paginationModels';
 
 export interface CollectionState {
   title: string;
@@ -7,7 +6,6 @@ export interface CollectionState {
   isFetching: boolean;
   categories: Category;
   filter: Filter;
-  pagination: Pagination;
 }
 
 // TODO manually test that Set is being compiled properly for older browsers

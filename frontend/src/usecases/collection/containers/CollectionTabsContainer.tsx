@@ -22,24 +22,30 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer from '../../map/containers/MapContainer';
-import {collectionChangePage} from '../collectionActions';
 import {GatewayList} from '../components/GatewayList';
 import {Pagination} from '../../ui/pagination/paginationModels';
+import {paginationChangePage} from '../../ui/pagination/paginationActions';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
   gateways: {[key: string]: Gateway};
   paginatedList: uuid[];
   pagination: Pagination;
-  collectionChangePage: ChangePage;
+  paginationChangePage: (payload: {page: number; useCase: string; }) => any;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
-  const {selectedTab, changeTab, gateways, pagination, collectionChangePage, paginatedList, numOfGateways} = props;
+  const {selectedTab, changeTab, gateways, pagination, paginationChangePage, paginatedList, numOfGateways} = props;
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'collection',
       tab,
+    });
+  };
+  const onChangePagination = (page: number) => {
+    paginationChangePage({
+      page,
+      useCase: 'collection',
     });
   };
 
@@ -90,7 +96,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
-        <PaginationControl pagination={pagination} changePage={collectionChangePage} nrOfEntities={numOfGateways}/>
+        <PaginationControl pagination={pagination} changePage={onChangePagination} nrOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>
@@ -100,21 +106,21 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui, collection: {pagination}, domainModels: {gateways}} = state;
+  const {ui, domainModels: {gateways}} = state;
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),
     numOfGateways: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
-    paginatedList: getPaginationList({pagination, gateways}),
-    pagination, // TODO: make a selector for pagination, for all usecases.
+    paginatedList: getPaginationList({pagination: ui.pagination.collection, gateways}),
+    pagination: ui.pagination.collection, // TODO: make a selector for pagination, for all usecases.
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   changeTab,
   changeTabOption,
-  collectionChangePage,
+  paginationChangePage,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);
