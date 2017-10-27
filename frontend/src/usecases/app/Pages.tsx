@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Route} from 'react-router';
 import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
 import {LoginContainer} from '../auth/containers/LoginContainer';
-import CollectionContainer from '../collection/containers/CollectionContainer';
+import {Collection} from '../collection/components/Collection';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import ReportContainer from '../report/containers/ReportContainer';
@@ -12,7 +12,7 @@ import {routes} from './routes';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
-const CollectionPage = userIsAuthenticated(CollectionContainer);
+const CollectionPage = userIsAuthenticated(Collection);
 const ValidationPage = userIsAuthenticated(ValidationContainer);
 const ReportPage = userIsAuthenticated(ReportContainer);
 const SearchPage = userIsAuthenticated(SelectionContainer);

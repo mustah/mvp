@@ -16,7 +16,7 @@ const getPagination = (useCase: string): any =>
 
 export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], Pagination, uuid[]>(
   getResult,
-  (state: PaginatedDomainModel) => ({page: state.page, limit: state.limit}),
+  ({page, limit}: PaginatedDomainModel) => ({page, limit}),
   (result: uuid[], pagination: Pagination) => {
     const {page, limit} = pagination;
     return result.slice((page - 1) * limit, page * limit);
