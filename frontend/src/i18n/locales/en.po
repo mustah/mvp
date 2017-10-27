@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-27T13:23:32.127Z\n"
+"POT-Creation-Date: 2017-10-27T14:13:52.869Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -37,6 +37,18 @@ msgstr "status"
 
 msgid "action"
 msgstr "action"
+
+msgid "ok"
+msgstr "ok"
+
+msgid "reported"
+msgstr "reported"
+
+msgid "unhandled problems"
+msgstr "unhandled problems"
+
+msgid "dashboard"
+msgstr "dashboard"
 
 msgid "list"
 msgstr "list"
@@ -83,9 +95,6 @@ msgstr "validation"
 msgid "action pending"
 msgstr "action pending"
 
-msgid "dashboard"
-msgstr "dashboard"
-
 msgid "meter"
 msgstr "meter"
 
@@ -112,6 +121,9 @@ msgstr "manufacturer"
 
 msgid "medium"
 msgstr "medium"
+
+msgid "could not be collected"
+msgstr "could not be collected"
 
 msgid "area"
 msgstr "area"

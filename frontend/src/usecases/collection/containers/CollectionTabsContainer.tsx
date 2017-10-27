@@ -4,14 +4,11 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {
-  getGatewayEntities,
-  getGatewaysTotal,
-} from '../../../state/domain-models/gateway/gatewaySelectors';
+import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
-import {ChangePage, PaginationControl} from '../../common/components/pagination-control/PaginationControl';
+import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
@@ -21,10 +18,10 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer from '../../map/containers/MapContainer';
-import {GatewayList} from '../components/GatewayList';
-import {Pagination} from '../../ui/pagination/paginationModels';
 import {paginationChangePage} from '../../ui/pagination/paginationActions';
+import {Pagination} from '../../ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
+import {GatewayList} from '../components/GatewayList';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
