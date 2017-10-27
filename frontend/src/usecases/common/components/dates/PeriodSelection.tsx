@@ -7,6 +7,7 @@ import {Normal} from '../texts/Texts';
 import 'PeriodSelection.scss';
 import {DropDownMenu, MenuItem} from 'material-ui';
 import {IdNamed, uuid} from '../../../../types/Types';
+import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectedPeriod?: uuid;
@@ -46,10 +47,10 @@ export class PeriodSelection extends React.Component<Props, State> {
             value={this.state.selectedPeriod.id}
             onChange={dropdownChanged}
           >
-            <MenuItem value={0} label={'9 nov - 16 nov'} primaryText="Week"/>
-            <MenuItem value={1} label={'16 okt - 16 nov'} primaryText="Month"/>
-            <MenuItem value={2} label={'16 aug - 16 nov'} primaryText="Quarter"/>
-            <MenuItem value={3} label={'2016-11-16 - 2017-11-16'} primaryText="Year"/>
+            <MenuItem value={0} label={'9 nov - 16 nov'} primaryText={translate('Last week')}/>
+            <MenuItem value={1} label={'16 okt - 16 nov'} primaryText={translate('Last month')}/>
+            <MenuItem value={2} label={'16 aug - 16 nov'} primaryText={translate('Last quarter')}/>
+            <MenuItem value={3} label={'2016-11-16 - 2017-11-16'} primaryText={translate('Last year')}/>
           </DropDownMenu>
         </Row>
       </Column>

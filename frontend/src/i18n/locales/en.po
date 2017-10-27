@@ -143,3 +143,15 @@ msgstr "{{count}} city°"
 msgctxt "°plural"
 msgid "{{count}} product°"
 msgstr "{{count}} product°"
+
+msgid "Last week"
+msgstr "Last week"
+
+msgid "Last month"
+msgstr "Last month"
+
+msgid "Last quarter"
+msgstr "Last quarter"
+
+msgid "Last year"
+msgstr "Last year"
