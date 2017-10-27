@@ -239,14 +239,14 @@ const cities = [
 ];
 
 const position = [
-  {lat: 57.715954, lng: 11.974855},
-  {lat: 57.487614, lng: 12.076706},
-  {lat: 57.650215, lng: 12.016228},
-  {lat: 59.330270, lng: 18.069251},
-  {lat: 56.899273, lng: 14.556001},
-  {lat: 56.200461, lng: 12.555504},
-  {lat: 57.107967, lng: 12.272229},
-  {lat: 57.721190, lng: 12.940214},
+  {latitude: 57.715954, longitude: 11.974855},
+  {latitude: 57.487614, longitude: 12.076706},
+  {latitude: 57.650215, longitude: 12.016228},
+  {latitude: 59.330270, longitude: 18.069251},
+  {latitude: 56.899273, longitude: 14.556001},
+  {latitude: 56.200461, longitude: 12.555504},
+  {latitude: 57.107967, longitude: 12.272229},
+  {latitude: 57.721190, longitude: 12.940214},
 ];
 
 const gatewayModels = [
