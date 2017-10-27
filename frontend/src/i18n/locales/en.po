@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-27 14:29+0200\n"
+"POT-Creation-Date: 2017-10-26 13:51+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,6 +16,9 @@ msgstr "email"
 
 msgid "password"
 msgstr "password"
+
+msgid "current filter"
+msgstr "current filter"
 
 msgid "gateway"
 msgstr "gateway"
@@ -34,21 +37,6 @@ msgstr "status"
 
 msgid "action"
 msgstr "action"
-
-msgid "collection"
-msgstr "collection"
-
-msgid "ok"
-msgstr "ok"
-
-msgid "reported"
-msgstr "reported"
-
-msgid "unhandled problems"
-msgstr "unhandled problems"
-
-msgid "dashboard"
-msgstr "dashboard"
 
 msgid "list"
 msgstr "list"
@@ -74,30 +62,6 @@ msgstr "Last year"
 msgid "all"
 msgstr "all"
 
-msgid "grouping"
-msgstr "grouping"
-
-msgid "count"
-msgstr "count"
-
-msgid "errands"
-msgstr "errands"
-
-msgid "{{count}} errand"
-msgstr "{{count}} errand"
-
-msgid "cities"
-msgstr "cities"
-
-msgid "{{count}} city"
-msgstr "{{count}} city"
-
-msgid "{{count}} product"
-msgstr "{{count}} product"
-
-msgid "action pending"
-msgstr "action pending"
-
 msgid "new search"
 msgstr "new search"
 
@@ -113,8 +77,11 @@ msgstr "meter details"
 msgid "meter id"
 msgstr "meter id"
 
-msgid "validation"
-msgstr "validation"
+msgid "address"
+msgstr "address"
+
+msgid "dashboard"
+msgstr "dashboard"
 
 msgid "meter"
 msgstr "meter"
@@ -137,8 +104,11 @@ msgstr "metering"
 msgid "saved search"
 msgstr "saved search"
 
-msgid "could not be collected"
-msgstr "could not be collected"
+msgid "manufacturer"
+msgstr "manufacturer"
+
+msgid "medium"
+msgstr "medium"
 
 msgid "area"
 msgstr "area"
@@ -150,16 +120,49 @@ msgid "facility"
 msgstr "facility"
 
 msgctxt "°plural"
+msgid "meter°"
+msgstr "meter°"
+
+msgctxt "°plural"
 msgid "{{count}} errand°"
 msgstr "{{count}} errand°"
 
-msgctxt "°plural"
-msgid "{{count}} city°"
-msgstr "{{count}} city°"
+#~ msgid "grouping"
+#~ msgstr "grouping"
 
-msgctxt "°plural"
-msgid "{{count}} product°"
-msgstr "{{count}} product°"
+#~ msgid "count"
+#~ msgstr "count"
+
+#~ msgid "errands"
+#~ msgstr "errands"
+
+#~ msgid "{{count}} errand"
+#~ msgstr "{{count}} errand"
+
+#~ msgid "cities"
+#~ msgstr "cities"
+
+#~ msgid "{{count}} city"
+#~ msgstr "{{count}} city"
+
+#~ msgid "{{count}} product"
+#~ msgstr "{{count}} product"
+
+#~ msgctxt "°plural"
+#~ msgid "meter°"
+#~ msgstr "meter°"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} errand°"
+#~ msgstr "{{count}} errand°"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} city°"
+#~ msgstr "{{count}} city°"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} product°"
+#~ msgstr "{{count}} product°"
 
 #~ msgid "current filter"
 #~ msgstr "current filter"

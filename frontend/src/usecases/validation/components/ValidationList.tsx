@@ -12,7 +12,7 @@ export const ValidationList = (props: ListProps) => {
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (value, index) =>
-    <Status code={value.code} content={value.text} />;
+    <Status code={0} content={value} />; // TODO: Need to redo this function to that it interprets status correctly.
 
   return (
     <Table data={data}>
@@ -22,15 +22,15 @@ export const ValidationList = (props: ListProps) => {
         cell={renderMeteringPointCell}
       />
       <TableColumn
-        id={'type'}
-        header={<TableHead>{translate('type')}</TableHead>}
+        id={'manufacturer'}
+        header={<TableHead>{translate('manufacturer')}</TableHead>}
       />
       <TableColumn
-        id={'location'}
-        header={<TableHead>{translate('location')}</TableHead>}
+        id={'medium'}
+        header={<TableHead>{translate('medium')}</TableHead>}
       />
       <TableColumn
-        id={'gateway'}
+        id={'gatewayId'}
         header={<TableHead>{translate('gateway')}</TableHead>}
       />
       <TableColumn

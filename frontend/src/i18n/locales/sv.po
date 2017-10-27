@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-27 14:29+0200\n"
+"POT-Creation-Date: 2017-10-26 13:53+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "email"
 msgstr "email"
@@ -35,21 +35,6 @@ msgstr "status"
 msgid "action"
 msgstr "åtgärd"
 
-msgid "collection"
-msgstr "insamling"
-
-msgid "ok"
-msgstr "ok"
-
-msgid "reported"
-msgstr "felrapporterade"
-
-msgid "unhandled problems"
-msgstr "ej hanterat"
-
-msgid "dashboard"
-msgstr "status"
-
 msgid "list"
 msgstr "lista"
 
@@ -74,30 +59,6 @@ msgstr "Föregående år"
 msgid "all"
 msgstr "allt"
 
-msgid "grouping"
-msgstr "gruppering"
-
-msgid "count"
-msgstr "antal"
-
-msgid "errands"
-msgstr "ärenden"
-
-msgid "{{count}} errand"
-msgstr "{{count}} ärende"
-
-msgid "cities"
-msgstr "städer"
-
-msgid "{{count}} city"
-msgstr "{{count}} stad"
-
-msgid "{{count}} product"
-msgstr "{{count}} produkt"
-
-msgid "action pending"
-msgstr "inväntar åtgärd"
-
 msgid "new search"
 msgstr "nytt urval"
 
@@ -115,6 +76,12 @@ msgstr "mätare"
 
 msgid "validation"
 msgstr "validering"
+
+msgid "action pending"
+msgstr "inväntar åtgärd"
+
+msgid "dashboard"
+msgstr "status"
 
 msgid "meter"
 msgstr "mätare"
@@ -137,8 +104,11 @@ msgstr "mätning"
 msgid "saved search"
 msgstr "sparad sökning"
 
-msgid "could not be collected"
-msgstr "kunde inte hämtas"
+msgid "manufacturer"
+msgstr "tillverkare"
+
+msgid "medium"
+msgstr "medium"
 
 msgid "area"
 msgstr "område"
@@ -150,16 +120,49 @@ msgid "facility"
 msgstr "anläggning"
 
 msgctxt "°plural"
+msgid "meter°"
+msgstr "mätare"
+
+msgctxt "°plural"
 msgid "{{count}} errand°"
 msgstr "{{count}} ärende°"
 
-msgctxt "°plural"
-msgid "{{count}} city°"
-msgstr "{{count}} stad°"
+#~ msgid "grouping"
+#~ msgstr "gruppering"
 
-msgctxt "°plural"
-msgid "{{count}} product°"
-msgstr "{{count}} produkt°"
+#~ msgid "count"
+#~ msgstr "antal"
+
+#~ msgid "errands"
+#~ msgstr "ärenden"
+
+#~ msgid "{{count}} errand"
+#~ msgstr "{{count}} ärende"
+
+#~ msgid "cities"
+#~ msgstr "städer"
+
+#~ msgid "{{count}} city"
+#~ msgstr "{{count}} stad"
+
+#~ msgid "{{count}} product"
+#~ msgstr "{{count}} produkt"
+
+#~ msgctxt "°plural"
+#~ msgid "meter°"
+#~ msgstr "mätare"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} errand°"
+#~ msgstr "{{count}} ärende°"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} city°"
+#~ msgstr "{{count}} stad°"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} product°"
+#~ msgstr "{{count}} produkt°"
 
 #~ msgid "current filter"
 #~ msgstr "aktuellt filter"

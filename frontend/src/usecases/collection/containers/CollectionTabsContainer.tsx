@@ -36,16 +36,17 @@ interface CollectionTabsContainer extends TabsContainerProps {
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const {selectedTab, changeTab, gateways, pagination, paginationChangePage, paginatedList, numOfGateways} = props;
+  const COLLECTION = 'collection';
   const onChangeTab = (tab: tabType) => {
     changeTab({
-      useCase: 'collection',
+      useCase: COLLECTION,
       tab,
     });
   };
   const onChangePagination = (page: number) => {
     paginationChangePage({
       page,
-      useCase: 'collection',
+      useCase: COLLECTION,
     });
   };
 
@@ -87,7 +88,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
-        <TabSettings useCase="collection"/>
+        <TabSettings useCase={COLLECTION}/>
       </TabTopBar>
       <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
         <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
@@ -96,7 +97,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
-        <PaginationControl pagination={pagination} changePage={onChangePagination} nrOfEntities={numOfGateways}/>
+        <PaginationControl pagination={pagination} changePage={onChangePagination} numOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>
