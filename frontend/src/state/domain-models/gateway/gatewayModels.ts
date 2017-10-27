@@ -1,16 +1,16 @@
 import {uuid} from '../../../types/Types';
 
 export interface Gateway {
-    id: string;
-    facility: string;
-    address: string;
-    city: string;
-    productModel: string;
-    telephoneNo: string;
-    ip: string;
-    port: string;
-    status: string;
-    position: string;
+  id: string;
+  facility: string;
+  address: string;
+  city: string;
+  productModel: string;
+  telephoneNo: string;
+  ip: string | null;
+  port: string | null;
+  status: string;
+  position: string;
 }
 
 export interface Gateways {

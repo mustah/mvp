@@ -52,7 +52,7 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
             </tr>
             <tr>
               <td>{translate('product model')}</td>
-              <td>{translate('{{count}} product', {count: unhandled.product_model.count})}</td>
+              <td>{translate('{{count}} product', {count: unhandled.productModel.count})}</td>
             </tr>
             </tbody>
           </table>
@@ -77,7 +77,7 @@ export const ProblemOverview = (props: ProblemOverviewProps) => {
             </tr>
             <tr>
               <td>{translate('product model')}</td>
-              <td>{translate('{{count}} product', {count: handled.product_model.count})}</td>
+              <td>{translate('{{count}} product', {count: handled.productModel.count})}</td>
             </tr>
             </tbody>
           </table>

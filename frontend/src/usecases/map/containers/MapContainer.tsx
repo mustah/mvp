@@ -63,9 +63,9 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         let warningCount = 0;
         for (const child of cluster.getAllChildMarkers()) {
           if (child.options.icon.options.iconUrl === 'marker-icon-error.png') {
-            errorCount ++;
+            errorCount++;
           } else if (child.options.icon.options.iconUrl === 'marker-icon-warning.png') {
-            warningCount ++;
+            warningCount++;
           }
         }
 
@@ -106,7 +106,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     // TODO break up marker icon logic into methods and add tests
 
     map.moids.forEach(moid => {
-      switch (moid.status) {
+      const {status} = moid;
+      switch (status) {
         case 0: {
           tmpIcon = 'marker-icon-ok.png';
           break;
@@ -124,21 +125,24 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         }
       }
 
-      markers.push(
-        {
-          lat: moid.position.lat,
-          lng: moid.position.lng,
-          options: {
-            icon: L.icon({
-              iconUrl: tmpIcon,
-            }),
+      const {latitude, longitude} = moid.position;
+      if (latitude && longitude) {
+        markers.push(
+          {
+            lat: latitude,
+            lng: longitude,
+            options: {
+              icon: L.icon({
+                iconUrl: tmpIcon,
+              }),
+            },
+            status,
           },
-          status: moid.status,
-        },
-      );
+        );
+      }
     });
 
-    const toggleScrollWheelZoom = (e) =>  {
+    const toggleScrollWheelZoom = (e) => {
       if (e.target.scrollWheelZoom.enabled()) {
         e.target.scrollWheelZoom.disable();
       } else {
@@ -181,9 +185,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = (state: RootState) => {
-  const {map} = state;
-
+const mapStateToProps = ({map}: RootState): MapContainerProps => {
   return {
     map,
   };

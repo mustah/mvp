@@ -2,9 +2,8 @@ const rp = require('request-promise');
 
 const encodeAddressInfo = (addressInfo) => {
   return [addressInfo.streetAddress, addressInfo.city, addressInfo.country]
-    .filter((el) => { return el !== undefined; } )
+    .filter((addrInfo) => addrInfo !== undefined)
     .join(' :: ');
-
 };
 
 const fetchGeocodeAddress = (addressInfo) => {
@@ -22,16 +21,15 @@ const fetchGeocodeAddress = (addressInfo) => {
   };
   return rp.post(rpOptions)
     .then((coords) => {
-      coordsObj = JSON.parse(coords);
-      if ('error' in coordsObj) {
-        throw Error('geocoding error: ' + coordsObj.error.description);
+      const coordinates = JSON.parse(coords);
+      if ('error' in coordinates) {
+        throw Error('geocoding error: ' + coordinates.error.description);
       }
-      const response = {
-        longitude: coordsObj.longt,
-        latitude: coordsObj.latt,
-        confidence: Number.parseFloat(coordsObj.standard.confidence),
+      return {
+        longitude: coordinates.longt,
+        latitude: coordinates.latt,
+        confidence: Number.parseFloat(coordinates.standard.confidence),
       };
-      return response;
     })
     .catch((err) => {
       return err;

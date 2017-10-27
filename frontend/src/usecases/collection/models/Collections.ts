@@ -31,7 +31,7 @@ interface CollectionCategories {
     count: number;
     entities: Array<{id: string; count: number}>;
   };
-  product_model: {
+  productModel: {
     count: number;
     entities: Array<{id: string; count: number}>;
   };
