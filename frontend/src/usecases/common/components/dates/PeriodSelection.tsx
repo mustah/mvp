@@ -25,6 +25,7 @@ export class PeriodSelection extends React.Component<Props, State> {
     super(props);
     this.state = {
       selectedPeriod: {id: 0, name: 'Week'},
+      // TODO extract to constant and normalize, or retrieve from backend
       periods: [{id: 0, name: 'Week'}, {id: 1, name: 'Month'}, {id: 2, name: 'Quarter'}, {id: 3, name: 'Year'}],
     };
   }
@@ -47,6 +48,7 @@ export class PeriodSelection extends React.Component<Props, State> {
             value={this.state.selectedPeriod.id}
             onChange={dropdownChanged}
           >
+            {/*TODO use periods */}
             <MenuItem value={0} label={'9 nov - 16 nov'} primaryText={translate('Last week')}/>
             <MenuItem value={1} label={'16 okt - 16 nov'} primaryText={translate('Last month')}/>
             <MenuItem value={2} label={'16 aug - 16 nov'} primaryText={translate('Last quarter')}/>
