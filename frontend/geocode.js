@@ -2,9 +2,8 @@ const rp = require('request-promise');
 
 const encodeAddressInfo = (addressInfo) => {
   return [addressInfo.streetAddress, addressInfo.city, addressInfo.country]
-    .filter((el) => { return el !== undefined; } )
+    .filter((addrInfo) => addrInfo !== undefined)
     .join(' :: ');
-
 };
 
 const fetchGeocodeAddress = (addressInfo) => {

@@ -18,7 +18,7 @@ const initialState: CollectionState = {
         count: 0,
         entities: [],
       },
-      product_model: {
+      productModel: {
         count: 0,
         entities: [],
       },
@@ -29,7 +29,7 @@ const initialState: CollectionState = {
         count: 0,
         entities: [],
       },
-      product_model: {
+      productModel: {
         count: 0,
         entities: [],
       },

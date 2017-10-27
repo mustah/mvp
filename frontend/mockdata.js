@@ -12,11 +12,11 @@ const fromDbJson = {
     email: 'evanil@elvaco.se',
     company: 'Bostäder AB',
   },
-  'todos': [
+  todos: [
     'translate unhandled and handled collections in the right place',
   ],
-  'collections': {
-    'unhandled': {
+  collections: {
+    unhandled: {
       'total': 2983,
       'city': {
         'count': 7,
@@ -31,7 +31,7 @@ const fromDbJson = {
             {'id': 'Borås', 'count': 250},
           ],
       },
-      'product_model':
+      productModel:
         {
           'count': 3,
           'entities': [
@@ -56,7 +56,7 @@ const fromDbJson = {
             {'id': 'Borås', 'count': 252},
           ],
         },
-      'product_model':
+      productModel:
         {
           'count': 3,
           'entities': [
@@ -67,7 +67,7 @@ const fromDbJson = {
         },
     },
   },
-  'dashboards': [
+  dashboards: [
     {
       'id': '3',
       'author': 'Sven',
@@ -95,7 +95,7 @@ const fromDbJson = {
       },
     },
   ],
-  'reports': [
+  reports: [
     {
       'id': 1,
       'title': 'json-server',
@@ -112,7 +112,7 @@ const fromDbJson = {
       'author': 'elvaco - home',
     },
   ],
-  'validations': [
+  validations: [
     {
       'id': 1,
       'title': 'json-server',
@@ -129,10 +129,10 @@ const fromDbJson = {
       'author': 'elvaco - home',
     },
   ],
-  'profile': {
-    'name': 'typicode',
+  profile: {
+    name: 'typicode',
   },
-  'selections': {
+  selections: {
     'cities': [
       {
         'id': 'got',
@@ -287,7 +287,7 @@ const mpDistrictHeatingErrors = [
 
 const getPosition = (area) => {
   switch (area) {
-    case   'Göteborg': {
+    case 'Göteborg': {
       return randomizeLatLng(position[0]);
     }
     case 'Mölndal': {
@@ -346,9 +346,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
     limiter = new Bottleneck(1, 1000);
     try {
       geocodeData = Object.assign(geocodeData,
-        JSON.parse(
-          fs.readFileSync(geocodeOptions.geocodeCacheFile, 'utf-8').toString()
-        ));
+        JSON.parse(fs.readFileSync(geocodeOptions.geocodeCacheFile, 'utf-8').toString()));
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err;
@@ -361,7 +359,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -376,7 +374,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         objPosition = geocodeData[geoKey];
       } else if (geocodeOptions.doGeocoding) {
         const pos = await limiter.schedule(geocode.fetchGeocodeAddress, addressInfo);
-        if (pos instanceof Error)  {
+        if (pos instanceof Error) {
           console.log(pos.message);
         } else {
           geocodeData[geoKey] = objPosition = pos;
@@ -384,7 +382,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         }
       }
       r.gateways.push({
-        id : row.gateway_id,
+        id: row.gateway_id,
         facility: row.facility,
         address: row.address,
         city: row.city,
@@ -434,33 +432,33 @@ module.exports = (doGeocoding = false) => {
 
   for (let i = 0; i < 1000; i++) {
     const numberOfMeters = Math.floor(appRandom() * 7);
-    const gwId = 23 + i;
+    const gatewayId = 23 + i;
     const gwStatus = gatewayStatuses[Math.floor(appRandom() * gatewayStatuses.length)];
     const city = cities[Math.floor(appRandom() * cities.length)];
 
-    const gw = {
-      'id': gwId,
-      'city': city,
-      'product_model': gatewayModels[Math.floor(appRandom() * gatewayModels.length)],
-      'status': gwStatus,
-      'connected_meters': numberOfMeters,
-      'action': (gwStatus.code === 0 ? '' : actions[Math.floor(appRandom() * actions.length)]),
+    const gateway = {
+      id: gatewayId,
+      city,
+      productModel: gatewayModels[Math.floor(appRandom() * gatewayModels.length)],
+      status: gwStatus,
+      connectedMeters: numberOfMeters,
+      action: (gwStatus.code === 0 ? '' : actions[Math.floor(appRandom() * actions.length)]),
     };
 
     for (let j = 0; j < numberOfMeters; j++) {
       const meter = {
-        'gateway_id': gwId,
-        'id': Math.floor(appRandom() * 100000),
-        'medium': 'Heat, Return temp',
-        'status': getWeightedRandomStatus(),
-        'city': city,
-        'position': getPosition(city),
-        'product_model': meterModels[Math.floor(appRandom() * meterModels.length)],
+        id: Math.floor(appRandom() * 100000),
+        gatewayId: gatewayId,
+        medium: 'Heat, Return temp',
+        status: getWeightedRandomStatus(),
+        city,
+        position: getPosition(city),
+        productModel: meterModels[Math.floor(appRandom() * meterModels.length)],
       };
       returnValues.random_meters.push(meter);
     }
 
-    returnValues.random_gateways.push(gw);
+    returnValues.random_gateways.push(gateway);
   }
   return returnValues;
 };
