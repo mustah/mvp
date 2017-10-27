@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Logo} from '../../branding/components/Logo';
+import {Logo} from '../../common/components/logo/Logo';
 import {Column} from '../../common/components/layouts/column/Column';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';

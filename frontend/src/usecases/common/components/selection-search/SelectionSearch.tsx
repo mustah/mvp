@@ -2,10 +2,10 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {CloseIcon} from '../icons/IconClose';
 import {Row, RowCenter} from '../layouts/row/Row';
+import {Logo} from '../logo/Logo';
 import {Summary} from '../summary/Summary';
 import {Normal} from '../texts/Texts';
 import './SelectionSearch.scss';
-import {Logo} from '../../../branding/components/Logo';
 
 interface OwnProps {
   close: (...args) => void;
