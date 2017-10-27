@@ -31,7 +31,7 @@ export class PeriodSelection extends React.Component<Props, State> {
   }
 
   render() {
-    const dropdownChanged = (event, index, value) => {
+    const dropdownChanged = (event, index) => {
       this.setState({selectedPeriod: this.state.periods[index]});
     };
 
