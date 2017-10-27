@@ -26,8 +26,8 @@ interface SelectionContentBoxProps {
 
 export const SelectionContentBox = (props: SelectionContentBoxProps) => {
   const {toggleSelection, selection, data, paginationProps} = props;
-  const selectCity = (selection: IdNamed) => toggleSelection({...selection, entity: 'cities'});
-  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, entity: 'addresses'});
+  const selectCity = (selection: IdNamed) => toggleSelection({...selection, attribute: 'cities'});
+  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, attribute: 'addresses'});
 
   return (
     <Column className="SelectionContentBox">

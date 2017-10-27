@@ -2,10 +2,10 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {RowCenter} from '../../common/components/layouts/row/Row';
-import {Bold} from '../../common/components/texts/Texts';
 import {fetchSelections} from '../../../state/search/selection/selectionActions';
 import {isFetching} from '../../../state/search/selection/selectionSelectors';
+import {RowCenter} from '../../common/components/layouts/row/Row';
+import {Bold} from '../../common/components/texts/Texts';
 
 interface OwnProps {
   children: React.ReactElement<any> | null;
@@ -37,9 +37,9 @@ class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({selection}: RootState): StateToProps => {
+const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
   return {
-    isFetching: isFetching(selection),
+    isFetching: isFetching(searchParameters),
   };
 };
 

@@ -96,7 +96,7 @@ describe('searchReducer', () => {
     const searchParameters: SelectionParameter = {
       name: 'Stockholm',
       id: 'sto',
-      entity: 'cities',
+      attribute: 'cities',
     };
     expect(selection(state!, setSelection(searchParameters))).toEqual({
       ...initialState,

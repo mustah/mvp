@@ -3,7 +3,6 @@ import {combineReducers} from 'redux';
 import {domainModels, DomainModelsState} from '../state/domain-models/domainModelsReducer';
 import {searchParameters} from '../state/search/searchParameterReducer';
 import {SearchParameterState} from '../state/search/selection/selectionModels';
-import {selection, SelectionState} from '../state/search/selection/selectionReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {auth, AuthState} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
@@ -22,7 +21,6 @@ export interface RootState {
   validation: ValidationState;
   report: ReportState;
   language: LanguageState;
-  selection: SelectionState; // TODO: remove since it's in searchParameters?
   searchParameters: SearchParameterState;
   ui: UiState;
   map: MapState;
@@ -36,7 +34,6 @@ export const rootReducer = combineReducers<RootState>({
   validation,
   report,
   language,
-  selection, // TODO: remove since it's in searchParameters?
   searchParameters,
   ui,
   map,

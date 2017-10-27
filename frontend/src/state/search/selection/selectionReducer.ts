@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
 import {uuid} from '../../../types/Types';
-import {SelectionOptions, SelectionResult} from './selectionModels';
+import {SelectionOptions, SelectedIds} from './selectionModels';
 import {
   DESELECT_SELECTION,
   SELECTION_FAILURE,
@@ -11,7 +11,7 @@ import {
 
 export interface SelectionState extends SelectionOptions {
   isFetching: boolean;
-  selected: SelectionResult;
+  selected: SelectedIds;
 }
 
 export const initialState: SelectionState = {
@@ -54,7 +54,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         ...state,
         selected: {
           ...state.selected,
-          [payload.entity]: [...state.selected[payload.entity], payload.id],
+          [payload.attribute]: [...state.selected[payload.attribute], payload.id],
         },
       };
     case DESELECT_SELECTION:
@@ -62,7 +62,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         ...state,
         selected: {
           ...state.selected,
-          [payload.entity]: filterOutUnselected(state.selected[payload.entity], payload.id),
+          [payload.attribute]: filterOutUnselected(state.selected[payload.attribute], payload.id),
         },
       };
     default:

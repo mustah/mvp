@@ -1,22 +1,27 @@
 import {IdNamed, uuid} from '../../../types/Types';
 
 export interface SelectionParameter extends IdNamed {
-  entity: string;
+  attribute: string;
 }
 
-export interface SelectionOptionEntity {
+export interface SelectionEntity {
   [key: string]: IdNamed;
 }
 
-export interface SelectionResult {
+export interface SelectedIds {
   [key: string]: uuid[];
 }
 
 export interface SelectionOptions {
-  entities: SelectionOptionEntity;
-  result: SelectionResult;
+  entities: SelectionEntity;
+  result: SelectedIds;
+}
+
+export interface SelectionState extends SelectionOptions {
+  isFetching: boolean;
+  selected: SelectedIds;
 }
 
 export interface SearchParameterState {
-  selected?: any; // TODO[!must!] fix this
+  selection: SelectionState;
 }

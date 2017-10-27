@@ -2,11 +2,12 @@ import {normalize} from 'normalizr';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Dispatch} from 'redux';
+import {RootState} from '../../../reducers/rootReducer';
 import {restClient} from '../../../services/restClient';
 import {SelectionOptions, SelectionParameter} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 import {selectionSchema} from './selectionSchemas';
-import {RootState} from '../../../reducers/rootReducer';
+import {getSelection} from './selectionSelectors';
 
 export const SELECTION_REQUEST = 'SELECTION_REQUEST';
 export const SELECTION_SUCCESS = 'SELECTION_SUCCESS';
@@ -33,10 +34,9 @@ export const closeSearch = () => dispatch => {
 export const toggleSelection = (parameter: SelectionParameter) =>
   (dispatch: Dispatch<SelectionState>, getState: () => RootState) => {
 
-    const {entity, id} = parameter;
-    const selected = getState().selection.selected[entity];
+    const {attribute, id} = parameter;
+    const selected = getSelection(getState().searchParameters).selected[attribute];
 
-    // TODO: Perhaps consider getting a boolean for selected unselected from caller.
     selected.includes(id)
       ? dispatch(deselectSelection(parameter))
       : dispatch(setSelection(parameter));
