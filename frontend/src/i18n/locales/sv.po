@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-26 13:53+0200\n"
+"POT-Creation-Date: 2017-10-27 10:40+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,20 +17,17 @@ msgstr "email"
 msgid "password"
 msgstr "lösenord"
 
-msgid "current filter"
-msgstr "aktuellt filter"
-
 msgid "gateway"
 msgstr "gateway"
 
 msgid "city"
 msgstr "stad"
 
+msgid "address"
+msgstr "adress"
+
 msgid "product model"
 msgstr "produktmodell"
-
-msgid "meter"
-msgstr "mätare"
 
 msgid "status"
 msgstr "status"
@@ -43,6 +40,24 @@ msgstr "insamling"
 
 msgid "list"
 msgstr "lista"
+
+msgid "map"
+msgstr "karta"
+
+msgid "period"
+msgstr "period"
+
+msgid "Last week"
+msgstr "Föregående vecka"
+
+msgid "Last month"
+msgstr "Föregående månad"
+
+msgid "Last quarter"
+msgstr "Föregående kvartal"
+
+msgid "Last year"
+msgstr "Ett år tillbaka"
 
 msgid "all"
 msgstr "allt"
@@ -89,23 +104,20 @@ msgstr "mätare"
 msgid "meter id"
 msgstr "mätare"
 
-msgid "address"
-msgstr "adress"
+msgid "validation"
+msgstr "validering"
 
 msgid "dashboard"
 msgstr "status"
 
-msgid "map"
-msgstr "karta"
+msgid "meter"
+msgstr "mätare"
 
 msgid "type"
 msgstr "typ"
 
 msgid "location"
 msgstr "plats"
-
-msgid "validation"
-msgstr "validering"
 
 msgid "report"
 msgstr "rapport"
@@ -129,10 +141,6 @@ msgid "facility"
 msgstr "anläggning"
 
 msgctxt "°plural"
-msgid "meter°"
-msgstr "mätare"
-
-msgctxt "°plural"
 msgid "{{count}} errand°"
 msgstr "{{count}} ärende°"
 
@@ -144,14 +152,9 @@ msgctxt "°plural"
 msgid "{{count}} product°"
 msgstr "{{count}} produkt°"
 
-msgid "Last week"
-msgstr "Föregående vecka"
+#~ msgid "current filter"
+#~ msgstr "aktuellt filter"
 
-msgid "Last month"
-msgstr "Föregående månad"
-
-msgid "Last quarter"
-msgstr "Föregående kvartal"
-
-msgid "Last year"
-msgstr "Ett år tillbaka"
+#~ msgctxt "°plural"
+#~ msgid "meter°"
+#~ msgstr "mätare"

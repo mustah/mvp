@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-26 13:51+0200\n"
+"POT-Creation-Date: 2017-10-27 10:41+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,20 +17,17 @@ msgstr "email"
 msgid "password"
 msgstr "password"
 
-msgid "current filter"
-msgstr "current filter"
-
 msgid "gateway"
 msgstr "gateway"
 
 msgid "city"
 msgstr "city"
 
+msgid "address"
+msgstr "address"
+
 msgid "product model"
 msgstr "product model"
-
-msgid "meter"
-msgstr "meter"
 
 msgid "status"
 msgstr "status"
@@ -43,6 +40,24 @@ msgstr "collection"
 
 msgid "list"
 msgstr "list"
+
+msgid "map"
+msgstr "map"
+
+msgid "period"
+msgstr "period"
+
+msgid "Last week"
+msgstr "Last week"
+
+msgid "Last month"
+msgstr "Last month"
+
+msgid "Last quarter"
+msgstr "Last quarter"
+
+msgid "Last year"
+msgstr "Last year"
 
 msgid "all"
 msgstr "all"
@@ -89,23 +104,20 @@ msgstr "meter details"
 msgid "meter id"
 msgstr "meter id"
 
-msgid "address"
-msgstr "address"
+msgid "validation"
+msgstr "validation"
 
 msgid "dashboard"
 msgstr "dashboard"
 
-msgid "map"
-msgstr "map"
+msgid "meter"
+msgstr "meter"
 
 msgid "type"
 msgstr "type"
 
 msgid "location"
 msgstr "location"
-
-msgid "validation"
-msgstr "validation"
 
 msgid "report"
 msgstr "report"
@@ -129,10 +141,6 @@ msgid "facility"
 msgstr "facility"
 
 msgctxt "°plural"
-msgid "meter°"
-msgstr "meter°"
-
-msgctxt "°plural"
 msgid "{{count}} errand°"
 msgstr "{{count}} errand°"
 
@@ -144,14 +152,9 @@ msgctxt "°plural"
 msgid "{{count}} product°"
 msgstr "{{count}} product°"
 
-msgid "Last week"
-msgstr "Last week"
+#~ msgid "current filter"
+#~ msgstr "current filter"
 
-msgid "Last month"
-msgstr "Last month"
-
-msgid "Last quarter"
-msgstr "Last quarter"
-
-msgid "Last year"
-msgstr "Last year"
+#~ msgctxt "°plural"
+#~ msgid "meter°"
+#~ msgstr "meter°"

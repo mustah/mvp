@@ -36,7 +36,7 @@ export class PeriodSelection extends React.Component<Props, State> {
 
     return (
       <Column>
-        <Normal className="uppercase">Period</Normal>
+        <Normal className="uppercase">{translate('period')}</Normal>
         <Separator/>
         <Row className="Row-center">
           <IconCalendar/>
