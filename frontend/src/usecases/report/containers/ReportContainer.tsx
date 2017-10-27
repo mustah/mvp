@@ -6,13 +6,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
-import {Column} from '../../common/components/layouts/column/Column';
-import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
+import {PageContainer} from '../../common/containers/PageContainer';
+import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 
@@ -34,15 +33,17 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
         <PeriodSelection/>
       </Row>
 
-      <IndicatorWidgets
-        indicators={indicators}
-        selectedWidget={selectedWidget}
-        selectIndicatorWidget={selectIndicatorWidget}
-      />
+      <Row className="Section">
+        <IndicatorWidgets
+          indicators={indicators}
+          selectedWidget={selectedWidget}
+          selectIndicatorWidget={selectIndicatorWidget}
+        />
+      </Row>
 
-      <Column className="Section">
-        <Image src="usecases/report/img/graph-map.png"/>
-      </Column>
+      <Row className="Section">
+        <GraphContainer/>
+      </Row>
     </PageContainer>
   );
 };
