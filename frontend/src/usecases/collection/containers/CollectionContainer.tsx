@@ -72,7 +72,7 @@ class CollectionContainer extends React.Component<Props> {
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('collection')}</MainTitle>
-          <PeriodSelection selectedPeriod={} periods={} />
+          <PeriodSelection/>
         </Row>
 
         <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
