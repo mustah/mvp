@@ -5,7 +5,6 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {Image} from '../../common/components/images/Image';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
@@ -25,8 +24,6 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
         <MainTitle>{translate('validation')}</MainTitle>
         <PeriodSelection/>
       </Row>
-
-      <Image src="usecases/validation/img/alarms.png"/>
 
       <Title>{translate('meter')}</Title>
       <ValidationTabsContainer/>
