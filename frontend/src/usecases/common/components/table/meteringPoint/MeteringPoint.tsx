@@ -1,10 +1,10 @@
-import {FlatButton} from 'material-ui';
 import Dialog from 'material-ui/Dialog';
+import RaisedButton from 'material-ui/RaisedButton';
 import 'MeteringPoint.scss';
 import * as React from 'react';
 import {translate} from '../../../../../services/translationService';
 import {Column} from '../../layouts/column/Column';
-import {Row, RowCenter} from '../../layouts/row/Row';
+import {Row} from '../../layouts/row/Row';
 import {StatusIcon} from '../status/StatusIcon';
 
 interface MeteringPointProps {
@@ -37,9 +37,8 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     const actions = [
       (
-        <FlatButton
+        <RaisedButton
           label={translate('close')}
-          primary={true}
           onClick={close}
         />
       ),
@@ -59,73 +58,73 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
             <Column>
               <img className="MeterGraphics" src={'cme2100.jpg'}/>
             </Column>
-            <Column>
+            <Column className="OverView">
               <Row>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('meter id')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     12000747
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('product model')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     KAM
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('city')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     Perstorp
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('address')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     Duvstigen 5
-                  </RowCenter>
+                  </Row>
                 </Column>
               </Row>
               <Row>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('collection')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     <StatusIcon code={0}/>
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('validation')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     <StatusIcon code={3}/>
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('status')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     Läckage
-                  </RowCenter>
+                  </Row>
                 </Column>
                 <Column>
-                  <RowCenter>
+                  <Row>
                     {translate('status')}
-                  </RowCenter>
-                  <RowCenter>
+                  </Row>
+                  <Row>
                     {translate('action pending')}
-                  </RowCenter>
+                  </Row>
                 </Column>
               </Row>
             </Column>
