@@ -359,7 +359,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {

@@ -11,6 +11,9 @@ import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import './_common.scss';
 import './App.scss';
 import {Pages} from './Pages';
+import {bindActionCreators} from 'redux';
+import {fetchGateways} from '../../state/domain-models/gateway/gatewayActions';
+import {fetchMeters} from '../../state/domain-models/meter/meterActions';
 
 interface StateToProps {
   isAuthenticated: boolean;
@@ -22,7 +25,17 @@ interface StateToProps {
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-class App extends React.Component<StateToProps> {
+
+interface AppProps extends StateToProps {
+  fetchGateways: (filter: any) => any;
+  fetchMeters: (filter: any) => any;
+}
+
+class App extends React.Component<AppProps> {
+  componentDidMount() {
+    this.props.fetchGateways([]); // TODO: Add filter instead of empty array.
+    this.props.fetchMeters([]);
+  }
 
   render() {
     const {isAuthenticated, isSideMenuOpen} = this.props;
@@ -48,4 +61,9 @@ const mapStateToProps = ({auth, ui}: RootState): StateToProps => {
   };
 };
 
-export default withRouter(connect(mapStateToProps, {})(App));
+const mapDispatchToProps = dispatch => bindActionCreators({
+  fetchGateways,
+  fetchMeters,
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

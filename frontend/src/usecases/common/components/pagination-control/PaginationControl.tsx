@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Pagination} from '../../../collection/models/Collections';
+import {Pagination} from '../../../ui/pagination/paginationModels';
 import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './PaginationControl.scss';
@@ -8,13 +8,13 @@ export type ChangePage = (page: number) => any;
 
 interface PaginationControlProps {
   pagination: Pagination;
-  nrOfEntities: number;
+  numOfEntities: number;
   changePage: ChangePage;
 }
 
 export const PaginationControl = (props: PaginationControlProps) => {
-  const {pagination: {page, limit}, changePage, nrOfEntities} = props;
-  const pages = Math.floor(nrOfEntities / limit);
+  const {pagination: {page, limit}, changePage, numOfEntities} = props;
+  const pages = Math.floor(numOfEntities / limit);
   const changePageNext = () => changePage(page + 1);
   const changePagePrev = () => changePage(page - 1);
   const prevPage = page === 1 ? null : (
