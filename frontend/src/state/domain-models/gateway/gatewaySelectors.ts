@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 import {uuid} from '../../../types/Types';
-import {Pagination} from '../../../usecases/collection/models/Collections';
+import {Pagination} from '../../../usecases/ui/pagination/paginationModels';
 import {Gateway, Gateways, GatewaysState} from './gatewayModels';
 
 interface PaginatedGateways {

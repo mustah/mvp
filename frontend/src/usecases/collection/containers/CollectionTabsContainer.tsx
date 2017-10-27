@@ -24,7 +24,7 @@ import {TabsContainerProps, tabType} from '../../common/components/tabs/models/T
 import MapContainer from '../../map/containers/MapContainer';
 import {collectionChangePage} from '../collectionActions';
 import {GatewayList} from '../components/GatewayList';
-import {Pagination} from '../models/Collections';
+import {Pagination} from '../../ui/pagination/paginationModels';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;

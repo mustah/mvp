@@ -9,11 +9,12 @@ import {toggleSelection} from '../../../state/search/selection/selectionActions'
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
+import {PageContainer} from '../../common/containers/PageContainer';
+import {Pagination} from '../../ui/pagination/paginationModels';
 import {fetchCollections} from '../collectionActions';
-import {Category, CollectionState, Pagination} from '../models/Collections';
+import {Category, CollectionState} from '../models/Collections';
 import CollectionTabsContainer from './CollectionTabsContainer';
 
 interface DispatchToProps {

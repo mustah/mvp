@@ -216,28 +216,6 @@ const fromDbJson = {
   },
 };
 
-const gatewayStatuses = [
-  {
-    'code': 0,
-    'text': 'OK',
-  },
-  {
-    'code': 3,
-    'text': 'Gateway kunde inte avläsas',
-  },
-];
-
-const cities = [
-  'Göteborg',
-  'Kungsbacka',
-  'Mölndal',
-  'Stockholm',
-  'Alvesta',
-  'Höganäs',
-  'Varberg',
-  'Borås',
-];
-
 const position = [
   {latitude: 57.715954, longitude: 11.974855},
   {latitude: 57.487614, longitude: 12.076706},
@@ -247,42 +225,6 @@ const position = [
   {latitude: 56.200461, longitude: 12.555504},
   {latitude: 57.107967, longitude: 12.272229},
   {latitude: 57.721190, longitude: 12.940214},
-];
-
-const gatewayModels = [
-  'CMe2100',
-  'CMi2110',
-  'CMe3100',
-];
-
-const meterModels = [
-  'Kamstrup Multical 403',
-  'Kamstrup Multical 603',
-];
-
-const actions = [
-  '',
-  'Inspektion väntar',
-  'Ny produkt beställd',
-  'Lagret kör ut ny gateway',
-];
-
-const mpDistrictHeatingErrors = [
-  'Battery low',
-  'Flow sensor error (air)',
-  'Flow sensor error (generic)',
-  'Flow sensor error (dirty)',
-  'Leakage',
-  'Overflow',
-  'Backflow',
-  'Forward temperature sensor error',
-  'Return temperature sensor error',
-  'Temperature sensor error (generic)',
-  'Temperature sensor inverted',
-  'Tamper error',
-  'Supply voltage error',
-  'Time for battery change',
-  'Internal meter error',
 ];
 
 const getPosition = (area) => {

@@ -1,4 +1,5 @@
 import {uuid} from '../../../types/Types';
+import {Pagination} from '../../ui/pagination/paginationModels';
 
 export interface CollectionState {
   title: string;
@@ -12,11 +13,6 @@ export interface CollectionState {
 // TODO manually test that Set is being compiled properly for older browsers
 export interface Filter {
   [category: string]: Set<uuid>;
-}
-
-export interface Pagination {
-  page: number;
-  limit: number;
 }
 
 // TODO we must give categories a type
