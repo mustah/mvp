@@ -4,10 +4,12 @@ import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './PaginationControl.scss';
 
+export type ChangePage = (page: number) => any;
+
 interface PaginationControlProps {
   pagination: Pagination;
   nrOfEntities: number;
-  changePage: (page) => any;
+  changePage: ChangePage;
 }
 
 export const PaginationControl = (props: PaginationControlProps) => {

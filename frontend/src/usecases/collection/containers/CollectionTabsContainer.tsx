@@ -12,7 +12,7 @@ import {
 import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
-import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
+import {ChangePage, PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
@@ -28,10 +28,10 @@ import {Pagination} from '../models/Collections';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
-  gateways: { [key: string]: Gateway };
+  gateways: {[key: string]: Gateway};
   paginatedList: uuid[];
   pagination: Pagination;
-  collectionChangePage: (page) => any;
+  collectionChangePage: ChangePage;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
