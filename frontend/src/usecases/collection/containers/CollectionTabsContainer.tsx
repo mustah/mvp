@@ -7,7 +7,6 @@ import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {
   getGatewayEntities,
   getGatewaysTotal,
-  getPaginationList,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
@@ -25,6 +24,7 @@ import MapContainer from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {paginationChangePage} from '../../ui/pagination/paginationActions';
+import {getCollectionPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
@@ -106,14 +106,16 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui, domainModels: {gateways}} = state;
+  const {ui, domainModels} = state;
+  const pagination = getCollectionPagination(ui);
+  const gateways = domainModels.gateways;
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),
     numOfGateways: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
-    paginatedList: getPaginationList({pagination: ui.pagination.collection, gateways}),
-    pagination: ui.pagination.collection, // TODO: make a selector for pagination, for all usecases.
+    paginatedList: getPaginationList({...pagination, ...gateways}),
+    pagination,
   };
 };
 
