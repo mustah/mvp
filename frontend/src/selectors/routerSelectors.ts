@@ -11,7 +11,7 @@ export const getPathname = createSelector<RouterState, Location, Pathname>(
 
 export const isSearchPage = createSelector<RouterState, string, boolean>(
   getPathname,
-  pathname => pathname.endsWith('/search'),
+  pathname => pathname.match(/\/search$/) !== null,
 );
 
 export const getLocation = createSelector<RouterState, Location, Location>(
