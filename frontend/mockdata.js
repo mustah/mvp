@@ -375,7 +375,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
       if (geoKey in geocodeData) {
         objPosition = geocodeData[geoKey];
       } else if (geocodeOptions.doGeocoding) {
-        const pos = await limiter.schedule(geocode.fetchGeocodeAddressGeocodeAddress, addressInfo);
+        const pos = await limiter.schedule(geocode.fetchGeocodeAddress, addressInfo);
         if (pos instanceof Error)  {
           console.log(pos.message);
         } else {
