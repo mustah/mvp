@@ -31,7 +31,7 @@ interface StateToProps {
   pagination: Pagination;
 }
 
-type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps ;
 
 class CollectionContainer extends React.Component<Props> {
 
