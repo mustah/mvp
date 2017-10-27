@@ -57,7 +57,7 @@ msgid "Last quarter"
 msgstr "Föregående kvartal"
 
 msgid "Last year"
-msgstr "Ett år tillbaka"
+msgstr "Föregående år"
 
 msgid "all"
 msgstr "allt"
