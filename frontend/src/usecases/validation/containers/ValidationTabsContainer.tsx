@@ -3,7 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
+import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
+import {uuid} from '../../../types/Types';
+import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -13,7 +15,7 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
+import MapContainer from '../../map/containers/MapContainer';
 import {ValidationList} from '../components/ValidationList';
 import {normalizedValidationData} from '../models/normalizedValidationData';
 
@@ -33,12 +35,40 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
     });
   };
 
+  const cities = [
+    {name: 'Älmhult', value: 822},
+    {name: 'Perstorp', value: 893},
+  ];
+
+  // TODO the city is maybe not an uuid here, but a string.. yikes
+  const selectCity: PieClick = (city: uuid) => alert('You selected the city ' + city);
+
+  const productModels = [
+    {name: 'CMe2100', value: 66},
+    {name: 'CMi2110', value: 1649},
+  ];
+
+  // TODO the city is maybe not an uuid here, but a string.. yikes
+  const selectProductModel: PieClick =
+    (productModel: uuid) => alert('You selected the product model ' + productModel);
+
+  /**
+   * We want the pie charts to differentiate against each other
+   * We can use a service like https://www.sessions.edu/color-calculator/
+   * to find sets of "splít complimentary", "triadic" or "tetriadic" colors.
+   */
+  const colors: [string[]] = [
+    ['#E8A090', '#FCE8CC'],
+    ['#588E95', '#CCD9CE'],
+  ];
+
   return (
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+          <Tab title={translate('dashboard')} tab={tabType.dashboard}/>
           <Tab title={translate('list')} tab={tabType.list}/>
-          <Tab title={translate('map')} tab={tabType.map} />
+          <Tab title={translate('map')} tab={tabType.map}/>
         </TabHeaders>
         <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
           <TabOption
@@ -56,8 +86,12 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
         </TabOptions>
         <TabSettings useCase="validation"/>
       </TabTopBar>
+      <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
+        <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
+        <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+      </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png"/>
+        <MapContainer/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <ValidationList data={normalizedValidationData.meteringPoints}/>

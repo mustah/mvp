@@ -13,6 +13,7 @@ import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
+import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -27,7 +28,7 @@ import {Pagination} from '../models/Collections';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
-  gateways: {[key: string]: Gateway};
+  gateways: { [key: string]: Gateway };
   paginatedList: uuid[];
   pagination: Pagination;
   collectionChangePage: (page) => any;
@@ -42,15 +43,47 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     });
   };
 
+  const cities = [
+    {name: 'Älmhult', value: 822},
+    {name: 'Perstorp', value: 893},
+  ];
+
+  // TODO the city is maybe not an uuid here, but a string.. yikes
+  const selectCity: PieClick = (city: uuid) => alert('You selected the city ' + city);
+
+  const productModels = [
+    {name: 'CMe2100', value: 66},
+    {name: 'CMi2110', value: 1649},
+  ];
+
+  // TODO the city is maybe not an uuid here, but a string.. yikes
+  const selectProductModel: PieClick =
+    (productModel: uuid) => alert('You selected the product model ' + productModel);
+
+  /**
+   * We want the pie charts to differentiate against each other
+   * We can use a service like https://www.sessions.edu/color-calculator/
+   * to find sets of "splít complimentary", "triadic" or "tetriadic" colors.
+   */
+  const colors: [string[]] = [
+    ['#E8A090', '#FCE8CC'],
+    ['#588E95', '#CCD9CE'],
+  ];
+
   return (
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+          <Tab tab={tabType.dashboard} title={translate('dashboard')}/>
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
         <TabSettings useCase="collection"/>
       </TabTopBar>
+      <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
+        <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
+        <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+      </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
         <PaginationControl pagination={pagination} changePage={collectionChangePage} nrOfEntities={numOfGateways}/>
