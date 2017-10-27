@@ -10,7 +10,6 @@ import CollectionTabsContainer from '../containers/CollectionTabsContainer';
 type Props = InjectedAuthRouterProps;
 
 export class Collection extends React.Component<Props> {
-
   render() {
     return (
       <PageContainer>

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-26 13:51+0200\n"
+"POT-Creation-Date: 2017-10-27T13:23:32.127Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "email"
 msgstr "email"
@@ -17,8 +17,8 @@ msgstr "email"
 msgid "password"
 msgstr "password"
 
-msgid "current filter"
-msgstr "current filter"
+msgid "collection"
+msgstr "collection"
 
 msgid "gateway"
 msgstr "gateway"
@@ -77,8 +77,11 @@ msgstr "meter details"
 msgid "meter id"
 msgstr "meter id"
 
-msgid "address"
-msgstr "address"
+msgid "validation"
+msgstr "validation"
+
+msgid "action pending"
+msgstr "action pending"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -119,34 +122,8 @@ msgstr "object"
 msgid "facility"
 msgstr "facility"
 
-msgctxt "°plural"
-msgid "meter°"
-msgstr "meter°"
-
-msgctxt "°plural"
-msgid "{{count}} errand°"
-msgstr "{{count}} errand°"
-
-#~ msgid "grouping"
-#~ msgstr "grouping"
-
-#~ msgid "count"
-#~ msgstr "count"
-
-#~ msgid "errands"
-#~ msgstr "errands"
-
-#~ msgid "{{count}} errand"
-#~ msgstr "{{count}} errand"
-
-#~ msgid "cities"
-#~ msgstr "cities"
-
-#~ msgid "{{count}} city"
-#~ msgstr "{{count}} city"
-
-#~ msgid "{{count}} product"
-#~ msgstr "{{count}} product"
+#~ msgid "current filter"
+#~ msgstr "current filter"
 
 #~ msgctxt "°plural"
 #~ msgid "meter°"
@@ -155,18 +132,3 @@ msgstr "{{count}} errand°"
 #~ msgctxt "°plural"
 #~ msgid "{{count}} errand°"
 #~ msgstr "{{count}} errand°"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} city°"
-#~ msgstr "{{count}} city°"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} product°"
-#~ msgstr "{{count}} product°"
-
-#~ msgid "current filter"
-#~ msgstr "current filter"
-
-#~ msgctxt "°plural"
-#~ msgid "meter°"
-#~ msgstr "meter°"
