@@ -37,8 +37,8 @@ const ValidationTabsContainer = (props: TabsContainerProps) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-          <Tab title={translate('map')} tab={tabType.map} />
           <Tab title={translate('list')} tab={tabType.list}/>
+          <Tab title={translate('map')} tab={tabType.map} />
         </TabHeaders>
         <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
           <TabOption
