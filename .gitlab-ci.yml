@@ -49,17 +49,15 @@ build:
         url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
         on_stop: teardown_review
     script:
-        - rm -rf app-root
-        - mkdir app-root
-        - tar -C app-root -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
+        - rm -rf app-root-`cat .version`
+        - mkdir app-root-`cat .version`
+        - tar -C app-root-`cat .version` -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
         - docker stop $CONTAINER_NAME || true
         - docker rm $CONTAINER_NAME || true
-        - docker run -v $(pwd)/app-root/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
+        - docker run -v $(pwd)/app-root-`cat .version`/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
         - sleep 1
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
-
-
 
 deploy_protected:
   <<: *review_app
@@ -87,6 +85,8 @@ teardown_review:
       - echo "Removing review container $CONTAINER_NAME"
       - docker stop $CONTAINER_NAME || true
       - docker rm $CONTAINER_NAME || true
+      - echo "Removing review app root"
+      - rm -rf app-root-`cat .version`
     when: manual
     environment:
         name: review/$CI_COMMIT_REF_NAME
