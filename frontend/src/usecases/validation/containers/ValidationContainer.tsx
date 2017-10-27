@@ -6,7 +6,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {Image} from '../../common/components/images/Image';
-import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
 import {ValidationState} from '../models/Validations';

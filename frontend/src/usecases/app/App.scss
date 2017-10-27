@@ -24,13 +24,9 @@ body {
   .SideMenuContainer {
     width: $main-menu-width;
 
-    &.isOpen {
-      width: $side-menu-container-width + $main-menu-width
+    &.isSideMenuOpen {
+      width: $opened-side-menu-width;
     }
-  }
-
-  .Content {
-    padding: $lg-space;
   }
 
   .Section {

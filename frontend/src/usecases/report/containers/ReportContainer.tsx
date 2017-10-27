@@ -10,7 +10,7 @@ import {Image} from '../../common/components/images/Image';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Column} from '../../common/components/layouts/column/Column';
-import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
 import {indicators, ReportState} from '../models/ReportModels';
