@@ -61,12 +61,14 @@ $map-width: 800px;
 $main-menu-height: 60px;
 $main-menu-width: 64px;
 $main-menu-z-index: 1400; // slightly larger than material design's app bar
+$selection-header-z-index: 1000;
 
 // tables
 $table-row-border-color: #e6e6e6;
 $table-header-color: $light-black;
 
 $side-menu-container-width: 256px;
+$opened-side-menu-width: $side-menu-container-width + $main-menu-width;
 
 $status-box-height: 150px;
 $status-box-width: 160px;

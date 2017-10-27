@@ -1,9 +1,18 @@
 @import "../../../app/variables";
 
 .SelectionSearch-Container {
+  position: fixed;
+  top: 0;
+  left: $main-menu-width;
+  right: 0;
+  z-index: $selection-header-z-index;
   padding: 0 $lg-space;
   background-color: $white;
   height: $main-menu-height;
+
+  &.isSideMenuOpen {
+    left: $opened-side-menu-width;
+  }
 
   .SelectionSearch {
     color: $blackest;

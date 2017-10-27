@@ -1,0 +1,10 @@
+@import "../../../../app/variables";
+
+.Content {
+  padding: $lg-space;
+
+  &.Content-main {
+    padding-top: $main-menu-height + $lg-space;
+  }
+}
+

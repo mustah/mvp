@@ -9,7 +9,7 @@ import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
-import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
 import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';

@@ -5,11 +5,11 @@ import './Layout.scss';
 export interface LayoutProps {
   hide?: boolean;
   className?: string;
-  children?: any;
-  onClick?: (...args) => any;
+  children?: React.ReactNode;
+  onClick?: (...args) => void;
 }
 
-export const Layout: React.StatelessComponent<LayoutProps> = (props) => {
+export const Layout = (props: LayoutProps) => {
   if (props.hide) {
     return null;
   }

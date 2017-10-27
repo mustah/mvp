@@ -9,7 +9,7 @@ import {toggleSelection} from '../../../state/search/selection/selectionActions'
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {PageContainer} from '../../common/components/layouts/layout/PageLayout';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {MainTitle} from '../../common/components/texts/Title';

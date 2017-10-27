@@ -4,26 +4,26 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {getPathname} from '../../../selectors/routerSelector';
+import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {routes} from '../../app/routes';
 import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
 import {IconCollection} from '../../common/components/icons/IconCollection';
 import {IconDashboard} from '../../common/components/icons/IconDashboard';
+import {IconReport} from '../../common/components/icons/IconReport';
 import {IconValidation} from '../../common/components/icons/IconValidation';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Profile} from '../../profile/components/Profile';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
-import {SideMenuState} from '../../sidemenu/sideMenuReducer';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
-import {IconReport} from '../../common/components/icons/IconReport';
 
 interface StateToProps {
   pathname: string;
   auth: AuthState;
-  sideMenu: SideMenuState;
+  isSideMenuOpen: boolean;
 }
 
 interface DispatchToProps {
@@ -32,7 +32,7 @@ interface DispatchToProps {
 }
 
 const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {pathname, auth, sideMenu, toggleShowHideSideMenu, logout} = props;
+  const {pathname, auth, isSideMenuOpen, toggleShowHideSideMenu, logout} = props;
 
   if (!auth.isAuthenticated) {
     return null;
@@ -41,7 +41,7 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
   return (
     <Column className="MainMenuContainer">
       <MainNavigationMenu
-        isOpen={sideMenu.isOpen}
+        isOpen={isSideMenuOpen}
         toggleShowHideSideMenu={toggleShowHideSideMenu}
       />
       <Column className="MenuItems Column-space-between">
@@ -81,12 +81,11 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = (state: RootState): StateToProps => {
-  const {auth, ui: {sideMenu}} = state;
+const mapStateToProps = ({auth, routing, ui}: RootState): StateToProps => {
   return {
-    pathname: getPathname(state.routing),
+    pathname: getPathname(routing),
     auth,
-    sideMenu,
+    isSideMenuOpen: isSideMenuOpen(ui),
   };
 };
 

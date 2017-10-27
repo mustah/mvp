@@ -9,18 +9,21 @@ import {bindActionCreators} from 'redux';
 import 'SideMenuContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {drawerWidth} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
-import {SideMenuState} from '../sideMenuReducer';
 
-interface SideMenuContainerProps {
-  sideMenu: SideMenuState;
+interface StateToProps {
+  isSideMenuOpen: boolean;
+}
+
+interface DispatchToProps {
   toggleShowHideSideMenu: () => void;
 }
 
-const SideMenuContainer = (props: SideMenuContainerProps) => {
-  const {sideMenu: {isOpen}} = props;
+const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
+  const {isSideMenuOpen} = props;
 
   const listItems = [
     <ListItem primaryText="Göteborg - Centrum" key={1}/>,
@@ -28,7 +31,7 @@ const SideMenuContainer = (props: SideMenuContainerProps) => {
   ];
 
   return (
-    <Drawer open={isOpen} docked={true} containerStyle={{left: isOpen ? drawerWidth : 0}}>
+    <Drawer open={isSideMenuOpen} docked={true} containerStyle={{left: isSideMenuOpen ? drawerWidth : 0}}>
       <AppBar
         className="AppTitle"
         title={translate('metering')}
@@ -48,10 +51,9 @@ const SideMenuContainer = (props: SideMenuContainerProps) => {
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui: {sideMenu}} = state;
+const mapStateToProps = ({ui}: RootState): StateToProps => {
   return {
-    sideMenu,
+    isSideMenuOpen: isSideMenuOpen(ui),
   };
 };
 
@@ -59,4 +61,5 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   toggleShowHideSideMenu,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(SideMenuContainer);
+export const SideMenuContainer =
+  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SideMenuContainerComponent);
