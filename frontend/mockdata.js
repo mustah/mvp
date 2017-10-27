@@ -2,6 +2,8 @@ const seedrandom = require('seedrandom');
 const fs = require('fs');
 const csvjson = require('csvjson');
 const glob = require('glob');
+const Bottleneck = require('bottleneck');
+const geocode = require('./geocode');
 const fromDbJson = {
   authenticate: {
     id: 8,
@@ -333,53 +335,97 @@ const getWeightedRandomStatus = () => {
   }
 };
 
-module.exports = () => {
-  const returnValues = Object.assign({}, fromDbJson);
-  returnValues.meters = [];
-  returnValues.gateways = [];
-  glob('data/seed_data/*.csv', {}, (er, files) => {
-    if (er) {
-      throw er;
+const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false}) => {
+  const r = {
+    meters: [],
+    gateways: [],
+  };
+  let geocodeData = {};
+  let limiter;
+  if (geocodeOptions.geocodeCacheFile !== null) {
+    limiter = new Bottleneck(1, 1000);
+    try {
+      geocodeData = Object.assign(geocodeData,
+        JSON.parse(
+          fs.readFileSync(geocodeOptions.geocodeCacheFile, 'utf-8').toString()
+        ));
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err;
+      }
     }
-    files.forEach((seedFile) => {
-      const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
-      const options = {
-        delimiter: ';',
-        headers: 'facility;address;city;medium;meterId;meterManufacturer;' +
-                 'gatewayId;gatewayProductModel;tel;ip;port;gatewayStatus;meterStatus',
-      };
-      const obj = csvjson.toObject(meterData, options);
-      obj.forEach((row) => {
-        const pos = getPosition(row.city);
-        const {facility, address, city, medium, meterId, meterManufacturer,
-        gatewayId, gatewayProductModel, tel, ip, port, gatewayStatus, meterStatus} = row;
-        returnValues.gateways.push({
-          'id': gatewayId,
-          facility,
-          address,
-          city,
-          'productModel': gatewayProductModel,
-          'telephoneNo': tel,
-          ip,
-          port,
-          'status': gatewayStatus,
-          'position': pos,
-        });
-        returnValues.meters.push({
-          'id': meterId,
-          facility,
-          address,
-          city,
-          medium,
-          'manufacturer': meterManufacturer,
-          'status': meterStatus,
-          gatewayId,
-          'position': pos,
-        });
-      });
-    });
-  });
+  }
+  const promises = glob.sync(path).map((seedFile) => {
 
+    const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
+    const options = {
+      delimiter: ';',
+      headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+    };
+    const obj = csvjson.toObject(meterData, options);
+    return Promise.all(obj.map(async (row) => {
+      let objPosition = {};
+      const addressInfo = {
+        city: row.city,
+        streetAddress: row.address,
+        country: 'Sweden',
+      };
+      const geoKey = geocode.encodeAddressInfo(addressInfo);
+      if (geoKey in geocodeData) {
+        objPosition = geocodeData[geoKey];
+      } else if (geocodeOptions.doGeocoding) {
+        const pos = await limiter.schedule(geocode.fetchGeocodeAddressGeocodeAddress, addressInfo);
+        if (pos instanceof Error)  {
+          console.log(pos.message);
+        } else {
+          geocodeData[geoKey] = objPosition = pos;
+          console.log('found position', pos, 'for', geoKey);
+        }
+      }
+      r.gateways.push({
+        id : row.gateway_id,
+        facility: row.facility,
+        address: row.address,
+        city: row.city,
+        productModel: row.gateway_product_model,
+        telephoneNumber: row.tel,
+        ip: row.ip,
+        port: row.port,
+        status: row.gateway_status,
+        position: objPosition,
+      });
+      r.meters.push({
+        id: row.meter_id,
+        facility: row.facility,
+        address: row.address,
+        city: row.city,
+        medium: row.medium,
+        manufacturer: row.meter_manufacturer,
+        status: row.meter_status,
+        gatewayId: row.gateway_id,
+        position: objPosition,
+      });
+    }));
+  });
+  Promise.all(promises).then(() => {
+    if (geocodeOptions.doGeocoding && geocodeOptions.geocodeCacheFile) {
+      fs.writeFileSync(geocodeOptions.geocodeCacheFile,
+        JSON.stringify(geocodeData));
+    }
+  });
+  return r;
+};
+
+module.exports = (doGeocoding = false) => {
+  const returnValues = Object.assign({},
+    fromDbJson,
+    parseSeedDataDirectory('data/seed_data/*.csv',
+      {
+        doGeocoding: doGeocoding,
+        geocodeCacheFile: 'data/geocoding.json',
+      }),
+  );
   // remove the entire endpoint from fromDbJson once we're done with the generation logic
   returnValues.random_gateways = [];
   returnValues.random_meters = [];
