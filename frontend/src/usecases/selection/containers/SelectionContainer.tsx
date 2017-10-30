@@ -10,7 +10,7 @@ import {SelectionParameter} from '../../../state/search/selection/selectionModel
 import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {uuid} from '../../../types/Types';
 import {PageContainer} from '../../common/containers/PageContainer';
-import {paginationChangePage} from '../../ui/pagination/paginationActions';
+import {changePaginationSelection} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {getPaginationList, getSelectionPagination} from '../../ui/pagination/paginationSelectors';
 import {SelectionContentBox} from '../components/SelectionContentBox';
@@ -26,20 +26,13 @@ export interface SelectionStateToProps {
 
 export interface SelectionDispatchToProps {
   toggleSelection: (searchParameters: SelectionParameter) => void;
-  paginationChangePage: (payload: {page: number; useCase: string; }) => any;
+  paginationChangePage: (page: number) => any;
 }
 
 type Props = SelectionStateToProps & SelectionDispatchToProps & InjectedAuthRouterProps;
 
 const SelectionContainerComponent = (props: Props) => {
   const {selection, toggleSelection, numOfMeters, meters, paginatedList, pagination, paginationChangePage} = props;
-  const SELECTION = 'selection';
-  const onChangePagination = (page: number) => {
-    paginationChangePage({
-      page,
-      useCase: SELECTION,
-    });
-  };
   return (
     <PageContainer>
       <SelectionOptionsLoaderContainer>
@@ -47,9 +40,7 @@ const SelectionContainerComponent = (props: Props) => {
           selection={selection}
           toggleSelection={toggleSelection}
           data={{allIds: paginatedList, byId: meters}}
-          pagination={pagination}
-          numOfEntities={numOfMeters}
-          changePage={onChangePagination}
+          paginationProps={{pagination, changePage: paginationChangePage, numOfEntities: numOfMeters}}
         />
       </SelectionOptionsLoaderContainer>
     </PageContainer>
@@ -70,7 +61,7 @@ const mapStateToProps = ({selection, ui, domainModels}: RootState): SelectionSta
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   toggleSelection,
-  paginationChangePage,
+  paginationChangePage: changePaginationSelection,
 }, dispatch);
 
 export const SelectionContainer =

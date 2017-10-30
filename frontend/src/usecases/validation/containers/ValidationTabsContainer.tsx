@@ -5,7 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
-import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
+import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
@@ -22,7 +22,7 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer from '../../map/containers/MapContainer';
-import {paginationChangePage} from '../../ui/pagination/paginationActions';
+import {changePaginationValidation} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../ui/pagination/paginationSelectors';
 
@@ -31,7 +31,7 @@ interface ValidationTabsContainerProps extends TabsContainerProps {
   meters: { [key: string]: Meter };
   paginatedList: uuid[];
   pagination: Pagination;
-  paginationChangePage: (payload: { page: number; useCase: string; }) => any;
+  paginationChangePage: (page: number) => any;
 }
 
 const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
@@ -39,26 +39,6 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
     tabs, changeTabOption, selectedTab, changeTab,
     meters, pagination, paginationChangePage, paginatedList, numOfMeters,
   } = props;
-  const VALIDATION = 'validation';
-  const onChangeTab = (tab: tabType) => {
-    changeTab({
-      useCase: VALIDATION,
-      tab,
-    });
-  };
-  const onChangeTabOption = (tab: tabType, option: string): void => {
-    changeTabOption({
-      useCase: VALIDATION,
-      tab,
-      option,
-    });
-  };
-  const onChangePagination = (page: number) => {
-    paginationChangePage({
-      page,
-      useCase: VALIDATION,
-    });
-  };
 
   const cities = [
     {name: 'Älmhult', value: 822},
@@ -93,12 +73,12 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   return (
     <Tabs>
       <TabTopBar>
-        <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+        <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
           <Tab title={translate('dashboard')} tab={tabType.dashboard}/>
           <Tab title={translate('list')} tab={tabType.list}/>
           <Tab title={translate('map')} tab={tabType.map}/>
         </TabHeaders>
-        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
+        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
           <TabOption
             title={translate('area')}
             id={'area'}
@@ -112,7 +92,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             id={'facility'}
           />
         </TabOptions>
-        <TabSettings useCase={VALIDATION}/>
+        <TabSettings useCase={'validation'}/>
       </TabTopBar>
       <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
         <Row>
@@ -126,7 +106,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <MeterList data={{allIds: paginatedList, byId: meters}}/>
-        <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={onChangePagination}/>
+        <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={paginationChangePage}/>
       </TabContent>
     </Tabs>
   );
@@ -147,9 +127,9 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  changeTab,
-  changeTabOption,
-  paginationChangePage,
+  changeTab: changeTabValidation,
+  changeTabOption: changeTabOptionValidation,
+  paginationChangePage: changePaginationValidation,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

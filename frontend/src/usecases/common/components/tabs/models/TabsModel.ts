@@ -18,7 +18,7 @@ export interface TabModel {
 }
 
 export interface SelectedTabs {
-  selectedTab: string;
+  selectedTab: tabType;
   tabs: TabModel;
 }
 
@@ -29,6 +29,6 @@ export interface TabsState {
 export interface TabsContainerProps {
   tabs: TabModel;
   selectedTab: tabType;
-  changeTab: (payload: {useCase: string; tab: tabType; }) => any;
-  changeTabOption: (payload: {useCase: string; tab: tabType; option: string; }) => any;
+  changeTab: (tab: tabType) => void;
+  changeTabOption: (tab: tabType, option: string) => void;
 }

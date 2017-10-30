@@ -1,18 +1,10 @@
 import * as React from 'react';
-import {Pagination} from '../../../ui/pagination/paginationModels';
+import {PaginationProps} from '../../../ui/pagination/paginationModels';
 import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './PaginationControl.scss';
 
-export type ChangePage = (page: number) => any;
-
-export interface PaginationControlProps {
-  pagination: Pagination;
-  numOfEntities: number;
-  changePage: ChangePage;
-}
-
-export const PaginationControl = (props: PaginationControlProps) => {
+export const PaginationControl = (props: PaginationProps) => {
   const {pagination: {page, limit}, changePage, numOfEntities} = props;
   const pages = Math.floor(numOfEntities / limit);
   const changePageNext = () => changePage(page + 1);
