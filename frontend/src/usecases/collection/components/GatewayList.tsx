@@ -1,18 +1,18 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
-import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
 import {Status} from '../../common/components/table/status/Status';
 import {Table} from '../../common/components/table/table/Table';
 import {TableHead} from '../../common/components/table/table/TableHead';
 import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
+import {Gateway} from '../../gateway/Gateway';
 
 export const GatewayList = (props: ListProps) => {
 
   const {data} = props;
   const renderStatusCell = (value, index) => <Status code={0} content={value}/>;
-  // TODO abstract out MeteringPoint <> Gateway
-  const renderGateway = (value, index) => <MeteringPoint id={value}/>;
+
+  const renderGateway = (value, index) => <Gateway id={value}/>;
 
   return (
     <Table data={data}>

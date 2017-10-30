@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-30 08:59+0100\n"
+"POT-Creation-Date: 2017-10-30 16:51+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -80,14 +80,23 @@ msgstr "nytt urval"
 msgid "selection"
 msgstr "urval"
 
+msgid "meter"
+msgstr "mätare"
+
+msgid "manufacturer"
+msgstr "tillverkare"
+
+msgid "medium"
+msgstr "medium"
+
 msgid "close"
 msgstr "stäng"
 
-msgid "meter details"
-msgstr "mätaregenskaper"
+msgid "gateway details"
+msgstr "gateway-egenskaper"
 
-msgid "meter id"
-msgstr "mätare"
+msgid "gateway id"
+msgstr "gateway id"
 
 msgid "validation"
 msgstr "validering"
@@ -107,17 +116,14 @@ msgstr "värde"
 msgid "comment"
 msgstr "kommentar"
 
-msgid "meter"
-msgstr "mätare"
-
-msgid "type"
-msgstr "typ"
-
-msgid "location"
-msgstr "plats"
-
 msgid "report"
 msgstr "rapport"
+
+msgid "meter details"
+msgstr "mätaregenskaper"
+
+msgid "meter id"
+msgstr "mätare"
 
 msgid "logout"
 msgstr "logga ut"
@@ -127,12 +133,6 @@ msgstr "mätning"
 
 msgid "saved search"
 msgstr "sparad sökning"
-
-msgid "manufacturer"
-msgstr "tillverkare"
-
-msgid "medium"
-msgstr "medium"
 
 msgid "could not be collected"
 msgstr "kunde inte hämtas"
@@ -145,6 +145,12 @@ msgstr "objekt"
 
 msgid "facility"
 msgstr "anläggning"
+
+#~ msgid "type"
+#~ msgstr "typ"
+
+#~ msgid "location"
+#~ msgstr "plats"
 
 #~ msgctxt "°plural"
 #~ msgid "meter°"

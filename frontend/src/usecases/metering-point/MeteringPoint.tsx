@@ -1,24 +1,24 @@
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
-import 'MeteringPoint.scss';
 import * as React from 'react';
-import {translate} from '../../../../../services/translationService';
-import {Column} from '../../layouts/column/Column';
-import {Row} from '../../layouts/row/Row';
-import {Status} from '../status/Status';
-import {StatusIcon} from '../status/StatusIcon';
-import {Table} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {TableColumn} from '../tableColumn/TableColumn';
-import {tabType} from '../../tabs/models/TabsModel';
-import {Tabs} from '../../tabs/components/Tabs';
-import {TabTopBar} from '../../tabs/components/TabTopBar';
-import {TabHeaders} from '../../tabs/components/TabHeaders';
-import {Tab} from '../../tabs/components/Tab';
-import {TabSettings} from '../../tabs/components/TabSettings';
-import {TabContent} from '../../tabs/components/TabContent';
-import MapContainer from '../../../../map/containers/MapContainer';
-import {IconDistrictHeating} from '../../icons/IconDistrictHeating';
+import 'MeteringPoint.scss';
+import {tabType} from '../common/components/tabs/models/TabsModel';
+import {translate} from '../../services/translationService';
+import {Status} from '../common/components/table/status/Status';
+import {Row} from '../common/components/layouts/row/Row';
+import {Column} from '../common/components/layouts/column/Column';
+import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
+import {StatusIcon} from '../common/components/table/status/StatusIcon';
+import {Tabs} from '../common/components/tabs/components/Tabs';
+import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
+import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
+import {Tab} from '../common/components/tabs/components/Tab';
+import {TabSettings} from '../common/components/tabs/components/TabSettings';
+import {TabContent} from '../common/components/tabs/components/TabContent';
+import {Table} from '../common/components/table/table/Table';
+import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
+import {TableHead} from '../common/components/table/table/TableHead';
+import MapContainer from '../map/containers/MapContainer';
 
 interface MeteringPointProps {
   id: string;
@@ -149,7 +149,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
         <Dialog
           actions={actions}
           autoScrollBodyContent={true}
-          contentClassName="MeteringPointDialog"
+          contentClassName="Dialog"
           onRequestClose={close}
           open={this.state.displayDialog}
         >

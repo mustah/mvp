@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {MeteringPoint} from './meteringPoint/MeteringPoint';
+import {MeteringPoint} from '../../../metering-point/MeteringPoint';
 import {Status} from './status/Status';
 import {Table} from './table/Table';
 import {TableHead} from './table/TableHead';
