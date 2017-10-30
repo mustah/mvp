@@ -112,6 +112,7 @@
     "redux-auth-wrapper": "^2.0.2",
     "redux-persist": "^4.10.1",
     "redux-thunk": "^2.2.0",
-    "reselect": "^3.0.1"
+    "reselect": "^3.0.1",
+    "es6-shim": "^0.35.3"
   }
 }
