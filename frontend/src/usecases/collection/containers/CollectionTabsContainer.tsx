@@ -22,13 +22,14 @@ import {paginationChangePage} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
 import {GatewayList} from '../components/GatewayList';
+import {Row} from '../../common/components/layouts/row/Row';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
-  gateways: {[key: string]: Gateway};
+  gateways: { [key: string]: Gateway };
   paginatedList: uuid[];
   pagination: Pagination;
-  paginationChangePage: (payload: {page: number; useCase: string; }) => any;
+  paginationChangePage: (payload: { page: number; useCase: string; }) => any;
 }
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
@@ -88,9 +89,11 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <TabSettings useCase={COLLECTION}/>
       </TabTopBar>
       <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
-        <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
-        <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
-        <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
+        <Row>
+          <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
+          <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+          <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
+        </Row>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
