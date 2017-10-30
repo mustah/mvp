@@ -10,6 +10,15 @@ import {StatusIcon} from '../status/StatusIcon';
 import {Table} from '../table/Table';
 import {TableHead} from '../table/TableHead';
 import {TableColumn} from '../tableColumn/TableColumn';
+import {tabType} from '../../tabs/models/TabsModel';
+import {Tabs} from '../../tabs/components/Tabs';
+import {TabTopBar} from '../../tabs/components/TabTopBar';
+import {TabHeaders} from '../../tabs/components/TabHeaders';
+import {Tab} from '../../tabs/components/Tab';
+import {TabSettings} from '../../tabs/components/TabSettings';
+import {TabContent} from '../../tabs/components/TabContent';
+import MapContainer from '../../../../map/containers/MapContainer';
+import {IconDistrictHeating} from '../../icons/IconDistrictHeating';
 
 interface MeteringPointProps {
   id: string;
@@ -17,6 +26,7 @@ interface MeteringPointProps {
 
 interface MeteringPointState {
   displayDialog: boolean;
+  selectedTab: tabType;
 }
 
 export class MeteringPoint extends React.Component<MeteringPointProps, MeteringPointState> {
@@ -26,10 +36,12 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     this.state = {
       displayDialog: false,
+      selectedTab: tabType.list,
     };
   }
 
   render() {
+    const {selectedTab} = this.state;
     const {id} = this.props;
 
     const open = (event: any): void => {
@@ -127,23 +139,33 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    // TODO extract the Dialog into its own component, and keep track of its open/close state in the root.ui reducer
+    const changeTab = (option: tabType) => {
+      this.setState({selectedTab: option});
+    };
+
     return (
       <div>
         <a href={'/#/meter/' + id} onClick={open}>{id}</a>
         <Dialog
           actions={actions}
-          open={this.state.displayDialog}
-          onRequestClose={close}
           autoScrollBodyContent={true}
+          contentClassName="MeteringPointDialog"
+          onRequestClose={close}
+          open={this.state.displayDialog}
         >
           <h2 className="capitalize">{translate('meter details')}</h2>
           <Row>
-            <Column>
-              <img className="MeterGraphics" src={'cme2100.jpg'}/>
-            </Column>
             <Column className="OverView">
               <Row>
+                <Column>
+                  <Row>
+                    {translate('medium')}
+                  </Row>
+                  <Row>
+                    <IconDistrictHeating color={'#2b6ea3'}/>
+                    Värme
+                  </Row>
+                </Column>
                 <Column>
                   <Row>
                     {translate('meter id')}
@@ -180,14 +202,6 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
               <Row>
                 <Column>
                   <Row>
-                    {translate('medium')}
-                  </Row>
-                  <Row>
-                    Värme, returtemp.
-                  </Row>
-                </Column>
-                <Column>
-                  <Row>
                     {translate('collection')}
                   </Row>
                   <Row>
@@ -222,29 +236,47 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
             </Column>
           </Row>
           <Row>
-            <Table data={meterData}>
-              <TableColumn
-                id={'date'}
-                header={<TableHead>{translate('date')}</TableHead>}
-              />
-              <TableColumn
-                id={'status'}
-                header={<TableHead>{translate('status')}</TableHead>}
-                cell={renderStatusCell}
-              />
-              <TableColumn
-                id={'quantity'}
-                header={<TableHead>{translate('quantity')}</TableHead>}
-              />
-              <TableColumn
-                id={'value'}
-                header={<TableHead>{translate('value')}</TableHead>}
-              />
-              <TableColumn
-                id={'comment'}
-                header={<TableHead>{translate('comment')}</TableHead>}
-              />
-            </Table>
+            <Tabs className="full-width">
+              <TabTopBar>
+                <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+                  <Tab tab={tabType.dashboard} title={translate('dashboard')}/>
+                  <Tab tab={tabType.list} title={translate('list')}/>
+                  <Tab tab={tabType.map} title={translate('map')}/>
+                </TabHeaders>
+                <TabSettings useCase={'meteringPoint'}/>
+              </TabTopBar>
+              <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
+                hej hej
+              </TabContent>
+              <TabContent tab={tabType.list} selectedTab={selectedTab}>
+                <Table data={meterData}>
+                  <TableColumn
+                    id={'date'}
+                    header={<TableHead>{translate('date')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'status'}
+                    header={<TableHead>{translate('status')}</TableHead>}
+                    cell={renderStatusCell}
+                  />
+                  <TableColumn
+                    id={'quantity'}
+                    header={<TableHead>{translate('quantity')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'value'}
+                    header={<TableHead>{translate('value')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'comment'}
+                    header={<TableHead>{translate('comment')}</TableHead>}
+                  />
+                </Table>
+              </TabContent>
+              <TabContent tab={tabType.map} selectedTab={selectedTab}>
+                <MapContainer/>
+              </TabContent>
+            </Tabs>
           </Row>
         </Dialog>
       </div>

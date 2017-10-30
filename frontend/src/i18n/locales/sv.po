@@ -84,7 +84,7 @@ msgid "close"
 msgstr "stäng"
 
 msgid "meter details"
-msgstr "mätare"
+msgstr "mätaregenskaper"
 
 msgid "meter id"
 msgstr "mätare"
