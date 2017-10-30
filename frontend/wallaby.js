@@ -1,12 +1,6 @@
-'use strict';
-
 module.exports = function(wallaby) {
-
-  wallaby.defaults.files.instrument = false;
-
   return {
     files: [
-      'tsconfig.json',
       'src/**/*.ts',
       '!src/**/__tests__/*.test.ts',
     ],
@@ -15,20 +9,16 @@ module.exports = function(wallaby) {
 
     env: {
       type: 'node',
-      runner: 'node',
-    },
-
-    compilers: {
-      '**/*.ts': wallaby.compilers.typeScript({}),
     },
 
     testFramework: 'jest',
 
-    setup: function(wallaby) {
-      const jestConfig = require('./package.json').jest;
-      jestConfig.globals = {'__DEV__': true};
-      wallaby.testFramework.configure(jestConfig);
+    compilers: {
+      'src/**/*.ts': wallaby.compilers.typeScript({
+        module: 'commonjs',
+        jsx: 'react',
+        target: 'es5',
+      }),
     },
-
   };
 };
