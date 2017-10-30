@@ -11,6 +11,7 @@ import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
+import {MeterList} from '../../common/components/table/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -24,7 +25,6 @@ import MapContainer from '../../map/containers/MapContainer';
 import {paginationChangePage} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../ui/pagination/paginationSelectors';
-import {ValidationList} from '../components/ValidationList';
 
 interface ValidationTabsContainerProps extends TabsContainerProps {
   numOfMeters: number;
@@ -125,7 +125,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         <MapContainer/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <ValidationList data={{allIds: paginatedList, byId: meters}}/>
+        <MeterList data={{allIds: paginatedList, byId: meters}}/>
         <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={onChangePagination}/>
       </TabContent>
     </Tabs>

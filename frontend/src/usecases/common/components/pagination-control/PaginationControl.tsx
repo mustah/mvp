@@ -6,7 +6,7 @@ import './PaginationControl.scss';
 
 export type ChangePage = (page: number) => any;
 
-interface PaginationControlProps {
+export interface PaginationControlProps {
   pagination: Pagination;
   numOfEntities: number;
   changePage: ChangePage;

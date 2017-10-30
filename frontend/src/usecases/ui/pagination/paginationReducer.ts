@@ -6,7 +6,7 @@ const initialState: PaginationState = {
   dashboard: {page: 1, limit: 20},
   collection: {page: 1, limit: 20},
   validation: {page: 1, limit: 20},
-  selection: {page: 1, limit: 20},
+  selection: {page: 1, limit: 10},
 };
 
 export const pagination = (state: PaginationState = initialState, action: AnyAction) => {
