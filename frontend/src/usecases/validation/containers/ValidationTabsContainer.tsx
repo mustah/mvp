@@ -8,6 +8,7 @@ import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/met
 import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
+import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
@@ -22,15 +23,15 @@ import {TabsContainerProps, tabType} from '../../common/components/tabs/models/T
 import MapContainer from '../../map/containers/MapContainer';
 import {paginationChangePage} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
-import {ValidationList} from '../components/ValidationList';
 import {getPaginationList, getValidationPagination} from '../../ui/pagination/paginationSelectors';
+import {ValidationList} from '../components/ValidationList';
 
 interface ValidationTabsContainerProps extends TabsContainerProps {
   numOfMeters: number;
-  meters: {[key: string]: Meter};
+  meters: { [key: string]: Meter };
   paginatedList: uuid[];
   pagination: Pagination;
-  paginationChangePage: (payload: {page: number; useCase: string; }) => any;
+  paginationChangePage: (payload: { page: number; useCase: string; }) => any;
 }
 
 const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
@@ -114,9 +115,11 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         <TabSettings useCase={VALIDATION}/>
       </TabTopBar>
       <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
-        <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
-        <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
-        <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
+        <Row>
+          <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
+          <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
+          <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
+        </Row>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>
