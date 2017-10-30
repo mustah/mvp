@@ -135,6 +135,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
           actions={actions}
           open={this.state.displayDialog}
           onRequestClose={close}
+          autoScrollBodyContent={true}
         >
           <h2 className="capitalize">{translate('meter details')}</h2>
           <Row>
