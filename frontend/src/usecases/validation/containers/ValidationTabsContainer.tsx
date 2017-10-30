@@ -23,6 +23,7 @@ import {TabsContainerProps, tabType} from '../../common/components/tabs/models/T
 import MapContainer from '../../map/containers/MapContainer';
 import {paginationChangePage} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
+import {MeterList} from '../../common/components/table/MeterList';
 import {getPaginationList, getValidationPagination} from '../../ui/pagination/paginationSelectors';
 import {ValidationList} from '../components/ValidationList';
 
@@ -125,7 +126,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         <MapContainer/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <ValidationList data={{allIds: paginatedList, byId: meters}}/>
+        <MeterList data={{allIds: paginatedList, byId: meters}}/>
         <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={onChangePagination}/>
       </TabContent>
     </Tabs>

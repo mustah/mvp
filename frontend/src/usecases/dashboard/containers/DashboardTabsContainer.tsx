@@ -3,11 +3,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
-import {Status} from '../../common/components/table/status/Status';
-import {Table} from '../../common/components/table/table/Table';
-import {TableHead} from '../../common/components/table/table/TableHead';
-import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
+import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
+import {uuid} from '../../../types/Types';
+import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
+import {MeterList} from '../../common/components/table/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -15,20 +17,38 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../../state/ui/tabs/tabsActions';
-import {normalizedData} from '../models/dashboardModels';
 import MapContainer from '../../map/containers/MapContainer';
+import {paginationChangePage} from '../../ui/pagination/paginationActions';
+import {Pagination} from '../../ui/pagination/paginationModels';
+import {getDashboardPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
 
-const DashboardTabsContainer = (props: TabsContainerProps) => {
-  const {selectedTab, changeTab} = props;
+interface DashboardTabsContainerProps extends TabsContainerProps {
+  numOfMeters: number;
+  meters: {[key: string]: Meter};
+  paginatedList: uuid[];
+  pagination: Pagination;
+  paginationChangePage: (payload: {page: number; useCase: string; }) => any;
+}
+
+const DashboardTabsContainer = (props: DashboardTabsContainerProps) => {
+  const {
+    selectedTab, changeTab,
+    meters, pagination, paginationChangePage, paginatedList, numOfMeters,
+  } = props;
+
+  const DASHBOARD = 'dashboard';
   const onChangeTab = (tab: tabType) => {
     changeTab({
       useCase: 'dashboard',
       tab,
     });
   };
-  const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
-  const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
+  const onChangePagination = (page: number) => {
+    paginationChangePage({
+      page,
+      useCase: DASHBOARD,
+    });
+  };
 
   return (
     <Tabs>
@@ -40,30 +60,8 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
         <TabSettings useCase="dashboard"/>
       </TabTopBar>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <Table data={normalizedData.meteringPoints}>
-          <TableColumn
-            id={'id'}
-            header={<TableHead>{translate('meter')}</TableHead>}
-            cell={renderMeteringPointCell}
-          />
-          <TableColumn
-            id={'type'}
-            header={<TableHead>{translate('type')}</TableHead>}
-          />
-          <TableColumn
-            id={'location'}
-            header={<TableHead>{translate('location')}</TableHead>}
-          />
-          <TableColumn
-            id={'gateway'}
-            header={<TableHead>{translate('gateway')}</TableHead>}
-          />
-          <TableColumn
-            id={'status'}
-            header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
-            cell={renderStatusCell}
-          />
-        </Table>
+        <MeterList data={{allIds: paginatedList, byId: meters}}/>
+        <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={onChangePagination}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>
@@ -73,16 +71,23 @@ const DashboardTabsContainer = (props: TabsContainerProps) => {
 };
 
 const mapStateToProps = (state: RootState) => {
-  const {ui: {tabs: {dashboard: {tabs, selectedTab}}}} = state;
+  const {ui, domainModels} = state;
+  const pagination = getDashboardPagination(ui);
+  const meters = domainModels.meters;
   return {
-    selectedTab,
-    tabs,
+    selectedTab: getSelectedTab(ui.tabs.dashboard),
+    tabs: getTabs(ui.tabs.dashboard),
+    numOfMeters: getMetersTotal(meters),
+    meters: getMeterEntities(meters),
+    paginatedList: getPaginationList({...pagination, ...meters}),
+    pagination,
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   changeTab,
   changeTabOption,
+  paginationChangePage,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashboardTabsContainer);

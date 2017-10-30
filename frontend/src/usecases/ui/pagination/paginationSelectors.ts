@@ -24,3 +24,4 @@ export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], Pa
 
 export const getCollectionPagination = getPagination('collection');
 export const getValidationPagination = getPagination('validation');
+export const getDashboardPagination = getPagination('dashboard');

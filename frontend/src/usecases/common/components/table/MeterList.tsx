@@ -1,13 +1,13 @@
 import * as React from 'react';
-import {translate} from '../../../services/translationService';
-import {MeteringPoint} from '../../common/components/table/meteringPoint/MeteringPoint';
-import {Status} from '../../common/components/table/status/Status';
-import {Table} from '../../common/components/table/table/Table';
-import {TableHead} from '../../common/components/table/table/TableHead';
-import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
-import {ListProps} from '../../common/components/tabs/models/TabsModel';
+import {translate} from '../../../../services/translationService';
+import {MeteringPoint} from './meteringPoint/MeteringPoint';
+import {Status} from './status/Status';
+import {Table} from './table/Table';
+import {TableHead} from './table/TableHead';
+import {TableColumn} from './tableColumn/TableColumn';
+import {ListProps} from '../tabs/models/TabsModel';
 
-export const ValidationList = (props: ListProps) => {
+export const MeterList = (props: ListProps) => {
 
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
