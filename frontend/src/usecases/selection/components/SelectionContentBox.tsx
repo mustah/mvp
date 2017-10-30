@@ -1,22 +1,31 @@
 import * as React from 'react';
 import 'SelectionContentBox.scss';
-import {IdNamed} from '../../../types/Types';
-import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row} from '../../common/components/layouts/row/Row';
-import {SelectionDispatchToProps, SelectionStateToProps} from '../containers/SelectionContainer';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {
   getDeselectedAddresses,
   getDeselectedCities,
   getSelectedAddresses,
   getSelectedCities,
 } from '../../../state/search/selection/selectionSelectors';
+import {IdNamed} from '../../../types/Types';
+import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
+import {Column} from '../../common/components/layouts/column/Column';
+import {Row} from '../../common/components/layouts/row/Row';
+import {PaginationControl, PaginationControlProps} from '../../common/components/pagination-control/PaginationControl';
+import {NormalizedRows} from '../../common/components/table/table/Table';
 import {SearchResultList} from './SelectionResultList';
 
-export const SelectionContentBox = (props: SelectionStateToProps & SelectionDispatchToProps) => {
-  const {toggleSearchOption, selection} = props;
-  const selectCity = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'cities'});
-  const selectAddress = (selection: IdNamed) => toggleSearchOption({...selection, entity: 'addresses'});
+interface SelectionContentBoxProps extends PaginationControlProps {
+  selection: SelectionState;
+  toggleSelection: (searchParameters: SelectionParameter) => void;
+  data: NormalizedRows;
+}
+
+export const SelectionContentBox = (props: SelectionContentBoxProps) => {
+  const {toggleSelection, selection, data, pagination, numOfEntities, changePage} = props;
+  const selectCity = (selection: IdNamed) => toggleSelection({...selection, entity: 'cities'});
+  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, entity: 'addresses'});
 
   return (
     <Column className="SelectionContentBox">
@@ -35,7 +44,8 @@ export const SelectionContentBox = (props: SelectionStateToProps & SelectionDisp
         />
       </Row>
 
-      <SearchResultList/>
+      <SearchResultList data={data}/>
+      <PaginationControl pagination={pagination} numOfEntities={numOfEntities} changePage={changePage}/>
     </Column>
   );
 };
