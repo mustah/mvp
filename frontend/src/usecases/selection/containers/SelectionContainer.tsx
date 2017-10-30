@@ -32,8 +32,8 @@ export interface SelectionDispatchToProps {
 type Props = SelectionStateToProps & SelectionDispatchToProps & InjectedAuthRouterProps;
 
 const SelectionContainerComponent = (props: Props) => {
-  const {selection, toggleSelection, numOfMeters, meters, paginatedList, pagination} = props;
-  const SELECTION = 'SELECTION';
+  const {selection, toggleSelection, numOfMeters, meters, paginatedList, pagination, paginationChangePage} = props;
+  const SELECTION = 'selection';
   const onChangePagination = (page: number) => {
     paginationChangePage({
       page,
