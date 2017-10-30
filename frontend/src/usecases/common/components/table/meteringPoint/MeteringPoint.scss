@@ -13,3 +13,11 @@
   }
 
 }
+
+/*
+ !important is needed for changes to override the material style
+ */
+.MeteringPointDialog {
+  width: 70% !important;
+  max-width: 1000px !important;
+}
