@@ -40,9 +40,7 @@ const SelectionContainerComponent = (props: Props) => {
           selection={selection}
           toggleSelection={toggleSelection}
           data={{allIds: paginatedList, byId: meters}}
-          pagination={pagination}
-          numOfEntities={numOfMeters}
-          changePage={paginationChangePage}
+          paginationProps={{pagination, changePage: paginationChangePage, numOfEntities: numOfMeters}}
         />
       </SelectionOptionsLoaderContainer>
     </PageContainer>
