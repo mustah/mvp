@@ -9,29 +9,22 @@ const COLLECTION = 'collection';
 const VALIDATION = 'validation';
 const SELECTION = 'selection';
 
-export const changePaginationDashboard = (page: number) => {
-  paginationChangePage({
-    page,
-    useCase: DASHBOARD,
-  });
-};
+export const changePaginationDashboard = (page: number) => paginationChangePage({
+  page,
+  useCase: DASHBOARD,
+});
 
-export const changePaginationCollection = (page: number) => {
-  paginationChangePage({
-    page,
-    useCase: COLLECTION,
-  });
-};
+export const changePaginationCollection = (page: number) => paginationChangePage({
+  page,
+  useCase: COLLECTION,
+});
 
-export const changePaginationValidation = (page: number) => {
-  paginationChangePage({
-    page,
-    useCase: VALIDATION,
-  });
-};
-export const changePaginationSelection = (page: number) => {
-  paginationChangePage({
-    page,
-    useCase: SELECTION,
-  });
-};
+export const changePaginationValidation = (page: number) => paginationChangePage({
+  page,
+  useCase: VALIDATION,
+});
+
+export const changePaginationSelection = (page: number) => paginationChangePage({
+  page,
+  useCase: SELECTION,
+});
