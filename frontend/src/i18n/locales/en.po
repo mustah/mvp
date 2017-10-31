@@ -60,16 +60,16 @@ msgid "period"
 msgstr "period"
 
 msgid "Last week"
-msgstr "Last week"
+msgstr "1 week"
 
 msgid "Last month"
-msgstr "Last month"
+msgstr "1 month"
 
 msgid "Last quarter"
-msgstr "Last quarter"
+msgstr "1 quarter"
 
 msgid "Last year"
-msgstr "Last year"
+msgstr "1 year"
 
 msgid "all"
 msgstr "all"

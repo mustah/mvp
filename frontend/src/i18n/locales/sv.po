@@ -60,16 +60,16 @@ msgid "period"
 msgstr "period"
 
 msgid "Last week"
-msgstr "Föregående vecka"
+msgstr "1 vecka"
 
 msgid "Last month"
-msgstr "Föregående månad"
+msgstr "1 månad"
 
 msgid "Last quarter"
-msgstr "Föregående kvartal"
+msgstr "1 kvartal"
 
 msgid "Last year"
-msgstr "Föregående år"
+msgstr "1 år"
 
 msgid "all"
 msgstr "allt"
