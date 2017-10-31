@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {getEncodedUriParameters} from '../../../state/search/selection/selectionSelectors';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../mapActions';
@@ -19,17 +20,19 @@ import {MapState} from '../mapReducer';
 interface MapContainerProps {
   map: MapState;
   children?: React.ReactNode;
+  encodedUriParameters: string;
 }
 
 interface MapDispatchToProps {
   toggleClusterDialog: () => any;
   openClusterDialog: (marker: L.Marker) => any;
-  fetchPositions: () => any;
+  fetchPositions: (encodedUriParameters: string) => any;
 }
 
 class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
   componentDidMount() {
-    this.props.fetchPositions();
+    const {fetchPositions, encodedUriParameters} = this.props;
+    fetchPositions(encodedUriParameters);
   }
 
   render() {
@@ -37,7 +40,6 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
       toggleClusterDialog,
       map,
       openClusterDialog,
-
     } = this.props;
 
     const actions = [
@@ -185,9 +187,10 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({map}: RootState): MapContainerProps => {
+const mapStateToProps = ({map, searchParameters}: RootState): MapContainerProps => {
   return {
     map,
+    encodedUriParameters: getEncodedUriParameters(searchParameters),
   };
 };
 
