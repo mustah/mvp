@@ -1,15 +1,26 @@
 import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton';
 import 'MeteringPoint.scss';
 import * as React from 'react';
-import {translate} from '../../../../../services/translationService';
-import {Column} from '../../layouts/column/Column';
-import {Row} from '../../layouts/row/Row';
-import {Status} from '../status/Status';
-import {StatusIcon} from '../status/StatusIcon';
-import {Table} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {TableColumn} from '../tableColumn/TableColumn';
+import {Link} from 'react-router-dom';
+import {translate} from '../../services/translationService';
+import {routes} from '../app/routes';
+import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
+import {Column} from '../common/components/layouts/column/Column';
+import {Row} from '../common/components/layouts/row/Row';
+import {Status} from '../common/components/table/status/Status';
+import {StatusIcon} from '../common/components/table/status/StatusIcon';
+import {Table} from '../common/components/table/table/Table';
+import {TableHead} from '../common/components/table/table/TableHead';
+import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
+import {Tab} from '../common/components/tabs/components/Tab';
+import {TabContent} from '../common/components/tabs/components/TabContent';
+import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
+import {Tabs} from '../common/components/tabs/components/Tabs';
+import {TabSettings} from '../common/components/tabs/components/TabSettings';
+import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
+import {tabType} from '../common/components/tabs/models/TabsModel';
+import {ButtonClose} from '../common/containers/button-close/ButtonClose';
+import MapContainer from '../map/containers/MapContainer';
 
 interface MeteringPointProps {
   id: string;
@@ -17,6 +28,7 @@ interface MeteringPointProps {
 
 interface MeteringPointState {
   displayDialog: boolean;
+  selectedTab: tabType;
 }
 
 export class MeteringPoint extends React.Component<MeteringPointProps, MeteringPointState> {
@@ -26,10 +38,12 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     this.state = {
       displayDialog: false,
+      selectedTab: tabType.statusChanges,
     };
   }
 
   render() {
+    const {selectedTab} = this.state;
     const {id} = this.props;
 
     const open = (event: any): void => {
@@ -38,15 +52,6 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
     };
 
     const close = (): void => this.setState({displayDialog: false});
-
-    const actions = [
-      (
-        <RaisedButton
-          label={translate('close')}
-          onClick={close}
-        />
-      ),
-    ];
 
     const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
 
@@ -127,22 +132,33 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    // TODO extract the Dialog into its own component, and keep track of its open/close state in the root.ui reducer
+    const changeTab = (option: tabType) => {
+      this.setState({selectedTab: option});
+    };
+
     return (
       <div>
-        <a href={'/#/meter/' + id} onClick={open}>{id}</a>
+        <Link to={`${routes.meter}/${id}`} onClick={open}>{id}</Link>
         <Dialog
-          actions={actions}
-          open={this.state.displayDialog}
+          actions={[(<ButtonClose onClick={close}/>)]}
+          autoScrollBodyContent={true}
+          contentClassName="Dialog"
           onRequestClose={close}
+          open={this.state.displayDialog}
         >
           <h2 className="capitalize">{translate('meter details')}</h2>
           <Row>
-            <Column>
-              <img className="MeterGraphics" src={'cme2100.jpg'}/>
-            </Column>
             <Column className="OverView">
               <Row>
+                <Column>
+                  <Row>
+                    {translate('medium')}
+                  </Row>
+                  <Row>
+                    <IconDistrictHeating color={'#2b6ea3'}/>
+                    Värme
+                  </Row>
+                </Column>
                 <Column>
                   <Row>
                     {translate('meter id')}
@@ -179,14 +195,6 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
               <Row>
                 <Column>
                   <Row>
-                    {translate('medium')}
-                  </Row>
-                  <Row>
-                    Värme, returtemp.
-                  </Row>
-                </Column>
-                <Column>
-                  <Row>
                     {translate('collection')}
                   </Row>
                   <Row>
@@ -221,29 +229,43 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
             </Column>
           </Row>
           <Row>
-            <Table data={meterData}>
-              <TableColumn
-                id={'date'}
-                header={<TableHead>{translate('date')}</TableHead>}
-              />
-              <TableColumn
-                id={'status'}
-                header={<TableHead>{translate('status')}</TableHead>}
-                cell={renderStatusCell}
-              />
-              <TableColumn
-                id={'quantity'}
-                header={<TableHead>{translate('quantity')}</TableHead>}
-              />
-              <TableColumn
-                id={'value'}
-                header={<TableHead>{translate('value')}</TableHead>}
-              />
-              <TableColumn
-                id={'comment'}
-                header={<TableHead>{translate('comment')}</TableHead>}
-              />
-            </Table>
+            <Tabs className="full-width">
+              <TabTopBar>
+                <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+                  <Tab tab={tabType.statusChanges} title={translate('status changes')}/>
+                  <Tab tab={tabType.map} title={translate('map')}/>
+                </TabHeaders>
+                <TabSettings useCase={'meteringPoint'}/>
+              </TabTopBar>
+              <TabContent tab={tabType.statusChanges} selectedTab={selectedTab}>
+                <Table data={meterData}>
+                  <TableColumn
+                    id={'date'}
+                    header={<TableHead>{translate('date')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'status'}
+                    header={<TableHead>{translate('status')}</TableHead>}
+                    cell={renderStatusCell}
+                  />
+                  <TableColumn
+                    id={'quantity'}
+                    header={<TableHead>{translate('quantity')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'value'}
+                    header={<TableHead>{translate('value')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'comment'}
+                    header={<TableHead>{translate('comment')}</TableHead>}
+                  />
+                </Table>
+              </TabContent>
+              <TabContent tab={tabType.map} selectedTab={selectedTab}>
+                <MapContainer/>
+              </TabContent>
+            </Tabs>
           </Row>
         </Dialog>
       </div>

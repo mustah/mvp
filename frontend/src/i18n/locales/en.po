@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-30 09:01+0100\n"
+"POT-Creation-Date: 2017-10-31 10:49+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -80,20 +80,32 @@ msgstr "new search"
 msgid "selection"
 msgstr "selection"
 
+msgid "meter"
+msgstr "meter"
+
+msgid "manufacturer"
+msgstr "manufacturer"
+
+msgid "medium"
+msgstr "medium"
+
 msgid "close"
 msgstr "close"
 
-msgid "meter details"
-msgstr "meter details"
+msgid "gateway details"
+msgstr "gateway details"
 
-msgid "meter id"
-msgstr "meter id"
+msgid "gateway id"
+msgstr "gateway id"
 
 msgid "validation"
 msgstr "validation"
 
 msgid "action pending"
 msgstr "action pending"
+
+msgid "status changes"
+msgstr "status changes"
 
 msgid "date"
 msgstr "date"
@@ -107,17 +119,14 @@ msgstr "value"
 msgid "comment"
 msgstr "comment"
 
-msgid "meter"
-msgstr "meter"
-
-msgid "type"
-msgstr "type"
-
-msgid "location"
-msgstr "location"
-
 msgid "report"
 msgstr "report"
+
+msgid "meter details"
+msgstr "meter details"
+
+msgid "meter id"
+msgstr "meter id"
 
 msgid "logout"
 msgstr "logout"
@@ -127,12 +136,6 @@ msgstr "metering"
 
 msgid "saved search"
 msgstr "saved search"
-
-msgid "manufacturer"
-msgstr "manufacturer"
-
-msgid "medium"
-msgstr "medium"
 
 msgid "could not be collected"
 msgstr "could not be collected"
@@ -145,6 +148,12 @@ msgstr "object"
 
 msgid "facility"
 msgstr "facility"
+
+#~ msgid "type"
+#~ msgstr "type"
+
+#~ msgid "location"
+#~ msgstr "location"
 
 #~ msgid "current filter"
 #~ msgstr "current filter"
