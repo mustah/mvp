@@ -19,6 +19,7 @@ import {Table} from '../common/components/table/table/Table';
 import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
 import {TableHead} from '../common/components/table/table/TableHead';
 import MapContainer from '../map/containers/MapContainer';
+import {Link} from 'react-router-dom';
 
 interface MeteringPointProps {
   id: string;
@@ -145,7 +146,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     return (
       <div>
-        <a href={'/#/meter/' + id} onClick={open}>{id}</a>
+        <Link to={'/#/meter/' + id} onClick={open}>{id}</Link>
         <Dialog
           actions={actions}
           autoScrollBodyContent={true}

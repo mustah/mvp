@@ -18,6 +18,7 @@ import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer from '../map/containers/MapContainer';
+import {Link} from 'react-router-dom';
 
 interface GatewayProps {
   id: string;
@@ -144,7 +145,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     return (
       <div>
-        <a href={'/#/gateway/' + id} onClick={open}>{id}</a>
+        <Link to={'/#/gateway/' + id} onClick={open}>{id}</Link>
         <Dialog
           actions={actions}
           autoScrollBodyContent={true}
