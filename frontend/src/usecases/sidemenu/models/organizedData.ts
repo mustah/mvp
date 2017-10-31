@@ -6,8 +6,8 @@ export interface SelectionTree {
   [key: string]: {
     id: uuid;
     name: string;
-    parent: uuid;
-    childNodes: uuid[];
+    parent: {type: string; id: uuid};
+    childNodes: {type: string; ids: uuid[]};
   }[];
 }
 
@@ -16,120 +16,120 @@ const organizedData: SelectionTree = {
     {
       id: 'got',
       name: 'Göteborg',
-      parent: '',
-      childNodes: [1, 2],
+      parent: {type: '', id: ''},
+      childNodes: {type: 'addresses', ids: [1, 2]},
     },
     {
       id: 'sto',
       name: 'Stockholm',
-      parent: '',
-      childNodes: [3],
+      parent: {type: '', id: ''},
+      childNodes: {type: 'addresses', ids: [3]},
     },
     {
       id: 'mmx',
       name: 'Malmö',
-      parent: '',
-      childNodes: [4],
+      parent: {type: '', id: ''},
+      childNodes: {type: 'addresses', ids: [4]},
     },
     {
       id: 'kub',
       name: 'Kungsbacka',
-      parent: '',
-      childNodes: [5],
+      parent: {type: '', id: ''},
+      childNodes: {type: 'addresses', ids: [5]},
     },
   ],
   addresses: [
     {
       id: 1,
       name: 'Stampgatan 46',
-      parent: 'got',
-      childNodes: ['m1', 'm2', 'm3'],
+      parent: {type: 'cities', id: 'got'},
+      childNodes: {type: 'meteringPoints', ids: ['m1', 'm2', 'm3']},
     },
     {
       id: 2,
       name: 'Stampgatan 33',
-      parent: 'got',
-      childNodes: ['m4'],
+      parent: {type: 'cities', id: 'got'},
+      childNodes: {type: 'meteringPoints', ids: ['m4']},
     },
     {
       id: 3,
       name: 'Kungsgatan 44',
-      parent: 'sto',
-      childNodes: ['m5'],
+      parent: {type: 'cities', id: 'sto'},
+      childNodes: {type: 'meteringPoints', ids: ['m5']},
     },
     {
       id: 4,
       name: 'Drottninggatan 1',
-      parent: 'mmx',
-      childNodes: ['m6', 'm7', 'm8'],
+      parent: {type: 'cities', id: 'mmx'},
+      childNodes: {type: 'meteringPoints', ids: ['m6', 'm7', 'm8']},
     },
     {
       id: 5,
       name: 'Åvägen 9',
-      parent: 'kub',
-      childNodes: ['m9', 'm10'],
+      parent: {type: 'cities', id: 'kub'},
+      childNodes: {type: 'meteringPoints', ids: ['m9', 'm10']},
     },
   ],
   meteringPoints: [
     {
       id: 'm1',
       name: 'UNICOcoder',
-      parent: 1,
-      childNodes: [],
+      parent: {type: 'addresses', id: 1},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm2',
       name: '3100',
-      parent: 1,
-      childNodes: [],
+      parent: {type: 'addresses', id: 1},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm3',
       name: 'xxx2233',
-      parent: 1,
-      childNodes: [],
+      parent: {type: 'addresses', id: 1},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm4',
       name: '3100',
-      parent: 2,
-      childNodes: [],
+      parent: {type: 'addresses', id: 2},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm5',
       name: 'Test kit',
-      parent: 3,
-      childNodes: [],
+      parent: {type: 'addresses', id: 3},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm6',
       name: 'UNICOcoder',
-      parent: 4,
-      childNodes: [],
+      parent: {type: 'addresses', id: 4},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm7',
       name: '3100',
-      parent: 4,
-      childNodes: [],
+      parent: {type: 'addresses', id: 4},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm8',
       name: 'xxx2233',
-      parent: 4,
-      childNodes: [],
+      parent: {type: 'addresses', id: 4},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm9',
       name: '3100',
-      parent: 5,
-      childNodes: [],
+      parent: {type: 'addresses', id: 5},
+      childNodes: {type: '', ids: []},
     },
     {
       id: 'm10',
       name: 'Test kit',
-      parent: 5,
-      childNodes: [],
+      parent: {type: 'addresses', id: 5},
+      childNodes: {type: '', ids: []},
     },
   ],
 };

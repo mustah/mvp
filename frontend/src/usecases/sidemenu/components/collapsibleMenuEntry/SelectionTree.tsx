@@ -5,12 +5,15 @@ import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
 import {translate} from '../../../../services/translationService';
 import List from 'material-ui/List/List';
 
-export const SelectionTree = (props) => {
+interface SelectionTreeProps {
+  topLvl: string;
+}
 
-  const cities = selectionTreeData.result.cities;
-  const levelRelations = {cities: 'addresses', addresses: 'meteringPoints'};
+export const SelectionTree = (props: SelectionTreeProps) => {
+  const {topLvl} = props;
+  const topLvlList = selectionTreeData.result[topLvl];
   const renderSelectionOverview = (id) =>
-    renderSelectionTree(id, levelRelations, 'cities', selectionTreeData);
+    renderSelectionTree(id, selectionTreeData, topLvl);
 
   return (
     <List>
@@ -19,25 +22,25 @@ export const SelectionTree = (props) => {
         primaryText={translate('selection overview')}
         leftIcon={<ActionLineWeight/>}
         initiallyOpen={false}
-        nestedItems={[cities.map(renderSelectionOverview)]}
+        nestedItems={topLvlList.map(renderSelectionOverview)}
       />
     </List>
   );
 };
 
-export const renderSelectionTree = (id, levelRelations, level, data) => {
-  const nextLevel = levelRelations[level];
-  const mapFnc = (treeItem) => renderSelectionTree(treeItem, levelRelations, nextLevel, data);
+export const renderSelectionTree = (id, data, level) => {
   const entity = data.entities[level][id];
-  const name = entity.name;
-  const children = entity.childNodes;
+  const nextLevel = entity.childNodes.type;
+
+  const mapFnc = (treeItem) => renderSelectionTree(treeItem, data, nextLevel);
+
   return (
     <ListItem
       className="ListItem"
-      primaryText={name}
+      primaryText={entity.name}
       key={id}
       initiallyOpen={false}
-      nestedItems={children.map(mapFnc)}
+      nestedItems={entity.childNodes.ids.map(mapFnc)}
     />
   );
 };
