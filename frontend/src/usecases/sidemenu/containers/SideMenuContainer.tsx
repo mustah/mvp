@@ -13,6 +13,8 @@ import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {drawerWidth} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
+import {CatalogueCompleteContainer} from './CatalogueCompleteContainer';
+import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -45,6 +47,13 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
           leftIcon={<ToggleStar/>}
           initiallyOpen={true}
           nestedItems={listItems}
+        />
+        <ListItem
+          className="ListItem"
+          primaryText={translate('selection overview')}
+          leftIcon={<ActionLineWeight/>}
+          initiallyOpen={false}
+          nestedItems={[<CatalogueCompleteContainer key={1}/>]}
         />
       </List>
     </Drawer>
