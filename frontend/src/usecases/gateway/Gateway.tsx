@@ -1,23 +1,22 @@
+import 'Gateway.scss';
 import Dialog from 'material-ui/Dialog';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as React from 'react';
-import 'Gateway.scss';
-import {tabType} from '../common/components/tabs/models/TabsModel';
 import {translate} from '../../services/translationService';
-import {Status} from '../common/components/table/status/Status';
-import {Row} from '../common/components/layouts/row/Row';
 import {Column} from '../common/components/layouts/column/Column';
-import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
+import {Row} from '../common/components/layouts/row/Row';
+import {Status} from '../common/components/table/status/Status';
 import {StatusIcon} from '../common/components/table/status/StatusIcon';
-import {Tabs} from '../common/components/tabs/components/Tabs';
-import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
-import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
-import {Tab} from '../common/components/tabs/components/Tab';
-import {TabSettings} from '../common/components/tabs/components/TabSettings';
-import {TabContent} from '../common/components/tabs/components/TabContent';
 import {Table} from '../common/components/table/table/Table';
-import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
 import {TableHead} from '../common/components/table/table/TableHead';
+import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
+import {Tab} from '../common/components/tabs/components/Tab';
+import {TabContent} from '../common/components/tabs/components/TabContent';
+import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
+import {Tabs} from '../common/components/tabs/components/Tabs';
+import {TabSettings} from '../common/components/tabs/components/TabSettings';
+import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
+import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer from '../map/containers/MapContainer';
 
 interface GatewayProps {
@@ -155,17 +154,11 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
         >
           <h2 className="capitalize">{translate('gateway details')}</h2>
           <Row>
+            <Column className="ProductImage">
+              <img src="cme2110.jpg" width="100"/>
+            </Column>
             <Column className="OverView">
               <Row>
-                <Column>
-                  <Row>
-                    {translate('medium')}
-                  </Row>
-                  <Row>
-                    <IconDistrictHeating color={'#2b6ea3'}/>
-                    Värme
-                  </Row>
-                </Column>
                 <Column>
                   <Row>
                     {translate('gateway id')}
