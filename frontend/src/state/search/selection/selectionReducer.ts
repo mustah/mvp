@@ -68,7 +68,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         ...state,
         selected: {
           ...state.selected,
-          [payload.attribute]: [...state.selected[payload.attribute], payload.id],
+          [payload.parameter]: [...state.selected[payload.parameter], payload.id],
         },
       };
     case DESELECT_SELECTION:
@@ -76,7 +76,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         ...state,
         selected: {
           ...state.selected,
-          [payload.attribute]: filterOutUnselected(state.selected[payload.attribute], payload.id),
+          [payload.parameter]: filterOutUnselected(state.selected[payload.parameter], payload.id),
         },
       };
     default:

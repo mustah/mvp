@@ -36,9 +36,9 @@ export const closeSearch = () => dispatch => {
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   async (dispatch: Dispatch<SelectionState>, getState: () => RootState) => {
     const selectionState: SelectionState = getSelection(getState().searchParameters);
-    const {attribute, id} = selectionParameter;
+    const {parameter, id} = selectionParameter;
 
-    if (selectionState.selected[attribute].includes(id)) {
+    if (selectionState.selected[parameter].includes(id)) {
       dispatch(deselectSelection(selectionParameter));
     } else {
       dispatch(setSelection(selectionParameter));

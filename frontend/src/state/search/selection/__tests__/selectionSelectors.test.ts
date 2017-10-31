@@ -1,23 +1,19 @@
 import {IdNamed} from '../../../../types/Types';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {setSelection} from '../selectionActions';
-import {SelectionAttribute} from '../selectionModels';
+import {entityNames, SelectionParameter} from '../selectionModels';
 import {addCityEntity, initialState, selection, SelectionState} from '../selectionReducer';
 import {getEncodedUriParameters, getSelectedCities, getSelection, isFetching} from '../selectionSelectors';
+
+const dbJsonData = require('./../../../../../mockdata');
+const mockData = dbJsonData();
 
 describe('selectionSelectors', () => {
 
   const searchParametersState: SearchParameterState = {selection: {...initialState}};
 
-  const stockholm: IdNamed = {
-    id: 'sto',
-    name: 'Stockholm',
-  };
-
-  const gothenburg: IdNamed = {
-    id: 'got',
-    name: 'Göteborg',
-  };
+  const gothenburg: IdNamed = {...mockData.selections.cities[0]};
+  const stockholm: IdNamed = {...mockData.selections.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...searchParametersState})).toEqual(initialState);
@@ -35,7 +31,7 @@ describe('selectionSelectors', () => {
 
   it('gets entities for type city', () => {
     const prevState: SelectionState = addCityEntity(initialState, {...stockholm});
-    const payload = {...stockholm, attribute: SelectionAttribute.cities};
+    const payload: SelectionParameter = {...stockholm, parameter: entityNames.cities};
     const state: SelectionState = selection(prevState, setSelection(payload));
 
     expect(getSelectedCities(state)).toEqual([{...stockholm}]);
@@ -48,15 +44,15 @@ describe('selectionSelectors', () => {
     });
 
     it('has selected city search parameter', () => {
-      const payload = {...stockholm, attribute: SelectionAttribute.cities};
+      const payload: SelectionParameter = {...stockholm, parameter: entityNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
       expect(getEncodedUriParameters({selection: state})).toEqual('city=sto');
     });
 
     it('has two selected cities', () => {
-      const payloadGot = {...gothenburg, attribute: SelectionAttribute.cities};
-      const payloadSto = {...stockholm, attribute: SelectionAttribute.cities};
+      const payloadGot: SelectionParameter = {...gothenburg, parameter: entityNames.cities};
+      const payloadSto: SelectionParameter = {...stockholm, parameter: entityNames.cities};
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 

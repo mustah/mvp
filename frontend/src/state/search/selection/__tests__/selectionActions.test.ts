@@ -4,6 +4,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeRestClient} from '../../../../services/restClient';
+import {IdNamed} from '../../../../types/Types';
 import {meterRequest} from '../../../domain-models/meter/meterActions';
 import {
   closeSearch,
@@ -16,7 +17,7 @@ import {
   setSelection,
   toggleSelection,
 } from '../selectionActions';
-import {SelectionAttribute, SelectionParameter} from '../selectionModels';
+import {entityNames, SelectionParameter} from '../selectionModels';
 import {addCityEntity, initialState, selection, SelectionState} from '../selectionReducer';
 import {selectionSchema} from '../selectionSchemas';
 import MockAdapter = require('axios-mock-adapter');
@@ -85,9 +86,9 @@ describe('selectionActions', () => {
     it('set selection', async () => {
       store = configureMockStore({searchParameters: {selection: {...initialState}}});
 
-      const selection = mockData.selections.cities[0];
+      const selection: IdNamed = mockData.selections.cities[0];
 
-      const parameter: SelectionParameter = {...selection, attribute: 'cities'};
+      const parameter: SelectionParameter = {...selection, parameter: entityNames.cities};
 
       store.dispatch(toggleSelection(parameter));
 
@@ -99,12 +100,12 @@ describe('selectionActions', () => {
 
     it('deselects selected city', () => {
       const prevState: SelectionState = addCityEntity(initialState, {...stockholm});
-      const payload = {...stockholm, attribute: SelectionAttribute.cities};
+      const payload: SelectionParameter = {...stockholm, parameter: entityNames.cities};
       const state: SelectionState = selection(prevState, setSelection(payload));
 
       store = configureMockStore({searchParameters: {selection: state}});
 
-      const parameter: SelectionParameter = {...stockholm, attribute: 'cities'};
+      const parameter: SelectionParameter = {...stockholm, parameter: entityNames.cities};
 
       store.dispatch(toggleSelection(parameter));
 
@@ -119,8 +120,8 @@ describe('selectionActions', () => {
 
       store = configureMockStore({searchParameters: {selection: state}});
 
-      const p1: SelectionParameter = {...stockholm, attribute: 'cities'};
-      const p2: SelectionParameter = {...gothenburg, attribute: 'cities'};
+      const p1: SelectionParameter = {...stockholm, parameter: entityNames.cities};
+      const p2: SelectionParameter = {...gothenburg, parameter: entityNames.cities};
 
       store.dispatch(toggleSelection(p1));
       store.dispatch(toggleSelection(p2));
