@@ -1,9 +1,11 @@
 export const routes = {
-  home: '/',
-  dashboard: '/dashboard',
   collection: '/collection',
-  validation: '/validation',
-  report: '/report',
+  dashboard: '/dashboard',
+  gateway: '/gateway',
+  home: '/',
   login: '/login',
+  meter: '/meter',
   mp: '/mp',
+  report: '/report',
+  validation: '/validation',
 };

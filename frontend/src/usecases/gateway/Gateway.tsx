@@ -1,8 +1,9 @@
 import 'Gateway.scss';
 import Dialog from 'material-ui/Dialog';
-import RaisedButton from 'material-ui/RaisedButton';
 import * as React from 'react';
+import {Link} from 'react-router-dom';
 import {translate} from '../../services/translationService';
+import {routes} from '../app/routes';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
 import {Status} from '../common/components/table/status/Status';
@@ -17,8 +18,8 @@ import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
+import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer from '../map/containers/MapContainer';
-import {Link} from 'react-router-dom';
 
 interface GatewayProps {
   id: string;
@@ -50,15 +51,6 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     };
 
     const close = (): void => this.setState({displayDialog: false});
-
-    const actions = [
-      (
-        <RaisedButton
-          label={translate('close')}
-          onClick={close}
-        />
-      ),
-    ];
 
     const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
 
@@ -145,9 +137,9 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     return (
       <div>
-        <Link to={'/#/gateway/' + id} onClick={open}>{id}</Link>
+        <Link to={`${routes.gateway}/${id}`} onClick={open}>{id}</Link>
         <Dialog
-          actions={actions}
+          actions={[(<ButtonClose onClick={close}/>)]}
           autoScrollBodyContent={true}
           contentClassName="Dialog"
           onRequestClose={close}
