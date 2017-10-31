@@ -98,7 +98,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     };
 
     const startPosition: [number, number] = [57.504935, 12.069482];
-
+    const confidenceThreshold: number = 0.7;
     // TODO type array
     const markers: any[] = [];
     let tmpIcon;
@@ -125,8 +125,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         }
       }
 
-      const {latitude, longitude} = moid.position;
-      if (latitude && longitude) {
+      const {latitude, longitude, confidence} = moid.position;
+      if (latitude && longitude && confidence >= confidenceThreshold) {
         markers.push(
           {
             lat: latitude,
