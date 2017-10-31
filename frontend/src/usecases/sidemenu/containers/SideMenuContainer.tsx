@@ -13,8 +13,7 @@ import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {drawerWidth} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
-import {CatalogueCompleteContainer} from './CatalogueCompleteContainer';
-import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
+import {SelectionTree} from '../components/collapsibleMenuEntry/SelectionTree';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -26,7 +25,6 @@ interface DispatchToProps {
 
 const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
   const {isSideMenuOpen} = props;
-
   const listItems = [
     <ListItem primaryText="Göteborg - Centrum" key={1}/>,
     <ListItem primaryText="Gateways med fel" key={2}/>,
@@ -48,14 +46,8 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
           initiallyOpen={true}
           nestedItems={listItems}
         />
-        <ListItem
-          className="ListItem"
-          primaryText={translate('selection overview')}
-          leftIcon={<ActionLineWeight/>}
-          initiallyOpen={false}
-          nestedItems={[<CatalogueCompleteContainer key={1}/>]}
-        />
       </List>
+      <SelectionTree/>
     </Drawer>
   );
 };
