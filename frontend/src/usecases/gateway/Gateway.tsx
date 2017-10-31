@@ -37,7 +37,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     this.state = {
       displayDialog: false,
-      selectedTab: tabType.list,
+      selectedTab: tabType.statusChanges,
     };
   }
 
@@ -225,16 +225,12 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
             <Tabs className="full-width">
               <TabTopBar>
                 <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                  <Tab tab={tabType.dashboard} title={translate('dashboard')}/>
-                  <Tab tab={tabType.list} title={translate('list')}/>
+                  <Tab tab={tabType.statusChanges} title={translate('status changes')}/>
                   <Tab tab={tabType.map} title={translate('map')}/>
                 </TabHeaders>
                 <TabSettings useCase={'gateway'}/>
               </TabTopBar>
-              <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
-                hej hej
-              </TabContent>
-              <TabContent tab={tabType.list} selectedTab={selectedTab}>
+              <TabContent tab={tabType.statusChanges} selectedTab={selectedTab}>
                 <Table data={gatewayData}>
                   <TableColumn
                     id={'date'}

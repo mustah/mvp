@@ -5,6 +5,7 @@ export enum tabType {
   map = 'map',
   graph = 'graph',
   dashboard = 'dashboard',
+  statusChanges = 'statusChanges',
 }
 
 export interface ListProps {

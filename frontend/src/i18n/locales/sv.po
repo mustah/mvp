@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-30 16:51+0100\n"
+"POT-Creation-Date: 2017-10-31 10:49+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -103,6 +103,9 @@ msgstr "validering"
 
 msgid "action pending"
 msgstr "inväntar åtgärd"
+
+msgid "status changes"
+msgstr "statusförändringar"
 
 msgid "date"
 msgstr "datum"
