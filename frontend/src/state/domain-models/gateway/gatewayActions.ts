@@ -1,6 +1,8 @@
 import {normalize} from 'normalizr';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {filterToUri, restClient} from '../../../services/restClient';
+import {Dispatch} from 'redux';
+import {restClient} from '../../../services/restClient';
+import {makeUrl} from '../../../services/urlFactory';
 import {gatewaySchema} from './gatewaySchema';
 
 export const GATEWAY_REQUEST = 'GATEWAY_REQUEST';
@@ -11,21 +13,13 @@ const gatewayRequest = createEmptyAction(GATEWAY_REQUEST);
 const gatewaySuccess = createPayloadAction(GATEWAY_SUCCESS);
 const gatewayFailure = createPayloadAction(GATEWAY_FAILURE);
 
-export const fetchGateways = (filter) => {
-  return (dispatch) => {
-    dispatch(gatewayRequest());
-
-    const parameters = {
-      ...filter,
-    };
-
-    restClient.get(filterToUri('/gateways', parameters))
-      .then(response => {
-        const gateways = response.data;
-        return dispatch(gatewaySuccess({
-          gateways: normalize(gateways, gatewaySchema),
-        }));
-      })
-      .catch(error => dispatch(gatewayFailure(error)));
+export const fetchGateways = (encodedUriParameters: string) =>
+  async (dispatch: Dispatch<any>) => {
+    try {
+      dispatch(gatewayRequest());
+      const {data: gateways} = await restClient.get(makeUrl('/gateways', encodedUriParameters));
+      dispatch(gatewaySuccess({gateways: normalize(gateways, gatewaySchema)}));
+    } catch (error) {
+      dispatch(gatewayFailure(error));
+    }
   };
-};

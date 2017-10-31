@@ -1,6 +1,5 @@
 import {AnyAction} from 'redux';
-import {uuid} from '../../../types/Types';
-import {SelectionOptions, SelectedIds} from './selectionModels';
+import {ErrorResponse, IdNamed, uuid} from '../../../types/Types';
 import {
   DESELECT_SELECTION,
   SELECTION_FAILURE,
@@ -8,10 +7,12 @@ import {
   SELECTION_SUCCESS,
   SET_SELECTION,
 } from './selectionActions';
+import {SelectedIds, SelectionNormalized} from './selectionModels';
 
-export interface SelectionState extends SelectionOptions {
+export interface SelectionState extends SelectionNormalized {
   isFetching: boolean;
   selected: SelectedIds;
+  error?: ErrorResponse;
 }
 
 export const initialState: SelectionState = {
@@ -28,6 +29,19 @@ export const initialState: SelectionState = {
 };
 
 const filterOutUnselected = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
+
+export const addCityEntity = (state: SelectionState, city: IdNamed): SelectionState => {
+  return {
+    ...state,
+    entities: {
+      ...state.entities,
+      cities: {
+        ...state.entities.cities,
+        [city.id]: {...city},
+      },
+    },
+  };
+};
 
 export const selection = (state: SelectionState = initialState, action: AnyAction): SelectionState => {
   const {payload} = action;
@@ -46,8 +60,8 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
     case SELECTION_FAILURE:
       return {
         ...state,
-        isFetch: false,
-        ...payload,
+        isFetching: false,
+        error: {...payload},
       };
     case SET_SELECTION:
       return {

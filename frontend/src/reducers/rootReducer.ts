@@ -1,8 +1,7 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
 import {combineReducers} from 'redux';
 import {domainModels, DomainModelsState} from '../state/domain-models/domainModelsReducer';
-import {searchParameters} from '../state/search/searchParameterReducer';
-import {SearchParameterState} from '../state/search/selection/selectionModels';
+import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {auth, AuthState} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';

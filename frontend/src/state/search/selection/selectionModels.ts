@@ -12,16 +12,13 @@ export interface SelectedIds {
   [key: string]: uuid[];
 }
 
-export interface SelectionOptions {
+export interface SelectionNormalized {
   entities: SelectionEntity;
   result: SelectedIds;
 }
 
-export interface SelectionState extends SelectionOptions {
-  isFetching: boolean;
-  selected: SelectedIds;
-}
-
-export interface SearchParameterState {
-  selection: SelectionState;
+export enum SelectionAttribute {
+  cities = 'cities',
+  addresses = 'addresses',
+  statuses = 'statuses',
 }

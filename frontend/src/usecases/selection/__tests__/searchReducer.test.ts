@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
-import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {setSelection} from '../../../state/search/selection/selectionActions';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';
 import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 

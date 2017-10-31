@@ -6,23 +6,24 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchGateways} from '../../state/domain-models/gateway/gatewayActions';
 import {fetchMeters} from '../../state/domain-models/meter/meterActions';
+import {getEncodedUriParameters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import {Row} from '../common/components/layouts/row/Row';
 import {MainMenuContainer} from '../main-menu/containers/MainMenuContainer';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
-import './_common.scss';
 import './App.scss';
 import {Pages} from './Pages';
 
 interface StateToProps {
   isAuthenticated: boolean;
   isSideMenuOpen: boolean;
+  encodedUriParameters: string;
 }
 
-interface AppProps extends StateToProps {
-  fetchGateways: (filter: any) => any;
-  fetchMeters: (filter: any) => any;
+interface DispatchToProps {
+  fetchGateways: (encodedUriParameters: string) => void;
+  fetchMeters: (encodedUriParameters: string) => void;
 }
 
 /**
@@ -30,10 +31,12 @@ interface AppProps extends StateToProps {
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-class App extends React.Component<AppProps> {
+class AppComponent extends React.Component<StateToProps & DispatchToProps> {
+
   componentDidMount() {
-    this.props.fetchGateways([]); // TODO: Add filter instead of empty array.
-    this.props.fetchMeters([]);
+    const {fetchGateways, fetchMeters, encodedUriParameters} = this.props;
+    fetchGateways(encodedUriParameters);
+    fetchMeters(encodedUriParameters);
   }
 
   render() {
@@ -53,10 +56,11 @@ class App extends React.Component<AppProps> {
   }
 }
 
-const mapStateToProps = ({auth, ui}: RootState): StateToProps => {
+const mapStateToProps = ({auth, ui, searchParameters}: RootState): StateToProps => {
   return {
     isAuthenticated: auth.isAuthenticated,
     isSideMenuOpen: isSideMenuOpen(ui),
+    encodedUriParameters: getEncodedUriParameters(searchParameters),
   };
 };
 
@@ -65,4 +69,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchMeters,
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+const AppContainer = connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(AppComponent);
+
+export const App = withRouter(AppContainer);

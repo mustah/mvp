@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
+import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {SearchParameterState, SelectedIds, SelectionEntity} from './selectionModels';
+import {SearchParameterState} from '../searchParameterReducer';
+import {SelectedIds, SelectionEntity} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 
 const getEntities = (state: SelectionState): SelectionEntity => state.entities;
@@ -53,3 +55,9 @@ export const getDeselectedCities = getDeselectedEntities('cities');
 export const getSelectedCities = getSelectedEntities('cities');
 export const getDeselectedAddresses = getDeselectedEntities('addresses');
 export const getSelectedAddresses = getSelectedEntities('addresses');
+
+export const getEncodedUriParameters = createSelector<SearchParameterState, SelectionEntity, SelectedIds, string>(
+  (searchParameters: SearchParameterState) => searchParameters.selection.entities,
+  (searchParameters: SearchParameterState) => searchParameters.selection.selected,
+  (entities: SelectionEntity, selected: SelectedIds) => encodedUriParametersFrom(selected),
+);
