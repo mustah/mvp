@@ -5,9 +5,9 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
-import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle, Title} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Title';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {ValidationState} from '../models/Validations';
 import {fetchValidations} from '../validationActions';
 import ValidationTabsContainer from './ValidationTabsContainer';
@@ -25,7 +25,6 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
         <PeriodSelection/>
       </Row>
 
-      <Title>{translate('meter')}</Title>
       <ValidationTabsContainer/>
 
     </PageContainer>
