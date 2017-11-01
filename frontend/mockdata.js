@@ -113,23 +113,6 @@ const fromDbJson = {
       'author': 'elvaco - home',
     },
   ],
-  validations: [
-    {
-      'id': 1,
-      'title': 'json-server',
-      'author': 'typicode',
-    },
-    {
-      'id': 2,
-      'title': 'validation 2',
-      'author': 'elvaco',
-    },
-    {
-      'id': 3,
-      'title': 'validation 3',
-      'author': 'elvaco - home',
-    },
-  ],
   profile: {
     name: 'typicode',
   },

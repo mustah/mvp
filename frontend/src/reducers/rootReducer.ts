@@ -9,15 +9,12 @@ import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/models/ReportModels';
 import {report} from '../usecases/report/reportReducer';
-import {ValidationState} from '../usecases/validation/models/Validations';
-import {validation} from '../usecases/validation/validationReducer';
 
 export interface RootState {
   auth: AuthState;
   domainModels: DomainModelsState;
   dashboard: DashboardState;
   routing: RouterState;
-  validation: ValidationState;
   report: ReportState;
   language: LanguageState;
   searchParameters: SearchParameterState;
@@ -30,7 +27,6 @@ export const rootReducer = combineReducers<RootState>({
   domainModels,
   dashboard,
   routing,
-  validation,
   report,
   language,
   searchParameters,

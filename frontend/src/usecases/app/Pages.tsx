@@ -7,13 +7,13 @@ import {Layout} from '../common/components/layouts/layout/Layout';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import ReportContainer from '../report/containers/ReportContainer';
 import {SelectionContainer} from '../selection/containers/SelectionContainer';
-import ValidationContainer from '../validation/containers/ValidationContainer';
 import {routes} from './routes';
+import {Validation} from '../validation/components/Validation';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(Collection);
-const ValidationPage = userIsAuthenticated(ValidationContainer);
+const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
 const SearchPage = userIsAuthenticated(SelectionContainer);
 
