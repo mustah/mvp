@@ -3,12 +3,12 @@ import {selectionSchema} from '../../../state/search/selection/selectionSchemas'
 import {uuid} from '../../../types/Types';
 
 export interface SelectionTree {
-  [key: string]: {
+  [key: string]: Array<{
     id: uuid;
     name: string;
     parent: {type: string; id: uuid};
     childNodes: {type: string; ids: uuid[]};
-  }[];
+  }>;
 }
 
 const organizedData: SelectionTree = {
