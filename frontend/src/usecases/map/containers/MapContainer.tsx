@@ -11,34 +11,30 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {getEncodedUriParameters} from '../../../state/search/selection/selectionSelectors';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
-import {fetchPositions, openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapState} from '../mapReducer';
+import {DomainModelsState} from '../../../state/domain-models/domainModelsReducer';
+import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 
 interface MapContainerProps {
+  domainModels: DomainModelsState;
   map: MapState;
   children?: React.ReactNode;
-  encodedUriParameters: string;
 }
 
 interface MapDispatchToProps {
   toggleClusterDialog: () => any;
   openClusterDialog: (marker: L.Marker) => any;
-  fetchPositions: (encodedUriParameters: string) => any;
 }
 
 class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
-  componentDidMount() {
-    const {fetchPositions, encodedUriParameters} = this.props;
-    fetchPositions(encodedUriParameters);
-  }
-
   render() {
     const {
       toggleClusterDialog,
       map,
+      domainModels,
       openClusterDialog,
     } = this.props;
 
@@ -107,42 +103,48 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
-    map.moids.forEach(moid => {
-      const {status} = moid;
-      switch (status) {
-        case 0: {
-          tmpIcon = 'marker-icon-ok.png';
-          break;
-        }
-        case 1: {
-          tmpIcon = 'marker-icon-warning.png';
-          break;
-        }
-        case 2: {
-          tmpIcon = 'marker-icon-error.png';
-          break;
-        }
-        default: {
-          tmpIcon = 'marker-icon.png';
-        }
-      }
+    const meters = getMeterEntities(domainModels.meters);
 
-      const {latitude, longitude, confidence} = moid.position;
-      if (latitude && longitude && confidence >= confidenceThreshold) {
-        markers.push(
-          {
-            lat: latitude,
-            lng: longitude,
-            options: {
-              icon: L.icon({
-                iconUrl: tmpIcon,
-              }),
+    for (const key in Object.keys(meters)) {
+      if (meters.hasOwnProperty(status)) {
+        const meter = meters[key];
+
+        const {status} = meter;
+        switch (status) {
+          case '0': {
+            tmpIcon = 'marker-icon-ok.png';
+            break;
+          }
+          case '1': {
+            tmpIcon = 'marker-icon-warning.png';
+            break;
+          }
+          case '2': {
+            tmpIcon = 'marker-icon-error.png';
+            break;
+          }
+          default: {
+            tmpIcon = 'marker-icon.png';
+          }
+        }
+
+        const {latitude, longitude, confidence} = meter.position;
+        if (latitude && longitude && confidence >= confidenceThreshold) {
+          markers.push(
+            {
+              lat: latitude,
+              lng: longitude,
+              options: {
+                icon: L.icon({
+                  iconUrl: tmpIcon,
+                }),
+              },
+              status,
             },
-            status,
-          },
-        );
+          );
+        }
       }
-    });
+    }
 
     const toggleScrollWheelZoom = (e) => {
       if (e.target.scrollWheelZoom.enabled()) {
@@ -187,17 +189,16 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({map, searchParameters}: RootState): MapContainerProps => {
+const mapStateToProps = ({domainModels, map, searchParameters}: RootState): MapContainerProps => {
   return {
+    domainModels,
     map,
-    encodedUriParameters: getEncodedUriParameters(searchParameters),
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   toggleClusterDialog,
   openClusterDialog,
-  fetchPositions,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
