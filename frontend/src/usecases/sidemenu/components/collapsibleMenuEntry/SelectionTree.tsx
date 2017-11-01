@@ -5,6 +5,7 @@ import * as React from 'react';
 import 'SelectionTree.scss';
 import {translate} from '../../../../services/translationService';
 import {selectionTreeData} from '../../models/organizedData';
+import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface SelectionTreeProps {
   topLvl: string;
@@ -29,14 +30,14 @@ export const SelectionTree = (props: SelectionTreeProps) => {
   );
 };
 
-export const renderSelectionTree = (id, data, level) => {
+const renderSelectionTree = (id, data, level) => {
   const entity = data.entities[level][id];
   const nextLevel = entity.childNodes.type;
 
   const mapFnc = (treeItem) => renderSelectionTree(treeItem, data, nextLevel);
 
   return (
-    <ListItem
+    <SelectableListItem
       className="TreeListItem"
       primaryText={entity.name}
       key={id}
@@ -48,7 +49,28 @@ export const renderSelectionTree = (id, data, level) => {
   );
 };
 
+class SelectableListItem extends React.Component<ListItemProps, {selected: boolean}> {
+
+  state = {selected: false};
+
+  onClick = (): void => {
+    this.setState((prevState => ({selected: !prevState.selected})));
+  }
+
+  render() {
+    const selected = this.state.selected ? selectionTreeItem.selected : null;
+    return (
+      <ListItem
+        {...this.props}
+        style={{...this.props.style, ...selected}}
+        onClick={this.onClick}
+      />
+    );
+  }
+}
+
 const selectionTreeItem = {
   fontSize: {fontSize: '14px'},
   padding: {padding: '5px 16px'},
+  selected: {color: '#00b6f7'},
 };
