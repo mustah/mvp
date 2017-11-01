@@ -2,7 +2,6 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
-import ToggleStar from 'material-ui/svg-icons/toggle/star';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -10,10 +9,10 @@ import 'SideMenuContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {drawerWidth} from '../../app/themes';
+import {drawerWidth, sideBarHeaders} from '../../app/themes';
 import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMenu';
-import {toggleShowHideSideMenu} from '../sideMenuActions';
 import {SelectionTree} from '../components/collapsibleMenuEntry/SelectionTree';
+import {toggleShowHideSideMenu} from '../sideMenuActions';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -42,8 +41,8 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
         <ListItem
           className="ListItem"
           primaryText={translate('saved search')}
-          leftIcon={<ToggleStar/>}
           initiallyOpen={true}
+          style={sideBarHeaders.fontStyle}
           nestedItems={listItems}
         />
       </List>

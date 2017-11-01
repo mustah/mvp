@@ -1,11 +1,11 @@
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
-import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
 import * as React from 'react';
 import 'SelectionTree.scss';
 import {translate} from '../../../../services/translationService';
 import {selectionTreeData} from '../../models/organizedData';
 import ListItemProps = __MaterialUI.List.ListItemProps;
+import {selectionTreeItems, sideBarHeaders} from '../../../app/themes';
 
 interface SelectionTreeProps {
   topLvl: string;
@@ -22,8 +22,8 @@ export const SelectionTree = (props: SelectionTreeProps) => {
       <ListItem
         className="ListItem"
         primaryText={translate('selection overview')}
-        leftIcon={<ActionLineWeight/>}
         initiallyOpen={false}
+        style={sideBarHeaders.fontStyle}
         nestedItems={topLvlList.map(renderSelectionOverview)}
       />
     </List>
@@ -41,8 +41,8 @@ const renderSelectionTree = (id, data, level) => {
       className="TreeListItem"
       primaryText={entity.name}
       key={id}
-      style={selectionTreeItem.fontSize}
-      innerDivStyle={selectionTreeItem.padding}
+      style={selectionTreeItems.fontSize}
+      innerDivStyle={selectionTreeItems.padding}
       initiallyOpen={false}
       nestedItems={entity.childNodes.ids.map(mapFnc)}
     />
@@ -58,7 +58,7 @@ class SelectableListItem extends React.Component<ListItemProps, {selected: boole
   }
 
   render() {
-    const selected = this.state.selected ? selectionTreeItem.selected : null;
+    const selected = this.state.selected ? selectionTreeItems.selected : null;
     return (
       <ListItem
         {...this.props}
@@ -68,9 +68,3 @@ class SelectableListItem extends React.Component<ListItemProps, {selected: boole
     );
   }
 }
-
-const selectionTreeItem = {
-  fontSize: {fontSize: '14px'},
-  padding: {padding: '5px 16px'},
-  selected: {color: '#00b6f7'},
-};
