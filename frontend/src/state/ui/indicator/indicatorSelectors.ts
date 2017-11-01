@@ -12,3 +12,4 @@ const getSelectedIndicator = (useCase: string): any =>
   );
 
 export const getSelectedIndicatorReport = getSelectedIndicator('report');
+export const getSelectedIndicatorDashboard = getSelectedIndicator('dashboard');

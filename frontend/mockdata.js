@@ -71,10 +71,7 @@ const fromDbJson = {
   dashboards: [
     {
       'id': '3',
-      'author': 'Sven',
-      'title': 'Sven\'s dashboard from the DashboardController',
       'systemOverview': {
-        'title': 'Sven\'s system overview from the DashboardController',
         'indicators': [
           {
             'title': 'Insamling',
