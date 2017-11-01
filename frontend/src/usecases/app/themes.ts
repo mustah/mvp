@@ -29,5 +29,5 @@ export const selectionTreeItems = {
 };
 
 export const sideBarHeaders = {
-  fontStyle: {fontWeight: 'bold' as 'bold'},
+  fontStyle: {fontWeight: 'bold' as 'bold'}, // "as 'bold' is for typing
 };
