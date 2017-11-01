@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {PaginationProps} from '../../../ui/pagination/paginationModels';
+import {PaginationProps} from '../../../../state/ui/pagination/paginationModels';
 import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './PaginationControl.scss';

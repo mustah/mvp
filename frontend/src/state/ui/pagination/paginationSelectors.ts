@@ -1,8 +1,8 @@
 import {Pagination, PaginationState} from './paginationModels';
 import {uuid} from '../../../types/Types';
 import {createSelector} from 'reselect';
-import {DomainModel, getResult} from '../../../state/domain-models/domainModelsSelectors';
-import {UiState} from '../../../state/ui/uiReducer';
+import {DomainModel, getResult} from '../../domain-models/domainModelsSelectors';
+import {UiState} from '../uiReducer';
 
 type PaginatedDomainModel = DomainModel & Pagination;
 

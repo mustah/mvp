@@ -22,9 +22,9 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {Bold} from '../../common/components/texts/Texts';
 import MapContainer from '../../map/containers/MapContainer';
-import {changePaginationCollection} from '../../ui/pagination/paginationActions';
-import {Pagination} from '../../ui/pagination/paginationModels';
-import {getCollectionPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
+import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
+import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {GatewayList} from '../components/GatewayList';
 
 interface CollectionTabsContainer extends TabsContainerProps {
