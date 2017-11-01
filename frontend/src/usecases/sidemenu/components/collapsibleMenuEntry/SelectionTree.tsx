@@ -1,9 +1,10 @@
-import ListItem from 'material-ui/List/ListItem';
-import * as React from 'react';
-import {selectionTreeData} from '../../models/organizedData';
-import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
-import {translate} from '../../../../services/translationService';
 import List from 'material-ui/List/List';
+import ListItem from 'material-ui/List/ListItem';
+import ActionLineWeight from 'material-ui/svg-icons/action/line-weight';
+import * as React from 'react';
+import 'SelectionTree.scss';
+import {translate} from '../../../../services/translationService';
+import {selectionTreeData} from '../../models/organizedData';
 
 interface SelectionTreeProps {
   topLvl: string;
@@ -36,11 +37,18 @@ export const renderSelectionTree = (id, data, level) => {
 
   return (
     <ListItem
-      className="ListItem"
+      className="TreeListItem"
       primaryText={entity.name}
       key={id}
+      style={selectionTreeItem.fontSize}
+      innerDivStyle={selectionTreeItem.padding}
       initiallyOpen={false}
       nestedItems={entity.childNodes.ids.map(mapFnc)}
     />
   );
+};
+
+const selectionTreeItem = {
+  fontSize: {fontSize: '14px'},
+  padding: {padding: '5px 16px'},
 };

@@ -1,0 +1,16 @@
+@import '../../../app/variables';
+
+.TreeListItem {
+  text-transform: capitalize;
+
+  button {
+    padding: 4px!important;
+    height: 26px!important; // = 2*button-padding + svg-height
+    width: 26px!important; // = 2*button-padding + svg-width
+
+    svg {
+      height: 18px!important;
+      width: 18px!important;
+    }
+  }
+}
