@@ -15,6 +15,7 @@ import {
   selectionRequest,
   selectionSuccess,
   selectPeriod,
+  selectPeriodAction,
   setSelection,
   toggleSelection,
 } from '../selectionActions';
@@ -102,14 +103,12 @@ describe('selectionActions', () => {
     it('select period', async () => {
       store = configureMockStore({searchParameters: {selection: {...initialState}}});
 
-      const selection: IdNamed = {id: Period.now, name: 'Now'};
+      const period = Period.now;
 
-      const parameter: SelectionParameter = {...selection, parameter: parameterNames.period};
-
-      store.dispatch(selectPeriod(parameter));
+      store.dispatch(selectPeriod(period));
 
       expect(store.getActions()).toEqual([
-        setSelection(parameter),
+        selectPeriodAction(period),
         meterRequest(),
       ]);
     });

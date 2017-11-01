@@ -1,9 +1,15 @@
-import {IdNamed} from '../../../../types/Types';
+import {IdNamed, Period} from '../../../../types/Types';
 import {SearchParameterState} from '../../searchParameterReducer';
-import {setSelection} from '../selectionActions';
+import {selectPeriodAction, setSelection} from '../selectionActions';
 import {parameterNames, SelectionParameter} from '../selectionModels';
 import {addCityEntity, initialState, selection, SelectionState} from '../selectionReducer';
-import {getEncodedUriParameters, getSelectedCities, getSelection, isFetching} from '../selectionSelectors';
+import {
+  getEncodedUriParameters,
+  getSelectedCities,
+  getSelectedPeriod,
+  getSelection,
+  isFetching
+} from '../selectionSelectors';
 
 const dbJsonData = require('./../../../../../mockdata');
 const mockData = dbJsonData();
@@ -57,6 +63,19 @@ describe('selectionSelectors', () => {
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
       expect(getEncodedUriParameters({selection: state})).toEqual('city=got&city=sto&period=now');
+    });
+  });
+
+  describe('get selected period', () => {
+
+    it('period now is default ', () => {
+      expect(getSelectedPeriod(initialState)).toBe(Period.now);
+    });
+
+    it('get selected period', () => {
+      const state: SelectionState = selection(initialState, selectPeriodAction(Period.month));
+
+      expect(getSelectedPeriod(state)).toBe(Period.month);
     });
   });
 
