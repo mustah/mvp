@@ -7,10 +7,10 @@ const parameterAttributes = {
   statuses: 'status',
 };
 
-export const encodedUriParametersFrom = (selection: SelectedIds): string => {
+export const encodedUriParametersFrom = (selectedIds: SelectedIds): string => {
   const parameters: string[] = [];
-  Object.keys(selection).forEach((key: string) => {
-    selection[key].forEach((id: uuid) => {
+  Object.keys(selectedIds).forEach((key: string) => {
+    selectedIds[key].forEach((id: uuid) => {
       const parameterName = parameterAttributes[key] || key;
       parameters.push(parameterName + '=' + encodeURIComponent(id.toString()));
     });
