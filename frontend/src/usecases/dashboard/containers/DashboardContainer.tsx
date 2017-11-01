@@ -4,15 +4,14 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
+import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
-import {PageContainer} from '../../common/containers/PageContainer';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle, Title} from '../../common/components/texts/Title';
-import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {PageContainer} from '../../common/containers/PageContainer';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
@@ -54,7 +53,6 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
-          <PeriodSelection/>
         </Row>
 
         {record && renderSystemOverview(record.systemOverview)}

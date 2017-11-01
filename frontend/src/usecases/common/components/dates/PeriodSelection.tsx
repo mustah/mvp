@@ -1,61 +1,43 @@
-import * as React from 'react';
-import {Separator} from '../../../dashboard/components/separators/Separator';
-import {IconCalendar} from '../icons/IconCalendar';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Normal} from '../texts/Texts';
-import 'PeriodSelection.scss';
 import {DropDownMenu, MenuItem} from 'material-ui';
-import {IdNamed, uuid} from '../../../../types/Types';
+import * as React from 'react';
 import {translate} from '../../../../services/translationService';
+import {OnSelectPeriod} from '../../../../state/search/selection/selectionModels';
+import {Period} from '../../../../types/Types';
+import {IconCalendar} from '../icons/IconCalendar';
+import {RowCenter} from '../layouts/row/Row';
 
 interface Props {
-  selectedPeriod?: uuid;
-  periods?: IdNamed[];
+  period: Period;
+  selectPeriod: OnSelectPeriod;
 }
 
-interface State {
-  selectedPeriod: IdNamed;
-  periods: IdNamed[];
-}
+export const PeriodSelection = (props: Props) => {
+  const {period, selectPeriod} = props;
 
-export class PeriodSelection extends React.Component<Props, State> {
+  const onSelectPeriod = (event, index, period: Period) => {
+    selectPeriod(period);
+  };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedPeriod: {id: 0, name: 'Week'},
-      // TODO extract to constant and normalize, or retrieve from backend
-      periods: [{id: 0, name: 'Week'}, {id: 1, name: 'Month'}, {id: 2, name: 'Quarter'}, {id: 3, name: 'Year'}],
-    };
-  }
+  return (
+    <RowCenter>
 
-  render() {
-    const dropdownChanged = (event, index) => {
-      this.setState({selectedPeriod: this.state.periods[index]});
-    };
-
-    return (
-      <Column>
-        <Normal className="uppercase">{translate('period')}</Normal>
-        <Separator/>
-        <Row className="Row-center">
-          <IconCalendar/>
-          <DropDownMenu
-            maxHeight={300}
-            autoWidth={false}
-            className="periodSelection"
-            value={this.state.selectedPeriod.id}
-            onChange={dropdownChanged}
-          >
-            {/*TODO use periods */}
-            <MenuItem value={0} label={'9 nov - 16 nov'} primaryText={translate('Last week')}/>
-            <MenuItem value={1} label={'16 okt - 16 nov'} primaryText={translate('Last month')}/>
-            <MenuItem value={2} label={'16 aug - 16 nov'} primaryText={translate('Last quarter')}/>
-            <MenuItem value={3} label={'2016-11-16 - 2017-11-16'} primaryText={translate('Last year')}/>
-          </DropDownMenu>
-        </Row>
-      </Column>
-    );
-  }
-}
+      <DropDownMenu
+        maxHeight={300}
+        autoWidth={false}
+        underlineStyle={{border: 'none'}}
+        labelStyle={{height: 48, lineHeight: '48px', paddingRight: 0, paddingLeft: 24, fontSize: 14}}
+        iconStyle={{fill: 'black', height: 48, width: 48, right: 0, top: 0, padding: 0}}
+        style={{width: 165}}
+        className="PeriodSelection"
+        value={period}
+        onChange={onSelectPeriod}
+        iconButton={<IconCalendar/>}
+      >
+        <MenuItem value={Period.now} label={'22 nov'} primaryText={translate('one day')}/>
+        <MenuItem value={Period.week} label={'15 nov - 22 nov'} primaryText={translate('last week')}/>
+        <MenuItem value={Period.month} label={'22 okt - 22 nov'} primaryText={translate('last month')}/>
+        <MenuItem value={Period.quarter} label={'22 aug - 22 nov'} primaryText={translate('last quarter')}/>
+      </DropDownMenu>
+    </RowCenter>
+  );
+};

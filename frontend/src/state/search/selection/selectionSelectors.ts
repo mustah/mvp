@@ -1,13 +1,13 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
-import {IdNamed, uuid} from '../../../types/Types';
+import {IdNamed, Period, uuid} from '../../../types/Types';
 import {SearchParameterState} from '../searchParameterReducer';
-import {entityNames, SelectedIds, SelectionEntity} from './selectionModels';
+import {parameterNames, SelectedParameters, SelectionEntity} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 
 const getEntities = (state: SelectionState): SelectionEntity => state.entities;
-const getSelected = (state: SelectionState): SelectedIds => state.selected;
-const getResult = (state: SelectionState): SelectedIds => state.result;
+const getSelected = (state: SelectionState): SelectedParameters => state.selected;
+const getResult = (state: SelectionState): SelectedParameters => state.result;
 
 const getEntitiesSelector = (entityType: string): any =>
   createSelector<SelectionState, SelectionEntity, IdNamed>(
@@ -16,18 +16,18 @@ const getEntitiesSelector = (entityType: string): any =>
   );
 
 const getSelectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectedIds, uuid[]>(
+  createSelector<SelectionState, SelectedParameters, uuid[]>(
     getSelected,
-    (searchResult: SelectedIds) => searchResult[entityType],
+    (searchResult: SelectedParameters) => searchResult[entityType],
   );
 
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
 const getDeselectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectedIds, SelectedIds, uuid[]>(
+  createSelector<SelectionState, SelectedParameters, SelectedParameters, uuid[]>(
     getResult,
     getSelected,
-    (result: SelectedIds, selected: SelectedIds) => arrayDiff(result[entityType], selected[entityType]),
+    (result: SelectedParameters, selected: SelectedParameters) => arrayDiff(result[entityType], selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string): any =>
@@ -51,12 +51,17 @@ export const isFetching = createSelector<SearchParameterState, SelectionState, b
   selection => selection.isFetching,
 );
 
-export const getDeselectedCities = getDeselectedEntities(entityNames.cities);
-export const getSelectedCities = getSelectedEntities(entityNames.cities);
-export const getDeselectedAddresses = getDeselectedEntities(entityNames.addresses);
-export const getSelectedAddresses = getSelectedEntities(entityNames.addresses);
+export const getDeselectedCities = getDeselectedEntities(parameterNames.cities);
+export const getSelectedCities = getSelectedEntities(parameterNames.cities);
+export const getDeselectedAddresses = getDeselectedEntities(parameterNames.addresses);
+export const getSelectedAddresses = getSelectedEntities(parameterNames.addresses);
 
-export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedIds, string>(
+export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   (searchParameters: SearchParameterState) => searchParameters.selection.selected,
   encodedUriParametersFrom,
+);
+
+export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(
+  getSelected,
+  (selected: SelectedParameters) => selected.period! || Period.now,
 );

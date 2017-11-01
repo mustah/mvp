@@ -4,7 +4,6 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
 import {PageContainer} from '../../common/containers/PageContainer';
@@ -22,11 +21,9 @@ const ValidationContainer = (props: ValidationContainerProps & InjectedAuthRoute
     <PageContainer>
       <Row className="space-between">
         <MainTitle>{translate('validation')}</MainTitle>
-        <PeriodSelection/>
       </Row>
 
       <ValidationTabsContainer/>
-
     </PageContainer>
   );
 };

@@ -1,17 +1,17 @@
 import {AnyAction} from 'redux';
-import {ErrorResponse, IdNamed, uuid} from '../../../types/Types';
+import {ErrorResponse, IdNamed, Period, uuid} from '../../../types/Types';
 import {
-  DESELECT_SELECTION,
+  DESELECT_SELECTION, SELECT_PERIOD,
   SELECTION_FAILURE,
   SELECTION_REQUEST,
   SELECTION_SUCCESS,
   SET_SELECTION,
 } from './selectionActions';
-import {SelectedIds, SelectionNormalized} from './selectionModels';
+import {SelectedParameters, SelectionNormalized} from './selectionModels';
 
 export interface SelectionState extends SelectionNormalized {
   isFetching: boolean;
-  selected: SelectedIds;
+  selected: SelectedParameters;
   error?: ErrorResponse;
 }
 
@@ -25,6 +25,8 @@ export const initialState: SelectionState = {
   selected: {
     cities: [],
     addresses: [],
+    statuses: [],
+    period: Period.now,
   },
 };
 
@@ -77,6 +79,14 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         selected: {
           ...state.selected,
           [payload.parameter]: filterOutUnselected(state.selected[payload.parameter], payload.id),
+        },
+      };
+    case SELECT_PERIOD:
+      return {
+        ...state,
+        selected: {
+          ...state.selected,
+          period: payload,
         },
       };
     default:

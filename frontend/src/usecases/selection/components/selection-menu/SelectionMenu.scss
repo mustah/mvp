@@ -1,6 +1,6 @@
 @import "../../../app/variables";
 
-.SelectionSearch-Container {
+.SelectionMenu-Container {
   position: fixed;
   top: 0;
   left: $main-menu-width;
@@ -9,12 +9,14 @@
   padding: 0 $lg-space;
   background-color: $white;
   height: $main-menu-height;
+  justify-content: space-between;
 
   &.isSideMenuOpen {
     left: $opened-side-menu-width;
   }
 
-  .SelectionSearch {
+  .SelectionMenu {
+    width: 200px;
     color: $blackest;
     align-items: center;
 

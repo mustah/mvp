@@ -4,7 +4,7 @@ import {routerActions} from 'react-router-redux';
 import {Dispatch} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {restClient} from '../../../services/restClient';
-import {ErrorResponse} from '../../../types/Types';
+import {ErrorResponse, Period} from '../../../types/Types';
 import {fetchMeters} from '../../domain-models/meter/meterActions';
 import {SelectionNormalized, SelectionParameter} from './selectionModels';
 import {SelectionState} from './selectionReducer';
@@ -18,6 +18,7 @@ export const SELECTION_FAILURE = 'SELECTION_FAILURE';
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 export const SET_SELECTION = 'SET_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
+export const SELECT_PERIOD = 'SELECT_PERIOD';
 
 export const closeSelectionPage = createEmptyAction(CLOSE_SELECTION_PAGE);
 
@@ -28,10 +29,18 @@ export const selectionFailure = createPayloadAction<string, ErrorResponse>(SELEC
 export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
 
+export const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
+
 export const closeSearch = () => dispatch => {
   dispatch(closeSelectionPage());
   dispatch(routerActions.goBack());
 };
+
+export const selectPeriod = (period: Period) =>
+  async (dispatch, getState: () => RootState) => {
+    dispatch(selectPeriodAction(period));
+    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
+  };
 
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   async (dispatch: Dispatch<SelectionState>, getState: () => RootState) => {

@@ -1,5 +1,7 @@
 export type uuid = string | number;
 
+export type OnClick = (...args) => void;
+
 export interface ClassNamed {
   className?: string;
 }
@@ -13,7 +15,7 @@ export interface Selectable {
 }
 
 export interface Clickable {
-  onClick: (...args) => void;
+  onClick: OnClick;
 }
 
 export interface IdNamed {
@@ -32,6 +34,13 @@ export enum Status {
   warning = 'warning',
   critical = 'critical',
   info = 'info',
+}
+
+export enum Period {
+  now = 'now',
+  week = 'week',
+  month = 'month',
+  quarter = 'quarter',
 }
 
 const status = {

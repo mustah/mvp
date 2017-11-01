@@ -1,19 +1,27 @@
-import {SelectedIds} from '../state/search/selection/selectionModels';
+import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 
-const parameterAttributes = {
+const parameterNames = {
   cities: 'city',
   addresses: 'address',
   statuses: 'status',
+  period: 'period',
 };
 
-export const encodedUriParametersFrom = (selectedIds: SelectedIds): string => {
+export const encodedUriParametersFrom = (selectedIds: SelectedParameters): string => {
   const parameters: string[] = [];
-  Object.keys(selectedIds).forEach((key: string) => {
-    selectedIds[key].forEach((id: uuid) => {
-      const parameterName = parameterAttributes[key] || key;
-      parameters.push(parameterName + '=' + encodeURIComponent(id.toString()));
-    });
+
+  const addParameterWith = (name: string, value: any) => {
+    parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
+  };
+
+  Object.keys(selectedIds).forEach((name: string) => {
+    const selection = selectedIds[name];
+    if (Array.isArray(selection)) {
+      selection.forEach((value: uuid) => addParameterWith(name, value));
+    } else {
+      addParameterWith(name, selection);
+    }
   });
   return parameters.length ? parameters.join('&') : '';
 };
