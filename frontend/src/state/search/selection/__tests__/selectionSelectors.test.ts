@@ -8,7 +8,7 @@ import {
   getSelectedCities,
   getSelectedPeriod,
   getSelection,
-  isFetching
+  isFetching,
 } from '../selectionSelectors';
 
 const dbJsonData = require('./../../../../../mockdata');
