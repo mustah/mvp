@@ -21,3 +21,13 @@ export const iconSize = {
     height: 28,
   },
 };
+
+export const selectionTreeItems = {
+  fontSize: {fontSize: '14px'},
+  padding: {padding: '5px 16px'},
+  selected: {color: '#00b6f7'},
+};
+
+export const sideBarHeaders = {
+  fontStyle: {fontWeight: 'bold' as 'bold'},
+};

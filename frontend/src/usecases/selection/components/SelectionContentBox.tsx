@@ -15,7 +15,7 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {NormalizedRows} from '../../common/components/table/table/Table';
-import {PaginationProps} from '../../ui/pagination/paginationModels';
+import {PaginationProps} from '../../../state/ui/pagination/paginationModels';
 import {SearchResultList} from './SelectionResultList';
 
 interface SelectionContentBoxProps {

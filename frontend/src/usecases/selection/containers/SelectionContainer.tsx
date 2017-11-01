@@ -9,9 +9,9 @@ import {toggleSelection} from '../../../state/search/selection/selectionActions'
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {SelectionState} from '../../../state/search/selection/selectionReducer';
 import {uuid} from '../../../types/Types';
-import {changePaginationSelection} from '../../ui/pagination/paginationActions';
-import {Pagination} from '../../ui/pagination/paginationModels';
-import {getPaginationList, getSelectionPagination} from '../../ui/pagination/paginationSelectors';
+import {changePaginationSelection} from '../../../state/ui/pagination/paginationActions';
+import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {SelectionContentBox} from '../components/SelectionContentBox';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {PageContainer} from '../../common/containers/PageContainer';

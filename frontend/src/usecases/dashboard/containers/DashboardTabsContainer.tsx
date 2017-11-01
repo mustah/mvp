@@ -17,10 +17,10 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer from '../../map/containers/MapContainer';
-import {Pagination} from '../../ui/pagination/paginationModels';
-import {getDashboardPagination, getPaginationList} from '../../ui/pagination/paginationSelectors';
+import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getDashboardPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabDashboard, changeTabOptionDashboard} from '../../../state/ui/tabs/tabsActions';
-import {changePaginationDashboard} from '../../ui/pagination/paginationActions';
+import {changePaginationDashboard} from '../../../state/ui/pagination/paginationActions';
 
 interface DashboardTabsContainerProps extends TabsContainerProps {
   numOfMeters: number;

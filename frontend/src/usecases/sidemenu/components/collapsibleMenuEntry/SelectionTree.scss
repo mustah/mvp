@@ -1,0 +1,19 @@
+@import '../../../app/variables';
+
+.TreeListItem {
+  text-transform: capitalize;
+
+  $iconSize: 18px;
+  $iconPadding: 4px;
+
+  button {
+    padding: $iconPadding!important;
+    height: 2*$iconPadding + $iconSize!important;
+    width: 2*$iconPadding + $iconSize!important;
+
+    svg {
+      height: $iconSize!important;
+      width: $iconSize!important;
+    }
+  }
+}
