@@ -3,19 +3,20 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import 'SelectionTree.scss';
 import {translate} from '../../../../services/translationService';
-import {selectionTreeData} from '../../models/organizedData';
+import {SelectionTreeModel, selectionTreeData} from '../../models/organizedData';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 import {selectionTreeItems, sideBarHeaders} from '../../../app/themes';
+import {uuid} from '../../../../types/Types';
 
 interface SelectionTreeProps {
-  topLvl: string;
+  topLevel: string;
 }
 
 export const SelectionTree = (props: SelectionTreeProps) => {
-  const {topLvl} = props;
-  const topLvlList = selectionTreeData.result[topLvl];
+  const {topLevel} = props;
+  const topLevelList = selectionTreeData.result[topLevel];
   const renderSelectionOverview = (id) =>
-    renderSelectionTree(id, selectionTreeData, topLvl);
+    renderSelectionTree(id, selectionTreeData, topLevel);
 
   return (
     <List>
@@ -24,17 +25,17 @@ export const SelectionTree = (props: SelectionTreeProps) => {
         primaryText={translate('selection overview')}
         initiallyOpen={false}
         style={sideBarHeaders.fontStyle}
-        nestedItems={topLvlList.map(renderSelectionOverview)}
+        nestedItems={topLevelList.map(renderSelectionOverview)}
       />
     </List>
   );
 };
 
-const renderSelectionTree = (id, data, level) => {
+const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) => {
   const entity = data.entities[level][id];
   const nextLevel = entity.childNodes.type;
 
-  const mapFnc = (treeItem) => renderSelectionTree(treeItem, data, nextLevel);
+  const renderChildNodes = (treeItem) => renderSelectionTree(treeItem, data, nextLevel);
 
   return (
     <SelectableListItem
@@ -44,7 +45,7 @@ const renderSelectionTree = (id, data, level) => {
       style={selectionTreeItems.fontSize}
       innerDivStyle={selectionTreeItems.padding}
       initiallyOpen={false}
-      nestedItems={entity.childNodes.ids.map(mapFnc)}
+      nestedItems={entity.childNodes.ids.map(renderChildNodes)}
     />
   );
 };

@@ -46,7 +46,7 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
           nestedItems={listItems}
         />
       </List>
-      <SelectionTree topLvl={'cities'}/>
+      <SelectionTree topLevel={'cities'}/>
     </Drawer>
   );
 };

@@ -3,14 +3,17 @@
 .TreeListItem {
   text-transform: capitalize;
 
+  $iconSize: 18px;
+  $iconPadding: 4px;
+
   button {
-    padding: 4px!important;
-    height: 26px!important; // = 2*button-padding + svg-height
-    width: 26px!important; // = 2*button-padding + svg-width
+    padding: $iconPadding!important;
+    height: 2*$iconPadding + $iconSize!important;
+    width: 2*$iconPadding + $iconSize!important;
 
     svg {
-      height: 18px!important;
-      width: 18px!important;
+      height: $iconSize!important;
+      width: $iconSize!important;
     }
   }
 }

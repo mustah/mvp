@@ -2,7 +2,7 @@ import {normalize} from 'normalizr';
 import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 import {uuid} from '../../../types/Types';
 
-export interface SelectionTree {
+export interface SelectionTreeModel {
   [key: string]: Array<{
     id: uuid;
     name: string;
@@ -11,7 +11,7 @@ export interface SelectionTree {
   }>;
 }
 
-const organizedData: SelectionTree = {
+const organizedData: SelectionTreeModel = {
   cities: [
     {
       id: 'got',
