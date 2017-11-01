@@ -113,88 +113,6 @@ const fromDbJson = {
   profile: {
     name: 'typicode',
   },
-  selections: {
-    cities: [
-      {
-        id: 'got',
-        name: 'Göteborg',
-      },
-      {
-        id: 'sto',
-        name: 'Stockholm',
-      },
-      {
-        id: 'mmx',
-        name: 'Malmö',
-      },
-      {
-        id: 'kub',
-        name: 'Kungsbacka',
-      },
-    ],
-    addresses: [
-      {
-        id: 1,
-        name: 'Stampgatan 46',
-      },
-      {
-        id: 2,
-        name: 'Stampgatan 33',
-      },
-      {
-        id: 3,
-        name: 'Kungsgatan 44',
-      },
-      {
-        id: 4,
-        name: 'Drottninggatan 1',
-      },
-      {
-        id: 5,
-        name: 'Åvägen 9',
-      },
-    ],
-    statuses: [
-      {
-        id: 'ok',
-        name: 'Ok',
-      },
-      {
-        id: 'warning',
-        name: 'Varning',
-      },
-      {
-        id: 'info',
-        name: 'Info',
-      },
-      {
-        id: 'critical',
-        name: 'Kritisk',
-      },
-    ],
-    meteringPoints: [
-      {
-        id: 'm1',
-        name: 'UNICOcoder',
-      },
-      {
-        id: 'm2',
-        name: '3100',
-      },
-      {
-        id: 'm3',
-        name: 'xxx2233',
-      },
-      {
-        id: 'm4',
-        name: '3100',
-      },
-      {
-        id: 'm5',
-        name: 'Test kit',
-      },
-    ],
-  },
 };
 
 const gatewayStatuses = [
@@ -320,6 +238,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
   const r = {
     meters: [],
     gateways: [],
+    selections: {meteringPoints: [], statuses: [], cities: [], addresses: []},
   };
   let geocodeData = {};
   let limiter;
@@ -334,13 +253,19 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
       }
     }
   }
+
+  const cities2 = new Set();
+  const addresses = new Set();
+  const meteringPoints = new Set();
+  const statuses = new Set();
+
   const promises = glob.sync(path).map((seedFile) => {
 
     const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -363,13 +288,17 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         }
       }
 
+      const city = row.city.trim();
+      const address = row.address.trim();
+      const meterId = row.meter_id.trim();
+      const meterStatus = row.meter_status.trim();
       const nullOr = (s) => s === 'NULL' ? null : s;
 
       r.gateways.push({
         id: row.gateway_id,
         facility: row.facility,
-        address: row.address,
-        city: row.city,
+        address: address,
+        city: city,
         productModel: row.gateway_product_model,
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
@@ -378,16 +307,33 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         position: objPosition,
       });
       r.meters.push({
-        id: row.meter_id,
+        id: meterId,
         facility: row.facility,
-        address: row.address,
-        city: row.city,
+        address: address,
+        city: city,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
-        status: row.meter_status,
+        status: meterStatus,
         gatewayId: row.gateway_id,
         position: objPosition,
       });
+      if (!cities2.has(city)) {
+        r.selections.cities.push({id: city, name: city});
+        cities2.add(city);
+      }
+      const addressId = address;
+      if (!addresses.has(addressId)) {
+        r.selections.addresses.push({id: addressId, name: address});
+        addresses.add(addressId);
+      }
+      if (!meteringPoints.has(meterId)) {
+        r.selections.meteringPoints.push({id: meterId, name: meterId});
+        meteringPoints.add(meterId);
+      }
+      if (!statuses.has(meterStatus)) {
+        r.selections.statuses.push({id: meterStatus, name: meterStatus});
+        statuses.add(meterStatus);
+      }
     }));
   });
   Promise.all(promises).then(() => {

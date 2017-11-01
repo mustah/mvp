@@ -6,7 +6,7 @@ import './PaginationControl.scss';
 
 export const PaginationControl = (props: PaginationProps) => {
   const {pagination: {page, limit}, changePage, numOfEntities} = props;
-  const pages = Math.floor(numOfEntities / limit);
+  const pages = Math.ceil(numOfEntities / limit);
   const changePageNext = () => changePage(page + 1);
   const changePagePrev = () => changePage(page - 1);
   const prevPage = page === 1 ? null : (

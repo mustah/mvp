@@ -72,7 +72,7 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
           onRequestClose={this.closeMenu}
           animated={false}
         >
-          <Menu>
+          <Menu maxHeight={400}>
             <Column className="DropdownSelector-menu">
               <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
               <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
