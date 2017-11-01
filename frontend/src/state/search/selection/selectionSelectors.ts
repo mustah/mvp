@@ -1,50 +1,62 @@
 import {createSelector} from 'reselect';
+import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {SelectionOptionEntity, SelectionResult} from './selectionModels';
+import {SearchParameterState} from '../searchParameterReducer';
+import {entityNames, SelectedIds, SelectionEntity} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 
-export const isFetching = (state: SelectionState): boolean => state.isFetching;
-
-const getEntities = (state: SelectionState): SelectionOptionEntity => state.entities;
-const getSelected = (state: SelectionState): SelectionResult => state.selected;
-const getResult = (state: SelectionState): SelectionResult => state.result;
+const getEntities = (state: SelectionState): SelectionEntity => state.entities;
+const getSelected = (state: SelectionState): SelectedIds => state.selected;
+const getResult = (state: SelectionState): SelectedIds => state.result;
 
 const getEntitiesSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectionOptionEntity, IdNamed>(
+  createSelector<SelectionState, SelectionEntity, IdNamed>(
     getEntities,
-    (entities: SelectionOptionEntity) => entities[entityType],
+    (entities: SelectionEntity) => entities[entityType],
   );
 
 const getSelectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectionResult, uuid[]>(
+  createSelector<SelectionState, SelectedIds, uuid[]>(
     getSelected,
-    (searchResult: SelectionResult) => searchResult[entityType],
+    (searchResult: SelectedIds) => searchResult[entityType],
   );
 
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
 const getDeselectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectionResult, SelectionResult, uuid[]>(
+  createSelector<SelectionState, SelectedIds, SelectedIds, uuid[]>(
     getResult,
     getSelected,
-    (result: SelectionResult, selected: SelectionResult) => arrayDiff(result[entityType], selected[entityType]),
+    (result: SelectedIds, selected: SelectedIds) => arrayDiff(result[entityType], selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string): any =>
-  createSelector<SelectionState, uuid[], SelectionOptionEntity, IdNamed[]>(
+  createSelector<SelectionState, uuid[], SelectionEntity, IdNamed[]>(
     getDeselectedEntityIdsSelector(entityType),
     getEntitiesSelector(entityType),
-    (ids: uuid[], entities: SelectionOptionEntity) => ids.map((id) => entities[id]),
+    (ids: uuid[], entities: SelectionEntity) => ids.map((id) => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string): any =>
-  createSelector<SelectionState, uuid[], SelectionOptionEntity, IdNamed[]>(
+  createSelector<SelectionState, uuid[], SelectionEntity, IdNamed[]>(
     getSelectedEntityIdsSelector(entityType),
     getEntitiesSelector(entityType),
-    (ids: uuid[], entities: SelectionOptionEntity) => ids.map((id) => entities[id]),
+    (ids: uuid[], entities: SelectionEntity) => ids.map((id) => entities[id]),
   );
 
-export const getDeselectedCities = getDeselectedEntities('cities');
-export const getSelectedCities = getSelectedEntities('cities');
-export const getDeselectedAddresses = getDeselectedEntities('addresses');
-export const getSelectedAddresses = getSelectedEntities('addresses');
+export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
+
+export const isFetching = createSelector<SearchParameterState, SelectionState, boolean>(
+  getSelection,
+  selection => selection.isFetching,
+);
+
+export const getDeselectedCities = getDeselectedEntities(entityNames.cities);
+export const getSelectedCities = getSelectedEntities(entityNames.cities);
+export const getDeselectedAddresses = getDeselectedEntities(entityNames.addresses);
+export const getSelectedAddresses = getSelectedEntities(entityNames.addresses);
+
+export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedIds, string>(
+  (searchParameters: SearchParameterState) => searchParameters.selection.selected,
+  encodedUriParametersFrom,
+);

@@ -58,7 +58,7 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal>{selectionText}{selectedOverview}</Normal>
+            <Normal className="capitalize">{selectionText}{selectedOverview}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>

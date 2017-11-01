@@ -20,8 +20,7 @@ export const gateways = (state: GatewaysState = initialState, action: AnyAction)
       const {gateways} = action.payload;
       return {
         isFetching: false,
-        total: gateways.result.length, // TODO: a work around since we don't use pagination form db.json.
-        // Got total from that before
+        total: gateways.result.length,
         ...gateways,
       };
     default:

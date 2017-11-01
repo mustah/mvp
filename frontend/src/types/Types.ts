@@ -21,6 +21,12 @@ export interface IdNamed {
   name: string;
 }
 
+export interface ErrorResponse {
+  type?: string | number;
+  data?: any;
+  message: string;
+}
+
 export enum Status {
   ok = 'ok',
   warning = 'warning',

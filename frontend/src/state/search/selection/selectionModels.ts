@@ -1,22 +1,24 @@
 import {IdNamed, uuid} from '../../../types/Types';
 
 export interface SelectionParameter extends IdNamed {
-  entity: string;
+  parameter: entityNames;
 }
 
-export interface SelectionOptionEntity {
+export interface SelectionEntity {
   [key: string]: IdNamed;
 }
 
-export interface SelectionResult {
+export interface SelectedIds {
   [key: string]: uuid[];
 }
 
-export interface SelectionOptions {
-  entities: SelectionOptionEntity;
-  result: SelectionResult;
+export interface SelectionNormalized {
+  entities: SelectionEntity;
+  result: SelectedIds;
 }
 
-export interface SearchParameterState {
-  selected?: any; // TODO[!must!] fix this
+export enum entityNames {
+  cities = 'cities',
+  addresses = 'addresses',
+  statuses = 'statuses',
 }

@@ -16,7 +16,7 @@ import {RootState} from './reducers/rootReducer';
 import {initRestClient} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
-import App from './usecases/app/App';
+import {App} from './usecases/app/App';
 import {mvpTheme} from './usecases/app/themes';
 const history: History = createHashHistory();
 
