@@ -9,7 +9,7 @@ import {TabOptions} from '../common/components/tabs/components/TabOptions';
 import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
-import {tabType} from '../common/components/tabs/models/TabsModel';
+import {TabModel, tabType} from '../common/components/tabs/models/TabsModel';
 
 interface GraphContainerProps {
   NotYetUsed?: boolean;
@@ -74,9 +74,9 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
       this.setState({selectedTabOption: option});
     };
 
-    const selectedTab = tabType.graph;
+    const selectedTab: tabType = tabType.graph;
 
-    const tabs = {
+    const tabs: TabModel = {
       [tabType.graph]: {
         selectedOption: this.state.selectedTabOption,
       },

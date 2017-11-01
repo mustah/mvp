@@ -21,7 +21,11 @@ const tabsInitialState: TabsState = {
   },
   collection: {
     selectedTab: tabType.list,
-    tabs: {},
+    tabs: {
+      [tabType.graph]: {
+        selectedOption: 'population',
+      },
+    },
   },
 };
 

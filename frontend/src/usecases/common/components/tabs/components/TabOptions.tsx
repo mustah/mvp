@@ -5,11 +5,13 @@ import {TabModel, tabType} from '../models/TabsModel';
 import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
 
+export type SelectTab = (tab: tabType, option: string) => void;
+
 export interface TabOptionsProps {
   children: Array<React.ReactElement<TabOptionProps>>;
   tab: tabType;
   selectedTab: tabType;
-  select: (tab: tabType, option: string) => void;
+  select: SelectTab;
   tabs: TabModel;
 }
 

@@ -8,9 +8,9 @@ import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/met
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
-import {Row} from '../../common/components/layouts/row/Row';
+import {Row, RowCenter} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {PieChartSelector, PieClick} from '../../common/components/pie-chart-selector/PieChartSelector';
+import {PieChartSelector} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {MeterList} from '../../common/components/table/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
@@ -25,6 +25,7 @@ import MapContainer from '../../map/containers/MapContainer';
 import {changePaginationValidation} from '../../ui/pagination/paginationActions';
 import {Pagination} from '../../ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../ui/pagination/paginationSelectors';
+import {Bold} from '../../common/components/texts/Texts';
 
 interface ValidationTabsContainerProps extends TabsContainerProps {
   numOfMeters: number;
@@ -45,15 +46,10 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
     {name: 'Perstorp', value: 893},
   ];
 
-  const selectCity: PieClick = (city: uuid) => alert('You selected the city ' + city);
-
   const productModels = [
     {name: 'CMe2100', value: 66},
     {name: 'CMi2110', value: 1649},
   ];
-
-  const selectProductModel: PieClick =
-    (productModel: uuid) => alert('You selected the product model ' + productModel);
 
   const statuses = [
     {name: translate('ok'), value: 1713},
@@ -61,20 +57,19 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
     {name: translate('could not be collected'), value: 0},
   ];
 
-  const selectStatus: PieClick =
-    (status: uuid) => alert('You selected the status ' + status);
-
   const colors: [string[]] = [
     ['#56b9d0', '#344d6c'],
     ['#fbba42', '#3b3f42'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
 
+  const numberOfMeters = productModels.reduce((sum, model) => sum + model.value, 0);
+
   return (
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab title={translate('dashboard')} tab={tabType.dashboard}/>
+          <Tab title={translate('graph')} tab={tabType.graph}/>
           <Tab title={translate('list')} tab={tabType.list}/>
           <Tab title={translate('map')} tab={tabType.map}/>
         </TabHeaders>
@@ -94,12 +89,17 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         </TabOptions>
         <TabSettings useCase={'validation'}/>
       </TabTopBar>
-      <TabContent tab={tabType.dashboard} selectedTab={selectedTab}>
-        <Row>
-          <PieChartSelector onClick={selectCity} data={cities} colors={colors[0]}/>
-          <PieChartSelector onClick={selectProductModel} data={productModels} colors={colors[1]}/>
-          <PieChartSelector onClick={selectStatus} data={statuses} colors={colors[2]}/>
-        </Row>
+      <TabContent tab={tabType.graph} selectedTab={selectedTab}>
+        <div>
+          <Row>
+            <p>Antal mätare: <Bold>{numberOfMeters}</Bold>.</p>
+          </Row>
+          <RowCenter>
+            <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
+            <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
+            <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
+          </RowCenter>
+        </div>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
         <MapContainer/>

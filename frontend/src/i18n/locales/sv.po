@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-10-31 10:49+0100\n"
+"POT-Creation-Date: 2017-10-31 15:01+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -47,14 +47,20 @@ msgstr "felrapporterade"
 msgid "unhandled problems"
 msgstr "ej hanterat"
 
-msgid "dashboard"
-msgstr "status"
+msgid "graph"
+msgstr "graf"
 
 msgid "list"
 msgstr "lista"
 
 msgid "map"
 msgstr "karta"
+
+msgid "population"
+msgstr "bestånd"
+
+msgid "faults"
+msgstr "fel"
 
 msgid "period"
 msgstr "period"
@@ -91,6 +97,9 @@ msgstr "medium"
 
 msgid "close"
 msgstr "stäng"
+
+msgid "dashboard"
+msgstr "status"
 
 msgid "gateway details"
 msgstr "gateway-egenskaper"

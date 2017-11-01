@@ -2,6 +2,7 @@ import 'PieChartSelector.scss';
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {uuid} from '../../../../types/Types';
+import {Column} from '../layouts/column/Column';
 
 interface PieData {
   name: string;
@@ -14,10 +15,11 @@ interface PieChartSelector {
   data: PieData[];
   onClick?: PieClick;
   colors: string[];
+  heading: string;
 }
 
 export const PieChartSelector = (props: PieChartSelector) => {
-  const {data, colors} = props;
+  const {data, colors, heading} = props;
 
   const renderCell = (entry: any, index: number) => (
     <Cell
@@ -39,12 +41,15 @@ export const PieChartSelector = (props: PieChartSelector) => {
   */
 
   return (
-    <PieChart width={300} height={300}>
-      <Pie data={data} activeIndex={[]} activeShape={null}>
-        {data.map(renderCell)}
-      </Pie>
-      <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
-      <Legend/>
-    </PieChart>
+    <Column className="PieContainer">
+      <h3>{heading}</h3>
+      <PieChart width={300} height={300}>
+        <Pie data={data} activeIndex={[]} activeShape={null}>
+          {data.map(renderCell)}
+        </Pie>
+        <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
+        <Legend/>
+      </PieChart>
+    </Column>
   );
 };
