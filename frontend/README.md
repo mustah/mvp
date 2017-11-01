@@ -44,7 +44,7 @@ We use [json-server](https://github.com/typicode/json-server) to fake our API.
 as long as you need it, or run it in the background by suffixing the JSON server call with `&` (i.e. `... --port 8080 &`).
 
 ```bash
-$ ./node_modules/json-server/bin/index.js --watch mockdata.js --routes routes.json --port 8080
+$ yarn json-server
 ```
 
 ## Tests
