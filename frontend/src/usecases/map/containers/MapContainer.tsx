@@ -105,8 +105,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     const meters = getMeterEntities(domainModels.meters);
 
-    for (const key in Object.keys(meters)) {
-      if (meters.hasOwnProperty(status)) {
+    Object.keys(meters).forEach((key: string) => {
         const meter = meters[key];
 
         const {status} = meter;
@@ -142,9 +141,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
               status,
             },
           );
-        }
       }
-    }
+    });
 
     const toggleScrollWheelZoom = (e) => {
       if (e.target.scrollWheelZoom.enabled()) {
@@ -159,6 +157,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         <Map
           center={startPosition}
           maxZoom={19}
+          minZoom={3}
           zoom={7}
           className="Map"
           scrollWheelZoom={false}
@@ -189,7 +188,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({domainModels, map, searchParameters}: RootState): MapContainerProps => {
+const mapStateToProps = ({domainModels, map}: RootState): MapContainerProps => {
   return {
     domainModels,
     map,
