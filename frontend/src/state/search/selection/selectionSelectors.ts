@@ -2,7 +2,7 @@ import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
 import {SearchParameterState} from '../searchParameterReducer';
-import {entityNames, SelectedIds, SelectionEntity} from './selectionModels';
+import {parameterNames, SelectedIds, SelectionEntity} from './selectionModels';
 import {SelectionState} from './selectionReducer';
 
 const getEntities = (state: SelectionState): SelectionEntity => state.entities;
@@ -51,10 +51,10 @@ export const isFetching = createSelector<SearchParameterState, SelectionState, b
   selection => selection.isFetching,
 );
 
-export const getDeselectedCities = getDeselectedEntities(entityNames.cities);
-export const getSelectedCities = getSelectedEntities(entityNames.cities);
-export const getDeselectedAddresses = getDeselectedEntities(entityNames.addresses);
-export const getSelectedAddresses = getSelectedEntities(entityNames.addresses);
+export const getDeselectedCities = getDeselectedEntities(parameterNames.cities);
+export const getSelectedCities = getSelectedEntities(parameterNames.cities);
+export const getDeselectedAddresses = getDeselectedEntities(parameterNames.addresses);
+export const getSelectedAddresses = getSelectedEntities(parameterNames.addresses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedIds, string>(
   (searchParameters: SearchParameterState) => searchParameters.selection.selected,

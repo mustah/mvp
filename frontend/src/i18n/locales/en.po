@@ -62,19 +62,25 @@ msgstr "population"
 msgid "faults"
 msgstr "faults"
 
+msgid "searching"
+msgstr "searching"
+
 msgid "period"
 msgstr "period"
 
-msgid "Last week"
+msgid "one day"
+msgstr "1 day"
+
+msgid "last week"
 msgstr "1 week"
 
-msgid "Last month"
+msgid "last month"
 msgstr "1 month"
 
-msgid "Last quarter"
+msgid "last quarter"
 msgstr "1 quarter"
 
-msgid "Last year"
+msgid "last year"
 msgstr "1 year"
 
 msgid "all"

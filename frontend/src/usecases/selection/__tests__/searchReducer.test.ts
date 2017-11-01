@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {entityNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';
 import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 import {IdNamed} from '../../../types/Types';
@@ -13,7 +13,7 @@ describe('searchReducer', () => {
   it('adds to selected list', () => {
     const state = {...initialState};
     const stockholm: IdNamed = {...mockData.selections.cities[0]};
-    const searchParameters: SelectionParameter = {...stockholm, parameter: entityNames.cities};
+    const searchParameters: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     expect(selection(state, setSelection(searchParameters))).toEqual({
       ...initialState,

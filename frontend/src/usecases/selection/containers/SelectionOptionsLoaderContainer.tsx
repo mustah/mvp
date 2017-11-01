@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
 import {fetchSelections} from '../../../state/search/selection/selectionActions';
 import {isFetching} from '../../../state/search/selection/selectionSelectors';
 import {RowCenter} from '../../common/components/layouts/row/Row';
@@ -30,7 +31,7 @@ class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
   render() {
     const {isFetching} = this.props;
     if (isFetching) {
-      return <RowCenter><Bold>...Söker</Bold></RowCenter>;
+      return <RowCenter><Bold>...{translate('searching')}</Bold></RowCenter>;
     } else {
       return this.props.children;
     }

@@ -1,10 +1,7 @@
 import * as classNames from 'classnames';
 import 'Logo.scss';
 import * as React from 'react';
-
-interface LogoProps {
-  small?: boolean;
-}
+import {ClassNamed} from '../../../../types/Types';
 
 const eonSvg = 'M340.669,56.204c0,15.368-9.576,35.559-16.497,48.9 ' +
   ' c-10.87,20.991-25.576,33.57-49.488,35.054c-21.136,1.311-68.905,' +
@@ -40,11 +37,7 @@ const eonSvg = 'M340.669,56.204c0,15.368-9.576,35.559-16.497,48.9 ' +
   '85.574-8.837C490.24,52.079,490.607,54.081,490.607,56.351 ' +
   ' L490.607,56.351z';
 
-export const Logo = (props: LogoProps) => {
-  const classes = ['EonLogo'];
-  if (props.small) {
-    classes.push('small');
-  }
+export const Logo = (props: ClassNamed) => {
   return (
     <svg
       version="1.1"
@@ -56,7 +49,7 @@ export const Logo = (props: LogoProps) => {
       y="0px"
       viewBox="0 0 508.246 148.344"
       enableBackground="new 0 0 508.246 148.344"
-      className={classNames(...classes)}
+      className={classNames('EonLogo', props.className)}
     >
       <g transform="translate(-6.041939e-2,0.147204)">
         <path

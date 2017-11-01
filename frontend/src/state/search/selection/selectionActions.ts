@@ -33,6 +33,12 @@ export const closeSearch = () => dispatch => {
   dispatch(routerActions.goBack());
 };
 
+export const selectPeriod = (selectionParameter: SelectionParameter) =>
+  async (dispatch, getState: () => RootState) => {
+    dispatch(setSelection(selectionParameter));
+    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
+  };
+
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   async (dispatch: Dispatch<SelectionState>, getState: () => RootState) => {
     const selectionState: SelectionState = getSelection(getState().searchParameters);

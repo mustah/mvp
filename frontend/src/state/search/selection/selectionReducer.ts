@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {ErrorResponse, IdNamed, uuid} from '../../../types/Types';
+import {ErrorResponse, IdNamed, Period, uuid} from '../../../types/Types';
 import {
   DESELECT_SELECTION,
   SELECTION_FAILURE,
@@ -25,6 +25,7 @@ export const initialState: SelectionState = {
   selected: {
     cities: [],
     addresses: [],
+    period: [Period.now],
   },
 };
 

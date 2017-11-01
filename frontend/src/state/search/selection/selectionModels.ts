@@ -1,7 +1,7 @@
 import {IdNamed, uuid} from '../../../types/Types';
 
 export interface SelectionParameter extends IdNamed {
-  parameter: entityNames;
+  parameter: parameterNames;
 }
 
 export interface SelectionEntity {
@@ -17,8 +17,9 @@ export interface SelectionNormalized {
   result: SelectedIds;
 }
 
-export enum entityNames {
+export enum parameterNames {
   cities = 'cities',
   addresses = 'addresses',
   statuses = 'statuses',
+  period = 'period',
 }

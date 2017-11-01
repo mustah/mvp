@@ -5,7 +5,6 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
-import {PeriodSelection} from '../../common/components/dates/PeriodSelection';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Row} from '../../common/components/layouts/row/Row';
@@ -30,7 +29,6 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
     <PageContainer>
       <Row className="space-between">
         <MainTitle>{translate('report')}</MainTitle>
-        <PeriodSelection/>
       </Row>
 
       <Row className="Section">

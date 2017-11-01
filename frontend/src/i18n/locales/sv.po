@@ -62,19 +62,25 @@ msgstr "bestånd"
 msgid "faults"
 msgstr "fel"
 
+msgid "searching"
+msgstr "söker"
+
 msgid "period"
 msgstr "period"
 
-msgid "Last week"
+msgid "one day"
+msgstr "1 dag"
+
+msgid "last week"
 msgstr "1 vecka"
 
-msgid "Last month"
+msgid "last month"
 msgstr "1 månad"
 
-msgid "Last quarter"
+msgid "last quarter"
 msgstr "1 kvartal"
 
-msgid "Last year"
+msgid "last year"
 msgstr "1 år"
 
 msgid "all"
