@@ -33,30 +33,26 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
   constructor(props) {
     super(props);
     this.state = {email: '', password: ''};
-
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onKeyPress = this.onKeyPress.bind(this);
   }
 
-  login() {
-    const {email, password} = this.state;
-    this.props.login(email, password);
-  }
-
-  onChange(event: any) {
+  onChange = (event: any): void => {
     const {target: {id, value}} = event;
     this.setState({[id]: value});
   }
 
-  onKeyPress(event: any) {
+  login = (): void => {
+    const {email, password} = this.state;
+    this.props.login(email, password);
+  }
+
+  onKeyPress = (event: any): void => {
     if (event.key === 'Enter') {
       event.preventDefault();
       this.login();
     }
   }
 
-  onSubmit(event: any): void {
+  onSubmit = (event: any): void => {
     event.preventDefault();
     this.login();
   }
