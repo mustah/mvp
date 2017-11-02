@@ -31,12 +31,13 @@ export const Checkbox = (props: CheckBox) => {
 };
 
 export const CheckboxList = (props: CheckboxListProps) => {
+  const {onClick, allChecked} = props;
   const renderCheckbox = (checkbox: IdNamed) => (
     <Checkbox
       key={checkbox.id}
       {...checkbox}
-      onClick={props.onClick}
-      checked={props.allChecked}
+      onClick={onClick}
+      checked={allChecked}
     />);
 
   return (
