@@ -72,12 +72,14 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
           onRequestClose={this.closeMenu}
           animated={false}
         >
-          <Menu maxHeight={400}>
+          <Menu>
             <Column className="DropdownSelector-menu">
               <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
-              <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
-              {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-              <CheckboxList onClick={onClick} list={filteredList}/>
+              <Column className="DropdownSelector-content">
+                <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
+                {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
+                <CheckboxList onClick={onClick} list={filteredList}/>
+              </Column>
             </Column>
           </Menu>
         </Popover>

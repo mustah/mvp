@@ -31,10 +31,12 @@
   .SearchBox {
     position: relative; // Used to position the search icon.
     margin-bottom: $sm-space;
+    display: flex;
 
     .SearchBox-input {
       $border-focused: 2px;
       $border-unfocused: 1px;
+      flex: 1;
 
       margin: $border-focused - $border-unfocused 5px;
       padding: 8px 20px 8px 5px;
@@ -47,7 +49,10 @@
       }
     }
   }
-
+  .DropdownSelector-content{
+    max-height: 420px;
+    overflow-y: scroll;
+  }
   .separation-border {
     margin: 0 5px;
     border-bottom: 1px solid $grey;
