@@ -1,12 +1,13 @@
 import * as classNames from 'classnames';
+import {Paper} from 'material-ui';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Logo} from '../../common/components/logo/Logo';
 import {Column} from '../../common/components/layouts/column/Column';
+import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
@@ -26,40 +27,42 @@ class LoginContainerComponent extends React.Component<Props> {
   private emailComponent: HTMLInputElement | null;
   private passwordComponent: HTMLInputElement | null;
 
+  onSubmit = (event: any): void => {
+    event.preventDefault();
+    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
+  }
+
   render() {
     const {auth} = this.props;
     return (
       <Column className={classNames('LoginContainer', 'Column-center')}>
-        <div className="customerLogo">
-          <Logo/>
-        </div>
-        <form onSubmit={this.onSubmit}>
-          <div>
-            <input
-              type="text"
-              placeholder={translate('email')}
-              ref={component => this.emailComponent = component}
-            />
+        <Paper zDepth={3} className="LoginPaper">
+          <div className="customerLogo">
+            <Logo/>
           </div>
-          <div>
-            <input
-              type="password"
-              placeholder={translate('password')}
-              ref={component => this.passwordComponent = component}
-            />
-          </div>
-          <div>
-            <input type="submit" value="Login"/>
-          </div>
-          {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
-        </form>
+          <form onSubmit={this.onSubmit}>
+            <div>
+              <input
+                type="text"
+                placeholder={translate('email')}
+                ref={component => this.emailComponent = component}
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder={translate('password')}
+                ref={component => this.passwordComponent = component}
+              />
+            </div>
+            <div>
+              <input type="submit" value="Login"/>
+            </div>
+            {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
+          </form>
+        </Paper>
       </Column>
     );
-  }
-
-  onSubmit = (event: any): void => {
-    event.preventDefault();
-    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
   }
 }
 
