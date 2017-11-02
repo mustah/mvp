@@ -59,6 +59,19 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth} = this.props;
+    const underlineFocusStyle = {
+      borderColor: '#00b6f7',
+    };
+
+    const floatingLabelFocusStyle = {
+      color: '#00b6f7',
+    };
+
+    const loginButtonStyle = {
+      backgroundColor: '#00b6f7',
+      color: '#fff',
+    };
+
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={3} className="LoginPaper">
@@ -69,26 +82,31 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             <TextField
               className="TextField"
               floatingLabelText="Email"
+              floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
               hintText="Din email-adress"
               id="email"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
+              underlineFocusStyle={underlineFocusStyle}
             />
             <TextField
               className="TextField"
               floatingLabelText="Lösenord"
+              floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
               hintText="Ditt lösenord"
               id="password"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
               type="password"
+              underlineFocusStyle={underlineFocusStyle}
             />
             <FlatButton
               fullWidth={true}
               label="Logga in"
               onClick={this.onSubmit}
+              style={loginButtonStyle}
             />
             {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
           </form>
