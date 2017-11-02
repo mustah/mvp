@@ -1,12 +1,12 @@
 import * as classNames from 'classnames';
 import {Paper} from 'material-ui';
+import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
-import {Column} from '../../common/components/layouts/column/Column';
+import {ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
@@ -20,48 +20,67 @@ interface DispatchToProps {
   login: (email: string, password: string) => any;
 }
 
+interface LoginState {
+  email: string;
+  password: string;
+}
+
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-class LoginContainerComponent extends React.Component<Props> {
+class LoginContainerComponent extends React.Component<Props, LoginState> {
 
-  private emailComponent: HTMLInputElement | null;
-  private passwordComponent: HTMLInputElement | null;
+  constructor(props) {
+    super(props);
+    this.state = {email: '', password: ''};
 
-  onSubmit = (event: any): void => {
+    this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+
+  onChange(event: any, ev2) {
+    const {target: {id, value}} = event;
+    this.setState({[id]: value});
+  }
+
+  onSubmit(event: any): void {
     event.preventDefault();
-    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
+    const {email, password} = this.state;
+    this.props.login(email, password);
   }
 
   render() {
     const {auth} = this.props;
     return (
-      <Column className={classNames('LoginContainer', 'Column-center')}>
+      <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={3} className="LoginPaper">
-          <div className="customerLogo">
+          <ColumnCenter className="customerLogo">
             <Logo/>
-          </div>
+          </ColumnCenter>
           <form onSubmit={this.onSubmit}>
-            <div>
-              <input
-                type="text"
-                placeholder={translate('email')}
-                ref={component => this.emailComponent = component}
-              />
-            </div>
-            <div>
-              <input
-                type="password"
-                placeholder={translate('password')}
-                ref={component => this.passwordComponent = component}
-              />
-            </div>
+            <TextField
+              className="TextField"
+              floatingLabelText="Email"
+              fullWidth={true}
+              hintText="Din email-adress"
+              id="email"
+              onChange={this.onChange}
+            />
+            <TextField
+              className="TextField"
+              floatingLabelText="Lösenord"
+              fullWidth={true}
+              hintText="Ditt lösenord"
+              id="password"
+              onChange={this.onChange}
+              type="password"
+            />
             <div>
               <input type="submit" value="Login"/>
             </div>
             {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
           </form>
         </Paper>
-      </Column>
+      </ColumnCenter>
     );
   }
 }
