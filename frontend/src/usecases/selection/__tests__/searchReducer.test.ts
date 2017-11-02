@@ -5,14 +5,94 @@ import {initialState, selection} from '../../../state/search/selection/selection
 import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 import {IdNamed} from '../../../types/Types';
 
-const dbJsonData = require('./../../../../mockdata');
-const mockData = dbJsonData();
+const mockData = {
+  cities: [
+    {
+      id: 'got',
+      name: 'Göteborg',
+    },
+    {
+      id: 'sto',
+      name: 'Stockholm',
+    },
+    {
+      id: 'mmx',
+      name: 'Malmö',
+    },
+    {
+      id: 'kub',
+      name: 'Kungsbacka',
+    },
+  ],
+  addresses: [
+    {
+      id: 1,
+      name: 'Stampgatan 46',
+    },
+    {
+      id: 2,
+      name: 'Stampgatan 33',
+    },
+    {
+      id: 3,
+      name: 'Kungsgatan 44',
+    },
+    {
+      id: 4,
+      name: 'Drottninggatan 1',
+    },
+    {
+      id: 5,
+      name: 'Åvägen 9',
+    },
+  ],
+  statuses: [
+    {
+      id: 'ok',
+      name: 'Ok',
+    },
+    {
+      id: 'warning',
+      name: 'Varning',
+    },
+    {
+      id: 'info',
+      name: 'Info',
+    },
+    {
+      id: 'critical',
+      name: 'Kritisk',
+    },
+  ],
+  meteringPoints: [
+    {
+      id: 'm1',
+      name: 'UNICOcoder',
+    },
+    {
+      id: 'm2',
+      name: '3100',
+    },
+    {
+      id: 'm3',
+      name: 'xxx2233',
+    },
+    {
+      id: 'm4',
+      name: '3100',
+    },
+    {
+      id: 'm5',
+      name: 'Test kit',
+    },
+  ],
+};
 
 describe('searchReducer', () => {
 
   it('adds to selected list', () => {
     const state = {...initialState};
-    const stockholm: IdNamed = {...mockData.selections.cities[0]};
+    const stockholm: IdNamed = {...mockData.cities[0]};
     const searchParameters: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     expect(selection(state, setSelection(searchParameters))).toEqual({
@@ -25,7 +105,7 @@ describe('searchReducer', () => {
   });
 
   it('normalized selection data', () => {
-    const normalizedData = normalize(mockData.selections, selectionSchema);
+    const normalizedData = normalize(mockData, selectionSchema);
 
     expect(normalizedData).toEqual({
       entities: {

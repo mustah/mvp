@@ -1,4 +1,3 @@
-const seedrandom = require('seedrandom');
 const fs = require('fs');
 const csvjson = require('csvjson');
 const glob = require('glob');
@@ -71,10 +70,7 @@ const fromDbJson = {
   dashboards: [
     {
       'id': '3',
-      'author': 'Sven',
-      'title': 'Sven\'s dashboard from the DashboardController',
       'systemOverview': {
-        'title': 'Sven\'s system overview from the DashboardController',
         'indicators': [
           {
             'title': 'Insamling',
@@ -113,233 +109,16 @@ const fromDbJson = {
       'author': 'elvaco - home',
     },
   ],
-  validations: [
-    {
-      'id': 1,
-      'title': 'json-server',
-      'author': 'typicode',
-    },
-    {
-      'id': 2,
-      'title': 'validation 2',
-      'author': 'elvaco',
-    },
-    {
-      'id': 3,
-      'title': 'validation 3',
-      'author': 'elvaco - home',
-    },
-  ],
   profile: {
     name: 'typicode',
   },
-  selections: {
-    cities: [
-      {
-        id: 'got',
-        name: 'Göteborg',
-      },
-      {
-        id: 'sto',
-        name: 'Stockholm',
-      },
-      {
-        id: 'mmx',
-        name: 'Malmö',
-      },
-      {
-        id: 'kub',
-        name: 'Kungsbacka',
-      },
-    ],
-    addresses: [
-      {
-        id: 1,
-        name: 'Stampgatan 46',
-      },
-      {
-        id: 2,
-        name: 'Stampgatan 33',
-      },
-      {
-        id: 3,
-        name: 'Kungsgatan 44',
-      },
-      {
-        id: 4,
-        name: 'Drottninggatan 1',
-      },
-      {
-        id: 5,
-        name: 'Åvägen 9',
-      },
-    ],
-    statuses: [
-      {
-        id: 'ok',
-        name: 'Ok',
-      },
-      {
-        id: 'warning',
-        name: 'Varning',
-      },
-      {
-        id: 'info',
-        name: 'Info',
-      },
-      {
-        id: 'critical',
-        name: 'Kritisk',
-      },
-    ],
-    meteringPoints: [
-      {
-        id: 'm1',
-        name: 'UNICOcoder',
-      },
-      {
-        id: 'm2',
-        name: '3100',
-      },
-      {
-        id: 'm3',
-        name: 'xxx2233',
-      },
-      {
-        id: 'm4',
-        name: '3100',
-      },
-      {
-        id: 'm5',
-        name: 'Test kit',
-      },
-    ],
-  },
-};
-
-const gatewayStatuses = [
-  {
-    'code': 0,
-    'text': 'OK',
-  },
-  {
-    'code': 3,
-    'text': 'Gateway kunde inte avläsas',
-  },
-];
-
-const cities = [
-  'Göteborg',
-  'Kungsbacka',
-  'Mölndal',
-  'Stockholm',
-  'Alvesta',
-  'Höganäs',
-  'Varberg',
-  'Borås',
-];
-
-const position = [
-  {latitude: 57.715954, longitude: 11.974855},
-  {latitude: 57.487614, longitude: 12.076706},
-  {latitude: 57.650215, longitude: 12.016228},
-  {latitude: 59.330270, longitude: 18.069251},
-  {latitude: 56.899273, longitude: 14.556001},
-  {latitude: 56.200461, longitude: 12.555504},
-  {latitude: 57.107967, longitude: 12.272229},
-  {latitude: 57.721190, longitude: 12.940214},
-];
-
-const gatewayModels = [
-  'CMe2100',
-  'CMi2110',
-  'CMe3100',
-];
-
-const meterModels = [
-  'Kamstrup Multical 403',
-  'Kamstrup Multical 603',
-];
-
-const actions = [
-  '',
-  'Inspektion väntar',
-  'Ny produkt beställd',
-  'Lagret kör ut ny gateway',
-];
-
-const mpDistrictHeatingErrors = [
-  'Battery low',
-  'Flow sensor error (air)',
-  'Flow sensor error (generic)',
-  'Flow sensor error (dirty)',
-  'Leakage',
-  'Overflow',
-  'Backflow',
-  'Forward temperature sensor error',
-  'Return temperature sensor error',
-  'Temperature sensor error (generic)',
-  'Temperature sensor inverted',
-  'Tamper error',
-  'Supply voltage error',
-  'Time for battery change',
-  'Internal meter error',
-];
-
-const getPosition = (area) => {
-  switch (area) {
-    case 'Göteborg': {
-      return randomizeLatLng(position[0]);
-    }
-    case 'Mölndal': {
-      return randomizeLatLng(position[1]);
-    }
-    case 'Stockholm': {
-      return randomizeLatLng(position[2]);
-    }
-    case 'Alvesta': {
-      return randomizeLatLng(position[3]);
-    }
-    case 'Höganäs': {
-      return randomizeLatLng(position[4]);
-    }
-    case 'Varberg': {
-      return randomizeLatLng(position[5]);
-    }
-    case 'Borås': {
-      return randomizeLatLng(position[6]);
-    }
-    default:
-      return randomizeLatLng(position[6]);
-  }
-};
-
-const randomizeLatLng = (a) => {
-  return {
-    lat: getRandomArbitrary(a.lat - 0.05, a.lat + 0.05),
-    lng: getRandomArbitrary(a.lng - 0.05, a.lng + 0.05),
-  };
-};
-
-const getRandomArbitrary = (min, max) => {
-  return Math.random() * (max - min) + min;
-};
-
-const getWeightedRandomStatus = () => {
-  const x = getRandomArbitrary(0, 100);
-  if (x < 1) {
-    return 2;
-  } else if (x < 5) {
-    return 1;
-  } else {
-    return 0;
-  }
 };
 
 const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false}) => {
   const r = {
     meters: [],
     gateways: [],
+    selections: {meteringPoints: [], statuses: [], cities: [], addresses: []},
   };
   let geocodeData = {};
   let limiter;
@@ -354,13 +133,19 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
       }
     }
   }
+
+  const cities = new Set();
+  const addresses = new Set();
+  const meteringPoints = new Set();
+  const statuses = new Set();
+
   const promises = glob.sync(path).map((seedFile) => {
 
     const meterData = fs.readFileSync(seedFile, 'utf-8').toString();
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -408,6 +193,23 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         gatewayId: row.gateway_id,
         position: objPosition,
       });
+      if (!cities.has(row.city)) {
+        r.selections.cities.push({id: row.city, name: row.city});
+        cities.add(row.city);
+      }
+      const addressId = row.address;
+      if (!addresses.has(addressId)) {
+        r.selections.addresses.push({id: addressId, name: row.address});
+        addresses.add(addressId);
+      }
+      if (!meteringPoints.has(row.meter_id)) {
+        r.selections.meteringPoints.push({id: row.meter_id, name: row.meter_id});
+        meteringPoints.add(row.meter_id);
+      }
+      if (!statuses.has(row.meter_status)) {
+        r.selections.statuses.push({id: row.meter_status, name: row.meter_status});
+        statuses.add(row.meter_status);
+      }
     }));
   });
   Promise.all(promises).then(() => {
@@ -420,49 +222,11 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
 };
 
 module.exports = (doGeocoding = false) => {
-  const returnValues = Object.assign({},
-    fromDbJson,
+  return Object.assign(fromDbJson,
     parseSeedDataDirectory('data/seed_data/*.csv',
       {
         doGeocoding: doGeocoding,
         geocodeCacheFile: 'data/geocoding.json',
       }),
   );
-  // remove the entire endpoint from fromDbJson once we're done with the generation logic
-  returnValues.random_gateways = [];
-  returnValues.random_meters = [];
-
-  const appRandom = new Math.seedrandom('this is a seed');
-
-  for (let i = 0; i < 1000; i++) {
-    const numberOfMeters = Math.floor(appRandom() * 7);
-    const gatewayId = 23 + i;
-    const gwStatus = gatewayStatuses[Math.floor(appRandom() * gatewayStatuses.length)];
-    const city = cities[Math.floor(appRandom() * cities.length)];
-
-    const gateway = {
-      id: gatewayId,
-      city,
-      productModel: gatewayModels[Math.floor(appRandom() * gatewayModels.length)],
-      status: gwStatus,
-      connectedMeters: numberOfMeters,
-      action: (gwStatus.code === 0 ? '' : actions[Math.floor(appRandom() * actions.length)]),
-    };
-
-    for (let j = 0; j < numberOfMeters; j++) {
-      const meter = {
-        id: Math.floor(appRandom() * 100000),
-        gatewayId: gatewayId,
-        medium: 'Heat, Return temp',
-        status: getWeightedRandomStatus(),
-        city,
-        position: getPosition(city),
-        productModel: meterModels[Math.floor(appRandom() * meterModels.length)],
-      };
-      returnValues.random_meters.push(meter);
-    }
-
-    returnValues.random_gateways.push(gateway);
-  }
-  return returnValues;
 };

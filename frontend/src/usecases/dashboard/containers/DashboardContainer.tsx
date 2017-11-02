@@ -17,6 +17,7 @@ import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
 import DashboardTabsContainer from './DashboardTabsContainer';
+import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicatorSelectors';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
@@ -75,10 +76,10 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
  * @returns {{dashboard: DashboardState}}
  */
 const mapStateToProps = (state: RootState): StateToProps => {
-  const {dashboard} = state;
+  const {dashboard, ui} = state;
   return {
     dashboard,
-    selectedWidget: state.ui.indicator.selectedIndicators.dashboard,
+    selectedWidget: getSelectedIndicatorDashboard(ui),
   };
 };
 

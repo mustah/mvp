@@ -13,6 +13,7 @@ import {PageContainer} from '../../common/containers/PageContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
+import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
@@ -47,10 +48,10 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
 };
 
 const mapStateToProps = (state: RootState): StateToProps => {
-  const {report} = state;
+  const {report, ui} = state;
   return {
     report,
-    selectedWidget: state.ui.indicator.selectedIndicators.report,
+    selectedWidget: getSelectedIndicatorReport(ui),
   };
 };
 

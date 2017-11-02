@@ -36,10 +36,7 @@ describe('Dashboard', () => {
 
     const capturedApiResponse: DashboardModel = {
       id: 3,
-      author: 'Sven',
-      title: 'Sven dashboard from the DashboardController',
       systemOverview: {
-        title: 'Sven system overview from the DashboardController',
         indicators,
       },
     };
@@ -52,13 +49,10 @@ describe('Dashboard', () => {
     const expected = {
       isFetching: false,
       record: {
-        author: 'Sven',
         id: 3,
         systemOverview: {
-          title: 'Sven system overview from the DashboardController',
           indicators,
         },
-        title: 'Sven dashboard from the DashboardController',
       },
     };
 
