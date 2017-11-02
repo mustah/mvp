@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {fetchGeoData} from '../../../state/domain-models/geoData/geoDataActions';
 import {fetchSelections} from '../../../state/search/selection/selectionActions';
 import {isFetching} from '../../../state/search/selection/selectionSelectors';
 import {RowCenter} from '../../common/components/layouts/row/Row';
@@ -18,14 +19,16 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchSearchOptions: () => void;
+  fetchGeoData: () => void;
 }
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchSearchOptions();
+    this.props.fetchGeoData();
   }
 
   render() {
@@ -46,6 +49,7 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchSearchOptions: fetchSelections,
+  fetchGeoData,
 }, dispatch);
 
 export const SelectionOptionsLoaderContainer =

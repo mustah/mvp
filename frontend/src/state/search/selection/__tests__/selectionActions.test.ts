@@ -3,6 +3,7 @@ import {normalize} from 'normalizr';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {testData} from '../../../../__tests__/TestDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {IdNamed, Period} from '../../../../types/Types';
 import {meterRequest} from '../../../domain-models/meter/meterActions';
@@ -24,14 +25,12 @@ import {addCityEntity, initialState, selection, SelectionState} from '../selecti
 import {selectionSchema} from '../selectionSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
-const dbJsonData = require('./../../../../../mockdata');
-const mockData = dbJsonData();
 const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const gothenburg = {...mockData.selections.cities[0]};
-  const stockholm = {...mockData.selections.cities[1]};
+  const gothenburg = {...testData.geoData.cities[0]};
+  const stockholm = {...testData.geoData.cities[1]};
 
   let mockRestClient;
   let store;
@@ -65,7 +64,7 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         selectionRequest(),
-        selectionSuccess(normalize(mockData.selections, selectionSchema)),
+        selectionSuccess(normalize(testData.geoData, selectionSchema)),
       ]);
     });
 
@@ -88,7 +87,7 @@ describe('selectionActions', () => {
     it('set selection', async () => {
       store = configureMockStore({searchParameters: {selection: {...initialState}}});
 
-      const selection: IdNamed = mockData.selections.cities[0];
+      const selection: IdNamed = {...gothenburg};
 
       const parameter: SelectionParameter = {...selection, parameter: parameterNames.cities};
 
@@ -151,7 +150,7 @@ describe('selectionActions', () => {
   });
 
   const fetchFakeSelections = async () => {
-    mockRestClient.onGet('/selections').reply(200, mockData.selections);
+    mockRestClient.onGet('/selections').reply(200, testData.geoData);
 
     return store.dispatch(fetchSelections());
   };

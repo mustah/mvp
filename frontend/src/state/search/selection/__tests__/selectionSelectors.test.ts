@@ -10,16 +10,14 @@ import {
   getSelection,
   isFetching,
 } from '../selectionSelectors';
-
-const dbJsonData = require('./../../../../../mockdata');
-const mockData = dbJsonData();
+import {testData} from '../../../../__tests__/TestDataFactory';
 
 describe('selectionSelectors', () => {
 
   const searchParametersState: SearchParameterState = {selection: {...initialState}};
 
-  const gothenburg: IdNamed = {...mockData.selections.cities[0]};
-  const stockholm: IdNamed = {...mockData.selections.cities[1]};
+  const gothenburg: IdNamed = {...testData.geoData.cities[0]};
+  const stockholm: IdNamed = {...testData.geoData.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...searchParametersState})).toEqual(initialState);
@@ -53,7 +51,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=Perstorp&period=now');
+      expect(getEncodedUriParameters({selection: state})).toEqual('city=sto&period=now');
     });
 
     it('has two selected cities', () => {
@@ -62,7 +60,7 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=%C3%84lmhult&city=Perstorp&period=now');
+      expect(getEncodedUriParameters({selection: state})).toEqual('city=got&city=sto&period=now');
     });
   });
 

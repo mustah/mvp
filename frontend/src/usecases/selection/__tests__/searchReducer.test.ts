@@ -1,98 +1,16 @@
 import {normalize} from 'normalizr';
+import {testData} from '../../../__tests__/TestDataFactory';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';
 import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 import {IdNamed} from '../../../types/Types';
 
-const mockData = {
-  cities: [
-    {
-      id: 'got',
-      name: 'Göteborg',
-    },
-    {
-      id: 'sto',
-      name: 'Stockholm',
-    },
-    {
-      id: 'mmx',
-      name: 'Malmö',
-    },
-    {
-      id: 'kub',
-      name: 'Kungsbacka',
-    },
-  ],
-  addresses: [
-    {
-      id: 1,
-      name: 'Stampgatan 46',
-    },
-    {
-      id: 2,
-      name: 'Stampgatan 33',
-    },
-    {
-      id: 3,
-      name: 'Kungsgatan 44',
-    },
-    {
-      id: 4,
-      name: 'Drottninggatan 1',
-    },
-    {
-      id: 5,
-      name: 'Åvägen 9',
-    },
-  ],
-  statuses: [
-    {
-      id: 'ok',
-      name: 'Ok',
-    },
-    {
-      id: 'warning',
-      name: 'Varning',
-    },
-    {
-      id: 'info',
-      name: 'Info',
-    },
-    {
-      id: 'critical',
-      name: 'Kritisk',
-    },
-  ],
-  meteringPoints: [
-    {
-      id: 'm1',
-      name: 'UNICOcoder',
-    },
-    {
-      id: 'm2',
-      name: '3100',
-    },
-    {
-      id: 'm3',
-      name: 'xxx2233',
-    },
-    {
-      id: 'm4',
-      name: '3100',
-    },
-    {
-      id: 'm5',
-      name: 'Test kit',
-    },
-  ],
-};
-
 describe('searchReducer', () => {
 
   it('adds to selected list', () => {
     const state = {...initialState};
-    const stockholm: IdNamed = {...mockData.cities[0]};
+    const stockholm: IdNamed = {...testData.geoData.cities[0]};
     const searchParameters: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     expect(selection(state, setSelection(searchParameters))).toEqual({
@@ -105,7 +23,7 @@ describe('searchReducer', () => {
   });
 
   it('normalized selection data', () => {
-    const normalizedData = normalize(mockData, selectionSchema);
+    const normalizedData = normalize(testData.geoData, selectionSchema);
 
     expect(normalizedData).toEqual({
       entities: {
@@ -149,46 +67,6 @@ describe('searchReducer', () => {
             name: 'Stockholm',
           },
         },
-        meteringPoints: {
-          m1: {
-            id: 'm1',
-            name: 'UNICOcoder',
-          },
-          m2: {
-            id: 'm2',
-            name: '3100',
-          },
-          m3: {
-            id: 'm3',
-            name: 'xxx2233',
-          },
-          m4: {
-            id: 'm4',
-            name: '3100',
-          },
-          m5: {
-            id: 'm5',
-            name: 'Test kit',
-          },
-        },
-        statuses: {
-          critical: {
-            id: 'critical',
-            name: 'Kritisk',
-          },
-          info: {
-            id: 'info',
-            name: 'Info',
-          },
-          ok: {
-            id: 'ok',
-            name: 'Ok',
-          },
-          warning: {
-            id: 'warning',
-            name: 'Varning',
-          },
-        },
       },
       result: {
         addresses: [
@@ -203,19 +81,6 @@ describe('searchReducer', () => {
           'sto',
           'mmx',
           'kub',
-        ],
-        meteringPoints: [
-          'm1',
-          'm2',
-          'm3',
-          'm4',
-          'm5',
-        ],
-        statuses: [
-          'ok',
-          'warning',
-          'info',
-          'critical',
         ],
       },
     });
