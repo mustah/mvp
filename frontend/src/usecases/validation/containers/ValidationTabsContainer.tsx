@@ -102,7 +102,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         </div>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer/>
+        <MapContainer locations={meters}/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <MeterList data={{allIds: paginatedList, byId: meters}}/>

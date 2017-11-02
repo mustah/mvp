@@ -14,12 +14,13 @@ import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {MapState} from '../mapReducer';
-import {DomainModelsState} from '../../../state/domain-models/domainModelsReducer';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
+import {Location} from '../../../state/domain-models/domainModels';
+import {isNullOrUndefined} from 'util';
 
 interface MapContainerProps {
-  domainModels: DomainModelsState;
+  locations: any;
   map: MapState;
   children?: React.ReactNode;
 }
@@ -34,7 +35,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     const {
       toggleClusterDialog,
       map,
-      domainModels,
+      locations,
       openClusterDialog,
     } = this.props;
 
@@ -103,44 +104,45 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
-    const meters = getMeterEntities(domainModels.meters);
 
-    Object.keys(meters).forEach((key: string) => {
-        const meter = meters[key];
+    let value = 'locations';
 
-        const {status} = meter;
-        switch (status) {
-          case '0': {
-            tmpIcon = 'marker-icon-ok.png';
-            break;
-          }
-          case '1': {
-            tmpIcon = 'marker-icon-warning.png';
-            break;
-          }
-          case '2': {
-            tmpIcon = 'marker-icon-error.png';
-            break;
-          }
-          default: {
-            tmpIcon = 'marker-icon.png';
-          }
+    Object.keys(locations[value]).forEach((a: string) => {
+      const meter = locations[value][a]
+
+      const status = '0'; // {status} = meter;
+      switch (status) {
+        case '0': {
+          tmpIcon = 'marker-icon-ok.png';
+          break;
         }
+        case '1': {
+          tmpIcon = 'marker-icon-warning.png';
+          break;
+        }
+        case '2': {
+          tmpIcon = 'marker-icon-error.png';
+          break;
+        }
+        default: {
+          tmpIcon = 'marker-icon.png';
+        }
+      }
 
-        const {latitude, longitude, confidence} = meter.position;
-        if (latitude && longitude && confidence >= confidenceThreshold) {
-          markers.push(
-            {
-              lat: latitude,
-              lng: longitude,
-              options: {
-                icon: L.icon({
-                  iconUrl: tmpIcon,
-                }),
-              },
-              status,
+      const {latitude, longitude, confidence} = meter.position;
+      if (latitude && longitude && confidence >= confidenceThreshold) {
+        markers.push(
+          {
+            lat: latitude,
+            lng: longitude,
+            options: {
+              icon: L.icon({
+                iconUrl: tmpIcon,
+              }),
             },
-          );
+            status,
+          },
+        );
       }
     });
 
@@ -188,9 +190,9 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({domainModels, map}: RootState): MapContainerProps => {
+const mapStateToProps = ({map}: RootState, locations: any): MapContainerProps => {
   return {
-    domainModels,
+    locations,
     map,
   };
 };
