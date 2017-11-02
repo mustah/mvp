@@ -4,8 +4,8 @@ import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {IconReport} from '../icons/IconReport';
 import {IconTemperature} from '../icons/IconTemperature';
+import {IconValidation} from '../icons/IconValidation';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold, Normal, Xlarge} from '../texts/Texts';
@@ -19,7 +19,7 @@ interface IndicatorIcon {
 
 const iconFor: IndicatorIcon = {
   [IndicatorType.collection]: <IconCollection className="Indicator-icon"/>,
-  [IndicatorType.measurementQuality]: <IconReport className="Indicator-icon"/>,
+  [IndicatorType.measurementQuality]: <IconValidation className="Indicator-icon"/>,
   [IndicatorType.current]: <IconCurrent className="Indicator-icon"/>,
   [IndicatorType.coldWater]: <IconColdWater className="Indicator-icon"/>,
   [IndicatorType.warmWater]: <IconColdWater className="Indicator-icon"/>,
