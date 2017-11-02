@@ -14,14 +14,6 @@
 
     .TextField {
       margin-bottom: 20px;
-      input {
-        /*
-        there is a builtin rule somewhere that I cannot find,
-        which messes up the element when you focus it without
-        having written anything yet. compensate for that rule..
-         */
-        margin-left: -10px;
-      }
     }
   }
 
