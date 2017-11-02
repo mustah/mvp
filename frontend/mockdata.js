@@ -168,7 +168,11 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
         }
       }
 
+      const decorateStatus = (s) => s === 'OK' ? {text: s, code: 0} : {text: s, code: 2};
       const nullOr = (s) => s === 'NULL' ? null : s;
+
+      row.meter_status = decorateStatus(row.meter_status);
+      row.gateway_status = decorateStatus(row.gateway_status);
 
       r.gateways.push({
         id: row.gateway_id,

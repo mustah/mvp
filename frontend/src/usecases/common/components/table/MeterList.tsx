@@ -1,18 +1,18 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {MeteringPoint} from '../../../metering-point/MeteringPoint';
+import {ListProps} from '../tabs/models/TabsModel';
 import {Status} from './status/Status';
 import {Table} from './table/Table';
 import {TableHead} from './table/TableHead';
 import {TableColumn} from './tableColumn/TableColumn';
-import {ListProps} from '../tabs/models/TabsModel';
 
 export const MeterList = (props: ListProps) => {
 
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (value, index) =>
-    <Status code={0} content={value} />; // TODO: Need to redo this function to that it interprets status correctly.
+    <Status code={value.code} content={value.text}/>;
 
   return (
     <Table data={data}>
