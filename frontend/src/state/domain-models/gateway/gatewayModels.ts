@@ -1,16 +1,14 @@
 import {uuid} from '../../../types/Types';
+import {Location} from '../domainModels';
 
-export interface Gateway {
+export interface Gateway extends Location {
   id: string;
   facility: string;
-  address: string;
-  city: string;
   productModel: string;
   telephoneNo: string;
   ip: string | null;
   port: string | null;
   status: string;
-  position: string;
 }
 
 export interface Gateways {
