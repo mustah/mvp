@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {normalize} from 'normalizr';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
@@ -11,18 +10,13 @@ import {
   closeSearch,
   closeSelectionPage,
   deselectSelection,
-  fetchSelections,
-  selectionFailure,
-  selectionRequest,
-  selectionSuccess,
   selectPeriod,
   selectPeriodAction,
   setSelection,
   toggleSelection,
 } from '../selectionActions';
-import {parameterNames, SelectionParameter} from '../selectionModels';
-import {addCityEntity, initialState, selection, SelectionState} from '../selectionReducer';
-import {selectionSchema} from '../selectionSchemas';
+import {parameterNames, SelectionParameter, SelectionState} from '../selectionModels';
+import {initialState, selection} from '../selectionReducer';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -53,31 +47,6 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         closeSelectionPage(),
         routerActions.goBack(),
-      ]);
-    });
-  });
-
-  describe('fetch selections', () => {
-
-    it('normalizes data', async () => {
-      await fetchFakeSelections();
-
-      expect(store.getActions()).toEqual([
-        selectionRequest(),
-        selectionSuccess(normalize(testData.geoData, selectionSchema)),
-      ]);
-    });
-
-    it('throws exception when no data exists', async () => {
-      const data = {message: 'failed'};
-
-      mockRestClient.onGet('/selections').reply(401, data);
-
-      await store.dispatch(fetchSelections());
-
-      expect(store.getActions()).toEqual([
-        selectionRequest(),
-        selectionFailure({...data}),
       ]);
     });
   });
@@ -113,9 +82,8 @@ describe('selectionActions', () => {
     });
 
     it('deselects selected city', () => {
-      const prevState: SelectionState = addCityEntity(initialState, {...stockholm});
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
-      const state: SelectionState = selection(prevState, setSelection(payload));
+      const state: SelectionState = selection(initialState, setSelection(payload));
 
       store = configureMockStore({searchParameters: {selection: state}});
 
@@ -130,9 +98,7 @@ describe('selectionActions', () => {
     });
 
     it('set several selections', async () => {
-      const state: SelectionState = addCityEntity(initialState, {...stockholm, ...gothenburg});
-
-      store = configureMockStore({searchParameters: {selection: state}});
+      store = configureMockStore({searchParameters: {selection: initialState}});
 
       const p1: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const p2: SelectionParameter = {...gothenburg, parameter: parameterNames.cities};
@@ -148,11 +114,5 @@ describe('selectionActions', () => {
       ]);
     });
   });
-
-  const fetchFakeSelections = async () => {
-    mockRestClient.onGet('/selections').reply(200, testData.geoData);
-
-    return store.dispatch(fetchSelections());
-  };
 
 });

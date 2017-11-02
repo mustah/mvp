@@ -4,8 +4,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchGeoData} from '../../../state/domain-models/geoData/geoDataActions';
-import {fetchSelections} from '../../../state/search/selection/selectionActions';
-import {isFetching} from '../../../state/search/selection/selectionSelectors';
+import {isFetchingAddresses, isFetchingCities} from '../../../state/domain-models/geoData/geoDataSelectors';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
 
@@ -18,7 +17,6 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchSearchOptions: () => void;
   fetchGeoData: () => void;
 }
 
@@ -27,7 +25,6 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.fetchSearchOptions();
     this.props.fetchGeoData();
   }
 
@@ -41,14 +38,13 @@ class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
+const mapStateToProps = ({domainModels: {geoData}}: RootState): StateToProps => {
   return {
-    isFetching: isFetching(searchParameters),
+    isFetching: isFetchingCities(geoData) || isFetchingAddresses(geoData),
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchSearchOptions: fetchSelections,
   fetchGeoData,
 }, dispatch);
 

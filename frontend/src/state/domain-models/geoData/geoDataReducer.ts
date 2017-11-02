@@ -1,15 +1,15 @@
 import {AnyAction, combineReducers} from 'redux';
 import {GEO_DATA_FAILURE, GEO_DATA_REQUEST, GEO_DATA_SUCCESS} from './geoDataActions';
-import {GeoDataState, NormalizedState} from './geoDataModels';
+import {GeoDataState, IdNamedState} from './geoDataModels';
 
-export const initialState: NormalizedState = {
+export const initialState: IdNamedState = {
   result: [],
   entities: {},
   isFetching: false,
   total: 0,
 };
 
-const geoDataReducerFor = (entity: string, state: NormalizedState, action: AnyAction): NormalizedState => {
+const geoDataReducerFor = (entity: string, state: IdNamedState, action: AnyAction): IdNamedState => {
   const {payload} = action;
 
   switch (action.type) {
@@ -37,10 +37,10 @@ const geoDataReducerFor = (entity: string, state: NormalizedState, action: AnyAc
   }
 };
 
-export const addresses = (state: NormalizedState = initialState, action: AnyAction): NormalizedState =>
+export const addresses = (state: IdNamedState = initialState, action: AnyAction): IdNamedState =>
   geoDataReducerFor('addresses', state, action);
 
-export const cities = (state: NormalizedState = initialState, action: AnyAction): NormalizedState =>
+export const cities = (state: IdNamedState = initialState, action: AnyAction): IdNamedState =>
   geoDataReducerFor('cities', state, action);
 
 export const geoData = combineReducers<GeoDataState>({addresses, cities});

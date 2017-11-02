@@ -1,59 +1,53 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
+import {DomainModel} from '../../domain-models/geoData/geoDataModels';
 import {SearchParameterState} from '../searchParameterReducer';
-import {parameterNames, SelectedParameters, SelectionEntity} from './selectionModels';
-import {SelectionState} from './selectionReducer';
+import {LookupState, parameterNames, SelectedParameters, SelectionState} from './selectionModels';
 
-const getEntities = (state: SelectionState): SelectionEntity => state.entities;
-const getSelected = (state: SelectionState): SelectedParameters => state.selected;
-const getResult = (state: SelectionState): SelectedParameters => state.result;
+const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
+
+export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
 const getEntitiesSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectionEntity, IdNamed>(
-    getEntities,
-    (entities: SelectionEntity) => entities[entityType],
+  createSelector<LookupState, DomainModel<IdNamed>, DomainModel<IdNamed>>(
+    (state: LookupState) => state.repository[entityType].entities,
+    (entities: DomainModel<IdNamed>) => entities,
   );
 
 const getSelectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectedParameters, uuid[]>(
-    getSelected,
-    (searchResult: SelectedParameters) => searchResult[entityType],
+  createSelector<LookupState, SelectedParameters, uuid[]>(
+    getSelectedIds,
+    (selectedParameters: SelectedParameters) => selectedParameters[entityType],
   );
 
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
-const getDeselectedEntityIdsSelector = (entityType: string): any =>
-  createSelector<SelectionState, SelectedParameters, SelectedParameters, uuid[]>(
-    getResult,
-    getSelected,
-    (result: SelectedParameters, selected: SelectedParameters) => arrayDiff(result[entityType], selected[entityType]),
+const deselectedIdsSelector = (entityType: string): any =>
+  createSelector<LookupState, uuid[], SelectedParameters, uuid[]>(
+    (state: LookupState) => state.repository[entityType].result,
+    getSelectedIds,
+    (result: uuid[], selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string): any =>
-  createSelector<SelectionState, uuid[], SelectionEntity, IdNamed[]>(
-    getDeselectedEntityIdsSelector(entityType),
-    getEntitiesSelector(entityType),
-    (ids: uuid[], entities: SelectionEntity) => ids.map((id) => entities[id]),
+  createSelector<LookupState, SelectionState, uuid[], DomainModel<IdNamed>, IdNamed[]>(
+    deselectedIdsSelector(entityType),
+    (state: LookupState) => state.repository[entityType].entities,
+    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map(id => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string): any =>
-  createSelector<SelectionState, uuid[], SelectionEntity, IdNamed[]>(
+  createSelector<LookupState, uuid[], DomainModel<IdNamed>, IdNamed[]>(
     getSelectedEntityIdsSelector(entityType),
     getEntitiesSelector(entityType),
-    (ids: uuid[], entities: SelectionEntity) => ids.map((id) => entities[id]),
+    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]),
   );
 
-export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
-
-export const isFetching = createSelector<SearchParameterState, SelectionState, boolean>(
-  getSelection,
-  selection => selection.isFetching,
-);
-
 export const getDeselectedCities = getDeselectedEntities(parameterNames.cities);
-export const getSelectedCities = getSelectedEntities(parameterNames.cities);
 export const getDeselectedAddresses = getDeselectedEntities(parameterNames.addresses);
+
+export const getSelectedCities = getSelectedEntities(parameterNames.cities);
 export const getSelectedAddresses = getSelectedEntities(parameterNames.addresses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
@@ -62,6 +56,6 @@ export const getEncodedUriParameters = createSelector<SearchParameterState, Sele
 );
 
 export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(
-  getSelected,
+  (selection: SelectionState) => selection.selected,
   (selected: SelectedParameters) => selected.period! || Period.now,
 );
