@@ -15,6 +15,7 @@
     "dist:server": "node fuse dist-server",
     "extract-translations": "node fuse extract-translations",
     "convert-po-to-json": "node fuse convert-po-to-json",
+    "json-server": "./node_modules/json-server/bin/index.js --watch mockdata.js --routes routes.json --port 8080",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch"
