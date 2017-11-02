@@ -56,9 +56,9 @@ class AppComponent extends React.Component<StateToProps & DispatchToProps> {
   }
 }
 
-const mapStateToProps = ({auth, ui, searchParameters}: RootState): StateToProps => {
+const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootState): StateToProps => {
   return {
-    isAuthenticated: auth.isAuthenticated,
+    isAuthenticated,
     isSideMenuOpen: isSideMenuOpen(ui),
     encodedUriParameters: getEncodedUriParameters(searchParameters),
   };
