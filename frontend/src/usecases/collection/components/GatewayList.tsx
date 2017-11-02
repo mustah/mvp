@@ -10,7 +10,8 @@ import {Gateway} from '../../gateway/Gateway';
 export const GatewayList = (props: ListProps) => {
 
   const {data} = props;
-  const renderStatusCell = (value, index) => <Status code={0} content={value}/>;
+  const renderStatusCell = (value, index) =>
+    <Status code={value.code} content={value.text}/>;
 
   const renderGateway = (value, index) => <Gateway id={value}/>;
 
