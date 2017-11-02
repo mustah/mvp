@@ -9,10 +9,12 @@
     margin-bottom: 20px;
   }
 
-  input {
-    cursor: pointer;
-    margin-bottom: $space;
-    width: 250px;
+  .LoginPaper {
+    padding: 60px;
+
+    .TextField {
+      margin-bottom: 20px;
+    }
   }
 
   .error-message {
