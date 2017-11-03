@@ -18,3 +18,8 @@ services:
       POSTGRES_PASSWORD: mvp
     ports:
       - "${DOCKER_POSTGRES_PORT:-5432}"
+  rabbitmq:
+      image: rabbitmq:management
+      ports:
+          - "8090:15672"
+          - "5672:5672"
