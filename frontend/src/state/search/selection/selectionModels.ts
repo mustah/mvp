@@ -1,11 +1,8 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
+import {GeoDataState} from '../../domain-models/geoData/geoDataModels';
 
 export interface SelectionParameter extends IdNamed {
   parameter: parameterNames;
-}
-
-export interface SelectionEntity {
-  [key: string]: IdNamed;
 }
 
 export interface SelectedParameters {
@@ -15,13 +12,13 @@ export interface SelectedParameters {
   period?: Period;
 }
 
-export interface SelectedIds {
-  [key: string]: uuid[];
+export interface SelectionState {
+  selected: SelectedParameters;
 }
 
-export interface SelectionNormalized {
-  entities: SelectionEntity;
-  result: SelectedIds;
+export interface LookupState {
+  selection: SelectionState;
+  geoData: GeoDataState;
 }
 
 export enum parameterNames {

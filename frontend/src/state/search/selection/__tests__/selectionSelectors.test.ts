@@ -1,44 +1,46 @@
+import {normalize} from 'normalizr';
+import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
+import {geoDataSuccess} from '../../../domain-models/geoData/geoDataActions';
+import {GeoDataState} from '../../../domain-models/geoData/geoDataModels';
+import {addresses, cities, initialState as initialGeoDataState} from '../../../domain-models/geoData/geoDataReducer';
+import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
-import {parameterNames, SelectionParameter} from '../selectionModels';
-import {addCityEntity, initialState, selection, SelectionState} from '../selectionReducer';
+import {LookupState, parameterNames, SelectionParameter, SelectionState} from '../selectionModels';
+import {initialState, selection} from '../selectionReducer';
 import {
+  getDeselectedCities,
   getEncodedUriParameters,
   getSelectedCities,
   getSelectedPeriod,
   getSelection,
-  isFetching,
 } from '../selectionSelectors';
-
-const dbJsonData = require('./../../../../../mockdata');
-const mockData = dbJsonData();
 
 describe('selectionSelectors', () => {
 
   const searchParametersState: SearchParameterState = {selection: {...initialState}};
 
-  const gothenburg: IdNamed = {...mockData.selections.cities[0]};
-  const stockholm: IdNamed = {...mockData.selections.cities[1]};
+  const gothenburg: IdNamed = {...testData.geoData.cities[0]};
+  const stockholm: IdNamed = {...testData.geoData.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...searchParametersState})).toEqual(initialState);
   });
 
-  it('is not fetching initially ', () => {
-    expect(isFetching({...searchParametersState})).toBe(false);
-  });
-
-  it('is fetching', () => {
-    const state = {selection: {...initialState, isFetching: true}};
-
-    expect(isFetching(state)).toBe(true);
-  });
-
   it('gets entities for type city', () => {
-    const prevState: SelectionState = addCityEntity(initialState, {...stockholm});
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
-    const state: SelectionState = selection(prevState, setSelection(payload));
+
+    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+    const geoDataState: GeoDataState = {
+      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+    };
+
+    const state: LookupState = {
+      selection: selection(initialState, setSelection(payload)),
+      geoData: geoDataState,
+    };
 
     expect(getSelectedCities(state)).toEqual([{...stockholm}]);
   });
@@ -53,7 +55,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=Perstorp&period=now');
+      expect(getEncodedUriParameters({selection: state})).toEqual('city=sto&period=now');
     });
 
     it('has two selected cities', () => {
@@ -62,7 +64,7 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=%C3%84lmhult&city=Perstorp&period=now');
+      expect(getEncodedUriParameters({selection: state})).toEqual('city=got&city=sto&period=now');
     });
   });
 
@@ -77,6 +79,31 @@ describe('selectionSelectors', () => {
 
       expect(getSelectedPeriod(state)).toBe(Period.month);
     });
+  });
+
+  describe('get deselected cities', () => {
+
+    it('period now is default ', () => {
+      const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+
+      const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+      const geoDataState: GeoDataState = {
+        addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+        cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      };
+
+      const state: LookupState = {
+        selection: selection(initialState, setSelection(payload)),
+        geoData: geoDataState,
+      };
+
+      expect(getDeselectedCities(state)).toEqual([
+        {id: 'got', name: 'Göteborg'},
+        {id: 'mmx', name: 'Malmö'},
+        {id: 'kub', name: 'Kungsbacka'},
+      ]);
+    });
+
   });
 
 });
