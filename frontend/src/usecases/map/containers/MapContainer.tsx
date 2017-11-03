@@ -103,9 +103,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     // TODO break up marker icon logic into methods and add tests
 
     const value = 'mappedObjects';
-
-    Object.keys(mappedObjects[value]).forEach((a: string) => {
-      const mappedObject = mappedObjects[value][a];
+    Object.keys(mappedObjects[value]).forEach((key: string) => {
+      const mappedObject = mappedObjects[value][key];
 
       switch (mappedObject.status) {
         case '0': {
