@@ -1,0 +1,5 @@
+FROM postgres:9.6
+ENV POSTGRES_USER mvp
+ENV POSTGRES_PASSWORD mvp
+RUN apt-get update
+RUN apt-get install postgresql-9.6-unit

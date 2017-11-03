@@ -12,7 +12,9 @@ services:
     links:
       - postgresql
   postgresql:
-    image: postgres:9.6
+    build:
+      context: .
+      dockerfile: Dockerfile-postgresql
     environment:
       POSTGRES_USER: mvp
       POSTGRES_PASSWORD: mvp
