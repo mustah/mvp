@@ -1,6 +1,13 @@
+@import "../../app/variables";
+
 .AppTitle {
+  box-shadow: none !important;
 
   h1 {
     text-transform: capitalize;
   }
+}
+
+.DrawerContainer {
+  box-shadow: $box-shadow !important;
 }
