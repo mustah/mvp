@@ -1,12 +1,11 @@
 import {uuid} from '../../../types/Types';
-import {Location} from '../domainModels';
+import {MappedObject} from '../domainModels';
 
-export interface Meter extends Location {
+export interface Meter extends MappedObject {
   id: string;
   facility: string;
   medium: string;
   manufacturer: string;
-  status: string;
   gatewayId: string;
 }
 

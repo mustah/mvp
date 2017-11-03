@@ -26,7 +26,6 @@ import {changePaginationCollection} from '../../../state/ui/pagination/paginatio
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {GatewayList} from '../components/GatewayList';
-import {gateways} from '../../../state/domain-models/gateway/gatewayReducer';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
@@ -138,7 +137,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer locations={gateways}/>
+        <MapContainer mappedObjects={gateways}/>
       </TabContent>
     </Tabs>
   );

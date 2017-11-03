@@ -14,13 +14,11 @@ import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {MapState} from '../mapReducer';
-import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
-import {Location} from '../../../state/domain-models/domainModels';
-import {isNullOrUndefined} from 'util';
+import {MappedObject} from '../../../state/domain-models/domainModels';
 
 interface MapContainerProps {
-  locations: any;
+  mappedObjects: { [key: string]: MappedObject };
   map: MapState;
   children?: React.ReactNode;
 }
@@ -35,7 +33,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     const {
       toggleClusterDialog,
       map,
-      locations,
+      mappedObjects,
       openClusterDialog,
     } = this.props;
 
@@ -104,14 +102,12 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
 
     // TODO break up marker icon logic into methods and add tests
 
+    const value = 'mappedObjects';
 
-    let value = 'locations';
+    Object.keys(mappedObjects[value]).forEach((a: string) => {
+      const mappedObject = mappedObjects[value][a];
 
-    Object.keys(locations[value]).forEach((a: string) => {
-      const meter = locations[value][a]
-
-      const status = '0'; // {status} = meter;
-      switch (status) {
+      switch (mappedObject.status) {
         case '0': {
           tmpIcon = 'marker-icon-ok.png';
           break;
@@ -129,7 +125,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         }
       }
 
-      const {latitude, longitude, confidence} = meter.position;
+      const {latitude, longitude, confidence} = mappedObject.position;
       if (latitude && longitude && confidence >= confidenceThreshold) {
         markers.push(
           {
@@ -190,9 +186,9 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({map}: RootState, locations: any): MapContainerProps => {
+const mapStateToProps = ({map}: RootState, mappedObjects: { [key: string]: MappedObject }): MapContainerProps => {
   return {
-    locations,
+    mappedObjects,
     map,
   };
 };

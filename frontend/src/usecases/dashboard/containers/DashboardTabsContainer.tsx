@@ -50,7 +50,7 @@ const DashboardTabsContainer = (props: DashboardTabsContainerProps) => {
         <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={paginationChangePage}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer/>
+        <MapContainer mappedObjects={meters}/>
       </TabContent>
     </Tabs>
   );
