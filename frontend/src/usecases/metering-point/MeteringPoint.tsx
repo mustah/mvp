@@ -133,10 +133,20 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    // TODO retrieve real location data for the meter
-    let mappedObjects: { [key: string]: MappedObject } = {};
-    let mappedObject: MappedObject = {status : '0', address: '', city : '', position: {confidence: 1, latitude: '57.505281', longitude: '12.069336'}};
-    mappedObjects['a'] = mappedObject;
+    // TODO retrieve real location data for the gateway
+    const mappedObjects: { [key: string]: MappedObject } = {};
+    const mappedObject: MappedObject = {
+      status: '0',
+      address: '',
+      city: '',
+      position: {
+        confidence: 1,
+        latitude: '57.505281',
+        longitude: '12.069336',
+      },
+    };
+
+    mappedObjects[0] = mappedObject;
 
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});

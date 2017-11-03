@@ -133,9 +133,19 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     };
 
     // TODO retrieve real location data for the gateway
-    let mappedObjects: { [key: string]: MappedObject } = {};
-    let mappedObject: MappedObject = {status : '0', address: '', city : '', position: {confidence: 1, latitude: '57.505281', longitude: '12.069336'}};
-    mappedObjects['a'] = mappedObject;
+    const mappedObjects: { [key: string]: MappedObject } = {};
+    const mappedObject: MappedObject = {
+      status: '0',
+      address: '',
+      city: '',
+      position: {
+        confidence: 1,
+        latitude: '57.505281',
+        longitude: '12.069336',
+      },
+    };
+
+    mappedObjects[0] = mappedObject;
 
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});
