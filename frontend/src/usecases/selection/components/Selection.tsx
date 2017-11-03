@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {PageContainer} from '../../common/containers/PageContainer';
-import {SelectionContentBoxContainer} from '../components/SelectionContentBox';
-import {SelectionOptionsLoaderContainer} from './SelectionOptionsLoaderContainer';
+import {SelectionContentBoxContainer} from './SelectionContentBox';
+import {SelectionOptionsLoaderContainer} from '../containers/SelectionOptionsLoaderContainer';
 
-export const SelectionPageComponent = () => {
+export const Selection = () => {
   return (
     <PageContainer>
       <SelectionOptionsLoaderContainer>
