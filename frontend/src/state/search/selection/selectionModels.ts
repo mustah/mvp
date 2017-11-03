@@ -18,7 +18,7 @@ export interface SelectionState {
 
 export interface LookupState {
   selection: SelectionState;
-  repository: GeoDataState;
+  geoData: GeoDataState;
 }
 
 export enum parameterNames {

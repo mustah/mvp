@@ -67,7 +67,7 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
 
 const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}}: RootState): StateToProps => {
   const lookupState: LookupState = {
-    repository: geoData,
+    geoData,
     selection,
   };
 

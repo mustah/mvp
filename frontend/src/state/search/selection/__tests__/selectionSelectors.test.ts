@@ -39,7 +39,7 @@ describe('selectionSelectors', () => {
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
-      repository: geoDataState,
+      geoData: geoDataState,
     };
 
     expect(getSelectedCities(state)).toEqual([{...stockholm}]);
@@ -94,7 +94,7 @@ describe('selectionSelectors', () => {
 
       const state: LookupState = {
         selection: selection(initialState, setSelection(payload)),
-        repository: geoDataState,
+        geoData: geoDataState,
       };
 
       expect(getDeselectedCities(state)).toEqual([
