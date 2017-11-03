@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
 import {Period, uuid} from '../../../types/Types';
-import {DESELECT_SELECTION, SELECT_PERIOD, SET_SELECTION} from './selectionActions';
+import {DESELECT_SELECTION, SELECT_PERIOD, SELECT_SAVED_SELECTION, SET_SELECTION} from './selectionActions';
 import {SelectionState} from './selectionModels';
 
 export const initialState: SelectionState = {
@@ -41,6 +41,11 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
           period: payload,
         },
       };
+    case SELECT_SAVED_SELECTION: {
+      return {
+        ...state,
+      };
+    }
     default:
       return state;
   }
