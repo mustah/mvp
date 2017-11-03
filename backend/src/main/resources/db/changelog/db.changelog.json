@@ -1,0 +1,22 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "Initial DB schema",
+        "author": "Anton Löfgren",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/initial_db.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
