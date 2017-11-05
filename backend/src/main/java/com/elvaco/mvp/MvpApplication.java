@@ -1,19 +1,14 @@
 package com.elvaco.mvp;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.hateoas.core.ControllerEntityLinks;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -26,8 +21,14 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.resource.ResourceResolver;
 import org.springframework.web.servlet.resource.ResourceResolverChain;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 @EnableWebSecurity
-@SpringBootApplication
+@SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class MvpApplication extends WebMvcConfigurerAdapter {
 
   public static void main(String[] args) {

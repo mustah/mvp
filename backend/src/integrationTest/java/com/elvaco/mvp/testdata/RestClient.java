@@ -1,9 +1,13 @@
 package com.elvaco.mvp.testdata;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,12 +25,26 @@ public final class RestClient {
     this.template = new TestRestTemplate(new RestTemplate());
   }
 
+  public String getBaseURL() {
+    return baseUrl;
+  }
+
   public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
     return template.getForEntity(apiUrlOf(url), clazz);
   }
 
   public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
     return template.postForEntity(apiUrlOf(url), request, responseType);
+  }
+
+  public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
+    ParameterizedTypeReference<RestResponsePage<T>> responseType = new ParameterizedTypeReference<RestResponsePage<T>>() {
+      public Type getType() {
+        return new ParameterizedTypeReferenceImpl((ParameterizedType) super.getType(), new Type[]{pagedClass});
+      }
+    };
+    ResponseEntity<RestResponsePage<T>> r = template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return r;
   }
 
   public RestClient loginWith(String username, String password) {
