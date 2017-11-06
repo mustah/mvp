@@ -14,27 +14,29 @@ import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {MapState} from '../mapReducer';
-import {DomainModelsState} from '../../../state/domain-models/domainModelsReducer';
-import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
+import {MapMarker} from '../mapModels';
 
-interface MapContainerProps {
-  domainModels: DomainModelsState;
+interface StateToProps {
   map: MapState;
   children?: React.ReactNode;
 }
 
-interface MapDispatchToProps {
+interface DispatchToProps {
   toggleClusterDialog: () => any;
   openClusterDialog: (marker: L.Marker) => any;
 }
 
-class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
+interface OwnProps {
+  markers: { [key: string]: MapMarker };
+}
+
+class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnProps, any> {
   render() {
     const {
       toggleClusterDialog,
       map,
-      domainModels,
+      markers,
       openClusterDialog,
     } = this.props;
 
@@ -98,49 +100,46 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     const startPosition: [number, number] = [57.504935, 12.069482];
     const confidenceThreshold: number = 0.7;
     // TODO type array
-    const markers: any[] = [];
+    const leafletMarkers: any[] = [];
     let tmpIcon;
 
     // TODO break up marker icon logic into methods and add tests
 
-    const meters = getMeterEntities(domainModels.meters);
+    Object.keys(markers).forEach((key: string) => {
+      const marker = markers[key];
 
-    Object.keys(meters).forEach((key: string) => {
-        const meter = meters[key];
-
-        const {status} = meter;
-        switch (status) {
-          case '0': {
-            tmpIcon = 'marker-icon-ok.png';
-            break;
-          }
-          case '1': {
-            tmpIcon = 'marker-icon-warning.png';
-            break;
-          }
-          case '2': {
-            tmpIcon = 'marker-icon-error.png';
-            break;
-          }
-          default: {
-            tmpIcon = 'marker-icon.png';
-          }
+      switch (marker.status) {
+        case '0': {
+          tmpIcon = 'marker-icon-ok.png';
+          break;
         }
+        case '1': {
+          tmpIcon = 'marker-icon-warning.png';
+          break;
+        }
+        case '2': {
+          tmpIcon = 'marker-icon-error.png';
+          break;
+        }
+        default: {
+          tmpIcon = 'marker-icon.png';
+        }
+      }
 
-        const {latitude, longitude, confidence} = meter.position;
-        if (latitude && longitude && confidence >= confidenceThreshold) {
-          markers.push(
-            {
-              lat: latitude,
-              lng: longitude,
-              options: {
-                icon: L.icon({
-                  iconUrl: tmpIcon,
-                }),
-              },
-              status,
+      const {latitude, longitude, confidence} = marker.position;
+      if (latitude && longitude && confidence >= confidenceThreshold) {
+        leafletMarkers.push(
+          {
+            lat: latitude,
+            lng: longitude,
+            options: {
+              icon: L.icon({
+                iconUrl: tmpIcon,
+              }),
             },
-          );
+            status,
+          },
+        );
       }
     });
 
@@ -168,7 +167,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            markers={markers}
+            markers={leafletMarkers}
             onMarkerClick={openClusterDialog}
             options={markerclusterOptions}
           />
@@ -188,9 +187,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({domainModels, map}: RootState): MapContainerProps => {
+const mapStateToProps = ({map}: RootState): StateToProps => {
   return {
-    domainModels,
     map,
   };
 };
@@ -200,4 +198,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   openClusterDialog,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
+export default connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MapContainer);

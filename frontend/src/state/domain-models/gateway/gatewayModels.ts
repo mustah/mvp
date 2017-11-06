@@ -1,14 +1,13 @@
 import {uuid} from '../../../types/Types';
-import {Location} from '../domainModels';
+import {MapMarker} from '../../../usecases/map/mapModels';
 
-export interface Gateway extends Location {
+export interface Gateway extends MapMarker {
   id: string;
   facility: string;
   productModel: string;
   telephoneNo: string;
   ip: string | null;
   port: string | null;
-  status: string;
 }
 
 export interface Gateways {
