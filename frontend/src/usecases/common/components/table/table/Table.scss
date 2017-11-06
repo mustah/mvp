@@ -30,4 +30,12 @@
     padding: 10px;
     vertical-align: top;
   }
+
+  td {
+    border-bottom: 1px solid $dark-grey;
+  }
+
+  tr:hover {
+    background-color: $light-grey;
+  }
 }
