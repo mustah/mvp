@@ -4,7 +4,7 @@ import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModel, GeoDataState} from '../../domain-models/geoData/geoDataModels';
 import {getGeoDataEntitiesBy, getGeoDataResultBy} from '../../domain-models/geoData/geoDataSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
-import {LookupState, parameterNames, SelectedParameters, SelectionState} from './selectionModels';
+import {LookupState, parameterNames, SelectedParameters, SelectionListItem, SelectionState} from './selectionModels';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
@@ -51,27 +51,19 @@ const getSelectedEntities = (entityType: string): any =>
     (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]),
   );
 
-export interface SelectionListItem extends IdNamed {
-  checked: boolean;
-}
-
 const getList = (entityType: string): any =>
   createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: IdNamed[], deselected: IdNamed[]) => {
-      const selectedEntities = selected.map(({id, name}: IdNamed) => ({id, name, checked: true}));
-      const deselectedEntities = deselected.map(({id, name}: IdNamed) => ({id, name, checked: false}));
+      const selectedEntities = selected.map(({id, name}: IdNamed) => ({id, name, selected: true}));
+      const deselectedEntities = deselected.map(({id, name}: IdNamed) => ({id, name, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );
 
-export const getListCities =  getList(parameterNames.cities);
-export const getListAddresses = getList(parameterNames.addresses);
-
-export const getDeselectedCities = getDeselectedEntities(parameterNames.cities);
-
-export const getSelectedCities = getSelectedEntities(parameterNames.cities);
+export const getCities =  getList(parameterNames.cities);
+export const getAddresses = getList(parameterNames.addresses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   (searchParameters: SearchParameterState) => searchParameters.selection.selected,

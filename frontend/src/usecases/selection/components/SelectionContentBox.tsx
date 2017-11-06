@@ -4,8 +4,13 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
-import {LookupState, parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {getListAddresses, getListCities, SelectionListItem} from '../../../state/search/selection/selectionSelectors';
+import {
+  LookupState,
+  parameterNames,
+  SelectionListItem,
+  SelectionParameter,
+} from '../../../state/search/selection/selectionModels';
+import {getAddresses, getCities} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
@@ -61,8 +66,8 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}
   };
 
   return {
-    cities: getListCities(lookupState),
-    addresses: getListAddresses(lookupState),
+    cities: getCities(lookupState),
+    addresses: getAddresses(lookupState),
   };
 };
 

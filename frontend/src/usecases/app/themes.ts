@@ -72,3 +72,8 @@ export const nestedListItemStyle: React.CSSProperties = {
   paddingTop: 0,
   paddingBottom: 0,
 };
+
+export const dropDownStyle: Styles = {
+  popoverStyle: {marginTop: '6px', marginLeft: '2px'},
+  listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
+};

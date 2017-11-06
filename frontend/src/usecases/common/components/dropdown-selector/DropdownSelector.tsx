@@ -4,7 +4,7 @@ import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
-import {SelectionListItem} from '../../../../state/search/selection/selectionSelectors';
+import {SelectionListItem} from '../../../../state/search/selection/selectionModels';
 import {Clickable, IdNamed} from '../../../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
@@ -13,6 +13,8 @@ import {Normal} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
+import {dropDownStyle} from '../../../app/themes';
+import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectionText: string;
@@ -33,6 +35,8 @@ const filterBy = (list: SelectionListItem[], exp: string) => {
   return list.filter((value: IdNamed) => value.name.match(re));
 };
 
+const selectedOptions = (list: SelectionListItem[]) => list.filter((item: SelectionListItem) => item.selected).length;
+
 export class DropdownSelector extends React.PureComponent<Props & Clickable, State> {
 
   constructor(props) {
@@ -50,17 +54,24 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
     const {anchorElement, isOpen, searchText, scrollToIndex} = this.state;
     const {selectionText} = this.props;
 
+    const rowHeight = 20; // TODO: Should prorably be move somewhere else.
+    const visibleItems = 15;
+    const entries = this.state.filteredList.length;
+
+    const selected = selectedOptions(this.props.list);
+    const selectedOverview = selected && selected + ' / ' + this.props.list.length || translate('all');
+
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal className="capitalize">{selectionText}</Normal>
+            <Normal className="capitalize">{selectionText}{selectedOverview}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>
 
         <Popover
-          style={{marginTop: '6px', marginLeft: '2px'}}
+          style={dropDownStyle.popoverStyle}
           open={isOpen}
           anchorEl={anchorElement}
           anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
@@ -71,15 +82,18 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
           <Menu>
             <Column className="DropdownSelector-menu">
               <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
-              <List
-                height={this.state.list.length > 10 ? 400 : this.state.list.length * 20}
-                overscanRowCount={10}
-                rowCount={this.state.filteredList.length}
-                rowHeight={20}
-                rowRenderer={this.rowRenderer}
-                width={200}
-                scrollToIndex={scrollToIndex}
-              />
+              <Row>
+                <List
+                  height={entries > visibleItems ? visibleItems * rowHeight : entries * rowHeight}
+                  overscanRowCount={10}
+                  rowCount={entries}
+                  rowHeight={rowHeight}
+                  rowRenderer={this.rowRenderer}
+                  width={220}
+                  scrollToIndex={scrollToIndex}
+                  style={dropDownStyle.listStyle}
+                />
+              </Row>
             </Column>
           </Menu>
         </Popover>
@@ -94,11 +108,12 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
       anchorElement: event.currentTarget,
       list: [...this.props.list],
       filteredList: [...this.props.list],
+      scrollToIndex: 0,
     });
   }
 
   closeMenu = (): void => {
-    this.setState({isOpen: false, searchText: '', scrollToIndex: 0});
+    this.setState({isOpen: false, searchText: ''});
   }
 
   whenSearchUpdate = (event) => {
@@ -120,7 +135,7 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
         onClick={onClick}
         key={key}
         style={style}
-        checked={filteredList[index].checked}
+        checked={filteredList[index].selected}
       />
     );
   }

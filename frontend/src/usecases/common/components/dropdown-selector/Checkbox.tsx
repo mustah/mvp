@@ -4,14 +4,14 @@ import {RowMiddle} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
 import './Checkbox.scss';
 
-type CheckBox = IdNamed & Clickable & {checked?: boolean} & {key: any, style: any};
+type CheckBox = IdNamed & Clickable & {checked?: boolean, style: any};
 
 export const Checkbox = (props: CheckBox) => {
-  const {id, name, checked, style, key} = props;
+  const {id, name, checked, style} = props;
   const onClick = () => props.onClick({name, id});
   const htmlId = `id-${id}`;
   return (
-    <RowMiddle className="Checkbox" style={style} key={key}>
+    <RowMiddle className="Checkbox" style={style}>
       <input
         type="checkbox"
         id={htmlId}

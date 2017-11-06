@@ -7,15 +7,9 @@ import {addresses, cities, initialState as initialGeoDataState} from '../../../d
 import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
-import {LookupState, parameterNames, SelectionParameter, SelectionState} from '../selectionModels';
+import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {
-  getDeselectedCities,
-  getEncodedUriParameters,
-  getSelectedCities,
-  getSelectedPeriod,
-  getSelection,
-} from '../selectionSelectors';
+import {getEncodedUriParameters, getCities, getSelectedPeriod, getSelection} from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
@@ -29,20 +23,26 @@ describe('selectionSelectors', () => {
   });
 
   it('gets entities for type city', () => {
-    const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
-
     const geoDataPayload = normalize(testData.geoData, geoDataSchema);
     const geoDataState: GeoDataState = {
       addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
       cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
     };
 
+    const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
       geoData: geoDataState,
     };
 
-    expect(getSelectedCities(state)).toEqual([{...stockholm}]);
+    const x: SelectionListItem[] = [
+      {selected: true, id: 'sto', name: 'Stockholm'},
+      {selected: false, id: 'got', name: 'Göteborg'},
+      {selected: false, id: 'mmx', name: 'Malmö'},
+      {selected: false, id: 'kub', name: 'Kungsbacka'},
+      ];
+    expect(getCities(state)).toEqual(x);
   });
 
   describe('encodedUriParameters', () => {
@@ -97,11 +97,14 @@ describe('selectionSelectors', () => {
         geoData: geoDataState,
       };
 
-      expect(getDeselectedCities(state)).toEqual([
-        {id: 'got', name: 'Göteborg'},
-        {id: 'mmx', name: 'Malmö'},
-        {id: 'kub', name: 'Kungsbacka'},
-      ]);
+      const x: SelectionListItem[] = [
+        {selected: true, id: 'sto', name: 'Stockholm'},
+        {selected: false, id: 'got', name: 'Göteborg'},
+        {selected: false, id: 'mmx', name: 'Malmö'},
+        {selected: false, id: 'kub', name: 'Kungsbacka'},
+      ];
+
+      expect(getCities(state)).toEqual(x);
     });
 
   });
