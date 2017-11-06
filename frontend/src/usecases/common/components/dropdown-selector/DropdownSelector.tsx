@@ -1,64 +1,60 @@
 import * as classNames from 'classnames';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
+import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
+import {List, ListRowProps} from 'react-virtualized';
+import {SelectionListItem} from '../../../../state/search/selection/selectionSelectors';
 import {Clickable, IdNamed} from '../../../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
 import {Normal} from '../texts/Texts';
-import {CheckboxList} from './CheckboxList';
+import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
-import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectionText: string;
-  selectedList: IdNamed[];
-  list: IdNamed[];
+  list: SelectionListItem[];
 }
 
 interface State {
   isOpen: boolean;
   searchText: string;
   anchorElement?: React.ReactInstance;
-  selectedList: IdNamed[];
-  list: IdNamed[];
+  list: SelectionListItem[];
+  filteredList: SelectionListItem[];
+  scrollToIndex: number;
 }
 
-const filterBy = (list: IdNamed[], exp: string) => {
+const filterBy = (list: SelectionListItem[], exp: string) => {
   const re = new RegExp(exp, 'i');
   return list.filter((value: IdNamed) => value.name.match(re));
 };
 
-export class DropdownSelector extends React.Component<Props & Clickable, State> {
+export class DropdownSelector extends React.PureComponent<Props & Clickable, State> {
 
   constructor(props) {
     super(props);
     this.state = {
       isOpen: false,
       searchText: '',
-      selectedList: [],
       list: [],
+      filteredList: [],
+      scrollToIndex: 0,
     };
   }
 
   render() {
-    const {anchorElement, isOpen, searchText, list, selectedList} = this.state;
-    const {selectionText, onClick} = this.props;
+    const {anchorElement, isOpen, searchText, scrollToIndex} = this.state;
+    const {selectionText} = this.props;
 
-    const selectedOptions = this.props.selectedList.length;
-    const totalNumberOfOptions = selectedOptions + this.props.list.length;
-
-    const selectedOverview = selectedOptions && selectedOptions + ' / ' + totalNumberOfOptions || translate('all');
-
-    const filteredList = filterBy(list, searchText);
-    const filteredSelectedList = filterBy(selectedList, searchText);
     return (
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal className="capitalize">{selectionText}{selectedOverview}</Normal>
+            <Normal className="capitalize">{selectionText}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>
@@ -70,16 +66,20 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
           anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
           targetOrigin={{horizontal: 'left', vertical: 'top'}}
           onRequestClose={this.closeMenu}
-          animated={false}
+          animation={PopoverAnimationVertical}
         >
           <Menu>
             <Column className="DropdownSelector-menu">
               <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
-              <Column className="DropdownSelector-content">
-                <CheckboxList onClick={onClick} list={filteredSelectedList} allChecked={true}/>
-                {selectedList && selectedList.length > 0 && <Row className="separation-border"/>}
-                <CheckboxList onClick={onClick} list={filteredList}/>
-              </Column>
+              <List
+                height={this.state.list.length > 10 ? 400 : this.state.list.length * 20}
+                overscanRowCount={10}
+                rowCount={this.state.filteredList.length}
+                rowHeight={20}
+                rowRenderer={this.rowRenderer}
+                width={200}
+                scrollToIndex={scrollToIndex}
+              />
             </Column>
           </Menu>
         </Popover>
@@ -93,17 +93,35 @@ export class DropdownSelector extends React.Component<Props & Clickable, State> 
       isOpen: true,
       anchorElement: event.currentTarget,
       list: [...this.props.list],
-      selectedList: [...this.props.selectedList],
+      filteredList: [...this.props.list],
     });
   }
 
   closeMenu = (): void => {
-    this.setState({isOpen: false, searchText: ''});
+    this.setState({isOpen: false, searchText: '', scrollToIndex: 0});
   }
 
-  whenSearchUpdate = (event) => { // TODO: add typing to event?
+  whenSearchUpdate = (event) => {
     event.preventDefault();
-    this.setState({searchText: event.target.value});
+    this.setState({
+      searchText: event.target.value,
+      scrollToIndex: 0,
+      filteredList: filterBy(this.state.list, event.target.value),
+    });
   }
 
+  rowRenderer = ({index, key, style}: ListRowProps) => {
+    const {filteredList} = this.state;
+    const {onClick} = this.props;
+    return (
+      <Checkbox
+        id={filteredList[index].id}
+        name={filteredList[index].name}
+        onClick={onClick}
+        key={key}
+        style={style}
+        checked={filteredList[index].checked}
+      />
+    );
+  }
 }

@@ -4,9 +4,9 @@ import {LayoutProps} from '../layout/Layout';
 import './Row.scss';
 
 export const Row = (props: LayoutProps) => {
-  const {className, onClick} = props;
+  const {className, onClick, style} = props;
   return (
-    <div className={classNames('Row', className)} onClick={onClick}>
+    <div className={classNames('Row', className)} onClick={onClick} style={style}>
       {props.children}
     </div>
   );

@@ -51,11 +51,27 @@ const getSelectedEntities = (entityType: string): any =>
     (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]),
   );
 
+export interface SelectionListItem extends IdNamed {
+  checked: boolean;
+}
+
+const getList = (entityType: string): any =>
+  createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[]>(
+    getSelectedEntities(entityType),
+    getDeselectedEntities(entityType),
+    (selected: IdNamed[], deselected: IdNamed[]) => {
+      const selectedEntities = selected.map(({id, name}: IdNamed) => ({id, name, checked: true}));
+      const deselectedEntities = deselected.map(({id, name}: IdNamed) => ({id, name, checked: false}));
+      return [...selectedEntities, ...deselectedEntities];
+    },
+  );
+
+export const getListCities =  getList(parameterNames.cities);
+export const getListAddresses = getList(parameterNames.addresses);
+
 export const getDeselectedCities = getDeselectedEntities(parameterNames.cities);
-export const getDeselectedAddresses = getDeselectedEntities(parameterNames.addresses);
 
 export const getSelectedCities = getSelectedEntities(parameterNames.cities);
-export const getSelectedAddresses = getSelectedEntities(parameterNames.addresses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   (searchParameters: SearchParameterState) => searchParameters.selection.selected,

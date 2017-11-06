@@ -5,12 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {LookupState, parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {
-  getDeselectedAddresses,
-  getDeselectedCities,
-  getSelectedAddresses,
-  getSelectedCities,
-} from '../../../state/search/selection/selectionSelectors';
+import {getListAddresses, getListCities, SelectionListItem} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
@@ -18,10 +13,8 @@ import {Row} from '../../common/components/layouts/row/Row';
 import {MetersResultContainer} from '../containers/MetersContainer';
 
 interface StateToProps {
-  selectedCities: IdNamed[];
-  cities: IdNamed[];
-  selectedAddresses: IdNamed[];
-  addresses: IdNamed[];
+  cities: SelectionListItem[];
+  addresses: SelectionListItem[];
 }
 
 interface DispatchToProps {
@@ -31,8 +24,6 @@ interface DispatchToProps {
 const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
   const {
     toggleSelection,
-    selectedCities,
-    selectedAddresses,
     cities,
     addresses,
   } = props;
@@ -47,13 +38,11 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
     <Column className="SelectionContentBox">
       <Row>
         <DropdownSelector
-          selectedList={selectedCities}
           list={cities}
           selectionText={citySelectionText}
           onClick={selectCity}
         />
         <DropdownSelector
-          selectedList={selectedAddresses}
           list={addresses}
           selectionText={addressSelectionText}
           onClick={selectAddress}
@@ -72,10 +61,8 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}
   };
 
   return {
-    selectedCities: getSelectedCities(lookupState),
-    cities: getDeselectedCities(lookupState),
-    selectedAddresses: getSelectedAddresses(lookupState),
-    addresses: getDeselectedAddresses(lookupState),
+    cities: getListCities(lookupState),
+    addresses: getListAddresses(lookupState),
   };
 };
 

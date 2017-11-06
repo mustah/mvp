@@ -5,6 +5,7 @@ import './Layout.scss';
 export interface LayoutProps {
   hide?: boolean;
   className?: string;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
   onClick?: (...args) => void;
 }
