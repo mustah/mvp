@@ -1,6 +1,4 @@
-export interface MappedObject extends Location {
-  status: string;
-}
+
 
 export interface Location {
   address: string;

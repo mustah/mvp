@@ -20,7 +20,7 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer from '../map/containers/MapContainer';
-import {MappedObject} from '../../state/domain-models/domainModels';
+import {MapMarker} from '../map/mapModels';
 
 interface GatewayProps {
   id: string;
@@ -133,8 +133,8 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     };
 
     // TODO retrieve real location data for the gateway
-    const mappedObjects: { [key: string]: MappedObject } = {};
-    const mappedObject: MappedObject = {
+    const markers: { [key: string]: MapMarker } = {};
+    const marker: MapMarker = {
       status: '0',
       address: '',
       city: '',
@@ -145,7 +145,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
       },
     };
 
-    mappedObjects[0] = mappedObject;
+    markers[0] = marker;
 
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});
@@ -272,7 +272,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
                 </Table>
               </TabContent>
               <TabContent tab={tabType.map} selectedTab={selectedTab}>
-                <MapContainer mappedObjects={mappedObjects}/>
+                <MapContainer markers={markers}/>
               </TabContent>
             </Tabs>
           </Row>

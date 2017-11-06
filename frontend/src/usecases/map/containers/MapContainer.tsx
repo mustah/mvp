@@ -15,25 +15,28 @@ import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {MapState} from '../mapReducer';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
-import {MappedObject} from '../../../state/domain-models/domainModels';
+import {MapMarker} from '../mapModels';
 
-interface MapContainerProps {
-  mappedObjects: { [key: string]: MappedObject };
+interface StateToProps {
   map: MapState;
   children?: React.ReactNode;
 }
 
-interface MapDispatchToProps {
+interface DispatchToProps {
   toggleClusterDialog: () => any;
   openClusterDialog: (marker: L.Marker) => any;
 }
 
-class MapContainer extends React.Component<MapContainerProps & MapDispatchToProps, any> {
+interface OwnProps {
+  markers: { [key: string]: MapMarker };
+}
+
+class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnProps, any> {
   render() {
     const {
       toggleClusterDialog,
       map,
-      mappedObjects,
+      markers,
       openClusterDialog,
     } = this.props;
 
@@ -97,16 +100,15 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
     const startPosition: [number, number] = [57.504935, 12.069482];
     const confidenceThreshold: number = 0.7;
     // TODO type array
-    const markers: any[] = [];
+    const leafletMarkers: any[] = [];
     let tmpIcon;
 
     // TODO break up marker icon logic into methods and add tests
 
-    const value = 'mappedObjects';
-    Object.keys(mappedObjects[value]).forEach((key: string) => {
-      const mappedObject = mappedObjects[value][key];
+    Object.keys(markers).forEach((key: string) => {
+      const marker = markers[key];
 
-      switch (mappedObject.status) {
+      switch (marker.status) {
         case '0': {
           tmpIcon = 'marker-icon-ok.png';
           break;
@@ -124,9 +126,9 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
         }
       }
 
-      const {latitude, longitude, confidence} = mappedObject.position;
+      const {latitude, longitude, confidence} = marker.position;
       if (latitude && longitude && confidence >= confidenceThreshold) {
-        markers.push(
+        leafletMarkers.push(
           {
             lat: latitude,
             lng: longitude,
@@ -165,7 +167,7 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
             attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
-            markers={markers}
+            markers={leafletMarkers}
             onMarkerClick={openClusterDialog}
             options={markerclusterOptions}
           />
@@ -185,9 +187,8 @@ class MapContainer extends React.Component<MapContainerProps & MapDispatchToProp
   }
 }
 
-const mapStateToProps = ({map}: RootState, mappedObjects: { [key: string]: MappedObject }): MapContainerProps => {
+const mapStateToProps = ({map}: RootState): StateToProps => {
   return {
-    mappedObjects,
     map,
   };
 };
@@ -197,4 +198,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   openClusterDialog,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapContainer);
+export default connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MapContainer);

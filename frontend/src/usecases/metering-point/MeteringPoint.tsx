@@ -21,7 +21,7 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer from '../map/containers/MapContainer';
-import {MappedObject} from '../../state/domain-models/domainModels';
+import {MapMarker} from '../map/mapModels';
 
 interface MeteringPointProps {
   id: string;
@@ -134,8 +134,8 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
     };
 
     // TODO retrieve real location data for the gateway
-    const mappedObjects: { [key: string]: MappedObject } = {};
-    const mappedObject: MappedObject = {
+    const markers: { [key: string]: MapMarker } = {};
+    const mappedObject: MapMarker = {
       status: '0',
       address: '',
       city: '',
@@ -146,7 +146,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
       },
     };
 
-    mappedObjects[0] = mappedObject;
+    markers[0] = mappedObject;
 
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});
@@ -279,7 +279,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
                 </Table>
               </TabContent>
               <TabContent tab={tabType.map} selectedTab={selectedTab}>
-                <MapContainer mappedObjects={mappedObjects}/>
+                <MapContainer markers={markers}/>
               </TabContent>
             </Tabs>
           </Row>

@@ -1,7 +1,7 @@
 import {uuid} from '../../../types/Types';
-import {MappedObject} from '../domainModels';
+import {MapMarker} from '../../../usecases/map/mapModels';
 
-export interface Meter extends MappedObject {
+export interface Meter extends MapMarker {
   id: string;
   facility: string;
   medium: string;

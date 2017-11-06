@@ -137,7 +137,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer mappedObjects={gateways}/>
+        <MapContainer markers={gateways}/>
       </TabContent>
     </Tabs>
   );
