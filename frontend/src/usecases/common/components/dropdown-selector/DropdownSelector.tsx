@@ -25,9 +25,7 @@ interface State {
   isOpen: boolean;
   searchText: string;
   anchorElement?: React.ReactInstance;
-  list: SelectionListItem[];
   filteredList: SelectionListItem[];
-  scrollToIndex: number;
 }
 
 const filterBy = (list: SelectionListItem[], exp: string) => {
@@ -44,14 +42,12 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
     this.state = {
       isOpen: false,
       searchText: '',
-      list: [],
       filteredList: [],
-      scrollToIndex: 0,
     };
   }
 
   render() {
-    const {anchorElement, isOpen, searchText, scrollToIndex} = this.state;
+    const {anchorElement, isOpen, searchText} = this.state;
     const {selectionText} = this.props;
 
     const rowHeight = 20; // TODO: Should prorably be move somewhere else.
@@ -90,7 +86,6 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
                   rowHeight={rowHeight}
                   rowRenderer={this.rowRenderer}
                   width={220}
-                  scrollToIndex={scrollToIndex}
                   style={dropDownStyle.listStyle}
                 />
               </Row>
@@ -106,9 +101,7 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
     this.setState({
       isOpen: true,
       anchorElement: event.currentTarget,
-      list: [...this.props.list],
       filteredList: [...this.props.list],
-      scrollToIndex: 0,
     });
   }
 
@@ -120,12 +113,11 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
     event.preventDefault();
     this.setState({
       searchText: event.target.value,
-      scrollToIndex: 0,
-      filteredList: filterBy(this.state.list, event.target.value),
+      filteredList: filterBy(this.props.list, event.target.value),
     });
   }
 
-  rowRenderer = ({index, key, style}: ListRowProps) => {
+  rowRenderer = ({index, style}: ListRowProps) => {
     const {filteredList} = this.state;
     const {onClick} = this.props;
     return (
@@ -133,7 +125,7 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
         id={filteredList[index].id}
         name={filteredList[index].name}
         onClick={onClick}
-        key={key}
+        key={filteredList[index].id}
         style={style}
         checked={filteredList[index].selected}
       />
