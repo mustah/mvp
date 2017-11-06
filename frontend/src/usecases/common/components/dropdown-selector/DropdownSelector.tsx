@@ -4,8 +4,10 @@ import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
+import {translate} from '../../../../services/translationService';
 import {SelectionListItem} from '../../../../state/search/selection/selectionModels';
 import {Clickable, IdNamed} from '../../../../types/Types';
+import {dropDownStyle} from '../../../app/themes';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
@@ -13,8 +15,6 @@ import {Normal} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
-import {dropDownStyle} from '../../../app/themes';
-import {translate} from '../../../../services/translationService';
 
 interface Props {
   selectionText: string;
@@ -85,7 +85,7 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
                   rowCount={entries}
                   rowHeight={rowHeight}
                   rowRenderer={this.rowRenderer}
-                  width={220}
+                  width={240}
                   style={dropDownStyle.listStyle}
                 />
               </Row>
@@ -117,17 +117,31 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
     });
   }
 
+  onClick = (props) => {
+    const {filteredList} = this.state;
+    const item = filteredList[props.index];
+    this.props.onClick(props);
+    this.setState({
+      filteredList: [
+        ...filteredList.slice(0, props.index),
+        {...item, selected: !item.selected},
+        ...filteredList.slice(props.index + 1),
+      ],
+    });
+  }
+
   rowRenderer = ({index, style}: ListRowProps) => {
     const {filteredList} = this.state;
-    const {onClick} = this.props;
+    const item = filteredList[index];
+    const onClick = (props: IdNamed) => this.onClick({...props, index});
     return (
       <Checkbox
-        id={filteredList[index].id}
-        name={filteredList[index].name}
+        id={item.id}
+        name={item.name}
         onClick={onClick}
-        key={filteredList[index].id}
+        key={item.id}
         style={style}
-        checked={filteredList[index].selected}
+        checked={item.selected}
       />
     );
   }
