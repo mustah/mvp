@@ -3,7 +3,10 @@ import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
 import {geoDataSuccess} from '../../../domain-models/geoData/geoDataActions';
 import {GeoDataState} from '../../../domain-models/geoData/geoDataModels';
-import {addresses, cities, initialState as initialGeoDataState} from '../../../domain-models/geoData/geoDataReducer';
+import {
+  addresses, cities, initialAddressState,
+  initialState as initialGeoDataState,
+} from '../../../domain-models/geoData/geoDataReducer';
 import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
@@ -48,8 +51,8 @@ describe('selectionSelectors', () => {
   it('get entities for undefined entity type', () => {
     const geoDataPayload = normalize(testData.geoData, geoDataSchema);
     const geoDataState: GeoDataState = {
-      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, {type: 'unknown'}),
+      addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
+      cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
@@ -105,7 +108,7 @@ describe('selectionSelectors', () => {
 
       const geoDataPayload = normalize(testData.geoData, geoDataSchema);
       const geoDataState: GeoDataState = {
-        addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+        addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
         cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
       };
 

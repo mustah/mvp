@@ -203,7 +203,7 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
       }
       const addressId = row.address;
       if (!addresses.has(addressId)) {
-        r.selections.addresses.push({id: addressId, name: row.address});
+        r.selections.addresses.push({id: addressId, name: row.address, cityId: row.city});
         addresses.add(addressId);
       }
       if (!meteringPoints.has(row.meter_id)) {

@@ -22,22 +22,27 @@ const geoData = {
     {
       id: 1,
       name: 'Stampgatan 46',
+      cityId: 'got',
     },
     {
       id: 2,
       name: 'Stampgatan 33',
+      cityId: 'got',
     },
     {
       id: 3,
       name: 'Kungsgatan 44',
+      cityId: 'sto',
     },
     {
       id: 4,
       name: 'Drottninggatan 1',
+      cityId: 'mmx',
     },
     {
       id: 5,
       name: 'Åvägen 9',
+      cityId: 'kub',
     },
   ],
 };
