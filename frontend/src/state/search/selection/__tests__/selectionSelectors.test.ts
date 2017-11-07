@@ -41,8 +41,25 @@ describe('selectionSelectors', () => {
       {selected: false, id: 'got', name: 'Göteborg'},
       {selected: false, id: 'mmx', name: 'Malmö'},
       {selected: false, id: 'kub', name: 'Kungsbacka'},
-      ];
+    ];
     expect(getCities(state)).toEqual(x);
+  });
+
+  it('get entities for undefined entity type', () => {
+    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+    const geoDataState: GeoDataState = {
+      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      cities: cities(initialGeoDataState, {type: 'unknown'}),
+    };
+
+    const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+
+    const state: LookupState = {
+      selection: selection(initialState, setSelection(payload)),
+      geoData: geoDataState,
+    };
+
+    expect(getCities(state)).toEqual([]);
   });
 
   describe('encodedUriParameters', () => {

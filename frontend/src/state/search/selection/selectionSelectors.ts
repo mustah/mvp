@@ -48,11 +48,11 @@ const getSelectedEntities = (entityType: string): any =>
   createSelector<LookupState, uuid[], DomainModel<IdNamed>, IdNamed[]>(
     getSelectedEntityIdsSelector(entityType),
     entitiesSelector(entityType),
-    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]),
+    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
 const getList = (entityType: string): any =>
-  createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[]>(
+  createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: IdNamed[], deselected: IdNamed[]) => {
