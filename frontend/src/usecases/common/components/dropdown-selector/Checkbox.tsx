@@ -7,8 +7,7 @@ import './Checkbox.scss';
 type CheckBox = IdNamed & Clickable & {checked?: boolean, style: any};
 
 export const Checkbox = (props: CheckBox) => {
-  const {id, name, checked, style} = props;
-  const onClick = () => props.onClick({name, id});
+  const {id, name, checked, style, onClick} = props;
   const htmlId = `id-${id}`;
   return (
     <RowMiddle className="Checkbox" style={style}>

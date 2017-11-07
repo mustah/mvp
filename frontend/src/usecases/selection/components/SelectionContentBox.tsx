@@ -45,12 +45,12 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
         <DropdownSelector
           list={cities}
           selectionText={citySelectionText}
-          onClick={selectCity}
+          select={selectCity}
         />
         <DropdownSelector
           list={addresses}
           selectionText={addressSelectionText}
-          onClick={selectAddress}
+          select={selectAddress}
         />
       </Row>
 

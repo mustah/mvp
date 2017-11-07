@@ -36,13 +36,13 @@ describe('selectionSelectors', () => {
       geoData: geoDataState,
     };
 
-    const x: SelectionListItem[] = [
+    const stockholmSelected: SelectionListItem[] = [
       {selected: true, id: 'sto', name: 'Stockholm'},
       {selected: false, id: 'got', name: 'Göteborg'},
       {selected: false, id: 'mmx', name: 'Malmö'},
       {selected: false, id: 'kub', name: 'Kungsbacka'},
     ];
-    expect(getCities(state)).toEqual(x);
+    expect(getCities(state)).toEqual(stockholmSelected);
   });
 
   it('get entities for undefined entity type', () => {
@@ -114,14 +114,14 @@ describe('selectionSelectors', () => {
         geoData: geoDataState,
       };
 
-      const x: SelectionListItem[] = [
+      const stockholmSelected: SelectionListItem[] = [
         {selected: true, id: 'sto', name: 'Stockholm'},
         {selected: false, id: 'got', name: 'Göteborg'},
         {selected: false, id: 'mmx', name: 'Malmö'},
         {selected: false, id: 'kub', name: 'Kungsbacka'},
       ];
 
-      expect(getCities(state)).toEqual(x);
+      expect(getCities(state)).toEqual(stockholmSelected);
     });
 
   });
