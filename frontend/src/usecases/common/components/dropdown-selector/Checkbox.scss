@@ -1,16 +1,11 @@
 @import "../../../app/variables";
 
-.CheckboxList {
-  .Checkbox {
-    padding: 10px;
-
-    &:hover {
-      background-color: $light-grey;
-    }
-  }
-}
-
 .Checkbox {
+
+  &:hover {
+    background-color: $light-grey;
+  }
+
   input[type=checkbox] {
     margin-right: $space;
   }

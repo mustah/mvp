@@ -30,6 +30,7 @@
 
   .SearchBox {
     position: relative; // Used to position the search icon.
+    margin-top: $xs-space;
     margin-bottom: $sm-space;
     display: flex;
 

@@ -29,3 +29,7 @@ export enum parameterNames {
 }
 
 export type OnSelectPeriod = (period: Period) => void;
+
+export interface SelectionListItem extends IdNamed {
+  selected: boolean;
+}
