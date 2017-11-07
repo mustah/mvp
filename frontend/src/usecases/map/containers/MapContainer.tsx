@@ -40,6 +40,10 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       openClusterDialog,
     } = this.props;
 
+    const maxZoom = 18;
+    const minZoom = 3;
+    const defaultZoom = 7;
+
     const actions = [
       (
         <FlatButton
@@ -95,6 +99,13 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       },
       chunkedLoading: true,
       showCoverageOnHover: true,
+      maxClusterRadius: (currentZoom) => {
+        if (currentZoom < maxZoom) {
+          return 80;
+        } else {
+          return 5;
+        }
+      },
     };
 
     const startPosition: [number, number] = [57.504935, 12.069482];
@@ -155,9 +166,9 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       <Column>
         <Map
           center={startPosition}
-          maxZoom={19}
-          minZoom={3}
-          zoom={7}
+          maxZoom={maxZoom}
+          minZoom={minZoom}
+          zoom={defaultZoom}
           className="Map"
           scrollWheelZoom={false}
           onclick={toggleScrollWheelZoom}
