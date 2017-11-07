@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
@@ -75,22 +74,20 @@ export class DropdownSelector extends React.PureComponent<Props & Clickable, Sta
           onRequestClose={this.closeMenu}
           animation={PopoverAnimationVertical}
         >
-          <Menu>
-            <Column className="DropdownSelector-menu">
-              <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
-              <Row>
-                <List
-                  height={entries > visibleItems ? visibleItems * rowHeight : entries * rowHeight}
-                  overscanRowCount={10}
-                  rowCount={entries}
-                  rowHeight={rowHeight}
-                  rowRenderer={this.rowRenderer}
-                  width={240}
-                  style={dropDownStyle.listStyle}
-                />
-              </Row>
-            </Column>
-          </Menu>
+          <Column className="DropdownSelector-menu">
+            <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
+            <Row>
+              <List
+                height={entries > visibleItems ? visibleItems * rowHeight : entries * rowHeight}
+                overscanRowCount={10}
+                rowCount={entries}
+                rowHeight={rowHeight}
+                rowRenderer={this.rowRenderer}
+                width={240}
+                style={dropDownStyle.listStyle}
+              />
+            </Row>
+          </Column>
         </Popover>
       </Row>
     );
