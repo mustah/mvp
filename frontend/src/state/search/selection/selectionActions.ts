@@ -11,15 +11,18 @@ export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 export const SET_SELECTION = 'SET_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
 export const SELECT_PERIOD = 'SELECT_PERIOD';
+export const SAVE_SELECTION = 'SAVE_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
 export const closeSelectionPage = createEmptyAction(CLOSE_SELECTION_PAGE);
 
 export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
+export const saveSelection = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
 
 export const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
-export const selectSavedSelectionAction = createPayloadAction<string, uuid>(SELECT_SAVED_SELECTION);
+
+export const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
 
 export const closeSearch = () => dispatch => {
   dispatch(closeSelectionPage());
@@ -33,8 +36,14 @@ export const selectPeriod = (period: Period) =>
   };
 
 export const selectSavedSelection = (selectedId: uuid) =>
-  (dispatch) => {
-    dispatch(selectSavedSelectionAction(selectedId));
+  (dispatch, getState: () => RootState) => {
+
+    const selected: SelectionState | undefined = getState().searchParameters.saved
+      .find((item: SelectionState) => item.id === selectedId);
+
+    if (selected) {
+      dispatch(selectSavedSelectionAction(selected));
+    }
   };
 
 export const toggleSelection = (selectionParameter: SelectionParameter) =>

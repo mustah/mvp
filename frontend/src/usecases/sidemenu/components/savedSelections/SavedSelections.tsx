@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {selectSavedSelection} from '../../../../state/search/selection/selectionActions';
+import {getSavedSelections} from '../../../../state/search/selection/selectionSelectors';
 import {IdNamed, OnClick} from '../../../../types/Types';
 import {
   dividerStyle,
@@ -16,9 +17,11 @@ import {
   sideBarHeaderStyle,
   sideBarStyles,
 } from '../../../app/themes';
+import {NoSavedSelections} from './NoSavedSelections';
 
 interface StateToProps {
   selections: IdNamed[];
+  hasSelections: boolean;
 }
 
 interface DispatchToProps {
@@ -26,7 +29,7 @@ interface DispatchToProps {
 }
 
 const SavedSelections = (props: StateToProps & DispatchToProps) => {
-  const {selections, selectSavedSelection} = props;
+  const {hasSelections, selections, selectSavedSelection} = props;
 
   const innerDivStyle: React.CSSProperties = {
     ...sideBarStyles.padding,
@@ -48,13 +51,13 @@ const SavedSelections = (props: StateToProps & DispatchToProps) => {
     );
   };
 
-  const listItems = selections.map(renderListItem);
+  const listItems = hasSelections ? selections.map(renderListItem) : [<NoSavedSelections key={1}/>];
 
   return (
     <List style={listStyle}>
       <ListItem
         className="ListItem"
-        primaryText={translate('saved search')}
+        primaryText={translate('saved selection')}
         initiallyOpen={true}
         style={sideBarHeaderStyle}
         hoverColor={sideBarStyles.onHover.color}
@@ -66,9 +69,11 @@ const SavedSelections = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({ui}: RootState): StateToProps => {
+const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
+  const savedSelections = getSavedSelections(searchParameters);
   return {
-    selections: [{name: 'Älmhult - Centrum', id: 1}, {name: 'Perstorp', id: 2}],
+    selections: savedSelections,
+    hasSelections: savedSelections.length !== 0,
   };
 };
 

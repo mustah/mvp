@@ -12,7 +12,7 @@ export interface SelectedParameters {
   period?: Period;
 }
 
-export interface SelectionState {
+export interface SelectionState extends IdNamed {
   selected: SelectedParameters;
 }
 

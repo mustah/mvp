@@ -7,9 +7,9 @@ import {RootState} from '../../../reducers/rootReducer';
 import {getPathname, isSearchPage} from '../../../selectors/routerSelectors';
 import {closeSearch, selectPeriod} from '../../../state/search/selection/selectionActions';
 import {OnSelectPeriod} from '../../../state/search/selection/selectionModels';
-import {getSelectedPeriod} from '../../../state/search/selection/selectionSelectors';
+import {getCurrentSelection, getSelectedPeriod} from '../../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {OnClick, Period} from '../../../types/Types';
+import {IdNamed, OnClick, Period} from '../../../types/Types';
 import {SelectionMenu} from '../../selection/components/selection-menu/SelectionMenu';
 import {SelectionMenuSummary} from '../../selection/components/selection-menu/SelectionMenuSummary';
 import {SearchMenuWrapper} from '../../selection/components/selection-menu/SelectionMenuWrapper';
@@ -23,6 +23,7 @@ interface StateToProps {
   isSideMenuOpen: boolean;
   children?: React.ReactNode;
   selectedPeriod: Period;
+  currentSelection: IdNamed;
 }
 
 interface DispatchToProps {
@@ -31,11 +32,20 @@ interface DispatchToProps {
 }
 
 const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {children, closeSearch, isSearchPage, isSideMenuOpen, pathname, selectPeriod, selectedPeriod} = props;
+  const {
+    children,
+    closeSearch,
+    currentSelection,
+    isSearchPage,
+    isSideMenuOpen,
+    pathname,
+    selectPeriod,
+    selectedPeriod,
+  } = props;
 
   const renderSelectionSearch = isSearchPage
     ? <SelectionMenu onClick={closeSearch}/>
-    : <SelectionMenuSummary pathname={pathname}/>;
+    : <SelectionMenuSummary pathname={pathname} currentSelection={currentSelection}/>;
 
   return (
     <Layout>
@@ -58,6 +68,7 @@ const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
 
 const mapStateToProps = ({routing, ui, searchParameters: {selection}}: RootState): StateToProps => {
   return {
+    currentSelection: getCurrentSelection(selection),
     isSearchPage: isSearchPage(routing),
     pathname: getPathname(routing),
     isSideMenuOpen: isSideMenuOpen(ui),

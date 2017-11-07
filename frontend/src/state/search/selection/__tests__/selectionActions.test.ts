@@ -12,6 +12,8 @@ import {
   deselectSelection,
   selectPeriod,
   selectPeriodAction,
+  selectSavedSelection,
+  selectSavedSelectionAction,
   setSelection,
   toggleSelection,
 } from '../selectionActions';
@@ -113,6 +115,60 @@ describe('selectionActions', () => {
         meterRequest(),
       ]);
     });
+  });
+
+  describe('select from saved selections', () => {
+
+    it('sets new selection', () => {
+      const savedSelection21 = {
+        ...initialState,
+        id: 21,
+        name: 'test 21',
+      };
+
+      const saved: SelectionState[] = [
+        {
+          ...initialState,
+          id: 1,
+          name: 'test 1',
+        },
+        savedSelection21,
+      ];
+
+      store = configureMockStore({searchParameters: {selection: initialState, saved}});
+
+      store.dispatch(selectSavedSelection(savedSelection21.id));
+
+      expect(store.getActions()).toEqual([
+        selectSavedSelectionAction(savedSelection21),
+      ]);
+    });
+
+    it('does not dispatch if the selection cannot be found', () => {
+      const saved: SelectionState[] = [
+        {
+          ...initialState,
+          id: 1,
+          name: 'test 1',
+        },
+        {
+          ...initialState,
+          id: 21,
+          name: 'test 21',
+        },
+      ];
+
+      store = configureMockStore({searchParameters: {selection: initialState, saved}});
+
+      store.dispatch(selectSavedSelection({
+        ...initialState,
+        id: 99,
+        name: 'test 99',
+      }.id));
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
 
 });

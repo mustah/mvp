@@ -149,6 +149,12 @@ msgstr "selection overview"
 msgid "metering"
 msgstr "metering"
 
+msgid "saved selection"
+msgstr "saved selection"
+
+msgid "no saved selections"
+msgstr "no saved selections"
+
 msgid "could not be collected"
 msgstr "could not be collected"
 
