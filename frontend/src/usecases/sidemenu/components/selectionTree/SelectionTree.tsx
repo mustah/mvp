@@ -40,6 +40,7 @@ export const SelectionTree = (props: SelectionTreeProps) => {
 const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) => {
   const entity = data.entities[level][id];
   const nextLevel = entity.childNodes.type;
+  const selectable = entity.selectable;
 
   const renderChildNodes = (treeItem: uuid) => renderSelectionTree(treeItem, data, nextLevel);
   const nestedItems = entity.childNodes.ids.sort().map(renderChildNodes);
@@ -53,22 +54,24 @@ const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) 
       initiallyOpen={false}
       nestedItems={nestedItems}
       nestedListStyle={nestedListItemStyle}
+      selectable={selectable}
     />
   );
 };
 
-class SelectableListItem extends React.Component<ListItemProps, {selected: boolean}> {
+class SelectableListItem extends React.Component<ListItemProps & {selectable: boolean}, {selected: boolean}> {
 
   state = {selected: false};
 
   render() {
     const selected = this.state.selected ? sideBarStyles.selected : null;
+    const {selectable} = this.props;
     return (
       <ListItem
         {...this.props}
         style={{...listItemStyle, ...selected}}
         hoverColor={sideBarStyles.onHover.color}
-        onClick={this.onClick}
+        onClick={selectable ? this.onClick : () => null}
       />
     );
   }
