@@ -36,7 +36,7 @@ export const GatewayList = (props: ListProps) => {
       />
       <TableColumn
         id={'status'}
-        header={<TableHead>{translate('status')}</TableHead>}
+        header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
         cell={renderStatusCell}
       />
       <TableColumn

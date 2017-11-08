@@ -1,9 +1,10 @@
 import classNames = require('classnames');
 import * as React from 'react';
+import {ClassNamed} from '../../../../../types/Types';
 
 type SortOrder = 'asc' | 'desc';
 
-interface TableHeadProps {
+interface TableHeadProps extends ClassNamed {
   sortable?: boolean;
   currentSort?: SortOrder;
   children?: string | React.ReactNode[];
@@ -14,7 +15,7 @@ export const TableHead = (props: TableHeadProps) => {
   const toggle = (order: SortOrder) => order === 'asc' ? ' ▲' : ' ▼';
   // TODO render link here, for switching order
   return (
-    <th className={classNames({clickable: sortable})}>
+    <th className={classNames(props.className, {clickable: sortable})}>
       {children}{sortable && toggle(currentSort!)}
     </th>
   );

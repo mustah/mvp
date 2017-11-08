@@ -6,7 +6,7 @@ import {Row} from '../../layouts/row/Row';
 
 interface StatusProps {
   code: number;
-  content?: string;
+  content: string;
 }
 
 export const Status = (props: StatusProps) => {
@@ -16,10 +16,7 @@ export const Status = (props: StatusProps) => {
   }
   return (
     <Row className="Status">
-      <StatusIcon code={code}/>
-      <div className="Status-text">
-        {content}
-      </div>
+      <StatusIcon code={code} content={content}/>
     </Row>
   );
 };

@@ -1,9 +1,16 @@
 @import '../../../app/variables';
 
 .PaginationControl {
-  align-items: center;
-  .PaginationControl-button {
-    margin: 0 5px;
-    background-color: $grey;
+  margin: 20px 0 10px;
+
+  .PageNumber {
+    /* important because of Material Design's inlined CSS rules */
+    min-width: 30px !important;
+    max-width: 50px;
+
+    &:disabled {
+      background: $blue !important;
+      color: $white !important;
+    }
   }
 }

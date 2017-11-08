@@ -1,9 +1,8 @@
 import 'Gateway.scss';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {translate} from '../../services/translationService';
-import {routes} from '../app/routes';
+import {InfoLink} from '../common/components/buttons/InfoLink';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
 import {Status} from '../common/components/table/status/Status';
@@ -153,7 +152,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     return (
       <div>
-        <Link to={`${routes.gateway}/${id}`} onClick={open}>{id}</Link>
+        <InfoLink onClick={open} label={id}/>
         <Dialog
           actions={[(<ButtonClose onClick={close}/>)]}
           autoScrollBodyContent={true}
@@ -207,7 +206,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
                     {translate('collection')}
                   </Row>
                   <Row>
-                    <StatusIcon code={0}/>
+                    <StatusIcon code={0} content="OK"/>
                   </Row>
                 </Column>
                 <Column>
@@ -215,7 +214,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
                     {translate('validation')}
                   </Row>
                   <Row>
-                    <StatusIcon code={3}/>
+                    <StatusIcon code={3} content="OK"/>
                   </Row>
                 </Column>
                 <Column>

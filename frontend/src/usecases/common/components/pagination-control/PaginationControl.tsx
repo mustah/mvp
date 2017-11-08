@@ -1,31 +1,61 @@
+import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {PaginationProps} from '../../../../state/ui/pagination/paginationModels';
-import {Row} from '../layouts/row/Row';
-import {Bold} from '../texts/Texts';
+import {RowCenter} from '../layouts/row/Row';
 import './PaginationControl.scss';
 
 export const PaginationControl = (props: PaginationProps) => {
-  const {pagination: {page, limit}, changePage, numOfEntities} = props;
-  const pages = Math.ceil(numOfEntities / limit);
-  const changePageNext = () => changePage(page + 1);
-  const changePagePrev = () => changePage(page - 1);
-  const prevPage = page === 1 ? null : (
-    <div onClick={changePagePrev} className="PaginationControl-button clickable">
-      Previous page
-    </div>
-  );
-  const nextPage = (page >= pages) ? null : (
-    <div onClick={changePageNext} className="PaginationControl-button clickable">
-      Next page
-    </div>
-  );
-  return (
-    <Row className="PaginationControl">
-      {prevPage}
-      <div>
-        <Bold>{page} / {pages}</Bold>
-      </div>
-      {nextPage}
-    </Row>
-  );
-};
+    const {pagination: {page, limit}, changePage, numOfEntities} = props;
+    const pages = Math.ceil(numOfEntities / limit);
+
+    /**
+     * I generally don't like "negative" variables, but I favor noPrev over hasPrev because the React component can use
+     * the variable without !inverting it, and thus not be forced to re-render as often.
+     */
+    const noPrev = page === 1;
+    const noNext = page >= pages;
+
+    const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
+    const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
+
+    const numbers = (current: number, total: number): any[] => {
+      const pages: Array<React.ReactElement<FlatButton | HTMLSpanElement>> = [];
+      const visibilityProximity: number = 3;
+      let lastPrintedAreDots = false;
+
+      // current starts with 1, meaning page should too
+      for (let page = 1; page <= total; page++) {
+        if (page === current) {
+          pages.push(<FlatButton className="PageNumber" disabled={true} key={page}>{page}</FlatButton>);
+          // pages.push(<span>{page}</span>);
+          lastPrintedAreDots = false;
+        } else if (Math.abs(page - current) <= visibilityProximity
+          || page <= visibilityProximity
+          || page > (total - visibilityProximity)) {
+          const cb = () => changePage(page);
+          pages.push(<FlatButton className="PageNumber" disabled={false} key={page} onClick={cb}>{page}</FlatButton>);
+          // pages.push(<span>{page}</span>);
+          lastPrintedAreDots = false;
+        } else if (!lastPrintedAreDots) {
+          pages.push(<span key={page}>...</span>);
+          lastPrintedAreDots = true;
+        }
+      }
+      return pages;
+    };
+
+    const renderedNumbers = numbers(page, pages);
+
+    return (
+      <RowCenter className="PaginationControl">
+        <FlatButton disabled={noPrev} onClick={changePagePrev}>
+          Föregående
+        </FlatButton>
+        {renderedNumbers}
+        <FlatButton disabled={noNext} onClick={changePageNext}>
+          Nästa
+        </FlatButton>
+      </RowCenter>
+    );
+  }
+;

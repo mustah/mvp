@@ -11,21 +11,27 @@
 }
 
 .StatusIcon {
+  border-radius: 20px;
   display: inline-block;
-  height: 18px;
-  margin-right: 4px;
-  text-indent: -99999em;
-  width: 18px;
+  font-size: $sm;
+  font-weight: bold;
+  min-width: 30px;
+  padding: 4px 8px;
+  text-align: center;
+  text-transform: uppercase;
 
   &.ok {
-    background: $green;
+    background: $dark-green;
+    color: $white;
   }
 
   &.warning {
     background: $orange;
+    color: $white;
   }
 
   &.critical {
     background: $red;
+    color: $white;
   }
 }

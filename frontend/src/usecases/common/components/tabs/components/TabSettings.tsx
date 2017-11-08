@@ -43,7 +43,7 @@ export class TabSettings extends React.Component<TabSettingsProps, TabSettingsSt
 
     return (
       <Column className="TabSettings">
-        <Row className="flex-1 Row-right clickable">
+        <Row className="flex-1 Row-right">
           <IconMore onClick={onClick}/>
           <Popover
             open={popOverOpen}
