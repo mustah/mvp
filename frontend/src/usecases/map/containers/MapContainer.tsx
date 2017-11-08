@@ -3,7 +3,6 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import {FlatButton} from 'material-ui';
-import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
@@ -16,6 +15,7 @@ import '../Map.scss';
 import {MapState} from '../mapReducer';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';
+import {MeteringPointDialog} from '../../metering-point/MeteringPointDialog';
 
 interface StateToProps {
   map: MapState;
@@ -43,18 +43,6 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     const maxZoom = 18;
     const minZoom = 3;
     const defaultZoom = 7;
-
-    const actions = [
-      (
-        <FlatButton
-          label={translate('close')}
-          primary={true}
-          onClick={toggleClusterDialog}
-          keyboardFocused={true}
-          key={1}
-        />
-      ),
-    ];
 
     const markerclusterOptions = {
       // Setting custom icon for cluster group
@@ -183,16 +171,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
             options={markerclusterOptions}
           />
         </Map>
-        <Dialog
-          title="Scrollable Dialog"
-          actions={actions}
-          modal={false}
-          open={map.isClusterDialogOpen}
-          onRequestClose={toggleClusterDialog}
-          autoScrollBodyContent={true}
-        >
-          {map.selectedMarker ? map.selectedMarker.getLatLng().toString() : null}
-        </Dialog>
+        <MeteringPointDialog id="weeeeeeee" displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>
       </Column>
     );
   }
