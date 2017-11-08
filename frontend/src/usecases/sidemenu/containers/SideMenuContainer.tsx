@@ -16,6 +16,7 @@ import {toggleShowHideSideMenu} from '../sideMenuActions';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
+  sidebarTree: any;
 }
 
 interface DispatchToProps {
@@ -40,14 +41,15 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
       />
       <SavedSelectionsContainer/>
 
-      <SelectionTree topLevel={'cities'}/>
+      <SelectionTree topLevel={'cities'} sidebarTree={props.sidebarTree}/>
     </Drawer>
   );
 };
 
-const mapStateToProps = ({ui}: RootState): StateToProps => {
+const mapStateToProps = ({ui, domainModels: {geoData: {sidebarTree}}}: RootState): StateToProps => {
   return {
     isSideMenuOpen: isSideMenuOpen(ui),
+    sidebarTree,
   };
 };
 

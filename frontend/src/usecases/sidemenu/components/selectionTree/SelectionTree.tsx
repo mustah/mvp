@@ -4,18 +4,23 @@ import * as React from 'react';
 import 'SelectionTree.scss';
 import {translate} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
-import {listItemStyle, sideBarStyles, sideBarHeaderStyle, listStyle, nestedListItemStyle} from '../../../app/themes';
-import {selectionTreeData, SelectionTreeModel} from '../../models/organizedData';
+import {listItemStyle, listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
+import {SelectionTreeModel} from '../../models/organizedData';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface SelectionTreeProps {
   topLevel: string;
+  sidebarTree: any;
 }
 
 export const SelectionTree = (props: SelectionTreeProps) => {
-  const {topLevel} = props;
-  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, selectionTreeData, topLevel);
-  const nestedItems = selectionTreeData.result[topLevel].map(renderSelectionOverview);
+
+  if (props.sidebarTree.result.length < 1) {
+    return null;
+  }
+  const {topLevel, sidebarTree} = props;
+  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, sidebarTree, topLevel);
+  const nestedItems = sidebarTree.result[topLevel].map(renderSelectionOverview);
 
   return (
     <List style={listStyle}>

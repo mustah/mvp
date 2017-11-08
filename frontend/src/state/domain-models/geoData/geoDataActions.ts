@@ -24,3 +24,23 @@ export const fetchGeoData = () =>
       dispatch(geoDataFailure(data));
     }
   };
+
+export const SIDEBAR_TREE_REQUEST = 'SIDEBAR_TREE_REQUEST';
+export const SIDEBAR_TREE_SUCCESS = 'SIDEBAR_TREE_SUCCESS';
+export const SIDEBAR_TREE_FAILURE = 'SIDEBAR_TREE_FAILURE';
+
+export const sidebarTreeRequest = createEmptyAction(SIDEBAR_TREE_REQUEST);
+export const sidebarTreeSuccess = createPayloadAction(SIDEBAR_TREE_SUCCESS);
+export const sidebarTreeFailure = createPayloadAction(SIDEBAR_TREE_FAILURE);
+
+export const fetchSidebarTreeData = () =>
+  async (dispatch) => {
+    try {
+      dispatch(sidebarTreeRequest());
+      const {data: sidebarTreeData} = await restClient.get('/sidebarTree');
+      dispatch(sidebarTreeSuccess(normalize(sidebarTreeData, geoDataSchema)));
+    } catch (error) {
+      const {response: {data}} = error;
+      dispatch(sidebarTreeFailure(data));
+    }
+  };

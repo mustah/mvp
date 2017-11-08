@@ -200,6 +200,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
     meters: [],
     gateways: [],
     selections: {meteringPoints: [], statuses: [], cities: [], addresses: []},
+    sidebarTree: {cities: [], addresses: [], meteringPoints: []},
   };
   let geocodeData = {};
   let limiter;
@@ -289,11 +290,21 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       });
       if (!cities.has(row.city)) {
         r.selections.cities.push({id: row.city, name: row.city});
+        r.sidebarTree.cities.push({id: row.city, name: row.city, parent: {type: '', id: ''}, childNodes: {type: 'addresses', ids: []}});
         cities.add(row.city);
       }
       const addressId = row.address;
       if (!addresses.has(addressId)) {
         r.selections.addresses.push({id: addressId, name: row.address, cityId: row.city});
+        r.sidebarTree.addresses.push({id: addressId, name: row.address, parent: {type: 'cities', id: row.city}, childNodes: {type: '', ids: []}});
+        r.sidebarTree.cities.map((city) => {
+          if (city.id === row.city) {
+            city.childNodes.ids.push(addressId);
+            return city;
+          } else {
+            return city;
+          }
+        });
         addresses.add(addressId);
       }
       if (!meteringPoints.has(row.meter_id)) {

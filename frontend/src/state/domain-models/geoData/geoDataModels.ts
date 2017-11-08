@@ -22,4 +22,5 @@ export type AddressState = NormalizedState<Address>;
 export interface GeoDataState {
   cities: IdNamedState;
   addresses: AddressState;
+  sidebarTree: any;
 }
