@@ -2,14 +2,12 @@ import * as L from 'leaflet';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
-import {FlatButton} from 'material-ui';
 import * as React from 'react';
 import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
 import {Column} from '../../common/components/layouts/column/Column';
 import '../Map.scss';
 import {MapState} from '../mapReducer';
@@ -171,7 +169,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
             options={markerclusterOptions}
           />
         </Map>
-        <MeteringPointDialog id="weeeeeeee" displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>
+        <MeteringPointDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>
       </Column>
     );
   }

@@ -22,7 +22,6 @@ import {Status} from '../common/components/table/status/Status';
 import {MapMarker} from '../map/mapModels';
 
 interface MeteringPointDialogProps {
-  id: string,
   displayDialog: boolean,
   close: any,
 }
