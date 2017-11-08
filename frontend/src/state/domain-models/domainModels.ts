@@ -1,8 +1,7 @@
 import {IdNamed, uuid} from '../../types/Types';
 
 export interface Location {
-  // TODO use type Address
-  address: string;
+  address: Address;
   city: string;
   position: GeoPosition;
 }

@@ -28,7 +28,7 @@ describe('selectionSelectors', () => {
   it('gets entities for type city', () => {
     const geoDataPayload = normalize(testData.geoData, geoDataSchema);
     const geoDataState: GeoDataState = {
-      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
       cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
     };
 
@@ -52,7 +52,7 @@ describe('selectionSelectors', () => {
     const geoDataPayload = normalize(testData.geoData, geoDataSchema);
     const geoDataState: GeoDataState = {
       addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      cities: cities(initialGeoDataState, {type: 'unknown'}),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
