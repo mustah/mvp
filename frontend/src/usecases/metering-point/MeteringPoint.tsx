@@ -214,7 +214,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
                     {translate('collection')}
                   </Row>
                   <Row>
-                    <StatusIcon code={0}/>
+                    <StatusIcon code={0} content="OK"/>
                   </Row>
                 </Column>
                 <Column>
@@ -222,7 +222,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
                     {translate('validation')}
                   </Row>
                   <Row>
-                    <StatusIcon code={3}/>
+                    <StatusIcon code={3} content="Felrapporterad"/>
                   </Row>
                 </Column>
                 <Column>

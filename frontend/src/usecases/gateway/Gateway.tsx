@@ -207,7 +207,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
                     {translate('collection')}
                   </Row>
                   <Row>
-                    <StatusIcon code={0}/>
+                    <StatusIcon code={0} content="OK"/>
                   </Row>
                 </Column>
                 <Column>
@@ -215,7 +215,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
                     {translate('validation')}
                   </Row>
                   <Row>
-                    <StatusIcon code={3}/>
+                    <StatusIcon code={3} content="OK"/>
                   </Row>
                 </Column>
                 <Column>
