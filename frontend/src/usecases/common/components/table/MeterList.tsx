@@ -14,6 +14,16 @@ export const MeterList = (props: ListProps) => {
   const renderStatusCell = (value, index) =>
     <Status code={value.code} content={value.text}/>;
 
+  const statusHeader = (
+    <TableHead
+      className="TableHead-status"
+      sortable={true}
+      currentSort={'asc'}
+    >
+      {translate('status')}
+    </TableHead>
+  );
+
   return (
     <Table data={data}>
       <TableColumn
@@ -35,7 +45,7 @@ export const MeterList = (props: ListProps) => {
       />
       <TableColumn
         id={'status'}
-        header={<TableHead sortable={true} currentSort={'asc'}>{translate('status')}</TableHead>}
+        header={statusHeader}
         cell={renderStatusCell}
       />
     </Table>

@@ -12,10 +12,11 @@ export const InfoLink = (props: InfoLinkProps) => {
   const {label, onClick} = props;
   return (
     <FlatButton
+      hoverColor="inherit"
       icon={<ActionInfoOutline/>}
       label={label}
       labelPosition="before"
       onClick={onClick}
     />
   );
-}
+};

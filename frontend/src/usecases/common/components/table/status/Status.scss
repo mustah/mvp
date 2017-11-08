@@ -13,10 +13,10 @@
 .StatusIcon {
   border-radius: 20px;
   display: inline-block;
-  font-size: smaller;
-  font-weight: normal;
+  font-size: $sm;
+  font-weight: bold;
   min-width: 30px;
-  padding: 4px;
+  padding: 4px 8px;
   text-align: center;
   text-transform: uppercase;
 

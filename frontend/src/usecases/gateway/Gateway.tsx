@@ -1,9 +1,8 @@
 import 'Gateway.scss';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {translate} from '../../services/translationService';
-import {routes} from '../app/routes';
+import {InfoLink} from '../common/components/buttons/InfoLink';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
 import {Status} from '../common/components/table/status/Status';
@@ -21,7 +20,6 @@ import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
-import {InfoLink} from '../common/components/buttons/InfoLink';
 
 interface GatewayProps {
   id: string;
