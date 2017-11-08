@@ -22,8 +22,8 @@ import {Status} from '../common/components/table/status/Status';
 import {MapMarker} from '../map/mapModels';
 
 interface MeteringPointDialogProps {
-  displayDialog: boolean,
-  close: any,
+  displayDialog: boolean;
+  close: any;
 }
 
 interface MeteringPointDialogState {
@@ -44,7 +44,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     const {displayDialog} = this.props;
     const {selectedTab} = this.state;
     const {close} = this.props;
-    //const close = (): void => this.setState({displayDialog: false});
+
     const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
