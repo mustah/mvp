@@ -116,6 +116,19 @@ const fromDbJson = {
 
 const parseMeasurementSeedData = (path) => {
   const measurements = [];
+  const statusChanges = {};
+  const padZero = (aNumber) => {
+    let str = aNumber + '';
+    if (str.length > 1) {
+      return str;
+    }
+    return '0' + str;
+  };
+  const dateString = (d) => {
+    //tslint:disable-next-line
+    return `${d.getFullYear()}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
+  };
+
   glob.sync(path).forEach((seedFile) => {
     /**
      * NOTE: This code could be much, much prettier but most of the ugly here is
@@ -125,7 +138,9 @@ const parseMeasurementSeedData = (path) => {
      */
     const measurementData = fs.readFileSync(seedFile, 'utf-8');
     measurementData.split('\n').forEach((csv) => {
-      if (csv.length === 0) { return; }
+      if (csv.length === 0) {
+        return;
+      }
       const [facility, meterId, datestring, energy, volume, forwardTemp, returnTemp] = csv.split(';');
       const year = datestring.substr(0, 4);
       const month = Number(datestring.substr(4, 2));
@@ -137,11 +152,15 @@ const parseMeasurementSeedData = (path) => {
       }
       const hour = datestring.substr(8, 2);
       const minute = datestring.substr(10, 2);
-      const created = new Date(year, month-1, day, hour, minute).toISOString();
+      const created = new Date(year, month - 1, day, hour, minute);
+      const createdIso = created.toISOString();
+      // this could be a complete lie, but hopefully the CSV is ordered by date in descending order
+      // also, we don't know if the status changed, but at least there is 'a' timestamp (perhaps we should randomize it)
+      statusChanges[meterId] = dateString(created);
       measurements.push({
         facility,
         meterId,
-        created,
+        created: createdIso,
         quantity: 'Energy',
         value: energy,
         unit: 'kWh',
@@ -149,7 +168,7 @@ const parseMeasurementSeedData = (path) => {
       measurements.push({
         facility,
         meterId,
-        created,
+        created: createdIso,
         quantity: 'Volume',
         value: volume,
         unit: 'm^3',
@@ -157,7 +176,7 @@ const parseMeasurementSeedData = (path) => {
       measurements.push({
         facility,
         meterId,
-        created,
+        created: createdIso,
         quantity: 'Forward Temp.',
         value: forwardTemp,
         unit: '°C',
@@ -165,17 +184,18 @@ const parseMeasurementSeedData = (path) => {
       measurements.push({
         facility,
         meterId,
-        created,
+        created: createdIso,
         quantity: 'Volume',
         value: returnTemp,
         unit: '°C',
       });
     });
   });
-  return measurements;
+  return {measurements, statusChanges};
 };
 
-const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false}) => {
+const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false, statusChanges: {}}) => {
+  const {geocodeCacheFile, doGeocoding, statusChanges} = geocodeOptions;
   const r = {
     meters: [],
     gateways: [],
@@ -183,11 +203,11 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   };
   let geocodeData = {};
   let limiter;
-  if (geocodeOptions.geocodeCacheFile !== null) {
+  if (geocodeCacheFile !== null) {
     limiter = new Bottleneck(1, 1000);
     try {
       geocodeData = Object.assign(geocodeData,
-        JSON.parse(fs.readFileSync(geocodeOptions.geocodeCacheFile, 'utf-8').toString()));
+        JSON.parse(fs.readFileSync(geocodeCacheFile, 'utf-8').toString()));
     } catch (err) {
       if (err.code !== 'ENOENT') {
         throw err;
@@ -219,7 +239,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       const geoKey = geocode.encodeAddressInfo(addressInfo);
       if (geoKey in geocodeData) {
         objPosition = geocodeData[geoKey];
-      } else if (geocodeOptions.doGeocoding) {
+      } else if (doGeocoding) {
         const pos = await limiter.schedule(geocode.fetchGeocodeAddress, addressInfo);
         if (pos instanceof Error) {
           console.log(pos.message);
@@ -235,6 +255,13 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       row.meter_status = decorateStatus(row.meter_status);
       row.gateway_status = decorateStatus(row.gateway_status);
 
+      let gatewayStatusChanged = 'N/A';
+      let meterStatusChanged = 'N/A';
+
+      if (statusChanges.hasOwnProperty(row.meter_id)) {
+        gatewayStatusChanged = meterStatusChanged = statusChanges[row.meter_id];
+      }
+
       r.gateways.push({
         id: row.gateway_id,
         facility: row.facility,
@@ -245,6 +272,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         ip: nullOr(row.ip),
         port: nullOr(row.port),
         status: row.gateway_status,
+        statusChanged: gatewayStatusChanged,
         position: objPosition,
       });
       r.meters.push({
@@ -255,6 +283,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: row.meter_status,
+        statusChanged: meterStatusChanged,
         gatewayId: row.gateway_id,
         position: objPosition,
       });
@@ -278,19 +307,19 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
     }));
   });
   Promise.all(promises).then(() => {
-    if (geocodeOptions.doGeocoding && geocodeOptions.geocodeCacheFile) {
-      fs.writeFileSync(geocodeOptions.geocodeCacheFile,
-        JSON.stringify(geocodeData));
+    if (doGeocoding && geocodeCacheFile) {
+      fs.writeFileSync(geocodeCacheFile, JSON.stringify(geocodeData));
     }
   });
   return r;
 };
 
 module.exports = (doGeocoding = false) => {
-  const measurements = parseMeasurementSeedData('data/seed_data/*measurements*.csv');
+  const {measurements, statusChanges} = parseMeasurementSeedData('data/seed_data/*measurements*.csv');
   const metersAndGateways = parseMeterSeedData('data/seed_data/*_meters.csv', {
-        doGeocoding: doGeocoding,
-        geocodeCacheFile: 'data/geocoding.json',
+    statusChanges,
+    doGeocoding,
+    geocodeCacheFile: 'data/geocoding.json',
   });
   return Object.assign(fromDbJson,
     {measurements},
