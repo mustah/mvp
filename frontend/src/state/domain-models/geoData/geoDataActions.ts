@@ -3,7 +3,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {restClient} from '../../../services/restClient';
 import {ErrorResponse, IdNamed} from '../../../types/Types';
 import {Normalized} from './geoDataModels';
-import {geoDataSchema} from './geoDataSchemas';
+import {geoDataSchema, sidebarTreeSchema} from './geoDataSchemas';
 
 export const GEO_DATA_REQUEST = 'GEO_DATA_REQUEST';
 export const GEO_DATA_SUCCESS = 'GEO_DATA_SUCCESS';
@@ -38,7 +38,7 @@ export const fetchSidebarTreeData = () =>
     try {
       dispatch(sidebarTreeRequest());
       const {data: sidebarTreeData} = await restClient.get('/sidebarTree');
-      dispatch(sidebarTreeSuccess(normalize(sidebarTreeData, geoDataSchema)));
+      dispatch(sidebarTreeSuccess(normalize(sidebarTreeData, sidebarTreeSchema)));
     } catch (error) {
       const {response: {data}} = error;
       dispatch(sidebarTreeFailure(data));

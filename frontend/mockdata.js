@@ -200,7 +200,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
     meters: [],
     gateways: [],
     selections: {meteringPoints: [], statuses: [], cities: [], addresses: []},
-    sidebarTree: {cities: [], addresses: [], meteringPoints: []},
+    sidebarTree: {cities: [], addresses: [], addressClusters: []},
   };
   let geocodeData = {};
   let limiter;
@@ -217,6 +217,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   }
 
   const cities = new Set();
+  const addressClusters = new Set();
   const addresses = new Set();
   const meteringPoints = new Set();
   const statuses = new Set();
@@ -290,19 +291,32 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       });
       if (!cities.has(row.city)) {
         r.selections.cities.push({id: row.city, name: row.city});
-        r.sidebarTree.cities.push({id: row.city, name: row.city, parent: {type: '', id: ''}, childNodes: {type: 'addresses', ids: []}});
+        r.sidebarTree.cities.push({id: row.city, name: row.city, parent: {type: '', id: ''}, selectable: true, childNodes: {type: 'addressClusters', ids: []}});
         cities.add(row.city);
+      }
+      const clusterId = row.city + ':' + row.address[0];
+      if (!addressClusters.has(clusterId)) {
+        r.sidebarTree.addressClusters.push({id: clusterId, name: row.address[0], parent: {type: 'cities', id: row.city}, selectable: false, childNodes: {type: 'addresses', ids: []}});
+        r.sidebarTree.cities.map((city) => {
+          if (city.id === row.city) {
+            city.childNodes.ids.push(clusterId);
+            return city;
+          } else {
+            return city;
+          }
+        });
+        addressClusters.add(clusterId);
       }
       const addressId = row.address;
       if (!addresses.has(addressId)) {
         r.selections.addresses.push({id: addressId, name: row.address, cityId: row.city});
-        r.sidebarTree.addresses.push({id: addressId, name: row.address, parent: {type: 'cities', id: row.city}, childNodes: {type: '', ids: []}});
-        r.sidebarTree.cities.map((city) => {
-          if (city.id === row.city) {
-            city.childNodes.ids.push(addressId);
-            return city;
+        r.sidebarTree.addresses.push({id: addressId, name: row.address, parent: {type: 'addressClusters', id: clusterId}, selectable: true, childNodes: {type: '', ids: []}});
+        r.sidebarTree.addressClusters.map((cluster) => {
+          if (cluster.id === clusterId) {
+            cluster.childNodes.ids.push(addressId);
+            return cluster;
           } else {
-            return city;
+            return cluster;
           }
         });
         addresses.add(addressId);

@@ -20,7 +20,7 @@ export const SelectionTree = (props: SelectionTreeProps) => {
   }
   const {topLevel, sidebarTree} = props;
   const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, sidebarTree, topLevel);
-  const nestedItems = sidebarTree.result[topLevel].map(renderSelectionOverview);
+  const nestedItems = sidebarTree.result[topLevel].sort().map(renderSelectionOverview);
 
   return (
     <List style={listStyle}>
@@ -42,7 +42,7 @@ const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) 
   const nextLevel = entity.childNodes.type;
 
   const renderChildNodes = (treeItem: uuid) => renderSelectionTree(treeItem, data, nextLevel);
-  const nestedItems = entity.childNodes.ids.map(renderChildNodes);
+  const nestedItems = entity.childNodes.ids.sort().map(renderChildNodes);
 
   return (
     <SelectableListItem
