@@ -167,6 +167,15 @@ msgstr "object"
 msgid "facility"
 msgstr "facility"
 
+msgid "save"
+msgstr "save"
+
+msgid "save as"
+msgstr "save as"
+
+#~ msgid "status changed"
+#~ msgstr "status changed"
+
 #~ msgid "email"
 #~ msgstr "email"
 

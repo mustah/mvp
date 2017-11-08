@@ -167,6 +167,15 @@ msgstr "objekt"
 msgid "facility"
 msgstr "anläggning"
 
+msgid "save"
+msgstr "spara"
+
+msgid "save as"
+msgstr "spara som"
+
+#~ msgid "status changed"
+#~ msgstr "statusförändring"
+
 #~ msgid "email"
 #~ msgstr "email"
 

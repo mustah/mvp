@@ -7,6 +7,7 @@ import {
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
+  UPDATE_SELECTION,
 } from './selectionActions';
 import {SelectionState} from './selectionModels';
 
@@ -53,6 +54,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
       };
     case SELECT_SAVED_SELECTION:
       return {
+        ...state,
         ...payload,
       };
     default:
@@ -60,10 +62,24 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
   }
 };
 
+const updateSelectionById = (state: SelectionState[] = [], {payload}: AnyAction): SelectionState[] => {
+  const index = state.findIndex((selection: SelectionState) => selection.id === payload.id);
+  if (index !== -1) {
+    state[index] = {...payload};
+    return [...state];
+  } else {
+    return state;
+  }
+};
+
 export const saved = (state: SelectionState[] = [], action: AnyAction): SelectionState[] => {
-  switch (action.type) {
+  const {payload, type} = action;
+
+  switch (type) {
     case SAVE_SELECTION:
-      return [...state, action.payload];
+      return [...state, payload];
+    case UPDATE_SELECTION:
+      return updateSelectionById(state, action);
     default:
       return state;
   }

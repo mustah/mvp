@@ -5,12 +5,12 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname, isSearchPage} from '../../../selectors/routerSelectors';
-import {closeSearch, selectPeriod} from '../../../state/search/selection/selectionActions';
-import {OnSelectPeriod} from '../../../state/search/selection/selectionModels';
-import {getCurrentSelection, getSelectedPeriod} from '../../../state/search/selection/selectionSelectors';
+import {selectPeriod} from '../../../state/search/selection/selectionActions';
+import {OnSelectPeriod, SelectionState} from '../../../state/search/selection/selectionModels';
+import {getSelectedPeriod, getSelection} from '../../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {IdNamed, OnClick, Period} from '../../../types/Types';
-import {SelectionMenu} from '../../selection/components/selection-menu/SelectionMenu';
+import {Period} from '../../../types/Types';
+import {SelectionMenuContainer} from '../../selection/containers/SelectionMenuContainer';
 import {SelectionMenuSummary} from '../../selection/components/selection-menu/SelectionMenuSummary';
 import {SearchMenuWrapper} from '../../selection/components/selection-menu/SelectionMenuWrapper';
 import {Column} from '../components/layouts/column/Column';
@@ -23,19 +23,17 @@ interface StateToProps {
   isSideMenuOpen: boolean;
   children?: React.ReactNode;
   selectedPeriod: Period;
-  currentSelection: IdNamed;
+  selection: SelectionState;
 }
 
 interface DispatchToProps {
-  closeSearch: OnClick;
   selectPeriod: OnSelectPeriod;
 }
 
 const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
   const {
     children,
-    closeSearch,
-    currentSelection,
+    selection,
     isSearchPage,
     isSideMenuOpen,
     pathname,
@@ -44,8 +42,8 @@ const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
   } = props;
 
   const renderSelectionSearch = isSearchPage
-    ? <SelectionMenu onClick={closeSearch}/>
-    : <SelectionMenuSummary pathname={pathname} currentSelection={currentSelection}/>;
+    ? <SelectionMenuContainer/>
+    : <SelectionMenuSummary pathname={pathname} selection={selection}/>;
 
   return (
     <Layout>
@@ -66,18 +64,17 @@ const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({routing, ui, searchParameters: {selection}}: RootState): StateToProps => {
+const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToProps => {
   return {
-    currentSelection: getCurrentSelection(selection),
+    selection: getSelection(searchParameters),
     isSearchPage: isSearchPage(routing),
     pathname: getPathname(routing),
     isSideMenuOpen: isSideMenuOpen(ui),
-    selectedPeriod: getSelectedPeriod(selection),
+    selectedPeriod: getSelectedPeriod(searchParameters.selection),
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  closeSearch,
   selectPeriod,
 }, dispatch);
 

@@ -1,6 +1,6 @@
 @import "../../../app/variables";
 
-.SelectionMenu-Container {
+.SelectionMenuWrapper {
   position: fixed;
   top: 0;
   left: $main-menu-width;
@@ -16,13 +16,14 @@
   }
 
   .SelectionMenu {
-    width: 200px;
+    width: 338px;
     color: $blackest;
     align-items: center;
+  }
 
+  .SelectionMenuSummary {
     .Normal {
-      margin-left: $sm-space;
-      text-transform: lowercase;
+      margin-left: $space;
 
       &:first-letter {
         text-transform: uppercase;

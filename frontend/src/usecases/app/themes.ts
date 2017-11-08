@@ -6,14 +6,16 @@ interface Styles {
   [key: string]: React.CSSProperties;
 }
 
-const fontSizeNormal = 14;
+export const fontSizeNormal = 14;
 
 export const colors = {
   darkBlue: '#006da3',
   blue: '#00b6f7',
   lightGrey: '#f9f9f9',
+  lightBlack: '#7b7b7b',
   borderColor: '#f2f2f2',
   dividerColor: '#eaeaea',
+  iconHover: '#0f2228',
 };
 
 export const mvpTheme = getMuiTheme({
@@ -76,4 +78,12 @@ export const nestedListItemStyle: React.CSSProperties = {
 export const dropDownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
+};
+
+export const underlineFocusStyle = {
+  borderColor: colors.blue,
+};
+
+export const floatingLabelFocusStyle = {
+  color: colors.blue,
 };

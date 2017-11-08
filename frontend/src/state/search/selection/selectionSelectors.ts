@@ -82,8 +82,3 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 );
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
-
-export const getCurrentSelection = createSelector<SelectionState, SelectionState, IdNamed>(
-  (state: SelectionState) => state,
-  ({id, name}: SelectionState) => ({id, name}),
-);

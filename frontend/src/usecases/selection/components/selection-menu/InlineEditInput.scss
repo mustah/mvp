@@ -1,0 +1,12 @@
+@import "../../../app/variables";
+
+.InlineEditInput {
+  .LinkButton {
+    padding-bottom: $space;
+
+    .Normal {
+      margin-left: $space;
+    }
+  }
+}
+

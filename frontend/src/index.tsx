@@ -1,5 +1,4 @@
-import 'es6-shim'; /* adds polyfills for a host of functions that
-                    might otherwise be missing in older browsers */
+import 'es6-shim'; // adds polyfills for a host of functions that might otherwise be missing in older browsers
 import {History} from 'history';
 import createHashHistory from 'history/createHashHistory';
 import {InitOptions} from 'i18next';
@@ -18,16 +17,16 @@ import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
 import {App} from './usecases/app/App';
 import {mvpTheme} from './usecases/app/themes';
+
 const history: History = createHashHistory();
 
 const appStore: Store<RootState> = configureStore(history);
 
 persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
   if (!error) {
-    const state = appStore.getState();
-    const {token} = state.auth;
+    const {auth: {token}, language: {language}} = appStore.getState();
     initRestClient(token);
-    initLanguage(state.language.language);
+    initLanguage(language);
   }
 });
 

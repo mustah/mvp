@@ -14,7 +14,6 @@ import {LookupState, parameterNames, SelectionListItem, SelectionParameter, Sele
 import {initialState, selection} from '../selectionReducer';
 import {
   getCities,
-  getCurrentSelection,
   getEncodedUriParameters,
   getSelectedPeriod,
   getSelection,
@@ -69,15 +68,6 @@ describe('selectionSelectors', () => {
     };
 
     expect(getCities(state)).toEqual([]);
-  });
-
-  describe('current selection', () => {
-
-    it('has default a current selection that is all', () => {
-      const state: SelectionState = {...initialState};
-      const {id, name} = state;
-      expect(getCurrentSelection(state)).toEqual({id, name});
-    });
   });
 
   describe('encodedUriParameters', () => {
