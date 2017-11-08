@@ -21,6 +21,7 @@ import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
+import {InfoLink} from '../common/components/buttons/InfoLink';
 
 interface GatewayProps {
   id: string;
@@ -153,7 +154,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     return (
       <div>
-        <Link to={`${routes.gateway}/${id}`} onClick={open}>{id}</Link>
+        <InfoLink onClick={open} label={id}/>
         <Dialog
           actions={[(<ButtonClose onClick={close}/>)]}
           autoScrollBodyContent={true}

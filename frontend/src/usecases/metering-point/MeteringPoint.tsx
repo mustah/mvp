@@ -1,9 +1,8 @@
 import Dialog from 'material-ui/Dialog';
 import 'MeteringPoint.scss';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
 import {translate} from '../../services/translationService';
-import {routes} from '../app/routes';
+import {InfoLink} from '../common/components/buttons/InfoLink';
 import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
@@ -154,7 +153,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     return (
       <div>
-        <Link to={`${routes.meter}/${id}`} onClick={open}>{id}</Link>
+        <InfoLink onClick={open} label={id}/>
         <Dialog
           actions={[(<ButtonClose onClick={close}/>)]}
           autoScrollBodyContent={true}
