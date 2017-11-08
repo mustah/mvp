@@ -136,7 +136,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     const markers: { [key: string]: MapMarker } = {};
     const marker: MapMarker = {
       status: '0',
-      address: '',
+      address: {id: '', cityId: '', name: ''},
       city: '',
       position: {
         confidence: 1,

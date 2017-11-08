@@ -31,22 +31,27 @@ describe('searchReducer', () => {
           1: {
             id: 1,
             name: 'Stampgatan 46',
+            cityId: 'got',
           },
           2: {
             id: 2,
             name: 'Stampgatan 33',
+            cityId: 'got',
           },
           3: {
             id: 3,
             name: 'Kungsgatan 44',
+            cityId: 'sto',
           },
           4: {
             id: 4,
             name: 'Drottninggatan 1',
+            cityId: 'mmx',
           },
           5: {
             id: 5,
             name: 'Åvägen 9',
+            cityId: 'kub',
           },
         },
         cities: {

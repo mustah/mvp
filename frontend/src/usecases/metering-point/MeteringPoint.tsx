@@ -137,7 +137,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
     const markers: { [key: string]: MapMarker } = {};
     const mappedObject: MapMarker = {
       status: '0',
-      address: '',
+      address: {id: '', cityId: '', name: ''},
       city: '',
       position: {
         confidence: 1,
