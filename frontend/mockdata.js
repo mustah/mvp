@@ -114,7 +114,68 @@ const fromDbJson = {
   },
 };
 
-const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false}) => {
+const parseMeasurementSeedData = (path) => {
+  const measurements = [];
+  glob.sync(path).forEach((seedFile) => {
+    /**
+     * NOTE: This code could be much, much prettier but most of the ugly here is
+     * required to keep performance at an acceptable level.
+     *
+     * The rest is incompetence.
+     */
+    const measurementData = fs.readFileSync(seedFile, 'utf-8');
+    measurementData.split('\n').forEach((csv) => {
+      if (csv.length === 0) { return; }
+      const [facility, meterId, datestring, energy, volume, forwardTemp, returnTemp] = csv.split(';');
+      const year = datestring.substr(0, 4);
+      const month = Number(datestring.substr(4, 2));
+      const day = Number(datestring.substr(6, 2));
+      // NOTE: We're only including about a week of data here, since serializing
+      // any more will either take a *lot* of time or crash with an OOM error.
+      if (month < 10 || (month === 10 && day < 28)) {
+        return;
+      }
+      const hour = datestring.substr(8, 2);
+      const minute = datestring.substr(10, 2);
+      const created = new Date(year, month-1, day, hour, minute).toISOString();
+      measurements.push({
+        facility,
+        meterId,
+        created,
+        quantity: 'Energy',
+        value: energy,
+        unit: 'kWh',
+      });
+      measurements.push({
+        facility,
+        meterId,
+        created,
+        quantity: 'Volume',
+        value: volume,
+        unit: 'm^3',
+      });
+      measurements.push({
+        facility,
+        meterId,
+        created,
+        quantity: 'Forward Temp.',
+        value: forwardTemp,
+        unit: '°C',
+      });
+      measurements.push({
+        facility,
+        meterId,
+        created,
+        quantity: 'Volume',
+        value: returnTemp,
+        unit: '°C',
+      });
+    });
+  });
+  return measurements;
+};
+
+const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false}) => {
   const r = {
     meters: [],
     gateways: [],
@@ -226,11 +287,13 @@ const parseSeedDataDirectory = (path, geocodeOptions = {geocodeCacheFile: null, 
 };
 
 module.exports = (doGeocoding = false) => {
-  return Object.assign(fromDbJson,
-    parseSeedDataDirectory('data/seed_data/*.csv',
-      {
+  const measurements = parseMeasurementSeedData('data/seed_data/*measurements*.csv');
+  const metersAndGateways = parseMeterSeedData('data/seed_data/*_meters.csv', {
         doGeocoding: doGeocoding,
         geocodeCacheFile: 'data/geocoding.json',
-      }),
+  });
+  return Object.assign(fromDbJson,
+    {measurements},
+    metersAndGateways,
   );
 };
