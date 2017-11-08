@@ -128,11 +128,16 @@ const parseMeasurementSeedData = (path) => {
       if (csv.length === 0) { return; }
       const [facility, meterId, datestring, energy, volume, forwardTemp, returnTemp] = csv.split(';');
       const year = datestring.substr(0, 4);
-      const month = datestring.substr(4, 2);
-      const day = datestring.substr(6, 2);
+      const month = Number(datestring.substr(4, 2));
+      const day = Number(datestring.substr(6, 2));
+      // NOTE: We're only including about a week of data here, since serializing
+      // any more will either take a *lot* of time or crash with an OOM error.
+      if (month < 10 || (month === 10 && day < 28)) {
+        return;
+      }
       const hour = datestring.substr(8, 2);
       const minute = datestring.substr(10, 2);
-      const created = new Date(year, month, day, hour, minute).toISOString();
+      const created = new Date(year, month-1, day, hour, minute).toISOString();
       measurements.push({
         facility,
         meterId,
