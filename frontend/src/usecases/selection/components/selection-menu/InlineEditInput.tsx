@@ -33,7 +33,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {selection: {name, id}, isChanged} = props;
     this.state = {
       isChanged,
-      name,
+      name: name === 'all' ? 'Allt' : name, // TODO[!must!] translate texts outside of React components
       id,
     };
   }
