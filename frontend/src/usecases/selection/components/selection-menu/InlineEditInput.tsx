@@ -22,7 +22,7 @@ interface State extends IdNamed {
 const textFieldStyle: React.CSSProperties = {
   marginLeft: 16,
   fontSize: 14,
-  width: 150,
+  width: 180,
 };
 
 export class InlineEditInput extends React.Component<Props, State> {

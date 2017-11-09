@@ -39,10 +39,13 @@ export const selectPeriod = (period: Period) =>
   };
 
 export const saveSelection = (selection: SelectionState) =>
-    dispatch => dispatch(saveSelectionAction(selection));
+  dispatch => {
+    dispatch(saveSelectionAction(selection));
+    dispatch(selectSavedSelectionAction(selection));
+  };
 
 export const updateSelection = (selection: SelectionState) =>
-    dispatch => dispatch(updateSelectionAction(selection));
+  dispatch => dispatch(updateSelectionAction(selection));
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: () => RootState) => {
