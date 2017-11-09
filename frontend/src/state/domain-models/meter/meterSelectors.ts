@@ -25,8 +25,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
       const clusterId = city.name + ':' + clusterName;
       const cluster: IdNamed = {id: clusterId, name: clusterName};
 
-      sidebarItems({
-        sidebarTree,
+      sidebarItems(sidebarTree, {
         category: parameterNames.cities,
         set: cities,
         unit: city,
@@ -36,8 +35,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: 'addressClusters',
       });
 
-      sidebarItems({
-        sidebarTree,
+      sidebarItems(sidebarTree, {
         category: 'addressClusters',
         set: addressClusters,
         unit: cluster,
@@ -47,8 +45,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: parameterNames.addresses,
       });
 
-      sidebarItems({
-        sidebarTree,
+      sidebarItems(sidebarTree, {
         category: parameterNames.addresses,
         set: addresses,
         unit: address,
@@ -73,16 +70,16 @@ const sidebarItem =
     };
   };
 
-const sidebarItems = (props: SidebarItemsProps) => {
-  const {sidebarTree, category, set, ...sidebarItemProps} = props;
+const sidebarItems = (sidebarTreeUpdate: {[key: string]: SidebarItem[]}, props: SidebarItemsProps): void => {
+  const {category, set, ...sidebarItemProps} = props;
   const {unit, parent, parentType} = props;
   if (!set.has(unit.id)) {
 
-    sidebarTree[category].push(sidebarItem(sidebarItemProps));
+    sidebarTreeUpdate[category].push(sidebarItem(sidebarItemProps));
     set.add(unit.id);
 
     if (parentType !== '') {
-      sidebarTree[parentType].map((par) => {
+      sidebarTreeUpdate[parentType].map((par) => {
         if (par.id === parent.id) {
           par.childNodes.ids.push(unit.id);
           return par;

@@ -42,7 +42,6 @@ export interface SidebarItemProps {
 }
 
 export interface SidebarItemsProps extends SidebarItemProps {
-  sidebarTree: {[key: string]: SidebarItem[]};
   category: string;
   set: Set<uuid>;
 }
