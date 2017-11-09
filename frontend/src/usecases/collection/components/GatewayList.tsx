@@ -35,6 +35,10 @@ export const GatewayList = (props: ListProps) => {
         header={<TableHead>{translate('product model')}</TableHead>}
       />
       <TableColumn
+        id={'statusChanged'}
+        header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+      />
+      <TableColumn
         id={'status'}
         header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
         cell={renderStatusCell}
