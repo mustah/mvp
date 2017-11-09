@@ -68,7 +68,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
-        <Paper zDepth={3} className="LoginPaper">
+        <Paper zDepth={1} className="LoginPaper">
           <ColumnCenter className="customerLogo">
             <Logo/>
           </ColumnCenter>

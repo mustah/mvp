@@ -89,10 +89,12 @@ const underlineStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   height: 48,
-  lineHeight: 48,
+  lineHeight: 1,
   paddingRight: 0,
   paddingLeft: 24,
   fontSize: 14,
+  display: 'flex',
+  alignItems: 'center',
 };
 
 const iconStyle: React.CSSProperties = {
