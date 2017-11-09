@@ -15,7 +15,7 @@ import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
-import MapContainer from '../map/containers/MapContainer';
+import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
 import {Status} from '../common/components/table/status/Status';
@@ -268,7 +268,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer markers={markers}/>
+              <MapContainer markers={markers} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>
         </Row>

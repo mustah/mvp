@@ -17,7 +17,7 @@ import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
-import MapContainer from '../map/containers/MapContainer';
+import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
 
 interface GatewayDialogProps {
@@ -261,7 +261,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer markers={markers}/>
+              <MapContainer markers={markers} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>
         </Row>
