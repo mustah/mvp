@@ -33,6 +33,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
     case SET_SELECTION:
       return {
         ...state,
+        isChanged: true,
         selected: {
           ...state.selected,
           [payload.parameter]: [...state.selected[payload.parameter], payload.id],
