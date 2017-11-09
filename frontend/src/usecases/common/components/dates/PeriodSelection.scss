@@ -1,0 +1,4 @@
+.TimePeriod:first-letter {
+  /* do not use capitalize, It Turns The Text Unreadable And Ugly */
+  text-transform: uppercase;
+}

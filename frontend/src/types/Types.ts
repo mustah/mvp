@@ -37,10 +37,11 @@ export enum Status {
 }
 
 export enum Period {
-  now = 'now',
-  week = 'week',
-  month = 'month',
-  quarter = 'quarter',
+  currentMonth = 'current_month',
+  previousMonth = 'previous_month',
+  currentWeek = 'current_week',
+  previous7Days = 'previous_7_days',
+  custom = 'custom',
 }
 
 const status = {

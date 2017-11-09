@@ -5,6 +5,7 @@ import {DomainModel, GeoDataState} from '../../domain-models/geoData/geoDataMode
 import {getGeoDataEntitiesBy, getGeoDataResultBy} from '../../domain-models/geoData/geoDataSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
 import {LookupState, parameterNames, SelectedParameters, SelectionListItem, SelectionState} from './selectionModels';
+import {initialState} from './selectionReducer';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
@@ -72,7 +73,7 @@ export const getEncodedUriParameters = createSelector<SearchParameterState, Sele
 
 export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(
   (selection: SelectionState) => selection.selected,
-  (selected: SelectedParameters) => selected.period! || Period.now,
+  (selected: SelectedParameters) => selected.period! || initialState.selected.period,
 );
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
