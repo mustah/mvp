@@ -17,7 +17,7 @@ export const SAVE_SELECTION = 'SAVE_SELECTION';
 export const UPDATE_SELECTION = 'UPDATE_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
-export const closeSelectionPage = createEmptyAction(CLOSE_SELECTION_PAGE);
+export const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 
 export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
@@ -27,16 +27,10 @@ export const saveSelectionAction = createPayloadAction<string, SelectionState>(S
 export const updateSelectionAction = createPayloadAction<string, SelectionState>(UPDATE_SELECTION);
 export const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
 
-export const closeSearch = () => dispatch => {
-  dispatch(closeSelectionPage());
+export const closeSelectionPage = () => dispatch => {
+  dispatch(closeSelectionPageAction());
   dispatch(routerActions.goBack());
 };
-
-export const selectPeriod = (period: Period) =>
-  async (dispatch, getState: () => RootState) => {
-    dispatch(selectPeriodAction(period));
-    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
-  };
 
 export const saveSelection = (selection: SelectionState) =>
   dispatch => {
@@ -68,5 +62,11 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
     } else {
       dispatch(setSelection(selectionParameter));
     }
+    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
+  };
+
+export const selectPeriod = (period: Period) =>
+  async (dispatch, getState: () => RootState) => {
+    dispatch(selectPeriodAction(period));
     dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
   };

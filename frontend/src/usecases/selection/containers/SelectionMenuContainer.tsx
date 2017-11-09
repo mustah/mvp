@@ -2,7 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {closeSearch, saveSelection, updateSelection} from '../../../state/search/selection/selectionActions';
+import {closeSelectionPage, saveSelection, updateSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {OnClick} from '../../../types/Types';
@@ -15,16 +15,16 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  closeSearch: OnClick;
+  closeSelectionPage: OnClick;
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
 }
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
-  const {closeSearch, selection, saveSelection, updateSelection} = props;
+  const {closeSelectionPage, selection, saveSelection, updateSelection} = props;
   return (
     <RowCenter>
-      <CloseIcon onClick={closeSearch}/>
+      <CloseIcon onClick={closeSelectionPage}/>
       <RowMiddle>
         <InlineEditInput
           key={selection.id}
@@ -44,7 +44,7 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  closeSearch,
+  closeSelectionPage,
   saveSelection,
   updateSelection,
 }, dispatch);

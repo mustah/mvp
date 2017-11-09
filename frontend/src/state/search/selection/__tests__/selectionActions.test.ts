@@ -7,8 +7,8 @@ import {makeRestClient} from '../../../../services/restClient';
 import {IdNamed, Period} from '../../../../types/Types';
 import {meterRequest} from '../../../domain-models/meter/meterActions';
 import {
-  closeSearch,
   closeSelectionPage,
+  closeSelectionPageAction,
   deselectSelection,
   selectPeriod,
   selectPeriodAction,
@@ -44,10 +44,10 @@ describe('selectionActions', () => {
   describe('close selection page', () => {
 
     it('closes selection page and navigates back to previous page', () => {
-      store.dispatch(closeSearch());
+      store.dispatch(closeSelectionPage());
 
       expect(store.getActions()).toEqual([
-        closeSelectionPage(),
+        closeSelectionPageAction(),
         routerActions.goBack(),
       ]);
     });
