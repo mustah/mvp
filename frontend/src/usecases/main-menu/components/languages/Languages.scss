@@ -6,13 +6,15 @@
   align-items: center;
 }
 
-.LanguageMenuItem{
-  padding-left: 15px;
-  &.isSelected{
+.LanguageMenuItem {
+  padding-left: $space;
+
+  &.isSelected {
     text-decoration: underline;
     color: $dark-blue;
   }
-  &:hover{
+
+  &:hover {
     color: $dark-blue;
   }
 

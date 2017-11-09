@@ -9,12 +9,12 @@
     font-weight: bold;
     text-align: left;
     text-transform: uppercase;
+    border-bottom: 1px solid $grey;
   }
 
   thead {
     tr {
       background: $light-grey;
-      border-color: $light-grey;
       color: $light-black;
     }
   }
@@ -26,12 +26,11 @@
   }
 
   th, td {
-    border-bottom: $table-row-border-color;
     padding: 8px;
   }
 
   td {
-    border-bottom: 1px solid $dark-grey;
+    border-bottom: 1px solid $light-grey;
   }
 
   tr:hover {
