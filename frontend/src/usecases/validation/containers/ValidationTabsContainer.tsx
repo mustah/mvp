@@ -21,7 +21,7 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import MapContainer from '../../map/containers/MapContainer';
+import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -102,7 +102,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
         </div>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer markers={meters}/>
+        <MapContainer markers={meters} popupMode={PopupMode.meterpoint}/>
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <MeterList data={{allIds: paginatedList, byId: meters}}/>

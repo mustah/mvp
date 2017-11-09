@@ -1,9 +1,10 @@
-import 'MeteringPoint.scss';
-import * as React from 'react';
+import 'Gateway.scss';
 import Dialog from 'material-ui/Dialog';
+import * as React from 'react';
 import {translate} from '../../services/translationService';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
+import {Status} from '../common/components/table/status/Status';
 import {StatusIcon} from '../common/components/table/status/StatusIcon';
 import {Table} from '../common/components/table/table/Table';
 import {TableHead} from '../common/components/table/table/TableHead';
@@ -14,23 +15,21 @@ import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
 import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
+import {tabType} from '../common/components/tabs/models/TabsModel';
 import {ButtonClose} from '../common/containers/button-close/ButtonClose';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
-import {tabType} from '../common/components/tabs/models/TabsModel';
-import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
-import {Status} from '../common/components/table/status/Status';
 import {MapMarker} from '../map/mapModels';
 
-interface MeteringPointDialogProps {
+interface GatewayDialogProps {
   displayDialog: boolean;
   close: any;
 }
 
-interface MeteringPointDialogState {
+interface GatewayDialogState {
   selectedTab: tabType;
 }
 
-export class MeteringPointDialog extends React.Component<MeteringPointDialogProps, MeteringPointDialogState> {
+export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDialogState> {
 
   constructor(props) {
     super(props);
@@ -41,14 +40,14 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
   }
 
   render() {
-    const {displayDialog} = this.props;
     const {selectedTab} = this.state;
+    const {displayDialog} = this.props;
     const {close} = this.props;
 
     const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const meterData = {
+    const gatewayData = {
       byId: {
         id1: {
           date: '2017-11-16 09:34',
@@ -124,13 +123,9 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    const changeTab = (option: tabType) => {
-      this.setState({selectedTab: option});
-    };
-
     // TODO retrieve real location data for the gateway
     const markers: { [key: string]: MapMarker } = {};
-    const mappedObject: MapMarker = {
+    const marker: MapMarker = {
       status: '0',
       address: {id: '', cityId: '', name: ''},
       city: '',
@@ -141,7 +136,11 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
       },
     };
 
-    markers[0] = mappedObject;
+    markers[0] = marker;
+
+    const changeTab = (option: tabType) => {
+      this.setState({selectedTab: option});
+    };
 
     return (
       <Dialog
@@ -151,22 +150,16 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         onRequestClose={close}
         open={displayDialog}
       >
-        <h2 className="capitalize">{translate('meter details')}</h2>
+        <h2 className="capitalize">{translate('gateway details')}</h2>
         <Row>
+          <Column className="ProductImage">
+            <img src="cme2110.jpg" width="100"/>
+          </Column>
           <Column className="OverView">
             <Row>
               <Column>
                 <Row>
-                  {translate('medium')}
-                </Row>
-                <Row>
-                  <IconDistrictHeating color={'#2b6ea3'}/>
-                  Värme
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('meter id')}
+                  {translate('gateway id')}
                 </Row>
                 <Row>
                   12000747
@@ -211,7 +204,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('validation')}
                 </Row>
                 <Row>
-                  <StatusIcon code={3} content="Felrapporterad"/>
+                  <StatusIcon code={3} content="OK"/>
                 </Row>
               </Column>
               <Column>
@@ -240,10 +233,10 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                 <Tab tab={tabType.statusChanges} title={translate('status changes')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
               </TabHeaders>
-              <TabSettings useCase={'meteringPoint'}/>
+              <TabSettings useCase={'gateway'}/>
             </TabTopBar>
             <TabContent tab={tabType.statusChanges} selectedTab={selectedTab}>
-              <Table data={meterData}>
+              <Table data={gatewayData}>
                 <TableColumn
                   id={'date'}
                   header={<TableHead>{translate('date')}</TableHead>}
@@ -274,6 +267,5 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         </Row>
       </Dialog>
     );
-
   }
 }

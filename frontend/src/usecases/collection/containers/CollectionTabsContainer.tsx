@@ -21,7 +21,7 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import {Bold} from '../../common/components/texts/Texts';
-import MapContainer from '../../map/containers/MapContainer';
+import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -137,7 +137,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={numOfGateways}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer markers={gateways}/>
+        <MapContainer markers={gateways} popupMode={PopupMode.gateway}/>
       </TabContent>
     </Tabs>
   );

@@ -14,6 +14,7 @@ import {MapState} from '../mapReducer';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';
 import {MeteringPointDialog} from '../../metering-point/MeteringPointDialog';
+import {GatewayDialog} from '../../gateway/GatewayDialog';
 
 interface StateToProps {
   map: MapState;
@@ -26,7 +27,17 @@ interface DispatchToProps {
 }
 
 interface OwnProps {
+  /* TODO MapContainer shouldn't even need to know that there is a popup,
+     it should only need to know what to do when a marker is clicked
+  */
+  popupMode: PopupMode;
   markers: { [key: string]: MapMarker };
+}
+
+export enum PopupMode {
+  gateway,
+  meterpoint,
+  none,
 }
 
 class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnProps, any> {
@@ -36,6 +47,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       map,
       markers,
       openClusterDialog,
+      popupMode,
     } = this.props;
 
     const maxZoom = 18;
@@ -148,6 +160,16 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       }
     };
 
+    let popup;
+
+    if (popupMode === PopupMode.gateway) {
+      popup = (<GatewayDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
+    } else if (popupMode === PopupMode.meterpoint) {
+      popup = (<MeteringPointDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
+    } else {
+      popup = null;
+    }
+
     return (
       <Column>
         <Map
@@ -169,7 +191,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
             options={markerclusterOptions}
           />
         </Map>
-        <MeteringPointDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>
+        {popup}
       </Column>
     );
   }
