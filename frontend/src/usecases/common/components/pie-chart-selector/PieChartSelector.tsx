@@ -43,7 +43,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
   return (
     <Column className="PieContainer">
       <h3>{heading}</h3>
-      <PieChart width={300} height={300}>
+      <PieChart width={240} height={240}>
         <Pie data={data} activeIndex={[]} activeShape={null}>
           {data.map(renderCell)}
         </Pie>
