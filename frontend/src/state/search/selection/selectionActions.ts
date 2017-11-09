@@ -1,8 +1,8 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
-import {Dispatch} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {Period, uuid} from '../../../types/Types';
+import {fetchGateways} from '../../domain-models/gateway/gatewayActions';
 import {fetchMeters} from '../../domain-models/meter/meterActions';
 import {SelectionParameter, SelectionState} from './selectionModels';
 import {getEncodedUriParameters, getSelection} from './selectionSelectors';
@@ -27,6 +27,14 @@ export const saveSelectionAction = createPayloadAction<string, SelectionState>(S
 export const updateSelectionAction = createPayloadAction<string, SelectionState>(UPDATE_SELECTION);
 export const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
 
+// TODO[!must!] do not fetch both every time (good enough for the demo though)
+const fetchMetersAndGateways = () =>
+  (dispatch, getState: () => RootState) => {
+    const encodedUriParameters = getEncodedUriParameters(getState().searchParameters);
+    dispatch(fetchMeters(encodedUriParameters));
+    dispatch(fetchGateways(encodedUriParameters));
+  };
+
 export const closeSelectionPage = () => dispatch => {
   dispatch(closeSelectionPageAction());
   dispatch(routerActions.goBack());
@@ -36,6 +44,7 @@ export const saveSelection = (selection: SelectionState) =>
   dispatch => {
     dispatch(saveSelectionAction(selection));
     dispatch(selectSavedSelectionAction(selection));
+    dispatch(fetchMetersAndGateways());
   };
 
 export const updateSelection = (selection: SelectionState) =>
@@ -49,11 +58,12 @@ export const selectSavedSelection = (selectedId: uuid) =>
 
     if (selected) {
       dispatch(selectSavedSelectionAction(selected));
+      dispatch(fetchMetersAndGateways());
     }
   };
 
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
-  async (dispatch: Dispatch<SelectionState>, getState: () => RootState) => {
+  async (dispatch, getState: () => RootState) => {
     const selectionState: SelectionState = getSelection(getState().searchParameters);
     const {parameter, id} = selectionParameter;
 
@@ -62,11 +72,11 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
     } else {
       dispatch(setSelection(selectionParameter));
     }
-    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
+    dispatch(fetchMetersAndGateways());
   };
 
 export const selectPeriod = (period: Period) =>
-  async (dispatch, getState: () => RootState) => {
+  async (dispatch) => {
     dispatch(selectPeriodAction(period));
-    dispatch(fetchMeters(getEncodedUriParameters(getState().searchParameters)));
+    dispatch(fetchMetersAndGateways());
   };
