@@ -91,9 +91,9 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
             <p>Antal gateways: <Bold>{numberOfGateways}</Bold>.</p>
           </Row>
           <RowCenter>
+            <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
             <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
             <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
-            <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
           </RowCenter>
         </div>
       );
@@ -107,6 +107,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
             </p>
           </Row>
           <RowCenter>
+            <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
             <PieChartSelector heading="Städer" data={faultsPerCity} colors={colors[0]}/>
             <PieChartSelector heading="Produktmodeller" data={faultsPerProductModel} colors={colors[1]}/>
           </RowCenter>
