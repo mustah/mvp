@@ -47,6 +47,7 @@ export const sideBarStyles: Styles = {
   fontSize: {fontSize: fontSizeNormal},
   padding: {padding: '5px 0'},
   selected: {color: colors.blue},
+  notSelectable: {color: '#7b7b7b'},
   onHover: {color: colors.lightGrey},
 };
 
