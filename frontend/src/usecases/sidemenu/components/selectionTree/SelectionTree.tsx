@@ -64,12 +64,12 @@ class SelectableListItem extends React.Component<ListItemProps & {selectable: bo
   state = {selected: false};
 
   render() {
-    const selected = this.state.selected ? sideBarStyles.selected : null;
+    const selectedStyle: React.CSSProperties = this.state.selected ? sideBarStyles.selected : {};
     const {selectable, ...ListItemProps} = this.props;
     return (
       <ListItem
         {...ListItemProps}
-        style={{...listItemStyle, ...selected}}
+        style={{...listItemStyle, ...selectedStyle}}
         hoverColor={sideBarStyles.onHover.color}
         onClick={selectable ? this.onClick : () => null}
       />

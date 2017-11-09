@@ -14,7 +14,6 @@ import {MainMenuContainer} from '../main-menu/containers/MainMenuContainer';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import './App.scss';
 import {Pages} from './Pages';
-import {fetchSidebarTreeData} from '../../state/domain-models/geoData/geoDataActions';
 
 interface StateToProps {
   isAuthenticated: boolean;
@@ -25,7 +24,6 @@ interface StateToProps {
 interface DispatchToProps {
   fetchGateways: (encodedUriParameters: string) => void;
   fetchMeters: (encodedUriParameters: string) => void;
-  fetchSidebarTreeData: () => void;
 }
 
 /**
@@ -39,7 +37,6 @@ class AppComponent extends React.Component<StateToProps & DispatchToProps> {
     const {fetchGateways, fetchMeters, encodedUriParameters} = this.props;
     fetchGateways(encodedUriParameters);
     fetchMeters(encodedUriParameters);
-    this.props.fetchSidebarTreeData();
   }
 
   render() {
@@ -70,7 +67,6 @@ const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootSt
 const mapDispatchToProps = dispatch => bindActionCreators({
   fetchGateways,
   fetchMeters,
-  fetchSidebarTreeData,
 }, dispatch);
 
 const AppContainer = connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(AppComponent);

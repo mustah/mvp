@@ -2,8 +2,8 @@ import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 
 const parameterNames = {
-  cities: 'city',
-  addresses: 'address',
+  cities: 'city.id',
+  addresses: 'address.id',
   statuses: 'status',
   period: 'period',
 };

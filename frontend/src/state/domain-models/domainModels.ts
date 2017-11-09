@@ -2,7 +2,7 @@ import {IdNamed, uuid} from '../../types/Types';
 
 export interface Location {
   address: Address;
-  city: string;
+  city: IdNamed;
   position: GeoPosition;
 }
 
