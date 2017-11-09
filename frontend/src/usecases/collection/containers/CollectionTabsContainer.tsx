@@ -147,6 +147,7 @@ const mapStateToProps = (state: RootState) => {
   const {ui, domainModels} = state;
   const pagination = getCollectionPagination(ui);
   const gateways = domainModels.gateways;
+
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),

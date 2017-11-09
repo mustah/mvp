@@ -126,7 +126,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     // TODO retrieve real location data for the gateway
     const markers: { [key: string]: MapMarker } = {};
     const marker: MapMarker = {
-      status: '0',
+      status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},
       city: '',
       position: {
