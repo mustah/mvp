@@ -6,6 +6,7 @@ import {IconMore} from '../../icons/IconMore';
 import {Column} from '../../layouts/column/Column';
 import {Row} from '../../layouts/row/Row';
 import {TabUnderline} from './TabUnderliner';
+import {listItemStyle} from '../../../../app/themes';
 
 export interface TabSettingsProps {
   useCase: string;
@@ -53,8 +54,8 @@ export class TabSettings extends React.Component<TabSettingsProps, TabSettingsSt
             onRequestClose={closePopOver}
           >
             <Menu>
-              <MenuItem>Export to Excel (.csv)</MenuItem>
-              <MenuItem>Export to JSON</MenuItem>
+              <MenuItem style={listItemStyle}>Export to Excel (.csv)</MenuItem>
+              <MenuItem style={listItemStyle}>Export to JSON</MenuItem>
             </Menu>
           </Popover>
         </Row>

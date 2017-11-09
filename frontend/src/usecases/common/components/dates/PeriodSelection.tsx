@@ -4,7 +4,7 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {OnSelectPeriod} from '../../../../state/search/selection/selectionModels';
 import {Period} from '../../../../types/Types';
-import {colors} from '../../../app/themes';
+import {colors, listItemStyle} from '../../../app/themes';
 import {IconCalendar} from '../icons/IconCalendar';
 import {RowCenter} from '../layouts/row/Row';
 
@@ -55,6 +55,7 @@ export const PeriodSelection = (props: Props) => {
       label={tp.chosen}
       primaryText={tp.alternative}
       className="TimePeriod"
+      style={listItemStyle}
     />
   ));
 
