@@ -8,7 +8,7 @@ interface InfoLinkProps {
   label: string;
 }
 
-export const InfoLink = (props: InfoLinkProps) => {
+export const ButtonInfoLink = (props: InfoLinkProps) => {
   const {label, onClick} = props;
   return (
     <FlatButton

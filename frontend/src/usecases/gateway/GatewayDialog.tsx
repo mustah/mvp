@@ -16,7 +16,7 @@ import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
-import {ButtonClose} from '../common/containers/button-close/ButtonClose';
+import {ButtonClose} from '../common/components/buttons/ButtonClose';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
 

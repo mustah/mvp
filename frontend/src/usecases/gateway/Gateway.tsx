@@ -1,6 +1,6 @@
 import 'Gateway.scss';
 import * as React from 'react';
-import {InfoLink} from '../common/components/buttons/InfoLink';
+import {ButtonInfoLink} from '../common/components/buttons/ButtonInfoLink';
 import {GatewayDialog} from './GatewayDialog';
 
 interface GatewayProps {
@@ -34,7 +34,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
 
     return (
       <div>
-        <InfoLink onClick={open} label={id}/>
+        <ButtonInfoLink onClick={open} label={id}/>
         <GatewayDialog displayDialog={displayDialog} close={close}/>
       </div>
     );
