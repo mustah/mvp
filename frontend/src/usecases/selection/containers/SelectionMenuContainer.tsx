@@ -3,8 +3,10 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {
-  closeSelectionPage, resetSelection, saveSelection,
-  updateSelection
+  closeSelectionPage,
+  resetSelection,
+  saveSelection,
+  updateSelection,
 } from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
