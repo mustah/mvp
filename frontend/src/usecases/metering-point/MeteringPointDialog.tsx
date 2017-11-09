@@ -1,10 +1,13 @@
+import Dialog from 'material-ui/Dialog';
 import 'MeteringPoint.scss';
 import * as React from 'react';
-import Dialog from 'material-ui/Dialog';
 import {translate} from '../../services/translationService';
+import {IdNamed} from '../../types/Types';
+import {ButtonClose} from '../common/components/buttons/ButtonClose';
+import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
-import {StatusIcon} from '../common/components/table/status/StatusIcon';
+import {Status} from '../common/components/table/status/Status';
 import {Table} from '../common/components/table/table/Table';
 import {TableHead} from '../common/components/table/table/TableHead';
 import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
@@ -14,11 +17,8 @@ import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
 import {Tabs} from '../common/components/tabs/components/Tabs';
 import {TabSettings} from '../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
-import {ButtonClose} from '../common/components/buttons/ButtonClose';
-import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {tabType} from '../common/components/tabs/models/TabsModel';
-import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
-import {Status} from '../common/components/table/status/Status';
+import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
 
 interface MeteringPointDialogProps {
@@ -45,7 +45,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     const {selectedTab} = this.state;
     const {close} = this.props;
 
-    const renderStatusCell = (value, index) => <Status code={value.code} content={value.text}/>;
+    const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
     const meterData = {
@@ -53,8 +53,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id1: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Energy',
           value: '170.97 MWh',
@@ -63,8 +63,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id2: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Volume',
           value: '3109.81 m^3',
@@ -73,8 +73,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id3: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Power',
           value: '1.6 kW',
@@ -83,8 +83,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id4: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Volume flow',
           value: '0.029 m^3/h',
@@ -93,8 +93,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id5: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Flow temp.',
           value: '82.5 Celcius',
@@ -103,8 +103,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id6: {
           date: '2017-11-16 09:34',
           status: {
-            code: 3,
-            text: 'Läckage',
+            id: 3,
+            name: 'Läckage',
           },
           quantity: 'Return temp.',
           value: '33.7 Celcius',
@@ -113,8 +113,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         id7: {
           date: '2017-11-16 09:34',
           status: {
-            code: 0,
-            text: '',
+            id: 0,
+            name: 'OK',
           },
           quantity: 'Difference temp.',
           value: '48.86 Kelvin',
@@ -129,7 +129,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     };
 
     // TODO retrieve real location data for the gateway
-    const markers: { [key: string]: MapMarker } = {};
+    const markers: {[key: string]: MapMarker} = {};
     markers[0] = {
       status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},
@@ -200,17 +200,13 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                 <Row>
                   {translate('collection')}
                 </Row>
-                <Row>
-                  <StatusIcon code={0} content="OK"/>
-                </Row>
+                <Status id={0} name="OK"/>
               </Column>
               <Column>
                 <Row>
                   {translate('validation')}
                 </Row>
-                <Row>
-                  <StatusIcon code={3} content="Felrapporterad"/>
-                </Row>
+                <Status id={3} name="Felrapporterad"/>
               </Column>
               <Column>
                 <Row>
