@@ -6,7 +6,7 @@ import {translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
 import {IdNamed, OnClick, uuid} from '../../../../types/Types';
 import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
-import {LinkButton} from '../../../common/components/buttons/LinkButton';
+import {ButtonLink} from '../../../common/components/buttons/ButtonLink';
 import {Row, RowBottom} from '../../../common/components/layouts/row/Row';
 
 interface Props {
@@ -66,14 +66,14 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {id} = this.state;
     return (
       <Row>
-        {isSavedSelection(id) && <LinkButton onClick={this.onSave}>{translate('save')}</LinkButton>}
-        <LinkButton onClick={this.onSaveAs}>{translate('save as')}</LinkButton>
+        {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
+        <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
       </Row>
     );
   }
 
   renderResetButton = (): React.ReactNode => {
-    return <LinkButton onClick={this.props.resetSelection}>{translate('reset')}</LinkButton>;
+    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset')}</ButtonLink>;
   }
 
   onChange = (event: any): void => {

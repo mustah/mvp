@@ -1,5 +1,5 @@
 import * as classNames from 'classnames';
-import 'LinkButton.scss';
+import 'ButtonLink.scss';
 import * as React from 'react';
 import {Clickable} from '../../../../types/Types';
 import {Normal} from '../texts/Texts';
@@ -10,10 +10,10 @@ interface Props extends Clickable {
   children?: React.ReactNode | React.ReactNode[];
 }
 
-export const LinkButton = (props: Props) => {
+export const ButtonLink = (props: Props) => {
   const {className, children, onClick} = props;
   return (
-    <Row className={classNames('LinkButton first-uppercase', className)} onClick={onClick}>
+    <Row className={classNames('ButtonLink first-uppercase', className)} onClick={onClick}>
       <Normal>{children}</Normal>
     </Row>
   );

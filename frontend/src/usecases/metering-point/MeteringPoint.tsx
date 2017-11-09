@@ -1,7 +1,7 @@
 
 import 'MeteringPoint.scss';
 import * as React from 'react';
-import {InfoLink} from '../common/components/buttons/InfoLink';
+import {ButtonInfoLink} from '../common/components/buttons/ButtonInfoLink';
 import {MeteringPointDialog} from './MeteringPointDialog';
 
 export interface MeteringPointProps {
@@ -37,7 +37,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     return (
       <div>
-        <InfoLink onClick={open} label={id}/>
+        <ButtonInfoLink onClick={open} label={id}/>
         <MeteringPointDialog displayDialog={displayDialog} close={close}/>
       </div>
     );
