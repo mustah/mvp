@@ -5,7 +5,7 @@ import {Bold, Small} from '../texts/Texts';
 import './Summary.scss';
 
 export interface SummaryProps {
-  count: string;
+  count: number;
   title: string;
 }
 
