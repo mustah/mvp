@@ -24,7 +24,7 @@ msgid "address"
 msgstr "adress"
 
 msgid "product model"
-msgstr "produktmodell"
+msgstr "modell"
 
 msgid "status change"
 msgstr "statusförändring"
@@ -34,6 +34,12 @@ msgstr "status"
 
 msgid "action"
 msgstr "åtgärd"
+
+msgid "interval"
+msgstr "intervall"
+
+msgid "flagged for action"
+msgstr "flaggad för åtgärd"
 
 msgid "ok"
 msgstr "ok"
@@ -92,6 +98,9 @@ msgstr "tillverkare"
 msgid "medium"
 msgstr "medium"
 
+msgid "show only changes"
+msgstr "visa bara ändringar"
+
 msgid "close"
 msgstr "stäng"
 
@@ -99,7 +108,7 @@ msgid "dashboard"
 msgstr "dashboard"
 
 msgid "gateway details"
-msgstr "gateway-egenskaper"
+msgstr "gateway"
 
 msgid "gateway id"
 msgstr "gateway id"
@@ -129,7 +138,7 @@ msgid "report"
 msgstr "rapport"
 
 msgid "meter details"
-msgstr "mätaregenskaper"
+msgstr "mätare"
 
 msgid "meter id"
 msgstr "mätare"
@@ -137,8 +146,32 @@ msgstr "mätare"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "gateways"
+msgstr "gateways"
+
+msgid "log"
+msgstr "logg"
+
 msgid "new search"
 msgstr "nytt urval"
+
+msgid "gateway id"
+msgstr "gateway ID"
+
+msgid "latest snr"
+msgstr "senaste SNR"
+
+msgid "sap id"
+msgstr "sap ID"
+
+msgid "facility id"
+msgstr "anläggnings ID"
+
+msgid "measure id"
+msgstr "mät ID"
+
+msgid "resolution"
+msgstr "upplösning"
 
 msgid "selection"
 msgstr "urval"

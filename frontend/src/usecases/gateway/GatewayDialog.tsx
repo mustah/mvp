@@ -19,6 +19,7 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
+import {Checkbox} from 'material-ui';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -35,7 +36,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     super(props);
 
     this.state = {
-      selectedTab: tabType.statusChanges,
+      selectedTab: tabType.values,
     };
   }
 
@@ -50,73 +51,80 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     const gatewayData = {
       byId: {
         id1: {
-          date: '2017-11-16 09:34',
+          moid: '26544',
+          date: '2017-11-22 09:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Energy',
-          value: '170.97 MWh',
+          manufacturer: 'ELV',
           comment: '',
         },
         id2: {
-          date: '2017-11-16 09:34',
+          moid: '98754',
+          date: '2017-11-22 08:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Volume',
-          value: '3109.81 m^3',
+          manufacturer: 'ELV',
           comment: '',
         },
         id3: {
-          date: '2017-11-16 09:34',
+          moid: '16345',
+          date: '2017-11-22 07:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Power',
-          value: '1.6 kW',
+          manufacturer: 'ELV',
           comment: '',
         },
         id4: {
-          date: '2017-11-16 09:34',
+          moid: '74982',
+          date: '2017-11-22 06:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Volume flow',
-          value: '0.029 m^3/h',
+          manufacturer: 'ELV',
           comment: '',
         },
         id5: {
-          date: '2017-11-16 09:34',
+          moid: '4985241',
+          date: '2017-11-22 05:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Flow temp.',
-          value: '82.5 Celcius',
+          manufacturer: 'ELV',
           comment: '',
         },
         id6: {
-          date: '2017-11-16 09:34',
+          moid: '6577452',
+          date: '2017-11-22 04:34',
           status: {
             id: 3,
             name: 'Läckage',
           },
           quantity: 'Return temp.',
-          value: '33.7 Celcius',
+          manufacturer: 'ELV',
           comment: '',
         },
         id7: {
-          date: '2017-11-16 09:34',
+          moid: '3216872',
+          date: '2017-11-22 03:34',
           status: {
             id: 0,
             name: 'OK',
           },
           quantity: 'Difference temp.',
-          value: '48.86 Kelvin',
+          manufacturer: 'ELV',
           comment: '',
         },
       },
@@ -136,6 +144,18 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
       },
     };
 
+    const checkbox: React.CSSProperties = {
+      padding: 0,
+      margin: 5,
+      marginLeft: 0,
+    };
+
+    const checkboxLabel: React.CSSProperties = {
+      padding: 0,
+      margin: 5,
+      marginTop: 10,
+    };
+
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});
     };
@@ -148,7 +168,31 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
         onRequestClose={close}
         open={displayDialog}
       >
-        <h2 className="capitalize">{translate('gateway details')}</h2>
+        <Row className="Column-space-between">
+          <Column>
+            <h2 className="capitalize">{translate('gateway details')}</h2>
+          </Column>
+          <Column className="Column-center">
+            <Row className="Address">
+              <Column>
+                <Row className="capitalize Bold">
+                  {translate('city')}
+                </Row>
+                <Row>
+                  Perstorp
+                </Row>
+              </Column>
+              <Column>
+                <Row className="capitalize Bold">
+                  {translate('address')}
+                </Row>
+                <Row>
+                  Duvstigen 5
+                </Row>
+              </Column>
+            </Row>
+          </Column>
+        </Row>
         <Row>
           <Column className="ProductImage">
             <img src="cme2110.jpg" width="100"/>
@@ -168,23 +212,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('product model')}
                 </Row>
                 <Row>
-                  KAM
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('city')}
-                </Row>
-                <Row>
-                  Perstorp
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('address')}
-                </Row>
-                <Row>
-                  Duvstigen 5
+                  CMi2110
                 </Row>
               </Column>
             </Row>
@@ -197,24 +225,18 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Column>
               <Column>
                 <Row>
-                  {translate('validation')}
-                </Row>
-                <Status id={3} name="OK"/>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('status')}
+                  {translate('interval')}
                 </Row>
                 <Row>
-                  Läckage
+                  24h
                 </Row>
               </Column>
               <Column>
                 <Row>
-                  {translate('status')}
+                  {translate('flagged for action')}
                 </Row>
                 <Row>
-                  {translate('action pending')}
+                  Nej
                 </Row>
               </Column>
             </Row>
@@ -224,33 +246,46 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
           <Tabs className="full-width">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                <Tab tab={tabType.statusChanges} title={translate('status changes')}/>
+                <Tab tab={tabType.values} title={translate('meter')}/>
+                <Tab tab={tabType.log} title={translate('log')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
               </TabHeaders>
               <TabSettings useCase={'gateway'}/>
             </TabTopBar>
-            <TabContent tab={tabType.statusChanges} selectedTab={selectedTab}>
+            <TabContent tab={tabType.values} selectedTab={selectedTab}>
               <Table data={gatewayData}>
                 <TableColumn
-                  id={'date'}
-                  header={<TableHead className="first">{translate('date')}</TableHead>}
+                  id={'moid'}
+                  header={<TableHead className="first">{translate('meter')}</TableHead>}
                 />
                 <TableColumn
-                  id={'status'}
-                  header={<TableHead>{translate('status')}</TableHead>}
-                  cell={renderStatusCell}
+                  id={'manufacturer'}
+                  header={<TableHead>{translate('manufacturer')}</TableHead>}
                 />
                 <TableColumn
                   id={'quantity'}
                   header={<TableHead>{translate('quantity')}</TableHead>}
                 />
                 <TableColumn
-                  id={'value'}
-                  header={<TableHead>{translate('value')}</TableHead>}
+                  id={'status'}
+                  header={<TableHead>{translate('status')}</TableHead>}
+                  cell={renderStatusCell}
+                />
+              </Table>
+            </TabContent>
+            <TabContent tab={tabType.log} selectedTab={selectedTab}>
+              <Row>
+                <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
+              </Row>
+              <Table data={gatewayData}>
+                <TableColumn
+                  id={'date'}
+                  header={<TableHead>{translate('date')}</TableHead>}
                 />
                 <TableColumn
-                  id={'comment'}
-                  header={<TableHead>{translate('comment')}</TableHead>}
+                  id={'status'}
+                  header={<TableHead>{translate('status')}</TableHead>}
+                  cell={renderStatusCell}
                 />
               </Table>
             </TabContent>

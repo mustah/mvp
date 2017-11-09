@@ -35,6 +35,12 @@ msgstr "status"
 msgid "action"
 msgstr "action"
 
+msgid "interval"
+msgstr "interval"
+
+msgid "flagged for action"
+msgstr "flagged for action"
+
 msgid "ok"
 msgstr "ok"
 
@@ -92,6 +98,9 @@ msgstr "manufacturer"
 msgid "medium"
 msgstr "medium"
 
+msgid "show only changes"
+msgstr "show only changes"
+
 msgid "close"
 msgstr "close"
 
@@ -99,7 +108,7 @@ msgid "dashboard"
 msgstr "dashboard"
 
 msgid "gateway details"
-msgstr "gateway details"
+msgstr "gateway"
 
 msgid "gateway id"
 msgstr "gateway id"
@@ -129,7 +138,7 @@ msgid "report"
 msgstr "report"
 
 msgid "meter details"
-msgstr "meter details"
+msgstr "meter"
 
 msgid "meter id"
 msgstr "meter id"
@@ -145,6 +154,33 @@ msgstr "save as"
 
 msgid "reset"
 msgstr "reset"
+
+msgid "gateways"
+msgstr "gateways"
+
+msgid "log"
+msgstr "log"
+
+msgid "new search"
+msgstr "new search"
+
+msgid "gateway id"
+msgstr "Gateway ID"
+
+msgid "latest snr"
+msgstr "latest SNR"
+
+msgid "sap id"
+msgstr "sap ID"
+
+msgid "facility id"
+msgstr "facility ID"
+
+msgid "measure id"
+msgstr "measure ID"
+
+msgid "resolution"
+msgstr "resolution"
 
 msgid "selection"
 msgstr "selection"

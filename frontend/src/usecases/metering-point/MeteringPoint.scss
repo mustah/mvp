@@ -1,3 +1,5 @@
+@import '../app/variables';
+
 .MeterGraphics {
   width: 200px;
 }
@@ -11,4 +13,8 @@
       text-transform: uppercase;
     }
   }
+}
+
+.Address .Column:first-child {
+  margin-right: $space;
 }
