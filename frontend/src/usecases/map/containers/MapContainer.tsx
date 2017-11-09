@@ -79,7 +79,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
         }
 
         let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
-        percent = Math.round(percent);
+        percent = Math.floor(percent);
 
         if (percent === 100) {
           cssClass = 'marker-cluster-ok';
@@ -117,16 +117,17 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     Object.keys(markers).forEach((key: string) => {
       const marker = markers[key];
 
-      switch (marker.status) {
-        case '0': {
+      // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
+      switch (marker.status.id) {
+        case 0: {
           tmpIcon = 'marker-icon-ok.png';
           break;
         }
-        case '1': {
+        case 1: {
           tmpIcon = 'marker-icon-warning.png';
           break;
         }
-        case '2': {
+        case 2: {
           tmpIcon = 'marker-icon-error.png';
           break;
         }

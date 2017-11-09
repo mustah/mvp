@@ -131,7 +131,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     // TODO retrieve real location data for the gateway
     const markers: { [key: string]: MapMarker } = {};
     const mappedObject: MapMarker = {
-      status: '0',
+      status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},
       city: '',
       position: {
