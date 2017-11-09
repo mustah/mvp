@@ -60,9 +60,8 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   ];
 
   const statuses = [
-    {name: translate('ok'), value: 1713},
-    {name: translate('reported'), value: 2},
-    {name: translate('unhandled problems'), value: 0},
+    {name: 'OK', value: 1713},
+    {name: 'Fel', value: 2},
   ];
 
   const colors: [string[]] = [
