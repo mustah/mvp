@@ -4,18 +4,23 @@ import * as React from 'react';
 import 'SelectionTree.scss';
 import {translate} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
-import {listItemStyle, sideBarStyles, sideBarHeaderStyle, listStyle, nestedListItemStyle} from '../../../app/themes';
-import {selectionTreeData, SelectionTreeModel} from '../../models/organizedData';
+import {listItemStyle, listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
+import {SelectionTreeModel} from '../../models/organizedData';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 interface SelectionTreeProps {
   topLevel: string;
+  sidebarTree: any;
 }
 
 export const SelectionTree = (props: SelectionTreeProps) => {
-  const {topLevel} = props;
-  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, selectionTreeData, topLevel);
-  const nestedItems = selectionTreeData.result[topLevel].map(renderSelectionOverview);
+
+  if (props.sidebarTree.result.length < 1) {
+    return null;
+  }
+  const {topLevel, sidebarTree} = props;
+  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, sidebarTree, topLevel);
+  const nestedItems = sidebarTree.result[topLevel].sort().map(renderSelectionOverview);
 
   return (
     <List style={listStyle}>
@@ -35,9 +40,10 @@ export const SelectionTree = (props: SelectionTreeProps) => {
 const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) => {
   const entity = data.entities[level][id];
   const nextLevel = entity.childNodes.type;
+  const selectable = entity.selectable;
 
   const renderChildNodes = (treeItem: uuid) => renderSelectionTree(treeItem, data, nextLevel);
-  const nestedItems = entity.childNodes.ids.map(renderChildNodes);
+  const nestedItems = entity.childNodes.ids.sort().map(renderChildNodes);
 
   return (
     <SelectableListItem
@@ -48,22 +54,25 @@ const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) 
       initiallyOpen={false}
       nestedItems={nestedItems}
       nestedListStyle={nestedListItemStyle}
+      selectable={selectable}
     />
   );
 };
 
-class SelectableListItem extends React.Component<ListItemProps, {selected: boolean}> {
+class SelectableListItem extends React.Component<ListItemProps & {selectable: boolean}, {selected: boolean}> {
 
   state = {selected: false};
 
   render() {
-    const selected = this.state.selected ? sideBarStyles.selected : null;
+    const {selectable, ...ListItemProps} = this.props;
+    const selectableStyle: React.CSSProperties = selectable ? {} : sideBarStyles.notSelectable;
+    const selectedStyle: React.CSSProperties = this.state.selected ? sideBarStyles.selected : selectableStyle;
     return (
       <ListItem
-        {...this.props}
-        style={{...listItemStyle, ...selected}}
+        {...ListItemProps}
+        style={{...listItemStyle, ...selectedStyle}}
         hoverColor={sideBarStyles.onHover.color}
-        onClick={this.onClick}
+        onClick={selectable ? this.onClick : () => null}
       />
     );
   }

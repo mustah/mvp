@@ -14,7 +14,7 @@ export const GatewayList = (props: ListProps) => {
     <Status code={value.code} content={value.text}/>;
 
   const renderGateway = (value, index) => <Gateway id={value}/>;
-
+  const renderLocation = (value, index) => value.name;
   return (
     <Table data={data}>
       <TableColumn
@@ -25,10 +25,12 @@ export const GatewayList = (props: ListProps) => {
       <TableColumn
         id={'city'}
         header={<TableHead>{translate('city')}</TableHead>}
+        cell={renderLocation}
       />
       <TableColumn
         id={'address'}
         header={<TableHead>{translate('address')}</TableHead>}
+        cell={renderLocation}
       />
       <TableColumn
         id={'productModel'}

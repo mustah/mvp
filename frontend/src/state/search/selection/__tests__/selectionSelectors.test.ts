@@ -80,7 +80,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&period=current_month');
     });
 
     it('has two selected cities', () => {
@@ -89,7 +89,8 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city=got&city=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []}))
+        .toEqual('city.id=got&city.id=sto&period=current_month');
     });
   });
 

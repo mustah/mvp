@@ -3,6 +3,7 @@ import * as React from 'react';
 import {PaginationProps} from '../../../../state/ui/pagination/paginationModels';
 import {RowCenter} from '../layouts/row/Row';
 import './PaginationControl.scss';
+import {translate} from '../../../../services/translationService';
 
 export const PaginationControl = (props: PaginationProps) => {
     const {pagination: {page, limit}, changePage, numOfEntities} = props;
@@ -48,12 +49,12 @@ export const PaginationControl = (props: PaginationProps) => {
 
     return (
       <RowCenter className="PaginationControl">
-        <FlatButton disabled={noPrev} onClick={changePagePrev}>
-          Föregående
+        <FlatButton disabled={noPrev} onClick={changePagePrev} className="first-uppercase">
+          {translate('previous')}
         </FlatButton>
         {renderedNumbers}
-        <FlatButton disabled={noNext} onClick={changePageNext}>
-          Nästa
+        <FlatButton disabled={noNext} onClick={changePageNext} className="first-uppercase">
+          {translate('next')}
         </FlatButton>
       </RowCenter>
     );

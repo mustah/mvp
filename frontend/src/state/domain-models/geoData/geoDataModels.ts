@@ -1,5 +1,5 @@
 import {ErrorResponse, IdNamed, uuid} from '../../../types/Types';
-import {Address} from '../../../state/domain-models/domainModels';
+import {Address} from '../domainModels';
 
 export interface DomainModel<T> {
   [key: string]: T;

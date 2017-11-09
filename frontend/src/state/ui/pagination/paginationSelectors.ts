@@ -1,7 +1,7 @@
 import {Pagination, PaginationState} from './paginationModels';
 import {uuid} from '../../../types/Types';
 import {createSelector} from 'reselect';
-import {DomainModel, getResult} from '../../domain-models/domainModelsSelectors';
+import {DomainModel, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {UiState} from '../uiReducer';
 
 type PaginatedDomainModel = DomainModel & Pagination;
@@ -15,7 +15,7 @@ const getPagination = (useCase: string): any =>
   );
 
 export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], Pagination, uuid[]>(
-  getResult,
+  getResultDomainModels,
   ({page, limit}: PaginatedDomainModel) => ({page, limit}),
   (result: uuid[], pagination: Pagination) => {
     const {page, limit} = pagination;

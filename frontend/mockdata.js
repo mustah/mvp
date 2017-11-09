@@ -254,6 +254,10 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
 
       row.meter_status = decorateStatus(row.meter_status);
       row.gateway_status = decorateStatus(row.gateway_status);
+      const cityId = row.city;
+      const addressId = row.address;
+      const city = {id: cityId, name: row.city};
+      const address = {id: addressId, name: row.address, cityId};
 
       let gatewayStatusChanged = 'N/A';
       let meterStatusChanged = 'N/A';
@@ -265,8 +269,8 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       r.gateways.push({
         id: row.gateway_id,
         facility: row.facility,
-        address: row.address,
-        city: row.city,
+        address,
+        city,
         productModel: row.gateway_product_model,
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
@@ -278,8 +282,8 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       r.meters.push({
         id: row.meter_id,
         facility: row.facility,
-        address: row.address,
-        city: row.city,
+        address,
+        city,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: row.meter_status,
@@ -287,13 +291,12 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         gatewayId: row.gateway_id,
         position: objPosition,
       });
-      if (!cities.has(row.city)) {
-        r.selections.cities.push({id: row.city, name: row.city});
-        cities.add(row.city);
+      if (!cities.has(cityId)) {
+        r.selections.cities.push({id: cityId, name: row.city});
+        cities.add(cityId);
       }
-      const addressId = row.address;
       if (!addresses.has(addressId)) {
-        r.selections.addresses.push({id: addressId, name: row.address, cityId: row.city});
+        r.selections.addresses.push({id: addressId, name: row.address, cityId});
         addresses.add(addressId);
       }
       if (!meteringPoints.has(row.meter_id)) {

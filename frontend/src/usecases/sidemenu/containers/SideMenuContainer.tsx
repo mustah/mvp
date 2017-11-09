@@ -13,9 +13,11 @@ import {IconNavigationMenu} from '../../common/components/icons/IconNavigationMe
 import {SavedSelectionsContainer} from '../components/savedSelections/SavedSelections';
 import {SelectionTree} from '../components/selectionTree/SelectionTree';
 import {toggleShowHideSideMenu} from '../sideMenuActions';
+import {getSidebarTree} from '../../../state/domain-models/meter/meterSelectors';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
+  sidebarTree: any;
 }
 
 interface DispatchToProps {
@@ -24,7 +26,6 @@ interface DispatchToProps {
 
 const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
   const {isSideMenuOpen} = props;
-
   return (
     <Drawer
       containerClassName="DrawerContainer"
@@ -40,14 +41,15 @@ const SideMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
       />
       <SavedSelectionsContainer/>
 
-      <SelectionTree topLevel={'cities'}/>
+      <SelectionTree topLevel={'cities'} sidebarTree={props.sidebarTree}/>
     </Drawer>
   );
 };
 
-const mapStateToProps = ({ui}: RootState): StateToProps => {
+const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps => {
   return {
     isSideMenuOpen: isSideMenuOpen(ui),
+    sidebarTree: getSidebarTree(meters),
   };
 };
 

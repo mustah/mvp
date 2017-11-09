@@ -1,7 +1,8 @@
 import {schema} from 'normalizr';
 
-const city = new schema.Entity('cities');
-const address = new schema.Entity('addresses');
+export const city = new schema.Entity('cities');
+export const address = new schema.Entity('addresses');
+export const addressCluster = new schema.Entity('addressClusters');
 
 export const geoDataSchema = {
   cities: [city],

@@ -1,5 +1,9 @@
 import {AnyAction, combineReducers} from 'redux';
-import {GEO_DATA_FAILURE, GEO_DATA_REQUEST, GEO_DATA_SUCCESS} from './geoDataActions';
+import {
+  GEO_DATA_FAILURE,
+  GEO_DATA_REQUEST,
+  GEO_DATA_SUCCESS,
+} from './geoDataActions';
 import {AddressState, GeoDataState, IdNamedState} from './geoDataModels';
 
 export const initialState: IdNamedState = {
