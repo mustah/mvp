@@ -173,6 +173,9 @@ msgstr "spara"
 msgid "save as"
 msgstr "spara som"
 
+msgid "reset"
+msgstr "återställ"
+
 #~ msgid "status changed"
 #~ msgstr "statusförändring"
 

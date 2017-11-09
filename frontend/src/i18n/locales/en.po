@@ -173,6 +173,9 @@ msgstr "save"
 msgid "save as"
 msgstr "save as"
 
+msgid "reset"
+msgstr "reset"
+
 #~ msgid "status changed"
 #~ msgstr "status changed"
 
