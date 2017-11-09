@@ -28,12 +28,12 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
       const cluster: IdNamed = {id: clusterId, name: clusterName};
 
       if (!cities.has(city.id)) {
-        sidebarTree.cities.push(sidebarItem(city, '', {id: '', name: ''}, true, 'addressClusters'));
+        sidebarTree.cities.push(sidebarItem({unit: city, parentType: '', parent: {id: '', name: ''}, selectable: true, childrenType: 'addressClusters'}));
         cities.add(city.id);
       }
       if (!addressClusters.has(cluster.id)) {
         sidebarTree.addressClusters.push(
-          sidebarItem(cluster, parameterNames.cities, city, false, parameterNames.addresses),
+          sidebarItem({unit: cluster, parentType: parameterNames.cities, parent: city, selectable: false, childrenType: parameterNames.addresses}),
         );
         sidebarTree.cities.map((cty) => {
           if (cty.id === city.id) {
@@ -45,18 +45,6 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         });
         addressClusters.add(cluster.id);
       }
-      // if (!addresses.has(address.id)) {
-      //   sidebarTree.addresses.push(sidebarItem(address.id, address.name, 'addressClusters', cluster.id, true, ''));
-      //   sidebarTree.addressClusters.map((cl) => {
-      //     if (cl.id === cluster.id) {
-      //       cl.childNodes.ids.push(address.id);
-      //       return cl;
-      //     } else {
-      //       return cl;
-      //     }
-      //   });
-      //   addresses.add(address.id);
-      // }
       tmp(sidebarTree, parameterNames.addresses, addresses, address, cluster, 'addressClusters', true, '');
     });
     return normalize(sidebarTree, sidebarTreeSchema);
@@ -88,12 +76,19 @@ interface TmpProps extends SidebarItemProps {
 }
 
 const sidebarItem =
-  (unit: Unit, pType: string, parent: Unit, selectable: boolean, cType: string): SidebarItem =>
-    ({id: unit.id, name: unit.name, parent: {type: pType, id: parent.id}, selectable, childNodes: {type: cType, ids: []}});
+  (props: SidebarItemProps): SidebarItem => {
+    return {
+      id: props.unit.id,
+      name: props.unit.name,
+      parent: {type: props.parentType, id: props.parent.id},
+      selectable: props.selectable,
+      childNodes: {type: props.childrenType, ids: []},
+    };
+  };
 
-const tmp = (sidebarTree: any, category: string, set: Set<uuid>, unit: Unit, parent: Unit, parentType: string, selectable: boolean, childType: string) => {
+const tmp = (sidebarTree: any, category: string, set: Set<uuid>, unit: Unit, parent: Unit, parentType: string, selectable: boolean, childrenType: string) => {
   if (!set.has(unit.id)) {
-    sidebarTree[category].push(sidebarItem(unit, parentType, parent, selectable, childType));
+    sidebarTree[category].push(sidebarItem({unit, parentType, parent, selectable, childrenType}));
     sidebarTree[parentType].map((par) => {
       if (par.id === parent.id) {
         par.childNodes.ids.push(unit.id);
