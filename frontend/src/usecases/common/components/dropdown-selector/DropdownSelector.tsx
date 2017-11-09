@@ -53,7 +53,7 @@ export class DropdownSelector extends React.PureComponent<Props, State> {
     const {anchorElement, isOpen, searchText, filteredList} = this.state;
     const {selectionText, list} = this.props;
 
-    const rowHeight = 20; // TODO: Should prorably be move somewhere else.
+    const rowHeight = 30; // TODO: Should probably be move somewhere else.
     const visibleItems = 15;
     const entries = filteredList.length;
 

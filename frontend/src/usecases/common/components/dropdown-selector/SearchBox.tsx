@@ -6,12 +6,15 @@ interface SearchBoxProps {
   onUpdateSearch: (event) => void;
 }
 
+const searchStyle: React.CSSProperties = {position: 'absolute', right: 12, top: 7, color: '#7b7b7b'};
+
 export const SearchBox = (props: SearchBoxProps) => {
   const {value, onUpdateSearch} = props;
+
   return (
     <div className="SearchBox">
       <input type="textfield" className="SearchBox-input" value={value} onChange={onUpdateSearch}/>
-      <ActionSearch style={{position: 'absolute', right: '12px', top: '5px', color: '#7b7b7b'}}/>
+      <ActionSearch style={searchStyle}/>
     </div>
   );
 };

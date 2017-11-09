@@ -27,22 +27,24 @@
 }
 
 .DropdownSelector-menu {
+  margin: $sm-space $xs-space;
 
   .SearchBox {
     position: relative; // Used to position the search icon.
-    margin-top: $xs-space;
     margin-bottom: $sm-space;
     display: flex;
 
     .SearchBox-input {
       $border-focused: 2px;
       $border-unfocused: 1px;
-      flex: 1;
 
+      flex: 1;
+      font-size: $normal;
       margin: $border-focused - $border-unfocused 5px;
       padding: 8px 20px 8px 5px;
       border: $border-unfocused solid $grey;
       border-radius: 4px;
+
       &:focus {
         border: $border-focused solid $blue;
         outline: none;
@@ -50,7 +52,7 @@
       }
     }
   }
-  .DropdownSelector-content{
+  .DropdownSelector-content {
     max-height: 420px;
     overflow-y: scroll;
   }
