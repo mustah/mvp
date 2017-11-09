@@ -8,7 +8,7 @@ export const initialState: SelectionState = {
     cities: [],
     addresses: [],
     statuses: [],
-    period: Period.now,
+    period: Period.currentMonth,
   },
 };
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-08 15:28+0100\n"
+"POT-Creation-Date: 2017-11-09 10:28+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -59,17 +59,20 @@ msgstr "bestånd"
 msgid "faults"
 msgstr "fel"
 
-msgid "one day"
-msgstr "1 dag"
+msgid "current month"
+msgstr "denna månad"
 
-msgid "last week"
-msgstr "1 vecka"
+msgid "previous month"
+msgstr "förra månaden"
 
-msgid "last month"
-msgstr "1 månad"
+msgid "current week"
+msgstr "denna vecka"
 
-msgid "last quarter"
-msgstr "1 kvartal"
+msgid "last 7 days"
+msgstr "senaste 7 dagarna"
+
+msgid "pick a date"
+msgstr "välj datum"
 
 msgid "all"
 msgstr "allt"
@@ -158,9 +161,6 @@ msgstr "objekt"
 msgid "facility"
 msgstr "anläggning"
 
-#~ msgid "status changed"
-#~ msgstr "statusförändring"
-
 #~ msgid "email"
 #~ msgstr "email"
 
@@ -169,6 +169,18 @@ msgstr "anläggning"
 
 #~ msgid "period"
 #~ msgstr "period"
+
+#~ msgid "one day"
+#~ msgstr "1 dag"
+
+#~ msgid "last week"
+#~ msgstr "1 vecka"
+
+#~ msgid "last month"
+#~ msgstr "1 månad"
+
+#~ msgid "last quarter"
+#~ msgstr "1 kvartal"
 
 #~ msgid "last year"
 #~ msgstr "1 år"

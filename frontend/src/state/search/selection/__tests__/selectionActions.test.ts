@@ -71,7 +71,7 @@ describe('selectionActions', () => {
     it('select period', async () => {
       store = configureMockStore({searchParameters: {selection: {...initialState}}});
 
-      const period = Period.now;
+      const period = Period.previousMonth;
 
       store.dispatch(selectPeriod(period));
 
