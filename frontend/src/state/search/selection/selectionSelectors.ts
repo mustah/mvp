@@ -63,11 +63,26 @@ const getList = (entityType: string): any =>
     },
   );
 
-export const getCities =  getList(parameterNames.cities);
+const getCurrentSelectedParameters = (state: LookupState): SelectedParameters => state.selection.selected;
+const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;
+
+const getTotalOf = (entityType: string) =>
+  createSelector<LookupState, GeoDataState, SelectedParameters, number>(
+    getGeoData,
+    getCurrentSelectedParameters,
+    (geoData: GeoDataState, selected: SelectedParameters) => {
+      const selectedParameter = selected[entityType];
+      return selectedParameter && selectedParameter.length
+        ? selectedParameter.length
+        : geoData[entityType].total;
+    },
+  );
+
+export const getCities = getList(parameterNames.cities);
 export const getAddresses = getList(parameterNames.addresses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
-  (searchParameters: SearchParameterState) => searchParameters.selection.selected,
+  getSelectedParameters,
   encodedUriParametersFrom,
 );
 
@@ -82,3 +97,6 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 );
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
+
+export const getNumCities = getTotalOf(parameterNames.cities);
+export const getNumAddresses = getTotalOf(parameterNames.addresses);

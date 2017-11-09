@@ -182,6 +182,18 @@ msgstr "spara som"
 msgid "reset"
 msgstr "återställ"
 
+msgctxt "°plural"
+msgid "city°"
+msgstr "städer"
+
+msgctxt "°plural"
+msgid "address°"
+msgstr "adresser"
+
+msgctxt "°plural"
+msgid "meter°"
+msgstr "mätare"
+
 #~ msgid "status changed"
 #~ msgstr "statusförändring"
 
@@ -214,10 +226,6 @@ msgstr "återställ"
 
 #~ msgid "location"
 #~ msgstr "plats"
-
-#~ msgctxt "°plural"
-#~ msgid "meter°"
-#~ msgstr "mätare"
 
 #~ msgctxt "°plural"
 #~ msgid "{{count}} errand°"

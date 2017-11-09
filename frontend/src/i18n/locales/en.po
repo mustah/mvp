@@ -137,8 +137,14 @@ msgstr "meter id"
 msgid "logout"
 msgstr "logout"
 
-msgid "new search"
-msgstr "new search"
+msgid "save"
+msgstr "save"
+
+msgid "save as"
+msgstr "save as"
+
+msgid "reset"
+msgstr "reset"
 
 msgid "selection"
 msgstr "selection"
@@ -146,20 +152,17 @@ msgstr "selection"
 msgid "searching"
 msgstr "searching"
 
-msgid "saved search"
-msgstr "saved search"
+msgid "no saved selections"
+msgstr "no saved selections"
+
+msgid "saved selection"
+msgstr "saved selection"
 
 msgid "selection overview"
 msgstr "selection overview"
 
 msgid "metering"
 msgstr "metering"
-
-msgid "saved selection"
-msgstr "saved selection"
-
-msgid "no saved selections"
-msgstr "no saved selections"
 
 msgid "could not be collected"
 msgstr "could not be collected"
@@ -173,14 +176,23 @@ msgstr "object"
 msgid "facility"
 msgstr "facility"
 
-msgid "save"
-msgstr "save"
+msgctxt "°plural"
+msgid "city°"
+msgstr "cities"
 
-msgid "save as"
-msgstr "save as"
+msgctxt "°plural"
+msgid "address°"
+msgstr "addresses"
 
-msgid "reset"
-msgstr "reset"
+msgctxt "°plural"
+msgid "meter°"
+msgstr "meters"
+
+#~ msgid "new search"
+#~ msgstr "new search"
+
+#~ msgid "saved search"
+#~ msgstr "saved search"
 
 #~ msgid "status changed"
 #~ msgstr "status changed"
@@ -217,10 +229,6 @@ msgstr "reset"
 
 #~ msgid "current filter"
 #~ msgstr "current filter"
-
-#~ msgctxt "°plural"
-#~ msgid "meter°"
-#~ msgstr "meter°"
 
 #~ msgctxt "°plural"
 #~ msgid "{{count}} errand°"

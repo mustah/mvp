@@ -7,7 +7,7 @@ import {routes} from '../../../app/routes';
 import {PeriodSelection} from '../../../common/components/dates/PeriodSelection';
 import {Row, RowCenter} from '../../../common/components/layouts/row/Row';
 import {Logo} from '../../../common/components/logo/Logo';
-import {SummaryWrapper} from '../../../common/components/summary/SummaryWrapper';
+import {SummaryContainer} from '../../../common/containers/SummaryContainer';
 import './SelectionMenuWrapper.scss';
 
 interface Props extends ClassNamed {
@@ -31,7 +31,7 @@ export const SearchMenuWrapper = (props: Props) => {
       </Row>
       <RowCenter>
         <PeriodSelection selectPeriod={selectPeriod} period={period}/>
-        <SummaryWrapper/>
+        <SummaryContainer/>
       </RowCenter>
     </Row>
   );
