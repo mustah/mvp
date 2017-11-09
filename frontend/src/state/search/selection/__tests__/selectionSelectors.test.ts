@@ -89,7 +89,8 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=got&city.id=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []}))
+        .toEqual('city.id=got&city.id=sto&period=current_month');
     });
   });
 
