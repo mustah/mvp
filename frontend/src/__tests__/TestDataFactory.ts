@@ -1,4 +1,3 @@
-
 const geoData = {
   cities: [
     {
@@ -47,54 +46,74 @@ const geoData = {
   ],
 };
 
-const meters = {
-  meters: [
-    {
-      id: 'm1',
-      name: 'UNICOcoder',
-    },
-    {
-      id: 'm2',
-      name: '3100',
-    },
-    {
-      id: 'm3',
-      name: 'xxx2233',
-    },
-    {
-      id: 'm4',
-      name: '3100',
-    },
-    {
-      id: 'm5',
-      name: 'Test kit',
-    },
-  ],
-};
+const meters = [
+  {
+    id: 'm1',
+    name: 'UNICOcoder',
+  },
+  {
+    id: 'm2',
+    name: '3100',
+  },
+  {
+    id: 'm3',
+    name: 'xxx2233',
+  },
+  {
+    id: 'm4',
+    name: '3100',
+  },
+  {
+    id: 'm5',
+    name: 'Test kit',
+  },
+];
 
-const statuses = {
-  statuses: [
-    {
-      id: 'ok',
-      name: 'Ok',
-    },
-    {
-      id: 'warning',
-      name: 'Varning',
-    },
-    {
-      id: 'info',
-      name: 'Info',
-    },
-    {
-      id: 'critical',
-      name: 'Kritisk',
-    },
-  ],
-};
+const gateways = [
+  {
+    id: 'g1',
+    name: 'UNICOcoder',
+  },
+  {
+    id: 'g2',
+    name: '3100',
+  },
+  {
+    id: 'g3',
+    name: 'xxx2233',
+  },
+  {
+    id: 'g4',
+    name: '3100',
+  },
+  {
+    id: 'g5',
+    name: 'Test kit',
+  },
+];
+
+const statuses = [
+  {
+    id: 'ok',
+    name: 'Ok',
+  },
+  {
+    id: 'warning',
+    name: 'Varning',
+  },
+  {
+    id: 'info',
+    name: 'Info',
+  },
+  {
+    id: 'critical',
+    name: 'Kritisk',
+  },
+];
 
 export const testData = {
   geoData,
   statuses,
   meters,
+  gateways,
 };

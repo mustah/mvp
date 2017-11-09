@@ -8,7 +8,7 @@ import {PeriodSelection} from '../../../common/components/dates/PeriodSelection'
 import {Row, RowCenter} from '../../../common/components/layouts/row/Row';
 import {Logo} from '../../../common/components/logo/Logo';
 import {SummaryWrapper} from '../../../common/components/summary/SummaryWrapper';
-import './SelectionMenu.scss';
+import './SelectionMenuWrapper.scss';
 
 interface Props extends ClassNamed {
   children?: React.ReactNode;
@@ -20,7 +20,7 @@ export const SearchMenuWrapper = (props: Props) => {
   const {children, className, period, selectPeriod} = props;
 
   return (
-    <Row className={classNames('SelectionMenu-Container', className)}>
+    <Row className={classNames('SelectionMenuWrapper', className)}>
       <Row className="SelectionMenu">
         {children}
       </Row>

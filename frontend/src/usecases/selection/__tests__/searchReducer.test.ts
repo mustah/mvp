@@ -15,6 +15,7 @@ describe('searchReducer', () => {
 
     expect(selection(state, setSelection(searchParameters))).toEqual({
       ...initialState,
+      isChanged: true,
       selected: {
         ...state.selected,
         cities: [stockholm.id],

@@ -76,4 +76,9 @@ export const getSelectedPeriod = createSelector<SelectionState, SelectedParamete
   (selected: SelectedParameters) => selected.period! || initialState.selected.period,
 );
 
+export const getSavedSelections = createSelector<SearchParameterState, SelectionState[], IdNamed[]>(
+  (state: SearchParameterState) => state.saved,
+  (selectionState: SelectionState[]) => selectionState.map(({id, name}) => ({id, name})),
+);
+
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;

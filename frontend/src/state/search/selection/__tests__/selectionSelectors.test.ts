@@ -12,11 +12,16 @@ import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {getEncodedUriParameters, getCities, getSelectedPeriod, getSelection} from '../selectionSelectors';
+import {
+  getCities,
+  getEncodedUriParameters,
+  getSelectedPeriod,
+  getSelection,
+} from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
-  const searchParametersState: SearchParameterState = {selection: {...initialState}};
+  const searchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
 
   const gothenburg: IdNamed = {...testData.geoData.cities[0]};
   const stockholm: IdNamed = {...testData.geoData.cities[1]};
@@ -75,7 +80,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city=sto&period=current_month');
     });
 
     it('has two selected cities', () => {
@@ -84,7 +89,7 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state})).toEqual('city=got&city=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city=got&city=sto&period=current_month');
     });
   });
 

@@ -1,0 +1,13 @@
+@import "../../../app/variables";
+
+.LinkButton {
+  cursor: pointer;
+
+  .Normal {
+    color: $blue;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

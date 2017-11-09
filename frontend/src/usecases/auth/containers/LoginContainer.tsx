@@ -7,11 +7,17 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
 import {ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
+
+const loginButtonStyle = {
+  backgroundColor: colors.blue,
+  color: '#fff',
+};
 
 interface StateToProps {
   auth: AuthState;
@@ -59,18 +65,6 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth} = this.props;
-    const underlineFocusStyle = {
-      borderColor: '#00b6f7',
-    };
-
-    const floatingLabelFocusStyle = {
-      color: '#00b6f7',
-    };
-
-    const loginButtonStyle = {
-      backgroundColor: '#00b6f7',
-      color: '#fff',
-    };
 
     return (
       <ColumnCenter className={classNames('LoginContainer')}>

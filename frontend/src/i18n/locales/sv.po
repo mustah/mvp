@@ -149,6 +149,12 @@ msgstr "urvalsöversikt"
 msgid "metering"
 msgstr "mätning"
 
+msgid "saved selection"
+msgstr "sparat urval"
+
+msgid "no saved selections"
+msgstr "inga sparade urval"
+
 msgid "could not be collected"
 msgstr "kunde inte hämtas"
 
@@ -160,6 +166,18 @@ msgstr "objekt"
 
 msgid "facility"
 msgstr "anläggning"
+
+msgid "save"
+msgstr "spara"
+
+msgid "save as"
+msgstr "spara som"
+
+msgid "reset"
+msgstr "återställ"
+
+#~ msgid "status changed"
+#~ msgstr "statusförändring"
 
 #~ msgid "email"
 #~ msgstr "email"

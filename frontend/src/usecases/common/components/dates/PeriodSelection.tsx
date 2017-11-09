@@ -62,10 +62,11 @@ export const PeriodSelection = (props: Props) => {
     <RowCenter>
       <DropDownMenu
         maxHeight={300}
-        underlineStyle={{border: 'none'}}
-        labelStyle={{height: 48, lineHeight: '48px', paddingRight: 0, paddingLeft: 24, fontSize: 14}}
-        iconStyle={{fill: 'black', height: 48, width: 48, right: 0, top: 0, padding: 0}}
-        style={{width: 165}}
+        autoWidth={false}
+        underlineStyle={underlineStyle}
+        labelStyle={labelStyle}
+        iconStyle={iconStyle}
+        style={style}
         className="PeriodSelection"
         value={period}
         onChange={onSelectPeriod}
@@ -76,4 +77,29 @@ export const PeriodSelection = (props: Props) => {
       </DropDownMenu>
     </RowCenter>
   );
+};
+
+const style: React.CSSProperties = {
+  width: 165,
+};
+
+const underlineStyle: React.CSSProperties = {
+  border: 'none',
+};
+
+const labelStyle: React.CSSProperties = {
+  height: 48,
+  lineHeight: 48,
+  paddingRight: 0,
+  paddingLeft: 24,
+  fontSize: 14,
+};
+
+const iconStyle: React.CSSProperties = {
+  fill: 'black',
+  height: 48,
+  width: 48,
+  right: 0,
+  top: 0,
+  padding: 0,
 };
