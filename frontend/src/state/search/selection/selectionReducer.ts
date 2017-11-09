@@ -1,9 +1,9 @@
 import {AnyAction} from 'redux';
-import {idGenerator} from '../../../services/idGenerator';
 import {Period, uuid} from '../../../types/Types';
 import {
   CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
+  RESET_SELECTION,
   SAVE_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
@@ -13,7 +13,7 @@ import {
 import {SelectionState} from './selectionModels';
 
 export const initialState: SelectionState = {
-  id: idGenerator.uuid(),
+  id: -1,
   name: 'all',
   isChanged: false,
   selected: {
@@ -30,6 +30,10 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
   const {payload} = action;
 
   switch (action.type) {
+    case RESET_SELECTION:
+      return {
+        ...initialState,
+      };
     case SET_SELECTION:
       return {
         ...state,

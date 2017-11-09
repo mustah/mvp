@@ -4,16 +4,17 @@ import * as React from 'react';
 import {idGenerator} from '../../../../services/idGenerator';
 import {translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
-import {IdNamed} from '../../../../types/Types';
+import {IdNamed, OnClick, uuid} from '../../../../types/Types';
 import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {LinkButton} from '../../../common/components/buttons/LinkButton';
 import {Row, RowBottom} from '../../../common/components/layouts/row/Row';
 
 interface Props {
+  isChanged: boolean;
   selection: SelectionState;
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
-  isChanged: boolean;
+  resetSelection: OnClick;
 }
 
 interface State extends IdNamed {
@@ -26,6 +27,9 @@ const textFieldStyle: React.CSSProperties = {
   width: 180,
 };
 
+const isInitialSelection = (id: uuid) => id === -1;
+const isSavedSelection = (id: uuid) => id !== -1;
+
 export class InlineEditInput extends React.Component<Props, State> {
 
   constructor(props) {
@@ -33,7 +37,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {selection: {name, id}, isChanged} = props;
     this.state = {
       isChanged,
-      name: name === 'all' ? 'Allt' : name, // TODO[!must!] translate texts outside of React components
+      name: isInitialSelection(id) ? 'Allt' : name, // TODO[!must!] translate texts outside of React components
       id,
     };
   }
@@ -41,7 +45,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   render() {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = isChanged || this.props.isChanged;
-
+    const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
     return (
       <RowBottom className="InlineEditInput">
         <TextField
@@ -53,17 +57,23 @@ export class InlineEditInput extends React.Component<Props, State> {
           id={`selection-${id}`}
         />
         {shouldRenderActionButtons && this.renderActionButtons()}
+        {shouldRenderResetButton && this.renderResetButton()}
       </RowBottom>
     );
   }
 
   renderActionButtons = (): React.ReactNode => {
+    const {id} = this.state;
     return (
       <Row>
-        <LinkButton onClick={this.onSave}>{translate('save')}</LinkButton>
+        {isSavedSelection(id) && <LinkButton onClick={this.onSave}>{translate('save')}</LinkButton>}
         <LinkButton onClick={this.onSaveAs}>{translate('save as')}</LinkButton>
       </Row>
     );
+  }
+
+  renderResetButton = (): React.ReactNode => {
+    return <LinkButton onClick={this.props.resetSelection}>{translate('reset')}</LinkButton>;
   }
 
   onChange = (event: any): void => {

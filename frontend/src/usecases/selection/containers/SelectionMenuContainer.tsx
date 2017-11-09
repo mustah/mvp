@@ -2,7 +2,10 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {closeSelectionPage, saveSelection, updateSelection} from '../../../state/search/selection/selectionActions';
+import {
+  closeSelectionPage, resetSelection, saveSelection,
+  updateSelection
+} from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {OnClick} from '../../../types/Types';
@@ -18,10 +21,11 @@ interface DispatchToProps {
   closeSelectionPage: OnClick;
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
+  resetSelection: OnClick;
 }
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
-  const {closeSelectionPage, selection, saveSelection, updateSelection} = props;
+  const {closeSelectionPage, selection, saveSelection, updateSelection, resetSelection} = props;
   const key = `${selection.id}-${selection.isChanged}`;
   return (
     <RowCenter>
@@ -33,6 +37,7 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
           selection={selection}
           saveSelection={saveSelection}
           updateSelection={updateSelection}
+          resetSelection={resetSelection}
         />
       </RowMiddle>
     </RowCenter>
@@ -49,6 +54,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   closeSelectionPage,
   saveSelection,
   updateSelection,
+  resetSelection,
 }, dispatch);
 
 export const SelectionMenuContainer =

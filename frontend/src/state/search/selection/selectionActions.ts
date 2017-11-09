@@ -11,6 +11,7 @@ export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 
 export const SET_SELECTION = 'SET_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
+export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_PERIOD = 'SELECT_PERIOD';
 
 export const SAVE_SELECTION = 'SAVE_SELECTION';
@@ -21,6 +22,7 @@ export const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 
 export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
+export const resetSelectionAction = createEmptyAction(RESET_SELECTION);
 export const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
 
 export const saveSelectionAction = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
@@ -62,8 +64,14 @@ export const selectSavedSelection = (selectedId: uuid) =>
     }
   };
 
+export const resetSelection = () =>
+  dispatch => {
+    dispatch(resetSelectionAction());
+    dispatch(fetchMetersAndGateways());
+  };
+
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
-  async (dispatch, getState: () => RootState) => {
+  (dispatch, getState: () => RootState) => {
     const selectionState: SelectionState = getSelection(getState().searchParameters);
     const {parameter, id} = selectionParameter;
 
@@ -76,7 +84,7 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
   };
 
 export const selectPeriod = (period: Period) =>
-  async (dispatch) => {
+  dispatch => {
     dispatch(selectPeriodAction(period));
     dispatch(fetchMetersAndGateways());
   };
