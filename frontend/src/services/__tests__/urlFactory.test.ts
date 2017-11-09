@@ -15,25 +15,25 @@ describe('urlFactory', () => {
     it('returns selected city', () => {
       const selection: SelectedParameters = {cities: ['got']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('city=got');
+      expect(encodedUriParametersFrom(selection)).toEqual('city.id=got');
     });
 
     it('returns selected cities', () => {
       const selection: SelectedParameters = {cities: ['got', 'sto', 'mmx']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('city=got&city=sto&city=mmx');
+      expect(encodedUriParametersFrom(selection)).toEqual('city.id=got&city.id=sto&city.id=mmx');
     });
 
     it('returns selected address', () => {
       const selection: SelectedParameters = {addresses: ['address 2']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('address=address%202');
+      expect(encodedUriParametersFrom(selection)).toEqual('address.id=address%202');
     });
 
     it('returns selected addresses', () => {
       const selection: SelectedParameters = {addresses: ['address 2', 'storgatan 5']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('address=address%202&address=storgatan%205');
+      expect(encodedUriParametersFrom(selection)).toEqual('address.id=address%202&address.id=storgatan%205');
     });
 
     it('returns selected statuses', () => {
@@ -49,7 +49,8 @@ describe('urlFactory', () => {
         statuses: [Status.ok, Status.warning],
       };
 
-      const expected = 'address=address%202&address=storgatan%205&city=got&city=sto&city=mmx&status=ok&status=warning';
+      const expected =
+        'address.id=address%202&address.id=storgatan%205&city.id=got&city.id=sto&city.id=mmx&status=ok&status=warning';
       expect(encodedUriParametersFrom(selection)).toEqual(expected);
     });
 
