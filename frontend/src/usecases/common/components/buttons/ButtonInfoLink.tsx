@@ -2,6 +2,7 @@ import FlatButton from 'material-ui/FlatButton';
 import ActionInfoOutline from 'material-ui/svg-icons/action/info-outline';
 import * as React from 'react';
 import {OnClick} from '../../../../types/Types';
+import {colors} from '../../../app/themes';
 
 interface InfoLinkProps {
   onClick: OnClick;
@@ -13,7 +14,7 @@ export const ButtonInfoLink = (props: InfoLinkProps) => {
   return (
     <FlatButton
       hoverColor="inherit"
-      icon={<ActionInfoOutline/>}
+      icon={<ActionInfoOutline color={colors.lightBlack} hoverColor={colors.iconHover}/>}
       label={label}
       labelPosition="before"
       onClick={onClick}
