@@ -13,6 +13,7 @@ interface Props {
   selection: SelectionState;
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
+  isChanged: boolean;
 }
 
 interface State extends IdNamed {
@@ -29,9 +30,9 @@ export class InlineEditInput extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
-    const {selection: {name, id}} = props;
+    const {selection: {name, id}, isChanged} = props;
     this.state = {
-      isChanged: false,
+      isChanged,
       name,
       id,
     };
@@ -39,6 +40,7 @@ export class InlineEditInput extends React.Component<Props, State> {
 
   render() {
     const {isChanged, name, id} = this.state;
+    const shouldRenderActionButtons = isChanged || this.props.isChanged;
 
     return (
       <RowBottom className="InlineEditInput">
@@ -50,7 +52,7 @@ export class InlineEditInput extends React.Component<Props, State> {
           onChange={this.onChange}
           id={`selection-${id}`}
         />
-        {isChanged && this.renderActionButtons()}
+        {shouldRenderActionButtons && this.renderActionButtons()}
       </RowBottom>
     );
   }

@@ -14,6 +14,7 @@ export interface SelectedParameters {
 
 export interface SelectionState extends IdNamed {
   selected: SelectedParameters;
+  isChanged: boolean;
 }
 
 export interface LookupState {

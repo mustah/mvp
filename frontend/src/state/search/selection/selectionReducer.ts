@@ -2,6 +2,7 @@ import {AnyAction} from 'redux';
 import {idGenerator} from '../../../services/idGenerator';
 import {Period, uuid} from '../../../types/Types';
 import {
+  CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
   SAVE_SELECTION,
   SELECT_PERIOD,
@@ -14,6 +15,7 @@ import {SelectionState} from './selectionModels';
 export const initialState: SelectionState = {
   id: idGenerator.uuid(),
   name: 'all',
+  isChanged: false,
   selected: {
     cities: [],
     addresses: [],
@@ -39,6 +41,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
     case DESELECT_SELECTION:
       return {
         ...state,
+        isChanged: true,
         selected: {
           ...state.selected,
           [payload.parameter]: filterOutUnselected(state.selected[payload.parameter], payload.id),
@@ -47,6 +50,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
     case SELECT_PERIOD:
       return {
         ...state,
+        isChanged: true,
         selected: {
           ...state.selected,
           period: payload,
@@ -56,6 +60,14 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
       return {
         ...state,
         ...payload,
+        isChanged: false,
+      };
+    case SAVE_SELECTION:
+    case UPDATE_SELECTION:
+    case CLOSE_SELECTION_PAGE:
+      return {
+        ...state,
+        isChanged: false,
       };
     default:
       return state;

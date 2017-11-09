@@ -22,12 +22,14 @@ interface DispatchToProps {
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
   const {closeSelectionPage, selection, saveSelection, updateSelection} = props;
+  const key = `${selection.id}-${selection.isChanged}`;
   return (
     <RowCenter>
       <CloseIcon onClick={closeSelectionPage}/>
       <RowMiddle>
         <InlineEditInput
-          key={selection.id}
+          key={key}
+          isChanged={selection.isChanged}
           selection={selection}
           saveSelection={saveSelection}
           updateSelection={updateSelection}

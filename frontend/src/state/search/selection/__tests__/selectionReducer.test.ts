@@ -8,6 +8,7 @@ describe('selectionReducer', () => {
   const mockPayload: SelectionState = {
     id: 5,
     name: 'something else',
+    isChanged: false,
     selected: {
       cities: [1, 2],
       addresses: [1, 2, 3],
@@ -24,6 +25,7 @@ describe('selectionReducer', () => {
       const payload: SelectionState = {
         id: 1,
         name: 'saved parameters',
+        isChanged: false,
         selected: {
           cities: [1, 2],
         },
@@ -35,6 +37,7 @@ describe('selectionReducer', () => {
       const payload: SelectionState = {
         id: 1,
         name: 'saved parameters',
+        isChanged: false,
         selected: {
           cities: [1, 2],
         },
@@ -53,7 +56,7 @@ describe('selectionReducer', () => {
     it('replaces current selection', () => {
       const state = selection(initialState, selectSavedSelectionAction(mockPayload));
 
-      expect(state).toEqual({...mockPayload});
+      expect(state).toEqual({...mockPayload, isChanged: false});
     });
   });
 
