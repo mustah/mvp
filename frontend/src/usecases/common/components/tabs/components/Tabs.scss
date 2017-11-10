@@ -3,6 +3,7 @@
 .Tabs {
   .TabList {
     align-items: flex-end;
+    border-bottom: solid 1px $dark-grey;
 
     .Tab {
       cursor: pointer;
@@ -12,7 +13,7 @@
         font-size: $normal;
         text-transform: capitalize;
         text-align: center;
-        padding: 5px $lg-space;
+        padding: 4px $lg-space;
         color: $lightest-black;
 
         &:hover {
@@ -25,15 +26,22 @@
           color: $black;
         }
 
+        &:hover {
+          .TabUnderline {
+            border-bottom: solid 4px $blue;
+          }
+        }
+      }
+
+      &:hover {
         .TabUnderline {
-          height: 1px;
+          border-bottom: solid 4px $grey;
         }
       }
     }
 
     .TabUnderline {
       height: 4px;
-      border-bottom: solid 1px $dark-grey;
 
       &.isSelected {
         border-bottom: solid 4px $blue;

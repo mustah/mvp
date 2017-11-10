@@ -1,14 +1,14 @@
 @import "../../../app/variables";
 
 .SummaryComponent {
-  width: 158px;
-  margin-left: $sm-space;
-  padding-left: 12px;
+  width: 166px;
+  padding-left: $space;
   border-left: 1px solid $border-color;
 }
 
 .Summary {
   padding-left: $sm-space;
+  padding-right: $sm-space;
   color: $light-black;
 
   .Summary-title {
