@@ -52,16 +52,20 @@ const getSelectedEntities = (entityType: string): any =>
     (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
+export const getCitiesSelection = entitiesSelector(parameterNames.cities);
+
+// TODO: Handle typing, that getAddresses return Address[] and not IdNamed[]
 const getList = (entityType: string): any =>
   createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: IdNamed[], deselected: IdNamed[]) => {
-      const selectedEntities = selected.map(({id, name}: IdNamed) => ({id, name, selected: true}));
-      const deselectedEntities = deselected.map(({id, name}: IdNamed) => ({id, name, selected: false}));
+      const selectedEntities = selected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: true}));
+      const deselectedEntities = deselected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );
+const entitySort = (objA: IdNamed, objB: IdNamed) => (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
 const getCurrentSelectedParameters = (state: LookupState): SelectedParameters => state.selection.selected;
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;
