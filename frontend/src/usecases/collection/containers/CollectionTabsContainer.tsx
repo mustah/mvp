@@ -26,6 +26,7 @@ import {changePaginationCollection} from '../../../state/ui/pagination/paginatio
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {GatewayList} from '../components/GatewayList';
+import {useCases} from '../../../types/constants';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   numOfGateways: number;
@@ -127,7 +128,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <TabOption title={translate('population')} id="population"/>
           <TabOption title={translate('faults')} id="faults"/>
         </TabOptions>
-        <TabSettings useCase={'collection'}/>
+        <TabSettings useCase={useCases.collection}/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
         {graphTabContents}

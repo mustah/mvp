@@ -1,4 +1,6 @@
-export const DASHBOARD = 'dashboard';
-export const COLLECTION = 'collection';
-export const VALIDATION = 'validation';
-export const SELECTION = 'selection';
+export const useCases = {
+  dashboard: 'dashboard',
+  collection: 'collection',
+  validation: 'validation',
+  selection: 'selection',
+};

@@ -5,8 +5,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
+import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
+import {useCases} from '../../../types/constants';
 import {uuid} from '../../../types/Types';
 import {Row, RowCenter} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
@@ -21,15 +25,12 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
-import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
-import {Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {Bold} from '../../common/components/texts/Texts';
+import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 
 interface ValidationTabsContainerProps extends TabsContainerProps {
   numOfMeters: number;
-  meters: { [key: string]: Meter };
+  meters: {[key: string]: Meter};
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
@@ -87,7 +88,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             id={'facility'}
           />
         </TabOptions>
-        <TabSettings useCase={'validation'}/>
+        <TabSettings useCase={useCases.validation}/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
         <div>
@@ -95,7 +96,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
             <p>Antal mätare: <Bold>{numberOfMeters}</Bold>.</p>
           </Row>
           <RowCenter>
-            <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
+            <PieChartSelector heading={translate('city', {count: cities.length})} data={cities} colors={colors[0]}/>
             <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
             <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
           </RowCenter>
@@ -112,10 +113,8 @@ const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui, domainModels} = state;
+const mapStateToProps = ({ui, domainModels: {meters}}: RootState) => {
   const pagination = getValidationPagination(ui);
-  const meters = domainModels.meters;
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
     tabs: getTabs(ui.tabs.validation),
