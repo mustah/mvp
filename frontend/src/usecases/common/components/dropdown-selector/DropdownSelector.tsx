@@ -6,7 +6,7 @@ import {List, ListRowProps} from 'react-virtualized';
 import {translate} from '../../../../services/translationService';
 import {SelectionListItem} from '../../../../state/search/selection/selectionModels';
 import {IdNamed} from '../../../../types/Types';
-import {dropdownRowStyle, dropDownStyle} from '../../../app/themes';
+import {dropDownStyle} from '../../../app/themes';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
@@ -15,10 +15,16 @@ import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
 
-interface Props {
+export interface DropdownProps {
   selectionText: string;
   list: SelectionListItem[];
   select: (props: IdNamed) => void;
+}
+
+interface GenericDropdownProps extends DropdownProps {
+  renderLabel: (index: number, filteredList: SelectionListItem[]) => Array<React.ReactElement<any>>;
+  rowHeight: number;
+  visibleItems: number;
 }
 
 interface State {
@@ -38,7 +44,7 @@ const selectedOptions = (list: SelectionListItem[]) => list.filter((item: Select
 const replaceArrayItem = (array: any[], newItem: any, index: number): any[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
 
-export class DropdownSelector extends React.PureComponent<Props, State> {
+export class DropdownSelector extends React.PureComponent<GenericDropdownProps, State> {
 
   constructor(props) {
     super(props);
@@ -53,8 +59,8 @@ export class DropdownSelector extends React.PureComponent<Props, State> {
     const {anchorElement, isOpen, searchText, filteredList} = this.state;
     const {selectionText, list} = this.props;
 
-    const rowHeight = dropdownRowStyle.rowHeight;
-    const visibleItems = dropdownRowStyle.visibleItems;
+    const rowHeight = this.props.rowHeight;
+    const visibleItems = this.props.visibleItems;
     const entries = filteredList.length;
 
     const selected = selectedOptions(list);
@@ -132,9 +138,7 @@ export class DropdownSelector extends React.PureComponent<Props, State> {
     const {filteredList} = this.state;
     const {id, name, selected} = filteredList[index];
     const onClick = () => this.onSelect({id, name, index});
-    const label = [
-      <Normal key={1}>{name}</Normal>,
-    ];
+    const label = this.props.renderLabel(index, filteredList);
 
     return (
       <Checkbox

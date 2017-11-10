@@ -47,8 +47,8 @@ describe('selectionSelectors', () => {
     const stockholmSelected: SelectionListItem[] = [
       {selected: true, id: 'sto', name: 'Stockholm'},
       {selected: false, id: 'got', name: 'Göteborg'},
-      {selected: false, id: 'mmx', name: 'Malmö'},
       {selected: false, id: 'kub', name: 'Kungsbacka'},
+      {selected: false, id: 'mmx', name: 'Malmö'},
     ];
     expect(getCities(state)).toEqual(stockholmSelected);
   });
@@ -126,8 +126,8 @@ describe('selectionSelectors', () => {
       const stockholmSelected: SelectionListItem[] = [
         {selected: true, id: 'sto', name: 'Stockholm'},
         {selected: false, id: 'got', name: 'Göteborg'},
-        {selected: false, id: 'mmx', name: 'Malmö'},
         {selected: false, id: 'kub', name: 'Kungsbacka'},
+        {selected: false, id: 'mmx', name: 'Malmö'},
       ];
 
       expect(getCities(state)).toEqual(stockholmSelected);

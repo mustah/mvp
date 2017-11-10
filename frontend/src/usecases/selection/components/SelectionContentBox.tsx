@@ -12,12 +12,12 @@ import {
 } from '../../../state/search/selection/selectionModels';
 import {getAddresses, getCities, getCitiesSelection} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
-import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
+import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MetersResultContainer} from '../containers/MetersContainer';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
-import {DomainModel} from 'state/domain-models/geoData/geoDataModels';
+import {DomainModel} from '../../../state/domain-models/geoData/geoDataModels';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -41,7 +41,7 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
   return (
     <Column className="SelectionContentBox">
       <Row>
-        <DropdownSelector
+        <SimpleDropdownSelector
           list={cities}
           selectionText={citySelectionText}
           select={selectCity}
