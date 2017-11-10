@@ -57,8 +57,8 @@ const getList = (entityType: string): any =>
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: IdNamed[], deselected: IdNamed[]) => {
-      const selectedEntities = selected.map(({id, name}: IdNamed) => ({id, name, selected: true}));
-      const deselectedEntities = deselected.map(({id, name}: IdNamed) => ({id, name, selected: false}));
+      const selectedEntities = selected.map((unit: IdNamed) => ({...unit, selected: true}));
+      const deselectedEntities = deselected.map((unit: IdNamed) => ({...unit, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );

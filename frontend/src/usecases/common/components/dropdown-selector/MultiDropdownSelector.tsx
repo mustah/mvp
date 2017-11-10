@@ -38,7 +38,7 @@ const selectedOptions = (list: SelectionListItem[]) => list.filter((item: Select
 const replaceArrayItem = (array: any[], newItem: any, index: number): any[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
 
-export class DropdownSelector extends React.PureComponent<Props, State> {
+export class MultiDropdownSelector extends React.PureComponent<Props, State> {
 
   constructor(props) {
     super(props);
@@ -53,8 +53,8 @@ export class DropdownSelector extends React.PureComponent<Props, State> {
     const {anchorElement, isOpen, searchText, filteredList} = this.state;
     const {selectionText, list} = this.props;
 
-    const rowHeight = dropdownRowStyle.rowHeight;
-    const visibleItems = dropdownRowStyle.visibleItems;
+    const rowHeight = dropdownRowStyle.rowHeightMulti;
+    const visibleItems = dropdownRowStyle.visibleItemsMulti;
     const entries = filteredList.length;
 
     const selected = selectedOptions(list);

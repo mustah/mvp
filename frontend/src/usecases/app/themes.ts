@@ -47,7 +47,7 @@ export const sideBarStyles: Styles = {
   fontSize: {fontSize: fontSizeNormal},
   padding: {padding: '5px 0'},
   selected: {color: colors.blue},
-  notSelectable: {color: '#7b7b7b'},
+  notSelectable: {color: colors.lightBlack},
   onHover: {color: colors.lightGrey},
 };
 
@@ -79,6 +79,12 @@ export const nestedListItemStyle: React.CSSProperties = {
 export const dropDownStyle: Styles = {
   popoverStyle: {marginTop: 6, marginLeft: 2},
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
+};
+export const dropdownRowStyle = {
+  rowHeight: 25, // 8:5 relation between regular and multi.
+  rowHeightMulti: 40,
+  visibleItems: 16, // 8:5 relation between regular and multi.
+  visibleItemsMulti: 10,
 };
 
 export const underlineFocusStyle = {
