@@ -46,6 +46,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
         indicators={systemOverview.indicators}
         selectedWidget={selectedWidget}
         selectIndicatorWidget={selectIndicatorWidget}
+        showSelected={false}
       />
     );
 

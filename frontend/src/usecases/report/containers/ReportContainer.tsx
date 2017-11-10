@@ -5,6 +5,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Row} from '../../common/components/layouts/row/Row';
@@ -13,7 +14,6 @@ import {PageContainer} from '../../common/containers/PageContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
-import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
@@ -37,6 +37,7 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
           indicators={indicators}
           selectedWidget={selectedWidget}
           selectIndicatorWidget={selectIndicatorWidget}
+          showSelected={true}
         />
       </Row>
 
