@@ -132,10 +132,14 @@ export class DropdownSelector extends React.PureComponent<Props, State> {
     const {filteredList} = this.state;
     const {id, name, selected} = filteredList[index];
     const onClick = () => this.onSelect({id, name, index});
+    const label = [
+      <Normal key={1}>{name}</Normal>,
+    ];
+
     return (
       <Checkbox
         id={id}
-        name={name}
+        label={label}
         onClick={onClick}
         key={id}
         style={style}

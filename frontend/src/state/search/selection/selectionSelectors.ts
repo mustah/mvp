@@ -52,6 +52,9 @@ const getSelectedEntities = (entityType: string): any =>
     (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
+export const getCitiesSelection = entitiesSelector(parameterNames.cities);
+
+// TODO: Handle typing, that getAddresses return Address[] and not IdNamed[]
 const getList = (entityType: string): any =>
   createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),

@@ -14,11 +14,14 @@ import {Normal} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
+import {DomainModel} from '../../../../state/domain-models/geoData/geoDataModels';
 
 interface Props {
   selectionText: string;
   list: SelectionListItem[];
   select: (props: IdNamed) => void;
+  parentSelectionLookup: DomainModel<IdNamed>;
+  parentIdentifier: string;
 }
 
 interface State {
@@ -130,12 +133,19 @@ export class MultiDropdownSelector extends React.PureComponent<Props, State> {
 
   rowRenderer = ({index, style}: ListRowProps) => {
     const {filteredList} = this.state;
+    const {parentIdentifier, parentSelectionLookup} = this.props;
     const {id, name, selected} = filteredList[index];
+    const parentId = filteredList[index][parentIdentifier];
+    const label = [
+      <Normal key={1}>{name}</Normal>,
+      <div key={2} style={dropDownStyle.parentStyle}>{parentSelectionLookup[parentId].name}</div>,
+    ];
+
     const onClick = () => this.onSelect({id, name, index});
     return (
       <Checkbox
         id={id}
-        name={name}
+        label={label}
         onClick={onClick}
         key={id}
         style={style}

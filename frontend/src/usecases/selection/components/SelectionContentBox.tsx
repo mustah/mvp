@@ -10,17 +10,19 @@ import {
   SelectionListItem,
   SelectionParameter,
 } from '../../../state/search/selection/selectionModels';
-import {getAddresses, getCities} from '../../../state/search/selection/selectionSelectors';
+import {getAddresses, getCities, getCitiesSelection} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {DropdownSelector} from '../../common/components/dropdown-selector/DropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MetersResultContainer} from '../containers/MetersContainer';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
+import {DomainModel} from 'state/domain-models/geoData/geoDataModels';
 
 interface StateToProps {
   cities: SelectionListItem[];
   addresses: SelectionListItem[];
+  citiesSelection: DomainModel<IdNamed>;
 }
 
 interface DispatchToProps {
@@ -28,11 +30,7 @@ interface DispatchToProps {
 }
 
 const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
-  const {
-    toggleSelection,
-    cities,
-    addresses,
-  } = props;
+  const {toggleSelection, cities, addresses, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
@@ -52,6 +50,8 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
           list={addresses}
           selectionText={addressSelectionText}
           select={selectAddress}
+          parentSelectionLookup={citiesSelection}
+          parentIdentifier="cityId"
         />
       </Row>
 
@@ -68,6 +68,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}
 
   return {
     cities: getCities(lookupState),
+    citiesSelection: getCitiesSelection(lookupState),
     addresses: getAddresses(lookupState),
   };
 };

@@ -1,13 +1,17 @@
 import * as React from 'react';
-import {Clickable, IdNamed} from '../../../../types/Types';
+import {Clickable, uuid} from '../../../../types/Types';
 import {RowMiddle} from '../layouts/row/Row';
-import {Normal} from '../texts/Texts';
 import './Checkbox.scss';
 
-type CheckBox = IdNamed & Clickable & {checked?: boolean, style: any};
+interface CheckBox extends Clickable {
+  id: uuid;
+  checked?: boolean;
+  style: any;
+  label: Array<React.ReactElement<any>>;
+}
 
 export const Checkbox = (props: CheckBox) => {
-  const {id, name, checked, style, onClick} = props;
+  const {id, label, checked, style, onClick} = props;
   const htmlId = `id-${id}`;
   return (
     <RowMiddle className="Checkbox" style={style}>
@@ -18,7 +22,7 @@ export const Checkbox = (props: CheckBox) => {
         defaultChecked={checked}
       />
       <label htmlFor={htmlId} className="clickable">
-        <Normal>{name}</Normal>
+        {label}
       </label>
     </RowMiddle>
   );
