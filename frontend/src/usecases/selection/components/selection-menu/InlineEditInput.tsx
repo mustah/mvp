@@ -46,6 +46,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = isChanged || this.props.isChanged;
     const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
+
     return (
       <RowBottom className="InlineEditInput">
         <TextField

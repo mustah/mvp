@@ -61,6 +61,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
           period: payload,
         },
       };
+    case UPDATE_SELECTION:
     case SELECT_SAVED_SELECTION:
       return {
         ...state,
@@ -68,7 +69,6 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         isChanged: false,
       };
     case SAVE_SELECTION:
-    case UPDATE_SELECTION:
     case CLOSE_SELECTION_PAGE:
       return {
         ...state,
