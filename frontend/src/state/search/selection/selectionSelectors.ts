@@ -57,11 +57,12 @@ const getList = (entityType: string): any =>
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: IdNamed[], deselected: IdNamed[]) => {
-      const selectedEntities = selected.map((unit: IdNamed) => ({...unit, selected: true}));
-      const deselectedEntities = deselected.map((unit: IdNamed) => ({...unit, selected: false}));
+      const selectedEntities = selected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: true}));
+      const deselectedEntities = deselected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );
+const entitySort = (objA: IdNamed, objB: IdNamed) => (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
 const getCurrentSelectedParameters = (state: LookupState): SelectedParameters => state.selection.selected;
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;

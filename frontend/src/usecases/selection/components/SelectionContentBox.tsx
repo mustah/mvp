@@ -16,6 +16,7 @@ import {DropdownSelector} from '../../common/components/dropdown-selector/Dropdo
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MetersResultContainer} from '../containers/MetersContainer';
+import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -47,7 +48,7 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
           selectionText={citySelectionText}
           select={selectCity}
         />
-        <DropdownSelector
+        <MultiDropdownSelector
           list={addresses}
           selectionText={addressSelectionText}
           select={selectAddress}
