@@ -5,19 +5,19 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicatorSelectors';
 import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle, Title} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Title';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
-import DashboardTabsContainer from './DashboardTabsContainer';
-import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicatorSelectors';
+import {SummaryContainer} from '../../common/containers/SummaryContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
@@ -47,6 +47,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
         indicators={systemOverview.indicators}
         selectedWidget={selectedWidget}
         selectIndicatorWidget={selectIndicatorWidget}
+        showSelected={false}
       />
     );
 
@@ -54,12 +55,10 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
+          <SummaryContainer/>
         </Row>
 
         {record && renderSystemOverview(record.systemOverview)}
-
-        <Title>{translate('collection')}</Title>
-        <DashboardTabsContainer/>
       </PageContainer>
     );
   }
@@ -75,8 +74,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
  * @param {RootState} state
  * @returns {{dashboard: DashboardState}}
  */
-const mapStateToProps = (state: RootState): StateToProps => {
-  const {dashboard, ui} = state;
+const mapStateToProps = ({dashboard, ui}: RootState): StateToProps => {
   return {
     dashboard,
     selectedWidget: getSelectedIndicatorDashboard(ui),

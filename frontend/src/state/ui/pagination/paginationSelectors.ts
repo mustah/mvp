@@ -1,15 +1,16 @@
-import {Pagination, PaginationState} from './paginationModels';
-import {uuid} from '../../../types/Types';
 import {createSelector} from 'reselect';
+import {useCases} from '../../../types/constants';
+import {uuid} from '../../../types/Types';
 import {DomainModel, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {UiState} from '../uiReducer';
+import {Pagination, PaginationState} from './paginationModels';
 
 type PaginatedDomainModel = DomainModel & Pagination;
 
 const getPaginationState = (state: UiState): PaginationState => state.pagination;
 
 const getPagination = (useCase: string): any =>
-  createSelector<UiState, PaginationState, Pagination> (
+  createSelector<UiState, PaginationState, Pagination>(
     getPaginationState,
     (pagination: PaginationState) => pagination[useCase],
   );
@@ -22,7 +23,7 @@ export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], Pa
     return result.slice((page - 1) * limit, page * limit);
   });
 
-export const getCollectionPagination = getPagination('collection');
-export const getValidationPagination = getPagination('validation');
-export const getDashboardPagination = getPagination('dashboard');
-export const getSelectionPagination = getPagination('selection');
+export const getCollectionPagination = getPagination(useCases.collection);
+export const getValidationPagination = getPagination(useCases.validation);
+export const getDashboardPagination = getPagination(useCases.dashboard);
+export const getSelectionPagination = getPagination(useCases.selection);

@@ -96,7 +96,7 @@ msgid "close"
 msgstr "stäng"
 
 msgid "dashboard"
-msgstr "status"
+msgstr "dashboard"
 
 msgid "gateway details"
 msgstr "gateway-egenskaper"

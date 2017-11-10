@@ -4,13 +4,14 @@ import {Column} from '../../../common/components/layouts/column/Column';
 import './SystemOverview.scss';
 
 export const SystemOverview = (props: IndicatorWidgetProps) => {
-  const {indicators, selectIndicatorWidget, selectedWidget} = props;
+  const {indicators, selectIndicatorWidget, selectedWidget, showSelected} = props;
   return (
     <Column className="SystemOverview">
       <IndicatorWidgets
         selectIndicatorWidget={selectIndicatorWidget}
         selectedWidget={selectedWidget}
         indicators={indicators}
+        showSelected={showSelected}
       />
     </Column>
   );

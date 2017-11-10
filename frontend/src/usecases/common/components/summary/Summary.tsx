@@ -17,7 +17,7 @@ export const Summary = (props: SummaryProps) => {
         <Small className="uppercase">{title}</Small>
       </RowCenter>
       <RowCenter>
-        <Bold>{count}</Bold>
+        <Bold className="Summary-value">{count}</Bold>
       </RowCenter>
     </Column>
   );

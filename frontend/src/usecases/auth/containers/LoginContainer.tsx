@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
+import {colors, floatingLabelFocusStyle, paperStyle, underlineFocusStyle} from '../../app/themes';
 import {ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
@@ -68,7 +68,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
-        <Paper zDepth={1} className="LoginPaper">
+        <Paper className="LoginPaper" style={paperStyle}>
           <ColumnCenter className="customerLogo">
             <Logo/>
           </ColumnCenter>

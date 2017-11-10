@@ -1,7 +1,7 @@
 @import "../../app/variables";
 
 .LoginContainer {
-  margin-top: $xl-space * 2;
+  margin-top: 150px;
   flex: 1;
   align-items: center;
 
@@ -10,7 +10,7 @@
   }
 
   .LoginPaper {
-    padding: 60px;
+    padding: 24px !important;
 
     .TextField {
       margin-bottom: 20px;

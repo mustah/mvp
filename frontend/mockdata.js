@@ -81,7 +81,7 @@ const fromDbJson = {
             'unit': '%',
           },
           {
-            'title': 'Mätvärdeskvalitet',
+            'title': 'Validering',
             'type': 'measurementQuality',
             'subtitle': '3481 punkter',
             'state': 'critical',
@@ -126,7 +126,7 @@ const parseMeasurementSeedData = (path) => {
   };
   const dateString = (d) => {
     //tslint:disable-next-line
-    return `${d.getFullYear()}-${padZero(d.getMonth()+1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
+    return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
   };
 
   glob.sync(path).forEach((seedFile) => {
@@ -226,7 +226,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {

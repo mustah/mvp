@@ -32,11 +32,13 @@ interface IndicatorProps {
   indicator: Indicator;
   select: (type: IndicatorType) => void;
   isSelected?: boolean;
+  showSelected: boolean;
 }
 
 export const IndicatorWidget = (props: IndicatorProps) => {
-  const {select, indicator, isSelected} = props;
+  const {select, indicator, isSelected, showSelected} = props;
   const {state, title, value, unit, subtitle} = indicator;
+
   const selectWidget = () => select(indicator.type);
 
   return (
@@ -56,7 +58,7 @@ export const IndicatorWidget = (props: IndicatorProps) => {
           </Row>
         </Column>
 
-        <div className={classNames('Indicator-separator', {isSelected}, state)}/>
+        {showSelected && <div className={classNames('Indicator-separator', {isSelected}, state)}/>}
       </Column>
     </div>
   );

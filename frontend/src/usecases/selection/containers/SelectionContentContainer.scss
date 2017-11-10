@@ -1,0 +1,12 @@
+@import "../../app/variables";
+
+.SelectionContentBox {
+  th {
+    border-top: 1px solid $grey;
+  }
+}
+
+.SelectionDropdownOptions {
+  padding-left: $space;
+}
+

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import 'SelectionContentContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
@@ -15,7 +16,7 @@ import {IdNamed} from '../../../types/Types';
 import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MetersResultContainer} from '../containers/MetersContainer';
+import {MetersResultContainer} from './MetersContainer';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
 import {DomainModel} from '../../../state/domain-models/geoData/geoDataModels';
 
@@ -29,7 +30,7 @@ interface DispatchToProps {
   toggleSelection: (searchParameters: SelectionParameter) => void;
 }
 
-const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
+const SelectionContent = (props: StateToProps & DispatchToProps) => {
   const {toggleSelection, cities, addresses, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
@@ -40,7 +41,7 @@ const SelectionContentBox = (props: StateToProps & DispatchToProps) => {
 
   return (
     <Column className="SelectionContentBox">
-      <Row>
+      <Row className="SelectionDropdownOptions">
         <SimpleDropdownSelector
           list={cities}
           selectionText={citySelectionText}
@@ -77,5 +78,5 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   toggleSelection,
 }, dispatch);
 
-export const SelectionContentBoxContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SelectionContentBox);
+export const SelectionContentContainer =
+  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SelectionContent);

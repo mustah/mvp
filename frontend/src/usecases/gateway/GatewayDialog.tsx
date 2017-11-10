@@ -233,7 +233,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               <Table data={gatewayData}>
                 <TableColumn
                   id={'date'}
-                  header={<TableHead>{translate('date')}</TableHead>}
+                  header={<TableHead className="first">{translate('date')}</TableHead>}
                 />
                 <TableColumn
                   id={'status'}

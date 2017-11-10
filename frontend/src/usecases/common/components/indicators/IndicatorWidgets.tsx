@@ -16,10 +16,11 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
   indicators: Indicator[];
   children?: React.ReactElement<any>;
   className?: string;
+  showSelected: boolean;
 }
 
 export const IndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {indicators, selectedWidget, selectIndicatorWidget} = props;
+  const {indicators, selectedWidget, selectIndicatorWidget, showSelected} = props;
 
   const renderWidget = (indicator: Indicator, index: number) => (
     <IndicatorWidget
@@ -27,6 +28,7 @@ export const IndicatorWidgets = (props: IndicatorWidgetProps) => {
       indicator={indicator}
       isSelected={selectedWidget !== null ? selectedWidget === indicator.type : index === 0}
       select={selectIndicatorWidget}
+      showSelected={showSelected}
     />);
 
   return (

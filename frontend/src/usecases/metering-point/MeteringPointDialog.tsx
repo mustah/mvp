@@ -240,7 +240,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               <Table data={meterData}>
                 <TableColumn
                   id={'date'}
-                  header={<TableHead>{translate('date')}</TableHead>}
+                  header={<TableHead className="first">{translate('date')}</TableHead>}
                 />
                 <TableColumn
                   id={'status'}
