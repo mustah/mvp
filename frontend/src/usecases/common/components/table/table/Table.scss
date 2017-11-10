@@ -15,6 +15,10 @@
     tr {
       background: $light-grey;
       color: $light-black;
+
+      th.first {
+        padding-left: $space;
+      }
     }
   }
 

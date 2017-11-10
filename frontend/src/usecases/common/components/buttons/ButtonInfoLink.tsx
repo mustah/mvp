@@ -17,6 +17,7 @@ export const ButtonInfoLink = (props: InfoLinkProps) => {
       icon={<ActionInfoOutline color={colors.lightBlack} hoverColor={colors.iconHover}/>}
       label={label}
       labelPosition="before"
+      labelStyle={{paddingLeft: 8}}
       onClick={onClick}
     />
   );
