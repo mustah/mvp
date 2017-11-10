@@ -140,8 +140,11 @@ msgstr "report"
 msgid "meter details"
 msgstr "meter"
 
+msgid "labels"
+msgstr "labels"
+
 msgid "meter id"
-msgstr "meter id"
+msgstr "MOID"
 
 msgid "logout"
 msgstr "logout"

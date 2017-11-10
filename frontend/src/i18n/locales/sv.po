@@ -140,8 +140,11 @@ msgstr "rapport"
 msgid "meter details"
 msgstr "mätare"
 
+msgid "labels"
+msgstr "etiketter"
+
 msgid "meter id"
-msgstr "mätare"
+msgstr "MOID"
 
 msgid "logout"
 msgstr "logga ut"

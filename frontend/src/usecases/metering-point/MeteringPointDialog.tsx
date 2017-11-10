@@ -145,7 +145,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     };
 
     // TODO retrieve real location data for the gateway
-    const markers: {[key: string]: MapMarker} = {};
+    const markers: { [key: string]: MapMarker } = {};
     markers[0] = {
       status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},
@@ -177,34 +177,14 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         onRequestClose={close}
         open={displayDialog}
       >
-        <Row className="Column-space-between">
-          <Column>
-            <h2 className="capitalize">{translate('meter details')}</h2>
-          </Column>
-          <Column className="Column-center">
-            <Row className="Address">
-              <Column>
-                <Row className="capitalize Bold">
-                  {translate('city')}
-                </Row>
-                <Row>
-                  Perstorp
-                </Row>
-              </Column>
-              <Column className="Column-center">
-                <Row className="capitalize Bold">
-                  {translate('address')}
-                </Row>
-                <Row>
-                  Duvstigen 5
-                </Row>
-              </Column>
-            </Row>
-          </Column>
-        </Row>
         <Row>
           <Column className="OverView">
             <Row>
+              <Column>
+                <Row>
+                  <h2>{translate('meter')}</h2>
+                </Row>
+              </Column>
               <Column>
                 <Row>
                   {translate('meter id')}
@@ -230,11 +210,32 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   Värme
                 </Row>
               </Column>
+              <Column className="address">
+                <Row className="capitalize Bold">
+                  {translate('city')}
+                </Row>
+                <Row>
+                  Perstorp
+                </Row>
+              </Column>
+              <Column className="Column-center">
+                <Row className="capitalize Bold">
+                  {translate('address')}
+                </Row>
+                <Row>
+                  Duvstigen 5
+                </Row>
+              </Column>
             </Row>
             <Row>
               <Column>
                 <Row>
-                  {translate('collection')}
+                  <h3>{translate('collection')}</h3>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('status')}
                 </Row>
                 <Row>
                   <StatusIcon id={0} name="OK"/>
@@ -268,7 +269,12 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  {translate('validation')}
+                  <h3>{translate('validation')}</h3>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('status')}
                 </Row>
                 <Row>
                   <StatusIcon id={3} name="Battery low"/>
@@ -284,6 +290,11 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Column>
             </Row>
             <Row>
+              <Column>
+                <Row>
+                  <h3>{translate('labels')}</h3>
+                </Row>
+              </Column>
               <Column>
                 <Row>
                   {translate('sap id')}
