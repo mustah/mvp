@@ -17,6 +17,7 @@ import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
+import {SummaryContainer} from '../../common/containers/SummaryContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
@@ -54,6 +55,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
+          <SummaryContainer/>
         </Row>
 
         {record && renderSystemOverview(record.systemOverview)}
