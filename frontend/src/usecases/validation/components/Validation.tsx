@@ -1,5 +1,7 @@
+import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
+import {paperStyle} from '../../app/themes';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Title';
 import {PageContainer} from '../../common/containers/PageContainer';
@@ -12,7 +14,9 @@ export const Validation = () => {
         <MainTitle>{translate('validation')}</MainTitle>
       </Row>
 
-      <ValidationTabsContainer/>
+      <Paper style={paperStyle}>
+        <ValidationTabsContainer/>
+      </Paper>
 
     </PageContainer>
   );

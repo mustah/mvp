@@ -10,11 +10,10 @@ import {OnSelectPeriod, SelectionState} from '../../../state/search/selection/se
 import {getSelectedPeriod, getSelection} from '../../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {Period} from '../../../types/Types';
-import {SelectionMenuContainer} from '../../selection/containers/SelectionMenuContainer';
 import {SelectionMenuSummary} from '../../selection/components/selection-menu/SelectionMenuSummary';
 import {SearchMenuWrapper} from '../../selection/components/selection-menu/SelectionMenuWrapper';
+import {SelectionMenuContainer} from '../../selection/containers/SelectionMenuContainer';
 import {Column} from '../components/layouts/column/Column';
-import {Content} from '../components/layouts/content/Content';
 import {Layout} from '../components/layouts/layout/Layout';
 
 interface StateToProps {
@@ -55,10 +54,8 @@ const PageContainerComponent = (props: StateToProps & DispatchToProps) => {
         {renderSelectionSearch}
       </SearchMenuWrapper>
 
-      <Column className="flex-1">
-        <Content className="Content-main">
-          {children}
-        </Content>
+      <Column className="flex-1 PageContent">
+        {children}
       </Column>
     </Layout>
   );

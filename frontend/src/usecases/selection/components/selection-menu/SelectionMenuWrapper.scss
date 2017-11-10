@@ -10,6 +10,7 @@
   background-color: $white;
   height: $main-menu-height;
   justify-content: space-between;
+  box-shadow: $box-shadow;
 
   &.isSideMenuOpen {
     left: $opened-side-menu-width;
