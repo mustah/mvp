@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
+import {IdNamed} from '../../../../types/Types';
 import {MeteringPoint} from '../../../metering-point/MeteringPoint';
 import {ListProps} from '../tabs/models/TabsModel';
 import {Status} from './status/Status';
@@ -11,8 +12,7 @@ export const MeterList = (props: ListProps) => {
 
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
-  const renderStatusCell = (value, index) =>
-    <Status code={value.code} content={value.text}/>;
+  const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
 
   const statusHeader = (
     <TableHead

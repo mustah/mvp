@@ -249,8 +249,8 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         }
       }
 
-      const decorateStatus = (s) => s === 'OK' ? {name: s, id: 0} : {name: s, id: 2};
-      const nullOr = (s) => s === 'NULL' ? null : s;
+      const decorateStatus = (status) => status === 'OK' ? {name: status, id: 0} : {name: status, id: 2};
+      const nullOr = (str) => str === 'NULL' ? null : str;
 
       row.meter_status = decorateStatus(row.meter_status);
       row.gateway_status = decorateStatus(row.gateway_status);

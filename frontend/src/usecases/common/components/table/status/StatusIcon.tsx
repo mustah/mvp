@@ -1,18 +1,12 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'Status.scss';
-import {statusFor} from '../../../../../types/Types';
+import 'StatusIcon.scss';
+import {IdNamed, statusFor} from '../../../../../types/Types';
 
-interface StatusIconProps {
-  code: number;
-  content: string;
-}
-
-export const StatusIcon = (props: StatusIconProps) => {
-  const {code, content} = props;
-  const status = statusFor(code);
+export const StatusIcon = (props: IdNamed) => {
+  const status = statusFor(props.id);
   if (!status) {
     return null;
   }
-  return <div className={classNames('StatusIcon', status)}>{content}</div>;
+  return <div className={classNames('StatusIcon', status)}>{props.name}</div>;
 };

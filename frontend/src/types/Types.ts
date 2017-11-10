@@ -49,4 +49,4 @@ const status = {
   11: Status.warning,
 };
 
-export const statusFor = (statusCode: number): Status | null => status[statusCode];
+export const statusFor = (statusCode: uuid): Status | null => status[statusCode];
