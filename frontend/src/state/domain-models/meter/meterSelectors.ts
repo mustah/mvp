@@ -55,6 +55,9 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: '',
       });
     });
+    // TODO: Perhaps move this moderation into the sidebarItemsList to speed up performance.
+    sidebarTree.addressClusters.map((item) => {item.name = item.name + '...(' + item.childNodes.ids.length + ')'; });
+
     return normalize(sidebarTree, sidebarTreeSchema);
   },
 );
@@ -82,9 +85,6 @@ const sidebarItems = (sidebarTreeUpdate: {[key: string]: SidebarItem[]}, props: 
       sidebarTreeUpdate[parentType].map((par) => {
         if (par.id === parent.id) {
           par.childNodes.ids.push(unit.id);
-          return par;
-        } else {
-          return par;
         }
       });
     }
