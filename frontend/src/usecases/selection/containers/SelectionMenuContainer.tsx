@@ -11,7 +11,7 @@ import {
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {OnClick} from '../../../types/Types';
-import {CloseIcon} from '../../common/components/icons/IconClose';
+import {IconNavigationBack} from '../../common/components/icons/IconNavigationBack';
 import {RowCenter, RowMiddle} from '../../common/components/layouts/row/Row';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
@@ -31,7 +31,7 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
   const key = `${selection.id}-${selection.isChanged}`;
   return (
     <RowCenter>
-      <CloseIcon onClick={closeSelectionPage}/>
+      <IconNavigationBack onClick={closeSelectionPage}/>
       <RowMiddle>
         <InlineEditInput
           key={key}
