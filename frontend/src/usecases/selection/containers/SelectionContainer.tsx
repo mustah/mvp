@@ -1,19 +1,25 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {paperStyle} from '../../app/themes';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
-import {SelectionContentContainer} from '../containers/SelectionContentContainer';
-import {SelectionOptionsLoaderContainer} from '../containers/SelectionOptionsLoaderContainer';
+import {SelectionContentContainer} from './SelectionContentContainer';
+import {SelectionOptionsLoaderContainer} from './SelectionOptionsLoaderContainer';
 
-export const Selection = () => {
+interface StateToProps {
+  title: string;
+}
+
+export const SelectionContainerComponent = (props: StateToProps) => {
   return (
     <PageContainer>
       <Row className="space-between">
-        <MainTitle>{translate('selection')}</MainTitle>
+        <MainTitle>{props.title}</MainTitle>
         <SummaryContainer/>
       </Row>
 
@@ -25,3 +31,12 @@ export const Selection = () => {
     </PageContainer>
   );
 };
+
+const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToProps => {
+  const title = selection.id === -1 ? translate('selection') : selection.name;
+  return {
+    title,
+  };
+};
+
+export const SelectionContainer = connect<StateToProps, {}, {}>(mapStateToProps)(SelectionContainerComponent);

@@ -6,7 +6,7 @@ import {Collection} from '../collection/components/Collection';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import DashboardContainer from '../dashboard/containers/DashboardContainer';
 import ReportContainer from '../report/containers/ReportContainer';
-import {Selection} from '../selection/components/Selection';
+import {SelectionContainer} from '../selection/containers/SelectionContainer';
 import {routes} from './routes';
 import {Validation} from '../validation/components/Validation';
 
@@ -15,7 +15,7 @@ const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(Collection);
 const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
-const SearchPage = userIsAuthenticated(Selection);
+const SearchPage = userIsAuthenticated(SelectionContainer);
 
 export const Pages = (props) => (
   <Layout className="flex-1">
