@@ -11,7 +11,7 @@ import {paperStyle} from '../../app/themes';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';

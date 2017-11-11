@@ -13,8 +13,12 @@
 
   thead {
     tr {
-      background: $light-grey;
+      background: $grey;
       color: $light-black;
+
+      &:hover {
+        background-color: $grey;
+      }
 
       th.first {
         padding-left: $space;

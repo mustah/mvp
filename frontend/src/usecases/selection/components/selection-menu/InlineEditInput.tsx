@@ -37,14 +37,14 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {selection: {name, id}, isChanged} = props;
     this.state = {
       isChanged,
-      name: isInitialSelection(id) ? 'Allt' : name, // TODO[!must!] translate texts outside of React components
+      name: isInitialSelection(id) ? '' : name, // TODO[!must!] translate texts outside of React components
       id,
     };
   }
 
   render() {
     const {isChanged, name, id} = this.state;
-    const shouldRenderActionButtons = isChanged || this.props.isChanged;
+    const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
     const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
 
     return (
@@ -52,6 +52,7 @@ export class InlineEditInput extends React.Component<Props, State> {
         <TextField
           style={textFieldStyle}
           floatingLabelFocusStyle={floatingLabelFocusStyle}
+          hintText="Namnge ditt urval"
           underlineFocusStyle={underlineFocusStyle}
           value={name}
           onChange={this.onChange}

@@ -11,7 +11,7 @@ import {
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
