@@ -1,6 +1,7 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {paperStyle} from '../../app/themes';
@@ -16,7 +17,7 @@ interface StateToProps {
   title: string;
 }
 
-export const SelectionContainerComponent = (props: StateToProps) => {
+export const SelectionContainerComponent = (props: StateToProps & InjectedAuthRouterProps) => {
   return (
     <PageContainer>
       <Row className="space-between">
