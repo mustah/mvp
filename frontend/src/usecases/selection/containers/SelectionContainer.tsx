@@ -7,6 +7,7 @@ import {paperStyle} from '../../app/themes';
 import {Row} from '../../common/components/layouts/row/Row';
 import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
+import {PeriodContainer} from '../../common/containers/PeriodContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
 import {SelectionContentContainer} from './SelectionContentContainer';
 import {SelectionOptionsLoaderContainer} from './SelectionOptionsLoaderContainer';
@@ -20,7 +21,10 @@ export const SelectionContainerComponent = (props: StateToProps) => {
     <PageContainer>
       <Row className="space-between">
         <MainTitle>{props.title}</MainTitle>
-        <SummaryContainer/>
+        <Row>
+          <SummaryContainer/>
+          <PeriodContainer/>
+        </Row>
       </Row>
 
       <SelectionOptionsLoaderContainer>

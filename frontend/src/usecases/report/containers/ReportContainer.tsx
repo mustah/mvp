@@ -17,6 +17,7 @@ import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
+import {PeriodContainer} from '../../common/containers/PeriodContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
@@ -33,7 +34,10 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
     <PageContainer>
       <Row className="space-between">
         <MainTitle>{translate('report')}</MainTitle>
-        <SummaryContainer/>
+        <Row>
+          <SummaryContainer/>
+          <PeriodContainer/>
+        </Row>
       </Row>
 
       <IndicatorWidgets

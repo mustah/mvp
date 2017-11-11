@@ -1,11 +1,16 @@
 @import "../../../app/variables";
 
+.SummaryContainer {
+  margin-bottom: $sm-space;
+  align-items: flex-end;
+}
+
 .Summary {
   padding-left: $space;
   color: $light-black;
 
   .Summary-title {
-    margin-bottom: 5px;
+    margin-bottom: $xs-space;
     color: $lightest-black;
   }
 

@@ -13,7 +13,7 @@ export const colors = {
   blue: '#00b6f7',
   lightGrey: '#f9f9f9',
   lightBlack: '#7b7b7b',
-  borderColor: '#f2f2f2',
+  borderColor: '#cccccc',
   dividerColor: '#eaeaea',
   iconHover: '#0f2228',
 };
