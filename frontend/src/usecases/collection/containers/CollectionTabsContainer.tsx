@@ -31,12 +31,12 @@ import {GatewayList} from '../components/GatewayList';
 import {useCases} from '../../../types/constants';
 
 interface CollectionTabsContainer extends TabsContainerProps {
-  numOfGateways: number;
-  gateways: { [key: string]: Gateway };
+  entityCount: number;
+  entities: { [key: string]: Gateway };
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
-  selectedGateways: uuid[];
+  selectedEntities: uuid[];
 }
 
 /**
@@ -54,12 +54,12 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const {
     selectedTab,
     changeTab,
-    gateways,
+    entities,
     pagination,
     paginationChangePage,
     paginatedList,
-    selectedGateways,
-    numOfGateways,
+    selectedEntities,
+    entityCount,
     changeTabOption,
     tabs,
   } = props;
@@ -102,8 +102,8 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
   // categorize the information into a format that's easy to manipulate ...
   const counts = {all: 0, ok: 0, warnings: 0, faults: 0};
-  selectedGateways.forEach((id) => {
-    const gateway = gateways[id];
+  selectedEntities.forEach((id) => {
+    const gateway = entities[id];
     const normalizedStatus = gateway.status.id === 0 ? 'ok' : 'faults';
 
     incProp(counts, 'all');
@@ -174,11 +174,11 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         {graphTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <GatewayList data={{allIds: paginatedList, byId: gateways}}/>
-        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={numOfGateways}/>
+        <GatewayList data={{allIds: paginatedList, byId: entities}}/>
+        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer markers={gateways} popupMode={PopupMode.gateway}/>
+        <MapContainer markers={entities} popupMode={PopupMode.gateway}/>
       </TabContent>
     </Tabs>
   );
@@ -187,15 +187,15 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 const mapStateToProps = (state: RootState) => {
   const {ui, domainModels} = state;
   const pagination = getCollectionPagination(ui);
-  const gateways = domainModels.gateways;
+  const entityState = domainModels.gateways;
 
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),
-    numOfGateways: getGatewaysTotal(gateways),
-    gateways: getGatewayEntities(gateways),
-    selectedGateways: getResultDomainModels(gateways),
-    paginatedList: getPaginationList({...pagination, ...gateways}),
+    entityCount: getGatewaysTotal(entityState),
+    entities: getGatewayEntities(entityState),
+    selectedEntities: getResultDomainModels(entityState),
+    paginatedList: getPaginationList({...pagination, ...entityState}),
     pagination,
   };
 };
