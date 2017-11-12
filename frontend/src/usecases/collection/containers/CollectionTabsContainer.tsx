@@ -1,9 +1,11 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
+import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
@@ -14,7 +16,7 @@ import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {PieChartSelector} from '../../common/components/pie-chart-selector/PieChartSelector';
+import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -34,7 +36,19 @@ interface CollectionTabsContainer extends TabsContainerProps {
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
+  selectedGateways: uuid[];
 }
+
+/**
+ * Examples:
+ * - incProp({}, 'hello') => {hello: 1}
+ * - incProp({hello: 2}, 'hello') => {hello: 3}
+ *
+ * @param obj
+ * @param {string} prop
+ */
+const incProp = (obj: any, prop: string): void =>
+  typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
 
 const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const {
@@ -44,76 +58,17 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     pagination,
     paginationChangePage,
     paginatedList,
+    selectedGateways,
     numOfGateways,
     changeTabOption,
     tabs,
   } = props;
-
-  const cities = {
-    all: [
-      {name: 'Älmhult', value: 822},
-      {name: 'Perstorp', value: 893},
-    ],
-    ok: [
-      {name: 'Älmhult', value: 821},
-      {name: 'Perstorp', value: 892},
-    ],
-    warnings: [
-      {name: 'Älmhult', value: 0},
-      {name: 'Perstorp', value: 0},
-    ],
-    faults: [
-      {name: 'Älmhult', value: 1},
-      {name: 'Perstorp', value: 1},
-    ],
-  };
-
-  const productModels = {
-    all: [
-      {name: 'CMe2100', value: 66},
-      {name: 'CMi2110', value: 1649},
-    ],
-    ok: [
-      {name: 'CMe2100', value: 66},
-      {name: 'CMi2110', value: 1647},
-    ],
-    warnings: [
-      {name: 'CMe2100', value: 0},
-      {name: 'CMi2110', value: 0},
-    ],
-    faults: [
-      {name: 'CMe2100', value: 0},
-      {name: 'CMi2110', value: 2},
-    ],
-  };
-
-  const flagged = {
-    all: [
-      {name: 'Ja', value: 2},
-      {name: 'Nej', value: 1713},
-    ],
-    ok: [
-      {name: 'Ja', value: 0},
-      {name: 'Nej', value: 1713},
-    ],
-    warnings: [
-      {name: 'Ja', value: 0},
-      {name: 'Nej', value: 0},
-    ],
-    faults: [
-      {name: 'Ja', value: 2},
-      {name: 'Nej', value: 0},
-    ],
-  };
 
   const colors: [string[]] = [
     ['#e8a090', '#fce8cc'],
     ['#588e95', '#ccd9ce'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
-
-  const numberOf = (status: string): number =>
-    flagged[status].reduce((sum, tuple) => sum + tuple.value, 0);
 
   const headings = {
     all: [
@@ -134,19 +89,65 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     ],
   };
 
+  // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
+  const categories: { [category: string]: number[] } = {flagged: [], cities: [], productModels: []};
+
+  // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
+  const liveData = {
+    all: _.cloneDeep(categories),
+    ok: _.cloneDeep(categories),
+    warnings: _.cloneDeep(categories),
+    faults: _.cloneDeep(categories),
+  };
+
+  // categorize the information into a format that's easy to manipulate ...
+  const counts = {all: 0, ok: 0, warnings: 0, faults: 0};
+  selectedGateways.forEach((id) => {
+    const gateway = gateways[id];
+    const normalizedStatus = gateway.status.id === 0 ? 'ok' : 'faults';
+
+    incProp(counts, 'all');
+
+    incProp(liveData.all.cities, gateway.city.name);
+    incProp(liveData.all.flagged, gateway.status.id !== 0 ? 'Ja' : 'Nej');
+    incProp(liveData.all.productModels, gateway.productModel);
+
+    incProp(counts, normalizedStatus);
+
+    incProp(liveData[normalizedStatus].cities, gateway.city.name);
+    incProp(liveData[normalizedStatus].flagged, gateway.status.id !== 0 ? 'Ja' : 'Nej');
+    incProp(liveData[normalizedStatus].productModels, gateway.productModel);
+  });
+
+  // ... then normalize the current tab, for the graphs to consume
+  const flagged: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].flagged).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const productModels: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].productModels).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+
+  const graphTabs: any[] = [
+    {id: 'all', label: 'ALLA'},
+    {id: 'ok', label: 'OK'},
+    {id: 'warnings', label: 'VARNINGAR'},
+    {id: 'faults', label: 'FEL'},
+  ].map((section) => {
+    section.label = `${section.label}: ${suffix(counts[section.id])}`;
+    return section;
+  }).map((section) => <TabOption key={section.id} title={section.label} id={section.id}/>);
+
   const graphTabContents = ((tabName: string): any => {
-    const count = numberOf(tabName);
-    const byCity = cities[tabName];
-    const byProduct = productModels[tabName];
+    const count = counts[tabName];
     const header = count > 0 ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
     return count > 0 ? (
       <div className="GraphContainer">
         <h2>{header}</h2>
         <Row>
-          <PieChartSelector heading="Flaggade för åtgärd" data={flagged.all} colors={colors[1]}/>
-          <PieChartSelector heading="Städer" data={byCity} colors={colors[0]}/>
-          <PieChartSelector heading="Produktmodeller" data={byProduct} colors={colors[1]}/>
+          <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+          <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
+          <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
         </Row>
       </div>
     ) : (
@@ -155,30 +156,6 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       </div>
     );
   })(tabs.graph.selectedOption);
-
-  const graphTabs: any[] = [
-    {
-      id: 'all',
-      label: 'ALLA',
-    },
-    {
-      id: 'ok',
-      label: 'OK',
-    },
-    {
-      id: 'warnings',
-      label: 'VARNINGAR',
-    },
-    {
-      id: 'faults',
-      label: 'FEL',
-    },
-  ].map((section) => {
-    section.label = `${section.label}: ${suffix(numberOf(section.id))}`;
-    return section;
-  }).map((section) => {
-    return <TabOption key={section.id} title={section.label} id={section.id}/>;
-  });
 
   return (
     <Tabs>
@@ -217,6 +194,7 @@ const mapStateToProps = (state: RootState) => {
     tabs: getTabs(ui.tabs.collection),
     numOfGateways: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
+    selectedGateways: getResultDomainModels(gateways),
     paginatedList: getPaginationList({...pagination, ...gateways}),
     pagination,
   };

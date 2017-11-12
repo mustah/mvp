@@ -4,7 +4,7 @@ import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {uuid} from '../../../../types/Types';
 import {Column} from '../layouts/column/Column';
 
-interface PieData {
+export interface PieData {
   name: string;
   value: number;
 }
