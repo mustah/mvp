@@ -51,16 +51,19 @@ export const PieChartSelector = (props: PieChartSelector) => {
     id: dataTuple.name,
   }));
 
+  const margins = {top: 20, right: 0, bottom: 0, left: 0};
+
   return (
     <Column className="PieContainer">
       <h3>{heading}</h3>
-      <PieChart width={240} height={240}>
+      <PieChart width={240} height={300}>
         <Pie data={data} activeIndex={[]} activeShape={null}>
           {data.map(renderCell)}
         </Pie>
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
         <Legend
           payload={legend}
+          margin={margins}
         />
       </PieChart>
     </Column>

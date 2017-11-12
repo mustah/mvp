@@ -64,9 +64,10 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     tabs,
   } = props;
 
+  // [1] from http://materialuicolors.co/ at level 600
   const colors: [string[]] = [
     ['#e8a090', '#fce8cc'],
-    ['#588e95', '#ccd9ce'],
+    ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
 
