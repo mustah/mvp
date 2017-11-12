@@ -90,7 +90,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories: { [category: string]: number[] } = {flagged: [], cities: [], manufacturers: []};
+  const categories: { [category: string]: number[] } = {flagged: [], cities: [], manufacturers: [], media: []};
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
@@ -111,12 +111,14 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     incProp(liveData.all.cities, meter.city.name);
     incProp(liveData.all.flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
     incProp(liveData.all.manufacturers, meter.manufacturer);
+    incProp(liveData.all.media, meter.medium);
 
     incProp(counts, normalizedStatus);
 
     incProp(liveData[normalizedStatus].cities, meter.city.name);
     incProp(liveData[normalizedStatus].flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
+    incProp(liveData[normalizedStatus].media, meter.medium);
   });
 
   // ... then normalize the current tab, for the graphs to consume
@@ -125,6 +127,8 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
     ({name: entry[0], value: entry[1]}));
   const manufacturers: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].manufacturers).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const media: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].media).map((entry) =>
     ({name: entry[0], value: entry[1]}));
 
   const graphTabs: any[] = [
@@ -148,6 +152,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
           <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
           <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
+          <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
         </Row>
       </div>
     ) : (
