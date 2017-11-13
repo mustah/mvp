@@ -42,13 +42,13 @@ export const MeterList = (props: ListProps) => {
         header={<TableHead>{translate('gateway')}</TableHead>}
       />
       <TableColumn
-        id={'statusChanged'}
-        header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
-      />
-      <TableColumn
         id={'status'}
         header={statusHeader}
         cell={renderStatusCell}
+      />
+      <TableColumn
+        id={'statusChanged'}
+        header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
       />
     </Table>
   );

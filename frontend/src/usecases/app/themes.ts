@@ -81,12 +81,6 @@ export const dropDownStyle: Styles = {
   listStyle: {outline: 'none', paddingLeft: 5, flex: 1},
   parentStyle: {fontSize: 12, color: colors.lightBlack},
 };
-export const dropdownRowStyle = {
-  rowHeight: 25, // 8:5 relation between regular and multi.
-  rowHeightMulti: 40,
-  visibleItems: 16, // 8:5 relation between regular and multi.
-  visibleItemsMulti: 10,
-};
 
 export const underlineFocusStyle = {
   borderColor: colors.blue,
