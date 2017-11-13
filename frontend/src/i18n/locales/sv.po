@@ -116,8 +116,14 @@ msgstr "intervall"
 msgid "flagged for action"
 msgstr "flaggad för åtgärd"
 
-msgid "log"
-msgstr "logg"
+msgid "status log"
+msgstr "status logg"
+
+msgid "latest value"
+msgstr "senaste"
+
+msgid "date"
+msgstr "datum"
 
 msgid "quantity"
 msgstr "storhet"

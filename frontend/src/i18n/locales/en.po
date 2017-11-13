@@ -116,8 +116,14 @@ msgstr "interval"
 msgid "flagged for action"
 msgstr "flagged for action"
 
-msgid "log"
-msgstr "log"
+msgid "latest value"
+msgstr "latest"
+
+msgid "status log"
+msgstr "status log"
+
+msgid "date"
+msgstr "date"
 
 msgid "quantity"
 msgstr "quantity"

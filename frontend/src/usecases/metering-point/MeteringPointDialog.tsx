@@ -22,6 +22,7 @@ import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
 import {StatusIcon} from '../common/components/table/status/StatusIcon';
 import {Checkbox} from 'material-ui';
+import {MainTitle, Subtitle} from '../common/components/texts/Titles';
 
 interface MeteringPointDialogProps {
   displayDialog: boolean;
@@ -182,7 +183,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  <h2>{translate('meter')}</h2>
+                  <MainTitle>{translate('meter')}</MainTitle>
                 </Row>
               </Column>
               <Column>
@@ -230,7 +231,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  <h3>{translate('collection')}</h3>
+                  <Subtitle>{translate('collection')}</Subtitle>
                 </Row>
               </Column>
               <Column>
@@ -269,7 +270,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  <h3>{translate('validation')}</h3>
+                  <Subtitle>{translate('validation')}</Subtitle>
                 </Row>
               </Column>
               <Column>
@@ -292,7 +293,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  <h3>{translate('labels')}</h3>
+                  <Subtitle>{translate('labels')}</Subtitle>
                 </Row>
               </Column>
               <Column>
@@ -326,8 +327,8 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
           <Tabs className="full-width">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                <Tab tab={tabType.values} title={translate('status changes')}/>
-                <Tab tab={tabType.log} title={translate('log')}/>
+                <Tab tab={tabType.values} title={translate('latest value')}/>
+                <Tab tab={tabType.log} title={translate('status log')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
                 <Tab tab={tabType.connectedGateways} title={translate('gateways')}/>
               </TabHeaders>
