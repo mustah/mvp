@@ -10,3 +10,13 @@
   text-transform: capitalize;
   margin-bottom: $space;
 }
+
+.Subtitle {
+  text-transform: capitalize;
+  margin-left: $space;
+  margin-bottom: $space;
+
+  .Normal {
+    font-size: 16px;
+  }
+}

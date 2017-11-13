@@ -11,12 +11,13 @@ import {paperStyle} from '../../app/themes';
 import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
 import {IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/ReportModels';
 import {fetchReports} from '../reportActions';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
+import {PeriodContainer} from '../../common/containers/PeriodContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
@@ -33,7 +34,10 @@ const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRou
     <PageContainer>
       <Row className="space-between">
         <MainTitle>{translate('report')}</MainTitle>
-        <SummaryContainer/>
+        <Row>
+          <SummaryContainer/>
+          <PeriodContainer/>
+        </Row>
       </Row>
 
       <IndicatorWidgets

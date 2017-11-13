@@ -17,7 +17,7 @@ interface StateToProps {
 const SummaryComponent = (props: StateToProps) => {
   const {numCities, numAddresses, numMeters} = props;
   return (
-    <Row className="SummaryComponent">
+    <Row className="SummaryContainer">
       <Summary title={translate('city', {count: numCities})} count={numCities}/>
       <Summary title={translate('address', {count: numAddresses})} count={numAddresses}/>
       <Summary title={translate('meter', {count: numMeters})} count={numMeters}/>

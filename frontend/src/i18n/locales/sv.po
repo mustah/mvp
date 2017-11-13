@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "filter"
+msgstr "filtrera"
+
 msgid "collection"
 msgstr "insamling"
 

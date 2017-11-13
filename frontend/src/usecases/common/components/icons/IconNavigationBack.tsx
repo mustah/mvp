@@ -1,15 +1,17 @@
 import 'Icons.scss';
 import IconButton from 'material-ui/IconButton';
-import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
+import NavigationArrowBack from 'material-ui/svg-icons/navigation/arrow-back';
 import * as React from 'react';
+import {Clickable} from '../../../../types/Types';
 import {iconSizeLarge, iconStyle} from '../../../app/themes';
 
-export const SelectionIconButton = () => (
+export const IconNavigationBack = (props: Clickable) => (
   <IconButton
     className="IconButton"
     style={iconStyle}
     iconStyle={iconSizeLarge}
+    onClick={props.onClick}
   >
-    <ContentFilterList/>
+    <NavigationArrowBack/>
   </IconButton>
 );

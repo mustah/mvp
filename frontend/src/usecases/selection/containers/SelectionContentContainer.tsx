@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import 'SelectionContentContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/geoData/geoDataModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -13,12 +14,12 @@ import {
 } from '../../../state/search/selection/selectionModels';
 import {getAddresses, getCities, getCitiesSelection} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
+import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
 import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {Subtitle} from '../../common/components/texts/Titles';
 import {MetersResultContainer} from './MetersContainer';
-import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
-import {DomainModel} from '../../../state/domain-models/geoData/geoDataModels';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -41,6 +42,8 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
 
   return (
     <Column className="SelectionContentBox">
+      <Subtitle>{translate('filter')}</Subtitle>
+
       <Row className="SelectionDropdownOptions">
         <SimpleDropdownSelector
           list={cities}

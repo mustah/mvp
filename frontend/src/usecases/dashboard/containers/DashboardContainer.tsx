@@ -11,13 +11,14 @@ import {
   SelectedIndicatorWidgetProps,
 } from '../../common/components/indicators/IndicatorWidgets';
 import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Title';
+import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
+import {PeriodContainer} from '../../common/containers/PeriodContainer';
+import {SummaryContainer} from '../../common/containers/SummaryContainer';
 import {SystemOverview} from '../components/system-overview/SystemOverview';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {SystemOverviewState} from '../models/dashboardModels';
-import {SummaryContainer} from '../../common/containers/SummaryContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
@@ -55,7 +56,10 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
       <PageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
-          <SummaryContainer/>
+          <Row>
+            <SummaryContainer/>
+            <PeriodContainer/>
+          </Row>
         </Row>
 
         {record && renderSystemOverview(record.systemOverview)}

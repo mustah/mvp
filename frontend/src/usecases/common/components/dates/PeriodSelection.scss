@@ -1,4 +1,15 @@
+@import "../../../app/variables";
+
+.PeriodSelection {
+  align-items: flex-start;
+
+  &:hover {
+    .IconCalendar {
+      fill: $black !important;
+    }
+  }
+}
+
 .TimePeriod:first-letter {
-  /* do not use capitalize, It Turns The Text Unreadable And Ugly */
   text-transform: uppercase;
 }

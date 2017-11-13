@@ -5,7 +5,7 @@ import * as React from 'react';
 import {Clickable} from '../../../../types/Types';
 import {iconSizeLarge, iconStyle} from '../../../app/themes';
 
-export const CloseIcon = (props: Clickable) => (
+export const IconClose = (props: Clickable) => (
   <IconButton
     className="IconButton"
     style={iconStyle}

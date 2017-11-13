@@ -4,9 +4,9 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {OnSelectPeriod} from '../../../../state/search/selection/selectionModels';
 import {Period} from '../../../../types/Types';
-import {colors, listItemStyle} from '../../../app/themes';
+import {colors, fontSizeNormal, listItemStyle} from '../../../app/themes';
 import {IconCalendar} from '../icons/IconCalendar';
-import {RowCenter} from '../layouts/row/Row';
+import {Row} from '../layouts/row/Row';
 
 interface Props {
   period: Period;
@@ -60,7 +60,7 @@ export const PeriodSelection = (props: Props) => {
   ));
 
   return (
-    <RowCenter>
+    <Row className="PeriodSelection">
       <DropDownMenu
         maxHeight={300}
         autoWidth={false}
@@ -68,20 +68,27 @@ export const PeriodSelection = (props: Props) => {
         labelStyle={labelStyle}
         iconStyle={iconStyle}
         style={style}
-        className="PeriodSelection"
         value={period}
         onChange={onSelectPeriod}
-        iconButton={<IconCalendar/>}
+        iconButton={<IconCalendar className="IconCalendar"/>}
         selectedMenuItemStyle={{color: colors.blue}}
       >
         {timePeriodComponents}
       </DropDownMenu>
-    </RowCenter>
+    </Row>
   );
 };
 
+const height = 32;
+
 const style: React.CSSProperties = {
-  width: 165,
+  height,
+  width: 158,
+  fontSize: fontSizeNormal,
+  border: `1px solid ${colors.borderColor}`,
+  borderRadius: 3,
+  marginLeft: 24,
+  marginBottom: 8,
 };
 
 const underlineStyle: React.CSSProperties = {
@@ -89,19 +96,19 @@ const underlineStyle: React.CSSProperties = {
 };
 
 const labelStyle: React.CSSProperties = {
-  height: 48,
+  height,
   lineHeight: 1,
   paddingRight: 0,
-  paddingLeft: 24,
+  paddingLeft: 16,
   fontSize: 14,
   display: 'flex',
   alignItems: 'center',
 };
 
 const iconStyle: React.CSSProperties = {
-  fill: 'black',
-  height: 48,
-  width: 48,
+  fill: '#7b7b7b',
+  height,
+  width: 46,
   right: 0,
   top: 0,
   padding: 0,
