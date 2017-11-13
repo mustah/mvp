@@ -1,21 +1,20 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
-import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
+import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
+import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
+import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {useCases} from '../../../types/constants';
 import {uuid} from '../../../types/Types';
-import {Row, RowCenter} from '../../common/components/layouts/row/Row';
+import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {PieChartSelector} from '../../common/components/pie-chart-selector/PieChartSelector';
-import {MeterList} from '../../common/components/table/MeterList';
+import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -25,110 +24,191 @@ import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {Bold} from '../../common/components/texts/Texts';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {MeterList} from '../../common/components/table/MeterList';
+import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 
-interface ValidationTabsContainerProps extends TabsContainerProps {
-  numOfMeters: number;
-  meters: {[key: string]: Meter};
+interface CollectionTabsContainer extends TabsContainerProps {
+  entityCount: number;
+  entities: { [key: string]: Meter };
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
+  selectedEntities: uuid[];
 }
 
-const ValidationTabsContainer = (props: ValidationTabsContainerProps) => {
+/**
+ * Examples:
+ * - incProp({}, 'hello') => {hello: 1}
+ * - incProp({hello: 2}, 'hello') => {hello: 3}
+ *
+ * @param obj
+ * @param {string} prop
+ */
+const incProp = (obj: any, prop: string): void =>
+  typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
+
+const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const {
-    tabs, changeTabOption, selectedTab, changeTab,
-    meters, pagination, paginationChangePage, paginatedList, numOfMeters,
+    selectedTab,
+    changeTab,
+    entities,
+    pagination,
+    paginationChangePage,
+    paginatedList,
+    selectedEntities,
+    entityCount,
+    changeTabOption,
+    tabs,
   } = props;
 
-  const cities = [
-    {name: 'Älmhult', value: 822},
-    {name: 'Perstorp', value: 893},
-  ];
-
-  const productModels = [
-    {name: 'CMe2100', value: 66},
-    {name: 'CMi2110', value: 1649},
-  ];
-
-  const statuses = [
-    {name: translate('ok'), value: 1713},
-    {name: translate('reported'), value: 2},
-    {name: translate('could not be collected'), value: 0},
-  ];
-
+  // [1] from http://materialuicolors.co/ at level 600
   const colors: [string[]] = [
-    ['#56b9d0', '#344d6c'],
-    ['#fbba42', '#3b3f42'],
+    ['#e8a090', '#fce8cc'],
+    ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
 
-  const numberOfMeters = productModels.reduce((sum, model) => sum + model.value, 0);
+  const headings = {
+    all: [
+      'Inga mätare',
+      'Visar alla mätare',
+    ],
+    ok: [
+      'Inga mätare som är OK',
+      'Visar alla mätare som är OK',
+    ],
+    warnings: [
+      'Inga mätare med varningar',
+      'Visar alla mätare med varningar',
+    ],
+    faults: [
+      'Inga mätare med fel',
+      'Visar alla mätare med fel',
+    ],
+  };
+
+  // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
+  const categories: { [category: string]: number[] } = {flagged: [], cities: [], manufacturers: [], media: []};
+
+  // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
+  const liveData = {
+    all: _.cloneDeep(categories),
+    ok: _.cloneDeep(categories),
+    warnings: _.cloneDeep(categories),
+    faults: _.cloneDeep(categories),
+  };
+
+  // categorize the information into a format that's easy to manipulate ...
+  const counts = {all: 0, ok: 0, warnings: 0, faults: 0};
+  selectedEntities.forEach((id) => {
+    const meter = entities[id];
+    const normalizedStatus = meter.status.id === 0 ? 'ok' : 'faults';
+
+    incProp(counts, 'all');
+
+    incProp(liveData.all.cities, meter.city.name);
+    incProp(liveData.all.flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
+    incProp(liveData.all.manufacturers, meter.manufacturer);
+    incProp(liveData.all.media, meter.medium);
+
+    incProp(counts, normalizedStatus);
+
+    incProp(liveData[normalizedStatus].cities, meter.city.name);
+    incProp(liveData[normalizedStatus].flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
+    incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
+    incProp(liveData[normalizedStatus].media, meter.medium);
+  });
+
+  // ... then normalize the current tab, for the graphs to consume
+  const flagged: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].flagged).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const manufacturers: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].manufacturers).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+  const media: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].media).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+
+  const graphTabs: any[] = [
+    {id: 'all', label: 'ALLA'},
+    {id: 'ok', label: 'OK'},
+    {id: 'warnings', label: 'VARNINGAR'},
+    {id: 'faults', label: 'FEL'},
+  ].map((section) => {
+    section.label = `${section.label}: ${suffix(counts[section.id])}`;
+    return section;
+  }).map((section) => <TabOption key={section.id} title={section.label} id={section.id}/>);
+
+  const graphTabContents = ((tabName: string): any => {
+    const count = counts[tabName];
+    const header = count > 0 ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
+
+    return count > 0 ? (
+      <div className="GraphContainer">
+        <h2>{header}</h2>
+        <Row>
+          <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+          <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
+          <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
+          <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
+        </Row>
+      </div>
+    ) : (
+      <div className="GraphContainer">
+        <h2>{header}</h2>
+      </div>
+    );
+  })(tabs.graph.selectedOption);
 
   return (
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab title={translate('graph')} tab={tabType.graph}/>
-          <Tab title={translate('list')} tab={tabType.list}/>
-          <Tab title={translate('map')} tab={tabType.map}/>
+          <Tab tab={tabType.graph} title="Dashboard"/>
+          <Tab tab={tabType.list} title={translate('list')}/>
+          <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
-        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
-          <TabOption
-            title={translate('area')}
-            id={'area'}
-          />
-          <TabOption
-            title={translate('object')}
-            id={'object'}
-          />
-          <TabOption
-            title={translate('facility')}
-            id={'facility'}
-          />
+        <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+          {graphTabs}
         </TabOptions>
-        <TabSettings useCase={useCases.validation}/>
+        <TabSettings useCase={'collection'}/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
-        <div>
-          <Row>
-            <p>Antal mätare: <Bold>{numberOfMeters}</Bold>.</p>
-          </Row>
-          <RowCenter>
-            <PieChartSelector heading={translate('city', {count: cities.length})} data={cities} colors={colors[0]}/>
-            <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
-            <PieChartSelector heading="Status" data={statuses} colors={colors[2]}/>
-          </RowCenter>
-        </div>
-      </TabContent>
-      <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <MapContainer markers={meters} popupMode={PopupMode.meterpoint}/>
+        {graphTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <MeterList data={{allIds: paginatedList, byId: meters}}/>
-        <PaginationControl pagination={pagination} numOfEntities={numOfMeters} changePage={paginationChangePage}/>
+        <MeterList data={{allIds: paginatedList, byId: entities}}/>
+        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
+      </TabContent>
+      <TabContent tab={tabType.map} selectedTab={selectedTab}>
+        <MapContainer markers={entities} popupMode={PopupMode.meterpoint}/>
       </TabContent>
     </Tabs>
   );
 };
 
-const mapStateToProps = ({ui, domainModels: {meters}}: RootState) => {
-  const pagination = getValidationPagination(ui);
+const mapStateToProps = (state: RootState) => {
+  const {ui, domainModels} = state;
+  const pagination = getCollectionPagination(ui);
+  const entityState = domainModels.meters;
+
   return {
-    selectedTab: getSelectedTab(ui.tabs.validation),
-    tabs: getTabs(ui.tabs.validation),
-    numOfMeters: getMetersTotal(meters),
-    meters: getMeterEntities(meters),
-    paginatedList: getPaginationList({...pagination, ...meters}),
+    selectedTab: getSelectedTab(ui.tabs.collection),
+    tabs: getTabs(ui.tabs.collection),
+    entityCount: getMetersTotal(entityState),
+    entities: getMeterEntities(entityState),
+    selectedEntities: getResultDomainModels(entityState),
+    paginatedList: getPaginationList({...pagination, ...entityState}),
     pagination,
   };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  changeTab: changeTabValidation,
-  changeTabOption: changeTabOptionValidation,
-  paginationChangePage: changePaginationValidation,
+  changeTab: changeTabCollection,
+  changeTabOption: changeTabOptionCollection,
+  paginationChangePage: changePaginationCollection,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);

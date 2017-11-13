@@ -5,7 +5,7 @@ import {tabType} from '../models/TabsModel';
 export interface TabOptionProps {
   tab?: tabType;
   select?: (tab: tabType, option: string) => void;
-  title: string;
+  title: React.ReactType;
   id: string;
   selectedOption?: string;
 }
