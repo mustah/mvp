@@ -7,12 +7,21 @@ import {Status} from './status/Status';
 import {Table} from './table/Table';
 import {TableHead} from './table/TableHead';
 import {TableColumn} from './tableColumn/TableColumn';
+import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
+import {Row} from '../layouts/row/Row';
 
 export const MeterList = (props: ListProps) => {
 
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
+  const actions = [translate('export to excel (.csv)'), translate('export to JSON'), translate('show gateways')];
+  const renderEntryActions = (value) => (
+    <Row>
+      {value}
+      <ActionsDropdown className="flex-1 Row-right" actions={actions}/>
+    </Row>
+  );
 
   const statusHeader = (
     <TableHead
@@ -49,6 +58,7 @@ export const MeterList = (props: ListProps) => {
       <TableColumn
         id={'statusChanged'}
         header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+        cell={renderEntryActions}
       />
     </Table>
   );
