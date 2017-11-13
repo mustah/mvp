@@ -1,10 +1,20 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
+import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {DomainModel, GeoDataState} from '../../domain-models/geoData/geoDataModels';
 import {getGeoDataEntitiesBy, getGeoDataResultBy} from '../../domain-models/geoData/geoDataSelectors';
+import {Meter, MetersState} from '../../domain-models/meter/meterModels';
+import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
-import {LookupState, parameterNames, SelectedParameters, SelectionListItem, SelectionState} from './selectionModels';
+import {
+  LookupState,
+  parameterNames,
+  SelectedParameters,
+  SelectionListItem,
+  SelectionState,
+  SelectionSummary,
+} from './selectionModels';
 import {initialState} from './selectionReducer';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
@@ -67,20 +77,7 @@ const getList = (entityType: string): any =>
   );
 const entitySort = (objA: IdNamed, objB: IdNamed) => (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
-const getCurrentSelectedParameters = (state: LookupState): SelectedParameters => state.selection.selected;
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;
-
-const getTotalOf = (entityType: string) =>
-  createSelector<LookupState, GeoDataState, SelectedParameters, number>(
-    getGeoData,
-    getCurrentSelectedParameters,
-    (geoData: GeoDataState, selected: SelectedParameters) => {
-      const selectedParameter = selected[entityType];
-      return selectedParameter && selectedParameter.length
-        ? selectedParameter.length
-        : geoData[entityType].total;
-    },
-  );
 
 export const getCities = getList(parameterNames.cities);
 export const getAddresses = getList(parameterNames.addresses);
@@ -102,5 +99,23 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
-export const getNumCities = getTotalOf(parameterNames.cities);
-export const getNumAddresses = getTotalOf(parameterNames.addresses);
+export const getSelectionSummary = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionSummary>(
+  getResultDomainModels,
+  getMeterEntities,
+  (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
+    const cities = new Set<uuid>();
+    const addresses = new Set<uuid>();
+
+    metersList.map((meterId: uuid) => {
+        const {city, address} = metersLookup[meterId];
+        cities.add(city.id);
+        addresses.add(address.id);
+      },
+    );
+    return ({
+      cities: cities.size,
+      addresses: addresses.size,
+      meters: metersList.length,
+    });
+  },
+);
