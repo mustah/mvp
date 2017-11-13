@@ -105,19 +105,17 @@ export const getSelectionSummary = createSelector<MetersState, uuid[], {[key: st
   (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
     const cities = new Set<uuid>();
     const addresses = new Set<uuid>();
-    const meters = new Set<uuid>();
 
     metersList.map((meterId: uuid) => {
         const {city, address} = metersLookup[meterId];
         cities.add(city.id);
         addresses.add(address.id);
-        meters.add(meterId);
       },
     );
     return ({
       cities: cities.size,
       addresses: addresses.size,
-      meters: meters.size,
+      meters: metersList.length,
     });
   },
 );
