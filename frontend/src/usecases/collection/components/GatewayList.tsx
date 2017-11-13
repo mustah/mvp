@@ -19,7 +19,7 @@ export const GatewayList = (props: ListProps) => {
     <Table data={data}>
       <TableColumn
         id={'id'}
-        header={<TableHead sortable={true} currentSort={'asc'} className="first">{translate('gateway')}</TableHead>}
+        header={<TableHead className="first">{translate('gateway')}</TableHead>}
         cell={renderGateway}
       />
       <TableColumn
@@ -38,7 +38,7 @@ export const GatewayList = (props: ListProps) => {
       />
       <TableColumn
         id={'statusChanged'}
-        header={<TableHead>{translate('status change')}</TableHead>}
+        header={<TableHead sortable={true} currentSort={'desc'}>{translate('status change')}</TableHead>}
       />
       <TableColumn
         id={'status'}

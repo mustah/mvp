@@ -17,8 +17,6 @@ export const MeterList = (props: ListProps) => {
   const statusHeader = (
     <TableHead
       className="TableHead-status"
-      sortable={true}
-      currentSort={'asc'}
     >
       {translate('status')}
     </TableHead>
