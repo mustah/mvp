@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -13,6 +12,7 @@ import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
+import {useCases} from '../../../types/constants';
 import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
@@ -28,7 +28,6 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
-import {useCases} from '../../../types/constants';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -91,14 +90,14 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories: { [category: string]: number[] } = {flagged: [], cities: [], productModels: []};
+  const categories = () => ({flagged: [], cities: [], productModels: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
-    all: _.cloneDeep(categories),
-    ok: _.cloneDeep(categories),
-    warnings: _.cloneDeep(categories),
-    faults: _.cloneDeep(categories),
+    all: categories(),
+    ok: categories(),
+    warnings: categories(),
+    faults: categories(),
   };
 
   // categorize the information into a format that's easy to manipulate ...
