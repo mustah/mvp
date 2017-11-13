@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-09T12:58:31.901Z\n"
+"POT-Creation-Date: 2017-11-13T16:04:23.060Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,11 +11,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
-msgid "filter"
-msgstr "filter"
-
 msgid "collection"
 msgstr "collection"
+
+msgid "export to Excel (.csv)"
+msgstr "export to Excel (.csv)"
+
+msgid "export to JSON"
+msgstr "export to JSON"
+
+msgid "show meters"
+msgstr "show meters"
 
 msgid "gateway"
 msgstr "gateway"
@@ -29,32 +35,14 @@ msgstr "address"
 msgid "product model"
 msgstr "product model"
 
-msgid "status change"
-msgstr "status change"
-
 msgid "status"
 msgstr "status"
 
+msgid "status change"
+msgstr "status change"
+
 msgid "action"
 msgstr "action"
-
-msgid "interval"
-msgstr "interval"
-
-msgid "flagged for action"
-msgstr "flagged for action"
-
-msgid "ok"
-msgstr "ok"
-
-msgid "reported"
-msgstr "reported"
-
-msgid "unhandled problems"
-msgstr "unhandled problems"
-
-msgid "graph"
-msgstr "graph"
 
 msgid "list"
 msgstr "list"
@@ -62,11 +50,8 @@ msgstr "list"
 msgid "map"
 msgstr "map"
 
-msgid "population"
-msgstr "population"
-
-msgid "faults"
-msgstr "faults"
+msgid "close"
+msgstr "close"
 
 msgid "current month"
 msgstr "current month"
@@ -92,6 +77,9 @@ msgstr "previous"
 msgid "next"
 msgstr "next"
 
+msgid "show gateways"
+msgstr "show gateways"
+
 msgid "meter"
 msgstr "meter"
 
@@ -100,12 +88,6 @@ msgstr "manufacturer"
 
 msgid "medium"
 msgstr "medium"
-
-msgid "show only changes"
-msgstr "show only changes"
-
-msgid "close"
-msgstr "close"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -116,38 +98,59 @@ msgstr "gateway"
 msgid "gateway id"
 msgstr "gateway id"
 
-msgid "validation"
-msgstr "validation"
+msgid "interval"
+msgstr "interval"
 
-msgid "action pending"
-msgstr "action pending"
+msgid "flagged for action"
+msgstr "flagged for action"
 
-msgid "status changes"
-msgstr "status changes"
-
-msgid "date"
-msgstr "date"
+msgid "log"
+msgstr "log"
 
 msgid "quantity"
 msgstr "quantity"
 
-msgid "value"
-msgstr "value"
+msgid "show only changes"
+msgstr "show only changes"
 
-msgid "comment"
-msgstr "comment"
+msgid "date"
+msgstr "date"
+
+msgid "validation"
+msgstr "validation"
 
 msgid "report"
 msgstr "report"
 
-msgid "meter details"
-msgstr "meter"
+msgid "meter id"
+msgstr "MOID"
+
+msgid "resolution"
+msgstr "resolution"
 
 msgid "labels"
 msgstr "labels"
 
-msgid "meter id"
-msgstr "MOID"
+msgid "sap id"
+msgstr "sap ID"
+
+msgid "facility id"
+msgstr "facility ID"
+
+msgid "measure id"
+msgstr "measure ID"
+
+msgid "status changes"
+msgstr "status changes"
+
+msgid "gateways"
+msgstr "gateways"
+
+msgid "value"
+msgstr "value"
+
+msgid "latest snr"
+msgstr "latest SNR"
 
 msgid "logout"
 msgstr "logout"
@@ -161,35 +164,11 @@ msgstr "save as"
 msgid "reset"
 msgstr "reset"
 
-msgid "gateways"
-msgstr "gateways"
-
-msgid "log"
-msgstr "log"
-
-msgid "new search"
-msgstr "new search"
-
-msgid "gateway id"
-msgstr "Gateway ID"
-
-msgid "latest snr"
-msgstr "latest SNR"
-
-msgid "sap id"
-msgstr "sap ID"
-
-msgid "facility id"
-msgstr "facility ID"
-
-msgid "measure id"
-msgstr "measure ID"
-
-msgid "resolution"
-msgstr "resolution"
-
 msgid "selection"
 msgstr "selection"
+
+msgid "filter"
+msgstr "filter"
 
 msgid "searching"
 msgstr "searching"
@@ -206,18 +185,6 @@ msgstr "selection overview"
 msgid "metering"
 msgstr "metering"
 
-msgid "could not be collected"
-msgstr "could not be collected"
-
-msgid "area"
-msgstr "area"
-
-msgid "object"
-msgstr "object"
-
-msgid "facility"
-msgstr "facility"
-
 msgctxt "°plural"
 msgid "city°"
 msgstr "cities"
@@ -230,48 +197,47 @@ msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
 
+#~ msgid "export to excel (.csv)"
+#~ msgstr "E"
+
+#~ msgid "ok"
+#~ msgstr "ok"
+
+#~ msgid "reported"
+#~ msgstr "reported"
+
+#~ msgid "unhandled problems"
+#~ msgstr "unhandled problems"
+
+#~ msgid "graph"
+#~ msgstr "graph"
+
+#~ msgid "population"
+#~ msgstr "population"
+
+#~ msgid "faults"
+#~ msgstr "faults"
+
+#~ msgid "action pending"
+#~ msgstr "action pending"
+
+#~ msgid "comment"
+#~ msgstr "comment"
+
+#~ msgid "meter details"
+#~ msgstr "meter"
+
 #~ msgid "new search"
 #~ msgstr "new search"
 
-#~ msgid "saved search"
-#~ msgstr "saved search"
+#~ msgid "could not be collected"
+#~ msgstr "could not be collected"
 
-#~ msgid "status changed"
-#~ msgstr "status changed"
+#~ msgid "area"
+#~ msgstr "area"
 
-#~ msgid "email"
-#~ msgstr "email"
+#~ msgid "object"
+#~ msgstr "object"
 
-#~ msgid "password"
-#~ msgstr "password"
-
-#~ msgid "period"
-#~ msgstr "period"
-
-#~ msgid "one day"
-#~ msgstr "1 day"
-
-#~ msgid "last week"
-#~ msgstr "1 week"
-
-#~ msgid "last month"
-#~ msgstr "1 month"
-
-#~ msgid "last quarter"
-#~ msgstr "1 quarter"
-
-#~ msgid "last year"
-#~ msgstr "1 year"
-
-#~ msgid "type"
-#~ msgstr "type"
-
-#~ msgid "location"
-#~ msgstr "location"
-
-#~ msgid "current filter"
-#~ msgstr "current filter"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} errand°"
-#~ msgstr "{{count}} errand°"
+#~ msgid "facility"
+#~ msgstr "facility"

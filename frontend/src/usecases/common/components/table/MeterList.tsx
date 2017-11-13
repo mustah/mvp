@@ -15,7 +15,7 @@ export const MeterList = (props: ListProps) => {
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
-  const actions = [translate('export to excel (.csv)'), translate('export to JSON'), translate('show gateways')];
+  const actions = [translate('export to Excel (.csv)'), translate('export to JSON'), translate('show gateways')];
   const renderEntryActions = (value) => (
     <Row>
       {value}

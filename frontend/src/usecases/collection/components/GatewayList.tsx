@@ -16,7 +16,7 @@ export const GatewayList = (props: ListProps) => {
   const renderStatusCell = (value: IdNamed) => <Status {...value}/>;
   const renderGateway = (value) => <Gateway id={value}/>;
   const renderLocation = (value: IdNamed) => value.name;
-  const actions = [translate('export to excel (.csv)'), translate('export to JSON'), translate('show meters')];
+  const actions = [translate('export to Excel (.csv)'), translate('export to JSON'), translate('show meters')];
   const renderEntryActions = (value) => (
     <Row>
       {value}
