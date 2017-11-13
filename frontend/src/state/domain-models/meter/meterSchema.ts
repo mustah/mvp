@@ -8,4 +8,5 @@ export const sidebarTreeSchema = {
   cities: [city],
   addresses: [address],
   addressClusters: [addressCluster],
+  meters: [meter],
 };
