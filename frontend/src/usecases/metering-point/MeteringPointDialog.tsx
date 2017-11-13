@@ -20,6 +20,8 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
+import {StatusIcon} from '../common/components/table/status/StatusIcon';
+import {Checkbox} from 'material-ui';
 
 interface MeteringPointDialogProps {
   displayDialog: boolean;
@@ -36,7 +38,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     super(props);
 
     this.state = {
-      selectedTab: tabType.statusChanges,
+      selectedTab: tabType.values,
     };
   }
 
@@ -46,6 +48,20 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     const {close} = this.props;
 
     const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
+
+    const meterGateways = {
+      byId: {
+        id1: {
+          serial: '0012100026',
+          snr: -122,
+        },
+        id2: {
+          serial: '0012105462',
+          snr: -96,
+        },
+      },
+      allIds: ['id1', 'id2'],
+    };
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
     const meterData = {
@@ -129,7 +145,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     };
 
     // TODO retrieve real location data for the gateway
-    const markers: {[key: string]: MapMarker} = {};
+    const markers: { [key: string]: MapMarker } = {};
     markers[0] = {
       status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},
@@ -141,6 +157,18 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
       },
     };
 
+    const checkbox: React.CSSProperties = {
+      padding: 0,
+      margin: 5,
+      marginLeft: 0,
+    };
+
+    const checkboxLabel: React.CSSProperties = {
+      padding: 0,
+      margin: 5,
+      marginTop: 10,
+    };
+
     return (
       <Dialog
         actions={[(<ButtonClose onClick={close}/>)]}
@@ -149,17 +177,12 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         onRequestClose={close}
         open={displayDialog}
       >
-        <h2 className="capitalize">{translate('meter details')}</h2>
         <Row>
           <Column className="OverView">
             <Row>
               <Column>
                 <Row>
-                  {translate('medium')}
-                </Row>
-                <Row>
-                  <IconDistrictHeating color={'#2b6ea3'}/>
-                  Värme
+                  <h2>{translate('meter')}</h2>
                 </Row>
               </Column>
               <Column>
@@ -180,14 +203,23 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Column>
               <Column>
                 <Row>
+                  {translate('medium')}
+                </Row>
+                <Row>
+                  <IconDistrictHeating color={'#2b6ea3'}/>
+                  Värme
+                </Row>
+              </Column>
+              <Column className="address">
+                <Row className="capitalize Bold">
                   {translate('city')}
                 </Row>
                 <Row>
                   Perstorp
                 </Row>
               </Column>
-              <Column>
-                <Row>
+              <Column className="Column-center">
+                <Row className="capitalize Bold">
                   {translate('address')}
                 </Row>
                 <Row>
@@ -198,22 +230,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <Row>
               <Column>
                 <Row>
-                  {translate('collection')}
-                </Row>
-                <Status id={0} name="OK"/>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('validation')}
-                </Row>
-                <Status id={3} name="Felrapporterad"/>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('status')}
-                </Row>
-                <Row>
-                  Läckage
+                  <h3>{translate('collection')}</h3>
                 </Row>
               </Column>
               <Column>
@@ -221,7 +238,85 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('status')}
                 </Row>
                 <Row>
-                  {translate('action pending')}
+                  <StatusIcon id={0} name="OK"/>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('interval')}
+                </Row>
+                <Row>
+                  24h
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('resolution')}
+                </Row>
+                <Row>
+                  1h
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('flagged for action')}
+                </Row>
+                <Row>
+                  Nej
+                </Row>
+              </Column>
+            </Row>
+            <Row>
+              <Column>
+                <Row>
+                  <h3>{translate('validation')}</h3>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('status')}
+                </Row>
+                <Row>
+                  <StatusIcon id={3} name="Battery low"/>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('flagged for action')}
+                </Row>
+                <Row>
+                  Nej
+                </Row>
+              </Column>
+            </Row>
+            <Row>
+              <Column>
+                <Row>
+                  <h3>{translate('labels')}</h3>
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('sap id')}
+                </Row>
+                <Row>
+                  123234
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('facility id')}
+                </Row>
+                <Row>
+                  12312321
+                </Row>
+              </Column>
+              <Column>
+                <Row>
+                  {translate('measure id')}
+                </Row>
+                <Row>
+                  12312312
                 </Row>
               </Column>
             </Row>
@@ -231,43 +326,61 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
           <Tabs className="full-width">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                <Tab tab={tabType.statusChanges} title={translate('status changes')}/>
+                <Tab tab={tabType.values} title={translate('status changes')}/>
+                <Tab tab={tabType.log} title={translate('log')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
+                <Tab tab={tabType.connectedGateways} title={translate('gateways')}/>
               </TabHeaders>
               <TabSettings useCase={'meteringPoint'}/>
             </TabTopBar>
-            <TabContent tab={tabType.statusChanges} selectedTab={selectedTab}>
+            <TabContent tab={tabType.values} selectedTab={selectedTab}>
+              <Table data={meterData}>
+                <TableColumn
+                  id={'quantity'}
+                  header={<TableHead className="first">{translate('quantity')}</TableHead>}
+                />
+                <TableColumn
+                  id={'value'}
+                  header={<TableHead>{translate('value')}</TableHead>}
+                />
+              </Table>
+            </TabContent>
+            <TabContent tab={tabType.log} selectedTab={selectedTab}>
+              <Row>
+                <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
+              </Row>
               <Table data={meterData}>
                 <TableColumn
                   id={'date'}
-                  header={<TableHead className="first">{translate('date')}</TableHead>}
+                  header={<TableHead>{translate('date')}</TableHead>}
                 />
                 <TableColumn
                   id={'status'}
                   header={<TableHead>{translate('status')}</TableHead>}
                   cell={renderStatusCell}
                 />
-                <TableColumn
-                  id={'quantity'}
-                  header={<TableHead>{translate('quantity')}</TableHead>}
-                />
-                <TableColumn
-                  id={'value'}
-                  header={<TableHead>{translate('value')}</TableHead>}
-                />
-                <TableColumn
-                  id={'comment'}
-                  header={<TableHead>{translate('comment')}</TableHead>}
-                />
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
               <MapContainer markers={markers} popupMode={PopupMode.none}/>
             </TabContent>
+            <TabContent tab={tabType.connectedGateways} selectedTab={selectedTab}>
+              <Row>
+                <Table data={meterGateways}>
+                  <TableColumn
+                    id={'serial'}
+                    header={<TableHead>{translate('gateway id')}</TableHead>}
+                  />
+                  <TableColumn
+                    id={'snr'}
+                    header={<TableHead>{translate('latest snr')}</TableHead>}
+                  />
+                </Table>
+              </Row>
+            </TabContent>
           </Tabs>
         </Row>
       </Dialog>
     );
-
   }
 }

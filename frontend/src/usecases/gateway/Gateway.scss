@@ -1,14 +1,26 @@
+@import '../app/variables';
+
 .ProductImage {
   margin-right: 30px;
 }
 
 .OverView {
   .Column {
-    margin: 0 30px 40px 0;
+    margin: 0 30px 20px 0;
 
     .Row:first-child {
+      display: block !important;
       font-weight: bold;
+      text-transform: lowercase;
+    }
+
+    .Row:first-letter {
       text-transform: uppercase;
     }
+
   }
+}
+
+.Address .Column:first-child {
+  margin-right: $space;
 }
