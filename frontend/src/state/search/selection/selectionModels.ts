@@ -36,3 +36,9 @@ export type OnSelectSelection = (selection: SelectionState) => void;
 export interface SelectionListItem extends IdNamed {
   selected: boolean;
 }
+
+export interface SelectionSummary {
+  cities: number;
+  addresses: number;
+  meters: number;
+}

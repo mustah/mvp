@@ -9,10 +9,11 @@ import {sidebarTreeSchema} from './meterSchema';
 export const getMetersTotal = (state: MetersState): number => state.total;
 export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities.meters;
 
+// TODO: Add correct type to result.
 export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, any>(
   getResultDomainModels,
   getMeterEntities,
-  (metersList: uuid[], meters: {[key: string]: Meter}) => {
+  (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
 
     const sidebarTree: {[key: string]: SidebarItem[]} = {cities: [], addresses: [], addressClusters: []};
     const cities = new Set<uuid>();
@@ -20,7 +21,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
     const addresses = new Set<uuid>();
 
     metersList.map((meterId: uuid) => {
-      const {city, address} = meters[meterId];
+      const {city, address} = metersLookup[meterId];
       const clusterName = address.name[0];
       const clusterId = city.name + ':' + clusterName;
       const cluster: IdNamed = {id: clusterId, name: clusterName};
@@ -56,7 +57,9 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
       });
     });
     // TODO: Perhaps move this moderation into the sidebarItemsList to speed up performance.
-    sidebarTree.addressClusters.map((item) => {item.name = item.name + '...(' + item.childNodes.ids.length + ')'; });
+    sidebarTree.addressClusters.map((item) => {
+      item.name = item.name + '...(' + item.childNodes.ids.length + ')';
+    });
 
     return normalize(sidebarTree, sidebarTreeSchema);
   },
