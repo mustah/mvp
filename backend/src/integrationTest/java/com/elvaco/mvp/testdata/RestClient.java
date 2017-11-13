@@ -12,16 +12,13 @@ import static java.util.Collections.singletonList;
 
 public final class RestClient {
 
-  private static final String API_URL = "http://localhost:8068/api";
+  private String baseUrl;
 
   private final TestRestTemplate template;
 
-  private RestClient() {
+  protected RestClient(int serverPort) {
+    baseUrl = "http://localhost:" + serverPort + "/api";
     this.template = new TestRestTemplate(new RestTemplate());
-  }
-
-  public static RestClient restClient() {
-    return InstanceHolder.INSTANCE;
   }
 
   public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
@@ -44,7 +41,7 @@ public final class RestClient {
         request.getHeaders().remove(AUTHORIZATION);
         return execution.execute(request, body);
       }));
-    return restClient();
+    return this;
   }
 
   private RestClient authorization(String token) {
@@ -57,14 +54,10 @@ public final class RestClient {
         request.getHeaders().add(headerName, value);
         return execution.execute(request, body);
       }));
-    return restClient();
+    return this;
   }
 
-  private static String apiUrlOf(String url) {
-    return API_URL + url;
-  }
-
-  private static final class InstanceHolder {
-    private static final RestClient INSTANCE = new RestClient();
+  private String apiUrlOf(String url) {
+    return baseUrl + url;
   }
 }

@@ -9,7 +9,6 @@ import com.elvaco.mvp.dto.UnauthorizedDTO;
 import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import static com.elvaco.mvp.testdata.RestClient.restClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
