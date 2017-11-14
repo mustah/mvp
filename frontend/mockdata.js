@@ -69,24 +69,20 @@ const fromDbJson = {
   },
   dashboards: [
     {
-      'id': '3',
-      'systemOverview': {
-        'indicators': [
+      id: 3,
+      systemOverview: {
+        widgets: [
           {
-            'title': 'Insamling',
-            'type': 'collection',
-            'subtitle': '3567 punkter',
-            'state': 'warning',
-            'value': '95.8',
-            'unit': '%',
+            type: 'collection',
+            total: 1715,
+            status: 'warning',
+            pending: 22,
           },
           {
-            'title': 'Validering',
-            'type': 'measurementQuality',
-            'subtitle': '3481 punkter',
-            'state': 'critical',
-            'value': '93.5',
-            'unit': '%',
+            type: 'measurementQuality',
+            total: 1715,
+            status: 'critical',
+            pending: 79,
           },
         ],
       },

@@ -1,6 +1,10 @@
+import * as React from 'react';
+
 export type uuid = string | number;
 
 export type OnClick = (...args) => void;
+
+export type Children = React.ReactNode | React.ReactNode[];
 
 export interface ClassNamed {
   className?: string;

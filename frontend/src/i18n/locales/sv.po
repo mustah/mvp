@@ -11,6 +11,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.9\n"
 
+msgid "filter"
+msgstr "filtrera"
+
+msgid "edit"
+msgstr "redigera"
+
+msgid "delete"
+msgstr "ta bort"
+
 msgid "collection"
 msgstr "insamling"
 
@@ -187,6 +196,40 @@ msgstr "urvalsöversikt"
 
 msgid "metering"
 msgstr "mätning"
+
+msgid "saved selection"
+msgstr "sparat urval"
+
+msgid "no saved selections"
+msgstr "inga sparade urval"
+
+msgid "could not be collected"
+msgstr "kunde inte hämtas"
+
+msgid "area"
+msgstr "område"
+
+msgid "object"
+msgstr "objekt"
+
+msgid "facility"
+msgstr "anläggning"
+
+msgid "save"
+msgstr "spara"
+
+msgid "save as"
+msgstr "spara som"
+
+msgid "reset"
+msgstr "återställ"
+
+msgid "of {{count}} point"
+msgstr "av {{count}} punkt"
+
+msgctxt "°plural"
+msgid "of {{count}} point°"
+msgstr "av {{count}} punkter"
 
 msgctxt "°plural"
 msgid "city°"

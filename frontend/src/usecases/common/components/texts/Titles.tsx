@@ -5,6 +5,7 @@ import './Titles.scss';
 
 interface TitleProps {
   children: React.ReactNode[] | React.ReactNode;
+  className?: string;
 }
 
 export const Title = (props: TitleProps) => (

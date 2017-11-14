@@ -3,7 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
-import {listItemStyle} from '../../app/themes';
+import {menuItemInnerDivStyle} from '../../app/themes';
 import {User} from '../../auth/authReducer';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
@@ -46,7 +46,7 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
           >
             <Menu>
               <MenuItem
-                style={listItemStyle}
+                innerDivStyle={menuItemInnerDivStyle}
                 className="logout first-uppercase"
                 onClick={this.logout}
               >

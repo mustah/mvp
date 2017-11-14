@@ -11,12 +11,9 @@ export enum IndicatorType {
   temperatureOutside = 'temperatureOutside',
 }
 
-export interface Indicator {
+export interface WidgetModel {
   type: IndicatorType;
-  title: string;
-  state: Status;
-  subtitle: string;
-  value: string;
-  // quantity?: string; // Quantity is something measured, like "energy", "water"
-  unit: string; // Unit is what we are measuring the value in, like "kWh", "m^3"
+  total: number;
+  status: Status;
+  pending: number;
 }
