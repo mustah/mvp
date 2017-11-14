@@ -83,6 +83,12 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
     dispatch(fetchMetersAndGateways());
   };
 
+export const addSelection = (selectionParameter: SelectionParameter) =>
+  (dispatch, getState: () => RootState) => {
+    dispatch(setSelection(selectionParameter));
+    dispatch(fetchMetersAndGateways());
+  };
+
 export const selectPeriod = (period: Period) =>
   dispatch => {
     dispatch(selectPeriodAction(period));

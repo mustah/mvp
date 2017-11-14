@@ -7,10 +7,12 @@ import {translate} from '../../../services/translationService';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
-import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
+import {addSelection} from '../../../state/search/selection/selectionActions';
+import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
-import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
+import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
@@ -28,13 +30,14 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 
-interface CollectionTabsContainer extends TabsContainerProps {
+interface ValidationTabsContainer extends TabsContainerProps {
   entityCount: number;
   entities: { [key: string]: Meter };
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
   selectedEntities: uuid[];
+  addSelection: (searchParameters: SelectionParameter) => void;
 }
 
 /**
@@ -48,7 +51,7 @@ interface CollectionTabsContainer extends TabsContainerProps {
 const incProp = (obj: any, prop: string): void =>
   typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
 
-const CollectionTabsContainer = (props: CollectionTabsContainer) => {
+const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   const {
     selectedTab,
     changeTab,
@@ -60,6 +63,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     entityCount,
     changeTabOption,
     tabs,
+    addSelection,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -140,6 +144,14 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     return section;
   }).map((section) => <TabOption key={section.id} title={section.label} id={section.id}/>);
 
+  const selectCity = (city: string) => {
+    addSelection({
+      parameter: parameterNames.cities,
+      id: city,
+      name: city,
+    });
+  };
+
   const graphTabContents = ((tabName: string): any => {
     const count = counts[tabName];
     const header = count > 0 ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
@@ -149,7 +161,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <h2>{header}</h2>
         <Row>
           <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
-          <PieChartSelector heading="Städer" data={cities} colors={colors[0]}/>
+          <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
           <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
           <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
         </Row>
@@ -190,7 +202,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
 const mapStateToProps = (state: RootState) => {
   const {ui, domainModels} = state;
-  const pagination = getCollectionPagination(ui);
+  const pagination = getValidationPagination(ui);
   const entityState = domainModels.meters;
 
   return {
@@ -205,9 +217,10 @@ const mapStateToProps = (state: RootState) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  changeTab: changeTabCollection,
-  changeTabOption: changeTabOptionCollection,
-  paginationChangePage: changePaginationCollection,
+  changeTab: changeTabValidation,
+  changeTabOption: changeTabOptionValidation,
+  paginationChangePage: changePaginationValidation,
+  addSelection,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
