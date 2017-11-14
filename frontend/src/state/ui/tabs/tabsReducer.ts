@@ -6,8 +6,8 @@ const tabsInitialState: TabsState = {
   validation: {
     selectedTab: tabType.list,
     tabs: {
-      [tabType.map]: {
-        selectedOption: 'area',
+      [tabType.graph]: {
+        selectedOption: 'all',
       },
     },
   },

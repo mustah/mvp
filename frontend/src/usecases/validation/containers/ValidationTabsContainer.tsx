@@ -184,7 +184,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
         <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
           {graphTabs}
         </TabOptions>
-        <TabSettings useCase={'collection'}/>
+        <TabSettings useCase={'validation'}/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
         {graphTabContents}
@@ -206,8 +206,8 @@ const mapStateToProps = (state: RootState) => {
   const entityState = domainModels.meters;
 
   return {
-    selectedTab: getSelectedTab(ui.tabs.collection),
-    tabs: getTabs(ui.tabs.collection),
+    selectedTab: getSelectedTab(ui.tabs.validation),
+    tabs: getTabs(ui.tabs.validation),
     entityCount: getMetersTotal(entityState),
     entities: getMeterEntities(entityState),
     selectedEntities: getResultDomainModels(entityState),
