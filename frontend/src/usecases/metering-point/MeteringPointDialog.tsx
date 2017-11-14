@@ -67,6 +67,16 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     // TODO are these example values too large? i.e. current state, not diff between current and last state
     const meterData = {
       byId: {
+        id0: {
+          date: '2017-11-16 09:34',
+          status: {
+            id: 0,
+            name: 'OK',
+          },
+          quantity: 'Date',
+          value: '2017-11-16 09:34',
+          comment: '',
+        },
         id1: {
           date: '2017-11-16 09:34',
           status: {
@@ -138,7 +148,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
           comment: '',
         },
       },
-      allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
+      allIds: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
     const changeTab = (option: tabType) => {
@@ -324,7 +334,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
           </Column>
         </Row>
         <Row>
-          <Tabs className="full-width">
+          <Tabs className="full-width first-letter">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
                 <Tab tab={tabType.values} title={translate('latest value')}/>
