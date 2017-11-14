@@ -63,7 +63,6 @@ export const PeriodSelection = (props: Props) => {
     <Row className="PeriodSelection">
       <DropDownMenu
         maxHeight={300}
-        autoWidth={false}
         underlineStyle={underlineStyle}
         labelStyle={labelStyle}
         iconStyle={iconStyle}
