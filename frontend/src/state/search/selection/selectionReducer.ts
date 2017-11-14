@@ -40,7 +40,7 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         isChanged: true,
         selected: {
           ...state.selected,
-          [payload.parameter]: [...state.selected[payload.parameter], payload.id],
+          [payload.parameter]: Array.from(new Set([...state.selected[payload.parameter]]).add(payload.id)),
         },
       };
     case DESELECT_SELECTION:
