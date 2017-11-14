@@ -15,16 +15,18 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
   getMeterEntities,
   (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
 
-    const sidebarTree: {[key: string]: SidebarItem[]} = {cities: [], addresses: [], addressClusters: []};
+    const sidebarTree: {[key: string]: SidebarItem[]} = {cities: [], addresses: [], addressClusters: [], meters: []};
     const cities = new Set<uuid>();
     const addressClusters = new Set<uuid>();
     const addresses = new Set<uuid>();
+    const meters = new Set<uuid>();
 
     metersList.map((meterId: uuid) => {
       const {city, address} = metersLookup[meterId];
       const clusterName = address.name[0];
       const clusterId = city.name + ':' + clusterName;
       const cluster: IdNamed = {id: clusterId, name: clusterName};
+      const meter: IdNamed = {id: meterId as string, name: meterId as string};
 
       sidebarItems(sidebarTree, {
         category: parameterNames.cities,
@@ -52,6 +54,16 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         unit: address,
         parentType: 'addressClusters',
         parent: cluster,
+        selectable: true,
+        childrenType: 'meters',
+      });
+
+      sidebarItems(sidebarTree, {
+        category: 'meters',
+        set: meters,
+        unit: meter,
+        parentType: parameterNames.addresses,
+        parent: address,
         selectable: true,
         childrenType: '',
       });
