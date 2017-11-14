@@ -20,6 +20,7 @@ import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
 import {Checkbox} from 'material-ui';
+import {MainTitle} from '../common/components/texts/Titles';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -57,7 +58,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             id: 0,
             name: 'OK',
           },
-          quantity: 'Energy',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
@@ -68,7 +69,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             id: 0,
             name: 'OK',
           },
-          quantity: 'Volume',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
@@ -79,7 +80,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             id: 0,
             name: 'OK',
           },
-          quantity: 'Power',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
@@ -90,40 +91,40 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             id: 0,
             name: 'OK',
           },
-          quantity: 'Volume flow',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
         id5: {
-          moid: '4985241',
+          moid: '49852',
           date: '2017-11-22 05:34',
           status: {
             id: 0,
             name: 'OK',
           },
-          quantity: 'Flow temp.',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
         id6: {
-          moid: '6577452',
+          moid: '65774',
           date: '2017-11-22 04:34',
           status: {
             id: 3,
-            name: 'Läckage',
+            name: 'Fel',
           },
-          quantity: 'Return temp.',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
         id7: {
-          moid: '3216872',
+          moid: '32168',
           date: '2017-11-22 03:34',
           status: {
             id: 0,
             name: 'OK',
           },
-          quantity: 'Difference temp.',
+          medium: 'Heat, Return temp',
           manufacturer: 'ELV',
           comment: '',
         },
@@ -170,7 +171,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
       >
         <Row className="Column-space-between">
           <Column>
-            <h2 className="capitalize">{translate('gateway details')}</h2>
+            <MainTitle>{translate('gateway details')}</MainTitle>
           </Column>
           <Column className="Column-center">
             <Row className="Address">
@@ -247,7 +248,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
                 <Tab tab={tabType.values} title={translate('meter')}/>
-                <Tab tab={tabType.log} title={translate('log')}/>
+                <Tab tab={tabType.log} title={translate('status log')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
               </TabHeaders>
               <TabSettings useCase={'gateway'}/>
@@ -263,8 +264,8 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   header={<TableHead>{translate('manufacturer')}</TableHead>}
                 />
                 <TableColumn
-                  id={'quantity'}
-                  header={<TableHead>{translate('quantity')}</TableHead>}
+                  id={'medium'}
+                  header={<TableHead>{translate('medium')}</TableHead>}
                 />
                 <TableColumn
                   id={'status'}

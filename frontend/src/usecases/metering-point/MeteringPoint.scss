@@ -1,9 +1,5 @@
 @import '../app/variables';
 
-.MeterGraphics {
-  width: 200px;
-}
-
 .OverView {
   h2, h3 {
     margin: 0;
@@ -21,4 +17,15 @@
       text-transform: uppercase;
     }
   }
+}
+
+.Tab-header {
+  // TODO we should create a default way of making only the first letter in a tag capitalized
+  display: block !important;
+  font-weight: bold;
+  text-transform: lowercase !important;
+}
+
+.Tab-header:first-letter {
+  text-transform: uppercase !important;
 }

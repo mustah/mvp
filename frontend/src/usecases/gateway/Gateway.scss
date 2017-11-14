@@ -24,3 +24,14 @@
 .Address .Column:first-child {
   margin-right: $space;
 }
+
+.Tab-header {
+  // TODO we should create a default way of making only the first letter in a tag capitalized
+  display: block !important;
+  font-weight: bold;
+  text-transform: lowercase !important;
+}
+
+.Tab-header:first-letter {
+  text-transform: uppercase !important;
+}

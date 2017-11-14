@@ -29,6 +29,11 @@ export const mvpTheme = getMuiTheme({
     primary1Color: fullBlack,
     textColor: darkBlack,
   },
+
+  dialog: {
+    bodyFontSize: fontSizeNormal,
+    bodyColor: darkBlack,
+  },
 });
 
 export const drawerWidth = 64;
