@@ -73,14 +73,14 @@ describe('selectionSelectors', () => {
   describe('encodedUriParameters', () => {
 
     it('has no search parameters', () => {
-      expect(getEncodedUriParameters(searchParametersState)).toEqual('period=current_month');
+      expect(getEncodedUriParameters(searchParametersState)).toEqual('period=now');
     });
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&period=current_month');
+      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&period=now');
     });
 
     it('has two selected cities', () => {
@@ -90,14 +90,14 @@ describe('selectionSelectors', () => {
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
       expect(getEncodedUriParameters({selection: state, saved: []}))
-        .toEqual('city.id=got&city.id=sto&period=current_month');
+        .toEqual('city.id=got&city.id=sto&period=now');
     });
   });
 
   describe('get selected period', () => {
 
-    it('period current month is default ', () => {
-      expect(getSelectedPeriod(initialState)).toBe(Period.currentMonth);
+    it('period now is default ', () => {
+      expect(getSelectedPeriod(initialState)).toBe(Period.now);
     });
 
     it('get selected period', () => {

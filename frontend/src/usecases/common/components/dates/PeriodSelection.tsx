@@ -22,6 +22,11 @@ export const PeriodSelection = (props: Props) => {
 
   const timePeriods = [
     {
+      value: Period.now,
+      chosen: 'Nu', // TODO demo purposes only. I imagine we will input real timestamps here in the future, anyways
+      alternative: translate('now'),
+    },
+    {
       value: Period.currentMonth,
       chosen: '1 nov - 22 nov',
       alternative: translate('current month'),
