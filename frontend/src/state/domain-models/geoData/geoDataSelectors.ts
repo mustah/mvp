@@ -1,12 +1,5 @@
 import {createSelector} from 'reselect';
-import {IdNamed, uuid} from '../../../types/Types';
-import {DomainModel, GeoDataState, IdNamedState} from './geoDataModels';
-
-export const getGeoDataEntitiesBy = (entityType: string) =>
-  (state: GeoDataState): DomainModel<IdNamed> => state[entityType].entities;
-
-export const getGeoDataResultBy = (entityType: string) =>
-  (state: GeoDataState): uuid[] => state[entityType].result;
+import {GeoDataState, IdNamedState} from './geoDataModels';
 
 export const isFetchingAddresses = createSelector<GeoDataState, IdNamedState, boolean>(
   (state: GeoDataState) => state.addresses,

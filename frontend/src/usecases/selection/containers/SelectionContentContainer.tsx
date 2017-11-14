@@ -77,21 +77,17 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData, alarms}}: RootState): StateToProps => {
+const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData: {cities, addresses}, alarms}}: RootState): StateToProps => {
   const lookupState: LookupState = {
-    geoData,
-    selection,
-  };
-  const alarmLookupState: LookupState = {
-    geoData: {alarms},
+    selectionEntities: {alarms, cities, addresses},
     selection,
   };
 
   return {
     cities: getCities(lookupState),
-    citiesSelection: getCitiesSelection(lookupState),
+    citiesSelection: getCitiesSelection(lookupState).entities,
     addresses: getAddresses(lookupState),
-    alarms: getAlarms(alarmLookupState),
+    alarms: getAlarms(lookupState),
   };
 };
 

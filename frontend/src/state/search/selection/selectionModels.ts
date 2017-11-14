@@ -1,5 +1,6 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
-import {GeoDataState} from '../../domain-models/geoData/geoDataModels';
+import {Address} from '../../domain-models/domainModels';
+import {Normalized, DomainModel} from '../../domain-models/geoData/geoDataModels';
 
 export interface SelectionParameter extends IdNamed {
   parameter: parameterNames;
@@ -18,9 +19,11 @@ export interface SelectionState extends IdNamed {
   isChanged: boolean;
 }
 
+export type SelectionEntity = IdNamed | Address;
+
 export interface LookupState {
   selection: SelectionState;
-  geoData: GeoDataState;
+  selectionEntities: DomainModel<Normalized<SelectionEntity>>;
 }
 
 export enum parameterNames {
@@ -35,9 +38,7 @@ export type OnSelectPeriod = (period: Period) => void;
 
 export type OnSelectSelection = (selection: SelectionState) => void;
 
-export interface SelectionListItem extends IdNamed {
-  selected: boolean;
-}
+export type SelectionListItem = SelectionEntity & {selected: boolean};
 
 export interface SelectionSummary {
   cities: number;
