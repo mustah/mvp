@@ -5,6 +5,7 @@ import {
   GEO_DATA_SUCCESS,
 } from './geoDataActions';
 import {AddressState, GeoDataState, IdNamedState} from './geoDataModels';
+import {parameterNames} from '../../search/selection/selectionModels';
 
 export const initialState: IdNamedState = {
   result: [],
@@ -49,9 +50,12 @@ const geoDataReducerFor = (entity: string, state: IdNamedState, action: AnyActio
 };
 
 export const addresses = (state: AddressState = initialAddressState, action: AnyAction): AddressState =>
-  geoDataReducerFor('addresses', state, action);
+  geoDataReducerFor(parameterNames.addresses, state, action);
 
 export const cities = (state: IdNamedState = initialState, action: AnyAction): IdNamedState =>
-  geoDataReducerFor('cities', state, action);
+  geoDataReducerFor(parameterNames.cities, state, action);
+
+export const alarms = (state: IdNamedState = initialState, action: AnyAction): IdNamedState =>
+  geoDataReducerFor(parameterNames.alarms, state, action);
 
 export const geoData = combineReducers<GeoDataState>({addresses, cities});

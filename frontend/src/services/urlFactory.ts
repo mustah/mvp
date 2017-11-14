@@ -5,6 +5,7 @@ const parameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
   statuses: 'status',
+  alarms: 'alarm',
   period: 'period',
 };
 

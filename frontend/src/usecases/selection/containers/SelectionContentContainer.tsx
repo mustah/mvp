@@ -12,7 +12,12 @@ import {
   SelectionListItem,
   SelectionParameter,
 } from '../../../state/search/selection/selectionModels';
-import {getAddresses, getCities, getCitiesSelection} from '../../../state/search/selection/selectionSelectors';
+import {
+  getAddresses,
+  getAlarms,
+  getCities,
+  getCitiesSelection,
+} from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
 import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/SimpleDropdownSelector';
@@ -24,6 +29,7 @@ import {MetersResultContainer} from './MetersContainer';
 interface StateToProps {
   cities: SelectionListItem[];
   addresses: SelectionListItem[];
+  alarms: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -32,13 +38,15 @@ interface DispatchToProps {
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {toggleSelection, cities, addresses, citiesSelection} = props;
+  const {toggleSelection, cities, addresses, alarms, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
+  const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.alarms});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
+  const alarmSelectionText = translate('alarm') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -57,6 +65,11 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           parentSelectionLookup={citiesSelection}
           parentIdentifier="cityId"
         />
+        <SimpleDropdownSelector
+          list={alarms}
+          selectionText={alarmSelectionText}
+          select={selectAlarm}
+        />
       </Row>
 
       <MetersResultContainer/>
@@ -64,9 +77,13 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}}: RootState): StateToProps => {
+const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData, alarms}}: RootState): StateToProps => {
   const lookupState: LookupState = {
     geoData,
+    selection,
+  };
+  const alarmLookupState: LookupState = {
+    geoData: {alarms},
     selection,
   };
 
@@ -74,6 +91,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels: {geoData}
     cities: getCities(lookupState),
     citiesSelection: getCitiesSelection(lookupState),
     addresses: getAddresses(lookupState),
+    alarms: getAlarms(alarmLookupState),
   };
 };
 
