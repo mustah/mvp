@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -6,6 +5,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -15,6 +16,7 @@ import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
+import {MeterList} from '../../common/components/table/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
@@ -25,9 +27,6 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {MeterList} from '../../common/components/table/MeterList';
-import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -90,14 +89,14 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories: { [category: string]: number[] } = {flagged: [], cities: [], manufacturers: [], media: []};
+  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
-    all: _.cloneDeep(categories),
-    ok: _.cloneDeep(categories),
-    warnings: _.cloneDeep(categories),
-    faults: _.cloneDeep(categories),
+    all: categories(),
+    ok: categories(),
+    warnings: categories(),
+    faults: categories(),
   };
 
   // categorize the information into a format that's easy to manipulate ...
