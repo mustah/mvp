@@ -110,6 +110,32 @@ const fromDbJson = {
   },
 };
 
+const alarmsLookup = [
+  'Battery low',
+  'Flow sensor error (air)',
+  'Flow sensor error (generic)',
+  'Flow sensor error (dirty)',
+  'Leakage',
+  'Overflow',
+  'Backflow',
+  'Forward temperature sensor error',
+  'Return temperature sensor error',
+  'Temperature sensor error (generic)',
+  'Temperature sensor inverted',
+  'Tamper error',
+  'Supply voltage error',
+  'Time for battery change',
+  'Internal meter error',
+];
+
+const getRandomAlarm = () => {
+  const randomNumber = Math.floor(Math.random() * 250);
+  if (randomNumber < 15) {
+    return alarmsLookup[randomNumber];
+  }
+  return 'none';
+};
+
 const parseMeasurementSeedData = (path) => {
   const measurements = [];
   const statusChanges = {};
@@ -195,7 +221,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const r = {
     meters: [],
     gateways: [],
-    selections: {meteringPoints: [], statuses: [], cities: [], addresses: []},
+    selections: {meteringPoints: [], statuses: [], cities: [], addresses: [], alarms: []},
   };
   let geocodeData = {};
   let limiter;
@@ -215,6 +241,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const addresses = new Set();
   const meteringPoints = new Set();
   const statuses = new Set();
+  const alarms = new Set();
 
   const promises = glob.sync(path).map((seedFile) => {
 
@@ -222,7 +249,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -280,6 +307,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         statusChanged: gatewayStatusChanged,
         position: objPosition,
       });
+      const alarm = getRandomAlarm();
       r.meters.push({
         id: row.meter_id,
         facility: row.facility,
@@ -292,6 +320,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         statusChanged: meterStatusChanged,
         gatewayId: row.gateway_id,
         position: objPosition,
+        alarm,
       });
       if (!cities.has(cityId)) {
         r.selections.cities.push({id: cityId, name: row.city});
@@ -308,6 +337,10 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       if (!statuses.has(row.meter_status)) {
         r.selections.statuses.push({id: row.meter_status, name: row.meter_status});
         statuses.add(row.meter_status);
+      }
+      if (!alarms.has(alarm)) {
+        r.selections.alarms.push({id: alarm, name: alarm});
+        alarms.add(alarm);
       }
     }));
   });
