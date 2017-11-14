@@ -119,21 +119,19 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
       // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
       switch (marker.status.id) {
-        case 0: {
+        case 0:
+        case 1:
           tmpIcon = 'marker-icon-ok.png';
           break;
-        }
-        case 1: {
+        case 2:
           tmpIcon = 'marker-icon-warning.png';
           break;
-        }
-        case 2: {
+        case 3:
           tmpIcon = 'marker-icon-error.png';
           break;
-        }
-        default: {
+        default:
           tmpIcon = 'marker-icon.png';
-        }
+          break;
       }
 
       const {latitude, longitude, confidence} = marker.position;
