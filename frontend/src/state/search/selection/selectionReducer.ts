@@ -94,7 +94,7 @@ export const saved = (state: SelectionState[] = [], action: AnyAction): Selectio
 
   switch (type) {
     case SAVE_SELECTION:
-      return [...state, payload];
+      return [payload, ...state];
     case UPDATE_SELECTION:
       return updateSelectionById(state, action);
     default:

@@ -47,7 +47,7 @@ describe('selectionReducer', () => {
       let state = saved([], saveSelectionAction(payload));
       state = saved(state, saveSelectionAction(newPayload));
 
-      expect(state).toEqual([payload, newPayload]);
+      expect(state).toEqual([newPayload, payload]);
     });
   });
 
