@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Row} from '../layouts/row/Row';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 import {IndicatorType} from './models/widgetModels';
-import {Indicator} from '../../../report/models/ReportModels';
+import {Indicator} from '../../../report/models/reportModels';
 
 export interface SelectedIndicatorWidgetProps {
   selectedWidget?: IndicatorType | null;

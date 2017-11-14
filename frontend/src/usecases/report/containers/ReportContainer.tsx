@@ -19,7 +19,7 @@ import {PageContainer} from '../../common/containers/PageContainer';
 import {PeriodContainer} from '../../common/containers/PeriodContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
-import {indicators, ReportState} from '../models/ReportModels';
+import {indicators, ReportState} from '../models/reportModels';
 import {fetchReports} from '../reportActions';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {

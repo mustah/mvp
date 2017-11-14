@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {ReportState} from './models/ReportModels';
+import {ReportState} from './models/reportModels';
 import {REPORTS_REQUEST} from './reportActions';
 
 const initialState: ReportState = {

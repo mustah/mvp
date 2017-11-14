@@ -7,7 +7,7 @@ import {auth, AuthState} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
 import {language, LanguageState} from '../usecases/main-menu/languageReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
-import {ReportState} from '../usecases/report/models/ReportModels';
+import {ReportState} from '../usecases/report/models/reportModels';
 import {report} from '../usecases/report/reportReducer';
 
 export interface RootState {

@@ -12,7 +12,7 @@ import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {IndicatorType} from './models/widgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
-import {Indicator} from '../../../report/models/ReportModels';
+import {Indicator} from '../../../report/models/reportModels';
 
 interface IndicatorIcon {
   [type: string]: React.ReactElement<SvgIconProps>;
