@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-09T12:58:31.901Z\n"
+"POT-Creation-Date: 2017-11-13T16:04:23.060Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,11 +11,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
-msgid "filter"
-msgstr "filtrera"
-
 msgid "collection"
 msgstr "insamling"
+
+msgid "export to Excel (.csv)"
+msgstr "exportera till Excel (.csv)"
+
+msgid "export to JSON"
+msgstr "exportera till JSON"
+
+msgid "show meters"
+msgstr "visa mätare"
 
 msgid "gateway"
 msgstr "gateway"
@@ -29,32 +35,14 @@ msgstr "adress"
 msgid "product model"
 msgstr "modell"
 
-msgid "status change"
-msgstr "statusförändring"
-
 msgid "status"
 msgstr "status"
 
+msgid "status change"
+msgstr "statusförändring"
+
 msgid "action"
 msgstr "åtgärd"
-
-msgid "interval"
-msgstr "intervall"
-
-msgid "flagged for action"
-msgstr "flaggad för åtgärd"
-
-msgid "ok"
-msgstr "ok"
-
-msgid "reported"
-msgstr "felrapporterade"
-
-msgid "unhandled problems"
-msgstr "ej hanterat"
-
-msgid "graph"
-msgstr "graf"
 
 msgid "list"
 msgstr "lista"
@@ -62,11 +50,8 @@ msgstr "lista"
 msgid "map"
 msgstr "karta"
 
-msgid "population"
-msgstr "bestånd"
-
-msgid "faults"
-msgstr "fel"
+msgid "close"
+msgstr "stäng"
 
 msgid "current month"
 msgstr "denna månad"
@@ -92,6 +77,9 @@ msgstr "föregående"
 msgid "next"
 msgstr "nästa"
 
+msgid "show gateways"
+msgstr "visa gateways"
+
 msgid "meter"
 msgstr "mätare"
 
@@ -100,12 +88,6 @@ msgstr "tillverkare"
 
 msgid "medium"
 msgstr "medium"
-
-msgid "show only changes"
-msgstr "visa bara ändringar"
-
-msgid "close"
-msgstr "stäng"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -116,56 +98,38 @@ msgstr "gateway"
 msgid "gateway id"
 msgstr "gateway id"
 
-msgid "validation"
-msgstr "validering"
+msgid "interval"
+msgstr "intervall"
 
-msgid "action pending"
-msgstr "inväntar åtgärd"
-
-msgid "status changes"
-msgstr "statusförändringar"
-
-msgid "date"
-msgstr "datum"
-
-msgid "quantity"
-msgstr "storhet"
-
-msgid "value"
-msgstr "värde"
-
-msgid "comment"
-msgstr "kommentar"
-
-msgid "report"
-msgstr "rapport"
-
-msgid "meter details"
-msgstr "mätare"
-
-msgid "labels"
-msgstr "etiketter"
-
-msgid "meter id"
-msgstr "MOID"
-
-msgid "logout"
-msgstr "logga ut"
-
-msgid "gateways"
-msgstr "gateways"
+msgid "flagged for action"
+msgstr "flaggad för åtgärd"
 
 msgid "log"
 msgstr "logg"
 
-msgid "new search"
-msgstr "nytt urval"
+msgid "quantity"
+msgstr "storhet"
 
-msgid "gateway id"
-msgstr "gateway ID"
+msgid "show only changes"
+msgstr "visa bara ändringar"
 
-msgid "latest snr"
-msgstr "senaste SNR"
+msgid "date"
+msgstr "datum"
+
+msgid "validation"
+msgstr "validering"
+
+msgid "report"
+msgstr "rapport"
+
+msgid "meter id"
+msgstr "MOID"
+
+msgid "resolution"
+msgstr "upplösning"
+
+msgid "labels"
+msgstr "etiketter"
 
 msgid "sap id"
 msgstr "sap ID"
@@ -176,41 +140,20 @@ msgstr "anläggnings ID"
 msgid "measure id"
 msgstr "mät ID"
 
-msgid "resolution"
-msgstr "upplösning"
+msgid "status changes"
+msgstr "statusförändringar"
 
-msgid "selection"
-msgstr "urval"
+msgid "gateways"
+msgstr "gateways"
 
-msgid "searching"
-msgstr "söker"
+msgid "value"
+msgstr "värde"
 
-msgid "saved search"
-msgstr "sparad sökning"
+msgid "latest snr"
+msgstr "senaste SNR"
 
-msgid "selection overview"
-msgstr "urvalsöversikt"
-
-msgid "metering"
-msgstr "mätning"
-
-msgid "saved selection"
-msgstr "sparat urval"
-
-msgid "no saved selections"
-msgstr "inga sparade urval"
-
-msgid "could not be collected"
-msgstr "kunde inte hämtas"
-
-msgid "area"
-msgstr "område"
-
-msgid "object"
-msgstr "objekt"
-
-msgid "facility"
-msgstr "anläggning"
+msgid "logout"
+msgstr "logga ut"
 
 msgid "save"
 msgstr "spara"
@@ -220,6 +163,27 @@ msgstr "spara som"
 
 msgid "reset"
 msgstr "återställ"
+
+msgid "selection"
+msgstr "urval"
+
+msgid "filter"
+msgstr "filtrera"
+
+msgid "searching"
+msgstr "söker"
+
+msgid "no saved selections"
+msgstr "inga sparade urval"
+
+msgid "saved selection"
+msgstr "sparat urval"
+
+msgid "selection overview"
+msgstr "urvalsöversikt"
+
+msgid "metering"
+msgstr "mätning"
 
 msgctxt "°plural"
 msgid "city°"
@@ -232,6 +196,51 @@ msgstr "adresser"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"
+
+#~ msgid "ok"
+#~ msgstr "ok"
+
+#~ msgid "reported"
+#~ msgstr "felrapporterade"
+
+#~ msgid "unhandled problems"
+#~ msgstr "ej hanterat"
+
+#~ msgid "graph"
+#~ msgstr "graf"
+
+#~ msgid "population"
+#~ msgstr "bestånd"
+
+#~ msgid "faults"
+#~ msgstr "fel"
+
+#~ msgid "action pending"
+#~ msgstr "inväntar åtgärd"
+
+#~ msgid "comment"
+#~ msgstr "kommentar"
+
+#~ msgid "meter details"
+#~ msgstr "mätare"
+
+#~ msgid "new search"
+#~ msgstr "nytt urval"
+
+#~ msgid "saved search"
+#~ msgstr "sparad sökning"
+
+#~ msgid "could not be collected"
+#~ msgstr "kunde inte hämtas"
+
+#~ msgid "area"
+#~ msgstr "område"
+
+#~ msgid "object"
+#~ msgstr "objekt"
+
+#~ msgid "facility"
+#~ msgstr "anläggning"
 
 #~ msgid "status changed"
 #~ msgstr "statusförändring"
