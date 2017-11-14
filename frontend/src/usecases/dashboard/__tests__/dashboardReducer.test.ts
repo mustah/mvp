@@ -1,43 +1,37 @@
 import {DASHBOARD_SUCCESS} from '../../../types/ActionTypes';
 import {Status} from '../../../types/Types';
-import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
+import {IndicatorType, WidgetModel} from '../../common/components/indicators/models/widgetModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
 
 describe('Dashboard', () => {
 
   it('extracts valid widgets from JSON response', () => {
-    const indicators: Indicator[] = [
+    const widgets: WidgetModel[] = [
       {
         type: IndicatorType.coldWater,
-        state: Status.warning,
-        subtitle: '-_-3567 punkter',
-        title: 'Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.warning,
+        total: 1000,
+        pending: 20,
       },
       {
         type: IndicatorType.current,
-        state: Status.ok,
-        subtitle: '-_-3567 punkter',
-        title: '-_-Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.ok,
+        total: 3000,
+        pending: 17,
       },
       {
         type: IndicatorType.districtHeating,
-        state: Status.critical,
-        subtitle: '-_-3567 punkter',
-        title: '-_-Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.critical,
+        total: 1000,
+        pending: 122,
       },
     ];
 
     const capturedApiResponse: DashboardModel = {
       id: 3,
       systemOverview: {
-        indicators,
+        widgets,
       },
     };
 
@@ -51,7 +45,7 @@ describe('Dashboard', () => {
       record: {
         id: 3,
         systemOverview: {
-          indicators,
+          widgets,
         },
       },
     };

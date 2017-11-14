@@ -11,6 +11,7 @@ export const fontSizeNormal = 14;
 export const colors = {
   darkBlue: '#006da3',
   blue: '#00b6f7',
+  red: '#ff3d00',
   lightGrey: '#f9f9f9',
   lightBlack: '#7b7b7b',
   borderColor: '#cccccc',
@@ -69,6 +70,12 @@ export const dividerStyle: React.CSSProperties = {
 
 export const listItemStyle: React.CSSProperties = {
   fontSize: fontSizeNormal,
+};
+
+export const menuItemInnerDivStyle: React.CSSProperties = {
+  ...listItemStyle,
+  lineHeight: '32px',
+  minHeight: 32,
 };
 
 export const nestedListItemStyle: React.CSSProperties = {

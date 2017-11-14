@@ -9,16 +9,19 @@ import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicat
 import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
-} from '../../common/components/indicators/IndicatorWidgets';
+} from '../../common/components/indicators/SelectableIndicatorWidgets';
+import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
+import {Bold} from '../../common/components/texts/Texts';
 import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {PeriodContainer} from '../../common/containers/PeriodContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
-import {SystemOverview} from '../components/system-overview/SystemOverview';
+import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
+import {Widget} from '../components/widgets/Widget';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
-import {SystemOverviewState} from '../models/dashboardModels';
+import {DashboardModel} from '../models/dashboardModels';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
@@ -39,18 +42,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
   render() {
     const {
       dashboard: {record},
-      selectIndicatorWidget,
-      selectedWidget,
     } = this.props;
-
-    const renderSystemOverview = (systemOverview: SystemOverviewState) => (
-      <SystemOverview
-        indicators={systemOverview.indicators}
-        selectedWidget={selectedWidget}
-        selectIndicatorWidget={selectIndicatorWidget}
-        showSelected={false}
-      />
-    );
 
     return (
       <PageContainer>
@@ -62,10 +54,31 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
           </Row>
         </Row>
 
-        {record && renderSystemOverview(record.systemOverview)}
+        {this.renderWidgets(record)}
       </PageContainer>
     );
   }
+
+  renderWidgets = (records?: DashboardModel) => {
+    if (records) {
+      return (
+        <Column>
+          <OverviewWidgets widgets={records.systemOverview.widgets}/>
+
+          <Row>
+            <Widget>
+              <Bold>Map TODO</Bold>
+            </Widget>
+            <Widget>
+              <Bold>Map - 2 - TODO</Bold>
+            </Widget>
+          </Row>
+        </Column>
+      );
+    }
+    return null;
+  }
+
 }
 
 /**

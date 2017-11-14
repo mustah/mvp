@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {IndicatorType} from '../../../usecases/common/components/indicators/models/IndicatorModels';
+import {IndicatorType} from '../../../usecases/common/components/indicators/models/widgetModels';
 import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
 
 export interface SelectedIndicators {

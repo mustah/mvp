@@ -1,65 +1,41 @@
-import * as classNames from 'classnames';
+import 'IndicatorWidget.scss';
 import * as React from 'react';
-import {IconColdWater} from '../icons/IconColdWater';
-import {IconCollection} from '../icons/IconCollection';
-import {IconCurrent} from '../icons/IconCurrent';
-import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {IconTemperature} from '../icons/IconTemperature';
-import {IconValidation} from '../icons/IconValidation';
-import {Column} from '../layouts/column/Column';
+import {translate} from '../../../../services/translationService';
+import {Children} from '../../../../types/Types';
+import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal, Xlarge} from '../texts/Texts';
-import './IndicatorWidget.scss';
-import {Indicator, IndicatorType} from './models/IndicatorModels';
-import SvgIconProps = __MaterialUI.SvgIconProps;
+import {Normal, Xlarge} from '../texts/Texts';
+import {WidgetModel} from './models/widgetModels';
+import {indicatorIconFor} from './SelectableIndicatorWidget';
+import classNames = require('classnames');
 
-interface IndicatorIcon {
-  [type: string]: React.ReactElement<SvgIconProps>;
+interface Props {
+  widget: WidgetModel;
+  children?: Children;
+  className?: string;
 }
 
-const iconFor: IndicatorIcon = {
-  [IndicatorType.collection]: <IconCollection className="Indicator-icon"/>,
-  [IndicatorType.measurementQuality]: <IconValidation className="Indicator-icon"/>,
-  [IndicatorType.current]: <IconCurrent className="Indicator-icon"/>,
-  [IndicatorType.coldWater]: <IconColdWater className="Indicator-icon"/>,
-  [IndicatorType.warmWater]: <IconColdWater className="Indicator-icon"/>,
-  [IndicatorType.districtHeating]: <IconDistrictHeating className="Indicator-icon"/>,
-  [IndicatorType.temperatureInside]: <IconTemperature className="Indicator-icon"/>,
-  [IndicatorType.temperatureOutside]: <IconTemperature className="Indicator-icon" color="black"/>,
-};
+export const IndicatorWidget = (props: Props) => {
+  const {widget: {total, status, pending, type}} = props;
 
-interface IndicatorProps {
-  indicator: Indicator;
-  select: (type: IndicatorType) => void;
-  isSelected?: boolean;
-  showSelected: boolean;
-}
-
-export const IndicatorWidget = (props: IndicatorProps) => {
-  const {select, indicator, isSelected, showSelected} = props;
-  const {state, title, value, unit, subtitle} = indicator;
-
-  const selectWidget = () => select(indicator.type);
+  const value = ((1 - (pending / total)) * 100).toFixed(1);
+  const pendingPercentage = ((pending / total) * 100).toFixed(1);
 
   return (
-    <div onClick={selectWidget}>
-      <Column className="Indicator-wrapper">
-        <Column className={classNames('Indicator Column-center', state)}>
-          <Row className="Indicator-name Row-center">
-            <Bold>{title}</Bold>
-          </Row>
-          <Row className="Row-center Row-bottom">
-            <Xlarge className="Indicator-value">{value}</Xlarge>
-            <Normal className="Indicator-unit">{unit}</Normal>
-          </Row>
-          <Row className="Indicator-subtitle Row-center">
-            {iconFor[indicator.type]}
-            <Bold>{subtitle}</Bold>
-          </Row>
-        </Column>
-
-        {showSelected && <div className={classNames('Indicator-separator', {isSelected}, state)}/>}
-      </Column>
-    </div>
+    <Column className={classNames('Indicator-wrapper', props.className)}>
+      <ColumnCenter className={classNames('Indicator', status)}>
+        <Row className="Row-center Row-bottom">
+          <Xlarge className="Indicator-value">{value}</Xlarge>
+          <Normal className="Indicator-unit">%</Normal>
+        </Row>
+        <Row className="Indicator-subtitle Row-center">
+          {indicatorIconFor[type]}
+          <Column>
+            <Normal>{pending} / {pendingPercentage}%</Normal>
+            <Normal>{translate('of {{count}} point', {count: total})}</Normal>
+          </Column>
+        </Row>
+      </ColumnCenter>
+    </Column>
   );
 };

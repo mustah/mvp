@@ -1,11 +1,20 @@
 import {Status} from '../../../types/Types';
-import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
+import {IndicatorType} from '../../common/components/indicators/models/widgetModels';
 
 export interface ReportState {
   title: string;
   records: ReportState[];
   error?: string;
   isFetching: boolean;
+}
+
+export interface Indicator {
+  type: IndicatorType;
+  title: string;
+  state: Status;
+  subtitle: string;
+  value: string;
+  unit: string; // Unit is what we are measuring the value in, like "kWh", "m^3"
 }
 
 // TODO[!must!] create this in redux later!

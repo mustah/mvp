@@ -1,8 +1,8 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
 import {Row} from '../layouts/row/Row';
-import {IndicatorWidget} from './IndicatorWidget';
-import {Indicator, IndicatorType} from './models/IndicatorModels';
+import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
+import {IndicatorType} from './models/widgetModels';
+import {Indicator} from '../../../report/models/reportModels';
 
 export interface SelectedIndicatorWidgetProps {
   selectedWidget?: IndicatorType | null;
@@ -16,24 +16,22 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
   indicators: Indicator[];
   children?: React.ReactElement<any>;
   className?: string;
-  showSelected: boolean;
 }
 
-export const IndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {indicators, selectedWidget, selectIndicatorWidget, showSelected} = props;
+export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
+  const {indicators, selectedWidget, selectIndicatorWidget} = props;
 
-  const renderWidget = (indicator: Indicator, index: number) => (
-    <IndicatorWidget
+  const renderIndicator = (indicator: Indicator, index: number) => (
+    <SelectableIndicatorWidget
       key={indicator.type || index}
       indicator={indicator}
       isSelected={selectedWidget !== null ? selectedWidget === indicator.type : index === 0}
       select={selectIndicatorWidget}
-      showSelected={showSelected}
     />);
 
   return (
-    <Row className={classNames('Indicators', props.className)}>
-      {indicators.map(renderWidget)}
+    <Row className={props.className}>
+      {indicators.map(renderIndicator)}
       {props.children}
     </Row>);
 };

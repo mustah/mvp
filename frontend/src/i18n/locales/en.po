@@ -11,6 +11,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.9\n"
 
+msgid "filter"
+msgstr "filter"
+
+msgid "edit"
+msgstr "edit"
+
+msgid "delete"
+msgstr "delete"
+
 msgid "collection"
 msgstr "collection"
 
@@ -187,6 +196,29 @@ msgstr "selection overview"
 
 msgid "metering"
 msgstr "metering"
+
+msgid "could not be collected"
+msgstr "could not be collected"
+
+msgid "area"
+msgstr "area"
+
+msgid "object"
+msgstr "object"
+
+msgid "facility"
+msgstr "facility"
+
+msgid "of {{count}} point"
+msgstr "of {{count}} point"
+
+msgctxt "°plural"
+msgid "of {{count}} point°"
+msgstr "of {{count}} points"
+
+msgctxt "°plural"
+msgid "city°"
+msgstr "cities"
 
 msgctxt "°plural"
 msgid "city°"
