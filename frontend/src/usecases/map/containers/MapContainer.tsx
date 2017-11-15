@@ -32,6 +32,7 @@ interface OwnProps {
   */
   popupMode: PopupMode;
   markers: { [key: string]: MapMarker };
+  height?: number;
 }
 
 export enum PopupMode {
@@ -48,6 +49,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       markers,
       openClusterDialog,
       popupMode,
+      height,
     } = this.props;
 
     const maxZoom = 18;
@@ -179,6 +181,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           className="Map"
           scrollWheelZoom={false}
           onclick={toggleScrollWheelZoom}
+          style={{height}}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
