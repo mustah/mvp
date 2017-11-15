@@ -15,14 +15,14 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, uuid} from '../../../types/Types';
-import {Column, ColumnEnd} from '../../common/components/layouts/column/Column';
+import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Row, RowRight} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
+import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
 import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
@@ -149,11 +149,11 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
   }).map((section) => (
-    <TabOption
+    <RaisedTabOption
       className={classNames(section.id)}
+      id={section.id}
       key={section.id}
       title={section.label}
-      id={section.id}
     />));
 
   const selectCity = (city: string) => {
@@ -182,16 +182,15 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <Column>
             <h2>{header}</h2>
           </Column>
-          <Column className="flex-1">
-          </Column>
-          <ColumnEnd className="StatusTabOptions">
+          <Column className="flex-1"/>
+          <ColumnCenter className="StatusTabOptions">
             <RowRight>
               Filtrera på status:
               <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {graphTabs}
               </TabOptions>
             </RowRight>
-          </ColumnEnd>
+          </ColumnCenter>
         </Row>
         {chartRow}
       </div>
