@@ -29,6 +29,7 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
 
 interface ValidationTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -112,14 +113,21 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(counts, 'all');
 
     incProp(liveData.all.cities, meter.city.name);
-    incProp(liveData.all.flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
     incProp(liveData.all.manufacturers, meter.manufacturer);
     incProp(liveData.all.media, meter.medium);
 
     incProp(counts, normalizedStatus);
 
     incProp(liveData[normalizedStatus].cities, meter.city.name);
-    incProp(liveData[normalizedStatus].flagged, meter.status.id !== 0 ? 'Ja' : 'Nej');
+    if (meter.flags.length) {
+      meter.flags.map((flag: Flag) => {
+        incProp(liveData.all.flagged, flag.title);
+        incProp(liveData[normalizedStatus].flagged, flag.title);
+      });
+    } else {
+      incProp(liveData.all.flagged, 'Ingen');
+      incProp(liveData[normalizedStatus].flagged, 'Ingen');
+    }
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
     incProp(liveData[normalizedStatus].media, meter.medium);
   });
@@ -160,7 +168,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
       <div className="GraphContainer">
         <h2>{header}</h2>
         <Row>
-          <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+          <PieChartSelector heading="Flaggor" data={flagged} colors={colors[1]}/>
           <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
           <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
           <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>

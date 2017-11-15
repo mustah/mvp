@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-14 13:31+0100\n"
+"POT-Creation-Date: 2017-11-15 08:50+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,15 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.9\n"
-
-msgid "filter"
-msgstr "filtrera"
-
-msgid "edit"
-msgstr "redigera"
-
-msgid "delete"
-msgstr "ta bort"
 
 msgid "collection"
 msgstr "insamling"
@@ -50,8 +41,8 @@ msgstr "status"
 msgid "status change"
 msgstr "statusförändring"
 
-msgid "action"
-msgstr "åtgärd"
+msgid "flags"
+msgstr "flaggor"
 
 msgid "list"
 msgstr "lista"
@@ -83,6 +74,9 @@ msgstr "välj datum"
 msgid "all"
 msgstr "allt"
 
+msgid "of {{count}} point"
+msgstr "av {{count}} punkt"
+
 msgid "previous"
 msgstr "föregående"
 
@@ -100,6 +94,15 @@ msgstr "tillverkare"
 
 msgid "medium"
 msgstr "medium"
+
+msgid "validation"
+msgstr "validering"
+
+msgid "edit"
+msgstr "redigera"
+
+msgid "delete"
+msgstr "ta bort"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -119,23 +122,11 @@ msgstr "flaggad för åtgärd"
 msgid "status log"
 msgstr "status logg"
 
-msgid "latest value"
-msgstr "senaste"
-
-msgid "date"
-msgstr "datum"
-
-msgid "quantity"
-msgstr "storhet"
-
 msgid "show only changes"
 msgstr "visa bara ändringar"
 
 msgid "date"
 msgstr "datum"
-
-msgid "validation"
-msgstr "validering"
 
 msgid "report"
 msgstr "rapport"
@@ -158,11 +149,14 @@ msgstr "anläggnings ID"
 msgid "measure id"
 msgstr "mät ID"
 
-msgid "status changes"
-msgstr "statusförändringar"
+msgid "latest value"
+msgstr "senaste"
 
 msgid "gateways"
 msgstr "gateways"
+
+msgid "quantity"
+msgstr "storhet"
 
 msgid "value"
 msgstr "värde"
@@ -203,36 +197,6 @@ msgstr "urvalsöversikt"
 msgid "metering"
 msgstr "mätning"
 
-msgid "saved selection"
-msgstr "sparat urval"
-
-msgid "no saved selections"
-msgstr "inga sparade urval"
-
-msgid "could not be collected"
-msgstr "kunde inte hämtas"
-
-msgid "area"
-msgstr "område"
-
-msgid "object"
-msgstr "objekt"
-
-msgid "facility"
-msgstr "anläggning"
-
-msgid "save"
-msgstr "spara"
-
-msgid "save as"
-msgstr "spara som"
-
-msgid "reset"
-msgstr "återställ"
-
-msgid "of {{count}} point"
-msgstr "av {{count}} punkt"
-
 msgctxt "°plural"
 msgid "of {{count}} point°"
 msgstr "av {{count}} punkter"
@@ -248,6 +212,24 @@ msgstr "adresser"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"
+
+#~ msgid "action"
+#~ msgstr "åtgärd"
+
+#~ msgid "status changes"
+#~ msgstr "statusförändringar"
+
+#~ msgid "could not be collected"
+#~ msgstr "kunde inte hämtas"
+
+#~ msgid "area"
+#~ msgstr "område"
+
+#~ msgid "object"
+#~ msgstr "objekt"
+
+#~ msgid "facility"
+#~ msgstr "anläggning"
 
 #~ msgid "ok"
 #~ msgstr "ok"
@@ -281,18 +263,6 @@ msgstr "mätare"
 
 #~ msgid "saved search"
 #~ msgstr "sparad sökning"
-
-#~ msgid "could not be collected"
-#~ msgstr "kunde inte hämtas"
-
-#~ msgid "area"
-#~ msgstr "område"
-
-#~ msgid "object"
-#~ msgstr "objekt"
-
-#~ msgid "facility"
-#~ msgstr "anläggning"
 
 #~ msgid "status changed"
 #~ msgstr "statusförändring"

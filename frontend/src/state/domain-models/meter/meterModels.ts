@@ -1,10 +1,12 @@
 import {IdNamed, uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Address} from '../domainModels';
+import {Flag} from '../flag/flagModels';
 
 export interface Meter extends MapMarker {
   id: string;
   facility: string;
+  flags: Flag[];
   medium: string;
   manufacturer: string;
   gatewayId: string;

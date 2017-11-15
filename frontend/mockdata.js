@@ -248,8 +248,12 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       const decorateStatus = (status) => status === 'OK' ? {name: status, id: 0} : {name: 'Fel', id: 3};
       const nullOr = (str) => str === 'NULL' ? null : str;
 
+      row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
+      row.meter_flags = row.meter_status === 'OK' ? [] : [{title: 'Åtgärd'}];
+
       row.meter_status = decorateStatus(row.meter_status);
       row.gateway_status = decorateStatus(row.gateway_status);
+
       const cityId = row.city;
       const addressId = row.address;
       const city = {id: cityId, name: row.city};
@@ -267,6 +271,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         facility: row.facility,
         address,
         city,
+        flags: row.gateway_flags,
         productModel: row.gateway_product_model,
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
@@ -280,6 +285,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         facility: row.facility,
         address,
         city,
+        flags: row.meter_flags,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: row.meter_status,

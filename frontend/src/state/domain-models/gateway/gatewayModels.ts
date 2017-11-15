@@ -1,9 +1,11 @@
 import {uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
+import {Flag} from '../flag/flagModels';
 
 export interface Gateway extends MapMarker {
   id: string;
   facility: string;
+  flags: Flag[];
   productModel: string;
   telephoneNo: string;
   ip: string | null;
