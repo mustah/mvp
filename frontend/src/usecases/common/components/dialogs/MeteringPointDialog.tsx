@@ -1,28 +1,28 @@
-import Dialog from 'material-ui/Dialog';
-import 'MeteringPoint.scss';
-import * as React from 'react';
-import {translate} from '../../services/translationService';
-import {IdNamed} from '../../types/Types';
-import {ButtonClose} from '../common/components/buttons/ButtonClose';
-import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
-import {Column} from '../common/components/layouts/column/Column';
-import {Row} from '../common/components/layouts/row/Row';
-import {Status} from '../common/components/status/Status';
-import {Table} from '../common/components/table/table/Table';
-import {TableHead} from '../common/components/table/table/TableHead';
-import {TableColumn} from '../common/components/table/table/TableColumn';
-import {Tab} from '../common/components/tabs/components/Tab';
-import {TabContent} from '../common/components/tabs/components/TabContent';
-import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
-import {Tabs} from '../common/components/tabs/components/Tabs';
-import {TabSettings} from '../common/components/tabs/components/TabSettings';
-import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
-import {tabType} from '../common/components/tabs/models/TabsModel';
-import MapContainer, {PopupMode} from '../map/containers/MapContainer';
-import {MapMarker} from '../map/mapModels';
-import {IconStatus} from '../common/components/icons/IconStatus';
 import {Checkbox} from 'material-ui';
-import {MainTitle, Subtitle} from '../common/components/texts/Titles';
+import Dialog from 'material-ui/Dialog';
+import 'MeteringPointDialog.scss';
+import * as React from 'react';
+import {tabType} from '../tabs/models/TabsModel';
+import {IdNamed} from '../../../../types/Types';
+import {Status} from '../status/Status';
+import {Row} from '../layouts/row/Row';
+import {ButtonClose} from '../buttons/ButtonClose';
+import {Column} from '../layouts/column/Column';
+import {MainTitle, Subtitle} from '../texts/Titles';
+import {translate} from '../../../../services/translationService';
+import {IconDistrictHeating} from '../icons/IconDistrictHeating';
+import {TabTopBar} from '../tabs/components/TabTopBar';
+import {Tabs} from '../tabs/components/Tabs';
+import {TabHeaders} from '../tabs/components/TabHeaders';
+import {Tab} from '../tabs/components/Tab';
+import {TabSettings} from '../tabs/components/TabSettings';
+import {TabContent} from '../tabs/components/TabContent';
+import {Table} from '../table/Table';
+import {TableColumn} from '../table/TableColumn';
+import {TableHead} from '../table/TableHead';
+import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
+import {IconStatus} from '../icons/IconStatus';
+import {MapMarker} from '../../../map/mapModels';
 
 interface MeteringPointDialogProps {
   displayDialog: boolean;
@@ -156,7 +156,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     };
 
     // TODO retrieve real location data for the gateway
-    const markers: { [key: string]: MapMarker } = {};
+    const markers: {[key: string]: MapMarker} = {};
     markers[0] = {
       status: {id: 0, name: 'OK'},
       address: {id: '', cityId: '', name: ''},

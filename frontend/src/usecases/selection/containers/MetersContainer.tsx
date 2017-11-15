@@ -7,7 +7,7 @@ import {changePaginationSelection} from '../../../state/ui/pagination/pagination
 import {ChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {NormalizedRows} from '../../common/components/table/table/Table';
+import {NormalizedRows} from '../../common/components/table/Table';
 import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {

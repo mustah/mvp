@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Children, uuid} from '../../../../../types/Types';
+import {Children, uuid} from '../../../../types/Types';
 import './Table.scss';
 
 export interface NormalizedRows {

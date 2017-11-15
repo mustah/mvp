@@ -1,6 +1,6 @@
 import classNames = require('classnames');
 import * as React from 'react';
-import {Children, ClassNamed} from '../../../../../types/Types';
+import {Children, ClassNamed} from '../../../../types/Types';
 
 type SortOrder = 'asc' | 'desc';
 

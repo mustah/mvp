@@ -18,7 +18,7 @@ import {uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
-import {MeterList} from '../../common/components/table/MeterList';
+import {MeterList} from '../../common/components/metering-point/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';

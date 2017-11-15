@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Children} from '../../../../../types/Types';
+import {Children} from '../../../../types/Types';
 
 /**
  * TODO the 'any' for 'header' and return type of 'cell' are
