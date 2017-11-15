@@ -2,12 +2,12 @@ import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {IdNamed} from '../../../types/Types';
 import {ActionsDropdown} from '../../common/components/actions-dropdown/ActionsDropdown';
-import {Status} from '../../common/components/table/status/Status';
-import {Table} from '../../common/components/table/table/Table';
-import {TableHead} from '../../common/components/table/table/TableHead';
-import {TableColumn} from '../../common/components/table/tableColumn/TableColumn';
+import {Status} from '../../common/components/status/Status';
+import {Table} from '../../common/components/table/Table';
+import {TableHead} from '../../common/components/table/TableHead';
+import {TableColumn} from '../../common/components/table/TableColumn';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
-import {Gateway} from '../../gateway/Gateway';
+import {Gateway} from './Gateway';
 
 export const GatewayList = (props: ListProps) => {
   const {data} = props;
@@ -62,7 +62,7 @@ export const GatewayList = (props: ListProps) => {
         cell={renderEntryActions}
       />
       <TableColumn
-        id={'action-buttons'}
+        id={'action-dropdown'}
         header={<TableHead className="actionDropdown">{' '}</TableHead>}
         cell={renderActionDropdown}
       />

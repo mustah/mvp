@@ -8,13 +8,13 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {GatewayDialog} from '../../common/components/dialogs/GatewayDialog';
+import {MeteringPointDialog} from '../../common/components/dialogs/MeteringPointDialog';
 import {Column} from '../../common/components/layouts/column/Column';
-import '../Map.scss';
-import {MapState} from '../mapReducer';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';
-import {MeteringPointDialog} from '../../metering-point/MeteringPointDialog';
-import {GatewayDialog} from '../../gateway/GatewayDialog';
+import {MapState} from '../mapReducer';
+import './MapContainer.scss';
 
 interface StateToProps {
   map: MapState;
@@ -31,7 +31,7 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: { [key: string]: MapMarker };
+  markers: {[key: string]: MapMarker};
   height?: number;
 }
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Children} from '../../../../types/Types';
 
 /**
  * TODO the 'any' for 'header' and return type of 'cell' are
@@ -9,7 +10,7 @@ import * as React from 'react';
  * really know what the DTO's properties are.
  */
 interface TableColumnProps {
-  header: any;
+  header: Children;
   cell?: (value: any, index: number) => any;
   id: string;
 }

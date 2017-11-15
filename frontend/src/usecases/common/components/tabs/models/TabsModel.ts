@@ -1,4 +1,4 @@
-import {NormalizedRows} from '../../table/table/Table';
+import {NormalizedRows} from '../../table/Table';
 
 export enum tabType {
   list = 'list',
