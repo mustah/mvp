@@ -1,4 +1,4 @@
-const geoData = {
+const selections = {
   cities: [
     {
       id: 'got',
@@ -112,7 +112,7 @@ const statuses = [
 ];
 
 export const testData = {
-  geoData,
+  selections,
   statuses,
   meters,
   gateways,

@@ -1,9 +1,9 @@
 import {AnyAction, combineReducers} from 'redux';
 import {parameterNames} from '../search/selection/selectionModels';
-import {SelectionEntityState} from './domainModels';
+import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
+import {SelectionEntityState} from './domainModelsModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {gateways} from './gateway/gatewayReducer';
-import {GEO_DATA_FAILURE, GEO_DATA_REQUEST, GEO_DATA_SUCCESS} from './geoData/geoDataActions';
 import {MetersState} from './meter/meterModels';
 import {meters} from './meter/meterReducer';
 
@@ -18,12 +18,12 @@ const domainModelReducerFor = (entity: string, state: SelectionEntityState, acti
   const {payload} = action;
 
   switch (action.type) {
-    case GEO_DATA_REQUEST:
+    case DOMAIN_MODELS_REQUEST:
       return {
         ...state,
         isFetching: true,
       };
-    case GEO_DATA_SUCCESS:
+    case DOMAIN_MODELS_SUCCESS:
       return {
         ...state,
         isFetching: false,
@@ -31,7 +31,7 @@ const domainModelReducerFor = (entity: string, state: SelectionEntityState, acti
         result: payload.result[entity],
         total: payload.result[entity].length,
       };
-    case GEO_DATA_FAILURE:
+    case DOMAIN_MODELS_FAILURE:
       return {
         ...state,
         isFetching: false,

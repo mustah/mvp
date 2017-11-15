@@ -1,7 +1,7 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
-import {Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {Normalized, SelectionEntity} from '../../domain-models/domainModelsModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';

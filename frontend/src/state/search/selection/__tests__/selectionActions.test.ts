@@ -29,8 +29,8 @@ const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const gothenburg = {...testData.geoData.cities[0]};
-  const stockholm = {...testData.geoData.cities[1]};
+  const gothenburg = {...testData.selections.cities[0]};
+  const stockholm = {...testData.selections.cities[1]};
 
   let mockRestClient;
   let store;

@@ -1,10 +1,10 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModels';
-import {addresses, cities, initialState as initialGeoDataState} from '../../../domain-models/domainModelsReducer';
-import {geoDataSuccess} from '../../../domain-models/geoData/geoDataActions';
-import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
+import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModelsModels';
+import {addresses, cities, initialState as initialDomainModelState} from '../../../domain-models/domainModelsReducer';
+import {domainModelSuccess} from '../../../domain-models/domainModelsActions';
+import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
@@ -16,18 +16,18 @@ describe('selectionSelectors', () => {
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
   const initialEncodedParameters = getEncodedUriParameters(initialSearchParametersState);
 
-  const gothenburg: IdNamed = {...testData.geoData.cities[0]};
-  const stockholm: IdNamed = {...testData.geoData.cities[1]};
+  const gothenburg: IdNamed = {...testData.selections.cities[0]};
+  const stockholm: IdNamed = {...testData.selections.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
   });
 
   it('gets entities for type city', () => {
-    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+    const domainModelPayload = normalize(testData.selections, selectionsSchema);
     const selectionEntities: DomainModel<SelectionEntityState> = {
-      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+      cities: cities(initialDomainModelState, domainModelSuccess(domainModelPayload)),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
@@ -47,10 +47,10 @@ describe('selectionSelectors', () => {
   });
 
   it('get entities for undefined entity type', () => {
-    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+    const domainModelPayload = normalize(testData.selections, selectionsSchema);
     const selectionEntities: DomainModel<SelectionEntityState> = {
-      addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, {type: 'unknown'}),
+      addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+      cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
@@ -101,10 +101,10 @@ describe('selectionSelectors', () => {
     it('can detect which the selected entities are', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
-      const geoDataPayload = normalize(testData.geoData, geoDataSchema);
+      const domainModelPayload = normalize(testData.selections, selectionsSchema);
       const selectionEntities: DomainModel<SelectionEntityState> = {
-        addresses: addresses(initialGeoDataState, geoDataSuccess(geoDataPayload)),
-        cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+        addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+        cities: cities(initialDomainModelState, domainModelSuccess(domainModelPayload)),
       };
 
       const state: LookupState = {

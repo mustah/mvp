@@ -1,6 +1,6 @@
 import {IdNamed, uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
-import {Address} from '../domainModels';
+import {Address} from '../domainModelsModels';
 import {Flag} from '../flag/flagModels';
 
 export interface Meter extends MapMarker {

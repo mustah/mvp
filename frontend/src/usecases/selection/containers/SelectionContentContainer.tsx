@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import 'SelectionContentContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModelsModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,

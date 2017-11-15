@@ -10,7 +10,7 @@ describe('searchReducer', () => {
 
   it('adds to selected list', () => {
     const state = {...initialState};
-    const stockholm: IdNamed = {...testData.geoData.cities[0]};
+    const stockholm: IdNamed = {...testData.selections.cities[0]};
     const searchParameters: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     expect(selection(state, setSelection(searchParameters))).toEqual({
@@ -24,7 +24,7 @@ describe('searchReducer', () => {
   });
 
   it('normalized selection data', () => {
-    const normalizedData = normalize(testData.geoData, selectionSchema);
+    const normalizedData = normalize(testData.selections, selectionSchema);
 
     expect(normalizedData).toEqual({
       entities: {

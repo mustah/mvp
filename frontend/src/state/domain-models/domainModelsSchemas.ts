@@ -5,7 +5,7 @@ export const address = new schema.Entity('addresses');
 const alarm = new schema.Entity('alarms');
 export const addressCluster = new schema.Entity('addressClusters');
 
-export const geoDataSchema = {
+export const selectionsSchema = {
   cities: [city],
   addresses: [address],
   alarms: [alarm],

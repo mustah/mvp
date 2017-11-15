@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
-import {testData} from '../../../../__tests__/TestDataFactory';
-import {geoDataFailure, geoDataRequest, geoDataSuccess} from '../geoDataActions';
-import {geoDataSchema} from '../geoDataSchemas';
-import {addresses, cities, initialState} from '../../domainModelsReducer';
+import {testData} from '../../../__tests__/TestDataFactory';
+import {domainModelFailure, domainModelRequest, domainModelSuccess} from '../domainModelsActions';
+import {addresses, cities, initialState} from '../domainModelsReducer';
+import {selectionsSchema} from '../domainModelsSchemas';
 
 describe('domainModelsReducer', () => {
 
@@ -12,14 +12,14 @@ describe('domainModelsReducer', () => {
       expect(addresses(initialState, {type: 'unknown'})).toEqual({...initialState});
     });
 
-    it('fetches geoData', () => {
-      expect(addresses(initialState, geoDataRequest())).toEqual({...initialState, isFetching: true});
+    it('fetches selections for addresses', () => {
+      expect(addresses(initialState, domainModelRequest())).toEqual({...initialState, isFetching: true});
     });
 
-    it('has fetched geoData successfully ', () => {
-      const payload = normalize(testData.geoData, geoDataSchema);
+    it('has fetched selections successfully ', () => {
+      const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(addresses(initialState, geoDataSuccess(payload))).toEqual({
+      expect(addresses(initialState, domainModelSuccess(payload))).toEqual({
         ...initialState,
         entities: {
           1: {id: 1, name: 'Stampgatan 46', cityId: 'got'},
@@ -36,7 +36,7 @@ describe('domainModelsReducer', () => {
     it('has error when fetching has failed', () => {
       const payload = {message: 'failed'};
 
-      expect(addresses(initialState, geoDataFailure(payload))).toEqual({
+      expect(addresses(initialState, domainModelFailure(payload))).toEqual({
         ...initialState,
         error: payload,
       });
@@ -49,14 +49,14 @@ describe('domainModelsReducer', () => {
       expect(cities(initialState, {type: 'unknown'})).toEqual({...initialState});
     });
 
-    it('fetches geoData', () => {
-      expect(cities(initialState, geoDataRequest())).toEqual({...initialState, isFetching: true});
+    it('fetches selections for cities', () => {
+      expect(cities(initialState, domainModelRequest())).toEqual({...initialState, isFetching: true});
     });
 
-    it('has fetched geoData successfully', () => {
-      const payload = normalize(testData.geoData, geoDataSchema);
+    it('has fetched selections successfully', () => {
+      const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(cities(initialState, geoDataSuccess(payload))).toEqual({
+      expect(cities(initialState, domainModelSuccess(payload))).toEqual({
         ...initialState,
         entities: {
           got: {id: 'got', name: 'Göteborg'},
@@ -72,7 +72,7 @@ describe('domainModelsReducer', () => {
     it('has error when fetching has failed', () => {
       const payload = {message: 'failed'};
 
-      expect(cities(initialState, geoDataFailure(payload))).toEqual({
+      expect(cities(initialState, domainModelFailure(payload))).toEqual({
         ...initialState,
         error: payload,
       });
