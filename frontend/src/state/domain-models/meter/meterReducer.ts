@@ -1,15 +1,16 @@
 import {AnyAction} from 'redux';
 import {MetersState} from './meterModels';
-import {METER_REQUEST, METER_SUCCESS} from './meterActions';
+import {METER_FAILURE, METER_REQUEST, METER_SUCCESS} from './meterActions';
 
 const initialState: MetersState = {
   isFetching: false,
   total: 0,
   result: [],
-  entities: {meters: {}},
+  entities: {},
 };
 
 export const meters = (state: MetersState = initialState, action: AnyAction) => {
+  const {payload} = action;
   switch (action.type) {
     case METER_REQUEST:
       return {
@@ -17,12 +18,18 @@ export const meters = (state: MetersState = initialState, action: AnyAction) => 
         isFetching: true,
       };
     case METER_SUCCESS:
-      const {meters} = action.payload;
+      const {meters: {result, entities}} = payload;
       return {
         isFetching: false,
-        total: meters.result.length, // TODO: a work around since we don't use pagination form db.json.
-        // Got total from that before
-        ...meters,
+        total: result.length,
+        result,
+        entities: entities.meters,
+      };
+    case METER_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: {...payload},
       };
     default:
       return state;

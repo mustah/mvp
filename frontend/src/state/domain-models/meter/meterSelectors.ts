@@ -7,7 +7,7 @@ import {Meter, MetersState, SidebarItem, SidebarItemProps, SidebarItemsProps} fr
 import {sidebarTreeSchema} from './meterSchema';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
-export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities.meters;
+export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities;
 
 // TODO: Add correct type to result.
 export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, any>(
