@@ -1,8 +1,8 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
+import {Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {Normalized} from '../../domain-models/geoData/geoDataModels';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
@@ -10,7 +10,6 @@ import {
   LookupState,
   parameterNames,
   SelectedParameters,
-  SelectionEntity,
   SelectionListItem,
   SelectionState,
   SelectionSummary,

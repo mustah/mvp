@@ -9,6 +9,7 @@ import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagin
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {NormalizedRows} from '../../common/components/table/Table';
 import {SearchResultList} from '../components/SelectionResultList';
+import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 
 interface StateToProps {
   pagination: Pagination;
@@ -38,7 +39,10 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps 
   const pagination = getSelectionPagination(ui);
   return {
     numOfEntities: getMetersTotal(meters),
-    meters: {allIds: getPaginationList({...pagination, ...meters}), byId: getMeterEntities(meters)},
+    meters: {
+      allIds: getPaginationList({pagination, result: getResultDomainModels(meters)}),
+      byId: getMeterEntities(meters),
+    },
     pagination,
   };
 };

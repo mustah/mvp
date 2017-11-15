@@ -2,7 +2,7 @@ import {normalize} from 'normalizr';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {restClient} from '../../../services/restClient';
 import {ErrorResponse, IdNamed} from '../../../types/Types';
-import {Normalized} from './geoDataModels';
+import {Normalized} from '../domainModels';
 import {geoDataSchema} from './geoDataSchemas';
 
 export const GEO_DATA_REQUEST = 'GEO_DATA_REQUEST';

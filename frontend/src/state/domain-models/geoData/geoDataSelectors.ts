@@ -1,3 +1,3 @@
-import {SelectionEntityState} from '../../search/selection/selectionModels';
+import {SelectionEntityState} from '../domainModels';
 
 export const isFetchingGeoData = (state: SelectionEntityState): boolean => state.isFetching;

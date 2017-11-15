@@ -232,7 +232,7 @@ const mapStateToProps = (state: RootState) => {
     entityCount: getGatewaysTotal(entityState),
     entities: getGatewayEntities(entityState),
     selectedEntities: getResultDomainModels(entityState),
-    paginatedList: getPaginationList({...pagination, ...entityState}),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(entityState)}),
     pagination,
   };
 };
