@@ -1,11 +1,7 @@
-import {AnyAction, combineReducers} from 'redux';
-import {
-  GEO_DATA_FAILURE,
-  GEO_DATA_REQUEST,
-  GEO_DATA_SUCCESS,
-} from './geoDataActions';
-import {AddressState, GeoDataState, IdNamedState} from './geoDataModels';
+import {AnyAction} from 'redux';
 import {parameterNames} from '../../search/selection/selectionModels';
+import {GEO_DATA_FAILURE, GEO_DATA_REQUEST, GEO_DATA_SUCCESS} from './geoDataActions';
+import {AddressState, IdNamedState} from './geoDataModels';
 
 export const initialState: IdNamedState = {
   result: [],
@@ -57,5 +53,3 @@ export const cities = (state: IdNamedState = initialState, action: AnyAction): I
 
 export const alarms = (state: IdNamedState = initialState, action: AnyAction): IdNamedState =>
   geoDataReducerFor(parameterNames.alarms, state, action);
-
-export const geoData = combineReducers<GeoDataState>({addresses, cities});

@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchGeoData} from '../../../state/domain-models/geoData/geoDataActions';
-import {isFetchingAddresses, isFetchingCities} from '../../../state/domain-models/geoData/geoDataSelectors';
+import {isFetchingGeoData} from '../../../state/domain-models/geoData/geoDataSelectors';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
 
@@ -38,9 +38,9 @@ class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({domainModels: {geoData}}: RootState): StateToProps => {
+const mapStateToProps = ({domainModels: {addresses, cities}}: RootState): StateToProps => {
   return {
-    isFetching: isFetchingCities(geoData) || isFetchingAddresses(geoData),
+    isFetching: isFetchingGeoData(cities) || isFetchingGeoData(addresses),
   };
 };
 

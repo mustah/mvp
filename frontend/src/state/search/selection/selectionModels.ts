@@ -1,6 +1,6 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {Address} from '../../domain-models/domainModels';
-import {Normalized, DomainModel} from '../../domain-models/geoData/geoDataModels';
+import {DomainModel, NormalizedState} from '../../domain-models/geoData/geoDataModels';
 
 export interface SelectionParameter extends IdNamed {
   parameter: parameterNames;
@@ -21,9 +21,11 @@ export interface SelectionState extends IdNamed {
 
 export type SelectionEntity = IdNamed | Address;
 
+export type SelectionEntityState = NormalizedState<SelectionEntity>;
+
 export interface LookupState {
   selection: SelectionState;
-  selectionEntities: DomainModel<Normalized<SelectionEntity>>;
+  selectionEntities: DomainModel<SelectionEntityState>;
 }
 
 export enum parameterNames {

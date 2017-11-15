@@ -22,7 +22,8 @@ export interface DropdownProps {
 }
 
 interface GenericDropdownProps extends DropdownProps {
-  renderLabel: (index: number, filteredList: SelectionListItem[]) => Array<React.ReactElement<any>>;
+  renderLabel: (index: number, filteredList: SelectionListItem[]) =>
+    Array<React.ReactElement<any>> | React.ReactElement<any>;
   rowHeight: number;
   visibleItems: number;
 }

@@ -7,7 +7,7 @@ interface CheckBox extends Clickable {
   id: uuid;
   checked?: boolean;
   style: any;
-  label: Array<React.ReactElement<any>>;
+  label: Array<React.ReactElement<any>> | React.ReactElement<any>;
 }
 
 export const Checkbox = (props: CheckBox) => {

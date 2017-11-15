@@ -1,12 +1,3 @@
-import {createSelector} from 'reselect';
-import {GeoDataState, IdNamedState} from './geoDataModels';
+import {SelectionEntityState} from '../../search/selection/selectionModels';
 
-export const isFetchingAddresses = createSelector<GeoDataState, IdNamedState, boolean>(
-  (state: GeoDataState) => state.addresses,
-  (addresses: IdNamedState) => addresses.isFetching,
-);
-
-export const isFetchingCities = createSelector<GeoDataState, IdNamedState, boolean>(
-  (state: GeoDataState) => state.cities,
-  (cities: IdNamedState) => cities.isFetching,
-);
+export const isFetchingGeoData = (state: SelectionEntityState): boolean => state.isFetching;

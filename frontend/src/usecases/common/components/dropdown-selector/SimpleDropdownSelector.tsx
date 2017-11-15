@@ -8,9 +8,9 @@ export const SimpleDropdownSelector = (props: DropdownProps) => {
 
   const renderLabel = (index: number, filteredList: SelectionListItem[]) => {
     const {name} = filteredList[index];
-    return ([
-      <Normal key={1}>{name}</Normal>,
-    ]);
+    return (
+      <Normal>{name}</Normal>
+    );
   };
 
   return (
