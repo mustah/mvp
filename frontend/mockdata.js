@@ -74,13 +74,13 @@ const fromDbJson = {
         widgets: [
           {
             type: 'collection',
-            total: 1715,
+            total: 1697,
             status: 'warning',
             pending: 22,
           },
           {
             type: 'measurementQuality',
-            total: 1715,
+            total: 1697,
             status: 'critical',
             pending: 79,
           },
