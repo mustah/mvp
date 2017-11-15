@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {DomainModel} from '../../../../state/domain-models/domainModelsModels';
+import {DomainModel} from '../../../../state/domain-models/domainModels';
 import {SelectionListItem} from '../../../../state/search/selection/selectionModels';
 import {IdNamed} from '../../../../types/Types';
 import {dropDownStyle} from '../../../app/themes';

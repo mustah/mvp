@@ -1,5 +1,5 @@
 import {uuid} from '../../types/Types';
-import {NormalizedState, SelectionEntity, SelectionEntityState} from './domainModelsModels';
+import {NormalizedState, SelectionEntity, SelectionEntityState} from './domainModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 

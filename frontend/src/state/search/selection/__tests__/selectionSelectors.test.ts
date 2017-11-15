@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModelsModels';
+import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModels';
 import {addresses, cities, initialState as initialDomainModelState} from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';

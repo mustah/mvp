@@ -1,5 +1,5 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
-import {DomainModel, SelectionEntity, SelectionEntityState} from '../../domain-models/domainModelsModels';
+import {DomainModel, SelectionEntity, SelectionEntityState} from '../../domain-models/domainModels';
 
 export interface SelectionParameter extends IdNamed {
   parameter: parameterNames;
