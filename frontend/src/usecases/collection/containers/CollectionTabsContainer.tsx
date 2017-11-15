@@ -170,7 +170,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         </div>
       );
     }
-  });
+  })(tabs.graph.selectedOption);
 
   return (
     <Tabs>
@@ -186,7 +186,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
-        {graphTabContents(tabs.graph.selectedOption)}
+        {graphTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: entities}}/>
