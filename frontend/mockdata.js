@@ -111,21 +111,21 @@ const fromDbJson = {
 };
 
 const alarmsLookup = [
-  'Battery low',
-  'Flow sensor error (air)',
-  'Flow sensor error (generic)',
-  'Flow sensor error (dirty)',
-  'Leakage',
-  'Overflow',
-  'Backflow',
-  'Forward temperature sensor error',
-  'Return temperature sensor error',
-  'Temperature sensor error (generic)',
-  'Temperature sensor inverted',
-  'Tamper error',
-  'Supply voltage error',
-  'Time for battery change',
-  'Internal meter error',
+  'Låg batterinivå',
+  'Flödessensorfel (luft)',
+  'Flödessensorfel (generisk)',
+  'Flödessensorfel (smutsig)',
+  'Läckage',
+  'Högt flöde',
+  'Felvänt flöde',
+  'Ingående temperatursensorfel',
+  'Utgående temeratursensorfel',
+  'Temperatursensorfel (generisk)',
+  'Temperatursensor inverterad',
+  'Tamperfel',
+  'Matningsspänningsfel',
+  'Behöver batteribyte',
+  'Internt mätarfel',
 ];
 
 const getRandomAlarm = () => {
@@ -133,7 +133,7 @@ const getRandomAlarm = () => {
   if (randomNumber < 15) {
     return alarmsLookup[randomNumber];
   }
-  return 'none';
+  return ':Inget fel:';
 };
 
 const parseMeasurementSeedData = (path) => {
