@@ -3,11 +3,11 @@ import {translate} from '../../../../services/translationService';
 import {IdNamed} from '../../../../types/Types';
 import {MeteringPoint} from '../../../metering-point/MeteringPoint';
 import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
+import {Status} from '../status/Status';
 import {ListProps} from '../tabs/models/TabsModel';
-import {Status} from './status/Status';
 import {Table} from './table/Table';
+import {TableColumn} from './table/TableColumn';
 import {TableHead} from './table/TableHead';
-import {TableColumn} from './tableColumn/TableColumn';
 
 export const MeterList = (props: ListProps) => {
   const {data} = props;

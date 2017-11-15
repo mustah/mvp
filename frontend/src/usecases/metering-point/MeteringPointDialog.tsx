@@ -7,10 +7,10 @@ import {ButtonClose} from '../common/components/buttons/ButtonClose';
 import {IconDistrictHeating} from '../common/components/icons/IconDistrictHeating';
 import {Column} from '../common/components/layouts/column/Column';
 import {Row} from '../common/components/layouts/row/Row';
-import {Status} from '../common/components/table/status/Status';
+import {Status} from '../common/components/status/Status';
 import {Table} from '../common/components/table/table/Table';
 import {TableHead} from '../common/components/table/table/TableHead';
-import {TableColumn} from '../common/components/table/tableColumn/TableColumn';
+import {TableColumn} from '../common/components/table/table/TableColumn';
 import {Tab} from '../common/components/tabs/components/Tab';
 import {TabContent} from '../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
@@ -20,7 +20,7 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
-import {StatusIcon} from '../common/components/table/status/StatusIcon';
+import {IconStatus} from '../common/components/icons/IconStatus';
 import {Checkbox} from 'material-ui';
 import {MainTitle, Subtitle} from '../common/components/texts/Titles';
 
@@ -249,7 +249,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('status')}
                 </Row>
                 <Row>
-                  <StatusIcon id={0} name="OK"/>
+                  <IconStatus id={0} name="OK"/>
                 </Row>
               </Column>
               <Column>
@@ -288,7 +288,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('status')}
                 </Row>
                 <Row>
-                  <StatusIcon id={3} name="Battery low"/>
+                  <IconStatus id={3} name="Battery low"/>
                 </Row>
               </Column>
               <Column>
