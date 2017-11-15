@@ -14,15 +14,14 @@ import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {uuid} from '../../../types/Types';
-import {Row} from '../../common/components/layouts/row/Row';
+import {Children, uuid} from '../../../types/Types';
+import {Row, RowRight} from '../../common/components/layouts/row/Row';
+import {MeterList} from '../../common/components/metering-point/MeterList';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
-import {MeterList} from '../../common/components/metering-point/MeterList';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
 import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
@@ -30,10 +29,13 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
+import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
+import classNames = require('classnames');
+import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 
 interface ValidationTabsContainer extends TabsContainerProps {
   entityCount: number;
-  entities: { [key: string]: Meter };
+  entities: {[key: string]: Meter};
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
@@ -150,7 +152,13 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
-  }).map((section) => <TabOption key={section.id} title={section.label} id={section.id}/>);
+  }).map((section) => (
+    <RaisedTabOption
+      className={classNames(section.id)}
+      id={section.id}
+      key={section.id}
+      title={section.label}
+    />));
 
   const selectCity = (city: string) => {
     addSelection({
@@ -160,23 +168,36 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     });
   };
 
-  const graphTabContents = ((tabName: string): any => {
+  const graphTabContents = ((tabName: string): Children => {
     const count = counts[tabName];
-    const header = count > 0 ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
+    const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
-    return count > 0 ? (
+    const chartRow = count > 0 ? (
+      <Row>
+        <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+        <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
+        <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
+        <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
+      </Row>
+    ) : null;
+
+    return (
       <div className="GraphContainer">
-        <h2>{header}</h2>
         <Row>
-          <PieChartSelector heading="Flaggor" data={flagged} colors={colors[1]}/>
-          <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-          <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
-          <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
+          <Column>
+            <h2>{header}</h2>
+          </Column>
+          <Column className="flex-1"/>
+          <ColumnCenter className="StatusTabOptions">
+            <RowRight>
+              Filtrera på status:
+              <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+                {graphTabs}
+              </TabOptions>
+            </RowRight>
+          </ColumnCenter>
         </Row>
-      </div>
-    ) : (
-      <div className="GraphContainer">
-        <h2>{header}</h2>
+        {chartRow}
       </div>
     );
   })(tabs.graph.selectedOption);
@@ -189,9 +210,6 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
-        <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
-          {graphTabs}
-        </TabOptions>
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>

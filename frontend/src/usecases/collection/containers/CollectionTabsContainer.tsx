@@ -15,13 +15,14 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, uuid} from '../../../types/Types';
-import {Row} from '../../common/components/layouts/row/Row';
+import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
+import {Row, RowRight} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
+import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
 import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
@@ -30,6 +31,7 @@ import {TabsContainerProps, tabType} from '../../common/components/tabs/models/T
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
+import classNames = require('classnames');
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -146,7 +148,13 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
-  }).map((section) => <TabOption key={section.id} title={section.label} id={section.id}/>);
+  }).map((section) => (
+    <RaisedTabOption
+      className={classNames(section.id)}
+      id={section.id}
+      key={section.id}
+      title={section.label}
+    />));
 
   const selectCity = (city: string) => {
     addSelection({
@@ -160,24 +168,33 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     const count = counts[tabName];
     const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
-    if (count) {
-      return (
-        <div className="GraphContainer">
-          <h2>{header}</h2>
-          <Row>
-            <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
-            <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-            <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
-          </Row>
-        </div>
-      );
-    } else {
-      return (
-        <div className="GraphContainer">
-          <h2>{header}</h2>
-        </div>
-      );
-    }
+    const chartRow = count > 0 ? (
+      <Row>
+        <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+        <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
+        <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
+      </Row>
+    ) : null;
+
+    return (
+      <div className="GraphContainer">
+        <Row>
+          <Column>
+            <h2>{header}</h2>
+          </Column>
+          <Column className="flex-1"/>
+          <ColumnCenter className="StatusTabOptions">
+            <RowRight>
+              Filtrera på status:
+              <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+                {graphTabs}
+              </TabOptions>
+            </RowRight>
+          </ColumnCenter>
+        </Row>
+        {chartRow}
+      </div>
+    );
   })(tabs.graph.selectedOption);
 
   return (
@@ -188,9 +205,6 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
-        <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
-          {graphTabs}
-        </TabOptions>
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
