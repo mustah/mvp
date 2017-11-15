@@ -291,7 +291,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer markers={markers} popupMode={PopupMode.none}/>
+              <MapContainer height={400} markers={markers} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>
         </Row>

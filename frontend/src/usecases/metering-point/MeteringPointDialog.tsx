@@ -373,7 +373,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer markers={markers} popupMode={PopupMode.none}/>
+              <MapContainer height={400} markers={markers} popupMode={PopupMode.none}/>
             </TabContent>
             <TabContent tab={tabType.connectedGateways} selectedTab={selectedTab}>
               <Row>
