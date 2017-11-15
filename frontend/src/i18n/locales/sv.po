@@ -20,8 +20,8 @@ msgstr "exportera till Excel (.csv)"
 msgid "export to JSON"
 msgstr "exportera till JSON"
 
-msgid "show meters"
-msgstr "visa mätare"
+msgid "add to report"
+msgstr "lägg till i rapport"
 
 msgid "gateway"
 msgstr "gateway"

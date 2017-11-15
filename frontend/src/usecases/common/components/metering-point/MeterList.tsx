@@ -20,7 +20,7 @@ export const MeterList = (props: ListProps) => {
   const dropdownActions = [
     translate('export to Excel (.csv)'),
     translate('export to JSON'),
-    translate('show gateways'),
+    translate('add to report'),
   ];
 
   const renderActionDropdown = () => <ActionsDropdown actions={dropdownActions}/>;

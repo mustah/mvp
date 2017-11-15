@@ -21,7 +21,7 @@ export const GatewayList = (props: ListProps) => {
   const actions = [
     translate('export to Excel (.csv)'),
     translate('export to JSON'),
-    translate('show meters'),
+    translate('add to report'),
   ];
 
   const renderActionDropdown = () => <ActionsDropdown actions={actions}/>;

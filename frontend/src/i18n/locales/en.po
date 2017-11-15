@@ -20,8 +20,8 @@ msgstr "export to Excel (.csv)"
 msgid "export to JSON"
 msgstr "export to JSON"
 
-msgid "show meters"
-msgstr "show meters"
+msgid "add to report"
+msgstr "add to report"
 
 msgid "gateway"
 msgstr "gateway"
