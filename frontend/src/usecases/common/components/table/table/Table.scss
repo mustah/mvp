@@ -9,6 +9,11 @@
     text-align: left;
     text-transform: uppercase;
     border-bottom: 1px solid $grey;
+
+    &.actionDropdown {
+      text-align: right;
+      width: 36px;
+    }
   }
 
   thead {

@@ -2,35 +2,27 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {IdNamed} from '../../../../types/Types';
 import {MeteringPoint} from '../../../metering-point/MeteringPoint';
+import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
 import {ListProps} from '../tabs/models/TabsModel';
 import {Status} from './status/Status';
 import {Table} from './table/Table';
 import {TableHead} from './table/TableHead';
 import {TableColumn} from './tableColumn/TableColumn';
-import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
-import {Row} from '../layouts/row/Row';
 
 export const MeterList = (props: ListProps) => {
-
   const {data} = props;
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
   const renderLocation = (value: IdNamed) => value.name;
-  const actions = [translate('export to Excel (.csv)'), translate('export to JSON'), translate('show gateways')];
-  const renderEntryActions = (value) => (
-    <Row>
-      {value}
-      <ActionsDropdown className="flex-1 Row-right" actions={actions}/>
-    </Row>
-  );
+  const renderEntryActions = (value) => (<span>{value}</span>);
 
-  const statusHeader = (
-    <TableHead
-      className="TableHead-status"
-    >
-      {translate('status')}
-    </TableHead>
-  );
+  const dropdownActions = [
+    translate('export to Excel (.csv)'),
+    translate('export to JSON'),
+    translate('show gateways'),
+  ];
+
+  const renderActionDropdown = () => <ActionsDropdown actions={dropdownActions}/>;
 
   return (
     <Table data={data}>
@@ -63,13 +55,18 @@ export const MeterList = (props: ListProps) => {
       />
       <TableColumn
         id={'status'}
-        header={statusHeader}
+        header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
         cell={renderStatusCell}
       />
       <TableColumn
         id={'statusChanged'}
         header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
         cell={renderEntryActions}
+      />
+      <TableColumn
+        id={'action-buttons'}
+        header={<TableHead className="actionDropdown">{' '}</TableHead>}
+        cell={renderActionDropdown}
       />
     </Table>
   );

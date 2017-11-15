@@ -28,8 +28,12 @@ export const Widget = (props: Props) => {
       <RowMiddle className="space-between">
         <Subtitle className="Widget-subtitle">{title}</Subtitle>
         <PopoverMenu>
-          <MenuItem style={menuItemInnerDivStyle} className="first-uppercase">{translate('edit')}</MenuItem>
-          <MenuItem style={deleteStyle} className="first-uppercase">{translate('delete')}</MenuItem>
+          <MenuItem style={menuItemInnerDivStyle} className="first-uppercase">
+            {translate('edit')}
+          </MenuItem>
+          <MenuItem style={deleteStyle} className="first-uppercase">
+            {translate('delete')}
+          </MenuItem>
         </PopoverMenu>
       </RowMiddle>
       <Column className="Content">

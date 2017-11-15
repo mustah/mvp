@@ -342,7 +342,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                 <Tab tab={tabType.map} title={translate('map')}/>
                 <Tab tab={tabType.connectedGateways} title={translate('gateways')}/>
               </TabHeaders>
-              <TabSettings useCase={'meteringPoint'}/>
+              <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
               <Table data={meterData}>

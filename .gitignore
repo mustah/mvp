@@ -48,6 +48,7 @@ backend/.idea/misc.xml
 backend/.idea/encodings.xml
 backend/.idea/gradle.xml
 backend/.idea/workspace.xml
+backend/.idea/typescript-compiler.xml
 
 *.iws
 *.iml

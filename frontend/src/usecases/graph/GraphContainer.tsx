@@ -100,10 +100,10 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
               <TabOption title={'Returtemp.'} id={'temp_return'}/>
               <TabOption title={'Temp.-skillnad'} id={'temp_difference'}/>
             </TabOptions>
-            <TabSettings useCase={tabType.graph}/>
+            <TabSettings/>
           </TabTopBar>
           <TabContent tab={tabType.graph} selectedTab={selectedTab}>
-            <ResponsiveContainer width="80%" aspect={4.0 / 1.0}>
+            <ResponsiveContainer width="80%" aspect={4.0}>
               <LineChart
                 width={10}
                 height={30}

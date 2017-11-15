@@ -14,8 +14,7 @@ import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {useCases} from '../../../types/constants';
-import {uuid} from '../../../types/Types';
+import {Children, uuid} from '../../../types/Types';
 import {Row} from '../../common/components/layouts/row/Row';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
@@ -33,7 +32,7 @@ import {GatewayList} from '../components/GatewayList';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
-  entities: { [key: string]: Gateway };
+  entities: {[key: string]: Gateway};
   paginatedList: uuid[];
   pagination: Pagination;
   paginationChangePage: (page: number) => any;
@@ -149,24 +148,28 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     });
   };
 
-  const graphTabContents = ((tabName: string): any => {
+  const graphTabContents = ((tabName: string): Children => {
     const count = counts[tabName];
-    const header = count > 0 ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
+    const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
-    return count > 0 ? (
-      <div className="GraphContainer">
-        <h2>{header}</h2>
-        <Row>
-          <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
-          <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-          <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
-        </Row>
-      </div>
-    ) : (
-      <div className="GraphContainer">
-        <h2>{header}</h2>
-      </div>
-    );
+    if (count) {
+      return (
+        <div className="GraphContainer">
+          <h2>{header}</h2>
+          <Row>
+            <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
+            <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
+            <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
+          </Row>
+        </div>
+      );
+    } else {
+      return (
+        <div className="GraphContainer">
+          <h2>{header}</h2>
+        </div>
+      );
+    }
   })(tabs.graph.selectedOption);
 
   return (
@@ -180,7 +183,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
           {graphTabs}
         </TabOptions>
-        <TabSettings useCase={useCases.collection}/>
+        <TabSettings/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
         {graphTabContents}
