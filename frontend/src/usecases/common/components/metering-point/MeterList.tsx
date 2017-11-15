@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
+import {Flag} from '../../../../state/domain-models/flag/flagModels';
 import {IdNamed} from '../../../../types/Types';
 import {MeteringPoint} from './MeteringPoint';
 import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
@@ -14,7 +15,7 @@ export const MeterList = (props: ListProps) => {
   const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
   const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
   const renderLocation = (value: IdNamed) => value.name;
-  const renderEntryActions = (value) => (<span>{value}</span>);
+  const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
 
   const dropdownActions = [
     translate('export to Excel (.csv)'),
@@ -61,7 +62,11 @@ export const MeterList = (props: ListProps) => {
       <TableColumn
         id={'statusChanged'}
         header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
-        cell={renderEntryActions}
+      />
+      <TableColumn
+        id={'flags'}
+        header={<TableHead>{translate('flags')}</TableHead>}
+        cell={renderFlags}
       />
       <TableColumn
         id={'action-buttons'}

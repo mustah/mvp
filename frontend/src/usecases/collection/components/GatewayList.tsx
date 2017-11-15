@@ -1,11 +1,12 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {IdNamed} from '../../../types/Types';
 import {ActionsDropdown} from '../../common/components/actions-dropdown/ActionsDropdown';
 import {Status} from '../../common/components/status/Status';
 import {Table} from '../../common/components/table/Table';
-import {TableHead} from '../../common/components/table/TableHead';
 import {TableColumn} from '../../common/components/table/TableColumn';
+import {TableHead} from '../../common/components/table/TableHead';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
 import {Gateway} from './Gateway';
 
@@ -15,14 +16,13 @@ export const GatewayList = (props: ListProps) => {
   const renderStatusCell = (value: IdNamed) => <Status {...value}/>;
   const renderGateway = (value) => <Gateway id={value}/>;
   const renderLocation = (value: IdNamed) => value.name;
+  const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
 
   const actions = [
     translate('export to Excel (.csv)'),
     translate('export to JSON'),
     translate('show meters'),
   ];
-
-  const renderEntryActions = (value) => (<span>{value}</span>);
 
   const renderActionDropdown = () => <ActionsDropdown actions={actions}/>;
 
@@ -57,9 +57,9 @@ export const GatewayList = (props: ListProps) => {
         header={<TableHead sortable={true} currentSort={'desc'}>{translate('status change')}</TableHead>}
       />
       <TableColumn
-        id={'action'}
-        header={<TableHead>{translate('action')}</TableHead>}
-        cell={renderEntryActions}
+        id={'flags'}
+        header={<TableHead>{translate('flags')}</TableHead>}
+        cell={renderFlags}
       />
       <TableColumn
         id={'action-dropdown'}

@@ -29,6 +29,7 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -112,13 +113,20 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     incProp(counts, 'all');
 
     incProp(liveData.all.cities, gateway.city.name);
-    incProp(liveData.all.flagged, gateway.status.id !== 0 ? 'Ja' : 'Nej');
     incProp(liveData.all.productModels, gateway.productModel);
 
     incProp(counts, normalizedStatus);
 
     incProp(liveData[normalizedStatus].cities, gateway.city.name);
-    incProp(liveData[normalizedStatus].flagged, gateway.status.id !== 0 ? 'Ja' : 'Nej');
+    if (gateway.flags.length) {
+      gateway.flags.map((flag: Flag) => {
+        incProp(liveData.all.flagged, flag.title);
+        incProp(liveData[normalizedStatus].flagged, flag.title);
+      });
+    } else {
+      incProp(liveData.all.flagged, 'Ingen');
+      incProp(liveData[normalizedStatus].flagged, 'Ingen');
+    }
     incProp(liveData[normalizedStatus].productModels, gateway.productModel);
   });
 

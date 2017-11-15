@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-14 13:31+0100\n"
+"POT-Creation-Date: 2017-11-15 08:50+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,15 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.9\n"
-
-msgid "filter"
-msgstr "filter"
-
-msgid "edit"
-msgstr "edit"
-
-msgid "delete"
-msgstr "delete"
 
 msgid "collection"
 msgstr "collection"
@@ -50,8 +41,8 @@ msgstr "status"
 msgid "status change"
 msgstr "status change"
 
-msgid "action"
-msgstr "action"
+msgid "flags"
+msgstr "flags"
 
 msgid "list"
 msgstr "list"
@@ -83,6 +74,9 @@ msgstr "pick a date"
 msgid "all"
 msgstr "all"
 
+msgid "of {{count}} point"
+msgstr "of {{count}} point"
+
 msgid "previous"
 msgstr "previous"
 
@@ -101,6 +95,15 @@ msgstr "manufacturer"
 msgid "medium"
 msgstr "medium"
 
+msgid "validation"
+msgstr "validation"
+
+msgid "edit"
+msgstr "edit"
+
+msgid "delete"
+msgstr "delete"
+
 msgid "dashboard"
 msgstr "dashboard"
 
@@ -116,26 +119,14 @@ msgstr "interval"
 msgid "flagged for action"
 msgstr "flagged for action"
 
-msgid "latest value"
-msgstr "latest"
-
 msgid "status log"
 msgstr "status log"
-
-msgid "date"
-msgstr "date"
-
-msgid "quantity"
-msgstr "quantity"
 
 msgid "show only changes"
 msgstr "show only changes"
 
 msgid "date"
 msgstr "date"
-
-msgid "validation"
-msgstr "validation"
 
 msgid "report"
 msgstr "report"
@@ -158,11 +149,14 @@ msgstr "facility ID"
 msgid "measure id"
 msgstr "measure ID"
 
-msgid "status changes"
-msgstr "status changes"
+msgid "latest value"
+msgstr "latest"
 
 msgid "gateways"
 msgstr "gateways"
+
+msgid "quantity"
+msgstr "quantity"
 
 msgid "value"
 msgstr "value"
@@ -203,28 +197,9 @@ msgstr "selection overview"
 msgid "metering"
 msgstr "metering"
 
-msgid "could not be collected"
-msgstr "could not be collected"
-
-msgid "area"
-msgstr "area"
-
-msgid "object"
-msgstr "object"
-
-msgid "facility"
-msgstr "facility"
-
-msgid "of {{count}} point"
-msgstr "of {{count}} point"
-
 msgctxt "°plural"
 msgid "of {{count}} point°"
 msgstr "of {{count}} points"
-
-msgctxt "°plural"
-msgid "city°"
-msgstr "cities"
 
 msgctxt "°plural"
 msgid "city°"
@@ -237,6 +212,24 @@ msgstr "addresses"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
+
+#~ msgid "action"
+#~ msgstr "action"
+
+#~ msgid "status changes"
+#~ msgstr "status changes"
+
+#~ msgid "could not be collected"
+#~ msgstr "could not be collected"
+
+#~ msgid "area"
+#~ msgstr "area"
+
+#~ msgid "object"
+#~ msgstr "object"
+
+#~ msgid "facility"
+#~ msgstr "facility"
 
 #~ msgid "export to excel (.csv)"
 #~ msgstr "E"
@@ -270,15 +263,3 @@ msgstr "meters"
 
 #~ msgid "new search"
 #~ msgstr "new search"
-
-#~ msgid "could not be collected"
-#~ msgstr "could not be collected"
-
-#~ msgid "area"
-#~ msgstr "area"
-
-#~ msgid "object"
-#~ msgstr "object"
-
-#~ msgid "facility"
-#~ msgstr "facility"
