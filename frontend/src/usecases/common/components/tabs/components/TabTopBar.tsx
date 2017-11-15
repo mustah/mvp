@@ -1,10 +1,9 @@
 import * as React from 'react';
+import {Row} from '../../layouts/row/Row';
 import {TabHeadersProps} from './TabHeaders';
 import {TabOptionsProps} from './TabOptions';
-import {TabSettingsProps} from './TabSettings';
-import {Row} from '../../layouts/row/Row';
 
-type TabTopBarChild = TabHeadersProps | TabOptionsProps | TabSettingsProps;
+type TabTopBarChild = TabHeadersProps | TabOptionsProps;
 
 export interface TabTopBarProps {
   children: Array<React.ReactElement<TabTopBarChild>>;

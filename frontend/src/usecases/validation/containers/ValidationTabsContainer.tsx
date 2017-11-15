@@ -184,7 +184,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
         <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
           {graphTabs}
         </TabOptions>
-        <TabSettings useCase={'validation'}/>
+        <TabSettings/>
       </TabTopBar>
       <TabContent tab={tabType.graph} selectedTab={selectedTab}>
         {graphTabContents}

@@ -1,13 +1,13 @@
 import classNames = require('classnames');
 import * as React from 'react';
-import {ClassNamed} from '../../../../../types/Types';
+import {Children, ClassNamed} from '../../../../../types/Types';
 
 type SortOrder = 'asc' | 'desc';
 
 interface TableHeadProps extends ClassNamed {
   sortable?: boolean;
   currentSort?: SortOrder;
-  children?: string | React.ReactNode[];
+  children?: Children;
 }
 
 export const TableHead = (props: TableHeadProps) => {

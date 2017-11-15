@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {uuid} from '../../../../../types/Types';
+import {Children, uuid} from '../../../../../types/Types';
 import './Table.scss';
 
 export interface NormalizedRows {
@@ -10,7 +10,7 @@ export interface NormalizedRows {
 
 interface TableProps {
   data: NormalizedRows;
-  children: React.ReactNode[];
+  children: Children;
 }
 
 interface Callbacks {

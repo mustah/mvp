@@ -14,9 +14,8 @@ interface TabsProps {
 
 export const Tabs = (props: TabsProps) => {
   const {children, className} = props;
-  const classes = className ? classNames('Tabs', className) : 'Tabs';
   return (
-    <Column className={classes}>
+    <Column className={classNames('Tabs', className)}>
       {children}
     </Column>
   );

@@ -1,64 +1,25 @@
-import * as React from 'react';
-import {listItemStyle} from '../../../app/themes';
 import MenuItem from 'material-ui/MenuItem';
-import {Row} from '../layouts/row/Row';
-import {IconMore} from '../icons/IconMore';
-import Popover from 'material-ui/Popover/Popover';
-import Menu from 'material-ui/Menu';
+import * as React from 'react';
+import {menuItemInnerDivStyle} from '../../../app/themes';
+import {PopoverMenu} from '../popover/PopoverMenu';
 
-interface PopoverState {
-  popOverOpen?: boolean;
-  popOverAnchorElement?: React.ReactInstance;
-}
-
-interface ActionsDropdownProps {
+interface Props {
   actions: string[];
-  className: string;
+  className?: string;
 }
 
-export class ActionsDropdown extends React.Component<ActionsDropdownProps, PopoverState> {
+export const ActionsDropdown = (props: Props) => {
+  const {actions, className} = props;
 
-  constructor(props) {
-    super(props);
+  const renderActions = (action: string, index: number) => (
+    <MenuItem key={index} style={menuItemInnerDivStyle} className="first-uppercase">
+      {action}
+    </MenuItem>
+  );
 
-    this.state = {
-      popOverOpen: false,
-    };
-  }
-
-  render() {
-    const {popOverOpen, popOverAnchorElement} = this.state;
-    const {actions, className} = this.props;
-
-    const onClick = (event: React.SyntheticEvent<any>): void => {
-      event.preventDefault();
-      this.setState({popOverOpen: true, popOverAnchorElement: event.currentTarget});
-    };
-
-    const closePopOver = () => {
-      this.setState({popOverOpen: false});
-    };
-
-    const renderActions = (action, index) => (
-      <MenuItem key={index} style={listItemStyle} className="first-uppercase">
-        {action}
-      </MenuItem>
-    );
-    return (
-        <Row className={className}>
-          <IconMore onClick={onClick}/>
-          <Popover
-            open={popOverOpen}
-            anchorEl={popOverAnchorElement}
-            anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-            onRequestClose={closePopOver}
-          >
-            <Menu>
-              {actions.map(renderActions)}
-            </Menu>
-          </Popover>
-        </Row>
-    );
-  }
-}
+  return (
+    <PopoverMenu className={className}>
+      {actions.map(renderActions)}
+    </PopoverMenu>
+  );
+};

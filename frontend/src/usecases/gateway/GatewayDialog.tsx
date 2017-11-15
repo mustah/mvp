@@ -1,4 +1,5 @@
 import 'Gateway.scss';
+import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {translate} from '../../services/translationService';
@@ -19,7 +20,6 @@ import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
 import {tabType} from '../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../map/containers/MapContainer';
 import {MapMarker} from '../map/mapModels';
-import {Checkbox} from 'material-ui';
 import {MainTitle} from '../common/components/texts/Titles';
 
 interface GatewayDialogProps {
@@ -251,7 +251,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                 <Tab tab={tabType.log} title={translate('status log')}/>
                 <Tab tab={tabType.map} title={translate('map')}/>
               </TabHeaders>
-              <TabSettings useCase={'gateway'}/>
+              <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
               <Table data={gatewayData}>
