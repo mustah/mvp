@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {fetchDomainModel} from '../../../state/domain-models/domainModelsActions';
+import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
 import {isFetchingDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Bold} from '../../common/components/texts/Texts';
@@ -45,7 +45,7 @@ const mapStateToProps = ({domainModels: {addresses, cities}}: RootState): StateT
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchDomainModel,
+  fetchDomainModel: fetchSelections,
 }, dispatch);
 
 export const SelectionOptionsLoaderContainer =

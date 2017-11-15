@@ -3,13 +3,13 @@ import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
 import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModelsModels';
 import {addresses, cities, initialState as initialDomainModelState} from '../../../domain-models/domainModelsReducer';
-import {domainModelSuccess} from '../../../domain-models/domainModelsActions';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {getCities, getEncodedUriParameters, getSelectedPeriod, getSelection} from '../selectionSelectors';
+import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 
 describe('selectionSelectors', () => {
 
@@ -26,8 +26,8 @@ describe('selectionSelectors', () => {
   it('gets entities for type city', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
     const selectionEntities: DomainModel<SelectionEntityState> = {
-      addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
-      cities: cities(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
@@ -49,7 +49,7 @@ describe('selectionSelectors', () => {
   it('get entities for undefined entity type', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
     const selectionEntities: DomainModel<SelectionEntityState> = {
-      addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
 
@@ -103,8 +103,8 @@ describe('selectionSelectors', () => {
 
       const domainModelPayload = normalize(testData.selections, selectionsSchema);
       const selectionEntities: DomainModel<SelectionEntityState> = {
-        addresses: addresses(initialDomainModelState, domainModelSuccess(domainModelPayload)),
-        cities: cities(initialDomainModelState, domainModelSuccess(domainModelPayload)),
+        addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };
 
       const state: LookupState = {

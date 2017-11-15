@@ -6,6 +6,12 @@ export interface Location {
   position: GeoPosition;
 }
 
+export enum EndPoints {
+  selections = '/selections',
+  meters = '/meters',
+  gateways = '/gateways',
+}
+
 export interface GeoPosition {
   latitude: string;
   longitude: string;

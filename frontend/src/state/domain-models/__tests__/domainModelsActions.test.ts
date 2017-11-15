@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../__tests__/TestDataFactory';
 import {makeRestClient} from '../../../services/restClient';
-import {fetchDomainModel, domainModelFailure, domainModelRequest, domainModelSuccess} from '../domainModelsActions';
+import {fetchSelections, selectionsRequest} from '../domainModelsActions';
 import {selectionsSchema} from '../domainModelsSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -31,8 +31,8 @@ describe('domainModelsActions', () => {
       await fetchFakeDomainModels();
 
       expect(store.getActions()).toEqual([
-        domainModelRequest(),
-        domainModelSuccess(normalize(testData.selections, selectionsSchema)),
+        selectionsRequest.request(),
+        selectionsRequest.success(normalize(testData.selections, selectionsSchema)),
       ]);
     });
 
@@ -41,11 +41,11 @@ describe('domainModelsActions', () => {
 
       mockRestClient.onGet('/selections').reply(401, response);
 
-      await store.dispatch(fetchDomainModel());
+      await store.dispatch(fetchSelections());
 
       expect(store.getActions()).toEqual([
-        domainModelRequest(),
-        domainModelFailure({...response}),
+        selectionsRequest.request(),
+        selectionsRequest.failure({...response}),
       ]);
     });
   });
@@ -53,7 +53,7 @@ describe('domainModelsActions', () => {
   const fetchFakeDomainModels = async () => {
     mockRestClient.onGet('/selections').reply(200, testData.selections);
 
-    return store.dispatch(fetchDomainModel());
+    return store.dispatch(fetchSelections());
   };
 
 });

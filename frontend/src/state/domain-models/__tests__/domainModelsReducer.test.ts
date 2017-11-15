@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/TestDataFactory';
-import {domainModelFailure, domainModelRequest, domainModelSuccess} from '../domainModelsActions';
 import {addresses, cities, initialState} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {selectionsRequest} from '../domainModelsActions';
 
 describe('domainModelsReducer', () => {
 
@@ -13,13 +13,13 @@ describe('domainModelsReducer', () => {
     });
 
     it('fetches selections for addresses', () => {
-      expect(addresses(initialState, domainModelRequest())).toEqual({...initialState, isFetching: true});
+      expect(addresses(initialState, selectionsRequest.request())).toEqual({...initialState, isFetching: true});
     });
 
     it('has fetched selections successfully ', () => {
       const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(addresses(initialState, domainModelSuccess(payload))).toEqual({
+      expect(addresses(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
         entities: {
           1: {id: 1, name: 'Stampgatan 46', cityId: 'got'},
@@ -36,7 +36,7 @@ describe('domainModelsReducer', () => {
     it('has error when fetching has failed', () => {
       const payload = {message: 'failed'};
 
-      expect(addresses(initialState, domainModelFailure(payload))).toEqual({
+      expect(addresses(initialState, selectionsRequest.failure(payload))).toEqual({
         ...initialState,
         error: payload,
       });
@@ -50,13 +50,13 @@ describe('domainModelsReducer', () => {
     });
 
     it('fetches selections for cities', () => {
-      expect(cities(initialState, domainModelRequest())).toEqual({...initialState, isFetching: true});
+      expect(cities(initialState, selectionsRequest.request())).toEqual({...initialState, isFetching: true});
     });
 
     it('has fetched selections successfully', () => {
       const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(cities(initialState, domainModelSuccess(payload))).toEqual({
+      expect(cities(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
         entities: {
           got: {id: 'got', name: 'Göteborg'},
@@ -72,7 +72,7 @@ describe('domainModelsReducer', () => {
     it('has error when fetching has failed', () => {
       const payload = {message: 'failed'};
 
-      expect(cities(initialState, domainModelFailure(payload))).toEqual({
+      expect(cities(initialState, selectionsRequest.failure(payload))).toEqual({
         ...initialState,
         error: payload,
       });
