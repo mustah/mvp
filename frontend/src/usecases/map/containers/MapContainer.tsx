@@ -33,6 +33,9 @@ interface OwnProps {
   popupMode: PopupMode;
   markers: {[key: string]: MapMarker};
   height?: number;
+  width?: number;
+  defaultZoom?: number;
+  viewCenter?: [number, number];
 }
 
 export enum PopupMode {
@@ -50,11 +53,13 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       openClusterDialog,
       popupMode,
       height,
+      width,
+      defaultZoom = 7,
+      viewCenter= defaultViewCenter,
     } = this.props;
 
     const maxZoom = 18;
     const minZoom = 3;
-    const defaultZoom = 7;
 
     const markerclusterOptions = {
       // Setting custom icon for cluster group
@@ -108,7 +113,6 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       },
     };
 
-    const startPosition: [number, number] = [57.504935, 12.069482];
     const confidenceThreshold: number = 0.7;
     // TODO type array
     const leafletMarkers: any[] = [];
@@ -174,18 +178,17 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     return (
       <Column>
         <Map
-          center={startPosition}
+          center={viewCenter}
           maxZoom={maxZoom}
           minZoom={minZoom}
           zoom={defaultZoom}
           className="Map"
           scrollWheelZoom={false}
           onclick={toggleScrollWheelZoom}
-          style={{height}}
+          style={{height, width}}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
-            attribution="&copy; <a href='http://osm.org/copyright'>OpenStreetMap</a> contributors"
           />
           <MarkerClusterGroup
             markers={leafletMarkers}
@@ -198,6 +201,8 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     );
   }
 }
+
+const defaultViewCenter: [number, number] = [57.504935, 12.069482];
 
 const mapStateToProps = ({map}: RootState): StateToProps => {
   return {

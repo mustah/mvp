@@ -12,19 +12,21 @@ import {
 } from '../../common/components/indicators/SelectableIndicatorWidgets';
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
-import {Bold} from '../../common/components/texts/Texts';
 import {MainTitle} from '../../common/components/texts/Titles';
 import {PageContainer} from '../../common/containers/PageContainer';
 import {PeriodContainer} from '../../common/containers/PeriodContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
-import {Widget} from '../components/widgets/Widget';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {MapWidgets} from '../components/widgets/mapWidgets';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
+  entities: { [key: string]: Meter };
 }
 
 export interface DispatchToProps extends IndicatorWidgetsDispatchProps {
@@ -42,6 +44,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
   render() {
     const {
       dashboard: {record},
+      entities,
     } = this.props;
 
     return (
@@ -54,25 +57,17 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
           </Row>
         </Row>
 
-        {this.renderWidgets(record)}
+        {this.renderWidgets(entities, record)}
       </PageContainer>
     );
   }
 
-  renderWidgets = (records?: DashboardModel) => {
+  renderWidgets = (entities: any, records?: DashboardModel) => {
     if (records) {
       return (
         <Column>
           <OverviewWidgets widgets={records.systemOverview.widgets}/>
-
-          <Row>
-            <Widget>
-              <Bold>Map TODO</Bold>
-            </Widget>
-            <Widget>
-              <Bold>Map - 2 - TODO</Bold>
-            </Widget>
-          </Row>
+          <MapWidgets tmp={entities}/>
         </Column>
       );
     }
@@ -91,10 +86,12 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
  * @param {RootState} state
  * @returns {{dashboard: DashboardState}}
  */
-const mapStateToProps = ({dashboard, ui}: RootState): StateToProps => {
+const mapStateToProps = ({dashboard, ui, domainModels}: RootState): StateToProps => {
+  const entityState = domainModels.meters;
   return {
     dashboard,
     selectedWidget: getSelectedIndicatorDashboard(ui),
+    entities: getMeterEntities(entityState),
   };
 };
 
