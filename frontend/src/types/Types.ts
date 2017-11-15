@@ -37,7 +37,7 @@ export enum Status {
 }
 
 export enum Period {
-  now = 'now',
+  latest = 'latest',
   currentMonth = 'current_month',
   previousMonth = 'previous_month',
   currentWeek = 'current_week',

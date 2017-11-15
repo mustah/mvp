@@ -4,7 +4,9 @@ import {IdNamed, Period} from '../../../../types/Types';
 import {geoDataSuccess} from '../../../domain-models/geoData/geoDataActions';
 import {GeoDataState} from '../../../domain-models/geoData/geoDataModels';
 import {
-  addresses, cities, initialAddressState,
+  addresses,
+  cities,
+  initialAddressState,
   initialState as initialGeoDataState,
 } from '../../../domain-models/geoData/geoDataReducer';
 import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
@@ -12,22 +14,18 @@ import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {
-  getCities,
-  getEncodedUriParameters,
-  getSelectedPeriod,
-  getSelection,
-} from '../selectionSelectors';
+import {getCities, getEncodedUriParameters, getSelectedPeriod, getSelection} from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
-  const searchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
+  const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
+  const initialEncodedParameters = getEncodedUriParameters(initialSearchParametersState);
 
   const gothenburg: IdNamed = {...testData.geoData.cities[0]};
   const stockholm: IdNamed = {...testData.geoData.cities[1]};
 
   it('has entities', () => {
-    expect(getSelection({...searchParametersState})).toEqual(initialState);
+    expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
   });
 
   it('gets entities for type city', () => {
@@ -72,15 +70,11 @@ describe('selectionSelectors', () => {
 
   describe('encodedUriParameters', () => {
 
-    it('has no search parameters', () => {
-      expect(getEncodedUriParameters(searchParametersState)).toEqual('period=now');
-    });
-
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&period=now');
+      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&' + initialEncodedParameters);
     });
 
     it('has two selected cities', () => {
@@ -90,14 +84,14 @@ describe('selectionSelectors', () => {
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
       expect(getEncodedUriParameters({selection: state, saved: []}))
-        .toEqual('city.id=got&city.id=sto&period=now');
+        .toEqual('city.id=got&city.id=sto&' + initialEncodedParameters);
     });
   });
 
   describe('get selected period', () => {
 
-    it('period now is default ', () => {
-      expect(getSelectedPeriod(initialState)).toBe(Period.now);
+    it('there is a default period', () => {
+      expect(getSelectedPeriod(initialState)).toEqual(expect.anything());
     });
 
     it('get selected period', () => {
@@ -107,9 +101,9 @@ describe('selectionSelectors', () => {
     });
   });
 
-  describe('get deselected cities', () => {
+  describe('get sub set of cities', () => {
 
-    it('period now is default ', () => {
+    it('can detect which the selected entities are', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
       const geoDataPayload = normalize(testData.geoData, geoDataSchema);
