@@ -71,6 +71,40 @@
   }
 }
 
+.StatusTabOptions {
+  .TabOption {
+    border-radius: 2px;
+    font-weight: bold;
+    margin-left: $sm-space;
+    padding: 8px;
+    text-transform: uppercase;
+
+    &.all {
+      background-color: $dark-blue;
+      color: $white;
+    }
+
+    &.ok {
+      background-color: $green;
+      color: $white;
+    }
+
+    &.warnings {
+      background-color: $orange;
+      color: $white;
+    }
+
+    &.faults {
+      background-color: $red;
+      color: $white;
+    }
+
+    &.isSelected {
+      text-decoration: underline;
+    }
+  }
+}
+
 .TabSettings {
   padding-right: $space;
 }

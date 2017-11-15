@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
-import {ColumnCenter} from '../../../common/components/layouts/column/Column';
+import {RowCenter} from '../../../common/components/layouts/row/Row';
 import {Xsmall} from '../../../common/components/texts/Texts';
 import './MenuItem.scss';
 
@@ -13,9 +13,9 @@ export interface MenuItemProps extends Selectable {
 export const MenuItem = (props: MenuItemProps) => {
   const {name, icon, isSelected} = props;
   return (
-    <ColumnCenter className={classNames('MenuItem', {isSelected})}>
+    <RowCenter className={classNames('MenuItem', {isSelected})}>
       {icon}
       <Xsmall className="Bold">{name}</Xsmall>
-    </ColumnCenter>
+    </RowCenter>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Column} from '../../layouts/column/Column';
-import {Row} from '../../layouts/row/Row';
+import {RowCenter} from '../../layouts/row/Row';
 import {TabModel, tabType} from '../models/TabsModel';
 import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
@@ -19,12 +19,13 @@ export const TabOptions = (props: TabOptionsProps) => {
   const {children, tab, selectedTab, select, tabs} = props;
   const selectedOption = tabs[tab].selectedOption;
   const passDownProps = (child, index) => React.cloneElement(child, {tab, select, selectedOption, key: index});
+  const renderedChildren = children.map(passDownProps);
   if (tab === selectedTab) {
     return (
       <Column className={'flex-1'}>
-        <Row className={'Row-center'}>
-          {children.map(passDownProps)}
-        </Row>
+        <RowCenter>
+          {renderedChildren}
+        </RowCenter>
         <TabUnderline/>
       </Column>
     );
