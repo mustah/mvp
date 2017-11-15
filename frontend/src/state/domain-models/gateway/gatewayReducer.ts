@@ -1,15 +1,16 @@
 import {AnyAction} from 'redux';
-import {GATEWAY_REQUEST, GATEWAY_SUCCESS} from './gatewayActions';
+import {GATEWAY_FAILURE, GATEWAY_REQUEST, GATEWAY_SUCCESS} from './gatewayActions';
 import {GatewaysState} from './gatewayModels';
 
 const initialState: GatewaysState = {
   isFetching: false,
   total: 0,
   result: [],
-  entities: {gateways: {}},
+  entities: {},
 };
 
 export const gateways = (state: GatewaysState = initialState, action: AnyAction) => {
+  const {payload} = action;
   switch (action.type) {
     case GATEWAY_REQUEST:
       return {
@@ -17,11 +18,18 @@ export const gateways = (state: GatewaysState = initialState, action: AnyAction)
         isFetching: true,
       };
     case GATEWAY_SUCCESS:
-      const {gateways} = action.payload;
+      const {gateways: {result, entities}} = payload;
       return {
         isFetching: false,
-        total: gateways.result.length,
-        ...gateways,
+        total: result.length,
+        result,
+        entities: entities.gateways,
+      };
+    case GATEWAY_FAILURE:
+      return {
+        ...state,
+        isFetching: false,
+        error: {...payload},
       };
     default:
       return state;
