@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-15 08:50+0100\n"
+"POT-Creation-Date: 2017-11-15T16:34:14.274Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "collection"
 msgstr "collection"
@@ -53,9 +53,6 @@ msgstr "map"
 msgid "close"
 msgstr "close"
 
-msgid "now"
-msgstr "now"
-
 msgid "current month"
 msgstr "current month"
 
@@ -71,42 +68,6 @@ msgstr "last 7 days"
 msgid "pick a date"
 msgstr "pick a date"
 
-msgid "all"
-msgstr "all"
-
-msgid "of {{count}} point"
-msgstr "of {{count}} point"
-
-msgid "previous"
-msgstr "previous"
-
-msgid "next"
-msgstr "next"
-
-msgid "show gateways"
-msgstr "show gateways"
-
-msgid "meter"
-msgstr "meter"
-
-msgid "manufacturer"
-msgstr "manufacturer"
-
-msgid "medium"
-msgstr "medium"
-
-msgid "validation"
-msgstr "validation"
-
-msgid "edit"
-msgstr "edit"
-
-msgid "delete"
-msgstr "delete"
-
-msgid "dashboard"
-msgstr "dashboard"
-
 msgid "gateway details"
 msgstr "gateway"
 
@@ -119,8 +80,17 @@ msgstr "interval"
 msgid "flagged for action"
 msgstr "flagged for action"
 
+msgid "meter"
+msgstr "meter"
+
 msgid "status log"
 msgstr "status log"
+
+msgid "manufacturer"
+msgstr "manufacturer"
+
+msgid "medium"
+msgstr "medium"
 
 msgid "show only changes"
 msgstr "show only changes"
@@ -128,14 +98,14 @@ msgstr "show only changes"
 msgid "date"
 msgstr "date"
 
-msgid "report"
-msgstr "report"
-
 msgid "meter id"
 msgstr "MOID"
 
 msgid "resolution"
 msgstr "resolution"
+
+msgid "validation"
+msgstr "validation"
 
 msgid "labels"
 msgstr "labels"
@@ -164,6 +134,33 @@ msgstr "value"
 msgid "latest snr"
 msgstr "latest SNR"
 
+msgid "all"
+msgstr "all"
+
+msgid "of {{count}} point"
+msgstr "of {{count}} point"
+
+msgid "show gateways"
+msgstr "show gateways"
+
+msgid "previous"
+msgstr "previous"
+
+msgid "next"
+msgstr "next"
+
+msgid "edit"
+msgstr "edit"
+
+msgid "delete"
+msgstr "delete"
+
+msgid "dashboard"
+msgstr "dashboard"
+
+msgid "report"
+msgstr "report"
+
 msgid "logout"
 msgstr "logout"
 
@@ -178,6 +175,9 @@ msgstr "reset"
 
 msgid "selection"
 msgstr "selection"
+
+msgid "alarm"
+msgstr "alarm"
 
 msgid "filter"
 msgstr "filter"
@@ -212,54 +212,3 @@ msgstr "addresses"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
-
-#~ msgid "action"
-#~ msgstr "action"
-
-#~ msgid "status changes"
-#~ msgstr "status changes"
-
-#~ msgid "could not be collected"
-#~ msgstr "could not be collected"
-
-#~ msgid "area"
-#~ msgstr "area"
-
-#~ msgid "object"
-#~ msgstr "object"
-
-#~ msgid "facility"
-#~ msgstr "facility"
-
-#~ msgid "export to excel (.csv)"
-#~ msgstr "E"
-
-#~ msgid "ok"
-#~ msgstr "ok"
-
-#~ msgid "reported"
-#~ msgstr "reported"
-
-#~ msgid "unhandled problems"
-#~ msgstr "unhandled problems"
-
-#~ msgid "graph"
-#~ msgstr "graph"
-
-#~ msgid "population"
-#~ msgstr "population"
-
-#~ msgid "faults"
-#~ msgstr "faults"
-
-#~ msgid "action pending"
-#~ msgstr "action pending"
-
-#~ msgid "comment"
-#~ msgstr "comment"
-
-#~ msgid "meter details"
-#~ msgstr "meter"
-
-#~ msgid "new search"
-#~ msgstr "new search"
