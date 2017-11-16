@@ -26,22 +26,23 @@ const domainModelRequest = <T>(endPoint: EndPoints): RestRequest<T> => ({
 });
 
 const fetchDomainModel = <T>(endPoint: EndPoints, {request, success, failure}: RestRequest<T>, schema: Schema) =>
-  (encodedUriParameters?: string) => async (dispatch) => {
-  try {
-      dispatch(request());
-      const {data: domainModelData} = await restClient.get(makeUrl(endPoint, encodedUriParameters));
-      dispatch(success(normalize(domainModelData, schema)));
-    } catch (error) {
-      const {response: {data}} = error;
-      dispatch(failure(data));
-    }
-  };
+  (encodedUriParameters?: string) =>
+    async (dispatch) => {
+      try {
+        dispatch(request());
+        const {data: domainModelData} = await restClient.get(makeUrl(endPoint, encodedUriParameters));
+        dispatch(success(normalize(domainModelData, schema)));
+      } catch (error) {
+        const {response: {data}} = error;
+        dispatch(failure(data));
+      }
+    };
 
 export const selectionsRequest = domainModelRequest<IdNamed>(EndPoints.selections);
 export const fetchSelections = fetchDomainModel<IdNamed>(EndPoints.selections, selectionsRequest, selectionsSchema);
 
-export const gatewayRequest =  domainModelRequest<Gateway>(EndPoints.gateways);
+export const gatewayRequest = domainModelRequest<Gateway>(EndPoints.gateways);
 export const fetchGateways = fetchDomainModel<Gateway>(EndPoints.gateways, gatewayRequest, gatewaySchema);
 
-export const meterRequest =  domainModelRequest<Gateway>(EndPoints.meters);
+export const meterRequest = domainModelRequest<Gateway>(EndPoints.meters);
 export const fetchMeters = fetchDomainModel<Gateway>(EndPoints.meters, meterRequest, meterSchema);
