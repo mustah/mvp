@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../reducers/rootReducer';
+import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
 import {getEncodedUriParameters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {Layout} from '../common/components/layouts/layout/Layout';
@@ -12,7 +13,6 @@ import {MainMenuContainer} from '../main-menu/containers/MainMenuContainer';
 import {SideMenuContainer} from '../sidemenu/containers/SideMenuContainer';
 import './App.scss';
 import {Pages} from './Pages';
-import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
 
 interface StateToProps {
   isAuthenticated: boolean;
@@ -41,8 +41,14 @@ class AppComponent extends React.Component<StateToProps & DispatchToProps> {
   render() {
     const {isAuthenticated, isSideMenuOpen} = this.props;
 
+    const classes: string[] = ['App'];
+    if (!isAuthenticated) {
+      classes.push('FullPageLogin');
+    }
+    const outerClasses = classNames(classes);
+
     return (
-      <Row className="App">
+      <Row className={outerClasses}>
         <MainMenuContainer/>
 
         <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})} hide={!isAuthenticated}>
