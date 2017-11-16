@@ -22,7 +22,7 @@ export const Profile = (props: Props) => {
   return (
     <Column className="ProfileWrapper">
       <Row className="Profile">
-        <PopoverMenu IconComponent={Avatar} onRequestClose={logout}>
+        <PopoverMenu IconComponent={Avatar}>
           <MenuItem
             style={menuItemInnerDivStyle}
             className="first-uppercase"

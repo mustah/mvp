@@ -3,16 +3,31 @@ import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {ClassNamed} from '../../../../types/Types';
 import {routes} from '../../../app/routes';
+import {AuthState} from '../../../auth/authReducer';
 import {Row} from '../../../common/components/layouts/row/Row';
 import {Logo} from '../../../common/components/logo/Logo';
+import {Profile} from '../../../profile/components/Profile';
 import './SelectionMenuWrapper.scss';
+import {RootState} from '../../../../reducers/rootReducer';
+import {logout} from '../../../auth/authActions';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
-interface Props extends ClassNamed {
+interface StateToProps extends ClassNamed {
+  auth: AuthState;
   children?: React.ReactNode;
 }
 
-export const SearchMenuWrapper = (props: Props) => {
-  const {children, className} = props;
+interface DispatchToProps {
+  logout: () => void;
+}
+
+interface OwnProps {
+  className: string;
+}
+
+const SearchMenuWrapperComponent = (props: StateToProps & DispatchToProps) => {
+  const {children, className, auth, logout} = props;
 
   return (
     <Row className={classNames('SelectionMenuWrapper', className)}>
@@ -20,10 +35,26 @@ export const SearchMenuWrapper = (props: Props) => {
         {children}
       </Row>
       <Row>
-        <Link className="Logo" to={routes.dashboard}>
+        <Link className="Logo" to={routes.home}>
           <Logo className="small"/>
         </Link>
+      </Row>
+      <Row>
+        <Profile user={auth.user!} logout={logout}/>
       </Row>
     </Row>
   );
 };
+
+const mapStateToProps = ({auth}: RootState): StateToProps => {
+  return {
+    auth,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  logout,
+}, dispatch);
+
+export const SearchMenuWrapper =
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(SearchMenuWrapperComponent);

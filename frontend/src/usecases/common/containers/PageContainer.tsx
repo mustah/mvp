@@ -14,10 +14,10 @@ import {Column} from '../components/layouts/column/Column';
 import {Layout} from '../components/layouts/layout/Layout';
 
 interface StateToProps {
-  pathname: Pathname;
+  children?: React.ReactNode;
   isSearchPage: boolean;
   isSideMenuOpen: boolean;
-  children?: React.ReactNode;
+  pathname: Pathname;
   selection: SelectionState;
 }
 

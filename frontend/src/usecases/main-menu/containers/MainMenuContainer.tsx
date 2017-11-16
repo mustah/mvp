@@ -8,14 +8,12 @@ import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {routes} from '../../app/routes';
-import {logout} from '../../auth/authActions';
 import {AuthState} from '../../auth/authReducer';
 import {IconCollection} from '../../common/components/icons/IconCollection';
 import {IconDashboard} from '../../common/components/icons/IconDashboard';
 import {IconReport} from '../../common/components/icons/IconReport';
 import {IconValidation} from '../../common/components/icons/IconValidation';
 import {Column} from '../../common/components/layouts/column/Column';
-import {Profile} from '../../profile/components/Profile';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
 import {MenuItem} from '../components/menuitems/MenuItem';
@@ -27,12 +25,11 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  logout: () => void;
   toggleShowHideSideMenu: () => void;
 }
 
 const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {pathname, auth, isSideMenuOpen, toggleShowHideSideMenu, logout} = props;
+  const {pathname, auth, isSideMenuOpen, toggleShowHideSideMenu} = props;
 
   if (!auth.isAuthenticated) {
     return null;
@@ -75,7 +72,6 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
             />
           </Link>
         </Column>
-        <Profile user={auth.user!} logout={logout}/>
       </Column>
     </Column>
   );
@@ -90,7 +86,6 @@ const mapStateToProps = ({auth, routing, ui}: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  logout,
   toggleShowHideSideMenu,
 }, dispatch);
 
