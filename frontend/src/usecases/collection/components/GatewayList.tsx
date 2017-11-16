@@ -1,11 +1,9 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
-import {IdNamed} from '../../../types/Types';
+import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 import {ListActionsDropdown} from '../../common/components/actions-dropdown/ListActionsDropdown';
 import {Status} from '../../common/components/status/Status';
-import {Table} from '../../common/components/table/Table';
-import {TableColumn} from '../../common/components/table/TableColumn';
+import {Table, TableColumn} from '../../common/components/table/Table';
 import {TableHead} from '../../common/components/table/TableHead';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
 import {Gateway} from './Gateway';
@@ -13,52 +11,49 @@ import {Gateway} from './Gateway';
 export const GatewayList = (props: ListProps) => {
   const {data} = props;
 
-  const renderStatusCell = (value: IdNamed) => <Status {...value}/>;
-  const renderGateway = (value) => <Gateway id={value}/>;
-  const renderLocation = (value: IdNamed) => value.name;
-  const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
-
-  const renderActionDropdown = (item: IdNamed) => <ListActionsDropdown item={item}/>;
+  const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
+  const renderGateway = (gateway: GatewayModel) => <Gateway id={gateway.id}/>;
+  const renderCity = (gateway: GatewayModel) => gateway.city.name;
+  const renderAddress = (gateway: GatewayModel) => gateway.address.name;
+  const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
+  const renderActionDropdown = (gateway: GatewayModel) =>
+    <ListActionsDropdown item={{id: gateway.id, name: gateway.productModel}}/>;
+  const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged;
+  const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
 
   return (
     <Table data={data}>
       <TableColumn
-        id={'id'}
         header={<TableHead className="first">{translate('gateway')}</TableHead>}
-        cell={renderGateway}
+        renderCell={renderGateway}
       />
       <TableColumn
-        id={'city'}
         header={<TableHead>{translate('city')}</TableHead>}
-        cell={renderLocation}
+        renderCell={renderCity}
       />
       <TableColumn
-        id={'address'}
         header={<TableHead>{translate('address')}</TableHead>}
-        cell={renderLocation}
+        renderCell={renderAddress}
       />
       <TableColumn
-        id={'productModel'}
         header={<TableHead>{translate('product model')}</TableHead>}
+        renderCell={renderProductModel}
       />
       <TableColumn
-        id={'status'}
         header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-        cell={renderStatusCell}
+        renderCell={renderStatusCell}
       />
       <TableColumn
-        id={'statusChanged'}
         header={<TableHead sortable={true} currentSort={'desc'}>{translate('status change')}</TableHead>}
+        renderCell={renderStatusChanged}
       />
       <TableColumn
-        id={'flags'}
         header={<TableHead>{translate('flags')}</TableHead>}
-        cell={renderFlags}
+        renderCell={renderFlags}
       />
       <TableColumn
-        id={'action-dropdown'}
         header={<TableHead className="actionDropdown">{' '}</TableHead>}
-        cell={renderActionDropdown}
+        renderCell={renderActionDropdown}
       />
     </Table>
   );

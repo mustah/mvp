@@ -3,15 +3,15 @@ import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {IdNamed, OnClick} from '../../../../types/Types';
+import {Meter} from '../../../../state/domain-models/meter/meterModels';
+import {OnClick} from '../../../../types/Types';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {MapMarker} from '../../../map/mapModels';
 import {ButtonClose} from '../buttons/ButtonClose';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Status} from '../status/Status';
-import {Table} from '../table/Table';
-import {TableColumn} from '../table/TableColumn';
+import {NormalizedRows, Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
 import {Tab} from '../tabs/components/Tab';
 import {TabContent} from '../tabs/components/TabContent';
@@ -46,10 +46,14 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     const {displayDialog} = this.props;
     const {close} = this.props;
 
-    const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
+    const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
+    const renderMoid = (item: Meter) => item.moid;
+    const renderManufacturer = (item: Meter) => item.manufacturer;
+    const renderDate = (item: Meter) => item.date;
+    const renderMedium = (item: Meter) => item.medium;
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const gatewayData = {
+    const gatewayData: NormalizedRows = {
       byId: {
         id1: {
           moid: '26544',
@@ -256,21 +260,20 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
               <Table data={gatewayData}>
                 <TableColumn
-                  id={'moid'}
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
+                  renderCell={renderMoid}
                 />
                 <TableColumn
-                  id={'manufacturer'}
                   header={<TableHead>{translate('manufacturer')}</TableHead>}
+                  renderCell={renderManufacturer}
                 />
                 <TableColumn
-                  id={'medium'}
                   header={<TableHead>{translate('medium')}</TableHead>}
+                  renderCell={renderMedium}
                 />
                 <TableColumn
-                  id={'status'}
                   header={<TableHead>{translate('status')}</TableHead>}
-                  cell={renderStatusCell}
+                  renderCell={renderStatusCell}
                 />
               </Table>
             </TabContent>
@@ -280,13 +283,12 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Row>
               <Table data={gatewayData}>
                 <TableColumn
-                  id={'date'}
                   header={<TableHead>{translate('date')}</TableHead>}
+                  renderCell={renderDate}
                 />
                 <TableColumn
-                  id={'status'}
                   header={<TableHead>{translate('status')}</TableHead>}
-                  cell={renderStatusCell}
+                  renderCell={renderStatusCell}
                 />
               </Table>
             </TabContent>

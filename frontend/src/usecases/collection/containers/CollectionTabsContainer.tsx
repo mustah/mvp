@@ -221,18 +221,15 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui, domainModels} = state;
+const mapStateToProps = ({ui, domainModels: {gateways}}: RootState) => {
   const pagination = getCollectionPagination(ui);
-  const entityState = domainModels.gateways;
-
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),
-    entityCount: getGatewaysTotal(entityState),
-    entities: getGatewayEntities(entityState),
-    selectedEntities: getResultDomainModels(entityState),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(entityState)}),
+    entityCount: getGatewaysTotal(gateways),
+    entities: getGatewayEntities(gateways),
+    selectedEntities: getResultDomainModels(gateways),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
     pagination,
   };
 };

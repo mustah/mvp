@@ -1,71 +1,68 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {Flag} from '../../../../state/domain-models/flag/flagModels';
-import {IdNamed} from '../../../../types/Types';
+import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
 import {Status} from '../status/Status';
-import {Table} from '../table/Table';
-import {TableColumn} from '../table/TableColumn';
+import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
 import {ListProps} from '../tabs/models/TabsModel';
 import {MeteringPoint} from './MeteringPoint';
 
 export const MeterList = (props: ListProps) => {
   const {data} = props;
-  const renderMeteringPointCell = (value, index) => <MeteringPoint id={value}/>;
-  const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
-  const renderLocation = (value: IdNamed) => value.name;
-  const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
 
-  const renderActionDropdown = (item: IdNamed) => <ListActionsDropdown item={item}/>;
+  const renderMeteringPointCell = (meter: Meter) => <MeteringPoint id={meter.id}/>;
+  const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
+  const renderCityName = (meter: Meter) => meter.city.name;
+  const renderAddressName = (meter: Meter) => meter.address.name;
+  const renderFlags = (meter: Meter) => meter.flags.map((flag) => flag.title).join(', ');
+  const renderActionDropdown = (meter: Meter) => <ListActionsDropdown item={{id: meter.id, name: meter.manufacturer}}/>;
+  const renderGatewayId = (meter: Meter) => meter.gatewayId;
+  const renderManufacturer = (meter: Meter) => meter.manufacturer;
+  const renderStatusChanged = (meter: Meter) => meter.statusChanged;
+  const renderMedium = (meter: Meter) => meter.medium;
 
   return (
     <Table data={data}>
       <TableColumn
-        id={'id'}
         header={<TableHead className="first">{translate('meter')}</TableHead>}
-        cell={renderMeteringPointCell}
+        renderCell={renderMeteringPointCell}
       />
       <TableColumn
-        id={'city'}
         header={<TableHead>{translate('city')}</TableHead>}
-        cell={renderLocation}
+        renderCell={renderCityName}
       />
       <TableColumn
-        id={'address'}
         header={<TableHead>{translate('address')}</TableHead>}
-        cell={renderLocation}
+        renderCell={renderAddressName}
       />
       <TableColumn
-        id={'manufacturer'}
         header={<TableHead>{translate('manufacturer')}</TableHead>}
+        renderCell={renderManufacturer}
       />
       <TableColumn
-        id={'medium'}
         header={<TableHead>{translate('medium')}</TableHead>}
+        renderCell={renderMedium}
       />
       <TableColumn
-        id={'gatewayId'}
         header={<TableHead>{translate('gateway')}</TableHead>}
+        renderCell={renderGatewayId}
       />
       <TableColumn
-        id={'status'}
         header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-        cell={renderStatusCell}
+        renderCell={renderStatusCell}
       />
       <TableColumn
-        id={'statusChanged'}
         header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+        renderCell={renderStatusChanged}
       />
       <TableColumn
-        id={'flags'}
         header={<TableHead>{translate('flags')}</TableHead>}
-        cell={renderFlags}
+        renderCell={renderFlags}
       />
       <TableColumn
-        id={'action-buttons'}
         header={<TableHead className="actionDropdown">{' '}</TableHead>}
-        cell={renderActionDropdown}
+        renderCell={renderActionDropdown}
       />
     </Table>
   );

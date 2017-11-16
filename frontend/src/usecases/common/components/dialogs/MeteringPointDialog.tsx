@@ -2,27 +2,26 @@ import {Checkbox} from 'material-ui';
 import Dialog from 'material-ui/Dialog';
 import 'MeteringPointDialog.scss';
 import * as React from 'react';
-import {tabType} from '../tabs/models/TabsModel';
-import {IdNamed} from '../../../../types/Types';
-import {Status} from '../status/Status';
-import {Row} from '../layouts/row/Row';
-import {ButtonClose} from '../buttons/ButtonClose';
-import {Column} from '../layouts/column/Column';
-import {MainTitle, Subtitle} from '../texts/Titles';
 import {translate} from '../../../../services/translationService';
-import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {TabTopBar} from '../tabs/components/TabTopBar';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tab} from '../tabs/components/Tab';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabContent} from '../tabs/components/TabContent';
-import {Table} from '../table/Table';
-import {TableColumn} from '../table/TableColumn';
-import {TableHead} from '../table/TableHead';
+import {IdNamed} from '../../../../types/Types';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {IconStatus} from '../icons/IconStatus';
 import {MapMarker} from '../../../map/mapModels';
+import {ButtonClose} from '../buttons/ButtonClose';
+import {IconDistrictHeating} from '../icons/IconDistrictHeating';
+import {IconStatus} from '../icons/IconStatus';
+import {Column} from '../layouts/column/Column';
+import {Row} from '../layouts/row/Row';
+import {Status} from '../status/Status';
+import {NormalizedRows, Table, TableColumn} from '../table/Table';
+import {TableHead} from '../table/TableHead';
+import {Tab} from '../tabs/components/Tab';
+import {TabContent} from '../tabs/components/TabContent';
+import {TabHeaders} from '../tabs/components/TabHeaders';
+import {Tabs} from '../tabs/components/Tabs';
+import {TabSettings} from '../tabs/components/TabSettings';
+import {TabTopBar} from '../tabs/components/TabTopBar';
+import {tabType} from '../tabs/models/TabsModel';
+import {MainTitle, Subtitle} from '../texts/Titles';
 
 interface MeteringPointDialogProps {
   displayDialog: boolean;
@@ -49,6 +48,11 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     const {close} = this.props;
 
     const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
+    const renderQuantity = (item: any) => item.quantity;
+    const renderValue = (item: any) => item.value;
+    const renderDate = (item: any) => item.date;
+    const renderSerial = (item: any) => item.serial;
+    const renderSnr = (item: any) => item.snr;
 
     const meterGateways = {
       byId: {
@@ -65,7 +69,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     };
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const meterData = {
+    const meterData: NormalizedRows = {
       byId: {
         id0: {
           date: '2017-11-16 09:34',
@@ -347,12 +351,12 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
               <Table data={meterData}>
                 <TableColumn
-                  id={'quantity'}
                   header={<TableHead className="first">{translate('quantity')}</TableHead>}
+                  renderCell={renderQuantity}
                 />
                 <TableColumn
-                  id={'value'}
                   header={<TableHead>{translate('value')}</TableHead>}
+                  renderCell={renderValue}
                 />
               </Table>
             </TabContent>
@@ -362,13 +366,12 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Row>
               <Table data={meterData}>
                 <TableColumn
-                  id={'date'}
                   header={<TableHead>{translate('date')}</TableHead>}
+                  renderCell={renderDate}
                 />
                 <TableColumn
-                  id={'status'}
                   header={<TableHead>{translate('status')}</TableHead>}
-                  cell={renderStatusCell}
+                  renderCell={renderStatusCell}
                 />
               </Table>
             </TabContent>
@@ -379,12 +382,12 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               <Row>
                 <Table data={meterGateways}>
                   <TableColumn
-                    id={'serial'}
                     header={<TableHead>{translate('gateway id')}</TableHead>}
+                    renderCell={renderSerial}
                   />
                   <TableColumn
-                    id={'snr'}
                     header={<TableHead>{translate('latest snr')}</TableHead>}
+                    renderCell={renderSnr}
                   />
                 </Table>
               </Row>
