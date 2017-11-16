@@ -7,6 +7,7 @@ import {EndPoints, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
+import {meterSchema} from './meter/meterSchema';
 
 export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
 export const DOMAIN_MODELS_SUCCESS = 'DOMAIN_MODELS_SUCCESS';
@@ -41,3 +42,6 @@ export const fetchSelections = fetchDomainModel<IdNamed>(EndPoints.selections, s
 
 export const gatewayRequest =  domainModelRequest<Gateway>(EndPoints.gateways);
 export const fetchGateways = fetchDomainModel<Gateway>(EndPoints.gateways, gatewayRequest, gatewaySchema);
+
+export const meterRequest =  domainModelRequest<Gateway>(EndPoints.meters);
+export const fetchMeters = fetchDomainModel<Gateway>(EndPoints.meters, meterRequest, meterSchema);

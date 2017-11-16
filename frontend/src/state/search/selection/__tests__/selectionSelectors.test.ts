@@ -9,12 +9,11 @@ import {
   cities,
   DomainModelsState,
   gateways,
-  initialDomain,
+  initialDomain, meters,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
-import {meters} from '../../../domain-models/meter/meterReducer';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';

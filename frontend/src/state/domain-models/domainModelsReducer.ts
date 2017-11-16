@@ -3,8 +3,7 @@ import {parameterNames} from '../search/selection/selectionModels';
 import {EndPoints, NormalizedState, SelectionEntity, SelectionEntityState} from './domainModels';
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
 import {Gateway, GatewaysState} from './gateway/gatewayModels';
-import {MetersState} from './meter/meterModels';
-import {meters} from './meter/meterReducer';
+import {Meter, MetersState} from './meter/meterModels';
 
 export const initialDomain = <T>(): NormalizedState<T> => ({
   result: [],
@@ -47,6 +46,7 @@ export const addresses = domainModelReducerFor<SelectionEntity>(parameterNames.a
 export const cities = domainModelReducerFor<SelectionEntity>(parameterNames.cities, EndPoints.selections);
 export const alarms = domainModelReducerFor<SelectionEntity>(parameterNames.alarms, EndPoints.selections);
 export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
+export const meters = domainModelReducerFor<Meter>('meters', EndPoints.meters);
 
 export interface DomainModelsState {
   gateways: GatewaysState;
