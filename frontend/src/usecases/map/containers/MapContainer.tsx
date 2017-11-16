@@ -3,7 +3,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
-import {Map, TileLayer} from 'react-leaflet';
+import {Map, Marker, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -15,6 +15,7 @@ import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import './MapContainer.scss';
+import {isNullOrUndefined} from 'util';
 
 interface StateToProps {
   map: MapState;
@@ -31,7 +32,7 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: {[key: string]: MapMarker};
+  markers: { [key: string]: MapMarker };
   height?: number;
   width?: number;
   defaultZoom?: number;
@@ -55,8 +56,14 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       height,
       width,
       defaultZoom = 7,
-      viewCenter= defaultViewCenter,
+      viewCenter = defaultViewCenter,
     } = this.props;
+
+    if (!isNullOrUndefined(map.selectedMarker) && !isNullOrUndefined(map.selectedMarker.options)) {
+      console.log(map.selectedMarker);
+      console.log(map.selectedMarker.options);
+      console.log(map.selectedMarker.options.mapMarker);
+    }
 
     const maxZoom = 18;
     const minZoom = 3;
@@ -141,18 +148,22 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       }
 
       const {latitude, longitude, confidence} = marker.position;
+
+      const test: Marker & any = {
+        lat: latitude,
+        lng: longitude,
+        options: {
+          icon: L.icon({
+            iconUrl: tmpIcon,
+          }),
+          mapMarker: marker,
+        },
+        status,
+      }
+
       if (latitude && longitude && confidence >= confidenceThreshold) {
         leafletMarkers.push(
-          {
-            lat: latitude,
-            lng: longitude,
-            options: {
-              icon: L.icon({
-                iconUrl: tmpIcon,
-              }),
-            },
-            status,
-          },
+          test
         );
       }
     });
@@ -167,12 +178,23 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     let popup;
 
-    if (popupMode === PopupMode.gateway) {
-      popup = (<GatewayDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
-    } else if (popupMode === PopupMode.meterpoint) {
-      popup = (<MeteringPointDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
-    } else {
-      popup = null;
+    if (!isNullOrUndefined(map.selectedMarker) && !isNullOrUndefined(map.selectedMarker.options)) {
+      if (popupMode === PopupMode.gateway) {
+        popup = (
+          <GatewayDialog
+            gateway={map.selectedMarker.options.mapMarker}
+            displayDialog={map.isClusterDialogOpen}
+            close={toggleClusterDialog}
+          />
+        );
+      } else if (popupMode === PopupMode.meterpoint) {
+        popup = (
+          <MeteringPointDialog
+            displayDialog={map.isClusterDialogOpen}
+            close={toggleClusterDialog}
+          />
+        );
+      }
     }
 
     return (

@@ -7,4 +7,6 @@ export const OPEN_CLUSTER_DIALOG = 'OPEN_CLUSTER_DIALOG';
 export const toggleClusterDialog = createEmptyAction<string>(TOGGLE_CLUSTER_DIALOG);
 export const openDialog = createPayloadAction<string, Marker>(OPEN_CLUSTER_DIALOG);
 
-export const openClusterDialog = (marker: Marker) => (dispatch) => dispatch(openDialog(marker));
+export const openClusterDialog = (marker: Marker) => (dispatch) => {
+  dispatch(openDialog(marker));
+};
