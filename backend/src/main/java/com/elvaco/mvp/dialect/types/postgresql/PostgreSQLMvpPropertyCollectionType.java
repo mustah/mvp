@@ -1,5 +1,6 @@
-package com.elvaco.mvp.dialect.types;
+package com.elvaco.mvp.dialect.types.postgresql;
 
+import com.elvaco.mvp.dialect.types.MvpPropertyCollectionType;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,13 +21,13 @@ public class PostgreSQLMvpPropertyCollectionType extends MvpPropertyCollectionTy
 
   @Override
   public int[] sqlTypes() {
-    return new int[]{Types.OTHER};
+    return new int[] {Types.OTHER} ;
   }
 
   @Override
   public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException {
     PGobject value = (PGobject) rs.getObject(names[0]);
-    if (value == null || value.getValue() == null) {
+    if (value == null  || value.getValue() == null) {
       return null;
     }
     try {

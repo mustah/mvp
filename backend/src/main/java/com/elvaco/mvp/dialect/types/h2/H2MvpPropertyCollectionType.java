@@ -1,5 +1,6 @@
-package com.elvaco.mvp.dialect.types;
+package com.elvaco.mvp.dialect.types.h2;
 
+import com.elvaco.mvp.dialect.types.MvpPropertyCollectionType;
 import java.io.IOException;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
