@@ -10,6 +10,7 @@ export interface Gateway extends MapMarker {
   telephoneNo: string;
   ip: string | null;
   port: string | null;
+  meterIds: string[];
 }
 
 export type GatewaysState = NormalizedState<Gateway>;

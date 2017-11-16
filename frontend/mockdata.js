@@ -305,6 +305,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         port: nullOr(row.port),
         status: row.gateway_status,
         statusChanged: gatewayStatusChanged,
+        meterIds: [row.meter_id],
         position: objPosition,
       });
       const alarm = getRandomAlarm();
