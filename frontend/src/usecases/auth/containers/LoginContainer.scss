@@ -1,12 +1,11 @@
 @import "../../app/variables";
 
 .LoginContainer {
-  margin-top: 150px;
   flex: 1;
   align-items: center;
 
   .customerLogo {
-    margin-bottom: 20px;
+    margin: 20px 0;
   }
 
   .LoginPaper {

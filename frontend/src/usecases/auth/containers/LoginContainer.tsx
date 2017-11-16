@@ -7,12 +7,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
-import {colors, floatingLabelFocusStyle, paperStyle, underlineFocusStyle} from '../../app/themes';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
 import {ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
+import {RowCenter} from '../../common/components/layouts/row/Row';
 
 const loginButtonStyle = {
   backgroundColor: colors.blue,
@@ -68,10 +69,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
-        <Paper className="LoginPaper" style={paperStyle}>
-          <ColumnCenter className="customerLogo">
+        <Paper zDepth={5} className="LoginPaper">
+          <RowCenter className="customerLogo">
             <Logo/>
-          </ColumnCenter>
+          </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextField
               className="TextField"
