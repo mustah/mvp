@@ -188,8 +188,8 @@ msgstr "söker"
 msgid "no saved selections"
 msgstr "inga sparade urval"
 
-msgid "saved selection"
-msgstr "sparat urval"
+msgid "saved selections"
+msgstr "sparade urval"
 
 msgid "selection overview"
 msgstr "urvalsöversikt"

@@ -1,10 +1,12 @@
 @import '../../../app/variables';
 
 .TreeListItem {
-  text-transform: capitalize;
-
   $iconSize: 18px;
   $iconPadding: 4px;
+
+  &:first-letter {
+    text-transform: uppercase;
+  }
 
   button {
     padding: $iconPadding !important;

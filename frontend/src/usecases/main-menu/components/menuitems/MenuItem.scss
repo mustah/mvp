@@ -5,7 +5,10 @@
   color: $primary-fg;
   cursor: pointer;
   padding: $sm-space;
-  text-transform: capitalize;
+
+  span:first-letter {
+    text-transform: uppercase;
+  }
 
   &:hover {
     background: $primary-bg-hover;

@@ -51,7 +51,7 @@ describe('selectionReducer', () => {
     });
   });
 
-  describe('select saved selection', () => {
+  describe('select saved selections', () => {
 
     it('replaces current selection', () => {
       const state = selection(initialState, selectSavedSelectionAction(mockPayload));

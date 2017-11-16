@@ -188,8 +188,8 @@ msgstr "searching"
 msgid "no saved selections"
 msgstr "no saved selections"
 
-msgid "saved selection"
-msgstr "saved selection"
+msgid "saved selections"
+msgstr "saved selections"
 
 msgid "selection overview"
 msgstr "selection overview"
