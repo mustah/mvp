@@ -20,11 +20,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
-
-  componentDidMount() {
-    this.props.fetchSelections();
-  }
+class MetersLoaderContainerComponent extends React.Component<Props> {
 
   render() {
     const {isFetching, children} = this.props;
@@ -36,9 +32,9 @@ class SelectionOptionsLoaderContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({domainModels: {cities, addresses, alarms}}: RootState): StateToProps => {
+const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
   return {
-    isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
+    isFetching: meters.isFetching,
   };
 };
 
@@ -46,6 +42,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchSelections,
 }, dispatch);
 
-export const SelectionOptionsLoaderContainer =
+export const MetersLoaderContainer =
   connect<StateToProps, DispatchToProps, {}>
-  (mapStateToProps, mapDispatchToProps)(SelectionOptionsLoaderContainerComponent);
+  (mapStateToProps, mapDispatchToProps)(MetersLoaderContainerComponent);

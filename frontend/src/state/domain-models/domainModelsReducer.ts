@@ -14,33 +14,33 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
 
 const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: AnyAction): any => {
-  const {payload} = action;
+    const {payload} = action;
 
-  switch (action.type) {
-    case DOMAIN_MODELS_REQUEST.concat(endPoint):
-      return {
-        ...state,
-        isFetching: true,
-      };
-    case DOMAIN_MODELS_SUCCESS.concat(endPoint):
-      const result = Array.isArray(payload.result) ? payload.result : payload.result[entity];
-      return {
-        ...state,
-        isFetching: false,
-        entities: payload.entities[entity],
-        result,
-        total: result.length,
-      };
-    case DOMAIN_MODELS_FAILURE.concat(endPoint):
-      return {
-        ...state,
-        isFetching: false,
-        error: {...payload},
-      };
-    default:
-      return state;
-  }
-};
+    switch (action.type) {
+      case DOMAIN_MODELS_REQUEST.concat(endPoint):
+        return {
+          ...state,
+          isFetching: true,
+        };
+      case DOMAIN_MODELS_SUCCESS.concat(endPoint):
+        const result = Array.isArray(payload.result) ? payload.result : payload.result[entity];
+        return {
+          ...state,
+          isFetching: false,
+          entities: payload.entities[entity],
+          result,
+          total: result.length,
+        };
+      case DOMAIN_MODELS_FAILURE.concat(endPoint):
+        return {
+          ...state,
+          isFetching: false,
+          error: {...payload},
+        };
+      default:
+        return state;
+    }
+  };
 
 export const addresses = domainModelReducerFor<SelectionEntity>(parameterNames.addresses, EndPoints.selections);
 export const cities = domainModelReducerFor<SelectionEntity>(parameterNames.cities, EndPoints.selections);

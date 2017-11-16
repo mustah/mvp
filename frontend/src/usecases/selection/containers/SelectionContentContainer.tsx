@@ -25,6 +25,7 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {Subtitle} from '../../common/components/texts/Titles';
 import {MetersResultContainer} from './MetersContainer';
+import {MetersLoaderContainer} from './MetersLoaderContainer';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -81,7 +82,9 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
         />
       </Row>
 
-      <MetersResultContainer/>
+      <MetersLoaderContainer>
+        <MetersResultContainer/>
+      </MetersLoaderContainer>
     </Column>
   );
 };
