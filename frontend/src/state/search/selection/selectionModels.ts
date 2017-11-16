@@ -1,5 +1,6 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
-import {DomainModel, SelectionEntity, SelectionEntityState} from '../../domain-models/domainModels';
+import {SelectionEntity} from '../../domain-models/domainModels';
+import {DomainModelsState} from '../../domain-models/domainModelsReducer';
 
 export interface SelectionParameter extends IdNamed {
   parameter: parameterNames;
@@ -20,7 +21,7 @@ export interface SelectionState extends IdNamed {
 
 export interface LookupState {
   selection: SelectionState;
-  selectionEntities: DomainModel<SelectionEntityState>;
+  domainModels: DomainModelsState;
 }
 
 export enum parameterNames {

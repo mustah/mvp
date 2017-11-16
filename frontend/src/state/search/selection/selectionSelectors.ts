@@ -19,7 +19,7 @@ import {initialState} from './selectionReducer';
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
 const getSelectionGroup = (entityType: string) =>
-  (state: LookupState): Normalized<SelectionEntity> => state.selectionEntities[entityType];
+  (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
 
 const getSelectedEntityIdsSelector = (entityType: string): any =>
   createSelector<LookupState, SelectedParameters, uuid[]>(

@@ -1,20 +1,26 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {DomainModel, SelectionEntityState} from '../../../domain-models/domainModels';
-import {addresses, cities, initialState as initialDomainModelState} from '../../../domain-models/domainModelsReducer';
+import {SelectionEntity} from '../../../domain-models/domainModels';
+import {selectionsRequest} from '../../../domain-models/domainModelsActions';
+import {addresses, alarms, cities, DomainModelsState, initialDomain} from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
+import {Gateway} from '../../../domain-models/gateway/gatewayModels';
+import {gateways} from '../../../domain-models/gateway/gatewayReducer';
+import {Meter} from '../../../domain-models/meter/meterModels';
+import {meters} from '../../../domain-models/meter/meterReducer';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {getCities, getEncodedUriParameters, getSelectedPeriod, getSelection} from '../selectionSelectors';
-import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 
 describe('selectionSelectors', () => {
 
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
   const initialEncodedParameters = getEncodedUriParameters(initialSearchParametersState);
+
+  const initialDomainModelState = initialDomain<SelectionEntity>();
 
   const gothenburg: IdNamed = {...testData.selections.cities[0]};
   const stockholm: IdNamed = {...testData.selections.cities[1]};
@@ -25,7 +31,10 @@ describe('selectionSelectors', () => {
 
   it('gets entities for type city', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
-    const selectionEntities: DomainModel<SelectionEntityState> = {
+    const domainModels: DomainModelsState = {
+      meters: meters(initialDomain<Meter>(), {type: 'none'}),
+      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
@@ -34,7 +43,7 @@ describe('selectionSelectors', () => {
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
-      selectionEntities,
+      domainModels,
     };
 
     const stockholmSelected: SelectionListItem[] = [
@@ -48,7 +57,10 @@ describe('selectionSelectors', () => {
 
   it('get entities for undefined entity type', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
-    const selectionEntities: DomainModel<SelectionEntityState> = {
+    const domainModels: DomainModelsState = {
+      meters: meters(initialDomain<Meter>(), {type: 'none'}),
+      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
@@ -57,7 +69,7 @@ describe('selectionSelectors', () => {
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
-      selectionEntities,
+      domainModels,
     };
 
     expect(getCities(state)).toEqual([]);
@@ -102,14 +114,17 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
       const domainModelPayload = normalize(testData.selections, selectionsSchema);
-      const selectionEntities: DomainModel<SelectionEntityState> = {
+      const domainModels: DomainModelsState = {
+        meters: meters(initialDomain<Meter>(), {type: 'none'}),
+        gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+        alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };
 
       const state: LookupState = {
         selection: selection(initialState, setSelection(payload)),
-        selectionEntities,
+        domainModels,
       };
 
       const stockholmSelected: SelectionListItem[] = [

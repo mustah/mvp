@@ -1,15 +1,9 @@
 import {AnyAction} from 'redux';
-import {MetersState} from './meterModels';
+import {Meter, MetersState} from './meterModels';
 import {METER_FAILURE, METER_REQUEST, METER_SUCCESS} from './meterActions';
+import {initialDomain} from '../domainModelsReducer';
 
-const initialState: MetersState = {
-  isFetching: false,
-  total: 0,
-  result: [],
-  entities: {},
-};
-
-export const meters = (state: MetersState = initialState, action: AnyAction) => {
+export const meters = (state: MetersState = initialDomain<Meter>(), action: AnyAction) => {
   const {payload} = action;
   switch (action.type) {
     case METER_REQUEST:

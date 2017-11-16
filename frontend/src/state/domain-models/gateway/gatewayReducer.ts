@@ -1,15 +1,9 @@
 import {AnyAction} from 'redux';
+import {initialDomain} from '../domainModelsReducer';
 import {GATEWAY_FAILURE, GATEWAY_REQUEST, GATEWAY_SUCCESS} from './gatewayActions';
-import {GatewaysState} from './gatewayModels';
+import {Gateway, GatewaysState} from './gatewayModels';
 
-const initialState: GatewaysState = {
-  isFetching: false,
-  total: 0,
-  result: [],
-  entities: {},
-};
-
-export const gateways = (state: GatewaysState = initialState, action: AnyAction) => {
+export const gateways = (state: GatewaysState = initialDomain<Gateway>(), action: AnyAction) => {
   const {payload} = action;
   switch (action.type) {
     case GATEWAY_REQUEST:

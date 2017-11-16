@@ -1,13 +1,15 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/TestDataFactory';
-import {addresses, cities, initialState} from '../domainModelsReducer';
+import {addresses, cities, initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {selectionsRequest} from '../domainModelsActions';
+import {SelectionEntity} from '../domainModels';
 
 describe('domainModelsReducer', () => {
 
   describe('addresses', () => {
 
+    const initialState = initialDomain<SelectionEntity>();
     it('has initial state', () => {
       expect(addresses(initialState, {type: 'unknown'})).toEqual({...initialState});
     });
@@ -45,6 +47,7 @@ describe('domainModelsReducer', () => {
 
   describe('cities', () => {
 
+    const initialState = initialDomain<SelectionEntity>();
     it('has initial state', () => {
       expect(cities(initialState, {type: 'unknown'})).toEqual({...initialState});
     });

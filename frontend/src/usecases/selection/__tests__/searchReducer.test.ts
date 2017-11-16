@@ -82,6 +82,7 @@ describe('searchReducer', () => {
           4,
           5,
         ],
+        alarms: [],
         cities: [
           'got',
           'sto',

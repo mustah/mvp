@@ -1,18 +1,20 @@
 import {AnyAction, combineReducers} from 'redux';
 import {parameterNames} from '../search/selection/selectionModels';
+import {EndPoints, NormalizedState, SelectionEntity, SelectionEntityState} from './domainModels';
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
-import {EndPoints, SelectionEntityState} from './domainModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {gateways} from './gateway/gatewayReducer';
 import {MetersState} from './meter/meterModels';
 import {meters} from './meter/meterReducer';
 
-export const initialState: SelectionEntityState = {
+export const initialDomain = <T>(): NormalizedState<T> => ({
   result: [],
   entities: {},
   isFetching: false,
   total: 0,
-};
+});
+
+const initialState = initialDomain<SelectionEntity>();
 
 const domainModelReducerFor = (entity: string, endPoint: EndPoints) =>
   (state: SelectionEntityState = initialState, action: AnyAction): any => {

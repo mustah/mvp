@@ -77,9 +77,9 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({searchParameters: {selection}, domainModels: {cities, addresses, alarms}}: RootState): StateToProps => {
+const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootState): StateToProps => {
   const lookupState: LookupState = {
-    selectionEntities: {alarms, cities, addresses},
+    domainModels,
     selection,
   };
 

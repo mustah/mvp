@@ -44,6 +44,7 @@ const selections = {
       cityId: 'kub',
     },
   ],
+  alarms: [],
 };
 
 const meters = [
