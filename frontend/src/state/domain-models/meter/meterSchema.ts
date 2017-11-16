@@ -1,5 +1,5 @@
 import {schema} from 'normalizr';
-import {address, addressCluster, city} from '../geoData/geoDataSchemas';
+import {address, addressCluster, city} from '../domainModelsSchemas';
 
 const meter = new schema.Entity('meters');
 export const meterSchema =  [meter];

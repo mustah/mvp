@@ -9,6 +9,9 @@ const tabsInitialState: TabsState = {
       [tabType.graph]: {
         selectedOption: 'all',
       },
+      [tabType.graph]: {
+        selectedOption: 'all',
+      },
     },
   },
   dashboard: {

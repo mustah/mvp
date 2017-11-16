@@ -1,15 +1,19 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {geoDataSuccess} from '../../../domain-models/geoData/geoDataActions';
-import {GeoDataState} from '../../../domain-models/geoData/geoDataModels';
+import {SelectionEntity} from '../../../domain-models/domainModels';
+import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
+  alarms,
   cities,
-  initialAddressState,
-  initialState as initialGeoDataState,
-} from '../../../domain-models/geoData/geoDataReducer';
-import {geoDataSchema} from '../../../domain-models/geoData/geoDataSchemas';
+  DomainModelsState,
+  gateways,
+  initialDomain, meters,
+} from '../../../domain-models/domainModelsReducer';
+import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
+import {Gateway} from '../../../domain-models/gateway/gatewayModels';
+import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
@@ -21,25 +25,30 @@ describe('selectionSelectors', () => {
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
   const initialEncodedParameters = getEncodedUriParameters(initialSearchParametersState);
 
-  const gothenburg: IdNamed = {...testData.geoData.cities[0]};
-  const stockholm: IdNamed = {...testData.geoData.cities[1]};
+  const initialDomainModelState = initialDomain<SelectionEntity>();
+
+  const gothenburg: IdNamed = {...testData.selections.cities[0]};
+  const stockholm: IdNamed = {...testData.selections.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
   });
 
   it('gets entities for type city', () => {
-    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
-    const geoDataState: GeoDataState = {
-      addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+    const domainModelPayload = normalize(testData.selections, selectionsSchema);
+    const domainModels: DomainModelsState = {
+      meters: meters(initialDomain<Meter>(), {type: 'none'}),
+      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
-      geoData: geoDataState,
+      domainModels,
     };
 
     const stockholmSelected: SelectionListItem[] = [
@@ -52,17 +61,20 @@ describe('selectionSelectors', () => {
   });
 
   it('get entities for undefined entity type', () => {
-    const geoDataPayload = normalize(testData.geoData, geoDataSchema);
-    const geoDataState: GeoDataState = {
-      addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
-      cities: cities(initialGeoDataState, {type: 'unknown'}),
+    const domainModelPayload = normalize(testData.selections, selectionsSchema);
+    const domainModels: DomainModelsState = {
+      meters: meters(initialDomain<Meter>(), {type: 'none'}),
+      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
 
     const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
-      geoData: geoDataState,
+      domainModels,
     };
 
     expect(getCities(state)).toEqual([]);
@@ -106,15 +118,18 @@ describe('selectionSelectors', () => {
     it('can detect which the selected entities are', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
 
-      const geoDataPayload = normalize(testData.geoData, geoDataSchema);
-      const geoDataState: GeoDataState = {
-        addresses: addresses(initialAddressState, geoDataSuccess(geoDataPayload)),
-        cities: cities(initialGeoDataState, geoDataSuccess(geoDataPayload)),
+      const domainModelPayload = normalize(testData.selections, selectionsSchema);
+      const domainModels: DomainModelsState = {
+        meters: meters(initialDomain<Meter>(), {type: 'none'}),
+        gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+        alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };
 
       const state: LookupState = {
         selection: selection(initialState, setSelection(payload)),
-        geoData: geoDataState,
+        domainModels,
       };
 
       const stockholmSelected: SelectionListItem[] = [

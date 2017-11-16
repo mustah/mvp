@@ -2,15 +2,15 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {makeRestClient} from '../../../../services/restClient';
-import {fetchGeoData, geoDataFailure, geoDataRequest, geoDataSuccess} from '../geoDataActions';
-import {geoDataSchema} from '../geoDataSchemas';
+import {testData} from '../../../__tests__/TestDataFactory';
+import {makeRestClient} from '../../../services/restClient';
+import {fetchSelections, selectionsRequest} from '../domainModelsActions';
+import {selectionsSchema} from '../domainModelsSchemas';
 import MockAdapter = require('axios-mock-adapter');
-import {testData} from '../../../../__tests__/TestDataFactory';
 
 const configureMockStore = configureStore([thunk]);
 
-describe('geoDataActions', () => {
+describe('domainModelsActions', () => {
 
   let mockRestClient;
   let store;
@@ -25,14 +25,14 @@ describe('geoDataActions', () => {
     mockRestClient.reset();
   });
 
-  describe('fetch geoData', () => {
+  describe('fetch domainModels from /selections', () => {
 
     it('normalizes data', async () => {
-      await fetchFakeGeoData();
+      await fetchFakeDomainModels();
 
       expect(store.getActions()).toEqual([
-        geoDataRequest(),
-        geoDataSuccess(normalize(testData.geoData, geoDataSchema)),
+        selectionsRequest.request(),
+        selectionsRequest.success(normalize(testData.selections, selectionsSchema)),
       ]);
     });
 
@@ -41,19 +41,19 @@ describe('geoDataActions', () => {
 
       mockRestClient.onGet('/selections').reply(401, response);
 
-      await store.dispatch(fetchGeoData());
+      await store.dispatch(fetchSelections());
 
       expect(store.getActions()).toEqual([
-        geoDataRequest(),
-        geoDataFailure({...response}),
+        selectionsRequest.request(),
+        selectionsRequest.failure({...response}),
       ]);
     });
   });
 
-  const fetchFakeGeoData = async () => {
-    mockRestClient.onGet('/selections').reply(200, testData.geoData);
+  const fetchFakeDomainModels = async () => {
+    mockRestClient.onGet('/selections').reply(200, testData.selections);
 
-    return store.dispatch(fetchGeoData());
+    return store.dispatch(fetchSelections());
   };
 
 });

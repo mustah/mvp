@@ -237,7 +237,7 @@ const mapStateToProps = (state: RootState) => {
     entityCount: getMetersTotal(entityState),
     entities: getMeterEntities(entityState),
     selectedEntities: getResultDomainModels(entityState),
-    paginatedList: getPaginationList({...pagination, ...entityState}),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(entityState)}),
     pagination,
   };
 };

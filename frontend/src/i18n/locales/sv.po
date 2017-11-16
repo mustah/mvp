@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-15 08:50+0100\n"
+"POT-Creation-Date: 2017-11-15T16:34:14.274Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "collection"
 msgstr "insamling"
@@ -53,9 +53,6 @@ msgstr "karta"
 msgid "close"
 msgstr "stäng"
 
-msgid "now"
-msgstr "nu"
-
 msgid "current month"
 msgstr "denna månad"
 
@@ -71,42 +68,6 @@ msgstr "senaste 7 dagarna"
 msgid "pick a date"
 msgstr "välj datum"
 
-msgid "all"
-msgstr "allt"
-
-msgid "of {{count}} point"
-msgstr "av {{count}} punkt"
-
-msgid "previous"
-msgstr "föregående"
-
-msgid "next"
-msgstr "nästa"
-
-msgid "show gateways"
-msgstr "visa gateways"
-
-msgid "meter"
-msgstr "mätare"
-
-msgid "manufacturer"
-msgstr "tillverkare"
-
-msgid "medium"
-msgstr "medium"
-
-msgid "validation"
-msgstr "validering"
-
-msgid "edit"
-msgstr "redigera"
-
-msgid "delete"
-msgstr "ta bort"
-
-msgid "dashboard"
-msgstr "dashboard"
-
 msgid "gateway details"
 msgstr "gateway"
 
@@ -119,8 +80,17 @@ msgstr "intervall"
 msgid "flagged for action"
 msgstr "flaggad för åtgärd"
 
+msgid "meter"
+msgstr "mätare"
+
 msgid "status log"
 msgstr "status logg"
+
+msgid "manufacturer"
+msgstr "tillverkare"
+
+msgid "medium"
+msgstr "medium"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
@@ -128,14 +98,14 @@ msgstr "visa bara ändringar"
 msgid "date"
 msgstr "datum"
 
-msgid "report"
-msgstr "rapport"
-
 msgid "meter id"
 msgstr "MOID"
 
 msgid "resolution"
 msgstr "upplösning"
+
+msgid "validation"
+msgstr "validering"
 
 msgid "labels"
 msgstr "etiketter"
@@ -164,6 +134,33 @@ msgstr "värde"
 msgid "latest snr"
 msgstr "senaste SNR"
 
+msgid "all"
+msgstr "allt"
+
+msgid "of {{count}} point"
+msgstr "av {{count}} punkt"
+
+msgid "show gateways"
+msgstr "visa gateways"
+
+msgid "previous"
+msgstr "föregående"
+
+msgid "next"
+msgstr "nästa"
+
+msgid "edit"
+msgstr "redigera"
+
+msgid "delete"
+msgstr "ta bort"
+
+msgid "dashboard"
+msgstr "dashboard"
+
+msgid "report"
+msgstr "rapport"
+
 msgid "logout"
 msgstr "logga ut"
 
@@ -178,6 +175,9 @@ msgstr "återställ"
 
 msgid "selection"
 msgstr "urval"
+
+msgid "alarm"
+msgstr "alarm"
 
 msgid "filter"
 msgstr "filtrera"
@@ -212,91 +212,3 @@ msgstr "adresser"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"
-
-#~ msgid "action"
-#~ msgstr "åtgärd"
-
-#~ msgid "status changes"
-#~ msgstr "statusförändringar"
-
-#~ msgid "could not be collected"
-#~ msgstr "kunde inte hämtas"
-
-#~ msgid "area"
-#~ msgstr "område"
-
-#~ msgid "object"
-#~ msgstr "objekt"
-
-#~ msgid "facility"
-#~ msgstr "anläggning"
-
-#~ msgid "ok"
-#~ msgstr "ok"
-
-#~ msgid "reported"
-#~ msgstr "felrapporterade"
-
-#~ msgid "unhandled problems"
-#~ msgstr "ej hanterat"
-
-#~ msgid "graph"
-#~ msgstr "graf"
-
-#~ msgid "population"
-#~ msgstr "bestånd"
-
-#~ msgid "faults"
-#~ msgstr "fel"
-
-#~ msgid "action pending"
-#~ msgstr "inväntar åtgärd"
-
-#~ msgid "comment"
-#~ msgstr "kommentar"
-
-#~ msgid "meter details"
-#~ msgstr "mätare"
-
-#~ msgid "new search"
-#~ msgstr "nytt urval"
-
-#~ msgid "saved search"
-#~ msgstr "sparad sökning"
-
-#~ msgid "status changed"
-#~ msgstr "statusförändring"
-
-#~ msgid "email"
-#~ msgstr "email"
-
-#~ msgid "password"
-#~ msgstr "lösenord"
-
-#~ msgid "period"
-#~ msgstr "period"
-
-#~ msgid "one day"
-#~ msgstr "1 dag"
-
-#~ msgid "last week"
-#~ msgstr "1 vecka"
-
-#~ msgid "last month"
-#~ msgstr "1 månad"
-
-#~ msgid "last quarter"
-#~ msgstr "1 kvartal"
-
-#~ msgid "last year"
-#~ msgstr "1 år"
-
-#~ msgid "type"
-#~ msgstr "typ"
-
-#~ msgid "location"
-#~ msgstr "plats"
-
-#~ msgctxt "°plural"
-#~ msgid "{{count}} errand°"
-#~ msgstr "{{count}} ärende°"

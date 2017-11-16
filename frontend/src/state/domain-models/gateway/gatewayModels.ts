@@ -1,6 +1,6 @@
-import {uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Flag} from '../flag/flagModels';
+import {NormalizedState} from '../domainModels';
 
 export interface Gateway extends MapMarker {
   id: string;
@@ -12,14 +12,4 @@ export interface Gateway extends MapMarker {
   port: string | null;
 }
 
-export interface Gateways {
-  result: uuid[];
-  entities: {
-    gateways: {[key: string]: Gateway};
-  };
-}
-
-export interface GatewaysState extends Gateways {
-  isFetching: boolean;
-  total: number;
-}
+export type GatewaysState = NormalizedState<Gateway>;

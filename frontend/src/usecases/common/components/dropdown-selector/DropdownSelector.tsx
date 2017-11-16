@@ -5,7 +5,7 @@ import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
 import {translate} from '../../../../services/translationService';
 import {SelectionListItem} from '../../../../state/search/selection/selectionModels';
-import {IdNamed} from '../../../../types/Types';
+import {Children, IdNamed} from '../../../../types/Types';
 import {dropDownStyle} from '../../../app/themes';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
@@ -22,7 +22,7 @@ export interface DropdownProps {
 }
 
 interface GenericDropdownProps extends DropdownProps {
-  renderLabel: (index: number, filteredList: SelectionListItem[]) => Array<React.ReactElement<any>>;
+  renderLabel: (index: number, filteredList: SelectionListItem[]) => Children;
   rowHeight: number;
   visibleItems: number;
 }

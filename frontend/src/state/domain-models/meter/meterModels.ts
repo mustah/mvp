@@ -1,6 +1,6 @@
-import {IdNamed, uuid} from '../../../types/Types';
+import {uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
-import {Address} from '../domainModels';
+import {NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
 export interface Meter extends MapMarker {
@@ -13,19 +13,7 @@ export interface Meter extends MapMarker {
   statusChanged: string;
 }
 
-export interface Meters {
-  result: uuid[];
-  entities: {
-    meters: {[key: string]: Meter};
-  };
-}
-
-export interface MetersState extends Meters {
-  isFetching: boolean;
-  total: number;
-}
-
-type Unit = IdNamed | Address;
+export type MetersState = NormalizedState<Meter>;
 
 export interface SidebarItem {
   id: uuid;
@@ -36,9 +24,9 @@ export interface SidebarItem {
 }
 
 export interface SidebarItemProps {
-  unit: Unit;
+  unit: SelectionEntity;
   parentType: string;
-  parent: Unit;
+  parent: SelectionEntity;
   selectable: boolean;
   childrenType: string;
 }

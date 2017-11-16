@@ -20,6 +20,7 @@ export const initialState: SelectionState = {
     cities: [],
     addresses: [],
     statuses: [],
+    alarms: [],
     period: Period.latest,
   },
 };

@@ -1,9 +1,8 @@
 import {createSelector} from 'reselect';
 import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
+import {Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {DomainModel, GeoDataState} from '../../domain-models/geoData/geoDataModels';
-import {getGeoDataEntitiesBy, getGeoDataResultBy} from '../../domain-models/geoData/geoDataSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
@@ -19,19 +18,8 @@ import {initialState} from './selectionReducer';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
-const getGeoData = (state: LookupState): GeoDataState => state.geoData;
-
-const entitiesSelector = (entityType: string): any =>
-  createSelector<LookupState, GeoDataState, DomainModel<IdNamed>>(
-    getGeoData,
-    getGeoDataEntitiesBy(entityType),
-  );
-
-const resultSelector = (entityType: string): any =>
-  createSelector<LookupState, GeoDataState, uuid[]>(
-    getGeoData,
-    getGeoDataResultBy(entityType),
-  );
+const getSelectionGroup = (entityType: string) =>
+  (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
 
 const getSelectedEntityIdsSelector = (entityType: string): any =>
   createSelector<LookupState, SelectedParameters, uuid[]>(
@@ -42,45 +30,47 @@ const getSelectedEntityIdsSelector = (entityType: string): any =>
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
 const deselectedIdsSelector = (entityType: string): any =>
-  createSelector<LookupState, GeoDataState, uuid[], SelectedParameters, uuid[]>(
-    resultSelector(entityType),
+  createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
+    getSelectionGroup(entityType),
     getSelectedIds,
-    (result: uuid[], selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
+    ({result}: Normalized<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string): any =>
-  createSelector<LookupState, SelectionState, uuid[], DomainModel<IdNamed>, IdNamed[]>(
+  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
-    entitiesSelector(entityType),
-    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map(id => entities[id]),
+    getSelectionGroup(entityType),
+    (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map(id => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string): any =>
-  createSelector<LookupState, uuid[], DomainModel<IdNamed>, IdNamed[]>(
+  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
-    entitiesSelector(entityType),
-    (ids: uuid[], entities: DomainModel<IdNamed>) => ids.map((id: uuid) => entities[id]).filter((item) => item),
+    getSelectionGroup(entityType),
+    (ids: uuid[], {entities}: Normalized<SelectionEntity>) =>
+      ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
-export const getCitiesSelection = entitiesSelector(parameterNames.cities);
+export const getCitiesSelection = getSelectionGroup(parameterNames.cities);
 
-// TODO: Handle typing, that getAddresses return Address[] and not IdNamed[]
 const getList = (entityType: string): any =>
-  createSelector<LookupState, IdNamed[], IdNamed[], SelectionListItem[] | null[]>(
+  createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
-    (selected: IdNamed[], deselected: IdNamed[]) => {
+    (selected: SelectionEntity[], deselected: SelectionEntity[]) => {
       const selectedEntities = selected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: true}));
       const deselectedEntities = deselected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );
-const entitySort = (objA: IdNamed, objB: IdNamed) => (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
+const entitySort = (objA: SelectionEntity, objB: SelectionEntity) =>
+  (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;
 
 export const getCities = getList(parameterNames.cities);
 export const getAddresses = getList(parameterNames.addresses);
+export const getAlarms = getList(parameterNames.alarms);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,

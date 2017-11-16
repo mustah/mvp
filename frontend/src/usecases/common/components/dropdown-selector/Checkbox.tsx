@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Clickable, uuid} from '../../../../types/Types';
+import {Children, Clickable, uuid} from '../../../../types/Types';
 import {RowMiddle} from '../layouts/row/Row';
 import './Checkbox.scss';
 
@@ -7,7 +7,7 @@ interface CheckBox extends Clickable {
   id: uuid;
   checked?: boolean;
   style: any;
-  label: Array<React.ReactElement<any>>;
+  label: Children;
 }
 
 export const Checkbox = (props: CheckBox) => {

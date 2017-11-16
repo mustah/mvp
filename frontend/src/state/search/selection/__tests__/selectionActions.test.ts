@@ -6,8 +6,7 @@ import {testData} from '../../../../__tests__/TestDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {makeUrl} from '../../../../services/urlFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {gatewayRequest} from '../../../domain-models/gateway/gatewayActions';
-import {meterRequest} from '../../../domain-models/meter/meterActions';
+import {gatewayRequest, meterRequest} from '../../../domain-models/domainModelsActions';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
   closeSelectionPage,
@@ -29,8 +28,8 @@ const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const gothenburg = {...testData.geoData.cities[0]};
-  const stockholm = {...testData.geoData.cities[1]};
+  const gothenburg = {...testData.selections.cities[0]};
+  const stockholm = {...testData.selections.cities[1]};
 
   let mockRestClient;
   let store;
@@ -72,8 +71,8 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         setSelection(parameter),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -88,8 +87,8 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         selectPeriodAction(period),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -107,8 +106,8 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         deselectSelection(parameter),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -125,11 +124,11 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         setSelection(p1),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
         setSelection(p2),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
       ]);
     });
   });
@@ -160,8 +159,8 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         selectSavedSelectionAction(savedSelection21),
-        meterRequest(),
-        gatewayRequest(),
+        meterRequest.request(),
+        gatewayRequest.request(),
       ]);
     });
 
