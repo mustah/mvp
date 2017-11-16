@@ -15,21 +15,21 @@ const DashboardPage = userIsAuthenticated(DashboardContainer);
 const CollectionPage = userIsAuthenticated(Collection);
 const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
-const SearchPage = userIsAuthenticated(SelectionContainer);
+const SelectionPage = userIsAuthenticated(SelectionContainer);
 
 export const Pages = (props) => (
   <Layout className="flex-1">
     <Switch>
       <Route path={routes.login} component={LoginPage}/>
-      <Route exact={true} path="/:page/search" component={SearchPage}/>
-      <Route exact={true} path="/:page/:id/search" component={SearchPage}/>
+      <Route exact={true} path="/:page/selection" component={SelectionPage}/>
+      <Route exact={true} path="/:page/:id/selection" component={SelectionPage}/>
       <Route exact={true} path={routes.home} component={DashboardPage}/>
       <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
       <Route exact={true} path={routes.collection} component={CollectionPage}/>
       <Route exact={true} path={routes.validation} component={ValidationPage}/>
       <Route exact={true} path={`${routes.report}/:id`} component={ReportPage}/>
       <Route exact={true} path={routes.report} component={ReportPage}/>
-       <Route exact={true} path="/search" component={SearchPage}/>
+       <Route exact={true} path="/selection" component={SelectionPage}/>
     </Switch>
   </Layout>
 );

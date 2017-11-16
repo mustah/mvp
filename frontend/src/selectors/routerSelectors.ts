@@ -9,12 +9,7 @@ export const getPathname = createSelector<RouterState, Location, Pathname>(
   items => items.pathname,
 );
 
-export const isSearchPage = createSelector<RouterState, string, boolean>(
+export const isSelectionPage = createSelector<RouterState, string, boolean>(
   getPathname,
-  pathname => pathname.match(/\/search$/) !== null,
-);
-
-export const getLocation = createSelector<RouterState, Location, Location>(
-  selectLocation,
-  items => items,
+  pathname => pathname.match(/\/selection$/) !== null,
 );

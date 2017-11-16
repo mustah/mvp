@@ -67,7 +67,7 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
           <Link to={routes.report} className="link">
             <MenuItem
               name={translate('report')}
-              isSelected={routes.report === pathname}
+              isSelected={pathname.startsWith(routes.report) && !pathname.includes('selection')}
               icon={<IconReport className="MenuItem-icon"/>}
             />
           </Link>

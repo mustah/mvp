@@ -14,7 +14,7 @@ interface Props {
 }
 
 const resolveSearchPath = (pathname: Pathname): Pathname =>
-  pathname === routes.home ? `search` : `${pathname}/search`;
+  pathname === routes.home ? `selection` : `${pathname}/selection`;
 
 export const SelectionMenuSummary = (props: Props) => {
   const {selection: {name}} = props;
