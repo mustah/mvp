@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {MeteringPointDialog} from '../dialogs/MeteringPointDialog';
+import {uuid} from '../../../../types/Types';
 
 export interface MeteringPointProps {
-  id: string;
+  id: uuid;
 }
 
 interface MeteringPointState {

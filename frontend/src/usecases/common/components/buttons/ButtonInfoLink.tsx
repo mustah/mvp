@@ -6,7 +6,7 @@ import {colors} from '../../../app/themes';
 
 interface InfoLinkProps {
   onClick: OnClick;
-  label: string;
+  label: string | number;
 }
 
 export const ButtonInfoLink = (props: InfoLinkProps) => {

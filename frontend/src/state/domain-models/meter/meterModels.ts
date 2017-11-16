@@ -4,13 +4,15 @@ import {NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
 export interface Meter extends MapMarker {
-  id: string;
+  id: uuid;
+  moid: string;
   facility: string;
   flags: Flag[];
   medium: string;
   manufacturer: string;
   gatewayId: string;
   statusChanged: string;
+  date?: string;
 }
 
 export type MetersState = NormalizedState<Meter>;

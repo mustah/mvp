@@ -5,6 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
@@ -15,6 +16,7 @@ import {getPaginationList, getValidationPagination} from '../../../state/ui/pagi
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, uuid} from '../../../types/Types';
+import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Row, RowRight} from '../../common/components/layouts/row/Row';
 import {MeterList} from '../../common/components/metering-point/MeterList';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
@@ -22,16 +24,14 @@ import {PieChartSelector, PieData} from '../../common/components/pie-chart-selec
 import {Tab} from '../../common/components/tabs/components/Tab';
 import {TabContent} from '../../common/components/tabs/components/TabContent';
 import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
+import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
 import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
-import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
 import classNames = require('classnames');
-import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 
 interface ValidationTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -226,18 +226,15 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui, domainModels} = state;
+const mapStateToProps = ({ui, domainModels: {meters}}: RootState) => {
   const pagination = getValidationPagination(ui);
-  const entityState = domainModels.meters;
-
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
     tabs: getTabs(ui.tabs.validation),
-    entityCount: getMetersTotal(entityState),
-    entities: getMeterEntities(entityState),
-    selectedEntities: getResultDomainModels(entityState),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(entityState)}),
+    entityCount: getMetersTotal(meters),
+    entities: getMeterEntities(meters),
+    selectedEntities: getResultDomainModels(meters),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
   };
 };
