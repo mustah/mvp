@@ -19,7 +19,7 @@ services:
       POSTGRES_USER: mvp
       POSTGRES_PASSWORD: mvp
     ports:
-      - "${DOCKER_POSTGRES_PORT:-5432}"
+      - "${DOCKER_POSTGRES_PORT:-5432:5432}"
   rabbitmq:
       image: rabbitmq:management
       ports:
