@@ -2,8 +2,7 @@ import {AnyAction, combineReducers} from 'redux';
 import {parameterNames} from '../search/selection/selectionModels';
 import {EndPoints, NormalizedState, SelectionEntity, SelectionEntityState} from './domainModels';
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
-import {GatewaysState} from './gateway/gatewayModels';
-import {gateways} from './gateway/gatewayReducer';
+import {Gateway, GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
 import {meters} from './meter/meterReducer';
 
@@ -14,10 +13,8 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
   total: 0,
 });
 
-const initialState = initialDomain<SelectionEntity>();
-
-const domainModelReducerFor = (entity: string, endPoint: EndPoints) =>
-  (state: SelectionEntityState = initialState, action: AnyAction): any => {
+const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
+  (state: NormalizedState<T> = initialDomain<T>(), action: AnyAction): any => {
   const {payload} = action;
 
   switch (action.type) {
@@ -27,12 +24,13 @@ const domainModelReducerFor = (entity: string, endPoint: EndPoints) =>
         isFetching: true,
       };
     case DOMAIN_MODELS_SUCCESS.concat(endPoint):
+      const result = Array.isArray(payload.result) ? payload.result : payload.result[entity];
       return {
         ...state,
         isFetching: false,
         entities: payload.entities[entity],
-        result: payload.result[entity],
-        total: payload.result[entity].length,
+        result,
+        total: result.length,
       };
     case DOMAIN_MODELS_FAILURE.concat(endPoint):
       return {
@@ -45,9 +43,10 @@ const domainModelReducerFor = (entity: string, endPoint: EndPoints) =>
   }
 };
 
-export const addresses = domainModelReducerFor(parameterNames.addresses, EndPoints.selections);
-export const cities = domainModelReducerFor(parameterNames.cities, EndPoints.selections);
-export const alarms = domainModelReducerFor(parameterNames.alarms, EndPoints.selections);
+export const addresses = domainModelReducerFor<SelectionEntity>(parameterNames.addresses, EndPoints.selections);
+export const cities = domainModelReducerFor<SelectionEntity>(parameterNames.cities, EndPoints.selections);
+export const alarms = domainModelReducerFor<SelectionEntity>(parameterNames.alarms, EndPoints.selections);
+export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
 
 export interface DomainModelsState {
   gateways: GatewaysState;

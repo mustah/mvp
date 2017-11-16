@@ -5,6 +5,8 @@ import {makeUrl} from '../../services/urlFactory';
 import {ErrorResponse, IdNamed} from '../../types/Types';
 import {EndPoints, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
+import {Gateway} from './gateway/gatewayModels';
+import {gatewaySchema} from './gateway/gatewaySchema';
 
 export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
 export const DOMAIN_MODELS_SUCCESS = 'DOMAIN_MODELS_SUCCESS';
@@ -36,3 +38,6 @@ const fetchDomainModel = <T>(endPoint: EndPoints, {request, success, failure}: R
 
 export const selectionsRequest = domainModelRequest<IdNamed>(EndPoints.selections);
 export const fetchSelections = fetchDomainModel<IdNamed>(EndPoints.selections, selectionsRequest, selectionsSchema);
+
+export const gatewayRequest =  domainModelRequest<Gateway>(EndPoints.gateways);
+export const fetchGateways = fetchDomainModel<Gateway>(EndPoints.gateways, gatewayRequest, gatewaySchema);

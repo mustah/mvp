@@ -2,10 +2,10 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {Period, uuid} from '../../../types/Types';
-import {fetchGateways} from '../../domain-models/gateway/gatewayActions';
 import {fetchMeters} from '../../domain-models/meter/meterActions';
 import {SelectionParameter, SelectionState} from './selectionModels';
 import {getEncodedUriParameters, getSelection} from './selectionSelectors';
+import {fetchGateways} from '../../domain-models/domainModelsActions';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 

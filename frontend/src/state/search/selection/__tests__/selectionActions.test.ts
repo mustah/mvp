@@ -6,7 +6,7 @@ import {testData} from '../../../../__tests__/TestDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {makeUrl} from '../../../../services/urlFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {gatewayRequest} from '../../../domain-models/gateway/gatewayActions';
+import {gatewayRequest} from '../../../domain-models/domainModelsActions';
 import {meterRequest} from '../../../domain-models/meter/meterActions';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
@@ -73,7 +73,7 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         setSelection(parameter),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -89,7 +89,7 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         selectPeriodAction(period),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -108,7 +108,7 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         deselectSelection(parameter),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
       ]);
     });
 
@@ -126,10 +126,10 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         setSelection(p1),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
         setSelection(p2),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
       ]);
     });
   });
@@ -161,7 +161,7 @@ describe('selectionActions', () => {
       expect(store.getActions()).toEqual([
         selectSavedSelectionAction(savedSelection21),
         meterRequest(),
-        gatewayRequest(),
+        gatewayRequest.request(),
       ]);
     });
 

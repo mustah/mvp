@@ -3,10 +3,16 @@ import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
 import {SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
-import {addresses, alarms, cities, DomainModelsState, initialDomain} from '../../../domain-models/domainModelsReducer';
+import {
+  addresses,
+  alarms,
+  cities,
+  DomainModelsState,
+  gateways,
+  initialDomain,
+} from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {gateways} from '../../../domain-models/gateway/gatewayReducer';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {meters} from '../../../domain-models/meter/meterReducer';
 import {SearchParameterState} from '../../searchParameterReducer';
