@@ -12,5 +12,5 @@ export interface MapMarker extends Location {
 export interface IdentifiedMarker extends Marker {
   options: {
     mapMarker?: Gateway & Meter;
-  }
+  };
 }

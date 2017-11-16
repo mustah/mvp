@@ -14,7 +14,7 @@ export const initialState: MapState = {
   isClusterDialogOpen: false,
   selectedMarker: {
     options: null,
-  }
+  },
 };
 
 export const map = (state: MapState = initialState, action: AnyAction): MapState => {

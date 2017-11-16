@@ -59,12 +59,6 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       viewCenter = defaultViewCenter,
     } = this.props;
 
-    if (!isNullOrUndefined(map.selectedMarker) && !isNullOrUndefined(map.selectedMarker.options)) {
-      console.log(map.selectedMarker);
-      console.log(map.selectedMarker.options);
-      console.log(map.selectedMarker.options.mapMarker);
-    }
-
     const maxZoom = 18;
     const minZoom = 3;
 
@@ -159,11 +153,11 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           mapMarker: marker,
         },
         status,
-      }
+      };
 
       if (latitude && longitude && confidence >= confidenceThreshold) {
         leafletMarkers.push(
-          test
+          test,
         );
       }
     });
@@ -190,6 +184,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       } else if (popupMode === PopupMode.meterpoint) {
         popup = (
           <MeteringPointDialog
+            meter={map.selectedMarker.options.mapMarker}
             displayDialog={map.isClusterDialogOpen}
             close={toggleClusterDialog}
           />
