@@ -40,8 +40,12 @@ export const RaisedTabOption = (props: TabOptionProps) => {
   const bgColor = isSelected ? statusColors[id] : '#fff';
   const fgColor = isSelected ? '#fff' : statusColors[id];
 
-  const inlineStyle = {
+  const inlineStyle: React.CSSProperties = {
     'margin-left': 16,
+  };
+  const labelStyle: React.CSSProperties = {
+    color: fgColor,
+    fontWeight: 700,
   };
 
   if (isSelected) {
@@ -50,8 +54,9 @@ export const RaisedTabOption = (props: TabOptionProps) => {
         backgroundColor={bgColor}
         label={title}
         labelColor={fgColor}
+        labelStyle={labelStyle}
         onClick={selectTabOption}
-        style={{...inlineStyle, color: fgColor}}
+        style={inlineStyle}
       />
     );
   }
@@ -59,8 +64,9 @@ export const RaisedTabOption = (props: TabOptionProps) => {
     <FlatButton
       backgroundColor={bgColor}
       label={title}
+      labelStyle={labelStyle}
       onClick={selectTabOption}
-      style={{...inlineStyle, color: fgColor}}
+      style={inlineStyle}
     />
   );
 };

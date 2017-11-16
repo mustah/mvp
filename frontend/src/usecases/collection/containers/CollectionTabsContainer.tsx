@@ -1,3 +1,5 @@
+import * as classNames from 'classnames';
+import 'CollectionTabsContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -18,6 +20,7 @@ import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, uuid} from '../../../types/Types';
 import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Row, RowRight} from '../../common/components/layouts/row/Row';
+import {WrapperIndent} from '../../common/components/layouts/wrapper/Wrapper';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../common/components/tabs/components/Tab';
@@ -31,7 +34,6 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
-import classNames = require('classnames');
 
 interface CollectionTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -177,8 +179,8 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     ) : null;
 
     return (
-      <div className="GraphContainer">
-        <Row>
+      <WrapperIndent>
+        <Row className="StatusControl">
           <Column>
             <h2>{header}</h2>
           </Column>
@@ -193,7 +195,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           </ColumnCenter>
         </Row>
         {chartRow}
-      </div>
+      </WrapperIndent>
     );
   })(tabs.graph.selectedOption);
 
