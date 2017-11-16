@@ -3,7 +3,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
-import {Map, Marker, TileLayer} from 'react-leaflet';
+import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -16,6 +16,8 @@ import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import './MapContainer.scss';
 import {isNullOrUndefined} from 'util';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
 
 interface StateToProps {
   map: MapState;
@@ -143,21 +145,18 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
       const {latitude, longitude, confidence} = marker.position;
 
-      const test: Marker & any = {
-        lat: latitude,
-        lng: longitude,
-        options: {
-          icon: L.icon({
-            iconUrl: tmpIcon,
-          }),
-          mapMarker: marker,
-        },
-        status,
-      };
-
       if (latitude && longitude && confidence >= confidenceThreshold) {
-        leafletMarkers.push(
-          test,
+        leafletMarkers.push({
+            lat: latitude,
+            lng: longitude,
+            options: {
+              icon: L.icon({
+                iconUrl: tmpIcon,
+              }),
+              mapMarker: marker,
+            },
+            status,
+          },
         );
       }
     });
@@ -176,7 +175,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       if (popupMode === PopupMode.gateway) {
         popup = (
           <GatewayDialog
-            gateway={map.selectedMarker.options.mapMarker}
+            gateway={map.selectedMarker.options.mapMarker as Gateway}
             displayDialog={map.isClusterDialogOpen}
             close={toggleClusterDialog}
           />
@@ -184,7 +183,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       } else if (popupMode === PopupMode.meterpoint) {
         popup = (
           <MeteringPointDialog
-            meter={map.selectedMarker.options.mapMarker}
+            meter={map.selectedMarker.options.mapMarker as Meter}
             displayDialog={map.isClusterDialogOpen}
             close={toggleClusterDialog}
           />

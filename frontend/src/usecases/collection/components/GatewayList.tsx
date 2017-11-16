@@ -12,7 +12,7 @@ export const GatewayList = (props: ListProps) => {
   const {data} = props;
 
   const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
-  const renderGateway = (gateway: GatewayModel) => <Gateway id={gateway.id}/>;
+  const renderGateway = (gateway: GatewayModel) => <Gateway gateway={gateway}/>;
   const renderCity = (gateway: GatewayModel) => gateway.city.name;
   const renderAddress = (gateway: GatewayModel) => gateway.address.name;
   const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');

@@ -3,18 +3,15 @@ import {
   OPEN_CLUSTER_DIALOG,
   TOGGLE_CLUSTER_DIALOG,
 } from './mapActions';
-import {IdentifiedMarker} from './mapModels';
+import {ExtendedMarker} from './mapModels';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
-  selectedMarker?: IdentifiedMarker;
+  selectedMarker?: ExtendedMarker;
 }
 
 export const initialState: MapState = {
   isClusterDialogOpen: false,
-  selectedMarker: {
-    options: null,
-  },
 };
 
 export const map = (state: MapState = initialState, action: AnyAction): MapState => {

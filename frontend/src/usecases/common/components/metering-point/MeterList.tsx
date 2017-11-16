@@ -11,7 +11,7 @@ import {MeteringPoint} from './MeteringPoint';
 export const MeterList = (props: ListProps) => {
   const {data} = props;
 
-  const renderMeteringPointCell = (meter: Meter) => <MeteringPoint id={meter.id}/>;
+  const renderMeteringPointCell = (meter: Meter) => <MeteringPoint meter={meter}/>;
   const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
   const renderCityName = (meter: Meter) => meter.city.name;
   const renderAddressName = (meter: Meter) => meter.address.name;
