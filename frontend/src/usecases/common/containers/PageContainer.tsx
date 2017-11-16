@@ -3,7 +3,7 @@ import {Pathname} from 'history';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {getPathname, isSearchPage} from '../../../selectors/routerSelectors';
+import {getPathname, isSelectionPage} from '../../../selectors/routerSelectors';
 import {SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
@@ -15,7 +15,7 @@ import {Layout} from '../components/layouts/layout/Layout';
 
 interface StateToProps {
   children?: React.ReactNode;
-  isSearchPage: boolean;
+  isSelectionPage: boolean;
   isSideMenuOpen: boolean;
   pathname: Pathname;
   selection: SelectionState;
@@ -25,12 +25,12 @@ const PageContainerComponent = (props: StateToProps) => {
   const {
     children,
     selection,
-    isSearchPage,
+    isSelectionPage,
     isSideMenuOpen,
     pathname,
   } = props;
 
-  const renderSelectionSearch = isSearchPage
+  const renderSelectionSearch = isSelectionPage
     ? <SelectionMenuContainer/>
     : <SelectionMenuSummary pathname={pathname} selection={selection}/>;
 
@@ -50,7 +50,7 @@ const PageContainerComponent = (props: StateToProps) => {
 const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToProps => {
   return {
     selection: getSelection(searchParameters),
-    isSearchPage: isSearchPage(routing),
+    isSelectionPage: isSelectionPage(routing),
     pathname: getPathname(routing),
     isSideMenuOpen: isSideMenuOpen(ui),
   };

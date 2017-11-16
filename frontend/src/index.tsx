@@ -18,7 +18,7 @@ import {configureStore} from './store/configureStore';
 import {App} from './usecases/app/App';
 import {mvpTheme} from './usecases/app/themes';
 
-const history: History = createHashHistory();
+export const history: History = createHashHistory();
 
 const appStore: Store<RootState> = configureStore(history);
 
