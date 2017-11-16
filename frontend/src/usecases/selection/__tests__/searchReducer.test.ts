@@ -3,8 +3,8 @@ import {testData} from '../../../__tests__/TestDataFactory';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';
-import {selectionSchema} from '../../../state/search/selection/selectionSchemas';
 import {IdNamed} from '../../../types/Types';
+import {selectionsSchema} from '../../../state/domain-models/domainModelsSchemas';
 
 describe('searchReducer', () => {
 
@@ -24,7 +24,7 @@ describe('searchReducer', () => {
   });
 
   it('normalized selection data', () => {
-    const normalizedData = normalize(testData.selections, selectionSchema);
+    const normalizedData = normalize(testData.selections, selectionsSchema);
 
     expect(normalizedData).toEqual({
       entities: {
@@ -89,6 +89,7 @@ describe('searchReducer', () => {
           'mmx',
           'kub',
         ],
+        manufacturers: [],
       },
     });
   });

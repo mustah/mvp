@@ -9,7 +9,7 @@ import {
   cities,
   DomainModelsState,
   gateways,
-  initialDomain, meters,
+  initialDomain, manufacturers, meters,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
@@ -40,6 +40,7 @@ describe('selectionSelectors', () => {
       meters: meters(initialDomain<Meter>(), {type: 'none'}),
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
@@ -66,6 +67,7 @@ describe('selectionSelectors', () => {
       meters: meters(initialDomain<Meter>(), {type: 'none'}),
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
@@ -123,6 +125,7 @@ describe('selectionSelectors', () => {
         meters: meters(initialDomain<Meter>(), {type: 'none'}),
         gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
         alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };

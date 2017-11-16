@@ -16,7 +16,7 @@ import {
   getAddresses,
   getAlarms,
   getCities,
-  getCitiesSelection,
+  getCitiesSelection, getManufacturers,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
@@ -30,6 +30,7 @@ interface StateToProps {
   cities: SelectionListItem[];
   addresses: SelectionListItem[];
   alarms: SelectionListItem[];
+  manufacturers: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -38,15 +39,18 @@ interface DispatchToProps {
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {toggleSelection, cities, addresses, alarms, citiesSelection} = props;
+  const {toggleSelection, cities, addresses, alarms, manufacturers, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
   const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.alarms});
+  const selectManufacturer = (selection: IdNamed) =>
+    toggleSelection({...selection, parameter: parameterNames.manufacturers});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
   const alarmSelectionText = translate('alarm') + ': ';
+  const manufacturerSelectionText = translate('manufacturer') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -70,6 +74,11 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           selectionText={alarmSelectionText}
           select={selectAlarm}
         />
+        <SimpleDropdownSelector
+          list={manufacturers}
+          selectionText={manufacturerSelectionText}
+          select={selectManufacturer}
+        />
       </Row>
 
       <MetersResultContainer/>
@@ -88,6 +97,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     citiesSelection: getCitiesSelection(lookupState).entities,
     addresses: getAddresses(lookupState),
     alarms: getAlarms(lookupState),
+    manufacturers: getManufacturers(lookupState),
   };
 };
 

@@ -71,6 +71,7 @@ const getSelectedParameters = (state: SearchParameterState): SelectedParameters 
 export const getCities = getList(parameterNames.cities);
 export const getAddresses = getList(parameterNames.addresses);
 export const getAlarms = getList(parameterNames.alarms);
+export const getManufacturers = getList(parameterNames.manufacturers);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,

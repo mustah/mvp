@@ -221,7 +221,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const r = {
     meters: [],
     gateways: [],
-    selections: {meteringPoints: [], statuses: [], cities: [], addresses: [], alarms: [], manufacturer: []},
+    selections: {meteringPoints: [], statuses: [], cities: [], addresses: [], alarms: [], manufacturers: []},
   };
   let geocodeData = {};
   let limiter;
@@ -242,7 +242,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const meteringPoints = new Set();
   const statuses = new Set();
   const alarms = new Set();
-  const manufacturer = new Set();
+  const manufacturers = new Set();
 
   const promises = glob.sync(path).map((seedFile) => {
 
@@ -344,9 +344,9 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         r.selections.alarms.push({id: alarm, name: alarm});
         alarms.add(alarm);
       }
-      if (!manufacturer.has(row.meter_manufacturer)) {
-        r.selections.manufacturer.push({id: row.meter_manufacturer, name: row.meter_manufacturer});
-        manufacturer.add(row.meter_manufacturer);
+      if (!manufacturers.has(row.meter_manufacturer)) {
+        r.selections.manufacturers.push({id: row.meter_manufacturer, name: row.meter_manufacturer});
+        manufacturers.add(row.meter_manufacturer);
       }
     }));
   });
