@@ -20,7 +20,7 @@ export const SearchMenuWrapper = (props: Props) => {
         {children}
       </Row>
       <Row>
-        <Link className="Logo" to={routes.dashboard}>
+        <Link className="Logo" to={routes.home}>
           <Logo className="small"/>
         </Link>
       </Row>
