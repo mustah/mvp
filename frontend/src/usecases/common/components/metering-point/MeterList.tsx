@@ -2,13 +2,13 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Flag} from '../../../../state/domain-models/flag/flagModels';
 import {IdNamed} from '../../../../types/Types';
-import {MeteringPoint} from './MeteringPoint';
-import {ActionsDropdown} from '../actions-dropdown/ActionsDropdown';
+import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
 import {Status} from '../status/Status';
-import {ListProps} from '../tabs/models/TabsModel';
 import {Table} from '../table/Table';
 import {TableColumn} from '../table/TableColumn';
 import {TableHead} from '../table/TableHead';
+import {ListProps} from '../tabs/models/TabsModel';
+import {MeteringPoint} from './MeteringPoint';
 
 export const MeterList = (props: ListProps) => {
   const {data} = props;
@@ -17,13 +17,7 @@ export const MeterList = (props: ListProps) => {
   const renderLocation = (value: IdNamed) => value.name;
   const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
 
-  const dropdownActions = [
-    translate('export to Excel (.csv)'),
-    translate('export to JSON'),
-    translate('add to report'),
-  ];
-
-  const renderActionDropdown = () => <ActionsDropdown actions={dropdownActions}/>;
+  const renderActionDropdown = (item: IdNamed) => <ListActionsDropdown item={item}/>;
 
   return (
     <Table data={data}>

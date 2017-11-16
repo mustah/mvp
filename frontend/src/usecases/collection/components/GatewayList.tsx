@@ -2,7 +2,7 @@ import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {IdNamed} from '../../../types/Types';
-import {ActionsDropdown} from '../../common/components/actions-dropdown/ActionsDropdown';
+import {ListActionsDropdown} from '../../common/components/actions-dropdown/ListActionsDropdown';
 import {Status} from '../../common/components/status/Status';
 import {Table} from '../../common/components/table/Table';
 import {TableColumn} from '../../common/components/table/TableColumn';
@@ -18,13 +18,7 @@ export const GatewayList = (props: ListProps) => {
   const renderLocation = (value: IdNamed) => value.name;
   const renderFlags = (flags: Flag[]) => flags.map((flag) => flag.title).join(', ');
 
-  const actions = [
-    translate('export to Excel (.csv)'),
-    translate('export to JSON'),
-    translate('add to report'),
-  ];
-
-  const renderActionDropdown = () => <ActionsDropdown actions={actions}/>;
+  const renderActionDropdown = (item: IdNamed) => <ListActionsDropdown item={item}/>;
 
   return (
     <Table data={data}>

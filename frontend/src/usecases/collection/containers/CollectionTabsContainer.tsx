@@ -5,6 +5,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
@@ -30,7 +31,6 @@ import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
 import classNames = require('classnames');
 
 interface CollectionTabsContainer extends TabsContainerProps {
