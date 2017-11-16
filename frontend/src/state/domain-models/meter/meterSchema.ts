@@ -1,8 +1,9 @@
 import {schema} from 'normalizr';
-import {address, addressCluster, city} from '../domainModelsSchemas';
+import {address, city} from '../domainModelsSchemas';
 
 const meter = new schema.Entity('meters');
 export const meterSchema =  [meter];
+export const addressCluster = new schema.Entity('addressClusters');
 
 export const sidebarTreeSchema = {
   cities: [city],

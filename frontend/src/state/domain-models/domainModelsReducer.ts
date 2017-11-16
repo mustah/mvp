@@ -45,21 +45,24 @@ const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
 export const addresses = domainModelReducerFor<SelectionEntity>(parameterNames.addresses, EndPoints.selections);
 export const cities = domainModelReducerFor<SelectionEntity>(parameterNames.cities, EndPoints.selections);
 export const alarms = domainModelReducerFor<SelectionEntity>(parameterNames.alarms, EndPoints.selections);
+export const manufacturers = domainModelReducerFor<SelectionEntity>(parameterNames.manufacturers, EndPoints.selections);
 export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
 export const meters = domainModelReducerFor<Meter>('meters', EndPoints.meters);
 
 export interface DomainModelsState {
-  gateways: GatewaysState;
-  meters: MetersState;
   addresses: SelectionEntityState;
   cities: SelectionEntityState;
   alarms: SelectionEntityState;
+  manufacturers: SelectionEntityState;
+  gateways: GatewaysState;
+  meters: MetersState;
 }
 
 export const domainModels = combineReducers<DomainModelsState>({
-  gateways,
-  meters,
   addresses,
   cities,
   alarms,
+  manufacturers,
+  gateways,
+  meters,
 });

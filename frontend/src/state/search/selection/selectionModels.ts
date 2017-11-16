@@ -11,6 +11,7 @@ export interface SelectedParameters {
   addresses?: uuid[];
   statuses?: uuid[];
   alarms?: uuid[];
+  manufacturers?: uuid[];
   period?: Period;
 }
 
@@ -29,6 +30,7 @@ export enum parameterNames {
   addresses = 'addresses',
   statuses = 'statuses',
   alarms = 'alarms',
+  manufacturers = 'manufacturers',
   period = 'period',
 }
 
