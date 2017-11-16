@@ -57,7 +57,7 @@ const SavedSelections = (props: StateToProps & DispatchToProps) => {
     <List style={listStyle}>
       <ListItem
         className="ListItem"
-        primaryText={translate('saved selection')}
+        primaryText={translate('saved selections')}
         initiallyOpen={true}
         style={sideBarHeaderStyle}
         hoverColor={sideBarStyles.onHover.color}
