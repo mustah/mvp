@@ -14,7 +14,6 @@ import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
-import static com.elvaco.mvp.testdata.RestClient.restClient;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")

@@ -1,9 +1,13 @@
 package com.elvaco.mvp.testdata;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,16 +16,17 @@ import static java.util.Collections.singletonList;
 
 public final class RestClient {
 
-  private static final String API_URL = "http://localhost:8068/api";
+  private String baseUrl;
 
   private final TestRestTemplate template;
 
-  private RestClient() {
+  protected RestClient(int serverPort) {
+    baseUrl = "http://localhost:" + serverPort + "/api";
     this.template = new TestRestTemplate(new RestTemplate());
   }
 
-  public static RestClient restClient() {
-    return InstanceHolder.INSTANCE;
+  public String getBaseURL() {
+    return baseUrl;
   }
 
   public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
@@ -30,6 +35,16 @@ public final class RestClient {
 
   public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
     return template.postForEntity(apiUrlOf(url), request, responseType);
+  }
+
+  public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
+    ParameterizedTypeReference<RestResponsePage<T>> responseType = new ParameterizedTypeReference<RestResponsePage<T>>() {
+      public Type getType() {
+        return new ParameterizedTypeReferenceImpl((ParameterizedType) super.getType(), new Type[]{pagedClass});
+      }
+    };
+    ResponseEntity<RestResponsePage<T>> r = template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    return r;
   }
 
   public RestClient loginWith(String username, String password) {
@@ -44,7 +59,7 @@ public final class RestClient {
         request.getHeaders().remove(AUTHORIZATION);
         return execution.execute(request, body);
       }));
-    return restClient();
+    return this;
   }
 
   private RestClient authorization(String token) {
@@ -57,14 +72,10 @@ public final class RestClient {
         request.getHeaders().add(headerName, value);
         return execution.execute(request, body);
       }));
-    return restClient();
+    return this;
   }
 
-  private static String apiUrlOf(String url) {
-    return API_URL + url;
-  }
-
-  private static final class InstanceHolder {
-    private static final RestClient INSTANCE = new RestClient();
+  private String apiUrlOf(String url) {
+    return baseUrl + url;
   }
 }
