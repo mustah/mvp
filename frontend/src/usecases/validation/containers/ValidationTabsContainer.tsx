@@ -1,6 +1,8 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import 'ValidationTabsContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
@@ -18,6 +20,7 @@ import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, uuid} from '../../../types/Types';
 import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
 import {Row, RowRight} from '../../common/components/layouts/row/Row';
+import {WrapperIndent} from '../../common/components/layouts/wrapper/Wrapper';
 import {MeterList} from '../../common/components/metering-point/MeterList';
 import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
@@ -31,7 +34,6 @@ import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
 import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
-import classNames = require('classnames');
 
 interface ValidationTabsContainer extends TabsContainerProps {
   entityCount: number;
@@ -182,8 +184,8 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     ) : null;
 
     return (
-      <div className="GraphContainer">
-        <Row>
+      <WrapperIndent>
+        <Row className="StatusControl">
           <Column>
             <h2>{header}</h2>
           </Column>
@@ -198,7 +200,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           </ColumnCenter>
         </Row>
         {chartRow}
-      </div>
+      </WrapperIndent>
     );
   })(tabs.graph.selectedOption);
 
