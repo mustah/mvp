@@ -17,7 +17,7 @@ const style: React.CSSProperties = {
   border: `1px solid ${colors.borderColor}`,
   borderRadius: 3,
   marginLeft: 24,
-  marginBottom: 8,
+  marginBottom: 16,
 };
 
 const underlineStyle: React.CSSProperties = {
