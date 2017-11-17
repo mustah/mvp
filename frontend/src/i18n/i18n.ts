@@ -8,7 +8,7 @@ export const initLanguage = (language: Language) => {
     .use(Backend)
     .init({
       lng: language.code,
-      debug: true,
+      debug: false,
       ...i18nextConfig,
       backend: {
         loadPath: 'i18n/locales/{{lng}}.json',
