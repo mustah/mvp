@@ -3,19 +3,21 @@ import {createSelector} from 'reselect';
 import {IdNamed, uuid} from '../../../types/Types';
 import {parameterNames} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
-import {Meter, MetersState, SidebarItem, SidebarItemProps, SidebarItemsProps} from './meterModels';
-import {sidebarTreeSchema} from './meterSchema';
+import {Meter, MetersState, SelectionTreeItem, SelectionTreeItemProps, SelectionTreeItemsProps} from './meterModels';
+import {selectionTreeSchema} from './meterSchema';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
 export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities;
 
 // TODO: Add correct type to result.
-export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, any>(
+export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, any>(
   getResultDomainModels,
   getMeterEntities,
   (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
 
-    const sidebarTree: {[key: string]: SidebarItem[]} = {cities: [], addresses: [], addressClusters: [], meters: []};
+    const selectionTree: {[key: string]: SelectionTreeItem[]} = {
+      cities: [], addresses: [], addressClusters: [], meters: [],
+    };
     const cities = new Set<uuid>();
     const addressClusters = new Set<uuid>();
     const addresses = new Set<uuid>();
@@ -28,7 +30,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
       const cluster: IdNamed = {id: clusterId, name: clusterName};
       const meter: IdNamed = {id: meterId as string, name: meterId as string};
 
-      sidebarItems(sidebarTree, {
+      selectionTreeItems(selectionTree, {
         category: parameterNames.cities,
         set: cities,
         unit: city,
@@ -38,7 +40,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: 'addressClusters',
       });
 
-      sidebarItems(sidebarTree, {
+      selectionTreeItems(selectionTree, {
         category: 'addressClusters',
         set: addressClusters,
         unit: cluster,
@@ -48,7 +50,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: parameterNames.addresses,
       });
 
-      sidebarItems(sidebarTree, {
+      selectionTreeItems(selectionTree, {
         category: parameterNames.addresses,
         set: addresses,
         unit: address,
@@ -58,7 +60,7 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: 'meters',
       });
 
-      sidebarItems(sidebarTree, {
+      selectionTreeItems(selectionTree, {
         category: 'meters',
         set: meters,
         unit: meter,
@@ -68,17 +70,17 @@ export const getSidebarTree = createSelector<MetersState, uuid[], {[key: string]
         childrenType: '',
       });
     });
-    // TODO: Perhaps move this moderation into the sidebarItemsList to speed up performance.
-    sidebarTree.addressClusters.map((item) => {
+    // TODO: Perhaps move this moderation into the selectionTreeItemsList to speed up performance.
+    selectionTree.addressClusters.map((item) => {
       item.name = item.name + '...(' + item.childNodes.ids.length + ')';
     });
 
-    return normalize(sidebarTree, sidebarTreeSchema);
+    return normalize(selectionTree, selectionTreeSchema);
   },
 );
 
-const sidebarItem =
-  (props: SidebarItemProps): SidebarItem => {
+const selectionTreeItem =
+  (props: SelectionTreeItemProps): SelectionTreeItem => {
     return {
       id: props.unit.id,
       name: props.unit.name,
@@ -88,16 +90,16 @@ const sidebarItem =
     };
   };
 
-const sidebarItems = (sidebarTreeUpdate: {[key: string]: SidebarItem[]}, props: SidebarItemsProps): void => {
-  const {category, set, ...sidebarItemProps} = props;
+const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]}, props: SelectionTreeItemsProps) => {
+  const {category, set, ...selectionTreeItemProps} = props;
   const {unit, parent, parentType} = props;
   if (!set.has(unit.id)) {
 
-    sidebarTreeUpdate[category].push(sidebarItem(sidebarItemProps));
+    selectionTree[category].push(selectionTreeItem(selectionTreeItemProps));
     set.add(unit.id);
 
     if (parentType !== '') {
-      sidebarTreeUpdate[parentType].map((par) => {
+      selectionTree[parentType].map((par) => {
         if (par.id === parent.id) {
           par.childNodes.ids.push(unit.id);
         }

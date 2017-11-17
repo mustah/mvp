@@ -1,26 +1,37 @@
 import List from 'material-ui/List/List';
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
-import 'SelectionTree.scss';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
 import {listItemStyle, listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
-import {SelectionTreeModel} from '../../models/organizedData';
+import {SelectionTreeModel} from '../../../../state/domain-models/meter/meterModels';
+import './SelectionTreeContainer.scss';
 import ListItemProps = __MaterialUI.List.ListItemProps;
+import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
+import {selectionTreeToggleEntry} from '../../../../state/ui/selection-tree/selectionTreeActions';
 
 interface SelectionTreeProps {
   topLevel: string;
-  sidebarTree: any;
 }
 
-export const SelectionTree = (props: SelectionTreeProps) => {
+interface StateToProps {
+  selectionTree: any;
+}
 
-  if (props.sidebarTree.result.length < 1) {
+interface DispatchToProps {
+  selectionTreeToggleEntry: (id: uuid) => void;
+}
+
+const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProps) => {
+  if (props.selectionTree.result.length < 1) {
     return null;
   }
-  const {topLevel, sidebarTree} = props;
-  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, sidebarTree, topLevel);
-  const nestedItems = sidebarTree.result[topLevel].sort().map(renderSelectionOverview);
+  const {topLevel, selectionTree} = props;
+  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, selectionTree, topLevel);
+  const nestedItems = selectionTree.result[topLevel].sort().map(renderSelectionOverview);
 
   return (
     <List style={listStyle}>
@@ -36,6 +47,19 @@ export const SelectionTree = (props: SelectionTreeProps) => {
     </List>
   );
 };
+
+const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+  return {
+    selectionTree: getSelectionTree(meters),
+  };
+};
+
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  selectionTreeToggleEntry,
+}, dispatch);
+
+export const SelectionTreeContainer =
+  connect<StateToProps, DispatchToProps, SelectionTreeProps>(mapStateToProps, mapDispatchToProps)(SelectionTree);
 
 const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) => {
   const entity = data.entities[level][id];

@@ -17,7 +17,7 @@ export interface Meter extends MapMarker {
 
 export type MetersState = NormalizedState<Meter>;
 
-export interface SidebarItem {
+export interface SelectionTreeItem {
   id: uuid;
   name: string;
   parent: {type: string; id: uuid};
@@ -25,7 +25,7 @@ export interface SidebarItem {
   childNodes: {type: string; ids: uuid[]};
 }
 
-export interface SidebarItemProps {
+export interface SelectionTreeItemProps {
   unit: SelectionEntity;
   parentType: string;
   parent: SelectionEntity;
@@ -33,7 +33,17 @@ export interface SidebarItemProps {
   childrenType: string;
 }
 
-export interface SidebarItemsProps extends SidebarItemProps {
+export interface SelectionTreeItemsProps extends SelectionTreeItemProps {
   category: string;
   set: Set<uuid>;
+}
+
+export interface SelectionTreeModel {
+  [key: string]: Array<{
+    id: uuid;
+    name: string;
+    selectable: boolean;
+    parent: {type: string; id: uuid};
+    childNodes: {type: string; ids: uuid[]};
+  }>;
 }
