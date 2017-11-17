@@ -6,7 +6,6 @@ import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {MapMarker} from '../../../map/mapModels';
 import {ButtonClose} from '../buttons/ButtonClose';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
@@ -137,19 +136,6 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
         },
       },
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
-    };
-
-    // TODO retrieve real location data for the gateway
-    const markers: {[key: string]: MapMarker} = {};
-    markers[0] = {
-      status: {id: 0, name: 'OK'},
-      address: {id: '', cityId: '', name: ''},
-      city: {id: '', name: ''},
-      position: {
-        confidence: 1,
-        latitude: '57.505281',
-        longitude: '12.069336',
-      },
     };
 
     const checkbox: React.CSSProperties = {
@@ -298,7 +284,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer height={400} markers={markers} popupMode={PopupMode.none}/>
+              <MapContainer height={400} markers={gateway} viewCenter={gateway.position} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>
         </Row>

@@ -15,7 +15,6 @@ import {Tab} from '../tabs/components/Tab';
 import {TabContent} from '../tabs/components/TabContent';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {IconStatus} from '../icons/IconStatus';
-import {MapMarker} from '../../../map/mapModels';
 import {tabType} from '../tabs/models/TabsModel';
 import {MainTitle, Subtitle} from '../texts/Titles';
 import {Tabs} from '../tabs/components/Tabs';
@@ -160,19 +159,6 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
 
     const changeTab = (option: tabType) => {
       this.setState({selectedTab: option});
-    };
-
-    // TODO retrieve real location data for the gateway
-    const markers: {[key: string]: MapMarker} = {};
-    markers[0] = {
-      status: {id: 0, name: 'OK'},
-      address: {id: '', cityId: '', name: ''},
-      city: {id: '', name: ''},
-      position: {
-        confidence: 1,
-        latitude: '57.505281',
-        longitude: '12.069336',
-      },
     };
 
     const checkbox: React.CSSProperties = {
@@ -379,7 +365,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer height={400} markers={markers} popupMode={PopupMode.none}/>
+              <MapContainer height={400} markers={meter} viewCenter={meter.position} popupMode={PopupMode.none}/>
             </TabContent>
             <TabContent tab={tabType.connectedGateways} selectedTab={selectedTab}>
               <Row>

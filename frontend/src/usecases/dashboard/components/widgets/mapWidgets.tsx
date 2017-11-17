@@ -3,6 +3,7 @@ import {Row} from '../../../common/components/layouts/row/Row';
 import {Widget} from './Widget';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {MapMarker} from '../../../map/mapModels';
+import {GeoPosition} from '../../../../state/domain-models/domainModels';
 
 interface Props {
   tmp: any;
@@ -19,8 +20,8 @@ export const MapWidgets = (props: Props) => {
     city: {id: '', name: ''},
     position: {
       confidence: 1,
-      latitude: '56.138288',
-      longitude: '13.394854',
+      latitude: 56.138288,
+      longitude: 13.394854,
     },
   };
 
@@ -30,13 +31,13 @@ export const MapWidgets = (props: Props) => {
     city: {id: '', name: ''},
     position: {
       confidence: 1,
-      latitude: '56.552119',
-      longitude: '14.137460',
+      latitude: 56.552119,
+      longitude: 14.137460,
     },
   };
 
-  const centerOfPerstorpMap: [number, number] = [56.138288, 13.394854];
-  const centerOfErrorMap: [number, number] = [56.228288, 13.794854];
+  const centerOfPerstorpMap: GeoPosition = {latitude: 56.138288, longitude: 13.394854, confidence: 1};
+  const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
 
   return (
     <Row className="MapWidgets">

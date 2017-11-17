@@ -18,6 +18,7 @@ import './MapContainer.scss';
 import {isNullOrUndefined} from 'util';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {GeoPosition} from '../../../state/domain-models/domainModels';
 
 interface StateToProps {
   map: MapState;
@@ -34,11 +35,11 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: { [key: string]: MapMarker };
+  markers: { [key: string]: MapMarker } | MapMarker;
   height?: number;
   width?: number;
   defaultZoom?: number;
-  viewCenter?: [number, number];
+  viewCenter?: GeoPosition;
 }
 
 export enum PopupMode {
@@ -60,6 +61,13 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       defaultZoom = 7,
       viewCenter = defaultViewCenter,
     } = this.props;
+
+    let tmpMarkers: { [key: string]: MapMarker } = {};
+    if (isMapMarker(markers)) {
+      tmpMarkers[0] = markers;
+    } else {
+      tmpMarkers = markers;
+    }
 
     const maxZoom = 18;
     const minZoom = 3;
@@ -123,8 +131,8 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     // TODO break up marker icon logic into methods and add tests
 
-    Object.keys(markers).forEach((key: string) => {
-      const marker = markers[key];
+    Object.keys(tmpMarkers).forEach((key: string) => {
+      const marker = tmpMarkers[key];
 
       // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
       switch (marker.status.id) {
@@ -194,7 +202,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     return (
       <Column>
         <Map
-          center={viewCenter}
+          center={[viewCenter.latitude, viewCenter.longitude]}
           maxZoom={maxZoom}
           minZoom={minZoom}
           zoom={defaultZoom}
@@ -218,7 +226,11 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
   }
 }
 
-const defaultViewCenter: [number, number] = [56.142226, 13.402965];
+const isMapMarker = (obj: any): obj is MapMarker => {
+  return obj.status !== undefined && obj.position !== undefined;
+};
+
+const defaultViewCenter: GeoPosition = {latitude: 56.142226, longitude: 13.402965, confidence: 1};
 
 const mapStateToProps = ({map}: RootState): StateToProps => {
   return {
