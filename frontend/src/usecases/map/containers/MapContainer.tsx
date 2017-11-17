@@ -171,7 +171,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     let popup;
 
-    if (!isNullOrUndefined(map.selectedMarker) && !isNullOrUndefined(map.selectedMarker.options)) {
+    if (!isNullOrUndefined(map.selectedMarker) && map.selectedMarker.options) {
       if (popupMode === PopupMode.gateway) {
         popup = (
           <GatewayDialog
