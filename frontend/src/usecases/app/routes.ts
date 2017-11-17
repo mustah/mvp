@@ -8,4 +8,5 @@ export const routes = {
   mp: '/mp',
   report: '/report',
   validation: '/validation',
+  selection: '/selection',
 };

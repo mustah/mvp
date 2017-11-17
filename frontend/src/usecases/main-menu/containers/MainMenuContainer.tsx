@@ -1,4 +1,5 @@
 import 'MainMenuContainer.scss';
+import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -7,7 +8,9 @@ import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
+import {OnClick} from '../../../types/Types';
 import {routes} from '../../app/routes';
+import {colors, iconStyle} from '../../app/themes';
 import {AuthState} from '../../auth/authReducer';
 import {IconCollection} from '../../common/components/icons/IconCollection';
 import {IconDashboard} from '../../common/components/icons/IconDashboard';
@@ -15,7 +18,7 @@ import {IconReport} from '../../common/components/icons/IconReport';
 import {IconValidation} from '../../common/components/icons/IconValidation';
 import {Column} from '../../common/components/layouts/column/Column';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
-import {MainNavigationMenu} from '../components/main-navigation-menu/MainNavigationMenu';
+import {MainMenuToggleIcon} from '../components/menuitems/MainMenuToggleIcon';
 import {MenuItem} from '../components/menuitems/MenuItem';
 
 interface StateToProps {
@@ -25,11 +28,11 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  toggleShowHideSideMenu: () => void;
+  toggleShowHideSideMenu: OnClick;
 }
 
 const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {pathname, auth, isSideMenuOpen, toggleShowHideSideMenu} = props;
+  const {pathname, auth, isSideMenuOpen} = props;
 
   if (!auth.isAuthenticated) {
     return null;
@@ -37,12 +40,15 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
 
   return (
     <Column className="MainMenuContainer">
-      <MainNavigationMenu
-        isOpen={isSideMenuOpen}
-        toggleShowHideSideMenu={toggleShowHideSideMenu}
-      />
       <Column className="MenuItems Column-space-between">
         <Column>
+          <Link to={routes.selection} className="link">
+            <MenuItem
+              name={translate('selection')}
+              isSelected={routes.selection === pathname}
+              icon={<ContentFilterList style={iconStyle} color={colors.white} className="MenuItem-icon"/>}
+            />
+          </Link>
           <Link to={routes.dashboard} className="link">
             <MenuItem
               name={translate('dashboard')}
@@ -71,6 +77,9 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
               icon={<IconReport className="MenuItem-icon"/>}
             />
           </Link>
+
+          <MainMenuToggleIcon onClick={props.toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
+
         </Column>
       </Column>
     </Column>

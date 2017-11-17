@@ -1,7 +1,8 @@
 @import "../../../app/variables";
 
 .MenuItem {
-  background: $primary-bg;
+  height: 44px;
+  background-color: $primary-bg;
   color: $primary-fg;
   cursor: pointer;
   padding: $sm-space;
@@ -11,12 +12,12 @@
   }
 
   &:hover {
-    background: $primary-bg-hover;
+    background-color: $primary-bg-hover;
     color: $primary-fg-hover;
   }
 
   &.isSelected {
-    background: $primary-bg-active;
+    background-color: $primary-bg-active;
     color: $primary-fg-active;
   }
 

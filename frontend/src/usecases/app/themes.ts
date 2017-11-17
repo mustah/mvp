@@ -25,6 +25,7 @@ export const colors = {
 export const mvpTheme = getMuiTheme({
   appBar: {
     height: 60,
+    padding: 16,
     color: colors.darkBlue,
   },
   fontFamily: 'PT Sans, sans-serif',
