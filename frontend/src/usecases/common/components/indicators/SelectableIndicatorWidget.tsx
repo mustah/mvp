@@ -19,13 +19,13 @@ interface IndicatorIcon {
 }
 
 export const indicatorIconFor: IndicatorIcon = {
-  [IndicatorType.collection]: <IconCollection className="Indicator-icon"/>,
-  [IndicatorType.measurementQuality]: <IconValidation className="Indicator-icon"/>,
-  [IndicatorType.current]: <IconCurrent className="Indicator-icon"/>,
-  [IndicatorType.coldWater]: <IconColdWater className="Indicator-icon"/>,
-  [IndicatorType.warmWater]: <IconColdWater className="Indicator-icon"/>,
+  [IndicatorType.collection]: <IconCollection className="Indicator-icon" color="black"/>,
+  [IndicatorType.measurementQuality]: <IconValidation className="Indicator-icon" color="black"/>,
+  [IndicatorType.current]: <IconCurrent className="Indicator-icon" color="black"/>,
+  [IndicatorType.coldWater]: <IconColdWater className="Indicator-icon" color="black"/>,
+  [IndicatorType.warmWater]: <IconColdWater className="Indicator-icon" color="black"/>,
   [IndicatorType.districtHeating]: <IconDistrictHeating className="Indicator-icon"/>,
-  [IndicatorType.temperatureInside]: <IconTemperature className="Indicator-icon"/>,
+  [IndicatorType.temperatureInside]: <IconTemperature className="Indicator-icon" color="black"/>,
   [IndicatorType.temperatureOutside]: <IconTemperature className="Indicator-icon" color="black"/>,
 };
 
