@@ -1,4 +1,7 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
+import DatePicker from 'material-ui/DatePicker';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 import 'PeriodSelection.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
@@ -48,73 +51,139 @@ interface Props {
   selectPeriod: OnSelectPeriod;
 }
 
-export const PeriodSelection = (props: Props) => {
-  const {period, selectPeriod} = props;
+interface State {
+  timePickerVisible: boolean;
+}
 
-  const onSelectPeriod = (event, index, period: Period) => {
-    selectPeriod(period);
-  };
+export class PeriodSelection extends React.Component<Props, State> {
 
-  const timePeriods = [
-    {
-      value: Period.latest,
-      chosen: 'Senaste', // TODO demo purposes only. I imagine we will input real timestamps here in the future, anyways
-      alternative: 'Senaste',
-    },
-    {
-      value: Period.currentMonth,
-      chosen: '1 nov - 22 nov',
-      alternative: translate('current month'),
-    },
-    {
-      value: Period.previousMonth,
-      chosen: '1 okt - 31 okt',
-      alternative: translate('previous month'),
-    },
-    {
-      value: Period.currentWeek,
-      chosen: '20 nov - 22 nov',
-      alternative: translate('current week'),
-    },
-    {
-      value: Period.previous7Days,
-      chosen: '16 nov - 22 nov',
-      alternative: translate('last 7 days'),
-    },
-    {
-      value: Period.custom,
-      chosen: '1 okt - 31 okt',
-      alternative: translate('pick a date'),
-    },
-  ];
+  constructor() {
+    super();
+    this.state = {
+      timePickerVisible: false,
+    };
+  }
 
-  const timePeriodComponents = timePeriods.map((tp) => (
-    <MenuItem
-      key={tp.alternative}
-      value={tp.value}
-      label={tp.chosen}
-      primaryText={tp.alternative}
-      className="TimePeriod"
-      style={listItemStyle}
-    />
-  ));
+  hideCustomPicker = () => {
+    this.setState({timePickerVisible: false});
+  }
 
-  return (
-    <Row className="PeriodSelection">
-      <DropDownMenu
-        className="PeriodSelection-dropdown"
-        maxHeight={300}
-        underlineStyle={underlineStyle}
-        labelStyle={labelStyle}
-        iconStyle={iconStyle}
-        style={style}
-        value={period}
-        onChange={onSelectPeriod}
-        iconButton={<IconCalendar className="IconCalendar"/>}
-        selectedMenuItemStyle={{color: colors.blue}}
+  showCustomPicker = () => {
+    this.setState({timePickerVisible: true});
+  }
+
+  render() {
+    const {period, selectPeriod} = this.props;
+    const {timePickerVisible} = this.state;
+
+    const onSelectPeriod = (event, index, period: Period) => {
+      selectPeriod(period);
+    };
+
+    const timePeriods = [
+      {
+        value: Period.latest,
+        chosen: 'Senaste', // TODO demo purposes only. I imagine we will input real timestamps here in the future,
+                           // anyways
+        alternative: 'Senaste',
+      },
+      {
+        value: Period.currentMonth,
+        chosen: '1 nov - 22 nov',
+        alternative: translate('current month'),
+      },
+      {
+        value: Period.previousMonth,
+        chosen: '1 okt - 31 okt',
+        alternative: translate('previous month'),
+      },
+      {
+        value: Period.currentWeek,
+        chosen: '20 nov - 22 nov',
+        alternative: translate('current week'),
+      },
+      {
+        value: Period.previous7Days,
+        chosen: '16 nov - 22 nov',
+        alternative: translate('last 7 days'),
+      },
+    ];
+
+    const timePeriodComponents = timePeriods.map((tp) => (
+      <MenuItem
+        className="TimePeriod"
+        key={tp.alternative}
+        label={tp.chosen}
+        primaryText={tp.alternative}
+        style={listItemStyle}
+        value={tp.value}
+      />
+    ));
+
+    timePeriodComponents.push(
+      (
+        <MenuItem
+          className="TimePeriod"
+          key={translate('pick a date')}
+          label={'1 okt - 31 okt'}
+          onClick={this.showCustomPicker}
+          primaryText={translate('pick a date')}
+          style={listItemStyle}
+          value={Period.custom}
+        />
+      ),
+    );
+
+    const actions = [
+      (
+        <FlatButton
+          key={'Stäng'}
+          label={'Stäng'}
+          onClick={this.hideCustomPicker}
+        />
+      ),
+    ];
+
+    const customPickerDialog = (
+      <Dialog
+        actions={actions}
+        onRequestClose={this.hideCustomPicker}
+        open={true}
       >
-        {timePeriodComponents}
-      </DropDownMenu>
-    </Row>
-  );
-};
+        <h2>Välj datum</h2>
+        <p>Mellan</p>
+        <DatePicker
+          autoOk={true}
+          hintText={'Startdatum'}
+        />
+        <p>och</p>
+        <DatePicker
+          autoOk={true}
+          hintText={'Slutdatum'}
+        />
+      </Dialog>
+    );
+
+    const customPicker = timePickerVisible ? customPickerDialog : null;
+
+    return (
+      <Row className="PeriodSelection">
+        {customPicker}
+        <DropDownMenu
+          className="PeriodSelection-dropdown"
+          maxHeight={300}
+          underlineStyle={underlineStyle}
+          labelStyle={labelStyle}
+          iconStyle={iconStyle}
+          style={style}
+          value={period}
+          onChange={onSelectPeriod}
+          iconButton={<IconCalendar className="IconCalendar"/>}
+          selectedMenuItemStyle={{color: colors.blue}}
+        >
+          {timePeriodComponents}
+        </DropDownMenu>
+      </Row>
+    );
+  }
+}
