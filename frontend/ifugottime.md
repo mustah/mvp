@@ -1,0 +1,4 @@
+- "deactive" widgets on report page
+- pretty material design time picker
+- focus the input field in when the selection dropdowns are opened
+- divider before "Lägg till i rapport" in the dotdotdot menu on each row

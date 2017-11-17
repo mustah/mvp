@@ -26,6 +26,7 @@ import {Row} from '../../common/components/layouts/row/Row';
 import {Subtitle} from '../../common/components/texts/Titles';
 import {MetersResultContainer} from './MetersContainer';
 import {MetersLoaderContainer} from './MetersLoaderContainer';
+import {SelectionQuantity} from '../components/SelectionQuantity';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -80,6 +81,7 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           selectionText={manufacturerSelectionText}
           select={selectManufacturer}
         />
+        <SelectionQuantity/>
       </Row>
 
       <MetersLoaderContainer>
