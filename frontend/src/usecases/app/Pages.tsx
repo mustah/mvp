@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Route, Switch} from 'react-router';
+import {Redirect, Route, Switch} from 'react-router';
 import {userIsAuthenticated, userIsNotAuthenticated} from '../../services/authService';
 import {LoginContainer} from '../auth/containers/LoginContainer';
 import {Collection} from '../collection/components/Collection';
@@ -29,7 +29,8 @@ export const Pages = (props) => (
       <Route exact={true} path={routes.validation} component={ValidationPage}/>
       <Route exact={true} path={`${routes.report}/:id`} component={ReportPage}/>
       <Route exact={true} path={routes.report} component={ReportPage}/>
-       <Route exact={true} path="/selection" component={SelectionPage}/>
+      <Route exact={true} path="/selection" component={SelectionPage}/>
+      <Redirect to={routes.home}/>
     </Switch>
   </Layout>
 );
