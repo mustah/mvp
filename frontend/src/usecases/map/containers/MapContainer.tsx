@@ -202,7 +202,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
   }
 }
 
-const defaultViewCenter: [number, number] = [57.504935, 12.069482];
+const defaultViewCenter: [number, number] = [56.142226, 13.402965];
 
 const mapStateToProps = ({map}: RootState): StateToProps => {
   return {
