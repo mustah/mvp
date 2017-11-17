@@ -13,6 +13,8 @@ import {renderSelectionTree} from '../../components/selection-tree-list-item/Sel
 import './SelectionTreeContainer.scss';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
+import {selectEntryToggle} from '../../../report/reportActions';
+import {getSelectedListItems} from '../../../report/reportSelectors';
 
 interface SelectionTreeProps {
   topLevel: string;
@@ -21,27 +23,31 @@ interface SelectionTreeProps {
 interface StateToProps {
   selectionTree: SelectionTreeData;
   openListItems: Set<uuid>;
+  selectedListItems: Set<uuid>;
+
 }
 
 interface DispatchToProps {
   toggleExpand: (id: uuid) => void;
+  toggleSelect: (id: uuid) => void;
 }
 
 const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProps) => {
   if (Object.keys(props.selectionTree.result).length === 0) {
     return null;
   }
-  const {topLevel, selectionTree, toggleExpand, openListItems} = props;
+  const {topLevel, selectionTree, toggleExpand, openListItems, toggleSelect, selectedListItems} = props;
   const renderSelectionOverview = (id: uuid) => renderSelectionTree({
     id,
     data: selectionTree,
     level: topLevel,
     toggleExpand,
     openListItems,
+    toggleSelect,
+    selectedListItems,
   });
 
   const nestedItems = selectionTree.result[topLevel].sort().map(renderSelectionOverview);
-
   return (
     <List style={listStyle}>
       <ListItem
@@ -57,15 +63,17 @@ const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProp
   );
 };
 
-const mapStateToProps = ({domainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
+const mapStateToProps = ({report, domainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
   return {
     selectionTree: getSelectionTree(meters),
     openListItems: getOpenListItems(selectionTree),
+    selectedListItems: getSelectedListItems(report),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleExpand: selectionTreeExpandToggle,
+  toggleSelect: selectEntryToggle,
 }, dispatch);
 
 export const SelectionTreeContainer =

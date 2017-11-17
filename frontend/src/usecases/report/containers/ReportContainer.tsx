@@ -20,14 +20,12 @@ import {PeriodContainer} from '../../common/containers/PeriodContainer';
 import {SummaryContainer} from '../../common/containers/SummaryContainer';
 import {GraphContainer} from '../../graph/GraphContainer';
 import {indicators, ReportState} from '../models/reportModels';
-import {fetchReports} from '../reportActions';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   report: ReportState;
 }
 
 interface DispatchToProps {
-  fetchReports: () => any;
   selectIndicatorWidget: (type: IndicatorType) => any;
 }
 
@@ -65,7 +63,6 @@ const mapStateToProps = (state: RootState): StateToProps => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchReports,
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 

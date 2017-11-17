@@ -88,23 +88,6 @@ const fromDbJson = {
       },
     },
   ],
-  reports: [
-    {
-      'id': 1,
-      'title': 'json-server',
-      'author': 'typicode',
-    },
-    {
-      'id': 2,
-      'title': 'report 2',
-      'author': 'elvaco',
-    },
-    {
-      'id': 3,
-      'title': 'report 3',
-      'author': 'elvaco - home',
-    },
-  ],
   profile: {
     name: 'typicode',
   },
