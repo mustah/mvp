@@ -18,6 +18,7 @@ import './MapContainer.scss';
 import {isNullOrUndefined} from 'util';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {GeoPosition} from '../../../state/domain-models/domainModels';
 
 interface StateToProps {
   map: MapState;
@@ -38,7 +39,7 @@ interface OwnProps {
   height?: number;
   width?: number;
   defaultZoom?: number;
-  viewCenter?: [number, number];
+  viewCenter?: GeoPosition;
 }
 
 export enum PopupMode {
@@ -194,7 +195,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     return (
       <Column>
         <Map
-          center={viewCenter}
+          center={[viewCenter.latitude, viewCenter.longitude]}
           maxZoom={maxZoom}
           minZoom={minZoom}
           zoom={defaultZoom}
@@ -218,7 +219,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
   }
 }
 
-const defaultViewCenter: [number, number] = [56.142226, 13.402965];
+const defaultViewCenter: GeoPosition = {latitude: 56.142226, longitude: 13.402965, confidence: 1};
 
 const mapStateToProps = ({map}: RootState): StateToProps => {
   return {

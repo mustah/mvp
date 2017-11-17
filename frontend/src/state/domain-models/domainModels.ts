@@ -13,8 +13,8 @@ export enum EndPoints {
 }
 
 export interface GeoPosition {
-  latitude: string;
-  longitude: string;
+  latitude: number;
+  longitude: number;
   confidence: number;
 }
 

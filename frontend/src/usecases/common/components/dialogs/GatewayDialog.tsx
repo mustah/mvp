@@ -141,16 +141,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
 
     // TODO retrieve real location data for the gateway
     const markers: {[key: string]: MapMarker} = {};
-    markers[0] = {
-      status: {id: 0, name: 'OK'},
-      address: {id: '', cityId: '', name: ''},
-      city: {id: '', name: ''},
-      position: {
-        confidence: 1,
-        latitude: '57.505281',
-        longitude: '12.069336',
-      },
-    };
+    markers[0] = gateway;
 
     const checkbox: React.CSSProperties = {
       padding: 0,
@@ -298,7 +289,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               </Table>
             </TabContent>
             <TabContent tab={tabType.map} selectedTab={selectedTab}>
-              <MapContainer height={400} markers={markers} popupMode={PopupMode.none}/>
+              <MapContainer height={400} markers={markers} viewCenter={gateway.position} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>
         </Row>
