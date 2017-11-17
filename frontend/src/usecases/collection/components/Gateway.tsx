@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../../common/components/buttons/ButtonInfoLink';
 import {GatewayDialog} from '../../common/components/dialogs/GatewayDialog';
+import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 
 interface GatewayProps {
-  id: string;
+  gateway: GatewayModel;
 }
 
 interface GatewayState {
@@ -18,13 +19,13 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
   }
 
   render() {
-    const {id} = this.props;
+    const {gateway} = this.props;
     const {displayDialog} = this.state;
 
     return (
       <div>
-        <ButtonInfoLink onClick={this.open} label={id}/>
-        <GatewayDialog displayDialog={displayDialog} close={this.close}/>
+        <ButtonInfoLink onClick={this.open} label={gateway.id}/>
+        <GatewayDialog gateway={gateway} displayDialog={displayDialog} close={this.close}/>
       </div>
     );
   }

@@ -15,6 +15,9 @@ import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import './MapContainer.scss';
+import {isNullOrUndefined} from 'util';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
 
 interface StateToProps {
   map: MapState;
@@ -31,7 +34,7 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: {[key: string]: MapMarker};
+  markers: { [key: string]: MapMarker };
   height?: number;
   width?: number;
   defaultZoom?: number;
@@ -55,7 +58,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       height,
       width,
       defaultZoom = 7,
-      viewCenter= defaultViewCenter,
+      viewCenter = defaultViewCenter,
     } = this.props;
 
     const maxZoom = 18;
@@ -141,15 +144,16 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       }
 
       const {latitude, longitude, confidence} = marker.position;
+
       if (latitude && longitude && confidence >= confidenceThreshold) {
-        leafletMarkers.push(
-          {
+        leafletMarkers.push({
             lat: latitude,
             lng: longitude,
             options: {
               icon: L.icon({
                 iconUrl: tmpIcon,
               }),
+              mapMarker: marker,
             },
             status,
           },
@@ -167,12 +171,24 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     let popup;
 
-    if (popupMode === PopupMode.gateway) {
-      popup = (<GatewayDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
-    } else if (popupMode === PopupMode.meterpoint) {
-      popup = (<MeteringPointDialog displayDialog={map.isClusterDialogOpen} close={toggleClusterDialog}/>);
-    } else {
-      popup = null;
+    if (!isNullOrUndefined(map.selectedMarker) && map.selectedMarker.options) {
+      if (popupMode === PopupMode.gateway) {
+        popup = (
+          <GatewayDialog
+            gateway={map.selectedMarker.options.mapMarker as Gateway}
+            displayDialog={map.isClusterDialogOpen}
+            close={toggleClusterDialog}
+          />
+        );
+      } else if (popupMode === PopupMode.meterpoint) {
+        popup = (
+          <MeteringPointDialog
+            meter={map.selectedMarker.options.mapMarker as Meter}
+            displayDialog={map.isClusterDialogOpen}
+            close={toggleClusterDialog}
+          />
+        );
+      }
     }
 
     return (

@@ -4,11 +4,8 @@ import 'MeteringPointDialog.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {IdNamed} from '../../../../types/Types';
-import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {MapMarker} from '../../../map/mapModels';
 import {ButtonClose} from '../buttons/ButtonClose';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {IconStatus} from '../icons/IconStatus';
 import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Status} from '../status/Status';
@@ -16,14 +13,19 @@ import {NormalizedRows, Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
 import {Tab} from '../tabs/components/Tab';
 import {TabContent} from '../tabs/components/TabContent';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabTopBar} from '../tabs/components/TabTopBar';
+import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
+import {IconStatus} from '../icons/IconStatus';
+import {MapMarker} from '../../../map/mapModels';
 import {tabType} from '../tabs/models/TabsModel';
 import {MainTitle, Subtitle} from '../texts/Titles';
+import {Tabs} from '../tabs/components/Tabs';
+import {TabTopBar} from '../tabs/components/TabTopBar';
+import {TabSettings} from '../tabs/components/TabSettings';
+import {Meter} from '../../../../state/domain-models/meter/meterModels';
+import {TabHeaders} from '../tabs/components/TabHeaders';
 
 interface MeteringPointDialogProps {
+  meter: Meter;
   displayDialog: boolean;
   close: any;
 }
@@ -46,6 +48,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
     const {displayDialog} = this.props;
     const {selectedTab} = this.state;
     const {close} = this.props;
+    const {meter} = this.props;
 
     const renderStatusCell = (status: IdNamed) => <Status {...status}/>;
     const renderQuantity = (item: any) => item.quantity;
@@ -205,7 +208,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('meter id')}
                 </Row>
                 <Row>
-                  12000747
+                  {meter.id}
                 </Row>
               </Column>
               <Column>
@@ -213,7 +216,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('product model')}
                 </Row>
                 <Row>
-                  KAM
+                  {meter.manufacturer}
                 </Row>
               </Column>
               <Column>
@@ -222,7 +225,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                 </Row>
                 <Row>
                   <IconDistrictHeating color={'#2b6ea3'}/>
-                  Värme
+                  {meter.medium}
                 </Row>
               </Column>
               <Column className="address">
@@ -230,7 +233,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('city')}
                 </Row>
                 <Row>
-                  Perstorp
+                  {meter.city.name}
                 </Row>
               </Column>
               <Column className="Column-center">
@@ -238,7 +241,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('address')}
                 </Row>
                 <Row>
-                  Duvstigen 5
+                  {meter.address.name}
                 </Row>
               </Column>
             </Row>

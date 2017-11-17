@@ -21,10 +21,12 @@ import {TabSettings} from '../tabs/components/TabSettings';
 import {TabTopBar} from '../tabs/components/TabTopBar';
 import {tabType} from '../tabs/models/TabsModel';
 import {MainTitle} from '../texts/Titles';
+import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
   close: OnClick;
+  gateway: Gateway;
 }
 
 interface GatewayDialogState {
@@ -45,6 +47,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     const {selectedTab} = this.state;
     const {displayDialog} = this.props;
     const {close} = this.props;
+    const {gateway} = this.props;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
     const renderMoid = (item: Meter) => item.moid;
@@ -184,7 +187,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('city')}
                 </Row>
                 <Row>
-                  Perstorp
+                  {gateway.city.name}
                 </Row>
               </Column>
               <Column>
@@ -192,7 +195,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('address')}
                 </Row>
                 <Row>
-                  Duvstigen 5
+                  {gateway.address.name}
                 </Row>
               </Column>
             </Row>
@@ -209,7 +212,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('gateway id')}
                 </Row>
                 <Row>
-                  12000747
+                  {gateway.id}
                 </Row>
               </Column>
               <Column>
@@ -217,7 +220,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('product model')}
                 </Row>
                 <Row>
-                  CMi2110
+                  {gateway.productModel}
                 </Row>
               </Column>
             </Row>
@@ -226,7 +229,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                 <Row>
                   {translate('collection')}
                 </Row>
-                <Status id={0} name="OK"/>
+                <Status id={gateway.status.id} name={gateway.status.name}/>
               </Column>
               <Column>
                 <Row>
@@ -234,6 +237,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                 </Row>
                 <Row>
                   24h
+                  {/* TODO gateway model is missing this value*/}
                 </Row>
               </Column>
               <Column>
@@ -242,6 +246,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                 </Row>
                 <Row>
                   Nej
+                  {/* TODO use flags {gateway.flags}*/}
                 </Row>
               </Column>
             </Row>

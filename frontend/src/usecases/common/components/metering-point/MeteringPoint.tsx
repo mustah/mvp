@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {MeteringPointDialog} from '../dialogs/MeteringPointDialog';
-import {uuid} from '../../../../types/Types';
+import {Meter} from '../../../../state/domain-models/meter/meterModels';
 
 export interface MeteringPointProps {
-  id: uuid;
+  meter: Meter;
 }
 
 interface MeteringPointState {
@@ -19,13 +19,13 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
   }
 
   render() {
-    const {id} = this.props;
+    const {meter} = this.props;
     const {displayDialog} = this.state;
 
     return (
       <div>
-        <ButtonInfoLink onClick={this.open} label={id}/>
-        <MeteringPointDialog displayDialog={displayDialog} close={this.close}/>
+        <ButtonInfoLink onClick={this.open} label={meter.id}/>
+        <MeteringPointDialog meter={meter} displayDialog={displayDialog} close={this.close}/>
       </div>
     );
   }

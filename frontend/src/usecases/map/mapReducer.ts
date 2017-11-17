@@ -1,13 +1,13 @@
-import {Marker} from 'leaflet';
 import {AnyAction} from 'redux';
 import {
   OPEN_CLUSTER_DIALOG,
   TOGGLE_CLUSTER_DIALOG,
 } from './mapActions';
+import {ExtendedMarker} from './mapModels';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
-  selectedMarker?: Marker;
+  selectedMarker?: ExtendedMarker;
 }
 
 export const initialState: MapState = {
