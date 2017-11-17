@@ -3,34 +3,40 @@ import * as React from 'react';
 import {OnClick} from '../../../../types/Types';
 import {menuItemInnerDivStyle} from '../../../app/themes';
 import {PopoverMenu} from '../popover/PopoverMenu';
+import Divider = __MaterialUI.Divider;
 
-export interface CallbackAction {
+interface CallbackAction {
   name: string;
   onClick: OnClick;
 }
 
 interface Props {
-  actions: CallbackAction[];
+  menuItems: MenuItems;
   className?: string;
 }
 
-export const ActionsDropdown = (props: Props) => {
-  const {actions, className} = props;
+export type MenuItems = Array<React.ReactElement<MenuItem | Divider>>;
 
-  const renderActions = (action: CallbackAction, index: number) => (
+export const menuItem = (callbackAction: CallbackAction): React.ReactElement<MenuItem> => {
+  const {name, onClick} = callbackAction;
+  return (
     <MenuItem
-      key={index}
+      key={name}
       style={menuItemInnerDivStyle}
       className="first-uppercase"
-      onClick={action.onClick}
+      onClick={onClick}
     >
-      {action.name}
+      {name}
     </MenuItem>
   );
+};
+
+export const ActionsDropdown = (props: Props) => {
+  const {menuItems, className} = props;
 
   return (
     <PopoverMenu className={className}>
-      {actions.map(renderActions)}
+      {menuItems}
     </PopoverMenu>
   );
 };
