@@ -8,9 +8,9 @@ const toggleEntry = createPayloadAction<string, uuid[]>(SELECTION_TREE_TOGGLE_EN
 
 const filterOutId = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
 
-export const selectionTreeToggleEntry = (id: uuid) => (dispatch, getState: () => RootState): void => {
+export const selectionTreeExpandToggle = (id: uuid) => (dispatch, getState: () => RootState): void => {
   const {openListItems} = getState().ui.selectionTree;
   const idRemovedFromOpenListItems = filterOutId(openListItems, id);
   const idWasRemoved = openListItems.length > idRemovedFromOpenListItems.length;
-  idWasRemoved ? toggleEntry(idRemovedFromOpenListItems) : toggleEntry([...openListItems, id]);
+  idWasRemoved ? dispatch(toggleEntry(idRemovedFromOpenListItems)) : dispatch(toggleEntry([...openListItems, id]));
 };

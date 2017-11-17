@@ -3,14 +3,20 @@ import {createSelector} from 'reselect';
 import {IdNamed, uuid} from '../../../types/Types';
 import {parameterNames} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
-import {Meter, MetersState, SelectionTreeItem, SelectionTreeItemProps, SelectionTreeItemsProps} from './meterModels';
+import {
+  Meter,
+  MetersState,
+  SelectionTreeData,
+  SelectionTreeItem,
+  SelectionTreeItemProps,
+  SelectionTreeItemsProps,
+} from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
 export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities;
 
-// TODO: Add correct type to result.
-export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, any>(
+export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionTreeData>(
   getResultDomainModels,
   getMeterEntities,
   (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {

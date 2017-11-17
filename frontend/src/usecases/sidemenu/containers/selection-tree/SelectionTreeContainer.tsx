@@ -5,32 +5,41 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {uuid} from '../../../../types/Types';
-import {listItemStyle, listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
-import {SelectionTreeModel} from '../../../../state/domain-models/meter/meterModels';
-import './SelectionTreeContainer.scss';
-import ListItemProps = __MaterialUI.List.ListItemProps;
 import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
-import {selectionTreeToggleEntry} from '../../../../state/ui/selection-tree/selectionTreeActions';
+import {selectionTreeExpandToggle} from '../../../../state/ui/selection-tree/selectionTreeActions';
+import {uuid} from '../../../../types/Types';
+import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
+import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import './SelectionTreeContainer.scss';
+import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
+import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 
 interface SelectionTreeProps {
   topLevel: string;
 }
 
 interface StateToProps {
-  selectionTree: any;
+  selectionTree: SelectionTreeData;
+  openListItems: Set<uuid>;
 }
 
 interface DispatchToProps {
-  selectionTreeToggleEntry: (id: uuid) => void;
+  toggleExpand: (id: uuid) => void;
 }
 
 const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProps) => {
-  if (props.selectionTree.result.length < 1) {
+  if (Object.keys(props.selectionTree.result).length === 0) {
     return null;
   }
-  const {topLevel, selectionTree} = props;
-  const renderSelectionOverview = (id: uuid) => renderSelectionTree(id, selectionTree, topLevel);
+  const {topLevel, selectionTree, toggleExpand, openListItems} = props;
+  const renderSelectionOverview = (id: uuid) => renderSelectionTree({
+    id,
+    data: selectionTree,
+    level: topLevel,
+    toggleExpand,
+    openListItems,
+  });
+
   const nestedItems = selectionTree.result[topLevel].sort().map(renderSelectionOverview);
 
   return (
@@ -48,61 +57,16 @@ const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProp
   );
 };
 
-const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({domainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
   return {
     selectionTree: getSelectionTree(meters),
+    openListItems: getOpenListItems(selectionTree),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  selectionTreeToggleEntry,
+  toggleExpand: selectionTreeExpandToggle,
 }, dispatch);
 
 export const SelectionTreeContainer =
   connect<StateToProps, DispatchToProps, SelectionTreeProps>(mapStateToProps, mapDispatchToProps)(SelectionTree);
-
-const renderSelectionTree = (id: uuid, data: SelectionTreeModel, level: string) => {
-  const entity = data.entities[level][id];
-  const nextLevel = entity.childNodes.type;
-  const selectable = entity.selectable;
-
-  const renderChildNodes = (treeItem: uuid) => renderSelectionTree(treeItem, data, nextLevel);
-  const nestedItems = entity.childNodes.ids.sort().map(renderChildNodes);
-
-  return (
-    <SelectableListItem
-      className="TreeListItem"
-      primaryText={entity.name}
-      key={id}
-      innerDivStyle={sideBarStyles.padding}
-      initiallyOpen={false}
-      nestedItems={nestedItems}
-      nestedListStyle={nestedListItemStyle}
-      selectable={selectable}
-    />
-  );
-};
-
-class SelectableListItem extends React.Component<ListItemProps & {selectable: boolean}, {selected: boolean}> {
-
-  state = {selected: false};
-
-  render() {
-    const {selectable, ...ListItemProps} = this.props;
-    const selectableStyle: React.CSSProperties = selectable ? {} : sideBarStyles.notSelectable;
-    const selectedStyle: React.CSSProperties = this.state.selected ? sideBarStyles.selected : selectableStyle;
-    return (
-      <ListItem
-        {...ListItemProps}
-        style={{...listItemStyle, ...selectedStyle}}
-        hoverColor={sideBarStyles.onHover.color}
-        onClick={selectable ? this.onClick : () => null}
-      />
-    );
-  }
-
-  onClick = (): void => {
-    this.setState((prevState => ({selected: !prevState.selected})));
-  }
-
-}
