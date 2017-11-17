@@ -84,7 +84,7 @@ msgid "meter"
 msgstr "mätare"
 
 msgid "status log"
-msgstr "status logg"
+msgstr "statuslogg"
 
 msgid "manufacturer"
 msgstr "tillverkare"
