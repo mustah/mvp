@@ -90,6 +90,7 @@ describe('searchReducer', () => {
           'kub',
         ],
         manufacturers: [],
+        productModels: [],
       },
     });
   });

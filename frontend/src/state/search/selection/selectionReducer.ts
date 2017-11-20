@@ -22,6 +22,7 @@ export const initialState: SelectionState = {
     statuses: [],
     alarms: [],
     manufacturers: [],
+    productModels: [],
     period: Period.latest,
   },
 };

@@ -46,6 +46,7 @@ const selections = {
   ],
   alarms: [],
   manufacturers: [],
+  productModels: [],
 };
 
 const meters = [

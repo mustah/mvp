@@ -221,7 +221,15 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const r = {
     meters: [],
     gateways: [],
-    selections: {meteringPoints: [], statuses: [], cities: [], addresses: [], alarms: [], manufacturers: []},
+    selections: {
+      meteringPoints: [],
+      statuses: [],
+      cities: [],
+      addresses: [],
+      alarms: [],
+      manufacturers: [],
+      productModels: [],
+    },
   };
   let geocodeData = {};
   let limiter;
@@ -243,6 +251,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
   const statuses = new Set();
   const alarms = new Set();
   const manufacturers = new Set();
+  const productModels = new Set();
 
   const promises = glob.sync(path).map((seedFile) => {
 
@@ -316,6 +325,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         address,
         city,
         flags: row.meter_flags,
+        productModel: row.gateway_product_model,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: row.meter_status,
@@ -347,6 +357,10 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       if (!manufacturers.has(row.meter_manufacturer)) {
         r.selections.manufacturers.push({id: row.meter_manufacturer, name: row.meter_manufacturer});
         manufacturers.add(row.meter_manufacturer);
+      }
+      if (!productModels.has(row.gateway_product_model)) {
+        r.selections.productModels.push({id: row.gateway_product_model, name: row.gateway_product_model});
+        productModels.add(row.gateway_product_model);
       }
     }));
   });

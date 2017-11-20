@@ -1,15 +1,14 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {SelectionEntity} from '../../../domain-models/domainModels';
+import {DomainModelsState, SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
   alarms,
   cities,
-  DomainModelsState,
   gateways,
-  initialDomain, manufacturers, meters,
+  initialDomain, manufacturers, meters, productModels,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
@@ -41,6 +40,7 @@ describe('selectionSelectors', () => {
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
@@ -68,6 +68,7 @@ describe('selectionSelectors', () => {
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
@@ -126,6 +127,7 @@ describe('selectionSelectors', () => {
         gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
         alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };
