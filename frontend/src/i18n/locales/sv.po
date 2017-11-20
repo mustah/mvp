@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-15T16:34:14.274Z\n"
+"POT-Creation-Date: 2017-11-20T09:39:26.556Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,20 +11,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
-msgid "collection"
-msgstr "insamling"
-
-msgid "export to Excel (.csv)"
-msgstr "exportera till Excel (.csv)"
-
-msgid "export to JSON"
-msgstr "exportera till JSON"
-
-msgid "add to report"
-msgstr "lägg till i rapport"
-
 msgid "gateway"
 msgstr "gateway"
+
+msgid "collection"
+msgstr "insamling"
 
 msgid "city"
 msgstr "stad"
@@ -49,6 +40,15 @@ msgstr "lista"
 
 msgid "map"
 msgstr "karta"
+
+msgid "export to Excel (.csv)"
+msgstr "exportera till Excel (.csv)"
+
+msgid "export to JSON"
+msgstr "exportera till JSON"
+
+msgid "add to report"
+msgstr "lägg till i rapport"
 
 msgid "close"
 msgstr "stäng"
@@ -140,9 +140,6 @@ msgstr "allt"
 msgid "of {{count}} point"
 msgstr "av {{count}} punkt"
 
-msgid "show gateways"
-msgstr "visa gateways"
-
 msgid "previous"
 msgstr "föregående"
 
@@ -182,9 +179,6 @@ msgstr "alarm"
 msgid "filter"
 msgstr "filtrera"
 
-msgid "searching"
-msgstr "söker"
-
 msgid "no saved selections"
 msgstr "inga sparade urval"
 
@@ -196,6 +190,12 @@ msgstr "urvalsöversikt"
 
 msgid "metering"
 msgstr "mätning"
+
+msgid "cities"
+msgstr "städer"
+
+msgid "filter on status"
+msgstr "filtrera på status"
 
 msgctxt "°plural"
 msgid "of {{count}} point°"
