@@ -176,10 +176,10 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
-        <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
-        <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-        <PieChartSelector heading="Tillverkare" data={manufacturers} colors={colors[1]}/>
-        <PieChartSelector heading="Medium" data={media} colors={colors[0]}/>
+        <PieChartSelector heading={translate('flagged for action')} data={flagged} colors={colors[1]}/>
+        <PieChartSelector heading={translate('cities')} data={cities} colors={colors[0]} onClick={selectCity}/>
+        <PieChartSelector heading={translate('manufacturer')} data={manufacturers} colors={colors[1]}/>
+        <PieChartSelector heading={translate('medium')} data={media} colors={colors[0]}/>
       </Row>
     ) : null;
 
@@ -192,7 +192,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           <Column className="flex-1"/>
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
-              Filtrera på status:
+              <div className="first-uppercase">{translate('filter on status') + ':'}</div>
               <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {graphTabs}
               </TabOptions>

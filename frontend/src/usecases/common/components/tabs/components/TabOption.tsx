@@ -41,7 +41,7 @@ export const RaisedTabOption = (props: TabOptionProps) => {
   const fgColor = isSelected ? '#fff' : statusColors[id];
 
   const inlineStyle: React.CSSProperties = {
-    'margin-left': 16,
+    marginLeft: 16,
   };
   const labelStyle: React.CSSProperties = {
     color: fgColor,
