@@ -2,9 +2,13 @@ package com.elvaco.mvp.entity.meteringpoint;
 
 import javax.persistence.*;
 
+import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Type;
 
 import lombok.ToString;
+
+import java.util.List;
 
 
 @ToString
@@ -24,5 +28,8 @@ public class MeteringPointEntity {
   @Type(type = "property-collection")
   public PropertyCollection propertyCollection;
 
+  @OneToMany(mappedBy = "meteringPoint")
+  @JsonManagedReference
+  public List<PhysicalMeterEntity> physicalMeters;
   public MeteringPointEntity() {}
 }

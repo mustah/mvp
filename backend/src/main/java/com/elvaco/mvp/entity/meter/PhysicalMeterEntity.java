@@ -1,6 +1,8 @@
 package com.elvaco.mvp.entity.meter;
 
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -20,6 +22,14 @@ public class PhysicalMeterEntity {
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
+
+  @ManyToOne
+  @JsonBackReference
+  public MeteringPointEntity meteringPoint;
+
+  public void setMeteringPoint(MeteringPointEntity meteringPoint) {
+    this.meteringPoint = meteringPoint;
+  }
 
   public PhysicalMeterEntity() {
   }
