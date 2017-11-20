@@ -7,7 +7,7 @@ import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import {WidgetModel} from './models/widgetModels';
-import {renderIndicator} from './SelectableIndicatorWidget';
+import {renderIndicatorIcon} from './SelectableIndicatorWidget';
 import classNames = require('classnames');
 
 interface Props {
@@ -30,7 +30,7 @@ export const IndicatorWidget = (props: Props) => {
           <Normal className="Indicator-unit">%</Normal>
         </Row>
         <Row className="Indicator-subtitle Row-center">
-          {renderIndicator(type, {color: colors.white})}
+          {renderIndicatorIcon(type, {color: colors.white})}
           <Column>
             <Normal>{pending} / {pendingPercentage}%</Normal>
             <Normal>{translate('of {{count}} metering point', {count: total})}</Normal>
