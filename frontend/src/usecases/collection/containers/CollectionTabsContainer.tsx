@@ -98,7 +98,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: [], cities: [], productModels: []});
+  const categories = () => ({flagged: [], cities: [], productModels: [], status: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
@@ -118,6 +118,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
     incProp(liveData.all.cities, gateway.city.name);
     incProp(liveData.all.productModels, gateway.productModel);
+    incProp(liveData.all.status, gateway.status.name);
 
     incProp(counts, normalizedStatus);
 
@@ -132,9 +133,12 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       incProp(liveData[normalizedStatus].flagged, 'Ingen');
     }
     incProp(liveData[normalizedStatus].productModels, gateway.productModel);
+    incProp(liveData[normalizedStatus].status, gateway.status.name);
   });
 
   // ... then normalize the current tab, for the graphs to consume
+  const status: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].status).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
   const flagged: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].flagged).map((entry) =>
     ({name: entry[0], value: entry[1]}));
   const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
@@ -172,6 +176,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
+        <PieChartSelector heading="Status" data={status} colors={colors[0]}/>
         <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
         <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
         <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
