@@ -1,26 +1,26 @@
 import {Checkbox} from 'material-ui';
 import Dialog from 'material-ui/Dialog';
-import 'MeteringPointDialog.scss';
+import 'MeteringPointDialogContainer.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {ButtonClose} from '../buttons/ButtonClose';
-import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {IconStatus} from '../icons/IconStatus';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Status} from '../status/Status';
-import {NormalizedRows, Table, TableColumn} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {Tab} from '../tabs/components/Tab';
-import {TabContent} from '../tabs/components/TabContent';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabTopBar} from '../tabs/components/TabTopBar';
-import {tabType} from '../tabs/models/TabsModel';
-import {MainTitle, Subtitle} from '../texts/Titles';
+import {ButtonClose} from '../../components/buttons/ButtonClose';
+import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
+import {IconStatus} from '../../components/icons/IconStatus';
+import {Column} from '../../components/layouts/column/Column';
+import {Row} from '../../components/layouts/row/Row';
+import {Status} from '../../components/status/Status';
+import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {TableHead} from '../../components/table/TableHead';
+import {Tab} from '../../components/tabs/components/Tab';
+import {TabContent} from '../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../components/tabs/components/TabHeaders';
+import {Tabs} from '../../components/tabs/components/Tabs';
+import {TabSettings} from '../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {tabType} from '../../components/tabs/models/TabsModel';
+import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
 import {getResultDomainModels} from '../../../../state/domain-models/domainModelsSelectors';
 import {getGatewayEntities} from '../../../../state/domain-models/gateway/gatewaySelectors';
@@ -42,7 +42,7 @@ interface MeteringPointDialogState {
   selectedTab: tabType;
 }
 
-export class MeteringPointDialog extends React.Component < MeteringPointDialogProps, MeteringPointDialogState> {
+class MeteringPointDialogContainer extends React.Component < MeteringPointDialogProps, MeteringPointDialogState> {
   constructor(props) {
     super(props);
 
@@ -410,4 +410,4 @@ const mapStateToProps = ({domainModels: {gateways}}: RootState) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeteringPointDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(MeteringPointDialogContainer);
