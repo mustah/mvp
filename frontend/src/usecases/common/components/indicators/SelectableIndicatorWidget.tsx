@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {Indicator} from '../../../report/models/reportModels';
 import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
@@ -12,13 +13,12 @@ import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {IndicatorType} from './models/widgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
-import {Indicator} from '../../../report/models/reportModels';
 
 interface IndicatorIcon {
   [type: string]: React.ReactElement<SvgIconProps>;
 }
 
-export const indicatorIconFor: IndicatorIcon = {
+const indicatorIconFor: IndicatorIcon = {
   [IndicatorType.collection]: <IconCollection className="Indicator-icon" color="black"/>,
   [IndicatorType.measurementQuality]: <IconValidation className="Indicator-icon" color="black"/>,
   [IndicatorType.current]: <IconCurrent className="Indicator-icon" color="black"/>,
@@ -27,6 +27,10 @@ export const indicatorIconFor: IndicatorIcon = {
   [IndicatorType.districtHeating]: <IconDistrictHeating className="Indicator-icon"/>,
   [IndicatorType.temperatureInside]: <IconTemperature className="Indicator-icon" color="black"/>,
   [IndicatorType.temperatureOutside]: <IconTemperature className="Indicator-icon" color="black"/>,
+};
+
+export const renderIndicator = (type: IndicatorType, props?: SvgIconProps): React.ReactElement<SvgIconProps> => {
+  return React.cloneElement(indicatorIconFor[type], props);
 };
 
 interface IndicatorProps {
@@ -53,7 +57,7 @@ export const SelectableIndicatorWidget = (props: IndicatorProps) => {
             <Normal className="Indicator-unit">{unit}</Normal>
           </Row>
           <Row className="Indicator-subtitle Row-center">
-            {indicatorIconFor[indicator.type]}
+            {renderIndicator(indicator.type)}
             <Bold>{subtitle}</Bold>
           </Row>
         </Column>
