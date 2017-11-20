@@ -22,7 +22,7 @@ import {DashboardState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
-import {MapWidgets} from '../components/widgets/mapWidgets';
+import {MapWidgets} from '../components/widgets/MapWidgets';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   dashboard: DashboardState;
