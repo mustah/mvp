@@ -14,12 +14,5 @@ public abstract class MeteringPointBaseRepository extends SimpleJpaRepository<Me
     super(MeteringPointEntity.class, entityManager);
     this.entityManager = entityManager;
   }
-
-  @Override
-  public MeteringPointEntity findByMoid(String moid) {
-    return entityManager
-      .createQuery("FROM MeteringPointEntity WHERE moid = :moid", getDomainClass())
-      .setParameter("moid", moid)
-      .getSingleResult();
-  }
 }
+

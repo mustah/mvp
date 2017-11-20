@@ -14,9 +14,10 @@ create table if not exists organisation (
 	name varchar(255)
 );
 
-create table if not exists logical_meter (
-	uuid uuid primary key default (uuid_generate_v4()),
-	meter_definition bigserial references meter_definition
+create table if not exists metering_point (
+	id bigserial primary key,
+	property_collection jsonb
+	-- meter_definition_id bigserial references meter_definition
 );
 
 create table if not exists physical_meter (
@@ -24,7 +25,7 @@ create table if not exists physical_meter (
 	organisation_id bigserial references organisation,
 	identity varchar(255),
 	medium varchar(255),
-	logical_meter_id uuid references logical_meter,
+	metering_point_id bigserial references metering_point,
 	unique (organisation_id, identity)
 );
 
