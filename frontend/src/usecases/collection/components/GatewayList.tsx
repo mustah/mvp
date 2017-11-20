@@ -7,6 +7,7 @@ import {Table, TableColumn} from '../../common/components/table/Table';
 import {TableHead} from '../../common/components/table/TableHead';
 import {ListProps} from '../../common/components/tabs/models/TabsModel';
 import {Gateway} from './Gateway';
+import {Separator} from '../../common/components/separators/Separator';
 
 export const GatewayList = (props: ListProps) => {
   const {data} = props;
@@ -18,7 +19,7 @@ export const GatewayList = (props: ListProps) => {
   const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
   const renderActionDropdown = (gateway: GatewayModel) =>
     <ListActionsDropdown item={{id: gateway.id, name: gateway.productModel}}/>;
-  const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged;
+  const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged || <Separator/>;
   const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
 
   return (
