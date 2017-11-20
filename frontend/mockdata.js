@@ -199,8 +199,8 @@ const parseMeasurementSeedData = (path) => {
   return {measurements, statusChanges};
 };
 
-const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGeocoding: false, statusChanges: {}}) => {
-  const {geocodeCacheFile, doGeocoding, statusChanges} = geocodeOptions;
+const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeocoding: false, statusChanges: {}}) => {
+  const {geocodeCacheFile, doGeocoding, statusChanges} = seedOptions;
   const r = {
     meters: [],
     gateways: [],
@@ -279,11 +279,10 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
       const city = {id: cityId, name: row.city};
       const address = {id: addressId, name: row.address, cityId};
 
-      let gatewayStatusChanged = 'N/A';
-      let meterStatusChanged = 'N/A';
+      let statusChanged;
 
       if (statusChanges.hasOwnProperty(row.meter_id)) {
-        gatewayStatusChanged = meterStatusChanged = statusChanges[row.meter_id];
+        statusChanged = statusChanges[row.meter_id];
       }
 
       r.gateways.push({
@@ -297,7 +296,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         ip: nullOr(row.ip),
         port: nullOr(row.port),
         status: row.gateway_status,
-        statusChanged: gatewayStatusChanged,
+        statusChanged,
         meterIds: [row.meter_id],
         position: objPosition,
       });
@@ -312,7 +311,7 @@ const parseMeterSeedData = (path, geocodeOptions = {geocodeCacheFile: null, doGe
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: row.meter_status,
-        statusChanged: meterStatusChanged,
+        statusChanged,
         gatewayId: row.gateway_id,
         position: objPosition,
         alarm,

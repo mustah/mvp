@@ -11,7 +11,7 @@ export interface Meter extends MapMarker {
   medium: string;
   manufacturer: string;
   gatewayId: string;
-  statusChanged: string;
+  statusChanged?: string;
   date?: string;
 }
 

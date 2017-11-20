@@ -8,7 +8,7 @@ export interface Gateway extends MapMarker {
   flags: Flag[];
   productModel: string;
   telephoneNo: string;
-  statusChanged: string;
+  statusChanged?: string;
   ip: string | null;
   port: string | null;
   meterIds: string[];

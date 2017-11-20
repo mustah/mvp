@@ -2,6 +2,7 @@ import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
+import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
@@ -19,7 +20,7 @@ export const MeterList = (props: ListProps) => {
   const renderActionDropdown = (meter: Meter) => <ListActionsDropdown item={{id: meter.id, name: meter.manufacturer}}/>;
   const renderGatewayId = (meter: Meter) => meter.gatewayId;
   const renderManufacturer = (meter: Meter) => meter.manufacturer;
-  const renderStatusChanged = (meter: Meter) => meter.statusChanged;
+  const renderStatusChanged = (meter: Meter) => meter.statusChanged || <Separator/>;
   const renderMedium = (meter: Meter) => meter.medium;
 
   return (
