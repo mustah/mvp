@@ -7,6 +7,7 @@ const parameterNames = {
   statuses: 'status',
   alarms: 'alarm',
   manufacturers: 'manufacturer',
+  productModels: 'productModel',
   period: 'period',
 };
 

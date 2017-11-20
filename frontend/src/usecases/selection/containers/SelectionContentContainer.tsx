@@ -16,7 +16,7 @@ import {
   getAddresses,
   getAlarms,
   getCities,
-  getCitiesSelection, getManufacturers,
+  getCitiesSelection, getManufacturers, getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
@@ -33,6 +33,7 @@ interface StateToProps {
   addresses: SelectionListItem[];
   alarms: SelectionListItem[];
   manufacturers: SelectionListItem[];
+  productModels: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -41,18 +42,21 @@ interface DispatchToProps {
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {toggleSelection, cities, addresses, alarms, manufacturers, citiesSelection} = props;
+  const {toggleSelection, cities, addresses, alarms, manufacturers, productModels, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
   const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.alarms});
   const selectManufacturer = (selection: IdNamed) =>
     toggleSelection({...selection, parameter: parameterNames.manufacturers});
+  const selectProductModel = (selection: IdNamed) =>
+    toggleSelection({...selection, parameter: parameterNames.productModels});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
   const alarmSelectionText = translate('alarm') + ': ';
   const manufacturerSelectionText = translate('manufacturer') + ': ';
+  const productModelSelectionText = translate('product model') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -81,6 +85,11 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           selectionText={manufacturerSelectionText}
           select={selectManufacturer}
         />
+        <SimpleDropdownSelector
+          list={productModels}
+          selectionText={productModelSelectionText}
+          select={selectProductModel}
+        />
         <SelectionQuantity/>
       </Row>
 
@@ -103,6 +112,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     addresses: getAddresses(lookupState),
     alarms: getAlarms(lookupState),
     manufacturers: getManufacturers(lookupState),
+    productModels: getProductModels(lookupState),
   };
 };
 
