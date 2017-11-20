@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
-import {MeteringPointDialog} from '../dialogs/MeteringPointDialog';
+import MeteringPointDialog from '../dialogs/MeteringPointDialog';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 
 export interface MeteringPointProps {
