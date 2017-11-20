@@ -26,7 +26,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
   constructor() {
     super();
     this.state = {
-      selectedTabOption: 'energy',
+      selectedTabOption: 'power',
     };
   }
 
@@ -62,14 +62,6 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
       asdf2: 'Mätare 67190406',
     };
 
-    /*
-    const onChangeTab = (tab: tabType) => {
-      changeTab({
-        useCase: tabType.graph,
-        tab,
-      });
-    };
-    */
     const onChangeTab = (tab: tabType) => void(0);
 
     const onChangeTabOption = (tab: tabType, option: string): void => {
