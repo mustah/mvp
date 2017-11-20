@@ -33,7 +33,7 @@ export const IndicatorWidget = (props: Props) => {
           {renderIndicator(type, {color: colors.white})}
           <Column>
             <Normal>{pending} / {pendingPercentage}%</Normal>
-            <Normal>{translate('of {{count}} point', {count: total})}</Normal>
+            <Normal>{translate('of {{count}} metering point', {count: total})}</Normal>
           </Column>
         </Row>
       </ColumnCenter>

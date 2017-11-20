@@ -137,8 +137,8 @@ msgstr "latest SNR"
 msgid "all"
 msgstr "all"
 
-msgid "of {{count}} point"
-msgstr "of {{count}} point"
+msgid "of {{count}} metering point"
+msgstr "of {{count}} metering point"
 
 msgid "previous"
 msgstr "previous"
@@ -198,8 +198,8 @@ msgid "filter on status"
 msgstr "filter on status"
 
 msgctxt "°plural"
-msgid "of {{count}} point°"
-msgstr "of {{count}} points"
+msgid "of {{count}} metering point°"
+msgstr "of {{count}} metering points"
 
 msgctxt "°plural"
 msgid "city°"
