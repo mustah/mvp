@@ -4,7 +4,7 @@ import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {
   validation: {
-    selectedTab: tabType.list,
+    selectedTab: tabType.graph,
     tabs: {
       [tabType.graph]: {
         selectedOption: 'all',
@@ -23,7 +23,7 @@ const tabsInitialState: TabsState = {
     },
   },
   collection: {
-    selectedTab: tabType.list,
+    selectedTab: tabType.graph,
     tabs: {
       [tabType.graph]: {
         selectedOption: 'all',
