@@ -31,7 +31,7 @@ public class MeasurementController {
   }
 
   @RequestMapping("")
-  public Page<MeasurementDTO> measurements(@Param("quantity") String quantity, @Param("as_unit") String asUnit, @Param("scale") String scale, Pageable pageable) {
+  public Page<MeasurementDTO> measurements(@Param("quantity") String quantity, @Param("scale") String scale, Pageable pageable) {
     Page<MeasurementEntity> entityPage = null;
     if (quantity != null) {
       if (scale != null) {
