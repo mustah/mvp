@@ -180,7 +180,7 @@ msgid "selection"
 msgstr "urval"
 
 msgid "alarm"
-msgstr "alarm"
+msgstr "larm"
 
 msgid "filter"
 msgstr "filtrera"
