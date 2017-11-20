@@ -98,7 +98,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: []});
+  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
@@ -119,6 +119,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(liveData.all.cities, meter.city.name);
     incProp(liveData.all.manufacturers, meter.manufacturer);
     incProp(liveData.all.media, meter.medium);
+    incProp(liveData.all.status, meter.status.name);
 
     incProp(counts, normalizedStatus);
 
@@ -134,9 +135,12 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     }
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
     incProp(liveData[normalizedStatus].media, meter.medium);
+    incProp(liveData[normalizedStatus].status, meter.status.name);
   });
 
   // ... then normalize the current tab, for the graphs to consume
+  const status: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].status).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
   const flagged: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].flagged).map((entry) =>
     ({name: entry[0], value: entry[1]}));
   const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
@@ -176,6 +180,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
+        <PieChartSelector heading={translate('status')} data={status} colors={colors[0]}/>
         <PieChartSelector heading={translate('flagged for action')} data={flagged} colors={colors[1]}/>
         <PieChartSelector heading={translate('cities')} data={cities} colors={colors[0]} onClick={selectCity}/>
         <PieChartSelector heading={translate('manufacturer')} data={manufacturers} colors={colors[1]}/>
