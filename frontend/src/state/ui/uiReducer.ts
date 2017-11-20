@@ -5,7 +5,8 @@ import {tabs} from './tabs/tabsReducer';
 import {indicator, IndicatorState} from './indicator/indicatorReducer';
 import {PaginationState} from './pagination/paginationModels';
 import {pagination} from './pagination/paginationReducer';
-import {selectionTree, SelectionTreeState} from './selection-tree/selectionTreeReducer';
+import {selectionTree} from './selection-tree/selectionTreeReducer';
+import {SelectionTreeState} from './selection-tree/selectionTreeModels';
 
 export interface UiState {
   tabs: TabsState;

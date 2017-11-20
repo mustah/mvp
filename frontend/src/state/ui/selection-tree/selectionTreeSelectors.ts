@@ -1,6 +1,6 @@
-import {SelectionTreeState} from './selectionTreeReducer';
-import {uuid} from '../../../types/Types';
 import {createSelector} from 'reselect';
+import {uuid} from '../../../types/Types';
+import {SelectionTreeState} from './selectionTreeModels';
 
 const getOpenItems = (state: SelectionTreeState): uuid[] => state.openListItems;
 

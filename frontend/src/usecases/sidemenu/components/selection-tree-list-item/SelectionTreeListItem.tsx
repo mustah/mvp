@@ -47,11 +47,12 @@ export const renderSelectionTree = (props: RenderSelectionTreeFunctionProps) => 
 
   const onToggleExpand = () => toggleExpand(entity.id);
   const onToggleSelect = () => toggleSelect(entity.id);
+  const PrimaryText = <div style={listItemStyle.textStyle}>{entity.name}</div>;
 
   return (
     <SelectableListItem
       className="TreeListItem"
-      primaryText={entity.name}
+      primaryText={PrimaryText}
       key={id}
       innerDivStyle={sideBarStyles.padding}
       initiallyOpen={openListItems.has(entity.id)}

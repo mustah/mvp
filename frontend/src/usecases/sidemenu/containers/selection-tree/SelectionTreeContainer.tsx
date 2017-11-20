@@ -5,16 +5,16 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
+import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
 import {selectionTreeExpandToggle} from '../../../../state/ui/selection-tree/selectionTreeActions';
+import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {uuid} from '../../../../types/Types';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
-import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
-import './SelectionTreeContainer.scss';
-import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
-import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
+import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
+import './SelectionTreeContainer.scss';
 
 interface SelectionTreeProps {
   topLevel: string;
@@ -24,7 +24,6 @@ interface StateToProps {
   selectionTree: SelectionTreeData;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
-
 }
 
 interface DispatchToProps {

@@ -11,9 +11,9 @@ const filterOutId = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel 
 export const selectionTreeExpandToggle = (id: uuid) =>
   (dispatch, getState: () => RootState): void => {
     const {openListItems} = getState().ui.selectionTree;
-    const idRemovedFromOpenListItems = filterOutId(openListItems, id);
-    const idWasRemoved = openListItems.length > idRemovedFromOpenListItems.length;
+    const popIdFromList = filterOutId(openListItems, id);
+    const idWasRemoved = openListItems.length > popIdFromList.length;
     idWasRemoved ?
-      dispatch(toggleEntry(idRemovedFromOpenListItems)) :
+      dispatch(toggleEntry(popIdFromList)) :
       dispatch(toggleEntry([...openListItems, id]));
   };

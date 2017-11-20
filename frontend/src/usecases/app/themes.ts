@@ -77,6 +77,7 @@ export const dividerStyle: React.CSSProperties = {
 
 export const listItemStyle: React.CSSProperties = {
   fontSize: fontSizeNormal,
+  textStyle: {textOverflow: 'ellipsis', width: 150,   whiteSpace: 'nowrap', overflow: 'hidden'},
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {
