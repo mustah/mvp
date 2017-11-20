@@ -24,7 +24,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
 
     return (
       <div>
-        <ButtonInfoLink onClick={this.open} label={meter.id}/>
+        <ButtonInfoLink onClick={this.open} label={meter.facility}/>
         <MeteringPointDialog meter={meter} displayDialog={displayDialog} close={this.close}/>
       </div>
     );

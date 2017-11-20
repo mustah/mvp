@@ -30,11 +30,11 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
     const meters = new Set<uuid>();
 
     metersList.map((meterId: uuid) => {
-      const {city, address} = metersLookup[meterId];
+      const {city, address, facility} = metersLookup[meterId];
       const clusterName = address.name[0];
       const clusterId = city.name + ':' + clusterName;
       const cluster: IdNamed = {id: clusterId, name: clusterName};
-      const meter: IdNamed = {id: meterId as string, name: meterId as string};
+      const meter: IdNamed = {id: meterId as string, name: facility as string};
 
       selectionTreeItems(selectionTree, {
         category: parameterNames.cities,
