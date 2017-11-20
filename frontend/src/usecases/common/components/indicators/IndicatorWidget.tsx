@@ -2,11 +2,12 @@ import 'IndicatorWidget.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Children} from '../../../../types/Types';
+import {colors} from '../../../app/themes';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import {WidgetModel} from './models/widgetModels';
-import {indicatorIconFor} from './SelectableIndicatorWidget';
+import {renderIndicator} from './SelectableIndicatorWidget';
 import classNames = require('classnames');
 
 interface Props {
@@ -29,7 +30,7 @@ export const IndicatorWidget = (props: Props) => {
           <Normal className="Indicator-unit">%</Normal>
         </Row>
         <Row className="Indicator-subtitle Row-center">
-          {indicatorIconFor[type]}
+          {renderIndicator(type, {color: colors.white})}
           <Column>
             <Normal>{pending} / {pendingPercentage}%</Normal>
             <Normal>{translate('of {{count}} point', {count: total})}</Normal>
