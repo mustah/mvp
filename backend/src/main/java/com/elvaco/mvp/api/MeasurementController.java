@@ -49,6 +49,8 @@ public class MeasurementController {
 
   private MeasurementDTO toDTO(MeasurementEntity measurementEntity) {
     MeasurementDTO dto = modelMapper.map(measurementEntity, MeasurementDTO.class);
+    dto.unit = measurementEntity.value.getUnit();
+    dto.value = measurementEntity.value.getValue();
     dto.physicalMeter = entityLinks.linkToSingleResource(measurementEntity.physicalMeter.getClass(), measurementEntity.physicalMeter.id);
     return dto;
   }
