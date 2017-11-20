@@ -17,11 +17,6 @@ public class PhysicalMeterEntity {
   public String identity;
   public String medium;
 
-  /*
-  @ManyToOne
-  public LogicalMeterEntity logicalMeter;
-
-  */
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
