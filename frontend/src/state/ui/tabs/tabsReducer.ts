@@ -4,28 +4,17 @@ import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {
   validation: {
-    selectedTab: tabType.graph,
+    selectedTab: tabType.overview,
     tabs: {
-      [tabType.graph]: {
+      [tabType.overview]: {
         selectedOption: 'all',
-      },
-      [tabType.graph]: {
-        selectedOption: 'all',
-      },
-    },
-  },
-  dashboard: {
-    selectedTab: tabType.map,
-    tabs: {
-      [tabType.map]: {
-        selectedOption: 'area',
       },
     },
   },
   collection: {
-    selectedTab: tabType.graph,
+    selectedTab: tabType.overview,
     tabs: {
-      [tabType.graph]: {
+      [tabType.overview]: {
         selectedOption: 'all',
       },
     },

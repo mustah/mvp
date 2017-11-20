@@ -11,6 +11,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "table"
+msgstr "tabell"
+
+msgid "graph"
+msgstr "graf"
+
 msgid "overview"
 msgstr "översikt"
 

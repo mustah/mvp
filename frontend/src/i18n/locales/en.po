@@ -14,6 +14,12 @@ msgstr ""
 msgid "overview"
 msgstr "overview"
 
+msgid "table"
+msgstr "table"
+
+msgid "graph"
+msgstr "graph"
+
 msgid "gateway"
 msgstr "gateway"
 
