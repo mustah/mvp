@@ -4,7 +4,7 @@ import {uuid} from '../types/Types';
 const parameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
-  statuses: 'status',
+  statuses: 'status.id',
   alarms: 'alarm',
   manufacturers: 'manufacturer',
   productModels: 'productModel',

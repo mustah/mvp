@@ -49,6 +49,7 @@ export interface DomainModelsState {
   alarms: SelectionEntityState;
   manufacturers: SelectionEntityState;
   productModels: SelectionEntityState;
+  statuses: SelectionEntityState;
   gateways: GatewaysState;
   meters: MetersState;
 }

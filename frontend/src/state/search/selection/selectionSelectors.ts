@@ -73,6 +73,7 @@ export const getAddresses = getList(parameterNames.addresses);
 export const getAlarms = getList(parameterNames.alarms);
 export const getManufacturers = getList(parameterNames.manufacturers);
 export const getProductModels = getList(parameterNames.productModels);
+export const getStatuses = getList(parameterNames.statuses);
 
 export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,
