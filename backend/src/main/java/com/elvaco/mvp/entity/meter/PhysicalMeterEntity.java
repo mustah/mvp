@@ -13,7 +13,7 @@ public class PhysicalMeterEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
-  public Long organisation;
+  public Long organisation_id; /*TODO: Materialize as an organisation entity */
   public String identity;
   public String medium;
 
@@ -25,7 +25,7 @@ public class PhysicalMeterEntity {
   }
 
   public PhysicalMeterEntity(Long organisation, String identity, String medium) {
-    this.organisation = organisation;
+    this.organisation_id = organisation;
     this.identity = identity;
     this.medium = medium;
   }

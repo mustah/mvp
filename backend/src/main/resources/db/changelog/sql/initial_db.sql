@@ -21,11 +21,11 @@ create table if not exists logical_meter (
 
 create table if not exists physical_meter (
 	id bigserial primary key,
-	organisation bigserial references organisation,
+	organisation_id bigserial references organisation,
 	identity varchar(255),
 	medium varchar(255),
 	logical_meter_id uuid references logical_meter,
-	unique (organisation, identity)
+	unique (organisation_id, identity)
 );
 
 -- TODO: add gateway
@@ -38,7 +38,6 @@ create table if not exists measurement (
 	value unit, -- if this is a proper measurement, the value will be here
 	unique (physical_meter_id, created, quantity, value)
 );
-
 
 /*create or replace function get_measurements_for_logical_meter(_logical_meter_id logical_meter.uuid%type, _from measurement.created%type, _to measurement.created%type) returns setof measurement as $$
 begin
@@ -66,7 +65,7 @@ begin
 	select physical_meter.id
 	from organisation, physical_meter
 				where
-					physical_meter.organisation = organisation_id
+					physical_meter.organisation_id = organisation_id
 					and physical_meter.identity = _identity
 					and physical_meter.medium = _medium
 					into physical_meter_id;
