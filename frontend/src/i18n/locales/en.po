@@ -90,7 +90,7 @@ msgid "manufacturer"
 msgstr "manufacturer"
 
 msgid "medium"
-msgstr "medium"
+msgstr "type"
 
 msgid "show only changes"
 msgstr "show only changes"
