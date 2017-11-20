@@ -1,11 +1,8 @@
-import {Status} from '../../../types/Types';
+import {Status, uuid} from '../../../types/Types';
 import {IndicatorType} from '../../common/components/indicators/models/widgetModels';
 
 export interface ReportState {
-  title: string;
-  records: ReportState[];
-  error?: string;
-  isFetching: boolean;
+  selectedListItems: uuid[];
 }
 
 export interface Indicator {

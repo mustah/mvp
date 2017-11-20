@@ -1,6 +1,6 @@
 import {uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
-import {NormalizedState, SelectionEntity} from '../domainModels';
+import {DomainModel, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
 export interface Meter extends MapMarker {
@@ -17,7 +17,7 @@ export interface Meter extends MapMarker {
 
 export type MetersState = NormalizedState<Meter>;
 
-export interface SidebarItem {
+export interface SelectionTreeItem {
   id: uuid;
   name: string;
   parent: {type: string; id: uuid};
@@ -25,7 +25,7 @@ export interface SidebarItem {
   childNodes: {type: string; ids: uuid[]};
 }
 
-export interface SidebarItemProps {
+export interface SelectionTreeItemProps {
   unit: SelectionEntity;
   parentType: string;
   parent: SelectionEntity;
@@ -33,7 +33,14 @@ export interface SidebarItemProps {
   childrenType: string;
 }
 
-export interface SidebarItemsProps extends SidebarItemProps {
+export interface SelectionTreeItemsProps extends SelectionTreeItemProps {
   category: string;
   set: Set<uuid>;
+}
+
+export type SelectionTreeModel = DomainModel<SelectionTreeItem>;
+
+export interface SelectionTreeData {
+  result: DomainModel<uuid[]>;
+  entities: SelectionTreeModel;
 }

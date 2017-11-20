@@ -1,23 +1,19 @@
-import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../services/restClient';
+import {uuid} from '../../types/Types';
+import {createPayloadAction} from 'react-redux-typescript';
+import {RootState} from '../../reducers/rootReducer';
 
-export const REPORTS_REQUEST = 'REPORTS_REQUEST';
-export const REPORTS_SUCCESS = 'REPORTS_SUCCESS';
-export const REPORTS_FAILURE = 'REPORTS_FAILURE';
+export const SELECT_ENTRY_TOGGLE = 'SELECT_ENTRY_TOGGLE';
 
-const reportsRequest = createEmptyAction(REPORTS_REQUEST);
-const reportsSuccess = createPayloadAction(REPORTS_SUCCESS);
-const reportsFailure = createPayloadAction(REPORTS_FAILURE);
+const toggleEntry = createPayloadAction<string, uuid[]>(SELECT_ENTRY_TOGGLE);
 
-export const fetchReports = () => {
-  return async (dispatch) => {
-    dispatch(reportsRequest());
-    try {
-      const {data: reports} = await restClient.get('/reports');
-      dispatch(reportsSuccess(reports));
-    } catch (error) {
-      const {response: {data}} = error;
-      dispatch(reportsFailure(data));
-    }
+const filterOutId = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
+
+export const selectEntryToggle = (id: uuid) =>
+  (dispatch, getState: () => RootState): void => {
+    const {selectedListItems} = getState().report;
+    const idRemovedFromOpenListItems = filterOutId(selectedListItems, id);
+    const idWasRemoved = selectedListItems.length > idRemovedFromOpenListItems.length;
+    idWasRemoved ?
+      dispatch(toggleEntry(idRemovedFromOpenListItems)) :
+      dispatch(toggleEntry([...selectedListItems, id]));
   };
-};

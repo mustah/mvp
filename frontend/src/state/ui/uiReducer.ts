@@ -5,12 +5,15 @@ import {tabs} from './tabs/tabsReducer';
 import {indicator, IndicatorState} from './indicator/indicatorReducer';
 import {PaginationState} from './pagination/paginationModels';
 import {pagination} from './pagination/paginationReducer';
+import {selectionTree} from './selection-tree/selectionTreeReducer';
+import {SelectionTreeState} from './selection-tree/selectionTreeModels';
 
 export interface UiState {
   tabs: TabsState;
   indicator: IndicatorState;
   sideMenu: SideMenuState;
   pagination: PaginationState;
+  selectionTree: SelectionTreeState;
 }
 
 export const ui = combineReducers<UiState>({
@@ -18,4 +21,5 @@ export const ui = combineReducers<UiState>({
   indicator,
   sideMenu,
   pagination,
+  selectionTree,
 });

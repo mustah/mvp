@@ -1,19 +1,18 @@
 import {AnyAction} from 'redux';
 import {ReportState} from './models/reportModels';
-import {REPORTS_REQUEST} from './reportActions';
+import {SELECT_ENTRY_TOGGLE} from './reportActions';
 
 const initialState: ReportState = {
-  title: 'ReportState',
-  records: [],
-  isFetching: false,
+  selectedListItems: [],
 };
 
 export const report = (state: ReportState = initialState, action: AnyAction): ReportState => {
+  const {payload} = action;
   switch (action.type) {
-    case REPORTS_REQUEST:
+    case SELECT_ENTRY_TOGGLE:
       return {
         ...state,
-        isFetching: true,
+        selectedListItems: payload,
       };
     default:
       return state;
