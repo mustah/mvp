@@ -47,7 +47,7 @@ public class MeteringPointEntity {
   public String moid;
 
   @Type(type = "property-collection")
-  public MvpPropertyCollection propertyCollection;
+  public PropertyCollection propertyCollection;
 
   public MeteringPointEntity() {}
 

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.repository.MeteringPointRepository;
 
 import static java.util.Arrays.asList;
