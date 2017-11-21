@@ -71,6 +71,17 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void MeasurementUnitScaled() {
+    ResponseEntity<RestResponsePage<MeasurementDTO>> responseEntity = rest().getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDTO.class);
+
+    RestResponsePage<MeasurementDTO> measurementsPage = responseEntity.getBody();
+    Page<MeasurementDTO> page = measurementsPage.pageImpl();
+    List<MeasurementDTO> contents = page.getContent();
+    assertThat(contents.get(0).quantity).isEqualTo("Butter temperature");
+    assertThat(contents.get(0).unit).isEqualTo("K");
+    assertThat(contents.get(0).value).isEqualTo(285.59); // 12.44 Celsius = 285.59 Kelvin
+  }
+  @Test
   public void MeasurementLinksToItsPhysicalMeter() {
     MeasurementDTO measurement = rest().get("/measurements/1", MeasurementDTO.class).getBody();
     assertThat(measurement.physicalMeter.getHref()).isEqualTo(restClient().getBaseURL() + "/physical-meters/1");
