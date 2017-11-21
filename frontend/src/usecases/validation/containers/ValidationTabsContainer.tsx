@@ -73,7 +73,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
 
   // [1] from http://materialuicolors.co/ at level 600
   const colors: [string[]] = [
-    ['#e8a090', '#fce8cc'],
+    ['#E91E63', '#fce8cc', '#3F51B5', '#2196F3', '#009688'],
     ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
@@ -87,11 +87,11 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
       'Inga mätare som är OK',
       'Visar alla mätare som är OK',
     ],
-    warnings: [
+    unknown: [
       'Inga mätare med varningar',
       'Visar alla mätare med varningar',
     ],
-    faults: [
+    alarms: [
       'Inga mätare med fel',
       'Visar alla mätare med fel',
     ],
@@ -104,15 +104,25 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   const liveData = {
     all: categories(),
     ok: categories(),
-    warnings: categories(),
-    faults: categories(),
+    unknown: categories(),
+    alarms: categories(),
+  };
+
+  const statusLabelOf = (id: uuid) => {
+    if (id === 4) {
+      return 'unknown';
+    } else if (id === 3) {
+      return 'alarms';
+    } else {
+      return 'ok';
+    }
   };
 
   // categorize the information into a format that's easy to manipulate ...
-  const counts = {all: 0, ok: 0, warnings: 0, faults: 0};
+  const counts = {all: 0, ok: 0, unknown: 0, alarms: 0};
   selectedEntities.forEach((id) => {
     const meter = entities[id];
-    const normalizedStatus = meter.status.id === 0 ? 'ok' : 'faults';
+    const normalizedStatus = statusLabelOf(meter.status.id);
 
     incProp(counts, 'all');
 
@@ -154,8 +164,8 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   const overviewTabOptions: any[] = [
     {id: 'all', label: 'ALLA'},
     {id: 'ok', label: 'OK'},
-    {id: 'warnings', label: 'VARNINGAR'},
-    {id: 'faults', label: 'FEL'},
+    {id: 'unknown', label: 'OKÄNDA'},
+    {id: 'alarms', label: 'LARM'},
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
