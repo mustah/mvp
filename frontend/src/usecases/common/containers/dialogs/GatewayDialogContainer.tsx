@@ -1,4 +1,4 @@
-import 'usecases/common/containers/dialogs/GatewayDialogContainer.scss';
+import 'GatewayDialogContainer.scss';
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
@@ -22,6 +22,10 @@ import {tabType} from '../../components/tabs/models/TabsModel';
 import {MainTitle} from '../../components/texts/Titles';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
 import {renderFlags} from './dialogHelper';
+import {RootState} from '../../../../reducers/rootReducer';
+import {getMeterEntities} from '../../../../state/domain-models/meter/meterSelectors';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -29,11 +33,15 @@ interface GatewayDialogProps {
   gateway: Gateway;
 }
 
+interface StateToProps {
+  entities: { [key: string]: Meter };
+}
+
 interface GatewayDialogState {
   selectedTab: tabType;
 }
 
-export class GatewayDialogContainer extends React.Component<GatewayDialogProps, GatewayDialogState> {
+class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, GatewayDialogState> {
 
   constructor(props) {
     super(props);
@@ -48,9 +56,10 @@ export class GatewayDialogContainer extends React.Component<GatewayDialogProps, 
     const {displayDialog} = this.props;
     const {close} = this.props;
     const {gateway} = this.props;
+    const {entities} = this.props;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
-    const renderMoid = (item: Meter) => item.moid;
+    const renderFacility = (item: Meter) => item.facility;
     const renderManufacturer = (item: Meter) => item.manufacturer;
     const renderDate = (item: Meter) => item.date;
     const renderMedium = (item: Meter) => item.medium;
@@ -137,6 +146,11 @@ export class GatewayDialogContainer extends React.Component<GatewayDialogProps, 
         },
       },
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
+    };
+
+    const gatewayMeters: NormalizedRows = {
+      byId: entities,
+      allIds: gateway.meterIds,
     };
 
     const checkbox: React.CSSProperties = {
@@ -249,10 +263,10 @@ export class GatewayDialogContainer extends React.Component<GatewayDialogProps, 
               <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
-              <Table data={gatewayData}>
+              <Table data={gatewayMeters}>
                 <TableColumn
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
-                  renderCell={renderMoid}
+                  renderCell={renderFacility}
                 />
                 <TableColumn
                   header={<TableHead>{translate('manufacturer')}</TableHead>}
@@ -292,3 +306,14 @@ export class GatewayDialogContainer extends React.Component<GatewayDialogProps, 
     );
   }
 }
+
+const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+  return {
+    entities: getMeterEntities(meters),
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+
+export const GatewayDialogContainer =
+  connect<StateToProps, {}, GatewayDialogProps>(mapStateToProps, mapDispatchToProps)(GatewayDialog);
