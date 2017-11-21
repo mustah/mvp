@@ -181,7 +181,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     if (!isNullOrUndefined(map.selectedMarker) && map.selectedMarker.options) {
       if (popupMode === PopupMode.gateway) {
-        popup = (
+        popup = map.isClusterDialogOpen && (
           <GatewayDialogContainer
             gateway={map.selectedMarker.options.mapMarker as Gateway}
             displayDialog={map.isClusterDialogOpen}
@@ -189,7 +189,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           />
         );
       } else if (popupMode === PopupMode.meterpoint) {
-        popup = (
+        popup = map.isClusterDialogOpen && (
           <MeteringPointDialogContainer
             meter={map.selectedMarker.options.mapMarker as Meter}
             displayDialog={map.isClusterDialogOpen}
