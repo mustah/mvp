@@ -167,7 +167,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   const selectStatus = (status: string) => {
     const statusId = status === 'OK' ? 0 : 3;
     addSelection({
-      parameter: parameterNames.meterStatuses,
+      parameter: parameterNames.gatewayStatuses,
       id: statusId,
       name: status,
     });

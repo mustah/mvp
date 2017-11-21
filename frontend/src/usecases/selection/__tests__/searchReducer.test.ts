@@ -92,6 +92,7 @@ describe('searchReducer', () => {
         manufacturers: [],
         productModels: [],
         meterStatuses: [],
+        gatewayStatuses: [],
       },
     });
   });

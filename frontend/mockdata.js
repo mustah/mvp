@@ -196,6 +196,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
     selections: {
       meteringPoints: [],
       meterStatuses: [],
+      gatewayStatuses: [],
       cities: [],
       addresses: [],
       alarms: [],
@@ -221,6 +222,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
   const addresses = new Set();
   const meteringPoints = new Set();
   const meterStatuses = new Set();
+  const gatewayStatuses = new Set();
   const alarms = new Set();
   const manufacturers = new Set();
   const productModels = new Set();
@@ -266,6 +268,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       const nullOr = (str) => str === 'NULL' ? null : str;
 
       const meterStatus = decorateMeterStatus(row.gateway_status, row.meter_status);
+      const gatewayStatus = decorateGatewayStatus(row.gateway_status);
 
       row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
       row.meter_flags = meterStatus.id === 0 ? [] : [];
@@ -287,7 +290,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
         port: nullOr(row.port),
-        status: decorateGatewayStatus(row.gateway_status),
+        status: gatewayStatus,
         statusChanged,
         meterIds: [row.meter_id],
         position: objPosition,
@@ -325,6 +328,10 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       if (!meterStatuses.has(meterStatus.id)) {
         r.selections.meterStatuses.push(meterStatus);
         meterStatuses.add(meterStatus.id);
+      }
+      if (!gatewayStatuses.has(gatewayStatus.id)) {
+        r.selections.gatewayStatuses.push(gatewayStatus);
+        gatewayStatuses.add(gatewayStatus.id);
       }
       if (!alarms.has(alarm)) {
         r.selections.alarms.push({id: alarm, name: alarm});

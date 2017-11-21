@@ -9,6 +9,7 @@ export interface SelectedParameters {
   cities?: uuid[];
   addresses?: uuid[];
   meterStatuses?: uuid[];
+  gatewayStatuses?: uuid[];
   alarms?: uuid[];
   manufacturers?: uuid[];
   productModels?: uuid[];
@@ -29,6 +30,7 @@ export enum parameterNames {
   cities = 'cities',
   addresses = 'addresses',
   meterStatuses = 'meterStatuses',
+  gatewayStatuses = 'gatewayStatuses',
   alarms = 'alarms',
   manufacturers = 'manufacturers',
   productModels = 'productModels',

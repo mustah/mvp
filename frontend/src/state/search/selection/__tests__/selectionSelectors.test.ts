@@ -8,7 +8,12 @@ import {
   alarms,
   cities,
   gateways,
-  initialDomain, manufacturers, meters, productModels, meterStatuses,
+  gatewayStatuses,
+  initialDomain,
+  manufacturers,
+  meters,
+  meterStatuses,
+  productModels,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
@@ -42,6 +47,7 @@ describe('selectionSelectors', () => {
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
@@ -71,6 +77,7 @@ describe('selectionSelectors', () => {
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
@@ -133,6 +140,7 @@ describe('selectionSelectors', () => {
         manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };

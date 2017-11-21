@@ -18,8 +18,8 @@ import {
   getCities,
   getCitiesSelection,
   getManufacturers,
+  getMeterStatuses,
   getProductModels,
-  getStatuses,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
@@ -133,7 +133,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     alarms: getAlarms(lookupState),
     manufacturers: getManufacturers(lookupState),
     productModels: getProductModels(lookupState),
-    meterStatuses: getStatuses(lookupState),
+    meterStatuses: getMeterStatuses(lookupState),
   };
 };
 
