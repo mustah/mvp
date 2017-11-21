@@ -106,7 +106,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
                 margin={{top: 40, right: 0, bottom: 0, left: 0}}
               >
                 <XAxis dataKey="name"/>
-                <YAxis label="MWh" yAxisId="left"/>
+                <YAxis label="MW" yAxisId="left"/>
                 <YAxis yAxisId="right" orientation="right"/>
                 <CartesianGrid strokeDasharray="3 3"/>
                 <Tooltip/>
