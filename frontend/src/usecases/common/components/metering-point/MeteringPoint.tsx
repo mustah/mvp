@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
-import {MeteringPointDialog} from '../dialogs/MeteringPointDialog';
+import {MeteringPointDialogContainer} from '../../containers/dialogs/MeteringPointDialogContainer';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 
 export interface MeteringPointProps {
@@ -25,7 +25,7 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
     return (
       <div>
         <ButtonInfoLink onClick={this.open} label={meter.facility}/>
-        <MeteringPointDialog meter={meter} displayDialog={displayDialog} close={this.close}/>
+        <MeteringPointDialogContainer meter={meter} displayDialog={displayDialog} close={this.close}/>
       </div>
     );
   }

@@ -1,26 +1,34 @@
 import {Checkbox} from 'material-ui';
 import Dialog from 'material-ui/Dialog';
-import 'MeteringPointDialog.scss';
+import 'MeteringPointDialogContainer.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {ButtonClose} from '../buttons/ButtonClose';
-import {IconDistrictHeating} from '../icons/IconDistrictHeating';
-import {IconStatus} from '../icons/IconStatus';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Status} from '../status/Status';
-import {NormalizedRows, Table, TableColumn} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {Tab} from '../tabs/components/Tab';
-import {TabContent} from '../tabs/components/TabContent';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabTopBar} from '../tabs/components/TabTopBar';
-import {tabType} from '../tabs/models/TabsModel';
-import {MainTitle, Subtitle} from '../texts/Titles';
+import {ButtonClose} from '../../components/buttons/ButtonClose';
+import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
+import {IconStatus} from '../../components/icons/IconStatus';
+import {Column} from '../../components/layouts/column/Column';
+import {Row} from '../../components/layouts/row/Row';
+import {Status} from '../../components/status/Status';
+import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {TableHead} from '../../components/table/TableHead';
+import {Tab} from '../../components/tabs/components/Tab';
+import {TabContent} from '../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../components/tabs/components/TabHeaders';
+import {Tabs} from '../../components/tabs/components/Tabs';
+import {TabSettings} from '../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {tabType} from '../../components/tabs/models/TabsModel';
+import {MainTitle, Subtitle} from '../../components/texts/Titles';
+import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
+import {getResultDomainModels} from '../../../../state/domain-models/domainModelsSelectors';
+import {getGatewayEntities} from '../../../../state/domain-models/gateway/gatewaySelectors';
+import {RootState} from '../../../../reducers/rootReducer';
+import {connect} from 'react-redux';
+import {uuid} from '../../../../types/Types';
+import {bindActionCreators} from 'redux';
+import {Flag} from '../../../../state/domain-models/flag/flagModels';
 
 interface MeteringPointDialogProps {
   meter: Meter;
@@ -28,12 +36,16 @@ interface MeteringPointDialogProps {
   close: any;
 }
 
+interface StateToProps {
+  entities: { [key: string]: Gateway };
+  selectedEntities: uuid[];
+}
+
 interface MeteringPointDialogState {
   selectedTab: tabType;
 }
 
-export class MeteringPointDialog extends React.Component<MeteringPointDialogProps, MeteringPointDialogState> {
-
+class MeteringPointDialog extends React.Component <MeteringPointDialogProps & StateToProps, MeteringPointDialogState> {
   constructor(props) {
     super(props);
 
@@ -43,30 +55,30 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
   }
 
   render() {
-    const {displayDialog} = this.props;
-    const {selectedTab} = this.state;
-    const {close} = this.props;
-    const {meter} = this.props;
+    const {
+      displayDialog,
+      close,
+      meter,
+      entities,
+    } = this.props;
+
+    const {
+      selectedTab,
+    } = this.state;
 
     const renderStatusCell = (item: any) => <Status {...item.status}/>;
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
     const renderDate = (item: any) => item.date;
-    const renderSerial = (item: any) => item.serial;
-    const renderSnr = (item: any) => item.snr;
+    const renderSerial = (item: any) => item.id;
+    const renderSnr = (item: any) => 'N/A'; // TODO Gateway should hold SNR (Signal Noise Ratio) information
 
+    // TODO We need to support that a meter is connected to several gateways
     const meterGateways = {
       byId: {
-        id1: {
-          serial: '0012100026',
-          snr: -122,
-        },
-        id2: {
-          serial: '0012105462',
-          snr: -96,
-        },
+        id1: entities[meter.gatewayId],
       },
-      allIds: ['id1', 'id2'],
+      allIds: ['id1'],
     };
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
@@ -241,7 +253,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('status')}
                 </Row>
                 <Row>
-                  <IconStatus id={0} name="OK"/>
+                  <IconStatus id={meter.status.id} name={meter.status.name}/>
                 </Row>
               </Column>
               <Column>
@@ -265,7 +277,7 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  Nej
+                  {renderFlags(meter.flags)}
                 </Row>
               </Column>
             </Row>
@@ -384,5 +396,22 @@ export class MeteringPointDialog extends React.Component<MeteringPointDialogProp
         </Row>
       </Dialog>
     );
+
   }
 }
+
+const renderFlags = (flags: Flag[]): string => {
+  return flags.map((flag) => flag.title).join(', ');
+};
+
+const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => {
+  return {
+    entities: getGatewayEntities(gateways),
+    selectedEntities: getResultDomainModels(gateways),
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+
+export const MeteringPointDialogContainer =
+  connect<StateToProps, {}, MeteringPointDialogProps>(mapStateToProps, mapDispatchToProps)(MeteringPointDialog);
