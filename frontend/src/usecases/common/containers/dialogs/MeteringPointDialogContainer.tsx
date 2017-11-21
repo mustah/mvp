@@ -22,13 +22,11 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {tabType} from '../../components/tabs/models/TabsModel';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
-import {getResultDomainModels} from '../../../../state/domain-models/domainModelsSelectors';
 import {getGatewayEntities} from '../../../../state/domain-models/gateway/gatewaySelectors';
 import {RootState} from '../../../../reducers/rootReducer';
 import {connect} from 'react-redux';
-import {uuid} from '../../../../types/Types';
 import {bindActionCreators} from 'redux';
-import {Flag} from '../../../../state/domain-models/flag/flagModels';
+import {renderFlags} from './dialogHelper';
 
 interface MeteringPointDialogProps {
   meter: Meter;
@@ -38,7 +36,6 @@ interface MeteringPointDialogProps {
 
 interface StateToProps {
   entities: { [key: string]: Gateway };
-  selectedEntities: uuid[];
 }
 
 interface MeteringPointDialogState {
@@ -253,7 +250,8 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   {translate('status')}
                 </Row>
                 <Row>
-                  <IconStatus id={meter.status.id} name={meter.status.name}/>
+                  {/*TODO A meter could be found on serveral gateways*/}
+                  <IconStatus id={entities[meter.gatewayId].status.id} name={entities[meter.gatewayId].status.name}/>
                 </Row>
               </Column>
               <Column>
@@ -277,7 +275,8 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  {renderFlags(meter.flags)}
+                  {/*TODO A meter could be found on serveral gateways*/}
+                  {renderFlags(entities[meter.gatewayId].flags)}
                 </Row>
               </Column>
             </Row>
@@ -292,7 +291,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   {translate('status')}
                 </Row>
                 <Row>
-                  <IconStatus id={3} name="Battery low"/>
+                  <IconStatus id={meter.status.id} name={meter.status.name}/>
                 </Row>
               </Column>
               <Column>
@@ -300,7 +299,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  Nej
+                  {renderFlags(meter.flags)}
                 </Row>
               </Column>
             </Row>
@@ -323,7 +322,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   {translate('facility id')}
                 </Row>
                 <Row>
-                  12312321
+                  {meter.facility}
                 </Row>
               </Column>
               <Column>
@@ -400,14 +399,9 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
   }
 }
 
-const renderFlags = (flags: Flag[]): string => {
-  return flags.map((flag) => flag.title).join(', ');
-};
-
 const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => {
   return {
     entities: getGatewayEntities(gateways),
-    selectedEntities: getResultDomainModels(gateways),
   };
 };
 

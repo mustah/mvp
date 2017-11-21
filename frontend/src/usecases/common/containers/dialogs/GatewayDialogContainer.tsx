@@ -1,4 +1,4 @@
-import 'GatewayDialog.scss';
+import 'GatewayDialogContainer.scss';
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
@@ -6,21 +6,26 @@ import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {ButtonClose} from '../buttons/ButtonClose';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Status} from '../status/Status';
-import {NormalizedRows, Table, TableColumn} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {Tab} from '../tabs/components/Tab';
-import {TabContent} from '../tabs/components/TabContent';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabTopBar} from '../tabs/components/TabTopBar';
-import {tabType} from '../tabs/models/TabsModel';
-import {MainTitle} from '../texts/Titles';
+import {ButtonClose} from '../../components/buttons/ButtonClose';
+import {Column} from '../../components/layouts/column/Column';
+import {Row} from '../../components/layouts/row/Row';
+import {Status} from '../../components/status/Status';
+import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {TableHead} from '../../components/table/TableHead';
+import {Tab} from '../../components/tabs/components/Tab';
+import {TabContent} from '../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../components/tabs/components/TabHeaders';
+import {Tabs} from '../../components/tabs/components/Tabs';
+import {TabSettings} from '../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {tabType} from '../../components/tabs/models/TabsModel';
+import {MainTitle} from '../../components/texts/Titles';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
+import {renderFlags} from './dialogHelper';
+import {RootState} from '../../../../reducers/rootReducer';
+import {getMeterEntities} from '../../../../state/domain-models/meter/meterSelectors';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -28,11 +33,15 @@ interface GatewayDialogProps {
   gateway: Gateway;
 }
 
+interface StateToProps {
+  entities: { [key: string]: Meter };
+}
+
 interface GatewayDialogState {
   selectedTab: tabType;
 }
 
-export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDialogState> {
+class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, GatewayDialogState> {
 
   constructor(props) {
     super(props);
@@ -47,9 +56,10 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     const {displayDialog} = this.props;
     const {close} = this.props;
     const {gateway} = this.props;
+    const {entities} = this.props;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
-    const renderMoid = (item: Meter) => item.moid;
+    const renderFacility = (item: Meter) => item.facility;
     const renderManufacturer = (item: Meter) => item.manufacturer;
     const renderDate = (item: Meter) => item.date;
     const renderMedium = (item: Meter) => item.medium;
@@ -136,6 +146,11 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
         },
       },
       allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
+    };
+
+    const gatewayMeters: NormalizedRows = {
+      byId: entities,
+      allIds: gateway.meterIds,
     };
 
     const checkbox: React.CSSProperties = {
@@ -231,8 +246,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  Nej
-                  {/* TODO use flags {gateway.flags}*/}
+                  {renderFlags(gateway.flags)}
                 </Row>
               </Column>
             </Row>
@@ -249,10 +263,10 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
               <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
-              <Table data={gatewayData}>
+              <Table data={gatewayMeters}>
                 <TableColumn
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
-                  renderCell={renderMoid}
+                  renderCell={renderFacility}
                 />
                 <TableColumn
                   header={<TableHead>{translate('manufacturer')}</TableHead>}
@@ -292,3 +306,14 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
     );
   }
 }
+
+const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+  return {
+    entities: getMeterEntities(meters),
+  };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
+
+export const GatewayDialogContainer =
+  connect<StateToProps, {}, GatewayDialogProps>(mapStateToProps, mapDispatchToProps)(GatewayDialog);
