@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {ButtonInfoLink} from '../../common/components/buttons/ButtonInfoLink';
-import {GatewayDialog} from '../../common/components/dialogs/GatewayDialog';
+import {GatewayDialogContainer} from '../../common/containers/dialogs/GatewayDialogContainer';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 
 interface GatewayProps {
@@ -25,7 +25,7 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     return (
       <div>
         <ButtonInfoLink onClick={this.open} label={gateway.id}/>
-        <GatewayDialog gateway={gateway} displayDialog={displayDialog} close={this.close}/>
+        <GatewayDialogContainer gateway={gateway} displayDialog={displayDialog} close={this.close}/>
       </div>
     );
   }

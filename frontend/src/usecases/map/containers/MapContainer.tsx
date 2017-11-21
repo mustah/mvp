@@ -8,7 +8,7 @@ import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {GatewayDialog} from '../../common/components/dialogs/GatewayDialog';
+import {GatewayDialogContainer} from '../../common/containers/dialogs/GatewayDialogContainer';
 import {MeteringPointDialogContainer} from '../../common/containers/dialogs/MeteringPointDialogContainer';
 import {Column} from '../../common/components/layouts/column/Column';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
@@ -182,7 +182,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     if (!isNullOrUndefined(map.selectedMarker) && map.selectedMarker.options) {
       if (popupMode === PopupMode.gateway) {
         popup = (
-          <GatewayDialog
+          <GatewayDialogContainer
             gateway={map.selectedMarker.options.mapMarker as Gateway}
             displayDialog={map.isClusterDialogOpen}
             close={toggleClusterDialog}

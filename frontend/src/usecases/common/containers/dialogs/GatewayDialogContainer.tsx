@@ -1,4 +1,4 @@
-import 'GatewayDialog.scss';
+import 'usecases/common/containers/dialogs/GatewayDialogContainer.scss';
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
@@ -6,21 +6,22 @@ import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
-import {ButtonClose} from '../buttons/ButtonClose';
-import {Column} from '../layouts/column/Column';
-import {Row} from '../layouts/row/Row';
-import {Status} from '../status/Status';
-import {NormalizedRows, Table, TableColumn} from '../table/Table';
-import {TableHead} from '../table/TableHead';
-import {Tab} from '../tabs/components/Tab';
-import {TabContent} from '../tabs/components/TabContent';
-import {TabHeaders} from '../tabs/components/TabHeaders';
-import {Tabs} from '../tabs/components/Tabs';
-import {TabSettings} from '../tabs/components/TabSettings';
-import {TabTopBar} from '../tabs/components/TabTopBar';
-import {tabType} from '../tabs/models/TabsModel';
-import {MainTitle} from '../texts/Titles';
+import {ButtonClose} from '../../components/buttons/ButtonClose';
+import {Column} from '../../components/layouts/column/Column';
+import {Row} from '../../components/layouts/row/Row';
+import {Status} from '../../components/status/Status';
+import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {TableHead} from '../../components/table/TableHead';
+import {Tab} from '../../components/tabs/components/Tab';
+import {TabContent} from '../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../components/tabs/components/TabHeaders';
+import {Tabs} from '../../components/tabs/components/Tabs';
+import {TabSettings} from '../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {tabType} from '../../components/tabs/models/TabsModel';
+import {MainTitle} from '../../components/texts/Titles';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
+import {renderFlags} from './dialogHelper';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -32,7 +33,7 @@ interface GatewayDialogState {
   selectedTab: tabType;
 }
 
-export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDialogState> {
+export class GatewayDialogContainer extends React.Component<GatewayDialogProps, GatewayDialogState> {
 
   constructor(props) {
     super(props);
@@ -231,8 +232,7 @@ export class GatewayDialog extends React.Component<GatewayDialogProps, GatewayDi
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  Nej
-                  {/* TODO use flags {gateway.flags}*/}
+                  {renderFlags(gateway.flags)}
                 </Row>
               </Column>
             </Row>
