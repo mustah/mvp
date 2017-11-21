@@ -48,7 +48,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={data} activeIndex={[]} activeShape={null}>
+        <Pie onClick={onPieClick} data={data} activeIndex={[]} activeShape={null} animationDuration={500}>
           {data.map(renderCell)}
         </Pie>
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
