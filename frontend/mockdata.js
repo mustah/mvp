@@ -112,12 +112,11 @@ const alarmsLookup = [
   'Internt mätarfel',
 ];
 
-const getRandomAlarm = () => {
-  const randomNumber = Math.floor(Math.random() * 250);
-  if (randomNumber < 15) {
-    return alarmsLookup[randomNumber];
+const getRandomAlarm = (meterStatus) => {
+  if (meterStatus === 0) {
+    return ':Inget fel:';
   }
-  return ':Inget fel:';
+  return alarmsLookup[Math.floor(Math.random() * alarmsLookup.length)];
 };
 
 const parseMeasurementSeedData = (path) => {
@@ -294,7 +293,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         position: objPosition,
       });
 
-      const alarm = getRandomAlarm();
+      const alarm = getRandomAlarm(meterStatus.id);
 
       r.meters.push({
         id: row.meter_id,
