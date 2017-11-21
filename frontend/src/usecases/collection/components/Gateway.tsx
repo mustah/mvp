@@ -22,10 +22,17 @@ export class Gateway extends React.Component<GatewayProps, GatewayState> {
     const {gateway} = this.props;
     const {displayDialog} = this.state;
 
+    const dialog = displayDialog && (
+      <GatewayDialogContainer
+        gateway={gateway}
+        displayDialog={displayDialog}
+        close={this.close}
+      />);
+
     return (
       <div>
         <ButtonInfoLink onClick={this.open} label={gateway.id}/>
-        <GatewayDialogContainer gateway={gateway} displayDialog={displayDialog} close={this.close}/>
+        {dialog}
       </div>
     );
   }

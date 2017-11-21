@@ -22,10 +22,17 @@ export class MeteringPoint extends React.Component<MeteringPointProps, MeteringP
     const {meter} = this.props;
     const {displayDialog} = this.state;
 
+    const dialog = displayDialog && (
+      <MeteringPointDialogContainer
+        meter={meter}
+        displayDialog={displayDialog}
+        close={this.close}
+      />);
+
     return (
       <div>
         <ButtonInfoLink onClick={this.open} label={meter.facility}/>
-        <MeteringPointDialogContainer meter={meter} displayDialog={displayDialog} close={this.close}/>
+        {dialog}
       </div>
     );
   }
