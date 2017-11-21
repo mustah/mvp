@@ -8,7 +8,6 @@ interface ParameterNames {
 const baseParameterNames: ParameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
-  alarms: 'alarm',
   manufacturers: 'manufacturer',
   productModels: 'productModel',
   period: 'period',
@@ -21,6 +20,7 @@ const gatewayParameterNames: ParameterNames = {
 const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
   meterStatuses: 'status.id',
+  alarms: 'alarm',
 };
 
 export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
