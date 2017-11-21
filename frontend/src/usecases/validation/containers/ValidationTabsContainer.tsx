@@ -98,7 +98,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: []});
+  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: [], alarms: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
@@ -130,6 +130,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(liveData.all.manufacturers, meter.manufacturer);
     incProp(liveData.all.media, meter.medium);
     incProp(liveData.all.status, meter.status.name);
+    incProp(liveData.all.alarms, meter.alarm);
 
     incProp(counts, normalizedStatus);
 
@@ -146,18 +147,26 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
     incProp(liveData[normalizedStatus].media, meter.medium);
     incProp(liveData[normalizedStatus].status, meter.status.name);
+    incProp(liveData[normalizedStatus].alarms, meter.alarm);
   });
 
   const {selectedOption} = tabs.overview;
   // ... then normalize the current tab, for the graphs to consume
   const status: PieData[] = Object.entries(liveData[selectedOption].status).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const flagged: PieData[] = Object.entries(liveData[selectedOption].flagged).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
+  const alarms: PieData[] = Object.entries(liveData[selectedOption].alarms).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+
   const cities: PieData[] = Object.entries(liveData[selectedOption].cities).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const manufacturers: PieData[] = Object.entries(liveData[selectedOption].manufacturers).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const media: PieData[] = Object.entries(liveData[selectedOption].media).map((entry) =>
     ({name: entry[0], value: entry[1]}));
 
@@ -220,21 +229,26 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           colors={colors[1]}
         />
         <PieChartSelector
+          heading={translate('alarms')}
+          data={alarms}
+          colors={colors[0]}
+        />
+        <PieChartSelector
           heading={translate('cities')}
           data={cities}
-          colors={colors[0]}
+          colors={colors[1]}
           onClick={selectCity}
         />
         <PieChartSelector
           heading={translate('manufacturer')}
           data={manufacturers}
-          colors={colors[1]}
+          colors={colors[0]}
           onClick={selectManufacturer}
         />
         <PieChartSelector
           heading={translate('medium')}
           data={media}
-          colors={colors[0]}
+          colors={colors[1]}
         />
       </Row>
     ) : null;

@@ -24,6 +24,29 @@ interface PieChartSelector {
 export const PieChartSelector = (props: PieChartSelector) => {
   const {data, colors, heading, onClick} = props;
 
+  const showIfGreaterPartThan = 0.006;
+
+  // lump together all values under a certain percentage, as "other"
+  // clicking on "other", is.. undefined behavior, for now
+  const total: number = data.reduce((sum, piece) => sum + piece.value, 0);
+
+  const localizedOther = 'Övriga';
+
+  const filteredData: PieData[] = data
+    .reduce((filtered: PieData[], current: PieData) => {
+      if ((current.value / total) >= showIfGreaterPartThan) {
+        filtered.push(current);
+      } else {
+        const indexOfOther = filtered.findIndex((current: PieData) => current.name === localizedOther);
+        if (indexOfOther !== -1) {
+          filtered[indexOfOther].value += current.value;
+        } else {
+          filtered.push({name: localizedOther, value: current.value});
+        }
+      }
+      return filtered;
+    }, []);
+
   const renderCell = (entry: any, index: number) => (
     <Cell
       key={index}
@@ -36,7 +59,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
   const onPieClick = (data: any) => onClick && onClick(data.payload.name);
 
   // the default legend only shows labels, I want to include the count as well
-  const legend = data.map((dataTuple, index) => ({
+  const legend = filteredData.map((dataTuple, index) => ({
     value: `${dataTuple.name} (${dataTuple.value})`,
     type: 'square',
     color: colors[index % colors.length],
@@ -48,8 +71,8 @@ export const PieChartSelector = (props: PieChartSelector) => {
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={data} activeIndex={[]} activeShape={null} animationDuration={500}>
-          {data.map(renderCell)}
+        <Pie onClick={onPieClick} data={data} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
+          {filteredData.map(renderCell)}
         </Pie>
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
         <Legend
