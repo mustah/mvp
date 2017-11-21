@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {GatewayDialog} from '../../common/components/dialogs/GatewayDialog';
-import MeteringPointDialogContainer from '../../common/containers/dialogs/MeteringPointDialogContainer';
+import {MeteringPointDialogContainer} from '../../common/containers/dialogs/MeteringPointDialogContainer';
 import {Column} from '../../common/components/layouts/column/Column';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {MapMarker} from '../mapModels';

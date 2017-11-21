@@ -34,6 +34,9 @@ interface MeteringPointDialogProps {
   meter: Meter;
   displayDialog: boolean;
   close: any;
+}
+
+interface StateToProps {
   entities: { [key: string]: Gateway };
   selectedEntities: uuid[];
 }
@@ -42,7 +45,7 @@ interface MeteringPointDialogState {
   selectedTab: tabType;
 }
 
-class MeteringPointDialogContainer extends React.Component < MeteringPointDialogProps, MeteringPointDialogState> {
+class MeteringPointDialog extends React.Component <MeteringPointDialogProps & StateToProps, MeteringPointDialogState> {
   constructor(props) {
     super(props);
 
@@ -401,7 +404,7 @@ const renderFlags = (flags: Flag[]): string => {
   return flags.map((flag) => flag.title).join(', ');
 };
 
-const mapStateToProps = ({domainModels: {gateways}}: RootState) => {
+const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => {
   return {
     entities: getGatewayEntities(gateways),
     selectedEntities: getResultDomainModels(gateways),
@@ -410,4 +413,5 @@ const mapStateToProps = ({domainModels: {gateways}}: RootState) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeteringPointDialogContainer);
+export const MeteringPointDialogContainer =
+  connect<StateToProps, {}, MeteringPointDialogProps>(mapStateToProps, mapDispatchToProps)(MeteringPointDialog);
