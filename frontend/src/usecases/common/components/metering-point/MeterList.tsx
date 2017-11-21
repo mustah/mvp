@@ -26,7 +26,7 @@ export const MeterList = (props: ListProps) => {
   return (
     <Table data={data}>
       <TableColumn
-        header={<TableHead className="first">{translate('meter')}</TableHead>}
+        header={<TableHead className="first">{translate('facility')}</TableHead>}
         renderCell={renderMeteringPointCell}
       />
       <TableColumn

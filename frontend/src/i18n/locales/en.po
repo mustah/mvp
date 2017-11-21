@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-20T09:39:26.556Z\n"
+"POT-Creation-Date: 2017-11-20T15:10:15.942Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -143,6 +143,9 @@ msgstr "all"
 msgid "of {{count}} metering point"
 msgstr "of {{count}} metering point"
 
+msgid "facility"
+msgstr "facility"
+
 msgid "previous"
 msgstr "previous"
 
@@ -188,11 +191,11 @@ msgstr "no saved selections"
 msgid "saved selections"
 msgstr "saved selections"
 
-msgid "selection overview"
-msgstr "selection overview"
-
 msgid "metering"
 msgstr "metering"
+
+msgid "selection overview"
+msgstr "selection overview"
 
 msgid "cities"
 msgstr "cities"

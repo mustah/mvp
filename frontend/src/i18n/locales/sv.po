@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-20T09:39:26.556Z\n"
+"POT-Creation-Date: 2017-11-20T15:10:15.942Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -143,6 +143,9 @@ msgstr "allt"
 msgid "of {{count}} metering point"
 msgstr "av {{count}} mätpunkt"
 
+msgid "facility"
+msgstr "anläggning"
+
 msgid "previous"
 msgstr "föregående"
 
@@ -188,11 +191,11 @@ msgstr "inga sparade urval"
 msgid "saved selections"
 msgstr "sparade urval"
 
-msgid "selection overview"
-msgstr "urvalsöversikt"
-
 msgid "metering"
 msgstr "mätning"
+
+msgid "selection overview"
+msgstr "urvalsöversikt"
 
 msgid "cities"
 msgstr "städer"
