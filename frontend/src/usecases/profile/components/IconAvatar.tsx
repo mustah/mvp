@@ -7,7 +7,7 @@ import {colors} from '../../app/themes';
 const avatarStyle = {
   padding: 0,
   height: 24,
-  width: 34,
+  width: 24,
 };
 
 export const Avatar = (props: Clickable) => {
