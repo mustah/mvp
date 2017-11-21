@@ -1,6 +1,6 @@
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Status} from '../../types/Types';
-import {encodedUriParametersFrom} from '../urlFactory';
+import {encodedUriParametersForMeters} from '../urlFactory';
 
 describe('urlFactory', () => {
 
@@ -9,50 +9,50 @@ describe('urlFactory', () => {
     it('returns empty parameters string when nothing is selected', () => {
       const selection: SelectedParameters = {cities: []};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('');
+      expect(encodedUriParametersForMeters(selection)).toEqual('');
     });
 
     it('returns selected city', () => {
       const selection: SelectedParameters = {cities: ['got']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('city.id=got');
+      expect(encodedUriParametersForMeters(selection)).toEqual('city.id=got');
     });
 
     it('returns selected cities', () => {
       const selection: SelectedParameters = {cities: ['got', 'sto', 'mmx']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('city.id=got&city.id=sto&city.id=mmx');
+      expect(encodedUriParametersForMeters(selection)).toEqual('city.id=got&city.id=sto&city.id=mmx');
     });
 
     it('returns selected address', () => {
       const selection: SelectedParameters = {addresses: ['address 2']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('address.id=address%202');
+      expect(encodedUriParametersForMeters(selection)).toEqual('address.id=address%202');
     });
 
     it('returns selected addresses', () => {
       const selection: SelectedParameters = {addresses: ['address 2', 'storgatan 5']};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('address.id=address%202&address.id=storgatan%205');
+      expect(encodedUriParametersForMeters(selection)).toEqual('address.id=address%202&address.id=storgatan%205');
     });
 
     it('returns selected statuses', () => {
-      const selection: SelectedParameters = {statuses: [Status.ok, Status.warning]};
+      const selection: SelectedParameters = {meterStatuses: [Status.ok, Status.warning]};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('status.id=ok&status.id=warning');
+      expect(encodedUriParametersForMeters(selection)).toEqual('status.id=ok&status.id=warning');
     });
 
     it('returns all selected parameters', () => {
       const selection: SelectedParameters = {
         addresses: ['address 2', 'storgatan 5'],
         cities: ['got', 'sto', 'mmx'],
-        statuses: [Status.ok, Status.warning],
+        meterStatuses: [Status.ok, Status.warning],
       };
 
       const expected =
         'address.id=address%202&address.id=storgatan%205&city.id=got&city.id=sto&city.id=mmx&' +
         'status.id=ok&status.id=warning';
-      expect(encodedUriParametersFrom(selection)).toEqual(expected);
+      expect(encodedUriParametersForMeters(selection)).toEqual(expected);
     });
 
   });

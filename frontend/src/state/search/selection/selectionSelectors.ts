@@ -1,5 +1,4 @@
 import {createSelector} from 'reselect';
-import {encodedUriParametersFrom} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
@@ -15,6 +14,7 @@ import {
   SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
+import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
@@ -73,11 +73,16 @@ export const getAddresses = getList(parameterNames.addresses);
 export const getAlarms = getList(parameterNames.alarms);
 export const getManufacturers = getList(parameterNames.manufacturers);
 export const getProductModels = getList(parameterNames.productModels);
-export const getStatuses = getList(parameterNames.statuses);
+export const getStatuses = getList(parameterNames.meterStatuses);
 
-export const getEncodedUriParameters = createSelector<SearchParameterState, SelectedParameters, string>(
+export const getEncodedUriParametersForMeters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,
-  encodedUriParametersFrom,
+  encodedUriParametersForMeters,
+);
+
+export const getEncodedUriParametersForGateways = createSelector<SearchParameterState, SelectedParameters, string>(
+  getSelectedParameters,
+  encodedUriParametersForGateways,
 );
 
 export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(

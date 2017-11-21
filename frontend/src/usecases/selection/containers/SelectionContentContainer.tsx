@@ -16,7 +16,10 @@ import {
   getAddresses,
   getAlarms,
   getCities,
-  getCitiesSelection, getManufacturers, getProductModels, getStatuses,
+  getCitiesSelection,
+  getManufacturers,
+  getProductModels,
+  getStatuses,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
@@ -24,9 +27,9 @@ import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/
 import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {Subtitle} from '../../common/components/texts/Titles';
+import {SelectionQuantity} from '../components/SelectionQuantity';
 import {MetersResultContainer} from './MetersContainer';
 import {MetersLoaderContainer} from './MetersLoaderContainer';
-import {SelectionQuantity} from '../components/SelectionQuantity';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -34,7 +37,7 @@ interface StateToProps {
   alarms: SelectionListItem[];
   manufacturers: SelectionListItem[];
   productModels: SelectionListItem[];
-  statuses: SelectionListItem[];
+  meterStatuses: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -43,7 +46,16 @@ interface DispatchToProps {
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {toggleSelection, cities, addresses, alarms, manufacturers, productModels, statuses, citiesSelection} = props;
+  const {
+    toggleSelection,
+    cities,
+    addresses,
+    alarms,
+    manufacturers,
+    productModels,
+    meterStatuses,
+    citiesSelection,
+  } = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
@@ -52,14 +64,14 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
     toggleSelection({...selection, parameter: parameterNames.manufacturers});
   const selectProductModel = (selection: IdNamed) =>
     toggleSelection({...selection, parameter: parameterNames.productModels});
-  const selectStatus = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.statuses});
+  const selectStatus = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.meterStatuses});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
   const alarmSelectionText = translate('alarm') + ': ';
   const manufacturerSelectionText = translate('manufacturer') + ': ';
   const productModelSelectionText = translate('product model') + ': ';
-  const statusSelectionText = translate('status') + ': ';
+  const statusSelectionText = translate('meter status') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -79,9 +91,9 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           parentIdentifier="cityId"
         />
         <SimpleDropdownSelector
-          list={alarms}
-          selectionText={alarmSelectionText}
-          select={selectAlarm}
+          list={productModels}
+          selectionText={productModelSelectionText}
+          select={selectProductModel}
         />
         <SimpleDropdownSelector
           list={manufacturers}
@@ -89,14 +101,14 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           select={selectManufacturer}
         />
         <SimpleDropdownSelector
-          list={productModels}
-          selectionText={productModelSelectionText}
-          select={selectProductModel}
-        />
-        <SimpleDropdownSelector
-          list={statuses}
+          list={meterStatuses}
           selectionText={statusSelectionText}
           select={selectStatus}
+        />
+        <SimpleDropdownSelector
+          list={alarms}
+          selectionText={alarmSelectionText}
+          select={selectAlarm}
         />
         <SelectionQuantity/>
       </Row>
@@ -121,7 +133,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     alarms: getAlarms(lookupState),
     manufacturers: getManufacturers(lookupState),
     productModels: getProductModels(lookupState),
-    statuses: getStatuses(lookupState),
+    meterStatuses: getStatuses(lookupState),
   };
 };
 

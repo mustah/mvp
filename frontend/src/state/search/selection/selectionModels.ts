@@ -8,7 +8,7 @@ export interface SelectionParameter extends IdNamed {
 export interface SelectedParameters {
   cities?: uuid[];
   addresses?: uuid[];
-  statuses?: uuid[];
+  meterStatuses?: uuid[];
   alarms?: uuid[];
   manufacturers?: uuid[];
   productModels?: uuid[];
@@ -28,7 +28,7 @@ export interface LookupState {
 export enum parameterNames {
   cities = 'cities',
   addresses = 'addresses',
-  statuses = 'statuses',
+  meterStatuses = 'meterStatuses',
   alarms = 'alarms',
   manufacturers = 'manufacturers',
   productModels = 'productModels',

@@ -38,6 +38,9 @@ msgstr "product model"
 msgid "status"
 msgstr "status"
 
+msgid "meter status"
+msgstr "meter status"
+
 msgid "status change"
 msgstr "status change"
 

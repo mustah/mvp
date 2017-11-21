@@ -34,6 +34,7 @@ export enum Status {
   warning = 'warning',
   critical = 'critical',
   info = 'info',
+  unknown = 'unknown',
 }
 
 export enum Period {
@@ -50,6 +51,7 @@ const status = {
   1: Status.info,
   2: Status.warning,
   3: Status.critical,
+  4: Status.unknown,
   10: Status.ok,
   11: Status.warning,
 };

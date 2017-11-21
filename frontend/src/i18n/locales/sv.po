@@ -38,6 +38,9 @@ msgstr "modell"
 msgid "status"
 msgstr "status"
 
+msgid "meter status"
+msgstr "mätarstatus"
+
 msgid "status change"
 msgstr "statusförändring"
 

@@ -28,4 +28,9 @@
     background: $red;
     color: $white;
   }
+
+  &.unknown {
+    background: $orange;
+    color: $white;
+  }
 }

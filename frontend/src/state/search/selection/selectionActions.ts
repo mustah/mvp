@@ -3,7 +3,7 @@ import {routerActions} from 'react-router-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {Period, uuid} from '../../../types/Types';
 import {SelectionParameter, SelectionState} from './selectionModels';
-import {getEncodedUriParameters, getSelection} from './selectionSelectors';
+import {getEncodedUriParametersForGateways, getEncodedUriParametersForMeters, getSelection} from './selectionSelectors';
 import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
@@ -31,9 +31,8 @@ export const selectSavedSelectionAction = createPayloadAction<string, SelectionS
 // TODO[!must!] do not fetch both every time (good enough for the demo though)
 const fetchMetersAndGateways = () =>
   (dispatch, getState: () => RootState) => {
-    const encodedUriParameters = getEncodedUriParameters(getState().searchParameters);
-    dispatch(fetchMeters(encodedUriParameters));
-    dispatch(fetchGateways(encodedUriParameters));
+    dispatch(fetchMeters(getEncodedUriParametersForMeters(getState().searchParameters)));
+    dispatch(fetchGateways(getEncodedUriParametersForGateways(getState().searchParameters)));
   };
 
 export const closeSelectionPage = () => dispatch => {

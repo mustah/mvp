@@ -81,9 +81,9 @@ const fromDbJson = {
           },
           {
             type: 'measurementQuality',
-            total: 1697,
+            total: 1709,
             status: 'critical',
-            pending: 79,
+            pending: 6,
           },
         ],
       },
@@ -196,7 +196,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
     gateways: [],
     selections: {
       meteringPoints: [],
-      statuses: [],
+      meterStatuses: [],
       cities: [],
       addresses: [],
       alarms: [],
@@ -221,7 +221,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
   const cities = new Set();
   const addresses = new Set();
   const meteringPoints = new Set();
-  const statuses = new Set();
+  const meterStatuses = new Set();
   const alarms = new Set();
   const manufacturers = new Set();
   const productModels = new Set();
@@ -232,7 +232,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -255,14 +255,21 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         }
       }
 
-      const decorateStatus = (status) => status === 'OK' ? {name: status, id: 0} : {name: 'Fel', id: 3};
+      const decorateGatewayStatus = (status) => status === 'OK'
+        ? {name: status, id: 0}
+        : {name: 'Fel', id: 3};
+
+      const decorateMeterStatus = (gwStatus, status) =>
+        gwStatus === 'OK'
+          ? {name: status, id: (status === 'OK' ? 0 : 3)}
+          : {name: 'Okänd', id: 4};
+
       const nullOr = (str) => str === 'NULL' ? null : str;
 
-      row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
-      row.meter_flags = row.meter_status === 'OK' ? [] : [{title: 'Åtgärd'}];
+      const meterStatus = decorateMeterStatus(row.gateway_status, row.meter_status);
 
-      row.meter_status = decorateStatus(row.meter_status);
-      row.gateway_status = decorateStatus(row.gateway_status);
+      row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
+      row.meter_flags = meterStatus.id === 0 ? [] : [];
 
       const cityId = row.city;
       const addressId = row.address;
@@ -281,12 +288,14 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
         port: nullOr(row.port),
-        status: row.gateway_status,
+        status: decorateGatewayStatus(row.gateway_status),
         statusChanged,
         meterIds: [row.meter_id],
         position: objPosition,
       });
+
       const alarm = getRandomAlarm();
+
       r.meters.push({
         id: row.meter_id,
         facility: row.facility,
@@ -296,7 +305,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         productModel: row.gateway_product_model,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
-        status: row.gateway_status,
+        status: meterStatus,
         statusChanged,
         gatewayId: row.gateway_id,
         position: objPosition,
@@ -314,9 +323,9 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         r.selections.meteringPoints.push({id: row.meter_id, name: row.meter_id});
         meteringPoints.add(row.meter_id);
       }
-      if (!statuses.has(row.meter_status.id)) {
-        r.selections.statuses.push(row.meter_status);
-        statuses.add(row.meter_status.id);
+      if (!meterStatuses.has(meterStatus.id)) {
+        r.selections.meterStatuses.push(meterStatus);
+        meterStatuses.add(meterStatus.id);
       }
       if (!alarms.has(alarm)) {
         r.selections.alarms.push({id: alarm, name: alarm});

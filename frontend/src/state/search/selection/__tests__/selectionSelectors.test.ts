@@ -8,7 +8,7 @@ import {
   alarms,
   cities,
   gateways,
-  initialDomain, manufacturers, meters, productModels, statuses,
+  initialDomain, manufacturers, meters, productModels, meterStatuses,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
@@ -17,12 +17,12 @@ import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
 import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {getCities, getEncodedUriParameters, getSelectedPeriod, getSelection} from '../selectionSelectors';
+import {getCities, getEncodedUriParametersForMeters, getSelectedPeriod, getSelection} from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
-  const initialEncodedParameters = getEncodedUriParameters(initialSearchParametersState);
+  const initialEncodedParameters = getEncodedUriParametersForMeters(initialSearchParametersState);
 
   const initialDomainModelState = initialDomain<SelectionEntity>();
 
@@ -41,7 +41,7 @@ describe('selectionSelectors', () => {
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      statuses: statuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
@@ -70,7 +70,7 @@ describe('selectionSelectors', () => {
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      statuses: statuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+      meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
@@ -91,7 +91,9 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
-      expect(getEncodedUriParameters({selection: state, saved: []})).toEqual('city.id=sto&' + initialEncodedParameters);
+      const encodedUriParametersForMeters = getEncodedUriParametersForMeters({selection: state, saved: []});
+
+      expect(encodedUriParametersForMeters).toEqual('city.id=sto&' + initialEncodedParameters);
     });
 
     it('has two selected cities', () => {
@@ -100,7 +102,7 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
-      expect(getEncodedUriParameters({selection: state, saved: []}))
+      expect(getEncodedUriParametersForMeters({selection: state, saved: []}))
         .toEqual('city.id=got&city.id=sto&' + initialEncodedParameters);
     });
   });
@@ -130,7 +132,7 @@ describe('selectionSelectors', () => {
         alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        statuses: statuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+        meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       };

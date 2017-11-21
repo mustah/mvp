@@ -19,7 +19,7 @@ export const initialState: SelectionState = {
   selected: {
     cities: [],
     addresses: [],
-    statuses: [],
+    meterStatuses: [],
     alarms: [],
     manufacturers: [],
     productModels: [],
