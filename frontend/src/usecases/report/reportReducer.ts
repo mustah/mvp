@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux';
 import {ReportState} from './models/reportModels';
-import {SELECT_ENTRY_TOGGLE} from './reportActions';
+import {SET_SELECTED_ENTRIES} from './reportActions';
 
 const initialState: ReportState = {
   selectedListItems: [],
@@ -9,7 +9,7 @@ const initialState: ReportState = {
 export const report = (state: ReportState = initialState, action: AnyAction): ReportState => {
   const {payload} = action;
   switch (action.type) {
-    case SELECT_ENTRY_TOGGLE:
+    case SET_SELECTED_ENTRIES:
       return {
         ...state,
         selectedListItems: payload,

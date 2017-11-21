@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
-import {ListActionsDropdown} from '../../common/components/actions-dropdown/ListActionsDropdown';
+import {ListActionsDropdownContainer} from '../../common/containers/actions-dropdown/ListActionsDropdownContainer';
 import {Status} from '../../common/components/status/Status';
 import {Table, TableColumn} from '../../common/components/table/Table';
 import {TableHead} from '../../common/components/table/TableHead';
@@ -18,7 +18,7 @@ export const GatewayList = (props: ListProps) => {
   const renderAddress = (gateway: GatewayModel) => gateway.address.name;
   const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
   const renderActionDropdown = (gateway: GatewayModel) =>
-    <ListActionsDropdown item={{id: gateway.id, name: gateway.productModel}}/>;
+    <ListActionsDropdownContainer item={{id: gateway.id, name: gateway.productModel}}/>;
   const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged || <Separator/>;
   const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
 

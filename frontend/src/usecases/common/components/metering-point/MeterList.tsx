@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
-import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
+import {ListActionsDropdownContainer} from '../../containers/actions-dropdown/ListActionsDropdownContainer';
 import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
@@ -17,7 +17,8 @@ export const MeterList = (props: ListProps) => {
   const renderCityName = (meter: Meter) => meter.city.name;
   const renderAddressName = (meter: Meter) => meter.address.name;
   const renderFlags = (meter: Meter) => meter.flags.map((flag) => flag.title).join(', ');
-  const renderActionDropdown = (meter: Meter) => <ListActionsDropdown item={{id: meter.id, name: meter.manufacturer}}/>;
+  const renderActionDropdown = (meter: Meter) =>
+    <ListActionsDropdownContainer item={{id: meter.id, name: meter.manufacturer}}/>;
   const renderGatewayId = (meter: Meter) => meter.gatewayId;
   const renderManufacturer = (meter: Meter) => meter.manufacturer;
   const renderStatusChanged = (meter: Meter) => meter.statusChanged || <Separator/>;
