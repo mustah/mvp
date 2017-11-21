@@ -1,15 +1,17 @@
 import 'GraphContainer.scss';
 import * as React from 'react';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
-import {Tab} from '../common/components/tabs/components/Tab';
-import {TabContent} from '../common/components/tabs/components/TabContent';
-import {TabHeaders} from '../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../common/components/tabs/components/TabOption';
-import {TabOptions} from '../common/components/tabs/components/TabOptions';
-import {Tabs} from '../common/components/tabs/components/Tabs';
-import {TabSettings} from '../common/components/tabs/components/TabSettings';
-import {TabTopBar} from '../common/components/tabs/components/TabTopBar';
-import {TabModel, tabType} from '../common/components/tabs/models/TabsModel';
+import {translate} from '../../../services/translationService';
+import {Tab} from '../../common/components/tabs/components/Tab';
+import {TabContent} from '../../common/components/tabs/components/TabContent';
+import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
+import {TabOption} from '../../common/components/tabs/components/TabOption';
+import {TabOptions} from '../../common/components/tabs/components/TabOptions';
+import {Tabs} from '../../common/components/tabs/components/Tabs';
+import {TabSettings} from '../../common/components/tabs/components/TabSettings';
+import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
+import {TabModel, tabType} from '../../common/components/tabs/models/TabsModel';
+import {Bold} from '../../common/components/texts/Texts';
 
 interface GraphContainerProps {
   NotYetUsed?: boolean;
@@ -24,7 +26,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
   constructor() {
     super();
     this.state = {
-      selectedTabOption: 'energy',
+      selectedTabOption: 'power',
     };
   }
 
@@ -60,14 +62,6 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
       asdf2: 'Mätare 67190406',
     };
 
-    /*
-    const onChangeTab = (tab: tabType) => {
-      changeTab({
-        useCase: tabType.graph,
-        tab,
-      });
-    };
-    */
     const onChangeTab = (tab: tabType) => void(0);
 
     const onChangeTabOption = (tab: tabType, option: string): void => {
@@ -89,7 +83,8 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
         <Tabs>
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-              <Tab tab={tabType.graph} title="Graf"/>
+              <Tab tab={tabType.graph} title={translate('graph')}/>
+              <Tab tab={tabType.table} title={translate('table')}/>
             </TabHeaders>
             <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
               <TabOption title={'Energi'} id={'energy'}/>
@@ -111,7 +106,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
                 margin={{top: 40, right: 0, bottom: 0, left: 0}}
               >
                 <XAxis dataKey="name"/>
-                <YAxis label="MWh" yAxisId="left"/>
+                <YAxis label="MW" yAxisId="left"/>
                 <YAxis yAxisId="right" orientation="right"/>
                 <CartesianGrid strokeDasharray="3 3"/>
                 <Tooltip/>
@@ -140,6 +135,9 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
                 />
               </LineChart>
             </ResponsiveContainer>
+          </TabContent>
+          <TabContent tab={tabType.table} selectedTab={selectedTab}>
+            <Bold>TBD</Bold>
           </TabContent>
         </Tabs>
       </div>

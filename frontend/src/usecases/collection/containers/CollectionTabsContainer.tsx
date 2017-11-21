@@ -136,17 +136,19 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     incProp(liveData[normalizedStatus].status, gateway.status.name);
   });
 
+  const {selectedOption} = tabs.overview;
+
   // ... then normalize the current tab, for the graphs to consume
-  const status: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].status).map((entry) =>
+  const status: PieData[] = Object.entries(liveData[selectedOption].status).map((entry) =>
     ({name: entry[0], value: entry[1]}));
-  const flagged: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].flagged).map((entry) =>
+  const flagged: PieData[] = Object.entries(liveData[selectedOption].flagged).map((entry) =>
     ({name: entry[0], value: entry[1]}));
-  const cities: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].cities).map((entry) =>
+  const cities: PieData[] = Object.entries(liveData[selectedOption].cities).map((entry) =>
     ({name: entry[0], value: entry[1]}));
-  const productModels: PieData[] = Object.entries(liveData[tabs.graph.selectedOption].productModels).map((entry) =>
+  const productModels: PieData[] = Object.entries(liveData[selectedOption].productModels).map((entry) =>
     ({name: entry[0], value: entry[1]}));
 
-  const graphTabs: any[] = [
+  const overviewTabOptions: any[] = [
     {id: 'all', label: 'ALLA'},
     {id: 'ok', label: 'OK'},
     {id: 'warnings', label: 'VARNINGAR'},
@@ -170,7 +172,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
     });
   };
 
-  const graphTabContents = ((tabName: string): Children => {
+  const overviewTabContents = ((tabName: string): Children => {
     const count = counts[tabName];
     const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
@@ -193,8 +195,8 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
               Filtrera på status:
-              <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
-                {graphTabs}
+              <TabOptions tab={tabType.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+                {overviewTabOptions}
               </TabOptions>
             </RowRight>
           </ColumnCenter>
@@ -202,20 +204,20 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
         {chartRow}
       </WrapperIndent>
     );
-  })(tabs.graph.selectedOption);
+  })(selectedOption);
 
   return (
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab tab={tabType.graph} title={translate('overview')}/>
+          <Tab tab={tabType.overview} title={translate('overview')}/>
           <Tab tab={tabType.list} title={translate('list')}/>
           <Tab tab={tabType.map} title={translate('map')}/>
         </TabHeaders>
         <TabSettings/>
       </TabTopBar>
-      <TabContent tab={tabType.graph} selectedTab={selectedTab}>
-        {graphTabContents}
+      <TabContent tab={tabType.overview} selectedTab={selectedTab}>
+        {overviewTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
         <GatewayList data={{allIds: paginatedList, byId: entities}}/>
