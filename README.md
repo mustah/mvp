@@ -18,8 +18,8 @@ multi-container Docker applications.
 The [docker-compose.yml] file controls the setup of the containers (one for
 running our application, and one for running a PostgreSQL instance).
 
-The application container is started with the "compose" Spring profile (see
-[backend/src/main/resources/application-compose.properties]), which makes sure
+The application container is started with the "postgresql" Spring profile (see
+[backend/src/main/resources/application-postgresql.properties]), which makes sure
 that the database is connected to at the correct URL, with the correct
 credentials.
 

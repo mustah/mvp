@@ -1,6 +1,5 @@
 package com.elvaco.mvp.repository.inmemory;
 
-import com.elvaco.mvp.config.Compose;
 import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.MeasurementRepository;

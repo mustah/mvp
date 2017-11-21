@@ -2,7 +2,7 @@ version: "2.1"
 services:
   application:
     environment:
-      MVP_OPTS: -Dspring.profiles.active=compose
+      MVP_OPTS: -Dspring.profiles.active=postgresql
     build:
       context: .
       args:

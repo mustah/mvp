@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
+import com.elvaco.mvp.config.PostgreSQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import com.elvaco.mvp.repository.MeteringPointBaseRepository;
 
 import static com.elvaco.mvp.utils.Json.toJson;
 
-@Profile("compose")
+@PostgreSQL
 @Repository
 public class PostgreSQLMeteringPointRepository extends MeteringPointBaseRepository {
 

@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Profile("compose")
-public @interface Compose {
+@Profile("postgresql")
+public @interface PostgreSQL {
 }

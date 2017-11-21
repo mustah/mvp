@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-@Profile("compose")
+@PostgreSQL
 @Configuration
-public class ComposeConfig {
+public class PostgreSQLConfig {
 
   /**
    * Delegating to in-memory version of the {@link UserDetailsService} for now, until we have an ACL implementation of
