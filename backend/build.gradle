@@ -54,13 +54,13 @@ distributions {
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-data-jpa')
   compile('org.springframework.boot:spring-boot-starter-jdbc')
-  compile("org.springframework.boot:spring-boot-starter-actuator")
-  compile("org.springframework.boot:spring-boot-starter-security")
+  compile('org.springframework.boot:spring-boot-starter-actuator')
+  compile('org.springframework.boot:spring-boot-starter-security')
   compile('org.springframework.boot:spring-boot-starter-web')
-  compile("org.springframework.security:spring-security-acl")
-  compile("org.springframework.boot:spring-boot-devtools")
+  compile('org.springframework.security:spring-security-acl')
+  compile('org.springframework.boot:spring-boot-devtools')
   compile('org.springframework.boot:spring-boot-starter-hateoas')
-  compile("org.modelmapper:modelmapper:1.1.0")
+  compile('org.modelmapper:modelmapper:1.1.0')
   compile('org.postgresql:postgresql')
 
   compileOnly('org.projectlombok:lombok:1.16.18')
