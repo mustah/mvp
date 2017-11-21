@@ -213,6 +213,10 @@ msgid "filter on status"
 msgstr "filter on status"
 
 msgctxt "°plural"
+msgid "alarm°"
+msgstr "alarms"
+
+msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
 

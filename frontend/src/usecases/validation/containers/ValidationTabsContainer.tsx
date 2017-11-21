@@ -229,7 +229,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           colors={colors[1]}
         />
         <PieChartSelector
-          heading={translate('alarms')}
+          heading={translate('alarm', {count: alarms.length})}
           data={alarms}
           colors={colors[0]}
         />
