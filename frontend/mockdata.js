@@ -113,7 +113,7 @@ const alarmsLookup = [
 ];
 
 const getRandomAlarm = (meterStatus) => {
-  if (meterStatus === 0) {
+  if (meterStatus === 0 || meterStatus === 4) {
     return ':Inget fel:';
   }
   return alarmsLookup[Math.floor(Math.random() * alarmsLookup.length)];
