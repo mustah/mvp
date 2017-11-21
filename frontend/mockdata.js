@@ -310,7 +310,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         productModel: row.gateway_product_model,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
-        status: row.meter_status,
+        status: row.gateway_status,
         statusChanged,
         gatewayId: row.gateway_id,
         position: objPosition,
@@ -328,9 +328,9 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         r.selections.meteringPoints.push({id: row.meter_id, name: row.meter_id});
         meteringPoints.add(row.meter_id);
       }
-      if (!statuses.has(row.meter_status)) {
-        r.selections.statuses.push({id: row.meter_status, name: row.meter_status});
-        statuses.add(row.meter_status);
+      if (!statuses.has(row.meter_status.id)) {
+        r.selections.statuses.push(row.meter_status);
+        statuses.add(row.meter_status.id);
       }
       if (!alarms.has(alarm)) {
         r.selections.alarms.push({id: alarm, name: alarm});

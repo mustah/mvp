@@ -39,7 +39,7 @@ describe('urlFactory', () => {
     it('returns selected statuses', () => {
       const selection: SelectedParameters = {statuses: [Status.ok, Status.warning]};
 
-      expect(encodedUriParametersFrom(selection)).toEqual('status=ok&status=warning');
+      expect(encodedUriParametersFrom(selection)).toEqual('status.id=ok&status.id=warning');
     });
 
     it('returns all selected parameters', () => {
@@ -50,7 +50,8 @@ describe('urlFactory', () => {
       };
 
       const expected =
-        'address.id=address%202&address.id=storgatan%205&city.id=got&city.id=sto&city.id=mmx&status=ok&status=warning';
+        'address.id=address%202&address.id=storgatan%205&city.id=got&city.id=sto&city.id=mmx&' +
+        'status.id=ok&status.id=warning';
       expect(encodedUriParametersFrom(selection)).toEqual(expected);
     });
 

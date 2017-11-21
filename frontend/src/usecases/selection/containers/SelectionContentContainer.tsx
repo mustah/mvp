@@ -16,7 +16,7 @@ import {
   getAddresses,
   getAlarms,
   getCities,
-  getCitiesSelection, getManufacturers, getProductModels,
+  getCitiesSelection, getManufacturers, getProductModels, getStatuses,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
@@ -34,6 +34,7 @@ interface StateToProps {
   alarms: SelectionListItem[];
   manufacturers: SelectionListItem[];
   productModels: SelectionListItem[];
+  statuses: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -42,7 +43,7 @@ interface DispatchToProps {
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {toggleSelection, cities, addresses, alarms, manufacturers, productModels, citiesSelection} = props;
+  const {toggleSelection, cities, addresses, alarms, manufacturers, productModels, statuses, citiesSelection} = props;
 
   const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
   const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
@@ -51,12 +52,14 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
     toggleSelection({...selection, parameter: parameterNames.manufacturers});
   const selectProductModel = (selection: IdNamed) =>
     toggleSelection({...selection, parameter: parameterNames.productModels});
+  const selectStatus = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.statuses});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
   const alarmSelectionText = translate('alarm') + ': ';
   const manufacturerSelectionText = translate('manufacturer') + ': ';
   const productModelSelectionText = translate('product model') + ': ';
+  const statusSelectionText = translate('status') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -90,6 +93,11 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           selectionText={productModelSelectionText}
           select={selectProductModel}
         />
+        <SimpleDropdownSelector
+          list={statuses}
+          selectionText={statusSelectionText}
+          select={selectStatus}
+        />
         <SelectionQuantity/>
       </Row>
 
@@ -113,6 +121,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     alarms: getAlarms(lookupState),
     manufacturers: getManufacturers(lookupState),
     productModels: getProductModels(lookupState),
+    statuses: getStatuses(lookupState),
   };
 };
 
