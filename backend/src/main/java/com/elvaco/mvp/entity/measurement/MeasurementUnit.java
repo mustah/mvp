@@ -29,7 +29,10 @@ public class MeasurementUnit {
 
   @Override
   public String toString() {
-    return String.format("%f %s", value, unit);
+    if (value == (long) value)
+      return String.format("%d %s", (long) value, unit);
+    else
+      return String.format("%s %s", value, unit);
   }
 
   public double getValue() {
