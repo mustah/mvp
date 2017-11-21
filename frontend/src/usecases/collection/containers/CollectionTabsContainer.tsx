@@ -195,10 +195,29 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
-        <PieChartSelector heading="Status" data={status} colors={colors[0]} onClick={selectStatus}/>
-        <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
-        <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-        <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]} onClick={selectProductModel}/>
+        <PieChartSelector
+          heading="Status"
+          data={status}
+          colors={colors[0]}
+          onClick={selectStatus}
+        />
+        <PieChartSelector
+          heading="Flaggade för åtgärd"
+          data={flagged}
+          colors={colors[1]}
+        />
+        <PieChartSelector
+          heading="Städer"
+          data={cities}
+          colors={colors[0]}
+          onClick={selectCity}
+        />
+        <PieChartSelector
+          heading="Produktmodeller"
+          data={productModels}
+          colors={colors[1]}
+          onClick={selectProductModel}
+        />
       </Row>
     ) : null;
 
