@@ -164,11 +164,28 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
       title={section.label}
     />));
 
+  const selectStatus = (status: string) => {
+    const statusId = status === 'OK' ? 0 : 3;
+    addSelection({
+      parameter: parameterNames.statuses,
+      id: statusId,
+      name: status,
+    });
+  };
+
   const selectCity = (city: string) => {
     addSelection({
       parameter: parameterNames.cities,
       id: city,
       name: city,
+    });
+  };
+
+  const selectProductModel = (productModel: string) => {
+    addSelection({
+      parameter: parameterNames.productModels,
+      id: productModel,
+      name: productModel,
     });
   };
 
@@ -178,10 +195,10 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
-        <PieChartSelector heading="Status" data={status} colors={colors[0]}/>
+        <PieChartSelector heading="Status" data={status} colors={colors[0]} onClick={selectStatus}/>
         <PieChartSelector heading="Flaggade för åtgärd" data={flagged} colors={colors[1]}/>
         <PieChartSelector heading="Städer" data={cities} colors={colors[0]} onClick={selectCity}/>
-        <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]}/>
+        <PieChartSelector heading="Produktmodeller" data={productModels} colors={colors[1]} onClick={selectProductModel}/>
       </Row>
     ) : null;
 

@@ -167,11 +167,28 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
       title={section.label}
     />));
 
+  const selectStatus = (status: string) => {
+    const statusId = status === 'OK' ? 0 : 3;
+    addSelection({
+      parameter: parameterNames.statuses,
+      id: statusId,
+      name: status,
+    });
+  };
+
   const selectCity = (city: string) => {
     addSelection({
       parameter: parameterNames.cities,
       id: city,
       name: city,
+    });
+  };
+
+  const selectManufacturer = (manufacturer: string) => {
+    addSelection({
+      parameter: parameterNames.manufacturers,
+      id: manufacturer,
+      name: manufacturer,
     });
   };
 
@@ -181,10 +198,10 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
 
     const chartRow = count > 0 ? (
       <Row>
-        <PieChartSelector heading={translate('status')} data={status} colors={colors[0]}/>
+        <PieChartSelector heading={translate('status')} data={status} colors={colors[0]} onClick={selectStatus}/>
         <PieChartSelector heading={translate('flagged for action')} data={flagged} colors={colors[1]}/>
         <PieChartSelector heading={translate('cities')} data={cities} colors={colors[0]} onClick={selectCity}/>
-        <PieChartSelector heading={translate('manufacturer')} data={manufacturers} colors={colors[1]}/>
+        <PieChartSelector heading={translate('manufacturer')} data={manufacturers} colors={colors[1]} onClick={selectManufacturer}/>
         <PieChartSelector heading={translate('medium')} data={media} colors={colors[0]}/>
       </Row>
     ) : null;
