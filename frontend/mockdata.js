@@ -3,6 +3,7 @@ const csvjson = require('csvjson');
 const glob = require('glob');
 const Bottleneck = require('bottleneck');
 const geocode = require('./geocode');
+const moment = require('moment');
 
 const fromDbJson = {
   authenticate: {
@@ -123,78 +124,67 @@ const parseMeasurementSeedData = (path) => {
   const measurements = [];
   const statusChanges = {};
   const padZero = (aNumber) => {
-    let str = aNumber + '';
-    if (str.length > 1) {
-      return str;
-    }
-    return '0' + str;
-  };
-  const dateString = (d) => {
-    //tslint:disable-next-line
-    return `${d.getFullYear()}-${padZero(d.getMonth() + 1)}-${padZero(d.getDate())} ${padZero(d.getHours())}:${padZero(d.getMinutes())}:${padZero(d.getSeconds())}`;
+    return aNumber < 10 ? `0${aNumber}` : aNumber + '';
   };
 
   glob.sync(path).forEach((seedFile) => {
-    /**
-     * NOTE: This code could be much, much prettier but most of the ugly here is
-     * required to keep performance at an acceptable level.
-     *
-     * The rest is incompetence.
-     */
-    const measurementData = fs.readFileSync(seedFile, 'utf-8');
-    measurementData.split('\n').forEach((csv) => {
-      if (csv.length === 0) {
-        return;
-      }
-      const [facility, meterId, datestring, energy, volume, forwardTemp, returnTemp] = csv.split(';');
-      const year = datestring.substr(0, 4);
-      const month = Number(datestring.substr(4, 2));
-      const day = Number(datestring.substr(6, 2));
-      // NOTE: We're only including about a week of data here, since serializing
-      // any more will either take a *lot* of time or crash with an OOM error.
-      if (month < 10 || (month === 10 && day < 28)) {
-        return;
-      }
-      const hour = datestring.substr(8, 2);
-      const minute = datestring.substr(10, 2);
-      const created = new Date(year, month - 1, day, hour, minute);
-      const createdIso = created.toISOString();
-      // this could be a complete lie, but hopefully the CSV is ordered by date in descending order
-      // also, we don't know if the status changed, but at least there is 'a' timestamp (perhaps we should randomize it)
-      statusChanges[meterId] = dateString(created);
-      measurements.push({
-        facility,
-        meterId,
-        created: createdIso,
-        quantity: 'Energy',
-        value: energy,
-        unit: 'kWh',
+    fs.readFileSync(seedFile, 'utf-8')
+      .split('\n')
+      .forEach((csv) => {
+        if (csv.length === 0) {
+          return;
+        }
+        const [facility, meterId, dateString, energy, volume, forwardTemp, returnTemp] = csv.split(';');
+        const year = dateString.substr(0, 4);
+        const month = Number(dateString.substr(4, 2));
+        const day = Number(dateString.substr(6, 2));
+        // NOTE: We're only including about a week of data here, since serializing
+        // any more will either take a *lot* of time or crash with an OOM error.
+        if (month < 10 || (month === 10 && day < 28)) {
+          return;
+        }
+        const hour = dateString.substr(8, 2);
+        const minute = dateString.substr(10, 2);
+        // this could be a complete lie, but hopefully the CSV is ordered by date in descending order
+        // also, we don't know if the status changed, but at least there is 'a' timestamp.
+        const createdAt = `${year}-${month}-${padZero(day)} ${hour}:${minute}`;
+        const created = moment(createdAt).valueOf();
+
+        statusChanges[meterId] = createdAt;
+
+        measurements.push({
+          facility,
+          meterId,
+          created,
+          quantity: 'Energy',
+          value: energy,
+          unit: 'kWh',
+        });
+        measurements.push({
+          facility,
+          meterId,
+          created,
+          quantity: 'Volume',
+          value: volume,
+          unit: 'm^3',
+        });
+        measurements.push({
+          facility,
+          meterId,
+          created,
+          quantity: 'Forward Temp.',
+          value: forwardTemp,
+          unit: '°C',
+        });
+        measurements.push({
+          facility,
+          meterId,
+          created,
+          quantity: 'Volume',
+          value: returnTemp,
+          unit: '°C',
+        });
       });
-      measurements.push({
-        facility,
-        meterId,
-        created: createdIso,
-        quantity: 'Volume',
-        value: volume,
-        unit: 'm^3',
-      });
-      measurements.push({
-        facility,
-        meterId,
-        created: createdIso,
-        quantity: 'Forward Temp.',
-        value: forwardTemp,
-        unit: '°C',
-      });
-      measurements.push({
-        facility,
-        meterId,
-        created: createdIso,
-        quantity: 'Volume',
-        value: returnTemp,
-        unit: '°C',
-      });
-    });
   });
   return {measurements, statusChanges};
 };
@@ -279,11 +269,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       const city = {id: cityId, name: row.city};
       const address = {id: addressId, name: row.address, cityId};
 
-      let statusChanged;
-
-      if (statusChanges.hasOwnProperty(row.meter_id)) {
-        statusChanged = statusChanges[row.meter_id];
-      }
+      const statusChanged = statusChanges[row.meter_id];
 
       r.gateways.push({
         id: row.gateway_id,
