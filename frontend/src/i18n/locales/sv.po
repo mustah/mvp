@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
 
+msgid "overview"
+msgstr "översikt"
+
 msgid "gateway"
 msgstr "gateway"
 
@@ -90,7 +93,7 @@ msgid "manufacturer"
 msgstr "tillverkare"
 
 msgid "medium"
-msgstr "medium"
+msgstr "typ"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
@@ -137,8 +140,8 @@ msgstr "senaste SNR"
 msgid "all"
 msgstr "allt"
 
-msgid "of {{count}} point"
-msgstr "av {{count}} punkt"
+msgid "of {{count}} metering point"
+msgstr "av {{count}} mätpunkt"
 
 msgid "previous"
 msgstr "föregående"
@@ -198,8 +201,8 @@ msgid "filter on status"
 msgstr "filtrera på status"
 
 msgctxt "°plural"
-msgid "of {{count}} point°"
-msgstr "av {{count}} punkter"
+msgid "of {{count}} metering point°"
+msgstr "av {{count}} mätpunkter"
 
 msgctxt "°plural"
 msgid "city°"

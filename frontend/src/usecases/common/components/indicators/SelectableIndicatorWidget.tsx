@@ -29,7 +29,7 @@ const indicatorIconFor: IndicatorIcon = {
   [IndicatorType.temperatureOutside]: <IconTemperature className="Indicator-icon" color="black"/>,
 };
 
-export const renderIndicator = (type: IndicatorType, props?: SvgIconProps): React.ReactElement<SvgIconProps> => {
+export const renderIndicatorIcon = (type: IndicatorType, props?: SvgIconProps): React.ReactElement<SvgIconProps> => {
   return React.cloneElement(indicatorIconFor[type], props);
 };
 
@@ -44,6 +44,7 @@ export const SelectableIndicatorWidget = (props: IndicatorProps) => {
   const {state, title, value, unit, subtitle} = indicator;
 
   const selectWidget = () => select(indicator.type);
+  const isEnabled = indicator.type === IndicatorType.districtHeating;
 
   return (
     <div onClick={selectWidget}>
@@ -53,11 +54,11 @@ export const SelectableIndicatorWidget = (props: IndicatorProps) => {
             <Bold>{title}</Bold>
           </Row>
           <Row className="Row-center Row-bottom">
-            <Xlarge className="Indicator-value">{value}</Xlarge>
-            <Normal className="Indicator-unit">{unit}</Normal>
+            <Xlarge className="Indicator-value">{(isEnabled && value) || '-'}</Xlarge>
+            <Normal className="Indicator-unit">{isEnabled && unit}</Normal>
           </Row>
           <Row className="Indicator-subtitle Row-center">
-            {renderIndicator(indicator.type)}
+            {renderIndicatorIcon(indicator.type)}
             <Bold>{subtitle}</Bold>
           </Row>
         </Column>
