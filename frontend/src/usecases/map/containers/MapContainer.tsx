@@ -65,8 +65,8 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     let onMarkerClick = openClusterDialog;
 
     if (popupMode === PopupMode.none) {
-      //Prevent popup in popup
-      onMarkerClick = () => {};
+      // Prevent popup in popup
+      onMarkerClick = () => void(0);
     }
 
     let tmpMarkers: { [key: string]: MapMarker } = {};
