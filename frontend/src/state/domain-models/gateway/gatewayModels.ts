@@ -14,7 +14,8 @@ export interface Gateway extends MapMarker {
   port: string | null;
   meterIds: string[];
   meterStatus: IdNamed;
-  alarm: string;
+  meterAlarm: string;
+  meterManufacturer: string;
 }
 
 export type GatewaysState = NormalizedState<Gateway>;

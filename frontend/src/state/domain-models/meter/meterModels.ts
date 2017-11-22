@@ -11,10 +11,11 @@ export interface Meter extends MapMarker {
   flags: Flag[];
   medium: string;
   manufacturer: string;
-  gatewayId: string;
   statusChanged?: string;
   date?: string;
+  gatewayId: string;
   gatewayStatus: IdNamed;
+  gatewayProductModel: string;
 }
 
 export type MetersState = NormalizedState<Meter>;
