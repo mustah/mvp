@@ -137,12 +137,11 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
     let tmpIcon;
 
     // TODO break up marker icon logic into methods and add tests
-
     if (tmpMarkers) {
       Object.keys(tmpMarkers).forEach((key: string) => {
         const marker = tmpMarkers[key];
 
-      // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
+        // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is
         switch (marker.status.id) {
           case 0:
           case 1:
@@ -208,6 +207,13 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       }
     }
 
+    const renderCluster = () => leafletMarkers.length > 0 && (
+      <MarkerClusterGroup
+        markers={leafletMarkers}
+        onMarkerClick={onMarkerClick}
+        options={markerclusterOptions}
+      />);
+
     return (
       <Column>
         <Map
@@ -223,11 +229,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           <TileLayer
             url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"
           />
-          <MarkerClusterGroup
-            markers={leafletMarkers}
-            onMarkerClick={onMarkerClick}
-            options={markerclusterOptions}
-          />
+          {renderCluster()}
         </Map>
         {popup}
       </Column>
