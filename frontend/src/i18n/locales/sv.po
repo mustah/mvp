@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-20T15:10:15.942Z\n"
+"POT-Creation-Date: 2017-11-22T08:51:37.775Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,15 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
-
-msgid "table"
-msgstr "tabell"
-
-msgid "graph"
-msgstr "graf"
-
-msgid "overview"
-msgstr "översikt"
 
 msgid "gateway"
 msgstr "gateway"
@@ -38,29 +29,20 @@ msgstr "modell"
 msgid "status"
 msgstr "status"
 
-msgid "meter status"
-msgstr "mätarstatus"
-
 msgid "status change"
 msgstr "statusförändring"
 
 msgid "flags"
 msgstr "flaggor"
 
+msgid "overview"
+msgstr "översikt"
+
 msgid "list"
 msgstr "lista"
 
 msgid "map"
 msgstr "karta"
-
-msgid "export to Excel (.csv)"
-msgstr "exportera till Excel (.csv)"
-
-msgid "export to JSON"
-msgstr "exportera till JSON"
-
-msgid "add to report"
-msgstr "lägg till i rapport"
 
 msgid "close"
 msgstr "stäng"
@@ -80,6 +62,39 @@ msgstr "senaste 7 dagarna"
 msgid "pick a date"
 msgstr "välj datum"
 
+msgid "all"
+msgstr "allt"
+
+msgid "of {{count}} metering point"
+msgstr "av {{count}} mätpunkt"
+
+msgid "facility"
+msgstr "anläggning"
+
+msgid "manufacturer"
+msgstr "tillverkare"
+
+msgid "medium"
+msgstr "typ"
+
+msgid "previous"
+msgstr "föregående"
+
+msgid "next"
+msgstr "nästa"
+
+msgid "export to Excel (.csv)"
+msgstr "exportera till Excel (.csv)"
+
+msgid "export to JSON"
+msgstr "exportera till JSON"
+
+msgid "meter"
+msgstr "mätare"
+
+msgid "add to report"
+msgstr "lägg till i rapport"
+
 msgid "gateway details"
 msgstr "gateway"
 
@@ -92,17 +107,8 @@ msgstr "intervall"
 msgid "flagged for action"
 msgstr "flaggad för åtgärd"
 
-msgid "meter"
-msgstr "mätare"
-
 msgid "status log"
 msgstr "statuslogg"
-
-msgid "manufacturer"
-msgstr "tillverkare"
-
-msgid "medium"
-msgstr "typ"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
@@ -146,21 +152,6 @@ msgstr "värde"
 msgid "latest snr"
 msgstr "senaste SNR"
 
-msgid "all"
-msgstr "allt"
-
-msgid "of {{count}} metering point"
-msgstr "av {{count}} mätpunkt"
-
-msgid "facility"
-msgstr "anläggning"
-
-msgid "previous"
-msgstr "föregående"
-
-msgid "next"
-msgstr "nästa"
-
 msgid "edit"
 msgstr "redigera"
 
@@ -170,11 +161,20 @@ msgstr "ta bort"
 msgid "dashboard"
 msgstr "dashboard"
 
+msgid "selection"
+msgstr "urval"
+
 msgid "report"
 msgstr "rapport"
 
 msgid "logout"
 msgstr "logga ut"
+
+msgid "graph"
+msgstr "graf"
+
+msgid "table"
+msgstr "tabell"
 
 msgid "save"
 msgstr "spara"
@@ -185,11 +185,14 @@ msgstr "spara som"
 msgid "reset"
 msgstr "återställ"
 
-msgid "selection"
-msgstr "urval"
-
 msgid "alarm"
 msgstr "larm"
+
+msgid "meter status"
+msgstr "mätarstatus"
+
+msgid "gateway status"
+msgstr "gatewaystatus"
 
 msgid "filter"
 msgstr "filtrera"
@@ -213,10 +216,6 @@ msgid "filter on status"
 msgstr "filtrera på status"
 
 msgctxt "°plural"
-msgid "alarm°"
-msgstr "larm"
-
-msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
 
@@ -231,3 +230,7 @@ msgstr "adresser"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "mätare"
+
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "larm"

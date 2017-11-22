@@ -70,7 +70,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
       <Row className="DropdownSelector">
         <div onClick={this.openMenu} className={classNames('DropdownSelector-Text clickable', {isOpen})}>
           <RowMiddle>
-            <Normal className="capitalize">{selectionText}{selectedOverview}</Normal>
+            <Normal className="first-uppercase">{selectionText}{selectedOverview}</Normal>
             <IconDropDown/>
           </RowMiddle>
         </div>

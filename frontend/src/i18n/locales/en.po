@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-20T15:10:15.942Z\n"
+"POT-Creation-Date: 2017-11-22T08:51:37.775Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,15 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.4\n"
-
-msgid "overview"
-msgstr "overview"
-
-msgid "table"
-msgstr "table"
-
-msgid "graph"
-msgstr "graph"
 
 msgid "gateway"
 msgstr "gateway"
@@ -38,29 +29,20 @@ msgstr "product model"
 msgid "status"
 msgstr "status"
 
-msgid "meter status"
-msgstr "meter status"
-
 msgid "status change"
 msgstr "status change"
 
 msgid "flags"
 msgstr "flags"
 
+msgid "overview"
+msgstr "overview"
+
 msgid "list"
 msgstr "list"
 
 msgid "map"
 msgstr "map"
-
-msgid "export to Excel (.csv)"
-msgstr "export to Excel (.csv)"
-
-msgid "export to JSON"
-msgstr "export to JSON"
-
-msgid "add to report"
-msgstr "add to report"
 
 msgid "close"
 msgstr "close"
@@ -80,6 +62,39 @@ msgstr "last 7 days"
 msgid "pick a date"
 msgstr "pick a date"
 
+msgid "all"
+msgstr "all"
+
+msgid "of {{count}} metering point"
+msgstr "of {{count}} metering point"
+
+msgid "facility"
+msgstr "facility"
+
+msgid "manufacturer"
+msgstr "manufacturer"
+
+msgid "medium"
+msgstr "type"
+
+msgid "previous"
+msgstr "previous"
+
+msgid "next"
+msgstr "next"
+
+msgid "export to Excel (.csv)"
+msgstr "export to Excel (.csv)"
+
+msgid "export to JSON"
+msgstr "export to JSON"
+
+msgid "meter"
+msgstr "meter"
+
+msgid "add to report"
+msgstr "add to report"
+
 msgid "gateway details"
 msgstr "gateway"
 
@@ -92,17 +107,8 @@ msgstr "interval"
 msgid "flagged for action"
 msgstr "flagged for action"
 
-msgid "meter"
-msgstr "meter"
-
 msgid "status log"
 msgstr "status log"
-
-msgid "manufacturer"
-msgstr "manufacturer"
-
-msgid "medium"
-msgstr "type"
 
 msgid "show only changes"
 msgstr "show only changes"
@@ -146,21 +152,6 @@ msgstr "value"
 msgid "latest snr"
 msgstr "latest SNR"
 
-msgid "all"
-msgstr "all"
-
-msgid "of {{count}} metering point"
-msgstr "of {{count}} metering point"
-
-msgid "facility"
-msgstr "facility"
-
-msgid "previous"
-msgstr "previous"
-
-msgid "next"
-msgstr "next"
-
 msgid "edit"
 msgstr "edit"
 
@@ -170,11 +161,20 @@ msgstr "delete"
 msgid "dashboard"
 msgstr "dashboard"
 
+msgid "selection"
+msgstr "selection"
+
 msgid "report"
 msgstr "report"
 
 msgid "logout"
 msgstr "logout"
+
+msgid "graph"
+msgstr "graph"
+
+msgid "table"
+msgstr "table"
 
 msgid "save"
 msgstr "save"
@@ -185,11 +185,14 @@ msgstr "save as"
 msgid "reset"
 msgstr "reset"
 
-msgid "selection"
-msgstr "selection"
-
 msgid "alarm"
 msgstr "alarm"
+
+msgid "meter status"
+msgstr "meter status"
+
+msgid "gateway status"
+msgstr "gateway status"
 
 msgid "filter"
 msgstr "filter"
@@ -213,10 +216,6 @@ msgid "filter on status"
 msgstr "filter on status"
 
 msgctxt "°plural"
-msgid "alarm°"
-msgstr "alarms"
-
-msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
 
@@ -231,3 +230,7 @@ msgstr "addresses"
 msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
+
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "alarms"

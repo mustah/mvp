@@ -17,6 +17,7 @@ import {
   getAlarms,
   getCities,
   getCitiesSelection,
+  getGatewayStatuses,
   getManufacturers,
   getMeterStatuses,
   getProductModels,
@@ -38,6 +39,7 @@ interface StateToProps {
   manufacturers: SelectionListItem[];
   productModels: SelectionListItem[];
   meterStatuses: SelectionListItem[];
+  gatewayStatuses: SelectionListItem[];
   citiesSelection: DomainModel<IdNamed>;
 }
 
@@ -54,6 +56,7 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
     manufacturers,
     productModels,
     meterStatuses,
+    gatewayStatuses,
     citiesSelection,
   } = props;
 
@@ -64,14 +67,18 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
     toggleSelection({...selection, parameter: parameterNames.manufacturers});
   const selectProductModel = (selection: IdNamed) =>
     toggleSelection({...selection, parameter: parameterNames.productModels});
-  const selectStatus = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.meterStatuses});
+  const selectMeterStatus = (selection: IdNamed) =>
+    toggleSelection({...selection, parameter: parameterNames.meterStatuses});
+  const selectGatewayStatus = (selection: IdNamed) =>
+    toggleSelection({...selection, parameter: parameterNames.gatewayStatuses});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
   const alarmSelectionText = translate('alarm') + ': ';
   const manufacturerSelectionText = translate('manufacturer') + ': ';
   const productModelSelectionText = translate('product model') + ': ';
-  const statusSelectionText = translate('meter status') + ': ';
+  const meterStatusSelectionText = translate('meter status') + ': ';
+  const gatewayStatusSelectionText = translate('gateway status') + ': ';
 
   return (
     <Column className="SelectionContentBox">
@@ -96,14 +103,19 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
           select={selectProductModel}
         />
         <SimpleDropdownSelector
+          list={gatewayStatuses}
+          selectionText={gatewayStatusSelectionText}
+          select={selectGatewayStatus}
+        />
+        <SimpleDropdownSelector
           list={manufacturers}
           selectionText={manufacturerSelectionText}
           select={selectManufacturer}
         />
         <SimpleDropdownSelector
           list={meterStatuses}
-          selectionText={statusSelectionText}
-          select={selectStatus}
+          selectionText={meterStatusSelectionText}
+          select={selectMeterStatus}
         />
         <SimpleDropdownSelector
           list={alarms}
@@ -134,6 +146,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     manufacturers: getManufacturers(lookupState),
     productModels: getProductModels(lookupState),
     meterStatuses: getMeterStatuses(lookupState),
+    gatewayStatuses: getGatewayStatuses(lookupState),
   };
 };
 
