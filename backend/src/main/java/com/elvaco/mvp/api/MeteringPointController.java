@@ -1,18 +1,19 @@
 package com.elvaco.mvp.api;
 
-import java.util.List;
-
+import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.repository.MeteringPointRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import java.util.List;
 
 @RestApi
+@Slf4j
 public class MeteringPointController {
 
   private final MeteringPointRepository repository;
@@ -22,9 +23,9 @@ public class MeteringPointController {
     this.repository = repository;
   }
 
-  @RequestMapping("/mps/{moid}")
-  public MeteringPointEntity meteringPoint(@PathVariable String moid) {
-    return repository.findByMoid(moid);
+  @RequestMapping("/mps/{id}")
+  public MeteringPointEntity meteringPoint(@PathVariable Long id) {
+    return repository.findOne(id);
   }
 
   @RequestMapping("/mps")

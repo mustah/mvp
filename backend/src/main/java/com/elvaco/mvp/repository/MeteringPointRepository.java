@@ -11,8 +11,6 @@ import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 @NoRepositoryBean
 public interface MeteringPointRepository extends JpaRepository<MeteringPointEntity, Long> {
 
-  MeteringPointEntity findByMoid(String moid);
-
   List<MeteringPointEntity> containsInPropertyCollection(PropertyCollectionDTO requestModel);
 
   /**

@@ -1,26 +1,36 @@
 package com.elvaco.mvp.api;
 
-import java.util.List;
-import java.util.Map;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDTO;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDTO;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.elvaco.mvp.repository.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class MeteringPointControllerTest extends IntegrationTest {
 
+  @Autowired
+  MeteringPointRepository repository;
   @Before
   public void setUp() {
+    MeteringPointEntity mp = new MeteringPointEntity();
+    mp.propertyCollection = new PropertyCollection()
+            .put("user", new UserPropertyDTO("abc123", "Some project"))
+            .putArray("numbers", Arrays.asList(1, 2, 3, 17));
+    repository.save(mp);
     restClient().loginWith("evanil@elvaco.se", "eva123");
   }
 
@@ -41,10 +51,6 @@ public class MeteringPointControllerTest extends IntegrationTest {
       .get(0);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(result.get("id")).isEqualTo(3);
-    assertThat(result.get("moid")).isEqualTo("3");
-    assertThat(result.get("status")).isEqualTo(200);
-    assertThat(result.get("message")).isEqualTo("Low battery.");
   }
 
   @Test
@@ -59,17 +65,14 @@ public class MeteringPointControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findByMoid() {
+  public void findById() {
     ResponseEntity<MeteringPointEntity> response = restClient()
       .get("/mps/2", MeteringPointEntity.class);
 
     MeteringPointEntity meteringPoint = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(meteringPoint.moid).isEqualTo("2");
-    assertThat(meteringPoint.status).isEqualTo(0);
-    assertThat(meteringPoint.message).isEmpty();
-    assertThat(meteringPoint.propertyCollection).isNull();
+    assertThat(meteringPoint.id).isEqualTo(2L);
   }
 
   @Test

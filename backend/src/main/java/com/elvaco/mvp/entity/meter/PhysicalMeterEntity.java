@@ -1,6 +1,8 @@
 package com.elvaco.mvp.entity.meter;
 
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -13,24 +15,27 @@ public class PhysicalMeterEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
-  public Long organisation;
+  public Long organisation_id; /*TODO: Materialize as an organisation entity */
   public String identity;
   public String medium;
 
-  /*
-  @ManyToOne
-  public LogicalMeterEntity logicalMeter;
-
-  */
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
+
+  @ManyToOne
+  @JsonBackReference
+  public MeteringPointEntity meteringPoint;
+
+  public void setMeteringPoint(MeteringPointEntity meteringPoint) {
+    this.meteringPoint = meteringPoint;
+  }
 
   public PhysicalMeterEntity() {
   }
 
   public PhysicalMeterEntity(Long organisation, String identity, String medium) {
-    this.organisation = organisation;
+    this.organisation_id = organisation;
     this.identity = identity;
     this.medium = medium;
   }

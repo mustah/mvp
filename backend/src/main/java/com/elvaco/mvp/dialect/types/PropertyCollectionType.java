@@ -7,14 +7,14 @@ import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
 
-import com.elvaco.mvp.entity.meteringpoint.MvpPropertyCollection;
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public abstract class MvpPropertyCollectionType implements UserType {
+public abstract class PropertyCollectionType implements UserType {
 
   @Override
-  public Class<MvpPropertyCollection> returnedClass() {
-    return MvpPropertyCollection.class;
+  public Class<PropertyCollection> returnedClass() {
+    return PropertyCollection.class;
   }
 
   @Override
@@ -41,12 +41,12 @@ public abstract class MvpPropertyCollectionType implements UserType {
       return null;
     }
 
-    if (!(value instanceof MvpPropertyCollection)) {
+    if (!(value instanceof PropertyCollection)) {
       return null;
     }
 
-    ObjectNode copyProperties = ((MvpPropertyCollection) value).getJson().deepCopy();
-    return new MvpPropertyCollection(copyProperties);
+    ObjectNode copyProperties = ((PropertyCollection) value).getJson().deepCopy();
+    return new PropertyCollection(copyProperties);
   }
 
   @Override

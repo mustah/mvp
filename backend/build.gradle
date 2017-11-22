@@ -54,20 +54,23 @@ distributions {
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-data-jpa')
   compile('org.springframework.boot:spring-boot-starter-jdbc')
-  compile("org.springframework.boot:spring-boot-starter-actuator")
-  compile("org.springframework.boot:spring-boot-starter-security")
+  compile('org.springframework.boot:spring-boot-starter-actuator')
+  compile('org.springframework.boot:spring-boot-starter-security')
   compile('org.springframework.boot:spring-boot-starter-web')
-  compile("org.springframework.security:spring-security-acl")
-  compile("org.springframework.boot:spring-boot-devtools")
+  compile('org.springframework.security:spring-security-acl')
+  compile('org.springframework.boot:spring-boot-devtools')
   compile('org.springframework.boot:spring-boot-starter-hateoas')
-  compile("org.modelmapper:modelmapper:1.1.0")
+  compile('org.modelmapper:modelmapper:1.1.0')
   compile('org.postgresql:postgresql')
+  // units-of-measurement - Only needed when running against H2,
+  // PostgreSQL does unit conversion natively.
+  // TODO: Exclude for prod builds
+  compile('tec.uom:uom-se:1.0.8')
 
   compileOnly('org.projectlombok:lombok:1.16.18')
 
   runtime('org.liquibase:liquibase-core')
   runtime('com.h2database:h2')
-
   testCompile('org.springframework.boot:spring-boot-starter-test')
   testCompile('org.assertj:assertj-core:3.8.0')
 }

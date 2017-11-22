@@ -10,15 +10,15 @@ import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.utils.Json.toJsonNode;
 
 @ToString
-public class MvpPropertyCollection {
+public class PropertyCollection {
 
   private final ObjectNode json;
 
-  public MvpPropertyCollection(ObjectNode json) {
+  public PropertyCollection(ObjectNode json) {
     this.json = json;
   }
 
-  public MvpPropertyCollection() {
+  public PropertyCollection() {
     this(OBJECT_MAPPER.createObjectNode());
   }
 
@@ -26,12 +26,12 @@ public class MvpPropertyCollection {
     return json;
   }
 
-  public MvpPropertyCollection put(String fieldName, Object value) {
+  public PropertyCollection put(String fieldName, Object value) {
     json.set(fieldName, toJsonNode(value));
     return this;
   }
 
-  public MvpPropertyCollection putArray(String fieldName, List<Integer> l) {
+  public PropertyCollection putArray(String fieldName, List<Integer> l) {
     ArrayNode arrayNode = json.putArray(fieldName);
     for (Integer v : l) {
       arrayNode.add(v);

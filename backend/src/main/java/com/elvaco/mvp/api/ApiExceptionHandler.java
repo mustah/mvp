@@ -2,6 +2,7 @@ package com.elvaco.mvp.api;
 
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,11 +15,13 @@ import com.elvaco.mvp.dto.ErrorMessageDTO;
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
 @ControllerAdvice
+@Slf4j
 public class ApiExceptionHandler {
 
   @ExceptionHandler
   @ResponseBody
   public ResponseEntity<ErrorMessageDTO> handle(Exception exception) {
+    log.warn("Exception occurred while processing request", exception);
     HttpStatus responseHttpStatus = resolveHttpStatus(exception);
     ErrorMessageDTO dto = new ErrorMessageDTO(exception.getMessage(), responseHttpStatus.value());
     return new ResponseEntity<>(dto, responseHttpStatus);
