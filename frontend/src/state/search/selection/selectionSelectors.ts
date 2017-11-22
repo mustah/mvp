@@ -74,7 +74,7 @@ export const getAlarms = getList(parameterNames.alarms);
 export const getManufacturers = getList(parameterNames.manufacturers);
 export const getProductModels = getList(parameterNames.productModels);
 export const getMeterStatuses = getList(parameterNames.meterStatuses);
-export const gatewayStatuses = getList(parameterNames.gatewayStatuses);
+export const getGatewayStatuses = getList(parameterNames.gatewayStatuses);
 
 export const getEncodedUriParametersForMeters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,

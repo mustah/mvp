@@ -279,6 +279,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       const address = {id: addressId, name: row.address, cityId};
 
       const statusChanged = statusChanges[row.meter_id];
+      const alarm = getRandomAlarm(meterStatus.id);
 
       r.gateways.push({
         id: row.gateway_id,
@@ -294,9 +295,10 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         statusChanged,
         meterIds: [row.meter_id],
         position: objPosition,
+        meterStatus,
+        meterAlarm: alarm,
+        meterManufacturer: row.meter_manufacturer,
       });
-
-      const alarm = getRandomAlarm(meterStatus.id);
 
       r.meters.push({
         id: row.meter_id,
@@ -304,14 +306,15 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         address,
         city,
         flags: row.meter_flags,
-        productModel: row.gateway_product_model,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: meterStatus,
         statusChanged,
-        gatewayId: row.gateway_id,
         position: objPosition,
         alarm,
+        gatewayId: row.gateway_id,
+        gatewayStatus,
+        gatewayProductModel: row.gateway_product_model,
       });
       if (!cities.has(cityId)) {
         r.selections.cities.push({id: cityId, name: row.city});

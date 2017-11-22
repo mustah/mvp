@@ -1,6 +1,7 @@
 import {MapMarker} from '../../../usecases/map/mapModels';
-import {Flag} from '../flag/flagModels';
 import {NormalizedState} from '../domainModels';
+import {Flag} from '../flag/flagModels';
+import {IdNamed} from '../../../types/Types';
 
 export interface Gateway extends MapMarker {
   id: string;
@@ -12,6 +13,9 @@ export interface Gateway extends MapMarker {
   ip: string | null;
   port: string | null;
   meterIds: string[];
+  meterStatus: IdNamed;
+  meterAlarm: string;
+  meterManufacturer: string;
 }
 
 export type GatewaysState = NormalizedState<Gateway>;
