@@ -48,6 +48,8 @@ export const alarms = domainModelReducerFor<SelectionEntity>(parameterNames.alar
 export const manufacturers = domainModelReducerFor<SelectionEntity>(parameterNames.manufacturers, EndPoints.selections);
 export const productModels = domainModelReducerFor<SelectionEntity>(parameterNames.productModels, EndPoints.selections);
 export const meterStatuses = domainModelReducerFor<SelectionEntity>(parameterNames.meterStatuses, EndPoints.selections);
+export const gatewayStatuses =
+  domainModelReducerFor<SelectionEntity>(parameterNames.gatewayStatuses, EndPoints.selections);
 export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
 export const meters = domainModelReducerFor<Meter>('meters', EndPoints.meters);
 
@@ -58,6 +60,7 @@ export const domainModels = combineReducers<DomainModelsState>({
   manufacturers,
   productModels,
   meterStatuses,
+  gatewayStatuses,
   gateways,
   meters,
 });

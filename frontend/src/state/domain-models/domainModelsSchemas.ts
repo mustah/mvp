@@ -6,6 +6,7 @@ const alarm = new schema.Entity('alarms');
 const manufacturer = new schema.Entity('manufacturers');
 const productModel = new schema.Entity('productModels');
 const meterStatus = new schema.Entity('meterStatuses');
+const gatewayStatus = new schema.Entity('gatewayStatuses');
 const meteringPoint = new schema.Entity('meteringPoints');
 
 export const selectionsSchema: Schema = {
@@ -15,5 +16,6 @@ export const selectionsSchema: Schema = {
   manufacturers: [manufacturer],
   productModels: [productModel],
   meterStatuses: [meterStatus],
+  gatewayStatuses: [gatewayStatus],
   meteringPoints: [meteringPoint],
 };

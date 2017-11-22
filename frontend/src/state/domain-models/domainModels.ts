@@ -50,6 +50,7 @@ export interface DomainModelsState {
   manufacturers: SelectionEntityState;
   productModels: SelectionEntityState;
   meterStatuses: SelectionEntityState;
+  gatewayStatuses: SelectionEntityState;
   gateways: GatewaysState;
   meters: MetersState;
 }

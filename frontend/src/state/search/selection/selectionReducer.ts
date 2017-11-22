@@ -20,6 +20,7 @@ export const initialState: SelectionState = {
     cities: [],
     addresses: [],
     meterStatuses: [],
+    gatewayStatuses: [],
     alarms: [],
     manufacturers: [],
     productModels: [],

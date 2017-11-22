@@ -48,6 +48,7 @@ const selections = {
   manufacturers: [],
   productModels: [],
   meterStatuses: [],
+  gatewayStatuses: [],
 };
 
 const meters = [
@@ -118,6 +119,7 @@ const meterStatuses = [
 export const testData = {
   selections,
   meterStatuses,
+  gatewayStatues: meterStatuses,
   meters,
   gateways,
 };
