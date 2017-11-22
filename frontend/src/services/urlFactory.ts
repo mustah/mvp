@@ -1,17 +1,37 @@
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 
-const parameterNames = {
+interface ParameterNames {
+  [key: string]: string;
+}
+
+const baseParameterNames: ParameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
-  statuses: 'status.id',
-  alarms: 'alarm',
   manufacturers: 'manufacturer',
   productModels: 'productModel',
   period: 'period',
 };
 
-export const encodedUriParametersFrom = (selectedIds: SelectedParameters): string => {
+const gatewayParameterNames: ParameterNames = {
+  ...baseParameterNames,
+};
+
+const meterParameterNames: ParameterNames = {
+  ...baseParameterNames,
+  meterStatuses: 'status.id',
+  alarms: 'alarm',
+};
+
+export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom(selectedIds, meterParameterNames);
+};
+
+export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom(selectedIds, gatewayParameterNames);
+};
+
+const encodedUriParametersFrom = (selectedIds: SelectedParameters, parameterNames: ParameterNames): string => {
   const parameters: string[] = [];
 
   const addParameterWith = (name: string, value: any) => {

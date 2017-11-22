@@ -5,7 +5,7 @@ import {withRouter} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../reducers/rootReducer';
 import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
-import {getEncodedUriParameters} from '../../state/search/selection/selectionSelectors';
+import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {Layout} from '../common/components/layouts/layout/Layout';
 import {Row} from '../common/components/layouts/row/Row';
@@ -17,7 +17,8 @@ import {Pages} from './Pages';
 interface StateToProps {
   isAuthenticated: boolean;
   isSideMenuOpen: boolean;
-  encodedUriParameters: string;
+  encodedUriParametersForMeters: string;
+  encodedUriParametersForGateways: string;
 }
 
 interface DispatchToProps {
@@ -33,9 +34,9 @@ interface DispatchToProps {
 class AppComponent extends React.Component<StateToProps & DispatchToProps> {
 
   componentDidMount() {
-    const {fetchGateways, fetchMeters, encodedUriParameters} = this.props;
-    fetchGateways(encodedUriParameters);
-    fetchMeters(encodedUriParameters);
+    const {fetchGateways, fetchMeters, encodedUriParametersForMeters, encodedUriParametersForGateways} = this.props;
+    fetchGateways(encodedUriParametersForMeters);
+    fetchMeters(encodedUriParametersForGateways);
   }
 
   render() {
@@ -65,7 +66,8 @@ const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootSt
   return {
     isAuthenticated,
     isSideMenuOpen: isSideMenuOpen(ui),
-    encodedUriParameters: getEncodedUriParameters(searchParameters),
+    encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
+    encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
   };
 };
 

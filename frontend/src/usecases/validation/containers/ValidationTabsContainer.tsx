@@ -73,7 +73,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
 
   // [1] from http://materialuicolors.co/ at level 600
   const colors: [string[]] = [
-    ['#e8a090', '#fce8cc'],
+    ['#E91E63', '#fce8cc', '#3F51B5', '#2196F3', '#009688'],
     ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
     ['#b7e000', '#f7be29', '#ed4200'],
   ];
@@ -87,32 +87,42 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
       'Inga mätare som är OK',
       'Visar alla mätare som är OK',
     ],
-    warnings: [
+    unknown: [
       'Inga mätare med varningar',
       'Visar alla mätare med varningar',
     ],
-    faults: [
+    alarms: [
       'Inga mätare med fel',
       'Visar alla mätare med fel',
     ],
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: []});
+  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: [], alarms: []});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
     all: categories(),
     ok: categories(),
-    warnings: categories(),
-    faults: categories(),
+    unknown: categories(),
+    alarms: categories(),
+  };
+
+  const statusLabelOf = (id: uuid) => {
+    if (id === 4) {
+      return 'unknown';
+    } else if (id === 3) {
+      return 'alarms';
+    } else {
+      return 'ok';
+    }
   };
 
   // categorize the information into a format that's easy to manipulate ...
-  const counts = {all: 0, ok: 0, warnings: 0, faults: 0};
+  const counts = {all: 0, ok: 0, unknown: 0, alarms: 0};
   selectedEntities.forEach((id) => {
     const meter = entities[id];
-    const normalizedStatus = meter.status.id === 0 ? 'ok' : 'faults';
+    const normalizedStatus = statusLabelOf(meter.status.id);
 
     incProp(counts, 'all');
 
@@ -120,6 +130,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(liveData.all.manufacturers, meter.manufacturer);
     incProp(liveData.all.media, meter.medium);
     incProp(liveData.all.status, meter.status.name);
+    incProp(liveData.all.alarms, meter.alarm);
 
     incProp(counts, normalizedStatus);
 
@@ -136,26 +147,34 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
     incProp(liveData[normalizedStatus].media, meter.medium);
     incProp(liveData[normalizedStatus].status, meter.status.name);
+    incProp(liveData[normalizedStatus].alarms, meter.alarm);
   });
 
   const {selectedOption} = tabs.overview;
   // ... then normalize the current tab, for the graphs to consume
   const status: PieData[] = Object.entries(liveData[selectedOption].status).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const flagged: PieData[] = Object.entries(liveData[selectedOption].flagged).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
+  const alarms: PieData[] = Object.entries(liveData[selectedOption].alarms).map((entry) =>
+    ({name: entry[0], value: entry[1]}));
+
   const cities: PieData[] = Object.entries(liveData[selectedOption].cities).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const manufacturers: PieData[] = Object.entries(liveData[selectedOption].manufacturers).map((entry) =>
     ({name: entry[0], value: entry[1]}));
+
   const media: PieData[] = Object.entries(liveData[selectedOption].media).map((entry) =>
     ({name: entry[0], value: entry[1]}));
 
   const overviewTabOptions: any[] = [
     {id: 'all', label: 'ALLA'},
     {id: 'ok', label: 'OK'},
-    {id: 'warnings', label: 'VARNINGAR'},
-    {id: 'faults', label: 'FEL'},
+    {id: 'unknown', label: 'OKÄNDA'},
+    {id: 'alarms', label: 'LARM'},
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
@@ -170,7 +189,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   const selectStatus = (status: string) => {
     const statusId = status === 'OK' ? 0 : 3;
     addSelection({
-      parameter: parameterNames.statuses,
+      parameter: parameterNames.meterStatuses,
       id: statusId,
       name: status,
     });
@@ -210,21 +229,26 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
           colors={colors[1]}
         />
         <PieChartSelector
+          heading={translate('alarm', {count: alarms.length})}
+          data={alarms}
+          colors={colors[0]}
+        />
+        <PieChartSelector
           heading={translate('cities')}
           data={cities}
-          colors={colors[0]}
+          colors={colors[1]}
           onClick={selectCity}
         />
         <PieChartSelector
           heading={translate('manufacturer')}
           data={manufacturers}
-          colors={colors[1]}
+          colors={colors[0]}
           onClick={selectManufacturer}
         />
         <PieChartSelector
           heading={translate('medium')}
           data={media}
-          colors={colors[0]}
+          colors={colors[1]}
         />
       </Row>
     ) : null;

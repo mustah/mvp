@@ -38,6 +38,9 @@ msgstr "product model"
 msgid "status"
 msgstr "status"
 
+msgid "meter status"
+msgstr "meter status"
+
 msgid "status change"
 msgstr "status change"
 
@@ -208,6 +211,10 @@ msgstr "cities"
 
 msgid "filter on status"
 msgstr "filter on status"
+
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "alarms"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"

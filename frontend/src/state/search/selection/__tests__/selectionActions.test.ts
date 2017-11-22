@@ -21,7 +21,7 @@ import {
 } from '../selectionActions';
 import {parameterNames, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {getEncodedUriParameters} from '../selectionSelectors';
+import {getEncodedUriParametersForMeters} from '../selectionSelectors';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -192,7 +192,7 @@ describe('selectionActions', () => {
   });
 
   const onFakeFetchMetersAndGateways = (searchParameters: SearchParameterState) => {
-    const encodedUriParameters = getEncodedUriParameters(searchParameters);
+    const encodedUriParameters = getEncodedUriParametersForMeters(searchParameters);
     mockRestClient.onGet(makeUrl('/meters', encodedUriParameters)).reply(200, testData.meters);
     mockRestClient.onGet(makeUrl('/gateways', encodedUriParameters)).reply(200, testData.gateways);
   };

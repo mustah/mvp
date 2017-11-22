@@ -7,6 +7,7 @@ export interface Meter extends MapMarker {
   id: uuid;
   moid: string;
   facility: string;
+  alarm: string;
   flags: Flag[];
   medium: string;
   manufacturer: string;

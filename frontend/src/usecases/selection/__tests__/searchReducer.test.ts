@@ -91,7 +91,7 @@ describe('searchReducer', () => {
         ],
         manufacturers: [],
         productModels: [],
-        statuses: [],
+        meterStatuses: [],
       },
     });
   });

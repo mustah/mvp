@@ -38,6 +38,9 @@ msgstr "modell"
 msgid "status"
 msgstr "status"
 
+msgid "meter status"
+msgstr "mätarstatus"
+
 msgid "status change"
 msgstr "statusförändring"
 
@@ -120,13 +123,13 @@ msgid "labels"
 msgstr "etiketter"
 
 msgid "sap id"
-msgstr "sap ID"
+msgstr "sap-ID"
 
 msgid "facility id"
-msgstr "anläggnings ID"
+msgstr "anläggnings-ID"
 
 msgid "measure id"
-msgstr "mät ID"
+msgstr "mät-ID"
 
 msgid "latest value"
 msgstr "senaste"
@@ -208,6 +211,10 @@ msgstr "städer"
 
 msgid "filter on status"
 msgstr "filtrera på status"
+
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "larm"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"

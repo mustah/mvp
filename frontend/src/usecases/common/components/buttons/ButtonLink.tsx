@@ -13,8 +13,8 @@ interface Props extends Clickable {
 export const ButtonLink = (props: Props) => {
   const {className, children, onClick} = props;
   return (
-    <Row className={classNames('ButtonLink first-uppercase', className)} onClick={onClick}>
-      <Normal>{children}</Normal>
+    <Row className={classNames('ButtonLink', className)} onClick={onClick}>
+      <Normal className="first-uppercase">{children}</Normal>
     </Row>
   );
 };
