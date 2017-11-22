@@ -279,6 +279,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       const address = {id: addressId, name: row.address, cityId};
 
       const statusChanged = statusChanges[row.meter_id];
+      const alarm = getRandomAlarm(meterStatus.id);
 
       r.gateways.push({
         id: row.gateway_id,
@@ -292,11 +293,11 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         port: nullOr(row.port),
         status: gatewayStatus,
         statusChanged,
+        meterStatus,
         meterIds: [row.meter_id],
         position: objPosition,
+        alarm,
       });
-
-      const alarm = getRandomAlarm(meterStatus.id);
 
       r.meters.push({
         id: row.meter_id,
@@ -309,6 +310,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         manufacturer: row.meter_manufacturer,
         status: meterStatus,
         statusChanged,
+        gatewayStatus,
         gatewayId: row.gateway_id,
         position: objPosition,
         alarm,

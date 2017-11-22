@@ -1,4 +1,4 @@
-import {uuid} from '../../../types/Types';
+import {IdNamed, uuid} from '../../../types/Types';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {DomainModel, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
@@ -14,6 +14,7 @@ export interface Meter extends MapMarker {
   gatewayId: string;
   statusChanged?: string;
   date?: string;
+  gatewayStatus: IdNamed;
 }
 
 export type MetersState = NormalizedState<Meter>;

@@ -11,17 +11,19 @@ const baseParameterNames: ParameterNames = {
   manufacturers: 'manufacturer',
   productModels: 'productModel',
   period: 'period',
+  alarms: 'alarm',
 };
 
 const gatewayParameterNames: ParameterNames = {
   ...baseParameterNames,
   gatewayStatuses: 'status.id',
+  meterStatuses: 'meterStatus.id',
 };
 
 const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
+  gatewayStatuses: 'gatewayStatus.id',
   meterStatuses: 'status.id',
-  alarms: 'alarm',
 };
 
 export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
