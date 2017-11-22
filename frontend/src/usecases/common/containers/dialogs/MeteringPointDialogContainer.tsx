@@ -27,6 +27,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {renderFlags} from './dialogHelper';
+import {Normal} from '../../components/texts/Texts';
 
 interface MeteringPointDialogProps {
   meter: Meter;
@@ -35,7 +36,7 @@ interface MeteringPointDialogProps {
 }
 
 interface StateToProps {
-  entities: { [key: string]: Gateway };
+  entities: {[key: string]: Gateway};
 }
 
 interface MeteringPointDialogState {
@@ -69,6 +70,15 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
     const renderDate = (item: any) => item.date;
     const renderSerial = (item: any) => item.id;
     const renderSnr = (item: any) => 'N/A'; // TODO Gateway should hold SNR (Signal Noise Ratio) information
+    const renderAlarm = () => meter.alarm !== ':Inget fel:' && (
+      <Column>
+        <Row>
+          {translate('alarm')}
+        </Row>
+        <Row>
+          {meter.alarm}
+        </Row>
+      </Column>);
 
     // TODO We need to support that a meter is connected to several gateways
     const meterGateways = {
@@ -276,7 +286,9 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                 </Row>
                 <Row>
                   {/*TODO A meter could be found on serveral gateways*/}
-                  {renderFlags(entities[meter.gatewayId].flags)}
+                  <Normal className="first-uppercase">
+                    {renderFlags(entities[meter.gatewayId].flags)}
+                  </Normal>
                 </Row>
               </Column>
             </Row>
@@ -294,12 +306,15 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                   <IconStatus id={meter.status.id} name={meter.status.name}/>
                 </Row>
               </Column>
+              {renderAlarm()}
               <Column>
                 <Row>
                   {translate('flagged for action')}
                 </Row>
                 <Row>
-                  {renderFlags(meter.flags)}
+                  <Normal className="first-uppercase">
+                    {renderFlags(meter.flags)}
+                  </Normal>
                 </Row>
               </Column>
             </Row>
