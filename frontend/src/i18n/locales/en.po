@@ -167,6 +167,9 @@ msgstr "selection"
 msgid "report"
 msgstr "report"
 
+msgid "no"
+msgstr "no"
+
 msgid "logout"
 msgstr "logout"
 

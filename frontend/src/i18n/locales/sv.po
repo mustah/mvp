@@ -167,6 +167,9 @@ msgstr "urval"
 msgid "report"
 msgstr "rapport"
 
+msgid "no"
+msgstr "nej"
+
 msgid "logout"
 msgstr "logga ut"
 
