@@ -35,7 +35,7 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: { [key: string]: MapMarker } | MapMarker;
+  markers: {[key: string]: MapMarker} | MapMarker;
   height?: number;
   width?: number;
   defaultZoom?: number;
@@ -69,7 +69,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       onMarkerClick = () => void(0);
     }
 
-    let tmpMarkers: { [key: string]: MapMarker } = {};
+    let tmpMarkers: {[key: string]: MapMarker} = {};
     if (isMapMarker(markers)) {
       tmpMarkers[0] = markers;
     } else {
@@ -138,43 +138,45 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 
     // TODO break up marker icon logic into methods and add tests
 
-    Object.keys(tmpMarkers).forEach((key: string) => {
-      const marker = tmpMarkers[key];
+    if (tmpMarkers) {
+      Object.keys(tmpMarkers).forEach((key: string) => {
+        const marker = tmpMarkers[key];
 
       // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
-      switch (marker.status.id) {
-        case 0:
-        case 1:
-          tmpIcon = 'marker-icon-ok.png';
-          break;
-        case 2:
-          tmpIcon = 'marker-icon-warning.png';
-          break;
-        case 3:
-          tmpIcon = 'marker-icon-error.png';
-          break;
-        default:
-          tmpIcon = 'marker-icon.png';
-          break;
-      }
+        switch (marker.status.id) {
+          case 0:
+          case 1:
+            tmpIcon = 'marker-icon-ok.png';
+            break;
+          case 2:
+            tmpIcon = 'marker-icon-warning.png';
+            break;
+          case 3:
+            tmpIcon = 'marker-icon-error.png';
+            break;
+          default:
+            tmpIcon = 'marker-icon.png';
+            break;
+        }
 
-      const {latitude, longitude, confidence} = marker.position;
+        const {latitude, longitude, confidence} = marker.position;
 
-      if (latitude && longitude && confidence >= confidenceThreshold) {
-        leafletMarkers.push({
-            lat: latitude,
-            lng: longitude,
-            options: {
-              icon: L.icon({
-                iconUrl: tmpIcon,
-              }),
-              mapMarker: marker,
+        if (latitude && longitude && confidence >= confidenceThreshold) {
+          leafletMarkers.push({
+              lat: latitude,
+              lng: longitude,
+              options: {
+                icon: L.icon({
+                  iconUrl: tmpIcon,
+                }),
+                mapMarker: marker,
+              },
+              status,
             },
-            status,
-          },
-        );
-      }
-    });
+          );
+        }
+      });
+    }
 
     const toggleScrollWheelZoom = (e) => {
       if (e.target.scrollWheelZoom.enabled()) {
@@ -234,7 +236,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
 }
 
 const isMapMarker = (obj: any): obj is MapMarker => {
-  return obj.status !== undefined && obj.position !== undefined;
+  return obj && obj.status !== undefined && obj.position !== undefined;
 };
 
 const defaultViewCenter: GeoPosition = {latitude: 56.142226, longitude: 13.402965, confidence: 1};
