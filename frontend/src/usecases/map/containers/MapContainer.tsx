@@ -62,6 +62,13 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       viewCenter = defaultViewCenter,
     } = this.props;
 
+    let onMarkerClick = openClusterDialog;
+
+    if (popupMode === PopupMode.none) {
+      // Prevent popup in popup
+      onMarkerClick = () => void(0);
+    }
+
     let tmpMarkers: { [key: string]: MapMarker } = {};
     if (isMapMarker(markers)) {
       tmpMarkers[0] = markers;
@@ -216,7 +223,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           />
           <MarkerClusterGroup
             markers={leafletMarkers}
-            onMarkerClick={openClusterDialog}
+            onMarkerClick={onMarkerClick}
             options={markerclusterOptions}
           />
         </Map>
