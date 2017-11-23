@@ -4,6 +4,9 @@ public class MeasurementUnit {
   private double value;
   private String unit;
 
+  public MeasurementUnit() {
+  }
+
   public MeasurementUnit(String valueUnit) {
     int i = valueUnit.lastIndexOf(' ');
     if (i < 0) {

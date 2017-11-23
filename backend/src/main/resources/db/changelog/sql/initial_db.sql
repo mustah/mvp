@@ -33,10 +33,10 @@ create table if not exists physical_meter (
 
 create table if not exists measurement (
 	id bigserial primary key,
-	physical_meter_id bigserial references physical_meter (id) on update cascade on delete cascade,
+	physical_meter_id bigserial not null references physical_meter (id) on update cascade on delete cascade,
 	created timestamp without time zone not null default now(),
-	quantity varchar(255),
-	value unit, -- if this is a proper measurement, the value will be here
+	quantity varchar(255) not null,
+	value unit not null, -- if this is a proper measurement, the value will be here
 	unique (physical_meter_id, created, quantity, value)
 );
 
