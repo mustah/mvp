@@ -19,10 +19,17 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'application'
+apply plugin: 'findbugs'
 
 applicationName = 'mvp'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+tasks.withType(FindBugs) {
+  reports {
+    xml.enabled false
+  }
+}
 
 /**
  * The bootRepackage task creates a fat jar of the project and, by default,
