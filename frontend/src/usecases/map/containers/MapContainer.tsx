@@ -89,9 +89,9 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
         let errorCount = 0;
         let warningCount = 0;
         for (const child of cluster.getAllChildMarkers()) {
-          if (child.options.icon.options.iconUrl === 'marker-icon-error.png') {
+          if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-error.png') {
             errorCount++;
-          } else if (child.options.icon.options.iconUrl === 'marker-icon-warning.png') {
+          } else if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-warning.png') {
             warningCount++;
           }
         }
@@ -145,16 +145,16 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
         switch (marker.status.id) {
           case 0:
           case 1:
-            tmpIcon = 'marker-icon-ok.png';
+            tmpIcon = 'assets/images/marker-icon-ok.png';
             break;
           case 2:
-            tmpIcon = 'marker-icon-warning.png';
+            tmpIcon = 'assets/images/marker-icon-warning.png';
             break;
           case 3:
-            tmpIcon = 'marker-icon-error.png';
+            tmpIcon = 'assets/images/marker-icon-error.png';
             break;
           default:
-            tmpIcon = 'marker-icon.png';
+            tmpIcon = 'assets/images/marker-icon.png';
             break;
         }
 
