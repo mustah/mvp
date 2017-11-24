@@ -204,7 +204,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
         </Row>
         <Row>
           <Column className="ProductImage">
-            <img src="cme2110.jpg" width="100"/>
+            <img src="assets/images/cme2110.jpg" width="100"/>
           </Column>
           <Column className="OverView">
             <Row>
