@@ -9,6 +9,9 @@ buildscript {
     classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
   }
 }
+plugins {
+  id 'io.franzbecker.gradle-lombok' version '1.7'
+}
 
 repositories {
   mavenCentral()
@@ -67,6 +70,25 @@ distributions {
     }
   }
 }
+
+idea {
+  module {
+    outputDir = file("$buildDir/classes/main")
+    testOutputDir = file("$buildDir/classes/test")
+    generatedSourceDirs += file("$buildDir/generated/")
+    sourceDirs += file("$buildDir/generated/")
+  }
+}
+
+compileJava {
+  options.compilerArgs << "-s"
+  options.compilerArgs << "$buildDir/generated"
+  doFirst {
+    // make sure that directory exists
+    file(new File(buildDir, "/generated")).mkdirs()
+  }
+}
+
 dependencies {
   compile('org.springframework.boot:spring-boot-starter-data-jpa')
   compile('org.springframework.boot:spring-boot-starter-jdbc')
@@ -82,6 +104,10 @@ dependencies {
   // PostgreSQL does unit conversion natively.
   // TODO: Exclude for prod builds
   compile('tec.uom:uom-se:1.0.8')
+
+  compile('com.querydsl:querydsl-root:4.1.4')
+  compile('com.querydsl:querydsl-apt:4.1.4:jpa')
+  compile('com.querydsl:querydsl-jpa:4.1.4')
 
   compileOnly('org.projectlombok:lombok:1.16.18')
 
@@ -105,12 +131,12 @@ configurations {
 
 sourceSets {
   integrationTest {
-  java {
-    compileClasspath += main.output + test.output
-    runtimeClasspath += main.output + test.output
-    srcDir file('src/integrationTest/java')
-  }
-  resources.srcDir file('src/integrationTest/resources')
+    java {
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+      srcDir file('src/integrationTest/java')
+    }
+    resources.srcDir file('src/integrationTest/resources')
   }
 }
 
