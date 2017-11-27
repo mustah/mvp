@@ -1,21 +1,21 @@
 import * as React from 'react';
+import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {Separator} from '../../../components/separators/Separator';
 import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {ListProps} from '../../../components/tabs/models/TabsModel';
-import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {translate} from '../../../services/translationService';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
-import {Gateway} from './Gateway';
 import {OnClickWithId} from '../../../types/Types';
+import {Gateway} from './Gateway';
+import {Normalized} from '../../../state/domain-models/domainModels';
 
 interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const GatewayList = (props: ListProps & Props) => {
-  const {data, selectEntryAdd} = props;
+export const GatewayList = (props: Normalized<GatewayModel> & Props) => {
+  const {result, entities, selectEntryAdd} = props;
 
   const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
   const renderGateway = (gateway: GatewayModel) => <Gateway gateway={gateway}/>;
@@ -28,7 +28,7 @@ export const GatewayList = (props: ListProps & Props) => {
   const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
 
   return (
-    <Table data={data}>
+    <Table result={result} entities={entities}>
       <TableColumn
         header={<TableHead className="first">{translate('gateway')}</TableHead>}
         renderCell={renderGateway}

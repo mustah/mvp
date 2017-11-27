@@ -2,21 +2,23 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
-import {NormalizedRows} from '../../../components/table/Table';
 import {RootState} from '../../../reducers/rootReducer';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {changePaginationSelection} from '../../../state/ui/pagination/paginationActions';
 import {ChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {OnClickWithId} from '../../../types/Types';
+import {OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {SearchResultList} from '../components/SelectionResultList';
+import {DomainModel} from '../../../state/domain-models/domainModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
 
 interface StateToProps {
   pagination: Pagination;
   numOfEntities: number;
-  meters: NormalizedRows;
+  meters: DomainModel<Meter>;
+  paginatedList: uuid[];
 }
 
 interface DispatchToProps {
@@ -25,10 +27,10 @@ interface DispatchToProps {
 }
 
 const MetersComponent = (props: StateToProps & DispatchToProps) => {
-  const {meters, changePage, numOfEntities, pagination, selectEntryAdd} = props;
+  const {meters, paginatedList, changePage, numOfEntities, pagination, selectEntryAdd} = props;
   return (
     <div>
-      <SearchResultList data={meters} selectEntryAdd={selectEntryAdd}/>
+      <SearchResultList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
 
       <PaginationControl
         changePage={changePage}
@@ -42,10 +44,8 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps 
   const pagination = getSelectionPagination(ui);
   return {
     numOfEntities: getMetersTotal(meters),
-    meters: {
-      allIds: getPaginationList({pagination, result: getResultDomainModels(meters)}),
-      byId: getMeterEntities(meters),
-    },
+    meters: getMeterEntities(meters),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
   };
 };
