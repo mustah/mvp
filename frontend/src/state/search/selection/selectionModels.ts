@@ -2,7 +2,7 @@ import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
 
 export interface SelectionParameter extends IdNamed {
-  parameter: parameterNames;
+  parameter: ParameterName;
 }
 
 export interface SelectedParameters {
@@ -26,7 +26,7 @@ export interface LookupState {
   domainModels: DomainModelsState;
 }
 
-export enum parameterNames {
+export enum ParameterName {
   cities = 'cities',
   addresses = 'addresses',
   meterStatuses = 'meterStatuses',

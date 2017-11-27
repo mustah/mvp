@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
 import {IdNamed, uuid} from '../../../types/Types';
-import {parameterNames} from '../../search/selection/selectionModels';
+import {ParameterName} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
   Meter,
@@ -37,7 +37,7 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
       const meter: IdNamed = {id: meterId as string, name: facility as string};
 
       selectionTreeItems(selectionTree, {
-        category: parameterNames.cities,
+        category: ParameterName.cities,
         set: cities,
         unit: city,
         parentType: '',
@@ -50,14 +50,14 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
         category: 'addressClusters',
         set: addressClusters,
         unit: cluster,
-        parentType: parameterNames.cities,
+        parentType: ParameterName.cities,
         parent: city,
         selectable: false,
-        childrenType: parameterNames.addresses,
+        childrenType: ParameterName.addresses,
       });
 
       selectionTreeItems(selectionTree, {
-        category: parameterNames.addresses,
+        category: ParameterName.addresses,
         set: addresses,
         unit: address,
         parentType: 'addressClusters',
@@ -70,7 +70,7 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
         category: 'meters',
         set: meters,
         unit: meter,
-        parentType: parameterNames.addresses,
+        parentType: ParameterName.addresses,
         parent: address,
         selectable: true,
         childrenType: '',

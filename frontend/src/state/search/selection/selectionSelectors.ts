@@ -7,7 +7,7 @@ import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
   LookupState,
-  parameterNames,
+  ParameterName,
   SelectedParameters,
   SelectionListItem,
   SelectionState,
@@ -51,7 +51,7 @@ const getSelectedEntities = (entityType: string): any =>
       ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
-export const getCitiesSelection = getSelectionGroup(parameterNames.cities);
+export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
 
 const getList = (entityType: string): any =>
   createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[] | null[]>(
@@ -68,13 +68,13 @@ const entitySort = (objA: SelectionEntity, objB: SelectionEntity) =>
 
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;
 
-export const getCities = getList(parameterNames.cities);
-export const getAddresses = getList(parameterNames.addresses);
-export const getAlarms = getList(parameterNames.alarms);
-export const getManufacturers = getList(parameterNames.manufacturers);
-export const getProductModels = getList(parameterNames.productModels);
-export const getMeterStatuses = getList(parameterNames.meterStatuses);
-export const getGatewayStatuses = getList(parameterNames.gatewayStatuses);
+export const getCities = getList(ParameterName.cities);
+export const getAddresses = getList(ParameterName.addresses);
+export const getAlarms = getList(ParameterName.alarms);
+export const getManufacturers = getList(ParameterName.manufacturers);
+export const getProductModels = getList(ParameterName.productModels);
+export const getMeterStatuses = getList(ParameterName.meterStatuses);
+export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
 export const getEncodedUriParametersForMeters = createSelector<SearchParameterState, SelectedParameters, string>(
   getSelectedParameters,

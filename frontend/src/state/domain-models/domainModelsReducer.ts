@@ -1,5 +1,5 @@
 import {AnyAction, combineReducers} from 'redux';
-import {parameterNames} from '../search/selection/selectionModels';
+import {ParameterName} from '../search/selection/selectionModels';
 import {DomainModelsState, EndPoints, NormalizedState, SelectionEntity} from './domainModels';
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
@@ -42,14 +42,14 @@ const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
     }
   };
 
-export const addresses = domainModelReducerFor<SelectionEntity>(parameterNames.addresses, EndPoints.selections);
-export const cities = domainModelReducerFor<SelectionEntity>(parameterNames.cities, EndPoints.selections);
-export const alarms = domainModelReducerFor<SelectionEntity>(parameterNames.alarms, EndPoints.selections);
-export const manufacturers = domainModelReducerFor<SelectionEntity>(parameterNames.manufacturers, EndPoints.selections);
-export const productModels = domainModelReducerFor<SelectionEntity>(parameterNames.productModels, EndPoints.selections);
-export const meterStatuses = domainModelReducerFor<SelectionEntity>(parameterNames.meterStatuses, EndPoints.selections);
+export const addresses = domainModelReducerFor<SelectionEntity>(ParameterName.addresses, EndPoints.selections);
+export const cities = domainModelReducerFor<SelectionEntity>(ParameterName.cities, EndPoints.selections);
+export const alarms = domainModelReducerFor<SelectionEntity>(ParameterName.alarms, EndPoints.selections);
+export const manufacturers = domainModelReducerFor<SelectionEntity>(ParameterName.manufacturers, EndPoints.selections);
+export const productModels = domainModelReducerFor<SelectionEntity>(ParameterName.productModels, EndPoints.selections);
+export const meterStatuses = domainModelReducerFor<SelectionEntity>(ParameterName.meterStatuses, EndPoints.selections);
 export const gatewayStatuses =
-  domainModelReducerFor<SelectionEntity>(parameterNames.gatewayStatuses, EndPoints.selections);
+  domainModelReducerFor<SelectionEntity>(ParameterName.gatewayStatuses, EndPoints.selections);
 export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
 export const meters = domainModelReducerFor<Meter>('meters', EndPoints.meters);
 

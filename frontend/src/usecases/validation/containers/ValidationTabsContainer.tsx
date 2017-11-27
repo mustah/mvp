@@ -30,7 +30,7 @@ import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
-import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -199,7 +199,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
   const selectStatus = (status: string) => {
     const statusId = status === 'OK' ? 0 : 3;
     addSelection({
-      parameter: parameterNames.meterStatuses,
+      parameter: ParameterName.meterStatuses,
       id: statusId,
       name: status,
     });
@@ -207,7 +207,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const selectCity = (city: string) => {
     addSelection({
-      parameter: parameterNames.cities,
+      parameter: ParameterName.cities,
       id: city,
       name: city,
     });
@@ -215,7 +215,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const selectManufacturer = (manufacturer: string) => {
     addSelection({
-      parameter: parameterNames.manufacturers,
+      parameter: ParameterName.manufacturers,
       id: manufacturer,
       name: manufacturer,
     });

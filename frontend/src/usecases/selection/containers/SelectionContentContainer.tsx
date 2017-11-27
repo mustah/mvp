@@ -8,7 +8,7 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
-  parameterNames,
+  ParameterName,
   SelectionListItem,
   SelectionParameter,
 } from '../../../state/search/selection/selectionModels';
@@ -60,17 +60,17 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
     citiesSelection,
   } = props;
 
-  const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.cities});
-  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.addresses});
-  const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: parameterNames.alarms});
+  const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
+  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
+  const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.alarms});
   const selectManufacturer = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: parameterNames.manufacturers});
+    toggleSelection({...selection, parameter: ParameterName.manufacturers});
   const selectProductModel = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: parameterNames.productModels});
+    toggleSelection({...selection, parameter: ParameterName.productModels});
   const selectMeterStatus = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: parameterNames.meterStatuses});
+    toggleSelection({...selection, parameter: ParameterName.meterStatuses});
   const selectGatewayStatus = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: parameterNames.gatewayStatuses});
+    toggleSelection({...selection, parameter: ParameterName.gatewayStatuses});
 
   const citySelectionText = translate('city') + ': ';
   const addressSelectionText = translate('address') + ': ';
