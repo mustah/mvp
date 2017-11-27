@@ -8,7 +8,7 @@ import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
 import {OnClick} from '../../../../types/Types';
-import {User} from '../../../auth/authReducer';
+import {User} from '../../../auth/authModels';
 import './Profile.scss';
 
 interface Props {

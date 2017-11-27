@@ -11,7 +11,7 @@ import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {Logo} from '../../../components/logo/Logo';
 import {login} from '../authActions';
-import {AuthState} from '../authReducer';
+import {AuthState} from '../authModels';
 import './LoginContainer.scss';
 import {RowCenter} from '../../../components/layouts/row/Row';
 

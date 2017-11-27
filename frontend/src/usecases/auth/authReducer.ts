@@ -1,36 +1,16 @@
-import {AnyAction} from 'redux';
+import {EmptyAction} from 'react-redux-typescript';
+import {Action} from '../../types/Types';
 import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS} from './authActions';
-
-export interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  company: string;
-}
-
-export interface UnauthorizedDTO {
-  timestamp: number;
-  error: string;
-  message: string;
-  path: string;
-  status: number;
-}
-
-export interface Authenticated {
-  isAuthenticated: boolean;
-}
-
-export interface AuthState extends Authenticated {
-  user?: User;
-  token?: string;
-  isLoading?: boolean;
-  error?: UnauthorizedDTO;
-}
+import {Authorized, AuthState, Unauthorized} from './authModels';
 
 const initialAuthState: AuthState = {isAuthenticated: false};
 
-export const auth = (state: AuthState = initialAuthState, action: AnyAction): AuthState => {
+type ActionTypes =
+  & Action<Authorized>
+  & Action<Unauthorized>
+  & EmptyAction<string>;
+
+export const auth = (state: AuthState = initialAuthState, action: ActionTypes): AuthState => {
   const {payload} = action;
 
   switch (action.type) {
@@ -54,7 +34,7 @@ export const auth = (state: AuthState = initialAuthState, action: AnyAction): Au
         ...state,
         isLoading: false,
         isAuthenticated: false,
-        error: {...payload},
+        error: {...(action as Action<Unauthorized>).payload},
       };
     case LOGOUT_REQUEST:
       return {
