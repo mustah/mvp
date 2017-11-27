@@ -1,16 +1,21 @@
 import * as React from 'react';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models/meter/meterModels';
-import {ListActionsDropdownContainer} from '../../containers/actions-dropdown/ListActionsDropdownContainer';
 import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
 import {ListProps} from '../tabs/models/TabsModel';
 import {MeteringPoint} from './MeteringPoint';
+import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
+import {OnClickWithId} from '../../types/Types';
 
-export const MeterList = (props: ListProps) => {
-  const {data} = props;
+interface Props {
+  selectEntryAdd: OnClickWithId;
+}
+
+export const MeterList = (props: ListProps & Props) => {
+  const {data, selectEntryAdd} = props;
 
   const renderMeteringPointCell = (meter: Meter) => <MeteringPoint meter={meter}/>;
   const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
@@ -18,7 +23,7 @@ export const MeterList = (props: ListProps) => {
   const renderAddressName = (meter: Meter) => meter.address.name;
   const renderFlags = (meter: Meter) => meter.flags.map((flag) => flag.title).join(', ');
   const renderActionDropdown = (meter: Meter) =>
-    <ListActionsDropdownContainer item={{id: meter.id, name: meter.manufacturer}}/>;
+    <ListActionsDropdown item={{id: meter.id, name: meter.manufacturer}} selectEntryAdd={selectEntryAdd}/>;
   const renderGatewayId = (meter: Meter) => meter.gatewayId;
   const renderManufacturer = (meter: Meter) => meter.manufacturer;
   const renderStatusChanged = (meter: Meter) => meter.statusChanged || <Separator/>;

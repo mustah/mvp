@@ -36,8 +36,9 @@ import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, uuid} from '../../../types/Types';
+import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {selectEntryAdd} from '../../report/reportActions';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -50,6 +51,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: (page: number) => any;
   addSelection: (searchParameters: SelectionParameter) => void;
+  selectEntryAdd: OnClickWithId;
 }
 
 /**
@@ -76,6 +78,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     changeTabOption,
     tabs,
     addSelection,
+    selectEntryAdd,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -295,7 +298,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         {overviewTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <MeterList data={{allIds: paginatedList, byId: entities}}/>
+        <MeterList data={{allIds: paginatedList, byId: entities}} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
@@ -323,6 +326,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTabOption: changeTabOptionValidation,
   paginationChangePage: changePaginationValidation,
   addSelection,
+  selectEntryAdd,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

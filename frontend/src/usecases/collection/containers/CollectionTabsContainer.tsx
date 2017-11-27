@@ -3,21 +3,6 @@ import 'CollectionTabsContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/rootReducer';
-import {suffix} from '../../../services/formatters';
-import {translate} from '../../../services/translationService';
-import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
-import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
-import {addSelection} from '../../../state/search/selection/selectionActions';
-import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
-import {Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
-import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
-import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, uuid} from '../../../types/Types';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
@@ -36,7 +21,23 @@ import {
   TabsContainerStateToProps,
   tabType,
 } from '../../../components/tabs/models/TabsModel';
+import {RootState} from '../../../reducers/rootReducer';
+import {suffix} from '../../../services/formatters';
+import {translate} from '../../../services/translationService';
+import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
+import {addSelection} from '../../../state/search/selection/selectionActions';
+import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
+import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
+import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
+import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
+import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 
 interface StateToProps extends TabsContainerStateToProps {
@@ -50,6 +51,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: (page: number) => any;
   addSelection: (searchParameters: SelectionParameter) => void;
+  selectEntryAdd: OnClickWithId;
 }
 
 /**
@@ -76,6 +78,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     changeTabOption,
     tabs,
     addSelection,
+    selectEntryAdd,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -263,7 +266,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         {overviewTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <GatewayList data={{allIds: paginatedList, byId: entities}}/>
+        <GatewayList data={{allIds: paginatedList, byId: entities}} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
@@ -291,6 +294,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTabOption: changeTabOptionCollection,
   paginationChangePage: changePaginationCollection,
   addSelection,
+  selectEntryAdd,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);
