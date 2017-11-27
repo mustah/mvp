@@ -1,7 +1,7 @@
-.EonLogo {
-  width: 200px;
+.Logo {
+  max-width: 200px;
 
   &.small {
-    width: 100px;
+    max-height: 40px;
   }
 }
