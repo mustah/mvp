@@ -90,20 +90,20 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const headings = {
     all: [
-      'Inga gateways',
-      'Visar alla gateways',
+      translate('no gateways'),
+      translate('showing all gateways'),
     ],
     ok: [
-      'Inga gateways som är OK',
-      'Visar alla gateways som är OK',
+      translate('no gateways that are ok'),
+      translate('showing all gateways that are ok'),
     ],
     warnings: [
-      'Inga gateways med varningar',
-      'Visar alla gateways med varningar',
+      translate('no gateways that have warnings'),
+      translate('showing all gateways that have warnings'),
     ],
     faults: [
-      'Inga gateways med fel',
-      'Visar alla gateways med fel',
+      translate('no gateways that have faults'),
+      translate('showing all gateways that have faults'),
     ],
   };
 
@@ -139,8 +139,8 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         incProp(liveData[normalizedStatus].flagged, flag.title);
       });
     } else {
-      incProp(liveData.all.flagged, 'Ingen');
-      incProp(liveData[normalizedStatus].flagged, 'Ingen');
+      incProp(liveData.all.flagged, translate('none'));
+      incProp(liveData[normalizedStatus].flagged, translate('none'));
     }
     incProp(liveData[normalizedStatus].productModels, gateway.productModel);
     incProp(liveData[normalizedStatus].status, gateway.status.name);
@@ -159,10 +159,10 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     ({name: entry[0], value: entry[1]}));
 
   const overviewTabOptions: any[] = [
-    {id: 'all', label: 'ALLA'},
-    {id: 'ok', label: 'OK'},
-    {id: 'warnings', label: 'VARNINGAR'},
-    {id: 'faults', label: 'FEL'},
+    {id: 'all', label: translate('all')},
+    {id: 'ok', label: translate('ok')},
+    {id: 'warnings', label: translate('warnings')},
+    {id: 'faults', label: translate('faults')},
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
@@ -206,24 +206,24 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     const chartRow = count > 0 ? (
       <Row>
         <PieChartSelector
-          heading="Status"
+          heading={translate('status')}
           data={status}
           colors={colors[0]}
           onClick={selectStatus}
         />
         <PieChartSelector
-          heading="Flaggade för åtgärd"
+          heading={translate('flagged for action')}
           data={flagged}
           colors={colors[1]}
         />
         <PieChartSelector
-          heading="Städer"
+          heading={translate('cities')}
           data={cities}
           colors={colors[0]}
           onClick={selectCity}
         />
         <PieChartSelector
-          heading="Produktmodeller"
+          heading={translate('product models')}
           data={productModels}
           colors={colors[1]}
           onClick={selectProductModel}
@@ -235,12 +235,12 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
       <WrapperIndent>
         <Row className="StatusControl">
           <Column>
-            <h2>{header}</h2>
+            <h2 className="first-uppercase">{header}</h2>
           </Column>
           <Column className="flex-1"/>
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
-              Filtrera på status:
+              <div className="first-uppercase">{translate('filter on status') + ':'}</div>
               <TabOptions tab={tabType.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {overviewTabOptions}
               </TabOptions>

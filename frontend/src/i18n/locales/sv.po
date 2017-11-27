@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-27 14:47+0100\n"
+"POT-Creation-Date: 2017-11-27 15:06+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -125,6 +125,9 @@ msgstr "visa bara ändringar"
 msgid "date"
 msgstr "datum"
 
+msgid "n/a"
+msgstr "ej tillämpbar"
+
 msgid "alarm"
 msgstr "larm"
 
@@ -163,6 +166,51 @@ msgstr "värde"
 
 msgid "latest snr"
 msgstr "senaste SNR"
+
+msgid "no gateways"
+msgstr "inga gateways"
+
+msgid "showing all gateways"
+msgstr "visar alla gateways"
+
+msgid "no gateways that are ok"
+msgstr "inga gateways som är ok"
+
+msgid "showing all gateways that are ok"
+msgstr "visar alla gateways som är ok"
+
+msgid "no gateways that have warnings"
+msgstr "inga gateways som har varningar"
+
+msgid "showing all gateways that have warnings"
+msgstr "visar alla gateways som har varningar"
+
+msgid "no gateways that have faults"
+msgstr "inga gateways som har fel"
+
+msgid "showing all gateways that have faults"
+msgstr "visar alla gateways som har fel"
+
+msgid "none"
+msgstr "inga"
+
+msgid "ok"
+msgstr "ok"
+
+msgid "warnings"
+msgstr "varningar"
+
+msgid "faults"
+msgstr "fel"
+
+msgid "cities"
+msgstr "städer"
+
+msgid "product models"
+msgstr "produktmodeller"
+
+msgid "filter by status"
+msgstr "filtrera efter status"
 
 msgid "overview"
 msgstr "översikt"
@@ -224,8 +272,35 @@ msgstr "urvalsöversikt"
 msgid "metering"
 msgstr "mätning"
 
-msgid "cities"
-msgstr "städer"
+msgid "no meters"
+msgstr "inga mätare"
+
+msgid "showing all meters"
+msgstr "visar alla mätare"
+
+msgid "no meters that are ok"
+msgstr "inga mätare som är ok"
+
+msgid "showing all meters that are ok"
+msgstr "visar alla mätare som är ok"
+
+msgid "no meters that have warnings"
+msgstr "inga mätare som har varningar"
+
+msgid "showing all meters that have warnings"
+msgstr "visar alla mätare som har varningar"
+
+msgid "no meters that have faults"
+msgstr "inga mätare som har fel"
+
+msgid "showing all meters that have faults"
+msgstr "visar alla mätare som har fel"
+
+msgid "unknown"
+msgstr "okända"
+
+msgid "alarms"
+msgstr "larm"
 
 msgid "filter on status"
 msgstr "filtrera på status"

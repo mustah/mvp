@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-27 14:48+0100\n"
+"POT-Creation-Date: 2017-11-27 15:11+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -125,6 +125,9 @@ msgstr "show only changes"
 msgid "date"
 msgstr "date"
 
+msgid "n/a"
+msgstr "N/A"
+
 msgid "alarm"
 msgstr "alarm"
 
@@ -163,6 +166,51 @@ msgstr "value"
 
 msgid "latest snr"
 msgstr "latest SNR"
+
+msgid "no gateways"
+msgstr "no gateways"
+
+msgid "showing all gateways"
+msgstr "showing all gateways"
+
+msgid "no gateways that are ok"
+msgstr "no gateways that are OK"
+
+msgid "showing all gateways that are ok"
+msgstr "showing all gateways that are OK"
+
+msgid "no gateways that have warnings"
+msgstr "no gateways that have warnings"
+
+msgid "showing all gateways that have warnings"
+msgstr "showing all gateways that have warnings"
+
+msgid "no gateways that have faults"
+msgstr "no gateways that have faults"
+
+msgid "showing all gateways that have faults"
+msgstr "showing all gateways that have faults"
+
+msgid "none"
+msgstr "none"
+
+msgid "ok"
+msgstr "OK"
+
+msgid "warnings"
+msgstr "warnings"
+
+msgid "faults"
+msgstr "faults"
+
+msgid "cities"
+msgstr "cities"
+
+msgid "product models"
+msgstr "product models"
+
+msgid "filter by status"
+msgstr "filter by status"
 
 msgid "overview"
 msgstr "overview"
@@ -224,8 +272,35 @@ msgstr "selection overview"
 msgid "metering"
 msgstr "metering"
 
-msgid "cities"
-msgstr "cities"
+msgid "no meters"
+msgstr "no meters"
+
+msgid "showing all meters"
+msgstr "showing all meters"
+
+msgid "no meters that are ok"
+msgstr "no meters that are ok"
+
+msgid "showing all meters that are ok"
+msgstr "showing all meters that are ok"
+
+msgid "no meters that have warnings"
+msgstr "no meters that have warnings"
+
+msgid "showing all meters that have warnings"
+msgstr "showing all meters that have warnings"
+
+msgid "no meters that have faults"
+msgstr "no meters that have faults"
+
+msgid "showing all meters that have faults"
+msgstr "showing all meters that have faults"
+
+msgid "unknown"
+msgstr "unknown"
+
+msgid "alarms"
+msgstr "alarms"
 
 msgid "filter on status"
 msgstr "filter on status"
