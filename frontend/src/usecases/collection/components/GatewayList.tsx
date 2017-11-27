@@ -8,13 +8,13 @@ import {translate} from '../../../services/translationService';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 import {OnClickWithId} from '../../../types/Types';
 import {Gateway} from './Gateway';
-import {TableProps} from '../../../components/tabs/models/TabsModel';
+import {Normalized} from '../../../state/domain-models/domainModels';
 
 interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const GatewayList = (props: TableProps<GatewayModel> & Props) => {
+export const GatewayList = (props: Normalized<GatewayModel> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
   const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;

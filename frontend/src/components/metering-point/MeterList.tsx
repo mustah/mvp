@@ -5,16 +5,16 @@ import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
-import {TableProps} from '../tabs/models/TabsModel';
 import {MeteringPoint} from './MeteringPoint';
 import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
 import {OnClickWithId} from '../../types/Types';
+import {Normalized} from '../../state/domain-models/domainModels';
 
 interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const MeterList = (props: TableProps<Meter> & Props) => {
+export const MeterList = (props: Normalized<Meter> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
   const renderMeteringPointCell = (meter: Meter) => <MeteringPoint meter={meter}/>;

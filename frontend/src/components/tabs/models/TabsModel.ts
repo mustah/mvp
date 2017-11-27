@@ -1,6 +1,3 @@
-
-import {Normalized} from '../../../state/domain-models/domainModels';
-
 export enum tabType {
   list = 'list',
   map = 'map',
@@ -11,8 +8,6 @@ export enum tabType {
   log = 'log',
   connectedGateways = 'connectedGateways',
 }
-
-export type TableProps<T> = Normalized<T>;
 
 export interface TabModel {
   [key: string]: {
