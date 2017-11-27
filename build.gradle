@@ -76,7 +76,7 @@ dockerCompose {
   removeContainers = true
   removeVolumes = true
   environment.put 'MVP_APPVER', version
-  environment.put 'MVP_OPTS', "-Dspring.profiles.active=compose"
+  environment.put 'MVP_OPTS', "-Dspring.profiles.active=postgresql"
 }
 
 composeUp {
