@@ -53,4 +53,4 @@ const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToPro
 };
 
 export const PageContainer =
-  connect<StateToProps, {}, {}>(mapStateToProps)(PageContainerComponent);
+  connect<StateToProps>(mapStateToProps)(PageContainerComponent);

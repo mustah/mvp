@@ -76,6 +76,6 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   fetchMeters,
 }, dispatch);
 
-const AppContainer = connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(AppComponent);
+const AppContainer = connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(AppComponent);
 
 export const App = withRouter(AppContainer);

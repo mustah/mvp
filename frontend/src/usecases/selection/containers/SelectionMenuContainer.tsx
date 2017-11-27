@@ -52,7 +52,7 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeSelectionPage,
   saveSelection,
   updateSelection,
@@ -60,4 +60,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 export const SelectionMenuContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SelectionMenu);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SelectionMenu);

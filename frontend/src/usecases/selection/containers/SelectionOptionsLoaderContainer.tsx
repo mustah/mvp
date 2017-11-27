@@ -42,10 +42,9 @@ const mapStateToProps = ({domainModels: {cities, addresses, alarms}}: RootState)
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelections,
 }, dispatch);
 
 export const SelectionOptionsLoaderContainer =
-  connect<StateToProps, DispatchToProps, {}>
-  (mapStateToProps, mapDispatchToProps)(SelectionOptionsLoaderContainerComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SelectionOptionsLoaderContainerComponent);

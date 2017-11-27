@@ -29,7 +29,7 @@ import {Column} from '../../common/components/layouts/column/Column';
 import {Row} from '../../common/components/layouts/row/Row';
 import {Subtitle} from '../../common/components/texts/Titles';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersResultContainer} from './MetersContainer';
+import {MetersResultContainer} from './MetersResultContainer';
 import {MetersLoaderContainer} from './MetersLoaderContainer';
 
 interface StateToProps {
@@ -150,9 +150,9 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSelection,
 }, dispatch);
 
 export const SelectionContentContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SelectionContent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SelectionContent);

@@ -32,16 +32,23 @@ import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
-import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
+import {
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+  tabType,
+} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 
-interface ValidationTabsContainer extends TabsContainerProps {
+interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
   entities: {[key: string]: Meter};
   paginatedList: uuid[];
   pagination: Pagination;
-  paginationChangePage: (page: number) => any;
   selectedEntities: uuid[];
+}
+
+interface DispatchToProps extends TabsContainerDispatchToProps {
+  paginationChangePage: (page: number) => any;
   addSelection: (searchParameters: SelectionParameter) => void;
 }
 
@@ -56,7 +63,7 @@ interface ValidationTabsContainer extends TabsContainerProps {
 const incProp = (obj: any, prop: string): void =>
   typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
 
-const ValidationTabsContainer = (props: ValidationTabsContainer) => {
+const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
@@ -298,7 +305,7 @@ const ValidationTabsContainer = (props: ValidationTabsContainer) => {
   );
 };
 
-const mapStateToProps = ({ui, domainModels: {meters}}: RootState) => {
+const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps => {
   const pagination = getValidationPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
@@ -311,11 +318,11 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState) => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   changeTabOption: changeTabOptionValidation,
   paginationChangePage: changePaginationValidation,
   addSelection,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
+export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

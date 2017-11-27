@@ -9,11 +9,11 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
 import {ColumnCenter} from '../../common/components/layouts/column/Column';
+import {RowCenter} from '../../common/components/layouts/row/Row';
 import {Logo} from '../../common/components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
-import {RowCenter} from '../../common/components/layouts/row/Row';
 
 const loginButtonStyle = {
   backgroundColor: colors.blue,
@@ -113,9 +113,9 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
 const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   login,
 }, dispatch);
 
 export const LoginContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);

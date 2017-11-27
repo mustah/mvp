@@ -29,4 +29,4 @@ const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
   };
 };
 
-export const SummaryContainer = connect<StateToProps, {}, {}>(mapStateToProps)(SummaryComponent);
+export const SummaryContainer = connect<StateToProps>(mapStateToProps)(SummaryComponent);
