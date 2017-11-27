@@ -1,14 +1,14 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
-import {translate} from '../../../services/translationService';
-import {OnClick} from '../../../types/Types';
-import {menuItemInnerDivStyle} from '../../../app/themes';
-import {User} from '../../auth/authReducer';
-import {Column} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
-import {PopoverMenu} from '../../../components/popover/PopoverMenu';
-import {Xsmall} from '../../../components/texts/Texts';
-import {Avatar} from './IconAvatar';
+import {menuItemInnerDivStyle} from '../../../../app/themes';
+import {IconAvatar} from '../../../../components/icons/IconAvatar';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
+import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
+import {Xsmall} from '../../../../components/texts/Texts';
+import {translate} from '../../../../services/translationService';
+import {OnClick} from '../../../../types/Types';
+import {User} from '../../../auth/authReducer';
 import './Profile.scss';
 
 interface Props {
@@ -22,7 +22,7 @@ export const Profile = (props: Props) => {
   return (
     <Column className="ProfileWrapper">
       <Row className="Profile">
-        <PopoverMenu IconComponent={Avatar}>
+        <PopoverMenu IconComponent={IconAvatar}>
           <MenuItem
             style={menuItemInnerDivStyle}
             className="first-uppercase"

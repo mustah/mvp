@@ -6,7 +6,7 @@ import {routes} from '../../../../app/routes';
 import {AuthState} from '../../../auth/authReducer';
 import {Row} from '../../../../components/layouts/row/Row';
 import {Logo} from '../../../../components/logo/Logo';
-import {Profile} from '../../../profile/components/Profile';
+import {Profile} from '../profile/Profile';
 import './SelectionMenuWrapper.scss';
 import {RootState} from '../../../../reducers/rootReducer';
 import {logout} from '../../../auth/authActions';
