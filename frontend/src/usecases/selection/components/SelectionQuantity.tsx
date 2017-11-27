@@ -7,9 +7,9 @@ import AlertAddAlert from 'material-ui/svg-icons/alert/add-alert';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {Clickable} from '../../../types/Types';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
-import {ColumnCenter} from '../../common/components/layouts/column/Column';
-import {RowBottom} from '../../common/components/layouts/row/Row';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {RowBottom} from '../../../components/layouts/row/Row';
 
 const textFieldStyle: React.CSSProperties = {
   marginBottom: -8, /* TODO another instance of "wasted too much time to find the hidden inlined style". So sorry */

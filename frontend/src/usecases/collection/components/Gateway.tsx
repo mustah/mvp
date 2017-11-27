@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {ButtonInfoLink} from '../../common/components/buttons/ButtonInfoLink';
-import {GatewayDialogContainer} from '../../common/containers/dialogs/GatewayDialogContainer';
+import {ButtonInfoLink} from '../../../components/buttons/ButtonInfoLink';
+import {GatewayDialogContainer} from '../../../containers/dialogs/GatewayDialogContainer';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 
 interface GatewayProps {

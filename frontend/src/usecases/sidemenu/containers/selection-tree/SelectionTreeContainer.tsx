@@ -10,7 +10,7 @@ import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelec
 import {selectionTreeExpandToggle} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {uuid} from '../../../../types/Types';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
+import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';

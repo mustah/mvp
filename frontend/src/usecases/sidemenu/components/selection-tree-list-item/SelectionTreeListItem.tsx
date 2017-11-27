@@ -2,7 +2,7 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {uuid} from '../../../../types/Types';
-import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../app/themes';
+import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 export const SelectableListItem = (props: ListItemProps & {selectable: boolean; selected: boolean}) => {

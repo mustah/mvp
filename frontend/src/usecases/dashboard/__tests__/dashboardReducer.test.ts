@@ -1,6 +1,6 @@
 import {DASHBOARD_SUCCESS} from '../dashboardActions';
 import {Status} from '../../../types/Types';
-import {IndicatorType, WidgetModel} from '../../common/components/indicators/models/widgetModels';
+import {IndicatorType, WidgetModel} from '../../../components/indicators/models/widgetModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 import {DashboardModel} from '../models/dashboardModels';
 

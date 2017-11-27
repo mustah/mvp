@@ -7,17 +7,17 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
-import {paperStyle} from '../../app/themes';
-import {IndicatorType} from '../../common/components/indicators/models/widgetModels';
+import {paperStyle} from '../../../app/themes';
+import {IndicatorType} from '../../../components/indicators/models/widgetModels';
 import {
   SelectableIndicatorWidgets,
   SelectedIndicatorWidgetProps,
-} from '../../common/components/indicators/SelectableIndicatorWidgets';
-import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Titles';
-import {PageContainer} from '../../common/containers/PageContainer';
-import {PeriodContainer} from '../../common/containers/PeriodContainer';
-import {SummaryContainer} from '../../common/containers/SummaryContainer';
+} from '../../../components/indicators/SelectableIndicatorWidgets';
+import {Row} from '../../../components/layouts/row/Row';
+import {MainTitle} from '../../../components/texts/Titles';
+import {PageContainer} from '../../../containers/PageContainer';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {GraphContainer} from './GraphContainer';
 import {indicators} from '../models/reportModels';
 

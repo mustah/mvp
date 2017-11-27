@@ -2,12 +2,12 @@ import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {OnClick} from '../../../types/Types';
-import {menuItemInnerDivStyle} from '../../app/themes';
+import {menuItemInnerDivStyle} from '../../../app/themes';
 import {User} from '../../auth/authReducer';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row} from '../../common/components/layouts/row/Row';
-import {PopoverMenu} from '../../common/components/popover/PopoverMenu';
-import {Xsmall} from '../../common/components/texts/Texts';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {PopoverMenu} from '../../../components/popover/PopoverMenu';
+import {Xsmall} from '../../../components/texts/Texts';
 import {Avatar} from './IconAvatar';
 import './Profile.scss';
 

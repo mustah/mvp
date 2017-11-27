@@ -6,8 +6,8 @@ import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/met
 import {changePaginationSelection} from '../../../state/ui/pagination/paginationActions';
 import {ChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {NormalizedRows} from '../../common/components/table/Table';
+import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
+import {NormalizedRows} from '../../../components/table/Table';
 import {SearchResultList} from '../components/SelectionResultList';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 

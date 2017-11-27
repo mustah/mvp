@@ -1,0 +1,48 @@
+@import "../../app/variables";
+
+.Bold {
+  font-weight: 700;
+}
+
+.Normal {
+  font-size: $normal;
+  line-height: 1;
+}
+
+.Large {
+  font-size: $lg;
+}
+
+.Small {
+  font-size: $sm;
+}
+
+.Xlarge {
+  font-size: $xl;
+}
+
+.Xsmall {
+  font-size: $xs;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.first-uppercase {
+  &:first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.Italic {
+  font-style: italic;
+}

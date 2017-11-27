@@ -1,8 +1,8 @@
 import * as React from 'react';
 import 'SelectionResultList.scss';
-import {Column} from '../../common/components/layouts/column/Column';
-import {MeterList} from '../../common/components/metering-point/MeterList';
-import {ListProps} from '../../common/components/tabs/models/TabsModel';
+import {Column} from '../../../components/layouts/column/Column';
+import {MeterList} from '../../../components/metering-point/MeterList';
+import {ListProps} from '../../../components/tabs/models/TabsModel';
 
 export const SearchResultList = (props: ListProps) => {
   const {data} = props;

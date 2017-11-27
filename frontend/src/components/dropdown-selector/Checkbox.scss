@@ -1,0 +1,12 @@
+@import "../../app/variables";
+
+.Checkbox {
+
+  &:hover {
+    background-color: $light-grey;
+  }
+
+  input[type=checkbox] {
+    margin-right: $space;
+  }
+}

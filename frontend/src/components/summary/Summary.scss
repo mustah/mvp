@@ -1,0 +1,20 @@
+@import "../../app/variables";
+
+.SummaryContainer {
+  margin-bottom: $space;
+  align-items: flex-end;
+}
+
+.Summary {
+  padding-left: $space;
+  color: $light-black;
+
+  .Summary-title {
+    margin-bottom: $xs-space;
+    color: $lightest-black;
+  }
+
+  .Summary-value {
+    color: $light-black;
+  }
+}

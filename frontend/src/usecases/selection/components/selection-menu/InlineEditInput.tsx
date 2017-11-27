@@ -5,9 +5,9 @@ import {idGenerator} from '../../../../services/idGenerator';
 import {translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
 import {IdNamed, OnClick, uuid} from '../../../../types/Types';
-import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
-import {ButtonLink} from '../../../common/components/buttons/ButtonLink';
-import {Row, RowBottom} from '../../../common/components/layouts/row/Row';
+import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
+import {ButtonLink} from '../../../../components/buttons/ButtonLink';
+import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 
 interface Props {
   isChanged: boolean;

@@ -1,6 +1,6 @@
 import {createPayloadAction} from 'react-redux-typescript';
 import {useCases} from '../../../types/constants';
-import {tabType} from '../../../usecases/common/components/tabs/models/TabsModel';
+import {tabType} from '../../../components/tabs/models/TabsModel';
 
 export const TABS_CHANGE_TAB = 'TABS_CHANGE_TAB';
 export const TABS_CHANGE_TAB_OPTION = 'TABS_CHANGE_TAB_OPTION';

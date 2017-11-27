@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
-import {Column} from '../../../common/components/layouts/column/Column';
-import {Row} from '../../../common/components/layouts/row/Row';
+import {Column} from '../../../../components/layouts/column/Column';
+import {Row} from '../../../../components/layouts/row/Row';
 import {Language, supportedLanguages} from '../../languageReducer';
 import './Languages.scss';
 

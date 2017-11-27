@@ -1,0 +1,21 @@
+@import "../../app/variables";
+
+.PeriodSelection {
+  align-items: flex-start;
+
+  &:hover {
+    .IconCalendar {
+      fill: $black !important;
+    }
+  }
+
+  .PeriodSelection-dropdown {
+    &:hover {
+      border: 1px solid $lightest-black !important;
+    }
+  }
+}
+
+.TimePeriod:first-letter {
+  text-transform: uppercase;
+}

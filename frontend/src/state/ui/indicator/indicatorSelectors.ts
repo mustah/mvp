@@ -1,6 +1,6 @@
 import {UiState} from '../uiReducer';
 import {IndicatorState} from './indicatorReducer';
-import {IndicatorType} from '../../../usecases/common/components/indicators/models/widgetModels';
+import {IndicatorType} from '../../../components/indicators/models/widgetModels';
 import {createSelector} from 'reselect';
 
 const getIndicatorState = (state: UiState): IndicatorState => state.indicator;

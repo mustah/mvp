@@ -16,7 +16,7 @@ import {
   nestedListItemStyle,
   sideBarHeaderStyle,
   sideBarStyles,
-} from '../../../app/themes';
+} from '../../../../app/themes';
 import {NoSavedSelections} from './NoSavedSelections';
 
 interface StateToProps {

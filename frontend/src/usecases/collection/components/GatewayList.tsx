@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
-import {ListActionsDropdownContainer} from '../../common/containers/actions-dropdown/ListActionsDropdownContainer';
-import {Status} from '../../common/components/status/Status';
-import {Table, TableColumn} from '../../common/components/table/Table';
-import {TableHead} from '../../common/components/table/TableHead';
-import {ListProps} from '../../common/components/tabs/models/TabsModel';
+import {ListActionsDropdownContainer} from '../../../containers/actions-dropdown/ListActionsDropdownContainer';
+import {Status} from '../../../components/status/Status';
+import {Table, TableColumn} from '../../../components/table/Table';
+import {TableHead} from '../../../components/table/TableHead';
+import {ListProps} from '../../../components/tabs/models/TabsModel';
 import {Gateway} from './Gateway';
-import {Separator} from '../../common/components/separators/Separator';
+import {Separator} from '../../../components/separators/Separator';
 
 export const GatewayList = (props: ListProps) => {
   const {data} = props;

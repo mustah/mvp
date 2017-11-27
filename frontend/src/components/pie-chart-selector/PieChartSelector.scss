@@ -1,0 +1,16 @@
+@import '../../app/variables';
+
+.ChartWrapper {
+  display: inline-block;
+}
+
+.PieContainer {
+  background: $light-grey;
+  border: 1px solid $grey;
+  margin: 0 40px 20px 0;
+  padding: 14px;
+
+  h3 {
+    margin: 0 0 0 10px;
+  }
+}

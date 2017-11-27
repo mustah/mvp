@@ -4,12 +4,12 @@ import {connect} from 'react-redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history3/redirect';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {paperStyle} from '../../app/themes';
-import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Titles';
-import {PageContainer} from '../../common/containers/PageContainer';
-import {PeriodContainer} from '../../common/containers/PeriodContainer';
-import {SummaryContainer} from '../../common/containers/SummaryContainer';
+import {paperStyle} from '../../../app/themes';
+import {Row} from '../../../components/layouts/row/Row';
+import {MainTitle} from '../../../components/texts/Titles';
+import {PageContainer} from '../../../containers/PageContainer';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {SelectionContentContainer} from './SelectionContentContainer';
 import {SelectionOptionsLoaderContainer} from './SelectionOptionsLoaderContainer';
 

@@ -7,13 +7,13 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {RootState} from '../../../reducers/rootReducer';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
-import {ColumnCenter} from '../../common/components/layouts/column/Column';
-import {RowCenter} from '../../common/components/layouts/row/Row';
-import {Logo} from '../../common/components/logo/Logo';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {Logo} from '../../../components/logo/Logo';
 import {login} from '../authActions';
 import {AuthState} from '../authReducer';
 import './LoginContainer.scss';
+import {RowCenter} from '../../../components/layouts/row/Row';
 
 const loginButtonStyle = {
   backgroundColor: colors.blue,

@@ -1,0 +1,16 @@
+@import "../../app/variables";
+
+.IconButton {
+  cursor: pointer;
+  border-radius: 3px !important;
+  background-color: $secondary-bg !important;
+  color: $secondary-fg !important;
+
+  &:hover {
+    background-color: $secondary-bg-hover !important;
+  }
+
+  svg:hover {
+    color: $secondary-fg-hover !important;
+  }
+}

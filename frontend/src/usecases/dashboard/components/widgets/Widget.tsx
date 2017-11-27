@@ -4,11 +4,11 @@ import * as React from 'react';
 import 'Widget.scss';
 import {translate} from '../../../../services/translationService';
 import {Children} from '../../../../types/Types';
-import {colors, menuItemInnerDivStyle} from '../../../app/themes';
-import {Column} from '../../../common/components/layouts/column/Column';
-import {RowMiddle} from '../../../common/components/layouts/row/Row';
-import {PopoverMenu} from '../../../common/components/popover/PopoverMenu';
-import {Subtitle} from '../../../common/components/texts/Titles';
+import {colors, menuItemInnerDivStyle} from '../../../../app/themes';
+import {Column} from '../../../../components/layouts/column/Column';
+import {RowMiddle} from '../../../../components/layouts/row/Row';
+import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
+import {Subtitle} from '../../../../components/texts/Titles';
 
 interface Props {
   title?: string;
