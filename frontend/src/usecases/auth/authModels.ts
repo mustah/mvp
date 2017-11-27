@@ -16,16 +16,13 @@ export interface Unauthorized {
   status: number;
 }
 
-export interface Authenticated {
-  isAuthenticated: boolean;
-}
-
 export interface Authorized {
   user: User;
   token: string;
 }
 
-export interface AuthState extends Authenticated {
+export interface AuthState {
+  isAuthenticated: boolean;
   user?: User;
   token?: string;
   isLoading?: boolean;
