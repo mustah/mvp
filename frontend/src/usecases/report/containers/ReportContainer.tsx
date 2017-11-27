@@ -61,8 +61,8 @@ const mapStateToProps = (state: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 
-export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(ReportContainer);
+export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportContainer);

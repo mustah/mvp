@@ -22,7 +22,7 @@ const PeriodComponent = (props: StateToProps & DispatchToProps) => {
   return (<PeriodSelection selectPeriod={selectPeriod} period={period}/>);
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectPeriod,
 }, dispatch);
 
@@ -32,5 +32,5 @@ const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToPro
   };
 };
 
-export const PeriodContainer = connect<StateToProps, DispatchToProps, {}>(
-  mapStateToProps, mapDispatchToProps)(PeriodComponent);
+export const PeriodContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(PeriodComponent);

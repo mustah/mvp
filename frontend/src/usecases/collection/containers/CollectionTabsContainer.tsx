@@ -31,17 +31,24 @@ import {TabOptions} from '../../common/components/tabs/components/TabOptions';
 import {Tabs} from '../../common/components/tabs/components/Tabs';
 import {TabSettings} from '../../common/components/tabs/components/TabSettings';
 import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
-import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
+import {
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+  tabType,
+} from '../../common/components/tabs/models/TabsModel';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {GatewayList} from '../components/GatewayList';
 
-interface CollectionTabsContainer extends TabsContainerProps {
+interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
   entities: {[key: string]: Gateway};
   paginatedList: uuid[];
   pagination: Pagination;
-  paginationChangePage: (page: number) => any;
   selectedEntities: uuid[];
+}
+
+interface DispatchToProps extends TabsContainerDispatchToProps {
+  paginationChangePage: (page: number) => any;
   addSelection: (searchParameters: SelectionParameter) => void;
 }
 
@@ -56,7 +63,7 @@ interface CollectionTabsContainer extends TabsContainerProps {
 const incProp = (obj: any, prop: string): void =>
   typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
 
-const CollectionTabsContainer = (props: CollectionTabsContainer) => {
+const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
@@ -266,7 +273,7 @@ const CollectionTabsContainer = (props: CollectionTabsContainer) => {
   );
 };
 
-const mapStateToProps = ({ui, domainModels: {gateways}}: RootState) => {
+const mapStateToProps = ({ui, domainModels: {gateways}}: RootState): StateToProps => {
   const pagination = getCollectionPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
@@ -279,11 +286,11 @@ const mapStateToProps = ({ui, domainModels: {gateways}}: RootState) => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
   changeTabOption: changeTabOptionCollection,
   paginationChangePage: changePaginationCollection,
   addSelection,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);
+export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);

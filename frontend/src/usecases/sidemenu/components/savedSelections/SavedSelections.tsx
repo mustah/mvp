@@ -77,9 +77,9 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectSavedSelection,
 }, dispatch);
 
 export const SavedSelectionsContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(SavedSelections);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(SavedSelections);

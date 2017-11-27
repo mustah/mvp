@@ -52,7 +52,7 @@ const mapStateToProps = ({auth}: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   logout,
 }, dispatch);
 

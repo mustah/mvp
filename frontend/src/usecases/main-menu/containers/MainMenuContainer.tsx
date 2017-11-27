@@ -99,4 +99,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export const MainMenuContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(MainMenuContainerComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MainMenuContainerComponent);

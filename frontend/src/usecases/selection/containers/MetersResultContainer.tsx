@@ -52,4 +52,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 export const MetersResultContainer =
-  connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(MetersComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MetersComponent);

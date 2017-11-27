@@ -38,10 +38,9 @@ const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchSelections,
 }, dispatch);
 
 export const MetersLoaderContainer =
-  connect<StateToProps, DispatchToProps, {}>
-  (mapStateToProps, mapDispatchToProps)(MetersLoaderContainerComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MetersLoaderContainerComponent);

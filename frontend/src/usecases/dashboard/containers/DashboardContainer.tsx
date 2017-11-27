@@ -29,7 +29,7 @@ interface StateToProps extends SelectedIndicatorWidgetProps {
   entities: { [key: string]: Meter };
 }
 
-export interface DispatchToProps extends IndicatorWidgetsDispatchProps {
+interface DispatchToProps extends IndicatorWidgetsDispatchProps {
   fetchDashboard: () => any;
 }
 
@@ -100,9 +100,9 @@ const mapStateToProps = ({dashboard, ui, domainModels}: RootState): StateToProps
  *
  * @param dispatch
  */
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
   selectIndicatorWidget: selectDashboardIndicatorWidget,
 }, dispatch);
 
-export default connect<StateToProps, DispatchToProps, {}>(mapStateToProps, mapDispatchToProps)(DashboardContainer);
+export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardContainer);

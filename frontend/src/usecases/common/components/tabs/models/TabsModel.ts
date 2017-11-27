@@ -30,9 +30,12 @@ export interface TabsState {
   [key: string]: SelectedTabs;
 }
 
-export interface TabsContainerProps {
+export interface TabsContainerStateToProps {
   tabs: TabModel;
   selectedTab: tabType;
+}
+
+export interface TabsContainerDispatchToProps {
   changeTab: (tab: tabType) => void;
   changeTabOption: (tab: tabType, option: string) => void;
 }

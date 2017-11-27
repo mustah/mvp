@@ -44,4 +44,4 @@ const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToPro
   };
 };
 
-export const SelectionContainer = connect<StateToProps, {}, {}>(mapStateToProps)(SelectionContainerComponent);
+export const SelectionContainer = connect<StateToProps>(mapStateToProps)(SelectionContainerComponent);

@@ -45,4 +45,4 @@ const mapStateToProps = ({ui}: RootState): StateToProps => {
 };
 
 export const SideMenuContainer =
-  connect<StateToProps, {}, {}>(mapStateToProps)(SideMenuContainerComponent);
+  connect<StateToProps>(mapStateToProps)(SideMenuContainerComponent);
