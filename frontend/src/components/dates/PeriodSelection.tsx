@@ -83,9 +83,8 @@ export class PeriodSelection extends React.Component<Props, State> {
     const timePeriods = [
       {
         value: Period.latest,
-        chosen: 'Senaste', // TODO demo purposes only. I imagine we will input real timestamps here in the future,
-                           // anyways
-        alternative: 'Senaste',
+        chosen: translate('latest'),
+        alternative: translate('latest'),
       },
       {
         value: Period.currentMonth,
@@ -137,8 +136,8 @@ export class PeriodSelection extends React.Component<Props, State> {
     const actions = [
       (
         <FlatButton
-          key={'Stäng'}
-          label={'Stäng'}
+          key={translate('close')}
+          label={translate('close')}
           onClick={this.hideCustomPicker}
         />
       ),
@@ -154,12 +153,12 @@ export class PeriodSelection extends React.Component<Props, State> {
         <p>Mellan</p>
         <DatePicker
           autoOk={true}
-          hintText={'Startdatum'}
+          hintText={translate('starting date')}
         />
         <p>och</p>
         <DatePicker
           autoOk={true}
-          hintText={'Slutdatum'}
+          hintText={translate('end date')}
         />
       </Dialog>
     );
