@@ -1,9 +1,8 @@
 import {IdNamed, uuid} from '../../../types/Types';
-import {MapMarker} from '../../../usecases/map/mapModels';
-import {DomainModel, NormalizedState, SelectionEntity} from '../domainModels';
+import {DomainModel, Location, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
-export interface Meter extends MapMarker {
+export interface Meter extends Location {
   id: uuid;
   moid: string;
   facility: string;
@@ -13,6 +12,7 @@ export interface Meter extends MapMarker {
   manufacturer: string;
   statusChanged?: string;
   date?: string;
+  status: IdNamed;
   gatewayId: string;
   gatewayStatus: IdNamed;
   gatewayProductModel: string;
