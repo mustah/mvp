@@ -10,7 +10,7 @@ import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
-import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
@@ -28,6 +28,7 @@ import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelec
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
+import {Normalized} from '../../state/domain-models/domainModels';
 
 interface MeteringPointDialogProps {
   meter: Meter;
@@ -81,16 +82,9 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
       </Column>);
 
     // TODO We need to support that a meter is connected to several gateways
-    const meterGateways = {
-      byId: {
-        id1: entities[meter.gatewayId],
-      },
-      allIds: ['id1'],
-    };
-
     // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const meterData: NormalizedRows = {
-      byId: {
+    const meterData: Normalized<any> = {
+      entities: {
         id0: {
           date: '2017-11-16 09:34',
           status: {
@@ -172,7 +166,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
           comment: '',
         },
       },
-      allIds: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
+      result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
     const changeTab = (option: tabType) => {
@@ -363,7 +357,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
               <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
-              <Table data={meterData}>
+              <Table {...meterData}>
                 <TableColumn
                   header={<TableHead className="first">{translate('quantity')}</TableHead>}
                   renderCell={renderQuantity}
@@ -378,7 +372,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
               <Row>
                 <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
               </Row>
-              <Table data={meterData}>
+              <Table {...meterData}>
                 <TableColumn
                   header={<TableHead>{translate('date')}</TableHead>}
                   renderCell={renderDate}
@@ -394,7 +388,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
             </TabContent>
             <TabContent tab={tabType.connectedGateways} selectedTab={selectedTab}>
               <Row>
-                <Table data={meterGateways}>
+                <Table result={['id1']} entities={{id1: entities[meter.gatewayId]}}>
                   <TableColumn
                     header={<TableHead>{translate('gateway id')}</TableHead>}
                     renderCell={renderSerial}

@@ -3,11 +3,7 @@ import * as React from 'react';
 import {Children, uuid} from '../../types/Types';
 import './Table.scss';
 import {TableHeadProps} from './TableHead';
-
-export interface NormalizedRows {
-  byId: object;
-  allIds: uuid[];
-}
+import {DomainModel} from '../../state/domain-models/domainModels';
 
 type RenderCellCallback = (value: any) => Children;
 
@@ -17,14 +13,15 @@ export interface TableColumnProps {
 }
 
 interface TableProps {
-  data: NormalizedRows;
+  result: uuid[];
+  entities: DomainModel<any>;
   children: Array<React.ReactElement<TableColumnProps>> | React.ReactElement<TableColumnProps>;
 }
 
 export const TableColumn = (props: TableColumnProps) => <td/>;
 
 export const Table = (props: TableProps) => {
-  const {data, children} = props;
+  const {result, entities, children} = props;
 
   const columns = Array.isArray(children) ? children : [children];
 
@@ -35,12 +32,12 @@ export const Table = (props: TableProps) => {
   });
 
   const rows = () => {
-    if (!data.allIds.length) {
+    if (!result.length) {
       return null;
     }
 
     const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
-      const item = data.byId[id];
+      const item = entities[id];
       return <td key={`cell-${id}-${index}`}>{onRenderCell(item)}</td>;
     };
 
@@ -51,7 +48,7 @@ export const Table = (props: TableProps) => {
         {cells.map((onRenderCell: RenderCellCallback, index: number) => renderCell(onRenderCell, id, index))}
       </tr>);
 
-    return data.allIds.map(renderRows);
+    return result.map(renderRows);
   };
 
   return (

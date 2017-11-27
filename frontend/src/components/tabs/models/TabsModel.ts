@@ -1,4 +1,5 @@
-import {NormalizedRows} from '../../table/Table';
+
+import {Normalized} from '../../../state/domain-models/domainModels';
 
 export enum tabType {
   list = 'list',
@@ -11,9 +12,7 @@ export enum tabType {
   connectedGateways = 'connectedGateways',
 }
 
-export interface ListProps {
-  data: NormalizedRows;
-}
+export type TableProps<T> = Normalized<T>;
 
 export interface TabModel {
   [key: string]: {

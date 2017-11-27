@@ -8,7 +8,7 @@ import {ButtonClose} from '../../components/buttons/ButtonClose';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
-import {NormalizedRows, Table, TableColumn} from '../../components/table/Table';
+import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
@@ -26,6 +26,7 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {OnClick} from '../../types/Types';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
+import {Normalized} from '../../state/domain-models/domainModels';
 
 interface GatewayDialogProps {
   displayDialog: boolean;
@@ -65,9 +66,10 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
     const renderMedium = (item: Meter) => item.medium;
 
     // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const gatewayData: NormalizedRows = {
-      byId: {
+    const gatewayData: Normalized<any> = {
+      entities: {
         id1: {
+          id: '26544',
           moid: '26544',
           date: '2017-11-22 09:34',
           status: {
@@ -76,9 +78,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id2: {
+          id: '98754',
           moid: '98754',
           date: '2017-11-22 08:34',
           status: {
@@ -87,9 +89,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id3: {
+          id: '16345',
           moid: '16345',
           date: '2017-11-22 07:34',
           status: {
@@ -98,9 +100,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id4: {
+          id: '74982',
           moid: '74982',
           date: '2017-11-22 06:34',
           status: {
@@ -109,9 +111,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id5: {
+          id: '49852',
           moid: '49852',
           date: '2017-11-22 05:34',
           status: {
@@ -120,9 +122,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id6: {
+          id: '65774',
           moid: '65774',
           date: '2017-11-22 04:34',
           status: {
@@ -131,9 +133,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
         id7: {
+          id: '32168',
           moid: '32168',
           date: '2017-11-22 03:34',
           status: {
@@ -142,15 +144,9 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           },
           medium: 'Heat, Return temp',
           manufacturer: 'ELV',
-          comment: '',
         },
       },
-      allIds: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
-    };
-
-    const gatewayMeters: NormalizedRows = {
-      byId: entities,
-      allIds: gateway.meterIds,
+      result: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
     const checkbox: React.CSSProperties = {
@@ -263,7 +259,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
               <TabSettings/>
             </TabTopBar>
             <TabContent tab={tabType.values} selectedTab={selectedTab}>
-              <Table data={gatewayMeters}>
+              <Table result={gateway.meterIds} entities={entities}>
                 <TableColumn
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
                   renderCell={renderFacility}
@@ -286,7 +282,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
               <Row>
                 <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
               </Row>
-              <Table data={gatewayData}>
+              <Table {...gatewayData} >
                 <TableColumn
                   header={<TableHead>{translate('date')}</TableHead>}
                   renderCell={renderDate}

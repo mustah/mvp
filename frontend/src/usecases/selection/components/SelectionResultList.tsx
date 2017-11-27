@@ -2,18 +2,19 @@ import * as React from 'react';
 import 'SelectionResultList.scss';
 import {Column} from '../../../components/layouts/column/Column';
 import {MeterList} from '../../../components/metering-point/MeterList';
-import {ListProps} from '../../../components/tabs/models/TabsModel';
+import {TableProps} from '../../../components/tabs/models/TabsModel';
 import {OnClickWithId} from '../../../types/Types';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
 
 interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const SearchResultList = (props: ListProps & Props) => {
-  const {data, selectEntryAdd} = props;
+export const SearchResultList = (props: TableProps<Meter> & Props) => {
+  const {selectEntryAdd} = props;
   return (
     <Column className="SearchResultList">
-      <MeterList data={data} selectEntryAdd={selectEntryAdd}/>
+      <MeterList {...props} selectEntryAdd={selectEntryAdd}/>
     </Column>
   );
 };

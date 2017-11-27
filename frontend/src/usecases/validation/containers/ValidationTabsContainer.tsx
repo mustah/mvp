@@ -298,7 +298,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         {overviewTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <MeterList data={{allIds: paginatedList, byId: entities}} selectEntryAdd={selectEntryAdd}/>
+        <MeterList result={paginatedList} entities={entities} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>

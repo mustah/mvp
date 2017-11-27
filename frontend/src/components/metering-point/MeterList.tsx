@@ -5,7 +5,7 @@ import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
-import {ListProps} from '../tabs/models/TabsModel';
+import {TableProps} from '../tabs/models/TabsModel';
 import {MeteringPoint} from './MeteringPoint';
 import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
 import {OnClickWithId} from '../../types/Types';
@@ -14,8 +14,8 @@ interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const MeterList = (props: ListProps & Props) => {
-  const {data, selectEntryAdd} = props;
+export const MeterList = (props: TableProps<Meter> & Props) => {
+  const {result, entities, selectEntryAdd} = props;
 
   const renderMeteringPointCell = (meter: Meter) => <MeteringPoint meter={meter}/>;
   const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
@@ -30,7 +30,7 @@ export const MeterList = (props: ListProps & Props) => {
   const renderMedium = (meter: Meter) => meter.medium;
 
   return (
-    <Table data={data}>
+    <Table result={result} entities={entities}>
       <TableColumn
         header={<TableHead className="first">{translate('facility')}</TableHead>}
         renderCell={renderMeteringPointCell}
