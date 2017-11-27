@@ -82,7 +82,7 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
   };
 
 export const addSelection = (selectionParameter: SelectionParameter) =>
-  (dispatch, getState: () => RootState) => {
+  (dispatch) => {
     dispatch(setSelection(selectionParameter));
     dispatch(fetchMetersAndGateways());
   };
