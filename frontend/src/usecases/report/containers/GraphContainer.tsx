@@ -13,18 +13,14 @@ import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {TabModel, TopLevelTab} from '../../../components/tabs/models/TabsModel';
 import {Bold} from '../../../components/texts/Texts';
 
-interface GraphContainerProps {
-  NotYetUsed?: boolean;
-}
-
 interface GraphContainerState {
   selectedTabOption: string;
 }
 
-export class GraphContainer extends React.Component<GraphContainerProps, GraphContainerState> {
+export class GraphContainer extends React.Component<{}, GraphContainerState> {
 
   constructor() {
-    super();
+    super({});
     this.state = {
       selectedTabOption: 'power',
     };

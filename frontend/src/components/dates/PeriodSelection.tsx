@@ -57,8 +57,8 @@ interface State {
 
 export class PeriodSelection extends React.Component<Props, State> {
 
-  constructor() {
-    super();
+  constructor(props: Props) {
+    super(props);
     this.state = {
       timePickerVisible: false,
     };
