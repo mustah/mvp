@@ -2,7 +2,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {makeToken} from '../../services/authService';
 import {makeRestClient} from '../../services/restClient';
-import {routes} from '../app/routes';
+import {routes} from '../../app/routes';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';

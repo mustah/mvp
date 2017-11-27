@@ -5,8 +5,8 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
 import {OnClick} from '../../../../types/Types';
-import {colors, iconStyle} from '../../../app/themes';
-import {RowRight} from '../../../common/components/layouts/row/Row';
+import {colors, iconStyle} from '../../../../app/themes';
+import {RowRight} from '../../../../components/layouts/row/Row';
 
 interface Props {
   onClick: OnClick;

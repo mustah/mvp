@@ -1,16 +1,21 @@
 import * as React from 'react';
+import {Separator} from '../../../components/separators/Separator';
+import {Status} from '../../../components/status/Status';
+import {Table, TableColumn} from '../../../components/table/Table';
+import {TableHead} from '../../../components/table/TableHead';
+import {ListProps} from '../../../components/tabs/models/TabsModel';
+import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {translate} from '../../../services/translationService';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
-import {ListActionsDropdownContainer} from '../../common/containers/actions-dropdown/ListActionsDropdownContainer';
-import {Status} from '../../common/components/status/Status';
-import {Table, TableColumn} from '../../common/components/table/Table';
-import {TableHead} from '../../common/components/table/TableHead';
-import {ListProps} from '../../common/components/tabs/models/TabsModel';
 import {Gateway} from './Gateway';
-import {Separator} from '../../common/components/separators/Separator';
+import {OnClickWithId} from '../../../types/Types';
 
-export const GatewayList = (props: ListProps) => {
-  const {data} = props;
+interface Props {
+  selectEntryAdd: OnClickWithId;
+}
+
+export const GatewayList = (props: ListProps & Props) => {
+  const {data, selectEntryAdd} = props;
 
   const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
   const renderGateway = (gateway: GatewayModel) => <Gateway gateway={gateway}/>;
@@ -18,7 +23,7 @@ export const GatewayList = (props: ListProps) => {
   const renderAddress = (gateway: GatewayModel) => gateway.address.name;
   const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
   const renderActionDropdown = (gateway: GatewayModel) =>
-    <ListActionsDropdownContainer item={{id: gateway.id, name: gateway.productModel}}/>;
+    <ListActionsDropdown item={{id: gateway.id, name: gateway.productModel}} selectEntryAdd={selectEntryAdd}/>;
   const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged || <Separator/>;
   const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
 

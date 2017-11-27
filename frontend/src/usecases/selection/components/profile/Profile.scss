@@ -1,0 +1,14 @@
+@import "../../../../app/variables";
+
+.ProfileWrapper {
+  background: $primary-fg;
+  color: $primary-bg;
+  padding: $sm-space 0;
+  min-width: 64px;
+
+  .Profile {
+    padding: 0;
+    margin-bottom: $xs-space;
+    justify-content: center;
+  }
+}

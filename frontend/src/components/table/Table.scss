@@ -1,0 +1,55 @@
+@import "../../app/variables";
+
+.Table {
+  background: white;
+  width: 100%;
+
+  th {
+    font-weight: bold;
+    text-align: left;
+    text-transform: uppercase;
+    border-bottom: 1px solid $grey;
+
+    &.actionDropdown {
+      text-align: right;
+      width: 36px;
+    }
+  }
+
+  thead {
+    tr {
+      background: $grey;
+      color: $light-black;
+
+      &:hover {
+        background-color: $grey;
+      }
+
+      th.first {
+        padding-left: $space;
+      }
+    }
+  }
+
+  tbody {
+    td:first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  th, td {
+    padding: $sm-space;
+  }
+
+  td {
+    border-bottom: 1px solid $light-grey;
+  }
+
+  tr:hover {
+    background-color: $light-grey;
+  }
+
+  .TableHead-status {
+    max-width: 120px;
+  }
+}

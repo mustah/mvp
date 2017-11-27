@@ -3,8 +3,8 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
-import {RowCenter} from '../../common/components/layouts/row/Row';
-import {Loading} from '../../common/components/loading/Loading';
+import {RowCenter} from '../../../components/layouts/row/Row';
+import {Loading} from '../../../components/loading/Loading';
 
 interface OwnProps {
   children: React.ReactElement<any> | null;

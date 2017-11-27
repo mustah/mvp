@@ -1,8 +1,8 @@
 import 'NoSavedSelections.scss';
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
-import {Row} from '../../../common/components/layouts/row/Row';
-import {Normal} from '../../../common/components/texts/Texts';
+import {Row} from '../../../../components/layouts/row/Row';
+import {Normal} from '../../../../components/texts/Texts';
 
 export const NoSavedSelections = () => (
   <Row className="NoSavedSelections">

@@ -6,7 +6,7 @@ import 'SideMenuContainer.scss';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {drawerWidth} from '../../app/themes';
+import {drawerWidth} from '../../../app/themes';
 import {SavedSelectionsContainer} from '../components/savedSelections/SavedSelections';
 import {SelectionTreeContainer} from './selection-tree/SelectionTreeContainer';
 

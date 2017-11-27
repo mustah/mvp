@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Row} from '../../../common/components/layouts/row/Row';
+import {Row} from '../../../../components/layouts/row/Row';
 import {Widget} from './Widget';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {MapMarker} from '../../../map/mapModels';

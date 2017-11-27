@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {translate} from '../../../../services/translationService';
 import {SelectionState} from '../../../../state/search/selection/selectionModels';
-import {Row, RowCenter} from '../../../common/components/layouts/row/Row';
-import {Bold, Normal} from '../../../common/components/texts/Texts';
+import {Row, RowCenter} from '../../../../components/layouts/row/Row';
+import {Bold, Normal} from '../../../../components/texts/Texts';
 
 interface Props {
   selection: SelectionState;

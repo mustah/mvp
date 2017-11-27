@@ -4,7 +4,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeToken} from '../../../services/authService';
-import {routes} from '../../app/routes';
+import {routes} from '../../../app/routes';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {UnauthorizedDTO} from '../authReducer';
 

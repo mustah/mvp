@@ -3,14 +3,14 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
 import {selectionTreeExpandToggle} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
-import {uuid} from '../../../../types/Types';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../app/themes';
+import {OnClickWithId, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -27,8 +27,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  toggleExpand: (id: uuid) => void;
-  toggleSelect: (id: uuid) => void;
+  toggleExpand: OnClickWithId;
+  toggleSelect: OnClickWithId;
 }
 
 const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProps) => {

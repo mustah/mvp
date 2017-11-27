@@ -23,11 +23,11 @@ import {
   getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
-import {MultiDropdownSelector} from '../../common/components/dropdown-selector/MultiDropdownSelector';
-import {SimpleDropdownSelector} from '../../common/components/dropdown-selector/SimpleDropdownSelector';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row} from '../../common/components/layouts/row/Row';
-import {Subtitle} from '../../common/components/texts/Titles';
+import {MultiDropdownSelector} from '../../../components/dropdown-selector/MultiDropdownSelector';
+import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {Subtitle} from '../../../components/texts/Titles';
 import {SelectionQuantity} from '../components/SelectionQuantity';
 import {MetersResultContainer} from './MetersResultContainer';
 import {MetersLoaderContainer} from './MetersLoaderContainer';

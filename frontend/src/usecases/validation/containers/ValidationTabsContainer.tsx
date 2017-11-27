@@ -3,6 +3,25 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import 'ValidationTabsContainer.scss';
+import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
+import {Row, RowRight} from '../../../components/layouts/row/Row';
+import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {MeterList} from '../../../components/metering-point/MeterList';
+import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
+import {PieChartSelector, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {Tab} from '../../../components/tabs/components/Tab';
+import {TabContent} from '../../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
+import {RaisedTabOption} from '../../../components/tabs/components/TabOption';
+import {TabOptions} from '../../../components/tabs/components/TabOptions';
+import {Tabs} from '../../../components/tabs/components/Tabs';
+import {TabSettings} from '../../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+  tabType,
+} from '../../../components/tabs/models/TabsModel';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
@@ -17,27 +36,9 @@ import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, uuid} from '../../../types/Types';
-import {Column, ColumnCenter} from '../../common/components/layouts/column/Column';
-import {Row, RowRight} from '../../common/components/layouts/row/Row';
-import {WrapperIndent} from '../../common/components/layouts/wrapper/Wrapper';
-import {MeterList} from '../../common/components/metering-point/MeterList';
-import {PaginationControl} from '../../common/components/pagination-control/PaginationControl';
-import {PieChartSelector, PieData} from '../../common/components/pie-chart-selector/PieChartSelector';
-import {Tab} from '../../common/components/tabs/components/Tab';
-import {TabContent} from '../../common/components/tabs/components/TabContent';
-import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {RaisedTabOption} from '../../common/components/tabs/components/TabOption';
-import {TabOptions} from '../../common/components/tabs/components/TabOptions';
-import {Tabs} from '../../common/components/tabs/components/Tabs';
-import {TabSettings} from '../../common/components/tabs/components/TabSettings';
-import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
-import {
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-  tabType,
-} from '../../common/components/tabs/models/TabsModel';
+import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {selectEntryAdd} from '../../report/reportActions';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -50,6 +51,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: (page: number) => any;
   addSelection: (searchParameters: SelectionParameter) => void;
+  selectEntryAdd: OnClickWithId;
 }
 
 /**
@@ -76,6 +78,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     changeTabOption,
     tabs,
     addSelection,
+    selectEntryAdd,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -295,7 +298,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         {overviewTabContents}
       </TabContent>
       <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <MeterList data={{allIds: paginatedList, byId: entities}}/>
+        <MeterList data={{allIds: paginatedList, byId: entities}} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={tabType.map} selectedTab={selectedTab}>
@@ -323,6 +326,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTabOption: changeTabOptionValidation,
   paginationChangePage: changePaginationValidation,
   addSelection,
+  selectEntryAdd,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

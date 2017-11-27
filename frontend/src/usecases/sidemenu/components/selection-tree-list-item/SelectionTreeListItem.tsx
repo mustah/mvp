@@ -1,8 +1,8 @@
 import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
-import {uuid} from '../../../../types/Types';
-import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../app/themes';
+import {OnClickWithId, uuid} from '../../../../types/Types';
+import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import ListItemProps = __MaterialUI.List.ListItemProps;
 
 export const SelectableListItem = (props: ListItemProps & {selectable: boolean; selected: boolean}) => {
@@ -23,9 +23,9 @@ interface RenderSelectionTreeFunctionProps {
   id: uuid;
   data: SelectionTreeData;
   level: string;
-  toggleExpand: (id: uuid) => void;
+  toggleExpand: OnClickWithId;
+  toggleSelect: OnClickWithId;
   openListItems: Set<uuid>;
-  toggleSelect: (id: uuid) => void;
   selectedListItems: Set<uuid>;
 }
 

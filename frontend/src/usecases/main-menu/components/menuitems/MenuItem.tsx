@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {Selectable} from '../../../../types/Types';
-import {RowCenter} from '../../../common/components/layouts/row/Row';
-import {Xsmall} from '../../../common/components/texts/Texts';
+import {RowCenter} from '../../../../components/layouts/row/Row';
+import {Xsmall} from '../../../../components/texts/Texts';
 import './MenuItem.scss';
 
 export interface MenuItemProps extends Selectable {

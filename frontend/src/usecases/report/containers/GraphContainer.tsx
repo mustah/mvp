@@ -2,16 +2,16 @@ import 'GraphContainer.scss';
 import * as React from 'react';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {translate} from '../../../services/translationService';
-import {Tab} from '../../common/components/tabs/components/Tab';
-import {TabContent} from '../../common/components/tabs/components/TabContent';
-import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
-import {TabOptions} from '../../common/components/tabs/components/TabOptions';
-import {Tabs} from '../../common/components/tabs/components/Tabs';
-import {TabSettings} from '../../common/components/tabs/components/TabSettings';
-import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
-import {TabModel, tabType} from '../../common/components/tabs/models/TabsModel';
-import {Bold} from '../../common/components/texts/Texts';
+import {Tab} from '../../../components/tabs/components/Tab';
+import {TabContent} from '../../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
+import {TabOption} from '../../../components/tabs/components/TabOption';
+import {TabOptions} from '../../../components/tabs/components/TabOptions';
+import {Tabs} from '../../../components/tabs/components/Tabs';
+import {TabSettings} from '../../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {TabModel, tabType} from '../../../components/tabs/models/TabsModel';
+import {Bold} from '../../../components/texts/Texts';
 
 interface GraphContainerProps {
   NotYetUsed?: boolean;

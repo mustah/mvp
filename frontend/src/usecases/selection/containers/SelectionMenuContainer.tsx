@@ -11,8 +11,8 @@ import {
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {OnClick} from '../../../types/Types';
-import {IconNavigationBack} from '../../common/components/icons/IconNavigationBack';
-import {RowCenter, RowMiddle} from '../../common/components/layouts/row/Row';
+import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
+import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
 interface StateToProps {

@@ -9,13 +9,13 @@ import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicat
 import {
   IndicatorWidgetsDispatchProps,
   SelectedIndicatorWidgetProps,
-} from '../../common/components/indicators/SelectableIndicatorWidgets';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Row} from '../../common/components/layouts/row/Row';
-import {MainTitle} from '../../common/components/texts/Titles';
-import {PageContainer} from '../../common/containers/PageContainer';
-import {PeriodContainer} from '../../common/containers/PeriodContainer';
-import {SummaryContainer} from '../../common/containers/SummaryContainer';
+} from '../../../components/indicators/SelectableIndicatorWidgets';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {MainTitle} from '../../../components/texts/Titles';
+import {PageContainer} from '../../../containers/PageContainer';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
