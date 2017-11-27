@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux';
-import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
+import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from './dashboardActions';
 import {DashboardModel} from './models/dashboardModels';
 
 export interface DashboardState {

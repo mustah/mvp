@@ -1,8 +1,11 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {Dispatch} from 'redux';
 import {restClient} from '../../services/restClient';
-import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
 import {DashboardState} from './dashboardReducer';
+
+export const DASHBOARD_REQUEST = 'DASHBOARD_REQUEST';
+export const DASHBOARD_SUCCESS = 'DASHBOARD_SUCCESS';
+export const DASHBOARD_FAILURE = 'DASHBOARD_FAILURE';
 
 const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
 const dashboardSuccess = createPayloadAction<string, DashboardState>(DASHBOARD_SUCCESS);
