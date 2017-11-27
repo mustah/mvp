@@ -2,13 +2,15 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import './Layout.scss';
 
-export interface LayoutProps {
-  hide?: boolean;
-  className?: string;
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
-  onClick?: (...args) => void;
+export interface AllLayoutProps {
+  hide: boolean;
+  className: string;
+  style: React.CSSProperties;
+  children: React.ReactNode;
+  onClick: (...args) => void;
 }
+
+export type LayoutProps = Partial<AllLayoutProps>;
 
 export const Layout = (props: LayoutProps) => {
   if (props.hide) {
