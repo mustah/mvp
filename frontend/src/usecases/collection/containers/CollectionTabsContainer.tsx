@@ -36,6 +36,7 @@ import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 import './CollectionTabsContainer.scss';
+import ClusterContainer from '../../map/containers/ClusterContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -267,7 +268,9 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer markers={entities} popupMode={PopupMode.gateway}/>
+        <MapContainer popupMode={PopupMode.gateway}>
+          <ClusterContainer markers={entities}/>
+        </MapContainer>
       </TabContent>
     </Tabs>
   );

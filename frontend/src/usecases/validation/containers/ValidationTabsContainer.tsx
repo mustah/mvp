@@ -40,6 +40,7 @@ import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {selectEntryAdd} from '../../report/reportActions';
 import './ValidationTabsContainer.scss';
 import {DomainModel} from '../../../state/domain-models/domainModels';
+import ClusterContainer from '../../map/containers/ClusterContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -303,7 +304,9 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer markers={entities} popupMode={PopupMode.meterpoint}/>
+        <MapContainer popupMode={PopupMode.meterpoint}>
+          <ClusterContainer markers={entities}/>
+        </MapContainer>
       </TabContent>
     </Tabs>
   );

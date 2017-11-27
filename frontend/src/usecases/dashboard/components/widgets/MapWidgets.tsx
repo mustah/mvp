@@ -4,6 +4,7 @@ import {DomainModel, GeoPosition} from '../../../../state/domain-models/domainMo
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {MapMarker} from '../../../map/mapModels';
 import {Widget} from './Widget';
+import ClusterContainer from '../../../map/containers/ClusterContainer';
 
 interface Props {
   tmp: any;
@@ -45,21 +46,23 @@ export const MapWidgets = (props: Props) => {
         <MapContainer
           height={400}
           width={400}
-          markers={tmp}
           defaultZoom={13}
           viewCenter={centerOfPerstorpMap}
           popupMode={PopupMode.meterpoint}
-        />
+        >
+          <ClusterContainer markers={tmp}/>
+        </MapContainer>
       </Widget>
       <Widget title="Fel">
         <MapContainer
           height={400}
           width={400}
-          markers={markers}
           defaultZoom={8}
           viewCenter={centerOfErrorMap}
           popupMode={PopupMode.meterpoint}
-        />
+        >
+          <ClusterContainer markers={markers}/>
+        </MapContainer>
       </Widget>
     </Row>
   );

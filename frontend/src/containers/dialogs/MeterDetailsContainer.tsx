@@ -27,6 +27,8 @@ import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContaine
 import {renderFlags} from './dialogHelper';
 import './MeterDetailsContainer.scss';
 import {checkbox, checkboxLabel} from '../../app/themes';
+import './MeteringPointDialogContainer.scss';
+import ClusterContainer from '../../usecases/map/containers/ClusterContainer';
 
 interface OwnProps {
   meter: Meter;
@@ -348,7 +350,9 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
               </Table>
             </TabContent>
             <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-              <MapContainer height={400} markers={meter} viewCenter={meter.position} popupMode={PopupMode.none}/>
+              <MapContainer height={400} viewCenter={meter.position} popupMode={PopupMode.none}>
+                <ClusterContainer markers={meter}/>
+              </MapContainer>
             </TabContent>
             <TabContent tab={TopLevelTab.connectedGateways} selectedTab={selectedTab}>
               <Row>
