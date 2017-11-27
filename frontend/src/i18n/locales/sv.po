@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-22T08:51:37.775Z\n"
+"POT-Creation-Date: 2017-11-27 15:06+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,43 +9,22 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 1.8.9\n"
 
-msgid "gateway"
-msgstr "gateway"
+msgid "export to Excel (.csv)"
+msgstr "exportera till Excel (.csv)"
 
-msgid "collection"
-msgstr "insamling"
+msgid "export to JSON"
+msgstr "exportera till JSON"
 
-msgid "city"
-msgstr "stad"
-
-msgid "address"
-msgstr "adress"
-
-msgid "product model"
-msgstr "modell"
-
-msgid "status"
-msgstr "status"
-
-msgid "status change"
-msgstr "statusförändring"
-
-msgid "flags"
-msgstr "flaggor"
-
-msgid "overview"
-msgstr "översikt"
-
-msgid "list"
-msgstr "lista"
-
-msgid "map"
-msgstr "karta"
+msgid "add to report"
+msgstr "lägg till i rapport"
 
 msgid "close"
 msgstr "stäng"
+
+msgid "latest"
+msgstr "senaste"
 
 msgid "current month"
 msgstr "denna månad"
@@ -62,6 +41,12 @@ msgstr "senaste 7 dagarna"
 msgid "pick a date"
 msgstr "välj datum"
 
+msgid "starting date"
+msgstr "startdatum"
+
+msgid "end date"
+msgstr "slutdatum"
+
 msgid "all"
 msgstr "allt"
 
@@ -71,11 +56,29 @@ msgstr "av {{count}} mätpunkt"
 msgid "facility"
 msgstr "anläggning"
 
+msgid "city"
+msgstr "stad"
+
+msgid "address"
+msgstr "adress"
+
 msgid "manufacturer"
 msgstr "tillverkare"
 
 msgid "medium"
 msgstr "typ"
+
+msgid "gateway"
+msgstr "gateway"
+
+msgid "status"
+msgstr "status"
+
+msgid "status change"
+msgstr "statusförändring"
+
+msgid "flags"
+msgstr "flaggor"
 
 msgid "previous"
 msgstr "föregående"
@@ -83,17 +86,11 @@ msgstr "föregående"
 msgid "next"
 msgstr "nästa"
 
-msgid "export to Excel (.csv)"
-msgstr "exportera till Excel (.csv)"
+msgid "other"
+msgstr "övriga"
 
-msgid "export to JSON"
-msgstr "exportera till JSON"
-
-msgid "meter"
-msgstr "mätare"
-
-msgid "add to report"
-msgstr "lägg till i rapport"
+msgid "no"
+msgstr "nej"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -101,20 +98,38 @@ msgstr "gateway"
 msgid "gateway id"
 msgstr "gateway id"
 
+msgid "product model"
+msgstr "modell"
+
+msgid "collection"
+msgstr "insamling"
+
 msgid "interval"
 msgstr "intervall"
 
 msgid "flagged for action"
 msgstr "flaggad för åtgärd"
 
+msgid "meter"
+msgstr "mätare"
+
 msgid "status log"
 msgstr "statuslogg"
+
+msgid "map"
+msgstr "karta"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
 
 msgid "date"
 msgstr "datum"
+
+msgid "n/a"
+msgstr "ej tillämpbar"
+
+msgid "alarm"
+msgstr "larm"
 
 msgid "meter id"
 msgstr "MOID"
@@ -152,6 +167,57 @@ msgstr "värde"
 msgid "latest snr"
 msgstr "senaste SNR"
 
+msgid "no gateways"
+msgstr "inga gateways"
+
+msgid "showing all gateways"
+msgstr "visar alla gateways"
+
+msgid "no gateways that are ok"
+msgstr "inga gateways som är ok"
+
+msgid "showing all gateways that are ok"
+msgstr "visar alla gateways som är ok"
+
+msgid "no gateways that have warnings"
+msgstr "inga gateways som har varningar"
+
+msgid "showing all gateways that have warnings"
+msgstr "visar alla gateways som har varningar"
+
+msgid "no gateways that have faults"
+msgstr "inga gateways som har fel"
+
+msgid "showing all gateways that have faults"
+msgstr "visar alla gateways som har fel"
+
+msgid "none"
+msgstr "inga"
+
+msgid "ok"
+msgstr "ok"
+
+msgid "warnings"
+msgstr "varningar"
+
+msgid "faults"
+msgstr "fel"
+
+msgid "cities"
+msgstr "städer"
+
+msgid "product models"
+msgstr "produktmodeller"
+
+msgid "filter by status"
+msgstr "filtrera efter status"
+
+msgid "overview"
+msgstr "översikt"
+
+msgid "list"
+msgstr "lista"
+
 msgid "edit"
 msgstr "redigera"
 
@@ -167,17 +233,14 @@ msgstr "urval"
 msgid "report"
 msgstr "rapport"
 
-msgid "no"
-msgstr "nej"
-
-msgid "logout"
-msgstr "logga ut"
-
 msgid "graph"
 msgstr "graf"
 
 msgid "table"
 msgstr "tabell"
+
+msgid "logout"
+msgstr "logga ut"
 
 msgid "save"
 msgstr "spara"
@@ -187,9 +250,6 @@ msgstr "spara som"
 
 msgid "reset"
 msgstr "återställ"
-
-msgid "alarm"
-msgstr "larm"
 
 msgid "meter status"
 msgstr "mätarstatus"
@@ -206,14 +266,41 @@ msgstr "inga sparade urval"
 msgid "saved selections"
 msgstr "sparade urval"
 
-msgid "metering"
-msgstr "mätning"
-
 msgid "selection overview"
 msgstr "urvalsöversikt"
 
-msgid "cities"
-msgstr "städer"
+msgid "metering"
+msgstr "mätning"
+
+msgid "no meters"
+msgstr "inga mätare"
+
+msgid "showing all meters"
+msgstr "visar alla mätare"
+
+msgid "no meters that are ok"
+msgstr "inga mätare som är ok"
+
+msgid "showing all meters that are ok"
+msgstr "visar alla mätare som är ok"
+
+msgid "no meters that have warnings"
+msgstr "inga mätare som har varningar"
+
+msgid "showing all meters that have warnings"
+msgstr "visar alla mätare som har varningar"
+
+msgid "no meters that have faults"
+msgstr "inga mätare som har fel"
+
+msgid "showing all meters that have faults"
+msgstr "visar alla mätare som har fel"
+
+msgid "unknown"
+msgstr "okända"
+
+msgid "alarms"
+msgstr "larm"
 
 msgid "filter on status"
 msgstr "filtrera på status"

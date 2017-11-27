@@ -90,20 +90,20 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const headings = {
     all: [
-      'Inga mätare',
-      'Visar alla mätare',
+      translate('no meters'),
+      translate('showing all meters'),
     ],
     ok: [
-      'Inga mätare som är OK',
-      'Visar alla mätare som är OK',
+      translate('no meters that are ok'),
+      translate('showing all meters that are ok'),
     ],
     unknown: [
-      'Inga mätare med varningar',
-      'Visar alla mätare med varningar',
+      translate('no meters that have warnings'),
+      translate('showing all meters that have warnings'),
     ],
     alarms: [
-      'Inga mätare med fel',
-      'Visar alla mätare med fel',
+      translate('no meters that have faults'),
+      translate('showing all meters that have faults'),
     ],
   };
 
@@ -151,8 +151,8 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         incProp(liveData[normalizedStatus].flagged, flag.title);
       });
     } else {
-      incProp(liveData.all.flagged, 'Ingen');
-      incProp(liveData[normalizedStatus].flagged, 'Ingen');
+      incProp(liveData.all.flagged, translate('none'));
+      incProp(liveData[normalizedStatus].flagged, translate('none'));
     }
     incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
     incProp(liveData[normalizedStatus].media, meter.medium);
@@ -181,10 +181,10 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     ({name: entry[0], value: entry[1]}));
 
   const overviewTabOptions: any[] = [
-    {id: 'all', label: 'ALLA'},
-    {id: 'ok', label: 'OK'},
-    {id: 'unknown', label: 'OKÄNDA'},
-    {id: 'alarms', label: 'LARM'},
+    {id: 'all', label: translate('all')},
+    {id: 'ok', label: translate('ok')},
+    {id: 'unknown', label: translate('unknown')},
+    {id: 'alarms', label: translate('alarms')},
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
@@ -267,7 +267,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
       <WrapperIndent>
         <Row className="StatusControl">
           <Column>
-            <h2>{header}</h2>
+            <h2 className="first-uppercase">{header}</h2>
           </Column>
           <Column className="flex-1"/>
           <ColumnCenter className="StatusTabOptions">

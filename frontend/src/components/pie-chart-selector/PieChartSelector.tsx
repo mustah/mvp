@@ -1,6 +1,7 @@
 import 'PieChartSelector.scss';
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
+import {translate} from '../../services/translationService';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
 
@@ -30,7 +31,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
   // clicking on "other", is.. undefined behavior, for now
   const total: number = data.reduce((sum, piece) => sum + piece.value, 0);
 
-  const localizedOther = 'Övriga';
+  const localizedOther = translate('other');
 
   const filteredData: PieData[] = data
     .reduce((filtered: PieData[], current: PieData) => {

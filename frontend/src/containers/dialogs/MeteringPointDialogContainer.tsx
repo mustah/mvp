@@ -69,7 +69,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
     const renderValue = (item: any) => item.value;
     const renderDate = (item: any) => item.date;
     const renderSerial = (item: any) => item.id;
-    const renderSnr = (item: any) => 'N/A'; // TODO Gateway should hold SNR (Signal Noise Ratio) information
+    const renderSnr = (item: any) => translate('n/a'); // TODO Gateway should hold SNR (Signal Noise Ratio) information
     const renderAlarm = () => meter.alarm !== ':Inget fel:' && (
       <Column>
         <Row>
