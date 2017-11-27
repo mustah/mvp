@@ -20,7 +20,7 @@ import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
-import {LookupState, parameterNames, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
+import {LookupState, ParameterName, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {getCities, getEncodedUriParametersForMeters, getSelectedPeriod, getSelection} from '../selectionSelectors';
 
@@ -52,7 +52,7 @@ describe('selectionSelectors', () => {
       cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     };
 
-    const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+    const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
@@ -82,7 +82,7 @@ describe('selectionSelectors', () => {
       cities: cities(initialDomainModelState, {type: 'unknown'}),
     };
 
-    const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+    const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
       selection: selection(initialState, setSelection(payload)),
@@ -95,7 +95,7 @@ describe('selectionSelectors', () => {
   describe('encodedUriParameters', () => {
 
     it('has selected city search parameter', () => {
-      const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({selection: state, saved: []});
@@ -104,8 +104,8 @@ describe('selectionSelectors', () => {
     });
 
     it('has two selected cities', () => {
-      const payloadGot: SelectionParameter = {...gothenburg, parameter: parameterNames.cities};
-      const payloadSto: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+      const payloadGot: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
+      const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const prevState: SelectionState = selection(initialState, setSelection(payloadGot));
       const state: SelectionState = selection(prevState, setSelection(payloadSto));
 
@@ -130,7 +130,7 @@ describe('selectionSelectors', () => {
   describe('get sub set of cities', () => {
 
     it('can detect which the selected entities are', () => {
-      const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       const domainModelPayload = normalize(testData.selections, selectionsSchema);
       const domainModels: DomainModelsState = {

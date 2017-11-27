@@ -19,7 +19,7 @@ import {
   setSelection,
   toggleSelection,
 } from '../selectionActions';
-import {parameterNames, SelectionParameter, SelectionState} from '../selectionModels';
+import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {getEncodedUriParametersForMeters} from '../selectionSelectors';
 import MockAdapter = require('axios-mock-adapter');
@@ -65,7 +65,7 @@ describe('selectionActions', () => {
 
       const selection: IdNamed = {...gothenburg};
 
-      const parameter: SelectionParameter = {...selection, parameter: parameterNames.cities};
+      const parameter: SelectionParameter = {...selection, parameter: ParameterName.cities};
 
       store.dispatch(toggleSelection(parameter));
 
@@ -93,14 +93,14 @@ describe('selectionActions', () => {
     });
 
     it('deselects selected city', () => {
-      const payload: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const state: SelectionState = selection(initialState, setSelection(payload));
 
       const rootState = {searchParameters: {selection: state, saved: []}};
       onFakeFetchMetersAndGateways(rootState.searchParameters);
       store = configureMockStore(rootState);
 
-      const parameter: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
+      const parameter: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       store.dispatch(toggleSelection(parameter));
 
@@ -116,8 +116,8 @@ describe('selectionActions', () => {
       onFakeFetchMetersAndGateways(rootState.searchParameters);
       store = configureMockStore(rootState);
 
-      const p1: SelectionParameter = {...stockholm, parameter: parameterNames.cities};
-      const p2: SelectionParameter = {...gothenburg, parameter: parameterNames.cities};
+      const p1: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
+      const p2: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
 
       store.dispatch(toggleSelection(p1));
       store.dispatch(toggleSelection(p2));

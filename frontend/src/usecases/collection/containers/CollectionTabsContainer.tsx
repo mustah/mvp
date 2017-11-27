@@ -29,7 +29,7 @@ import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
-import {parameterNames, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -177,7 +177,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   const selectStatus = (status: string) => {
     const statusId = status === 'OK' ? 0 : 3;
     addSelection({
-      parameter: parameterNames.gatewayStatuses,
+      parameter: ParameterName.gatewayStatuses,
       id: statusId,
       name: status,
     });
@@ -185,7 +185,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const selectCity = (city: string) => {
     addSelection({
-      parameter: parameterNames.cities,
+      parameter: ParameterName.cities,
       id: city,
       name: city,
     });
@@ -193,7 +193,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const selectProductModel = (productModel: string) => {
     addSelection({
-      parameter: parameterNames.productModels,
+      parameter: ParameterName.productModels,
       id: productModel,
       name: productModel,
     });
