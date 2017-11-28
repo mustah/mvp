@@ -119,7 +119,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
   };
 
   // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: [], cities: [], manufacturers: [], media: [], status: [], alarms: []});
+  const categories = () => ({flagged: {}, cities: {}, manufacturers: {}, media: {}, status: {}, alarms: {}});
 
   // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
   const liveData = {
@@ -135,6 +135,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     } else if (id === 3) {
       return 'alarms';
     } else {
+
       return 'ok';
     }
   };

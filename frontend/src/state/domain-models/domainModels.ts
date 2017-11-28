@@ -40,7 +40,7 @@ export interface NormalizedState<T> extends Normalized<T> {
 }
 
 export type SelectionEntityState = NormalizedState<SelectionEntity>;
-// TODO: Find a way to include gateways and meters in SelectionEntity -> Rename DomainModelEntity
+
 export type SelectionEntity = IdNamed | Address;
 
 export interface DomainModelsState {
