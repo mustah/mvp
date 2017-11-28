@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CollectionControllerTest extends IntegrationTest {
 
   @Test
-  public void FindAllCollections() {
+  public void findAllCollections() {
     List collections = restClient()
       .loginWith("user", "password")
       .get("/collections", List.class)

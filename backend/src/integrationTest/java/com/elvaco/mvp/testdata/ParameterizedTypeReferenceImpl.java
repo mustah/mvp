@@ -2,19 +2,20 @@ package com.elvaco.mvp.testdata;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 public class ParameterizedTypeReferenceImpl implements ParameterizedType {
   private ParameterizedType delegate;
-  private Type[] types;
+  private final Type[] types;
 
   public ParameterizedTypeReferenceImpl(ParameterizedType delegate, Type[] types) {
     this.delegate = delegate;
-    this.types = types;
+    this.types = Arrays.copyOf(types, types.length);
   }
 
   @Override
   public Type[] getActualTypeArguments() {
-    return types;
+    return Arrays.copyOf(types, types.length);
   }
 
   @Override

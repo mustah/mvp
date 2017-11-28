@@ -2,6 +2,7 @@ package com.elvaco.mvp.testdata;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -49,7 +50,8 @@ public final class RestClient {
 
   public RestClient loginWith(String username, String password) {
     String authentication = username + ":" + password;
-    String token = new String(Base64.getEncoder().encode(authentication.getBytes(StandardCharsets.UTF_8)));
+    byte[] authBytes = authentication.getBytes(StandardCharsets.UTF_8);
+    String token = new String(Base64.getEncoder().encode(authBytes), StandardCharsets.UTF_8);
     return authorization(token);
   }
 

@@ -30,7 +30,7 @@ public class MeasurementEntity {
   }
 
   public MeasurementEntity(Date created, String quantity, double value, String unit, PhysicalMeterEntity physicalMeter) {
-    this.created = created;
+    this.created = new Date(created.getTime());
     this.quantity = quantity;
     this.value = new MeasurementUnit(unit, value);
     this.physicalMeter = physicalMeter;
