@@ -26,7 +26,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 tasks.withType(FindBugs) {
-  excludeFilter = file("findbugs/excludeFilter.xml")
+  excludeFilter = file("config/findbugs/excludeFilter.xml")
   reports {
     xml.enabled false
   }
