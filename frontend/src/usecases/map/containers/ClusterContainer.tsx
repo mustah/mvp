@@ -3,32 +3,24 @@ import * as L from 'leaflet';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {openClusterDialog, toggleClusterDialog} from '../mapActions';
+import {openClusterDialog} from '../mapActions';
 import {ExtendedMarker, MapMarker} from '../mapModels';
 import {IdNamed} from '../../../types/Types';
 
 interface DispatchToProps {
-  toggleClusterDialog: () => any;
-  openClusterDialog: (marker: ExtendedMarker) => any;
+  openClusterDialog?: (marker: ExtendedMarker) => any;
 }
 
 interface OwnProps {
    markers: { [key: string]: MapMarker } | MapMarker;
  }
 
-class ClusterContainer extends React.Component<DispatchToProps & OwnProps, any> {
+class Cluster extends React.Component<DispatchToProps & OwnProps, any> {
   render() {
     const {
       openClusterDialog,
       markers,
     } = this.props;
-
-    let onMarkerClick = openClusterDialog;
-
-    // if (popupMode === PopupMode.none) {
-    //   // Prevent popup in popup
-    //   onMarkerClick = () => void(0);
-    // }
 
     let tmpMarkers: { [key: string]: MapMarker } = {};
     if (isMapMarker(markers)) {
@@ -53,7 +45,7 @@ class ClusterContainer extends React.Component<DispatchToProps & OwnProps, any> 
             lng: longitude,
             options: {
               icon: L.icon({
-                iconUrl: getIcon(marker.status),
+                iconUrl: getStatusIcon(marker.status),
               }),
               mapMarker: marker,
             },
@@ -62,33 +54,27 @@ class ClusterContainer extends React.Component<DispatchToProps & OwnProps, any> 
       });
     }
 
-    const markerclusterOptions = {
-      // Setting custom icon for cluster group
-
+    const markerClusterOptions = {
       iconCreateFunction: handleIconCreate,
       chunkedLoading: true,
       showCoverageOnHover: true,
       maxClusterRadius: getZoomBasedRadius,
     };
 
-    // const renderCluster = () => leafletMarkers.length > 0 && (
-    //   <MarkerClusterGroup
-    //     markers={leafletMarkers}
-    //     onMarkerClick={onMarkerClick}
-    //     options={markerclusterOptions}
-    //   />);
-
-    return (
+    const renderCluster = () => leafletMarkers.length > 0 && (
       <MarkerClusterGroup
         markers={leafletMarkers}
-        onMarkerClick={onMarkerClick}
-        options={markerclusterOptions}
-      />
+        onMarkerClick={openClusterDialog}
+        options={markerClusterOptions}
+      />);
+
+    return (
+      renderCluster()
     );
   }
 }
 
-const getZoomBasedRadius = (zoom) => {
+const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
     return 80;
   } else {
@@ -97,7 +83,7 @@ const getZoomBasedRadius = (zoom) => {
 };
 
 const handleIconCreate = (cluster: MarkerClusterGroup) => {
-  const x = getCLusterDimensions(cluster.getChildCount());
+  const x = getClusterDimensions(cluster.getChildCount());
 
   return L.divIcon({
     html: `<span>${cluster.getChildCount()}</span>`,
@@ -116,13 +102,16 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
 
   let errorCount = 0;
   let warningCount = 0;
-  for (const child of cluster.getAllChildMarkers()) {
-    if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-error.png') {
-      errorCount++;
-    } else if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-warning.png') {
-      warningCount++;
+
+  cluster.getAllChildMarkers().forEach((child: L.Marker) => {
+    if (child.options.icon) {
+      if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-error.png') {
+        errorCount++;
+      } else if (child.options.icon.options.iconUrl === 'assets/images/marker-icon-warning.png') {
+        warningCount++;
+      }
     }
-  }
+  });
 
   let percent = (cluster.getChildCount() - errorCount - warningCount) / cluster.getChildCount() * 100;
   percent = Math.floor(percent);
@@ -139,30 +128,16 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   return cssClass;
 };
 
-const getIcon = (status: IdNamed): string => {
-  let tmpIcon: string;
-
-  // TODO This logic is currently very fragile. We don't know every possible status, and how severe that status is.
-  switch (status.id) {
-    case 0:
-    case 1:
-      tmpIcon = 'assets/images/marker-icon-ok.png';
-      break;
-    case 2:
-      tmpIcon = 'assets/images/marker-icon-warning.png';
-      break;
-    case 3:
-      tmpIcon = 'assets/images/marker-icon-error.png';
-      break;
-    default:
-      tmpIcon = 'assets/images/marker-icon.png';
-      break;
-  }
-
-  return tmpIcon;
+const icons = {
+  0: 'assets/images/marker-icon-ok.png',
+  1: 'assets/images/marker-icon-ok.png',
+  2: 'assets/images/marker-icon-warning.png',
+  3: 'assets/images/marker-icon-error.png',
 };
 
-const getCLusterDimensions = (clusterCount: number): number => {
+const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
+
+const getClusterDimensions = (clusterCount: number): number => {
   let x = clusterCount / 9;
 
   if (x > 90) {
@@ -179,8 +154,7 @@ const isMapMarker = (obj: any): obj is MapMarker => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  toggleClusterDialog,
   openClusterDialog,
 }, dispatch);
 
-export default connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(ClusterContainer);
+export const ClusterContainer = connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(Cluster);

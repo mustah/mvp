@@ -1,6 +1,9 @@
-import {Action} from '../../types/Types';
-import {OPEN_CLUSTER_DIALOG, TOGGLE_CLUSTER_DIALOG} from './mapActions';
+import {
+  OPEN_CLUSTER_DIALOG,
+  CLOSE_CLUSTER_DIALOG,
+} from './mapActions';
 import {ExtendedMarker} from './mapModels';
+import {Action} from '../../types/Types';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
@@ -13,7 +16,7 @@ export const initialState: MapState = {
 
 export const map = (state: MapState = initialState, action: Action<ExtendedMarker>): MapState => {
   switch (action.type) {
-    case TOGGLE_CLUSTER_DIALOG:
+    case CLOSE_CLUSTER_DIALOG:
       return {
         ...state,
         isClusterDialogOpen: false,

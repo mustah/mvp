@@ -35,12 +35,15 @@ import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationM
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, OnClickWithId, uuid} from '../../../types/Types';
-import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import './ValidationTabsContainer.scss';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import ClusterContainer from '../../map/containers/ClusterContainer';
+import {MeteringPointDialogContainer} from '../../../containers/dialogs/MeteringPointDialogContainer';
+import {closeClusterDialog} from '../../map/mapActions';
+import {MapState} from '../../map/mapReducer';
+import {MapContainer} from '../../map/containers/MapContainer';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -48,12 +51,14 @@ interface StateToProps extends TabsContainerStateToProps {
   paginatedList: uuid[];
   pagination: Pagination;
   selectedEntities: uuid[];
+  map: MapState;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
   addSelection: (searchParameters: SelectionParameter) => void;
   selectEntryAdd: OnClickWithId;
+  closeClusterDialog: OnClick;
 }
 
 /**
@@ -81,6 +86,8 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     tabs,
     addSelection,
     selectEntryAdd,
+    map,
+    closeClusterDialog,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -286,6 +293,14 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     );
   })(selectedOption);
 
+  const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
+    <MeteringPointDialogContainer
+      meter={map.selectedMarker.options.mapMarker as Meter}
+      displayDialog={map.isClusterDialogOpen}
+      close={closeClusterDialog}
+    />
+  ) : null;
+
   return (
     <Tabs>
       <TabTopBar>
@@ -304,15 +319,16 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer popupMode={PopupMode.meterpoint}>
+        <MapContainer>
           <ClusterContainer markers={entities}/>
         </MapContainer>
+        {dialog}
       </TabContent>
     </Tabs>
   );
 };
 
-const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToProps => {
   const pagination = getValidationPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
@@ -322,6 +338,7 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps 
     selectedEntities: getResultDomainModels(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
+    map,
   };
 };
 
@@ -331,6 +348,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   paginationChangePage: changePaginationValidation,
   addSelection,
   selectEntryAdd,
+  closeClusterDialog,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);

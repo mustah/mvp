@@ -14,11 +14,11 @@ import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
-import {MapWidgets} from '../components/widgets/MapWidgets';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 import {Loader} from '../../../components/loading/Loader';
+import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   isFetching: boolean;
@@ -35,8 +35,8 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class DashboardContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.fetchDashboard();
-  }
+      this.props.fetchDashboard();
+    }
 
   render() {
     const {isFetching, dashboard, meters} = this.props;
@@ -51,15 +51,15 @@ class DashboardContainerComponent extends React.Component<Props> {
         </Row>
 
         <Loader isFetching={isFetching}>
-          <Column>
+        <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgets tmp={meters}/>
-          </Column>
+            <MapWidgetsContainer markers={meters}/>
+        </Column>
         </Loader>
       </PageContainer>
-    );
+      );
+    }
   }
-}
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
