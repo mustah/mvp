@@ -4010,8 +4010,8 @@ react-leaflet-markercluster@^1.1.6:
   resolved "https://registry.yarnpkg.com/react-leaflet-markercluster/-/react-leaflet-markercluster-1.1.7.tgz#d35dbdc076ec87f69a1ff8b83b682c0d5ab34136"
 
 react-leaflet@^1.7.1:
-  version "1.7.6"
-  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-1.7.6.tgz#71dfb575fd30c1da595c9423883f663aeacf8bee"
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-1.7.7.tgz#32887d457913f39b546cdaf184ed974925c22e0f"
   dependencies:
     lodash "^4.0.0"
     lodash-es "^4.0.0"
