@@ -18,7 +18,8 @@
     "json-server": "./node_modules/json-server/bin/index.js --watch mockdata.js --routes routes.json --port 8080",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "tslint": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format stylish"
   },
   "jest": {
     "globals": {
