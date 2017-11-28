@@ -68,7 +68,7 @@
     "request-promise": "^4.2.2",
     "seedrandom": "^2.4.3",
     "ts-jest": "^21.2.3",
-    "tslint": "^5.5.0",
+    "tslint": "^5.8.0",
     "tslint-react": "^3.0.0",
     "typescript": "^2.5.3",
     "uglify-js": "^3.1.3"
