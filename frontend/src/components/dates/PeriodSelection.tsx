@@ -57,12 +57,9 @@ interface State {
 
 export class PeriodSelection extends React.Component<Props, State> {
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      timePickerVisible: false,
-    };
-  }
+  state: State = {
+    timePickerVisible: false,
+  };
 
   hideCustomPicker = () => {
     this.setState({timePickerVisible: false});
