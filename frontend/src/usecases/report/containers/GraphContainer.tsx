@@ -10,7 +10,7 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {TabModel, tabType} from '../../../components/tabs/models/TabsModel';
+import {TabModel, TopLevelTab} from '../../../components/tabs/models/TabsModel';
 import {Bold} from '../../../components/texts/Texts';
 
 interface GraphContainerProps {
@@ -62,16 +62,16 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
       asdf2: 'Mätare 67190406',
     };
 
-    const onChangeTab = (tab: tabType) => void(0);
+    const onChangeTab = (tab: TopLevelTab) => void(0);
 
-    const onChangeTabOption = (tab: tabType, option: string): void => {
+    const onChangeTabOption = (tab: TopLevelTab, option: string): void => {
       this.setState({selectedTabOption: option});
     };
 
-    const selectedTab: tabType = tabType.graph;
+    const selectedTab: TopLevelTab = TopLevelTab.graph;
 
     const tabs: TabModel = {
-      [tabType.graph]: {
+      [TopLevelTab.graph]: {
         selectedOption: this.state.selectedTabOption,
       },
     };
@@ -83,10 +83,10 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
         <Tabs>
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-              <Tab tab={tabType.graph} title={translate('graph')}/>
-              <Tab tab={tabType.table} title={translate('table')}/>
+              <Tab tab={TopLevelTab.graph} title={translate('graph')}/>
+              <Tab tab={TopLevelTab.table} title={translate('table')}/>
             </TabHeaders>
-            <TabOptions tab={tabType.graph} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
+            <TabOptions tab={TopLevelTab.graph} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
               <TabOption title={'Energi'} id={'energy'}/>
               <TabOption title={'Volym'} id={'volume'}/>
               <TabOption title={'Effekt'} id={'power'}/>
@@ -97,7 +97,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
             </TabOptions>
             <TabSettings/>
           </TabTopBar>
-          <TabContent tab={tabType.graph} selectedTab={selectedTab}>
+          <TabContent tab={TopLevelTab.graph} selectedTab={selectedTab}>
             <ResponsiveContainer width="80%" aspect={4.0}>
               <LineChart
                 width={10}
@@ -136,7 +136,7 @@ export class GraphContainer extends React.Component<GraphContainerProps, GraphCo
               </LineChart>
             </ResponsiveContainer>
           </TabContent>
-          <TabContent tab={tabType.table} selectedTab={selectedTab}>
+          <TabContent tab={TopLevelTab.table} selectedTab={selectedTab}>
             <Bold>TBD</Bold>
           </TabContent>
         </Tabs>

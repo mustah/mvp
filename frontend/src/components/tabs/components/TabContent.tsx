@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {tabType} from '../models/TabsModel';
+import {TopLevelTab} from '../models/TabsModel';
 import {Column} from '../../layouts/column/Column';
 
 export interface TabContentProps {
-  tab: tabType;
-  selectedTab: tabType;
+  tab: TopLevelTab;
+  selectedTab: TopLevelTab;
   children: any;
 }
 

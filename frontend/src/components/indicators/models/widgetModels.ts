@@ -1,6 +1,6 @@
 import {Status} from '../../../types/Types';
 
-export enum IndicatorType {
+export const enum IndicatorType {
   collection = 'collection',
   measurementQuality = 'measurementQuality',
   current = 'current',

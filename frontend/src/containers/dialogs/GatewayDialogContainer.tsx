@@ -16,7 +16,7 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {tabType} from '../../components/tabs/models/TabsModel';
+import {TopLevelTab} from '../../components/tabs/models/TabsModel';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
@@ -39,7 +39,7 @@ interface StateToProps {
 }
 
 interface GatewayDialogState {
-  selectedTab: tabType;
+  selectedTab: TopLevelTab;
 }
 
 class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, GatewayDialogState> {
@@ -48,7 +48,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
     super(props);
 
     this.state = {
-      selectedTab: tabType.values,
+      selectedTab: TopLevelTab.values,
     };
   }
 
@@ -161,7 +161,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
       marginTop: 10,
     };
 
-    const changeTab = (option: tabType) => {
+    const changeTab = (option: TopLevelTab) => {
       this.setState({selectedTab: option});
     };
 
@@ -252,13 +252,13 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
           <Tabs className="full-width">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                <Tab tab={tabType.values} title={translate('meter')}/>
-                <Tab tab={tabType.log} title={translate('status log')}/>
-                <Tab tab={tabType.map} title={translate('map')}/>
+                <Tab tab={TopLevelTab.values} title={translate('meter')}/>
+                <Tab tab={TopLevelTab.log} title={translate('status log')}/>
+                <Tab tab={TopLevelTab.map} title={translate('map')}/>
               </TabHeaders>
               <TabSettings/>
             </TabTopBar>
-            <TabContent tab={tabType.values} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
               <Table result={gateway.meterIds} entities={entities}>
                 <TableColumn
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
@@ -278,7 +278,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
                 />
               </Table>
             </TabContent>
-            <TabContent tab={tabType.log} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
               <Row>
                 <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
               </Row>
@@ -293,7 +293,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
                 />
               </Table>
             </TabContent>
-            <TabContent tab={tabType.map} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
               <MapContainer height={400} markers={gateway} viewCenter={gateway.position} popupMode={PopupMode.none}/>
             </TabContent>
           </Tabs>

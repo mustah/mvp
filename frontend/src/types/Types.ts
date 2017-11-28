@@ -30,7 +30,7 @@ export interface ErrorResponse {
   message: string;
 }
 
-export enum Status {
+export const enum Status {
   ok = 'ok',
   warning = 'warning',
   critical = 'critical',
@@ -38,7 +38,7 @@ export enum Status {
   unknown = 'unknown',
 }
 
-export enum Period {
+export const enum Period {
   latest = 'latest',
   currentMonth = 'current_month',
   previousMonth = 'previous_month',

@@ -3,12 +3,12 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as React from 'react';
 import {colors} from '../../../app/themes';
-import {tabType} from '../models/TabsModel';
+import {TopLevelTab} from '../models/TabsModel';
 
 export interface TabOptionProps {
   className?: string;
-  tab?: tabType;
-  select?: (tab: tabType, option: string) => void;
+  tab?: TopLevelTab;
+  select?: (tab: TopLevelTab, option: string) => void;
   title: React.ReactType;
   id: string;
   selectedOption?: string;
