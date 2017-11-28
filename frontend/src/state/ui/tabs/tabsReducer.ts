@@ -1,11 +1,11 @@
 import {Action} from '../../../types/Types';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
-import {SelectedTabs, TabSelection, TabsState, TopLevelTab} from './tabsModels';
+import {SelectedTabs, TabSelection, TabsState, TabName} from './tabsModels';
 
 const overviewTab: SelectedTabs = {
-  selectedTab: TopLevelTab.overview,
+  selectedTab: TabName.overview,
   tabs: {
-    [TopLevelTab.overview]: {
+    [TabName.overview]: {
       selectedOption: 'all',
     },
   },

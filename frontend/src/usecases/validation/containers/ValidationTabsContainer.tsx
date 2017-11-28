@@ -19,7 +19,7 @@ import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {
   TabsContainerDispatchToProps,
   TabsContainerStateToProps,
-  TopLevelTab,
+  TabName,
 } from '../../../state/ui/tabs/tabsModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
@@ -37,6 +37,7 @@ import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import './ValidationTabsContainer.scss';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -283,7 +284,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
               <div className="first-uppercase">{translate('filter on status') + ':'}</div>
-              <TabOptions tab={TopLevelTab.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+              <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {overviewTabOptions}
               </TabOptions>
             </RowRight>
@@ -306,20 +307,20 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab tab={TopLevelTab.overview} title={translate('overview')}/>
-          <Tab tab={TopLevelTab.list} title={translate('list')}/>
-          <Tab tab={TopLevelTab.map} title={translate('map')}/>
+          <Tab tab={TabName.overview} title={translate('overview')}/>
+          <Tab tab={TabName.list} title={translate('list')}/>
+          <Tab tab={TabName.map} title={translate('map')}/>
         </TabHeaders>
         <TabSettings/>
       </TabTopBar>
-      <TabContent tab={TopLevelTab.overview} selectedTab={selectedTab}>
+      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
         {overviewTabContents}
       </TabContent>
-      <TabContent tab={TopLevelTab.list} selectedTab={selectedTab}>
+      <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <MeterList result={paginatedList} entities={entities} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
-      <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
+      <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <Map>
           <ClusterContainer markers={entities}/>
         </Map>

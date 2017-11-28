@@ -1,4 +1,4 @@
-import {SelectedTabs, TabModel, TopLevelTab} from './tabsModels';
+import {SelectedTabs, TabModel, TabName} from './tabsModels';
 
-export const getSelectedTab = (state: SelectedTabs): TopLevelTab => state.selectedTab;
+export const getSelectedTab = (state: SelectedTabs): TabName => state.selectedTab;
 export const getTabs = (state: SelectedTabs): TabModel => state.tabs;

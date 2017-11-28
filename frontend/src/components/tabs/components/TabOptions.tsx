@@ -1,16 +1,16 @@
 import * as React from 'react';
 import {Column} from '../../layouts/column/Column';
 import {RowCenter} from '../../layouts/row/Row';
-import {TabModel, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
+import {TabModel, TabName} from '../../../state/ui/tabs/tabsModels';
 import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
 
-export type SelectTab = (tab: TopLevelTab, option: string) => void;
+export type SelectTab = (tab: TabName, option: string) => void;
 
 export interface TabOptionsProps {
   children: Array<React.ReactElement<TabOptionProps>>;
-  tab: TopLevelTab;
-  selectedTab: TopLevelTab;
+  tab: TabName;
+  selectedTab: TabName;
   select: SelectTab;
   tabs: TabModel;
 }
