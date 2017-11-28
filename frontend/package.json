@@ -19,7 +19,8 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
-    "tslint": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format stylish"
+    "tslint": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format stylish",
+    "tsfix": "./node_modules/tslint/bin/tslint --project tsconfig.json --config tslint.json --format stylish --fix"
   },
   "jest": {
     "globals": {
