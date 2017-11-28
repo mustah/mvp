@@ -50,6 +50,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
       .getBody()
       .get(0);
 
+    assertThat(result).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
