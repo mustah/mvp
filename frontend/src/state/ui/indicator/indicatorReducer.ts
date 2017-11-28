@@ -1,5 +1,6 @@
-import {AnyAction} from 'redux';
+import {EmptyAction} from 'react-redux-typescript';
 import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {Action} from '../../../types/Types';
 import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
 
 export interface SelectedIndicators {
@@ -18,16 +19,16 @@ export const initialState = {
   },
 };
 
-export const indicator = (state: IndicatorState = initialState, action: AnyAction): IndicatorState => {
-  const {payload, type} = action;
+type ActionTypes = EmptyAction<string> | Action<SelectedIndicators>;
 
-  switch (type) {
+export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
+  switch (action.type) {
     case SELECT_INDICATOR_WIDGET:
       return {
         ...state,
         selectedIndicators: {
           ...state.selectedIndicators,
-          ...payload,
+          ...(action as Action<SelectedIndicators>).payload,
         },
       };
     default:
