@@ -19,7 +19,7 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardState} from '../dashboardReducer';
-import {DashboardModel} from '../models/dashboardModels';
+import {DashboardModel} from '../dashboardModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {MapWidgets} from '../components/widgets/MapWidgets';
@@ -66,7 +66,7 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
     if (records) {
       return (
         <Column>
-          <OverviewWidgets widgets={records.systemOverview.widgets}/>
+          <OverviewWidgets widgets={records.widgets}/>
           <MapWidgets tmp={entities}/>
         </Column>
       );
