@@ -1,6 +1,7 @@
-import {AnyAction} from 'redux';
+import {EmptyAction} from 'react-redux-typescript';
+import {Action} from '../../../types/Types';
 import {PAGINATION_CHANGE_PAGE} from './paginationActions';
-import {PaginationState} from './paginationModels';
+import {PaginationState, PaginationUseCase} from './paginationModels';
 
 const limit = 30;
 
@@ -11,7 +12,9 @@ const initialState: PaginationState = {
   selection: {page: 1, limit},
 };
 
-export const pagination = (state: PaginationState = initialState, action: AnyAction) => {
+type ActionTypes = Action<PaginationUseCase> & EmptyAction<string>;
+
+export const pagination = (state: PaginationState = initialState, action: ActionTypes) => {
   const {payload} = action;
 
   switch (action.type) {

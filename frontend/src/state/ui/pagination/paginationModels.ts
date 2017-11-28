@@ -3,12 +3,17 @@ export interface Pagination {
   limit: number;
 }
 
-export type ChangePage = (page: number) => any;
+export interface PaginationUseCase  {
+  page: number;
+  useCase: string;
+}
+
+export type OnChangePage = (page: number) => any;
 
 export interface PaginationProps {
   pagination: Pagination;
   numOfEntities: number;
-  changePage: ChangePage;
+  changePage: OnChangePage;
 }
 
 export interface PaginationState {

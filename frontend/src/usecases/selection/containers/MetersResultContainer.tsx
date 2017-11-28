@@ -9,7 +9,7 @@ import {getResultDomainModels} from '../../../state/domain-models/domainModelsSe
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {changePaginationSelection} from '../../../state/ui/pagination/paginationActions';
-import {ChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
+import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
@@ -24,7 +24,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  changePage: ChangePage;
+  changePage: OnChangePage;
   selectEntryAdd: OnClickWithId;
 }
 

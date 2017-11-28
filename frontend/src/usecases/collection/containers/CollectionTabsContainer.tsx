@@ -30,7 +30,7 @@ import {getGatewayEntities, getGatewaysTotal} from '../../../state/domain-models
 import {addSelection} from '../../../state/search/selection/selectionActions';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
-import {Pagination} from '../../../state/ui/pagination/paginationModels';
+import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
@@ -49,7 +49,7 @@ interface StateToProps extends TabsContainerStateToProps {
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
-  paginationChangePage: (page: number) => any;
+  paginationChangePage: OnChangePage;
   addSelection: (searchParameters: SelectionParameter) => void;
   selectEntryAdd: OnClickWithId;
 }
