@@ -1,5 +1,4 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {Dispatch} from 'redux';
 import {restClient} from '../../services/restClient';
 import {ErrorResponse} from '../../types/Types';
 import {DashboardModel} from './dashboardModels';
@@ -13,11 +12,11 @@ export const dashboardSuccess = createPayloadAction<string, DashboardModel>(DASH
 export const dashboardFailure = createPayloadAction<string, ErrorResponse>(DASHBOARD_FAILURE);
 
 export const fetchDashboard = () =>
-  async (dispatch: Dispatch<any>) => {
+  async (dispatch) => {
     try {
       dispatch(dashboardRequest());
-      const {data: dashboards} = await restClient.get('/dashboards/current');
-      dispatch(dashboardSuccess(dashboards));
+      const {data: dashboard} = await restClient.get('/dashboards/current');
+      dispatch(dashboardSuccess(dashboard));
     } catch (error) {
       const {response: {data}} = error;
       dispatch(dashboardFailure(data));

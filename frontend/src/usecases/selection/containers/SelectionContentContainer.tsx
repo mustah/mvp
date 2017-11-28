@@ -28,9 +28,7 @@ import {
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersLoaderContainer} from './MetersLoaderContainer';
 import {MetersResultContainer} from './MetersResultContainer';
-import './SelectionContentContainer.scss';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -125,9 +123,8 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
         <SelectionQuantity/>
       </Row>
 
-      <MetersLoaderContainer>
-        <MetersResultContainer/>
-      </MetersLoaderContainer>
+      <MetersResultContainer/>
+
     </Column>
   );
 };

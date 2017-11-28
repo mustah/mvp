@@ -71,22 +71,20 @@ const fromDbJson = {
   dashboards: [
     {
       id: 3,
-      systemOverview: {
-        widgets: [
-          {
-            type: 'collection',
-            total: 1697,
-            status: 'warning',
-            pending: 22,
-          },
-          {
-            type: 'measurementQuality',
-            total: 1709,
-            status: 'critical',
-            pending: 6,
-          },
-        ],
-      },
+      widgets: [
+        {
+          type: 'collection',
+          total: 1697,
+          status: 'warning',
+          pending: 22,
+        },
+        {
+          type: 'measurementQuality',
+          total: 1709,
+          status: 'critical',
+          pending: 6,
+        },
+      ],
     },
   ],
   profile: {

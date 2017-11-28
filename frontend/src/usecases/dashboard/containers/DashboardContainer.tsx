@@ -2,51 +2,44 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
-import {selectDashboardIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
-import {getSelectedIndicatorDashboard} from '../../../state/ui/indicator/indicatorSelectors';
-import {
-  IndicatorWidgetsDispatchProps,
-  SelectedIndicatorWidgetProps,
-} from '../../../components/indicators/SelectableIndicatorWidgets';
+import {SelectedIndicatorWidgetProps} from '../../../components/indicators/SelectableIndicatorWidgets';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageContainer} from '../../../containers/PageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
-import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
-import {fetchDashboard} from '../dashboardActions';
-import {DashboardState} from '../dashboardReducer';
-import {DashboardModel} from '../dashboardModels';
+import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {MapWidgets} from '../components/widgets/MapWidgets';
+import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
+import {fetchDashboard} from '../dashboardActions';
+import {DashboardModel} from '../dashboardModels';
+import {Loader} from '../../../components/loading/Loader';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
-  dashboard: DashboardState;
-  entities: { [key: string]: Meter };
+  isFetching: boolean;
+  dashboard?: DashboardModel;
+  meters: DomainModel<Meter>;
 }
 
-interface DispatchToProps extends IndicatorWidgetsDispatchProps {
+interface DispatchToProps {
   fetchDashboard: () => any;
 }
 
-class DashboardContainer extends React.Component<StateToProps & DispatchToProps & InjectedAuthRouterProps> {
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class DashboardContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
-    if (this.props.isAuthenticated) {
-      this.props.fetchDashboard();
-    }
+    this.props.fetchDashboard();
   }
 
   render() {
-    const {
-      dashboard: {record},
-      entities,
-    } = this.props;
-
+    const {isFetching, dashboard, meters} = this.props;
     return (
       <PageContainer>
         <Row className="space-between">
@@ -57,52 +50,28 @@ class DashboardContainer extends React.Component<StateToProps & DispatchToProps 
           </Row>
         </Row>
 
-        {this.renderWidgets(entities, record)}
+        <Loader isFetching={isFetching}>
+          <Column>
+            {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
+            <MapWidgets tmp={meters}/>
+          </Column>
+        </Loader>
       </PageContainer>
     );
   }
-
-  renderWidgets = (entities: any, records?: DashboardModel) => {
-    if (records) {
-      return (
-        <Column>
-          <OverviewWidgets widgets={records.widgets}/>
-          <MapWidgets tmp={entities}/>
-        </Column>
-      );
-    }
-    return null;
-  }
-
 }
 
-/**
- * React deals with both state and props, but when we introduce
- * Redux, Redux takes over the ownership of state.
- *
- * Changing the state of a React component is called to "dispatch"
- * in Redux.
- *
- * @param {RootState} state
- * @returns {{dashboard: DashboardState}}
- */
-const mapStateToProps = ({dashboard, ui, domainModels}: RootState): StateToProps => {
-  const entityState = domainModels.meters;
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  fetchDashboard,
+}, dispatch);
+
+const mapStateToProps = ({dashboard, domainModels: {meters}}: RootState): StateToProps => {
   return {
-    dashboard,
-    selectedWidget: getSelectedIndicatorDashboard(ui),
-    entities: getMeterEntities(entityState),
+    isFetching: dashboard.isFetching,
+    dashboard: dashboard.record,
+    meters: getMeterEntities(meters),
   };
 };
 
-/**
- * Handle both triggering of and listening to events in the DashboardContainer
- *
- * @param dispatch
- */
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchDashboard,
-  selectIndicatorWidget: selectDashboardIndicatorWidget,
-}, dispatch);
-
-export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardContainer);
+export const DashboardContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardContainerComponent);
