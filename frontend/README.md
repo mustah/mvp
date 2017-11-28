@@ -57,6 +57,12 @@ $ yarn test
 $ yarn test:watch
 ```
 
+# Upgrading packages
+
+Some tips:
+- Use `yarn outdated` to find which packages are in need of updates
+- Upgrade one package at a time, run `yarn tslint`, start the application, commit, upgrade the next package
+
 # Material Design
 We are using the material design react components from [material-ui](http://www.material-ui.com/#/) library.
 
