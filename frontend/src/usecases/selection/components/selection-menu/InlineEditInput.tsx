@@ -42,6 +42,28 @@ export class InlineEditInput extends React.Component<Props, State> {
     };
   }
 
+  render() {
+    const {isChanged, name, id} = this.state;
+    const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
+    const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
+
+    return (
+      <RowBottom className="InlineEditInput">
+        <TextField
+          style={textFieldStyle}
+          floatingLabelFocusStyle={floatingLabelFocusStyle}
+          hintText="Namnge ditt urval"
+          underlineFocusStyle={underlineFocusStyle}
+          value={name}
+          onChange={this.onChange}
+          id={`selection-${id}`}
+        />
+        {shouldRenderActionButtons && this.renderActionButtons()}
+        {shouldRenderResetButton && this.renderResetButton()}
+      </RowBottom>
+    );
+  }
+
   renderActionButtons = (): React.ReactNode => {
     const {id} = this.state;
     return (
@@ -70,28 +92,6 @@ export class InlineEditInput extends React.Component<Props, State> {
     const id = idGenerator.uuid();
     this.setState({id, isChanged: false});
     saveSelection({...selection, name, id});
-  }
-
-  render() {
-    const {isChanged, name, id} = this.state;
-    const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
-    const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
-
-    return (
-      <RowBottom className="InlineEditInput">
-        <TextField
-          style={textFieldStyle}
-          floatingLabelFocusStyle={floatingLabelFocusStyle}
-          hintText="Namnge ditt urval"
-          underlineFocusStyle={underlineFocusStyle}
-          value={name}
-          onChange={this.onChange}
-          id={`selection-${id}`}
-        />
-        {shouldRenderActionButtons && this.renderActionButtons()}
-        {shouldRenderResetButton && this.renderResetButton()}
-      </RowBottom>
-    );
   }
 
 }
