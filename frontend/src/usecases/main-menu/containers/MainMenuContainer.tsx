@@ -1,25 +1,25 @@
-import 'MainMenuContainer.scss';
 import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/rootReducer';
-import {getPathname} from '../../../selectors/routerSelectors';
-import {translate} from '../../../services/translationService';
-import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {OnClick} from '../../../types/Types';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
-import {AuthState} from '../../auth/authReducer';
 import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconReport} from '../../../components/icons/IconReport';
 import {IconValidation} from '../../../components/icons/IconValidation';
 import {Column} from '../../../components/layouts/column/Column';
+import {RootState} from '../../../reducers/rootReducer';
+import {getPathname} from '../../../selectors/routerSelectors';
+import {translate} from '../../../services/translationService';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
+import {OnClick} from '../../../types/Types';
+import {AuthState} from '../../auth/authReducer';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {MainMenuToggleIcon} from '../components/menuitems/MainMenuToggleIcon';
 import {MenuItem} from '../components/menuitems/MenuItem';
+import './MainMenuContainer.scss';
 
 interface StateToProps {
   pathname: string;

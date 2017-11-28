@@ -42,10 +42,10 @@ interface State {
   chosenDirection: string;
 }
 
-export class SelectionQuantity extends React.Component<any, State> {
+export class SelectionQuantity extends React.Component<{}, State> {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       showDiffTempDialog: false,
       chosenQuantity: 'Heat, return temp',

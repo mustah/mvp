@@ -37,7 +37,7 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 class LoginContainerComponent extends React.Component<Props, LoginState> {
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {email: '', password: ''};
   }

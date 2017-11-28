@@ -17,7 +17,7 @@ const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
 const SelectionPage = userIsAuthenticated(SelectionContainer);
 
-export const Pages = (props) => (
+export const Pages = () => (
   <Layout className="flex-1">
     <Switch>
       <Route path={routes.login} component={LoginPage}/>

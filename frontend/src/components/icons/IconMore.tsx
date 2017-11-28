@@ -1,4 +1,4 @@
-import 'Icons.scss';
+import './Icons.scss';
 import IconButton from 'material-ui/IconButton';
 import NavigationMoreVert from 'material-ui/svg-icons/navigation/more-vert';
 import * as React from 'react';

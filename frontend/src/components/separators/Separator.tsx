@@ -1,5 +1,5 @@
 import * as React from 'react';
-import 'Separator.scss';
+import './Separator.scss';
 
 interface Props {
   style?: React.CSSProperties;

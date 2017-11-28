@@ -17,7 +17,7 @@ export const fetchDashboard = () =>
       dispatch(dashboardRequest());
       const {data: dashboards} = await restClient.get('/dashboards/current');
       dispatch(dashboardSuccess(dashboards));
-    }catch (error) {
+    } catch (error) {
       const {response: {data}} = error;
       dispatch(dashboardFailure(data));
     }

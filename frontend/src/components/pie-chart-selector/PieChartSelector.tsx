@@ -1,9 +1,9 @@
-import 'PieChartSelector.scss';
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {translate} from '../../services/translationService';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
+import './PieChartSelector.scss';
 
 export interface PieData {
   name: string;

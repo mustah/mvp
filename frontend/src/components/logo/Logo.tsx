@@ -1,6 +1,6 @@
-import 'Logo.scss';
 import * as React from 'react';
 import {ClassNamed} from '../../types/Types';
+import './Logo.scss';
 import classNames = require('classnames');
 
 export const Logo = (props: ClassNamed) => {

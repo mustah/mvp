@@ -1,13 +1,13 @@
-import 'InlineEditInput.scss';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
+import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
+import {ButtonLink} from '../../../../components/buttons/ButtonLink';
+import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../services/idGenerator';
 import {translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
 import {IdNamed, OnClick, uuid} from '../../../../types/Types';
-import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/themes';
-import {ButtonLink} from '../../../../components/buttons/ButtonLink';
-import {Row, RowBottom} from '../../../../components/layouts/row/Row';
+import './InlineEditInput.scss';
 
 interface Props {
   isChanged: boolean;
@@ -73,23 +73,19 @@ export class InlineEditInput extends React.Component<Props, State> {
       </Row>
     );
   }
-
   renderResetButton = (): React.ReactNode => {
     return <ButtonLink onClick={this.props.resetSelection}>{translate('reset')}</ButtonLink>;
   }
-
   onChange = (event: any): void => {
     const {target: {value}} = event;
     this.setState({name: value, isChanged: true});
   }
-
   onSave = (): void => {
     const {updateSelection, selection} = this.props;
     const {name} = this.state;
     this.setState({isChanged: false});
     updateSelection({...selection, name});
   }
-
   onSaveAs = (): void => {
     const {saveSelection, selection} = this.props;
     const {name} = this.state;
