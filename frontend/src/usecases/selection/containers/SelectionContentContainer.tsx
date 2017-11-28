@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import 'SelectionContentContainer.scss';
 import {MultiDropdownSelector} from '../../../components/dropdown-selector/MultiDropdownSelector';
 import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../../components/layouts/column/Column';
