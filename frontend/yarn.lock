@@ -1102,9 +1102,9 @@ cssom@0.3.x, "cssom@>= 0.3.2 < 0.4.0":
   dependencies:
     cssom "0.3.x"
 
-csvjson@^4.3.4:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/csvjson/-/csvjson-4.3.4.tgz#dc4c375c024621cb6e31572c1254009b40a939a3"
+csvjson@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/csvjson/-/csvjson-5.0.0.tgz#456df3ceba989d1faa1211bf2adb4a93c91e97d4"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
