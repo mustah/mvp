@@ -4162,9 +4162,11 @@ react-leaflet@^1.7.1:
     lodash-es "^4.0.0"
     warning "^3.0.0"
 
-react-redux-typescript@^2.3.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-redux-typescript/-/react-redux-typescript-2.3.0.tgz#6bc4a974352095d3901bc42c5480c63ed343f3ec"
+react-redux-typescript@^3.0.0-rc.2:
+  version "3.0.0-rc.2"
+  resolved "https://registry.yarnpkg.com/react-redux-typescript/-/react-redux-typescript-3.0.0-rc.2.tgz#bc17c7eb55dec94466226130d2d32e169ac6a5b0"
+  dependencies:
+    ts-redux-actions "1.0.0-rc.0"
 
 react-redux@^5.0.5:
   version "5.0.6"
@@ -5220,6 +5222,10 @@ ts-jest@^21.2.3:
     pkg-dir "^2.0.0"
     source-map-support "^0.5.0"
     yargs "^10.0.3"
+
+ts-redux-actions@1.0.0-rc.0:
+  version "1.0.0-rc.0"
+  resolved "https://registry.yarnpkg.com/ts-redux-actions/-/ts-redux-actions-1.0.0-rc.0.tgz#af7977e47a389d872e77e3825bed4010cd5d26c5"
 
 tslib@^1.7.1:
   version "1.7.1"
