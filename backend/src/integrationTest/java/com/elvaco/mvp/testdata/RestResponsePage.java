@@ -1,14 +1,15 @@
 package com.elvaco.mvp.testdata;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RestResponsePage<T> extends PageImpl<T> {
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 7024191353049604570L;
   private int number;
   private int size;
   private int totalPages;
@@ -118,6 +119,16 @@ public class RestResponsePage<T> extends PageImpl<T> {
 
   public void setSort(Sort sort) {
     this.sort = sort;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
   }
 
   public Page<T> pageImpl() {
