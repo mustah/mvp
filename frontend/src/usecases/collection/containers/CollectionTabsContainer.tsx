@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-import 'CollectionTabsContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -39,6 +38,7 @@ import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
+import './CollectionTabsContainer.scss';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;

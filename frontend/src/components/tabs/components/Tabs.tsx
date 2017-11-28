@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'Tabs.scss';
 import {Column} from '../../layouts/column/Column';
 import {TabContentProps} from './TabContent';
+import './Tabs.scss';
 import {TabTopBarProps} from './TabTopBar';
 
 type TabsChildren = TabTopBarProps | TabContentProps;

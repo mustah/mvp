@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import 'IconStatus.scss';
 import {IdNamed, statusFor} from '../../types/Types';
+import './IconStatus.scss';
 
 export const IconStatus = (props: IdNamed) => {
   const status = statusFor(props.id);

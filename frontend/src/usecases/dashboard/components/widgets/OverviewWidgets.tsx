@@ -1,11 +1,11 @@
-import 'OverviewWidgets.scss';
 import * as React from 'react';
 import {Link} from 'react-router-dom';
-import {translate} from '../../../../services/translationService';
 import {routes} from '../../../../app/routes';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
 import {WidgetModel} from '../../../../components/indicators/models/widgetModels';
 import {Row} from '../../../../components/layouts/row/Row';
+import {translate} from '../../../../services/translationService';
+import './OverviewWidgets.scss';
 import {Widget} from './Widget';
 
 interface Props {

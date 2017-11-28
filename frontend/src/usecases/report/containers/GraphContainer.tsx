@@ -1,7 +1,5 @@
-import 'GraphContainer.scss';
 import * as React from 'react';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
-import {translate} from '../../../services/translationService';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -12,6 +10,8 @@ import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {TabModel, TopLevelTab} from '../../../components/tabs/models/TabsModel';
 import {Bold} from '../../../components/texts/Texts';
+import {translate} from '../../../services/translationService';
+import './GraphContainer.scss';
 
 interface GraphContainerState {
   selectedTabOption: string;

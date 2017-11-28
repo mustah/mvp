@@ -1,14 +1,14 @@
 import Card from 'material-ui/Card/Card';
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
-import 'Widget.scss';
-import {translate} from '../../../../services/translationService';
-import {Children} from '../../../../types/Types';
 import {colors, menuItemInnerDivStyle} from '../../../../app/themes';
 import {Column} from '../../../../components/layouts/column/Column';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Subtitle} from '../../../../components/texts/Titles';
+import {translate} from '../../../../services/translationService';
+import {Children} from '../../../../types/Types';
+import './Widget.scss';
 
 interface Props {
   title?: string;

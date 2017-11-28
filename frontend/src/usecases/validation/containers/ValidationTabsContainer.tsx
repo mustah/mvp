@@ -2,7 +2,6 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import 'ValidationTabsContainer.scss';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
@@ -39,6 +38,7 @@ import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {selectEntryAdd} from '../../report/reportActions';
+import './ValidationTabsContainer.scss';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;

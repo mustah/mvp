@@ -1,7 +1,11 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import 'SelectionContentContainer.scss';
+import {MultiDropdownSelector} from '../../../components/dropdown-selector/MultiDropdownSelector';
+import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {Subtitle} from '../../../components/texts/Titles';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -23,14 +27,10 @@ import {
   getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
-import {MultiDropdownSelector} from '../../../components/dropdown-selector/MultiDropdownSelector';
-import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
-import {Column} from '../../../components/layouts/column/Column';
-import {Row} from '../../../components/layouts/row/Row';
-import {Subtitle} from '../../../components/texts/Titles';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersResultContainer} from './MetersResultContainer';
 import {MetersLoaderContainer} from './MetersLoaderContainer';
+import {MetersResultContainer} from './MetersResultContainer';
+import './SelectionContentContainer.scss';
 
 interface StateToProps {
   cities: SelectionListItem[];

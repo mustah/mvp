@@ -1,7 +1,7 @@
-import 'ButtonClose.scss';
 import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {translate} from '../../services/translationService';
+import './ButtonClose.scss';
 
 type Callback = (event: any) => any;
 

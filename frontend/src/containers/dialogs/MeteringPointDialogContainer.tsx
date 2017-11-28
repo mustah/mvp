@@ -1,6 +1,5 @@
 import {Checkbox} from 'material-ui';
 import Dialog from 'material-ui/Dialog';
-import 'MeteringPointDialogContainer.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -23,12 +22,13 @@ import {Normal} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
+import {Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
-import {Normalized} from '../../state/domain-models/domainModels';
+import './MeteringPointDialogContainer.scss';
 
 interface MeteringPointDialogProps {
   meter: Meter;

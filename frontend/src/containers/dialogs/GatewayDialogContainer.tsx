@@ -1,4 +1,3 @@
-import 'GatewayDialogContainer.scss';
 import Checkbox from 'material-ui/Checkbox';
 import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
@@ -20,13 +19,14 @@ import {TopLevelTab} from '../../components/tabs/models/TabsModel';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
+import {Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {OnClick} from '../../types/Types';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
-import {Normalized} from '../../state/domain-models/domainModels';
+import './GatewayDialogContainer.scss';
 
 interface GatewayDialogProps {
   displayDialog: boolean;

@@ -2,7 +2,6 @@ import {DropDownMenu, MenuItem} from 'material-ui';
 import DatePicker from 'material-ui/DatePicker';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import 'PeriodSelection.scss';
 import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
@@ -10,6 +9,7 @@ import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
 import {Period} from '../../types/Types';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
+import './PeriodSelection.scss';
 
 const height = 32;
 

@@ -2,13 +2,13 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import 'SideMenuContainer.scss';
+import {drawerWidth} from '../../../app/themes';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {drawerWidth} from '../../../app/themes';
 import {SavedSelectionsContainer} from '../components/savedSelections/SavedSelections';
 import {SelectionTreeContainer} from './selection-tree/SelectionTreeContainer';
+import './SideMenuContainer.scss';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -33,7 +33,7 @@ const SideMenuContainerComponent = (props: StateToProps) => {
       />
       <SavedSelectionsContainer/>
 
-      <SelectionTreeContainer topLevel={'cities'} />
+      <SelectionTreeContainer topLevel={'cities'}/>
     </Drawer>
   );
 };

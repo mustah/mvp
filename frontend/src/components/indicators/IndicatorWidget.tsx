@@ -1,11 +1,11 @@
-import 'IndicatorWidget.scss';
 import * as React from 'react';
+import {colors} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {Children} from '../../types/Types';
-import {colors} from '../../app/themes';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
+import './IndicatorWidget.scss';
 import {WidgetModel} from './models/widgetModels';
 import {renderIndicatorIcon} from './SelectableIndicatorWidget';
 import classNames = require('classnames');
