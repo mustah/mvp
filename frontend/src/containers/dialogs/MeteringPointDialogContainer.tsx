@@ -18,7 +18,7 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {tabType} from '../../components/tabs/models/TabsModel';
+import {TopLevelTab} from '../../components/tabs/models/TabsModel';
 import {Normal} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
@@ -41,7 +41,7 @@ interface StateToProps {
 }
 
 interface MeteringPointDialogState {
-  selectedTab: tabType;
+  selectedTab: TopLevelTab;
 }
 
 class MeteringPointDialog extends React.Component <MeteringPointDialogProps & StateToProps, MeteringPointDialogState> {
@@ -49,7 +49,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
     super(props);
 
     this.state = {
-      selectedTab: tabType.values,
+      selectedTab: TopLevelTab.values,
     };
   }
 
@@ -169,7 +169,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
       result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    const changeTab = (option: tabType) => {
+    const changeTab = (option: TopLevelTab) => {
       this.setState({selectedTab: option});
     };
 
@@ -349,14 +349,14 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
           <Tabs className="full-width first-letter">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-                <Tab tab={tabType.values} title={translate('latest value')}/>
-                <Tab tab={tabType.log} title={translate('status log')}/>
-                <Tab tab={tabType.map} title={translate('map')}/>
-                <Tab tab={tabType.connectedGateways} title={translate('gateways')}/>
+                <Tab tab={TopLevelTab.values} title={translate('latest value')}/>
+                <Tab tab={TopLevelTab.log} title={translate('status log')}/>
+                <Tab tab={TopLevelTab.map} title={translate('map')}/>
+                <Tab tab={TopLevelTab.connectedGateways} title={translate('gateways')}/>
               </TabHeaders>
               <TabSettings/>
             </TabTopBar>
-            <TabContent tab={tabType.values} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
               <Table {...meterData}>
                 <TableColumn
                   header={<TableHead className="first">{translate('quantity')}</TableHead>}
@@ -368,7 +368,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                 />
               </Table>
             </TabContent>
-            <TabContent tab={tabType.log} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
               <Row>
                 <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
               </Row>
@@ -383,10 +383,10 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
                 />
               </Table>
             </TabContent>
-            <TabContent tab={tabType.map} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
               <MapContainer height={400} markers={meter} viewCenter={meter.position} popupMode={PopupMode.none}/>
             </TabContent>
-            <TabContent tab={tabType.connectedGateways} selectedTab={selectedTab}>
+            <TabContent tab={TopLevelTab.connectedGateways} selectedTab={selectedTab}>
               <Row>
                 <Table result={['id1']} entities={{id1: entities[meter.gatewayId]}}>
                   <TableColumn

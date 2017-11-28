@@ -20,7 +20,7 @@ import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {
   TabsContainerDispatchToProps,
   TabsContainerStateToProps,
-  tabType,
+  TopLevelTab,
 } from '../../../components/tabs/models/TabsModel';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
@@ -273,7 +273,7 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
               <div className="first-uppercase">{translate('filter on status') + ':'}</div>
-              <TabOptions tab={tabType.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+              <TabOptions tab={TopLevelTab.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {overviewTabOptions}
               </TabOptions>
             </RowRight>
@@ -288,20 +288,20 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     <Tabs>
       <TabTopBar>
         <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab tab={tabType.overview} title={translate('overview')}/>
-          <Tab tab={tabType.list} title={translate('list')}/>
-          <Tab tab={tabType.map} title={translate('map')}/>
+          <Tab tab={TopLevelTab.overview} title={translate('overview')}/>
+          <Tab tab={TopLevelTab.list} title={translate('list')}/>
+          <Tab tab={TopLevelTab.map} title={translate('map')}/>
         </TabHeaders>
         <TabSettings/>
       </TabTopBar>
-      <TabContent tab={tabType.overview} selectedTab={selectedTab}>
+      <TabContent tab={TopLevelTab.overview} selectedTab={selectedTab}>
         {overviewTabContents}
       </TabContent>
-      <TabContent tab={tabType.list} selectedTab={selectedTab}>
+      <TabContent tab={TopLevelTab.list} selectedTab={selectedTab}>
         <MeterList result={paginatedList} entities={entities} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
-      <TabContent tab={tabType.map} selectedTab={selectedTab}>
+      <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
         <MapContainer markers={entities} popupMode={PopupMode.meterpoint}/>
       </TabContent>
     </Tabs>

@@ -1,20 +1,20 @@
 import {AnyAction} from 'redux';
-import {TabsState, tabType} from '../../../components/tabs/models/TabsModel';
+import {TabsState, TopLevelTab} from '../../../components/tabs/models/TabsModel';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
 
 const tabsInitialState: TabsState = {
   validation: {
-    selectedTab: tabType.overview,
+    selectedTab: TopLevelTab.overview,
     tabs: {
-      [tabType.overview]: {
+      [TopLevelTab.overview]: {
         selectedOption: 'all',
       },
     },
   },
   collection: {
-    selectedTab: tabType.overview,
+    selectedTab: TopLevelTab.overview,
     tabs: {
-      [tabType.overview]: {
+      [TopLevelTab.overview]: {
         selectedOption: 'all',
       },
     },

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import {tabType} from '../models/TabsModel';
+import {TopLevelTab} from '../models/TabsModel';
 import {TabProps} from './Tab';
 import {Row} from '../../layouts/row/Row';
 
 export interface TabHeadersProps {
   children: Array<React.ReactElement<TabProps>> | React.ReactElement<TabProps>;
-  selectedTab: tabType;
+  selectedTab: TopLevelTab;
   onChangeTab: (tab: string) => void;
 }
 
