@@ -42,7 +42,7 @@ interface OwnProps {
   viewCenter?: GeoPosition;
 }
 
-export enum PopupMode {
+export const enum PopupMode {
   gateway,
   meterpoint,
   none,

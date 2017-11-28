@@ -8,7 +8,7 @@ export interface Location {
   position: GeoPosition;
 }
 
-export enum EndPoints {
+export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
   gateways = '/gateways',

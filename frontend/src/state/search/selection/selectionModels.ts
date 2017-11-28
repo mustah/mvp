@@ -1,7 +1,7 @@
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
 
-export enum ParameterName {
+export const enum ParameterName {
   cities = 'cities',
   addresses = 'addresses',
   meterStatuses = 'meterStatuses',

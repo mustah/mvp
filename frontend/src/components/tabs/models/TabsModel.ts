@@ -1,4 +1,4 @@
-export enum tabType {
+export const enum tabType {
   list = 'list',
   map = 'map',
   graph = 'graph',
