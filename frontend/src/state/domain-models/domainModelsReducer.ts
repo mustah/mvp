@@ -1,6 +1,8 @@
-import {AnyAction, combineReducers} from 'redux';
+import {EmptyAction} from 'react-redux-typescript';
+import {combineReducers} from 'redux';
+import {Action, ErrorResponse, uuid} from '../../types/Types';
 import {ParameterName} from '../search/selection/selectionModels';
-import {DomainModelsState, EndPoints, NormalizedState, SelectionEntity} from './domainModels';
+import {DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -12,10 +14,26 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
   total: 0,
 });
 
-const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
-  (state: NormalizedState<T> = initialDomain<T>(), action: AnyAction): any => {
-    const {payload} = action;
+const success = <T>(entity: string, state: NormalizedState<T>, action: Action<Normalized<T>>): NormalizedState<T> => {
+  const {payload} = action;
+  const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
+  const entities: any = payload.entities[entity];
+  return {
+    ...state,
+    isFetching: false,
+    entities,
+    result,
+    total: result.length,
+  };
+};
 
+type ActionTypes<T> =
+  | EmptyAction<string>
+  | Action<Normalized<T>>
+  | Action<ErrorResponse>;
+
+const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
+  (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
       case DOMAIN_MODELS_REQUEST.concat(endPoint):
         return {
@@ -23,35 +41,27 @@ const domainModelReducerFor = <T>(entity: string, endPoint: EndPoints) =>
           isFetching: true,
         };
       case DOMAIN_MODELS_SUCCESS.concat(endPoint):
-        const result = Array.isArray(payload.result) ? payload.result : payload.result[entity];
-        return {
-          ...state,
-          isFetching: false,
-          entities: payload.entities[entity],
-          result,
-          total: result.length,
-        };
+        return success<T>(entity, state, action as Action<Normalized<T>>);
       case DOMAIN_MODELS_FAILURE.concat(endPoint):
         return {
           ...state,
           isFetching: false,
-          error: {...payload},
+          error: {...(action as Action<ErrorResponse>).payload},
         };
       default:
         return state;
     }
   };
 
-export const addresses = domainModelReducerFor<SelectionEntity>(ParameterName.addresses, EndPoints.selections);
-export const cities = domainModelReducerFor<SelectionEntity>(ParameterName.cities, EndPoints.selections);
-export const alarms = domainModelReducerFor<SelectionEntity>(ParameterName.alarms, EndPoints.selections);
-export const manufacturers = domainModelReducerFor<SelectionEntity>(ParameterName.manufacturers, EndPoints.selections);
-export const productModels = domainModelReducerFor<SelectionEntity>(ParameterName.productModels, EndPoints.selections);
-export const meterStatuses = domainModelReducerFor<SelectionEntity>(ParameterName.meterStatuses, EndPoints.selections);
-export const gatewayStatuses =
-  domainModelReducerFor<SelectionEntity>(ParameterName.gatewayStatuses, EndPoints.selections);
-export const gateways = domainModelReducerFor<Gateway>('gateways', EndPoints.gateways);
-export const meters = domainModelReducerFor<Meter>('meters', EndPoints.meters);
+export const addresses = reducerFor<SelectionEntity>(ParameterName.addresses, EndPoints.selections);
+export const cities = reducerFor<SelectionEntity>(ParameterName.cities, EndPoints.selections);
+export const alarms = reducerFor<SelectionEntity>(ParameterName.alarms, EndPoints.selections);
+export const manufacturers = reducerFor<SelectionEntity>(ParameterName.manufacturers, EndPoints.selections);
+export const productModels = reducerFor<SelectionEntity>(ParameterName.productModels, EndPoints.selections);
+export const meterStatuses = reducerFor<SelectionEntity>(ParameterName.meterStatuses, EndPoints.selections);
+export const gatewayStatuses = reducerFor<SelectionEntity>(ParameterName.gatewayStatuses, EndPoints.selections);
+export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
+export const meters = reducerFor<Meter>('meters', EndPoints.meters);
 
 export const domainModels = combineReducers<DomainModelsState>({
   addresses,
