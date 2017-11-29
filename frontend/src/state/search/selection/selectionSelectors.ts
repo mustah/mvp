@@ -15,6 +15,8 @@ import {
   SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
+import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
+import {getNameTranslation} from '../../../services/translationService';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
@@ -53,13 +55,15 @@ const getSelectedEntities = (entityType: string): any =>
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
 
-const getList = (entityType: string): any =>
+const getList = (entityType: ParameterName): any =>
   createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
     (selected: SelectionEntity[], deselected: SelectionEntity[]) => {
-      const selectedEntities = selected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: true}));
-      const deselectedEntities = deselected.sort(entitySort).map((unit: IdNamed) => ({...unit, selected: false}));
+      const selectedEntities = selected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
+        ({id, name: getNameTranslation({id, name}, entityType), ...extra, selected: true}));
+      const deselectedEntities = deselected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
+        ({id, name: getNameTranslation({id, name}, entityType), ...extra, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );

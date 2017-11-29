@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-27 15:11+0100\n"
+"POT-Creation-Date: 2017-11-29T09:01:23.159Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "export to Excel (.csv)"
 msgstr "export to Excel (.csv)"
@@ -89,8 +89,8 @@ msgstr "next"
 msgid "other"
 msgstr "other"
 
-msgid "no"
-msgstr "no"
+msgid "meter"
+msgstr "meter"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -109,9 +109,6 @@ msgstr "interval"
 
 msgid "flagged for action"
 msgstr "flagged for action"
-
-msgid "meter"
-msgstr "meter"
 
 msgid "status log"
 msgstr "status log"
@@ -167,6 +164,18 @@ msgstr "value"
 msgid "latest snr"
 msgstr "latest SNR"
 
+msgid "no"
+msgstr "no"
+
+msgid "ok"
+msgstr "OK"
+
+msgid "fault"
+msgstr "fault"
+
+msgid "unknown"
+msgstr "unknown"
+
 msgid "no gateways"
 msgstr "no gateways"
 
@@ -194,9 +203,6 @@ msgstr "showing all gateways that have faults"
 msgid "none"
 msgstr "none"
 
-msgid "ok"
-msgstr "OK"
-
 msgid "warnings"
 msgstr "warnings"
 
@@ -209,8 +215,8 @@ msgstr "cities"
 msgid "product models"
 msgstr "product models"
 
-msgid "filter by status"
-msgstr "filter by status"
+msgid "filter on status"
+msgstr "filter on status"
 
 msgid "overview"
 msgstr "overview"
@@ -266,11 +272,11 @@ msgstr "no saved selections"
 msgid "saved selections"
 msgstr "saved selections"
 
-msgid "selection overview"
-msgstr "selection overview"
-
 msgid "metering"
 msgstr "metering"
+
+msgid "selection overview"
+msgstr "selection overview"
 
 msgid "no meters"
 msgstr "no meters"
@@ -296,14 +302,8 @@ msgstr "no meters that have faults"
 msgid "showing all meters that have faults"
 msgstr "showing all meters that have faults"
 
-msgid "unknown"
-msgstr "unknown"
-
 msgid "alarms"
 msgstr "alarms"
-
-msgid "filter on status"
-msgstr "filter on status"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
