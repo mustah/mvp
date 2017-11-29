@@ -17,19 +17,20 @@ describe('selectionReducer', () => {
 
   describe('save current selection', () => {
 
+    const payload: SelectionState = {
+      id: 1,
+      name: 'saved parameters',
+      isChanged: false,
+      selected: {
+        cities: [1, 2],
+      },
+    };
+
     it('has initial state', () => {
-      expect(saved([], {type: 'unknown'})).toEqual([]);
+      expect(saved([], {type: 'unknown', payload: {...payload}})).toEqual([]);
     });
 
     it('saves selection to empty saved list', () => {
-      const payload: SelectionState = {
-        id: 1,
-        name: 'saved parameters',
-        isChanged: false,
-        selected: {
-          cities: [1, 2],
-        },
-      };
       expect(saved([], saveSelectionAction(payload))).toEqual([{...payload}]);
     });
 
