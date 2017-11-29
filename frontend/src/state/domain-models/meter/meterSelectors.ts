@@ -12,9 +12,10 @@ import {
   SelectionTreeItemsProps,
 } from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
+import {DomainModel} from '../domainModels';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
-export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities;
+export const getMeterEntities = (state: MetersState): DomainModel<Meter> => state.entities;
 
 export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionTreeData>(
   getResultDomainModels,
@@ -113,3 +114,10 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
     }
   }
 };
+
+const getMeterStatusOverview = (meterStatus: uuid) => createSelector<MetersState, uuid[], DomainModel<Meter>, uuid[]>(
+  getResultDomainModels,
+  getMeterEntities,
+  (meters: uuid[], meterLookup: DomainModel<Meter>) =>
+    meters.filter(meterId => meterLookup[meterId].status.id === meterStatus),
+);
