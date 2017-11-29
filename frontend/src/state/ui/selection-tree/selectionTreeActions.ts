@@ -1,6 +1,6 @@
 import {createPayloadAction} from 'react-redux-typescript';
-import {uuid} from '../../../types/Types';
 import {RootState} from '../../../reducers/rootReducer';
+import {uuid} from '../../../types/Types';
 
 export const SELECTION_TREE_TOGGLE_ENTRY = 'SELECTION_TREE_TOGGLE_ENTRY';
 
@@ -13,7 +13,7 @@ export const selectionTreeExpandToggle = (id: uuid) =>
     const {openListItems} = getState().ui.selectionTree;
     const popIdFromList = filterOutId(openListItems, id);
     const idWasRemoved = openListItems.length > popIdFromList.length;
-    idWasRemoved ?
-      dispatch(toggleEntry(popIdFromList)) :
-      dispatch(toggleEntry([...openListItems, id]));
+    idWasRemoved
+      ? dispatch(toggleEntry(popIdFromList))
+      : dispatch(toggleEntry([...openListItems, id]));
   };
