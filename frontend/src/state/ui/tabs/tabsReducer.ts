@@ -1,52 +1,57 @@
-import {AnyAction} from 'redux';
-import {TabsState, TopLevelTab} from './tabsModels';
+import {Action} from '../../../types/Types';
 import {TABS_CHANGE_TAB, TABS_CHANGE_TAB_OPTION} from './tabsActions';
+import {SelectedTabs, TabSelection, TabsState, TopLevelTab} from './tabsModels';
 
-const tabsInitialState: TabsState = {
-  validation: {
-    selectedTab: TopLevelTab.overview,
-    tabs: {
-      [TopLevelTab.overview]: {
-        selectedOption: 'all',
-      },
-    },
-  },
-  collection: {
-    selectedTab: TopLevelTab.overview,
-    tabs: {
-      [TopLevelTab.overview]: {
-        selectedOption: 'all',
-      },
+const overviewTab: SelectedTabs = {
+  selectedTab: TopLevelTab.overview,
+  tabs: {
+    [TopLevelTab.overview]: {
+      selectedOption: 'all',
     },
   },
 };
 
-export const tabs = (state: TabsState = tabsInitialState, action: AnyAction) => {
-  const {payload} = action;
+const initialState: TabsState = {
+  validation: {...overviewTab},
+  collection: {...overviewTab},
+};
+
+type ActionType = Action<TabSelection>;
+
+const changeTabOption = (state: TabsState = initialState, action: Action<TabSelection>): TabsState => {
+  const {payload: {useCase, tab, option}} = action;
+  return {
+    ...state,
+    [useCase]: {
+      ...state[useCase],
+      tabs: {
+        ...state[useCase].tabs,
+        [tab]: {
+          ...state[useCase][tab],
+          selectedOption: option,
+        },
+      },
+    },
+  };
+};
+
+const changeTab = (state: TabsState = initialState, action: Action<TabSelection>): TabsState => {
+  const {payload: {useCase, tab}} = action;
+  return {
+    ...state,
+    [useCase]: {
+      ...state[useCase],
+      selectedTab: tab,
+    },
+  };
+};
+
+export const tabs = (state: TabsState = initialState, action: ActionType): TabsState => {
   switch (action.type) {
     case TABS_CHANGE_TAB:
-      return {
-        ...state,
-        [payload.useCase]: {
-          ...state[payload.useCase],
-          selectedTab: payload.tab,
-        },
-      };
+      return changeTab(state, action);
     case TABS_CHANGE_TAB_OPTION:
-      const {payload: {useCase, tab, option}} = action;
-      return {
-        ...state,
-        [useCase]: {
-          ...state[useCase],
-          tabs: {
-            ...state[useCase].tabs,
-            [tab]: {
-              ...state[useCase][tab],
-              selectedOption: option,
-            },
-          },
-        },
-      };
+      return changeTabOption(state, action);
     default:
       return state;
   }
