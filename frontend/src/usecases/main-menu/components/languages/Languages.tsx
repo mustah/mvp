@@ -1,9 +1,9 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Selectable} from '../../../../types/Types';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
-import {Language, supportedLanguages} from '../../languageReducer';
+import {Selectable} from '../../../../types/Types';
+import {Language, supportedLanguages} from '../../languageModels';
 import './Languages.scss';
 
 export interface LanguagesProps {

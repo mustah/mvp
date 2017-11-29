@@ -1,36 +1,20 @@
-import {AnyAction} from 'redux';
+import {EmptyAction} from 'react-redux-typescript';
+import {Action} from '../../types/Types';
 import {CHANGE_LANGUAGE} from './languageActions';
-
-export interface LanguageState {
-  language: Language;
-}
-
-export interface Language {
-  name: string;
-  code: string;
-}
-
-export const supportedLanguages: {readonly [key: string]: Language} = {
-  sv: {
-    code: 'sv',
-    name: 'Swedish',
-  },
-  en: {
-    code: 'en',
-    name: 'English',
-  },
-};
+import {Language, LanguageState, supportedLanguages} from './languageModels';
 
 const initialState: LanguageState = {
   language: supportedLanguages.sv,
 };
 
-export const language = (state: LanguageState = initialState, action: AnyAction) => {
+type ActionTypes = Action<Language> & EmptyAction<string>;
+
+export const language = (state: LanguageState = initialState, action: ActionTypes) => {
   switch (action.type) {
     case CHANGE_LANGUAGE:
       return {
         ...state,
-        language: action.payload,
+        language: (action as Action<Language>).payload,
       };
     default:
       return state;

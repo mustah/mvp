@@ -5,12 +5,13 @@ import {searchParameters, SearchParameterState} from '../state/search/searchPara
 import {ui, UiState} from '../state/ui/uiReducer';
 import {auth} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
-import {language, LanguageState} from '../usecases/main-menu/languageReducer';
+import {language} from '../usecases/main-menu/languageReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/models/reportModels';
 import {report} from '../usecases/report/reportReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {AuthState} from '../usecases/auth/authModels';
+import {LanguageState} from '../usecases/main-menu/languageModels';
 
 export interface RootState {
   auth: AuthState;
