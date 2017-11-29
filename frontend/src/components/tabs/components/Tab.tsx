@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {TopLevelTab} from '../models/TabsModel';
+import {TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {TabUnderline} from './TabUnderliner';
 import {Column} from '../../layouts/column/Column';
 

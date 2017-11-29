@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TopLevelTab} from '../models/TabsModel';
+import {TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {Column} from '../../layouts/column/Column';
 
 export interface TabContentProps {

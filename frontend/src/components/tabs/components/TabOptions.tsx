@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Column} from '../../layouts/column/Column';
 import {RowCenter} from '../../layouts/row/Row';
-import {TabModel, TopLevelTab} from '../models/TabsModel';
+import {TabModel, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {TabOptionProps} from './TabOption';
 import {TabUnderline} from './TabUnderliner';
 

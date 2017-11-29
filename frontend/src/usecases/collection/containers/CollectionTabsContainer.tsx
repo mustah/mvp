@@ -19,7 +19,7 @@ import {
   TabsContainerDispatchToProps,
   TabsContainerStateToProps,
   TopLevelTab,
-} from '../../../components/tabs/models/TabsModel';
+} from '../../../state/ui/tabs/tabsModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
