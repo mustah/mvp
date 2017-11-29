@@ -1,11 +1,13 @@
-import {AnyAction} from 'redux';
 import {TOGGLE_SHOW_HIDE_SIDE_MENU} from './sideMenuActions';
+import {EmptyAction} from 'ts-redux-actions';
 
 export interface SideMenuState {
   isOpen: boolean;
 }
 
-export const sideMenu = (state: SideMenuState = {isOpen: true}, action: AnyAction): SideMenuState => {
+type ActionTypes = EmptyAction<string>;
+
+export const sideMenu = (state: SideMenuState = {isOpen: true}, action: ActionTypes): SideMenuState => {
   switch (action.type) {
     case TOGGLE_SHOW_HIDE_SIDE_MENU:
       return {
