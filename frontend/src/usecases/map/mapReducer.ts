@@ -1,8 +1,5 @@
-import {AnyAction} from 'redux';
-import {
-  OPEN_CLUSTER_DIALOG,
-  TOGGLE_CLUSTER_DIALOG,
-} from './mapActions';
+import {Action} from '../../types/Types';
+import {OPEN_CLUSTER_DIALOG, TOGGLE_CLUSTER_DIALOG} from './mapActions';
 import {ExtendedMarker} from './mapModels';
 
 export interface MapState {
@@ -14,8 +11,7 @@ export const initialState: MapState = {
   isClusterDialogOpen: false,
 };
 
-export const map = (state: MapState = initialState, action: AnyAction): MapState => {
-
+export const map = (state: MapState = initialState, action: Action<ExtendedMarker>): MapState => {
   switch (action.type) {
     case TOGGLE_CLUSTER_DIALOG:
       return {

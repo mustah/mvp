@@ -12,7 +12,7 @@ import {GatewayDialogContainer} from '../../../containers/dialogs/GatewayDialogC
 import {MeteringPointDialogContainer} from '../../../containers/dialogs/MeteringPointDialogContainer';
 import {Column} from '../../../components/layouts/column/Column';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
-import {MapMarker} from '../mapModels';
+import {ExtendedMarker, MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import './MapContainer.scss';
 import {isNullOrUndefined} from 'util';
@@ -27,7 +27,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   toggleClusterDialog: () => any;
-  openClusterDialog: (marker: L.Marker) => any;
+  openClusterDialog: (marker: ExtendedMarker) => any;
 }
 
 interface OwnProps {
