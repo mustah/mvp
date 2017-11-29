@@ -3,7 +3,7 @@ export interface Pagination {
   limit: number;
 }
 
-export interface PaginationUseCase  {
+export interface SelectedPagination  {
   page: number;
   useCase: string;
 }
