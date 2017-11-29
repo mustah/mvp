@@ -2,9 +2,9 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {RootState} from '../../../reducers/rootReducer';
 import {Period, uuid} from '../../../types/Types';
+import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 import {SelectionParameter, SelectionState} from './selectionModels';
 import {getEncodedUriParametersForGateways, getEncodedUriParametersForMeters, getSelection} from './selectionSelectors';
-import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 
@@ -70,10 +70,12 @@ export const resetSelection = () =>
 
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: () => RootState) => {
-    const selectionState: SelectionState = getSelection(getState().searchParameters);
     const {parameter, id} = selectionParameter;
+    const selectedParameter: Period | uuid[] | undefined =
+      getSelection(getState().searchParameters).selected[parameter];
 
-    if (selectionState.selected[parameter].includes(id)) {
+    // TODO selectedParameter's type is too ambiguous, we should split Period from uuid[]s
+    if (selectedParameter instanceof Array && selectedParameter.includes(id)) {
       dispatch(deselectSelection(selectionParameter));
     } else {
       dispatch(setSelection(selectionParameter));
