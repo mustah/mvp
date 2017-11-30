@@ -31,7 +31,7 @@ interface OwnProps {
   gateway: Gateway;
 }
 
-interface OwnState {
+interface TabsState {
   selectedTab: TopLevelTab;
 }
 
@@ -39,7 +39,92 @@ interface StateToProps {
   meters: DomainModel<Meter>;
 }
 
-class GatewayDetails extends React.Component<OwnProps & StateToProps, OwnState> {
+type Props = OwnProps & StateToProps;
+
+const GatewayDetailsInfo = ({gateway}: OwnProps) => {
+  return (
+    <div>
+      <Row className="Column-space-between">
+        <Column>
+          <MainTitle>{translate('gateway details')}</MainTitle>
+        </Column>
+        <Column className="Column-center">
+          <Row className="Address">
+            <Column>
+              <Row className="capitalize Bold">
+                {translate('city')}
+              </Row>
+              <Row>
+                {gateway.city.name}
+              </Row>
+            </Column>
+            <Column>
+              <Row className="capitalize Bold">
+                {translate('address')}
+              </Row>
+              <Row>
+                {gateway.address.name}
+              </Row>
+            </Column>
+          </Row>
+        </Column>
+      </Row>
+      <Row>
+        <Column className="ProductImage">
+          <img src="assets/images/cme2110.jpg" width="100"/>
+        </Column>
+        <Column className="OverView">
+          <Row>
+            <Column>
+              <Row>
+                {translate('gateway id')}
+              </Row>
+              <Row>
+                {gateway.id}
+              </Row>
+            </Column>
+            <Column>
+              <Row>
+                {translate('product model')}
+              </Row>
+              <Row>
+                {gateway.productModel}
+              </Row>
+            </Column>
+          </Row>
+          <Row>
+            <Column>
+              <Row>
+                {translate('collection')}
+              </Row>
+              <Status id={gateway.status.id} name={gateway.status.name}/>
+            </Column>
+            <Column>
+              <Row>
+                {translate('interval')}
+              </Row>
+              <Row>
+                24h
+                {/* TODO gateway model is missing this value*/}
+              </Row>
+            </Column>
+            <Column>
+              <Row>
+                {translate('flagged for action')}
+              </Row>
+              <Row>
+                {renderFlags(gateway.flags)}
+              </Row>
+            </Column>
+          </Row>
+        </Column>
+      </Row>
+
+    </div>
+  );
+};
+
+class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   constructor(props) {
     super(props);
@@ -59,135 +144,58 @@ class GatewayDetails extends React.Component<OwnProps & StateToProps, OwnState> 
     const statusChangelog = normalizedStatusChangelogs(gateway);
 
     return (
-      <div className="GatewayDetails">
-        <Row className="Column-space-between">
-          <Column>
-            <MainTitle>{translate('gateway details')}</MainTitle>
-          </Column>
-          <Column className="Column-center">
-            <Row className="Address">
-              <Column>
-                <Row className="capitalize Bold">
-                  {translate('city')}
-                </Row>
-                <Row>
-                  {gateway.city.name}
-                </Row>
-              </Column>
-              <Column>
-                <Row className="capitalize Bold">
-                  {translate('address')}
-                </Row>
-                <Row>
-                  {gateway.address.name}
-                </Row>
-              </Column>
-            </Row>
-          </Column>
-        </Row>
-        <Row>
-          <Column className="ProductImage">
-            <img src="assets/images/cme2110.jpg" width="100"/>
-          </Column>
-          <Column className="OverView">
+      <Row>
+        <Tabs className="full-width">
+          <TabTopBar>
+            <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
+              <Tab tab={TopLevelTab.values} title={translate('meter')}/>
+              <Tab tab={TopLevelTab.log} title={translate('status log')}/>
+              <Tab tab={TopLevelTab.map} title={translate('map')}/>
+            </TabHeaders>
+            <TabSettings/>
+          </TabTopBar>
+          <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
+            <Table result={gateway.meterIds} entities={meters}>
+              <TableColumn
+                header={<TableHead className="first">{translate('meter')}</TableHead>}
+                renderCell={renderFacility}
+              />
+              <TableColumn
+                header={<TableHead>{translate('manufacturer')}</TableHead>}
+                renderCell={renderManufacturer}
+              />
+              <TableColumn
+                header={<TableHead>{translate('medium')}</TableHead>}
+                renderCell={renderMedium}
+              />
+              <TableColumn
+                header={<TableHead>{translate('status')}</TableHead>}
+                renderCell={renderStatusCell}
+              />
+            </Table>
+          </TabContent>
+          <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
             <Row>
-              <Column>
-                <Row>
-                  {translate('gateway id')}
-                </Row>
-                <Row>
-                  {gateway.id}
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('product model')}
-                </Row>
-                <Row>
-                  {gateway.productModel}
-                </Row>
-              </Column>
+              <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
-            <Row>
-              <Column>
-                <Row>
-                  {translate('collection')}
-                </Row>
-                <Status id={gateway.status.id} name={gateway.status.name}/>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('interval')}
-                </Row>
-                <Row>
-                  24h
-                  {/* TODO gateway model is missing this value*/}
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('flagged for action')}
-                </Row>
-                <Row>
-                  {renderFlags(gateway.flags)}
-                </Row>
-              </Column>
-            </Row>
-          </Column>
-        </Row>
-        <Row>
-          <Tabs className="full-width">
-            <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
-                <Tab tab={TopLevelTab.values} title={translate('meter')}/>
-                <Tab tab={TopLevelTab.log} title={translate('status log')}/>
-                <Tab tab={TopLevelTab.map} title={translate('map')}/>
-              </TabHeaders>
-              <TabSettings/>
-            </TabTopBar>
-            <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
-              <Table result={gateway.meterIds} entities={meters}>
-                <TableColumn
-                  header={<TableHead className="first">{translate('meter')}</TableHead>}
-                  renderCell={renderFacility}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('manufacturer')}</TableHead>}
-                  renderCell={renderManufacturer}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('medium')}</TableHead>}
-                  renderCell={renderMedium}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('status')}</TableHead>}
-                  renderCell={renderStatusCell}
-                />
-              </Table>
-            </TabContent>
-            <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
-              <Row>
-                <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
-              </Row>
-              <Table entities={statusChangelog.entities} result={statusChangelog.result}>
-                <TableColumn
-                  header={<TableHead>{translate('date')}</TableHead>}
-                  renderCell={renderDate}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('status')}</TableHead>}
-                  renderCell={renderStatusCell}
-                />
-              </Table>
-            </TabContent>
-            <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-              <Map height={400} viewCenter={gateway.position}>
-                <ClusterContainer markers={gateway}/>
-              </Map>
-            </TabContent>
-          </Tabs>
-        </Row>
-      </div>
+            <Table entities={statusChangelog.entities} result={statusChangelog.result}>
+              <TableColumn
+                header={<TableHead>{translate('date')}</TableHead>}
+                renderCell={renderDate}
+              />
+              <TableColumn
+                header={<TableHead>{translate('status')}</TableHead>}
+                renderCell={renderStatusCell}
+              />
+            </Table>
+          </TabContent>
+          <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
+            <Map height={400} viewCenter={gateway.position}>
+              <ClusterContainer markers={gateway}/>
+            </Map>
+          </TabContent>
+        </Tabs>
+      </Row>
     );
   }
 
@@ -196,10 +204,15 @@ class GatewayDetails extends React.Component<OwnProps & StateToProps, OwnState> 
   }
 }
 
-const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
-  return {
-    meters: getMeterEntities(meters),
-  };
-};
+const GatewayDetails = (props: Props) => (
+  <div className="GatewayDetails">
+    <GatewayDetailsInfo gateway={props.gateway}/>
+    <GatewayDetailsTabs {...props}/>
+  </div>
+);
+
+const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => ({
+  meters: getMeterEntities(meters),
+});
 
 export const GatewayDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(GatewayDetails);
