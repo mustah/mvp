@@ -3,17 +3,23 @@ import * as MockAdapter from 'axios-mock-adapter';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {makeToken} from '../../../services/authService';
 import {routes} from '../../../app/routes';
+import {makeToken} from '../../../services/authService';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
-import {UnauthorizedDTO} from '../authReducer';
+import {Unauthorized, User} from '../authModels';
 
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
 
 describe('authActions', () => {
 
-  const user = {id: 1, firstName: 'clark', lastName: 'kent'};
+  const user: User = {
+    id: 1,
+    firstName: 'clark',
+    lastName: 'kent',
+    email: 'ck@dailyplanet.net',
+    company: 'daily planet',
+  };
   let mockRestClient;
   let store;
   let token: string;
@@ -63,7 +69,7 @@ describe('authActions', () => {
 
     it('cannot login when wrong credentials are provided ', async () => {
       const unauthorized = 401;
-      const errorMessage: UnauthorizedDTO = {
+      const errorMessage: Unauthorized = {
         status: unauthorized,
         timestamp: Date.now(),
         error: 'Unauthorized',
@@ -79,7 +85,7 @@ describe('authActions', () => {
 
     it('cannot login when the server fails due to some unknown reason', async () => {
       const internalServerError = 500;
-      const errorMessage: UnauthorizedDTO = {
+      const errorMessage: Unauthorized = {
         timestamp: Date.now(),
         status: internalServerError,
         error: 'Internal Server Error',
@@ -96,7 +102,7 @@ describe('authActions', () => {
 
     it('does not persist the token if the user cannot login', async () => {
       const internalServerError = 401;
-      const errorMessage: UnauthorizedDTO = {
+      const errorMessage: Unauthorized = {
         timestamp: Date.now(),
         status: internalServerError,
         error: 'Bad credentials',

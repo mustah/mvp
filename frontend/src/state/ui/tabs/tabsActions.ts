@@ -1,12 +1,12 @@
 import {createPayloadAction} from 'react-redux-typescript';
 import {useCases} from '../../../types/constants';
-import {TopLevelTab} from '../../../components/tabs/models/TabsModel';
+import {TabSelection, TopLevelTab} from './tabsModels';
 
 export const TABS_CHANGE_TAB = 'TABS_CHANGE_TAB';
 export const TABS_CHANGE_TAB_OPTION = 'TABS_CHANGE_TAB_OPTION';
 
-const changeTab = createPayloadAction(TABS_CHANGE_TAB);
-const changeTabOption = createPayloadAction(TABS_CHANGE_TAB_OPTION);
+const changeTab = createPayloadAction<string, TabSelection>(TABS_CHANGE_TAB);
+const changeTabOption = createPayloadAction<string, TabSelection>(TABS_CHANGE_TAB_OPTION);
 
 export const changeTabCollection = (tab: TopLevelTab) => changeTab({
   useCase: useCases.collection,

@@ -1,6 +1,6 @@
 import * as i18n from 'i18next';
 import * as Backend from 'i18next-xhr-backend';
-import {Language} from '../usecases/main-menu/languageReducer';
+import {Language} from '../usecases/main-menu/languageModels';
 const {i18nextConfig} = require('./i18nextConfig');
 
 export const initLanguage = (language: Language) => {

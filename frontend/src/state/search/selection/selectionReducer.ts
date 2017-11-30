@@ -1,5 +1,5 @@
-import {AnyAction} from 'redux';
-import {Period, uuid} from '../../../types/Types';
+import {EmptyAction} from 'react-redux-typescript';
+import {Action, Period, uuid} from '../../../types/Types';
 import {
   CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
@@ -10,7 +10,7 @@ import {
   SET_SELECTION,
   UPDATE_SELECTION,
 } from './selectionActions';
-import {SelectionState} from './selectionModels';
+import {SelectionParameter, SelectionState} from './selectionModels';
 
 export const initialState: SelectionState = {
   id: -1,
@@ -28,48 +28,70 @@ export const initialState: SelectionState = {
   },
 };
 
-const filterOutUnselected = (selected: uuid[], id: uuid): uuid[] => selected.filter(sel => sel !== id);
+interface SelectionActionModel {
+  payload: SelectionState;
+  type: string;
+}
 
-export const selection = (state: SelectionState = initialState, action: AnyAction): SelectionState => {
+const updateSelected = (state: SelectionState = initialState, action: Action<SelectionParameter>): SelectionState => {
+  const {payload: {parameter, id}} = action;
+  const selectedIds: uuid[] = state.selected[parameter] as uuid[];
+  return {
+    ...state,
+    isChanged: true,
+    selected: {
+      ...state.selected,
+      [parameter]: Array.from(new Set([...selectedIds]).add(id)),
+    },
+  };
+};
+
+const updatePeriod = (state: SelectionState = initialState, action: Action<Period>): SelectionState => {
   const {payload} = action;
+  return {
+    ...state,
+    isChanged: true,
+    selected: {
+      ...state.selected,
+      period: payload,
+    },
+  };
+};
 
+const removeSelected = (state: SelectionState = initialState, action: Action<SelectionParameter>): SelectionState => {
+  const {payload: {parameter, id}} = action;
+  const selectedIds: uuid[] = state.selected[parameter]! as uuid[];
+  return {
+    ...state,
+    isChanged: true,
+    selected: {
+      ...state.selected,
+      [parameter]: selectedIds.filter(selectedId => selectedId !== id),
+    },
+  };
+};
+
+type ActionTypes =
+  | EmptyAction<string>
+  | Action<SelectionParameter>
+  | Action<SelectionState>
+  | Action<Period>;
+
+export const selection = (state: SelectionState = initialState, action: ActionTypes): SelectionState => {
   switch (action.type) {
     case RESET_SELECTION:
-      return {
-        ...initialState,
-      };
+      return {...initialState};
     case SET_SELECTION:
-      return {
-        ...state,
-        isChanged: true,
-        selected: {
-          ...state.selected,
-          [payload.parameter]: Array.from(new Set([...state.selected[payload.parameter]]).add(payload.id)),
-        },
-      };
+      return updateSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:
-      return {
-        ...state,
-        isChanged: true,
-        selected: {
-          ...state.selected,
-          [payload.parameter]: filterOutUnselected(state.selected[payload.parameter], payload.id),
-        },
-      };
+      return removeSelected(state, action as Action<SelectionParameter>);
     case SELECT_PERIOD:
-      return {
-        ...state,
-        isChanged: true,
-        selected: {
-          ...state.selected,
-          period: payload,
-        },
-      };
+      return updatePeriod(state, action as Action<Period>);
     case UPDATE_SELECTION:
     case SELECT_SAVED_SELECTION:
       return {
         ...state,
-        ...payload,
+        ...(action as SelectionActionModel).payload,
         isChanged: false,
       };
     case SAVE_SELECTION:
@@ -78,29 +100,6 @@ export const selection = (state: SelectionState = initialState, action: AnyActio
         ...state,
         isChanged: false,
       };
-    default:
-      return state;
-  }
-};
-
-const updateSelectionById = (state: SelectionState[] = [], {payload}: AnyAction): SelectionState[] => {
-  const index = state.findIndex((selection: SelectionState) => selection.id === payload.id);
-  if (index !== -1) {
-    state[index] = {...payload};
-    return [...state];
-  } else {
-    return state;
-  }
-};
-
-export const saved = (state: SelectionState[] = [], action: AnyAction): SelectionState[] => {
-  const {payload, type} = action;
-
-  switch (type) {
-    case SAVE_SELECTION:
-      return [payload, ...state];
-    case UPDATE_SELECTION:
-      return updateSelectionById(state, action);
     default:
       return state;
   }

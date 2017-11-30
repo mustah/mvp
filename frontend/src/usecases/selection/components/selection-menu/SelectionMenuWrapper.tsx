@@ -9,7 +9,7 @@ import {Logo} from '../../../../components/logo/Logo';
 import {RootState} from '../../../../reducers/rootReducer';
 import {ClassNamed} from '../../../../types/Types';
 import {logout} from '../../../auth/authActions';
-import {AuthState} from '../../../auth/authReducer';
+import {AuthState} from '../../../auth/authModels';
 import {Profile} from '../profile/Profile';
 import './SelectionMenuWrapper.scss';
 

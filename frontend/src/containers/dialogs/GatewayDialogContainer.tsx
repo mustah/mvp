@@ -15,7 +15,7 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {TopLevelTab} from '../../components/tabs/models/TabsModel';
+import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';

@@ -1,4 +1,4 @@
-import {AnyAction} from 'redux';
+import {Action, uuid} from '../../types/Types';
 import {ReportState} from './models/reportModels';
 import {SET_SELECTED_ENTRIES} from './reportActions';
 
@@ -6,13 +6,14 @@ const initialState: ReportState = {
   selectedListItems: [],
 };
 
-export const report = (state: ReportState = initialState, action: AnyAction): ReportState => {
-  const {payload} = action;
+type ActionTypes = Action<uuid[]>;
+
+export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
   switch (action.type) {
     case SET_SELECTED_ENTRIES:
       return {
         ...state,
-        selectedListItems: payload,
+        selectedListItems: action.payload,
       };
     default:
       return state;

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import 'SelectionContentContainer.scss';
 import {MultiDropdownSelector} from '../../../components/dropdown-selector/MultiDropdownSelector';
 import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../../components/layouts/column/Column';
@@ -28,9 +29,7 @@ import {
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersLoaderContainer} from './MetersLoaderContainer';
 import {MetersResultContainer} from './MetersResultContainer';
-import './SelectionContentContainer.scss';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -125,9 +124,8 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
         <SelectionQuantity/>
       </Row>
 
-      <MetersLoaderContainer>
-        <MetersResultContainer/>
-      </MetersLoaderContainer>
+      <MetersResultContainer/>
+
     </Column>
   );
 };

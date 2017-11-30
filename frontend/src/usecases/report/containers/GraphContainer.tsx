@@ -8,7 +8,7 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {TabModel, TopLevelTab} from '../../../components/tabs/models/TabsModel';
+import {TabModel, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {Bold} from '../../../components/texts/Texts';
 import {translate} from '../../../services/translationService';
 import './GraphContainer.scss';

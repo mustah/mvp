@@ -24,6 +24,12 @@ export interface TabsState {
   [key: string]: SelectedTabs;
 }
 
+export interface TabSelection {
+  tab: TopLevelTab;
+  useCase: string;
+  option?: string;
+}
+
 export interface TabsContainerStateToProps {
   tabs: TabModel;
   selectedTab: TopLevelTab;

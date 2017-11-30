@@ -15,7 +15,7 @@ import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
 import {OnClick} from '../../../types/Types';
-import {AuthState} from '../../auth/authReducer';
+import {AuthState} from '../../auth/authModels';
 import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
 import {MainMenuToggleIcon} from '../components/menuitems/MainMenuToggleIcon';
 import {MenuItem} from '../components/menuitems/MenuItem';

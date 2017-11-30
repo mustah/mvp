@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {PayloadAction} from 'react-redux-typescript';
 
 export type uuid = string | number;
 
@@ -6,6 +7,11 @@ export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
 
 export type Children = React.ReactNode | React.ReactNode[];
+
+/**
+ * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
+ */
+export type Action<P> = PayloadAction<string, P>;
 
 export interface ClassNamed {
   className?: string;
@@ -20,8 +26,8 @@ export interface Clickable {
 }
 
 export interface IdNamed {
-  id: uuid;
-  name: string;
+  readonly id: uuid;
+  readonly name: string;
 }
 
 export interface ErrorResponse {
