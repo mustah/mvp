@@ -1,0 +1,9 @@
+@import '../../app/variables';
+
+.Info {
+  .Info-label {
+    margin-bottom: 4px;
+    color: $lightest-black;
+    text-transform: uppercase;
+  }
+}

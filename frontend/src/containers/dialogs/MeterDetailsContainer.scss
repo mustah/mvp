@@ -11,10 +11,5 @@
 
   .Column {
     margin: 0 $xl-space $lg-space 0;
-
-    .Row:first-child {
-      font-weight: bold;
-      text-transform: uppercase;
-    }
   }
 }

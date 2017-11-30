@@ -25,7 +25,7 @@ import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogs, renderFlags} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
-import './GatewayDialogContainer.scss';
+import {Info} from './Info';
 
 interface OwnProps {
   gateway: Gateway;
@@ -42,84 +42,37 @@ interface StateToProps {
 type Props = OwnProps & StateToProps;
 
 const GatewayDetailsInfo = ({gateway}: OwnProps) => {
+  const {city, address, id, productModel, status, flags} = gateway;
+
   return (
-    <div>
+    <div className="GatewayDetailsInfo">
       <Row className="Column-space-between">
         <Column>
           <MainTitle>{translate('gateway details')}</MainTitle>
         </Column>
         <Column className="Column-center">
           <Row className="Address">
-            <Column>
-              <Row className="capitalize Bold">
-                {translate('city')}
-              </Row>
-              <Row>
-                {gateway.city.name}
-              </Row>
-            </Column>
-            <Column>
-              <Row className="capitalize Bold">
-                {translate('address')}
-              </Row>
-              <Row>
-                {gateway.address.name}
-              </Row>
-            </Column>
+            <Info label={translate('city')} value={city.name}/>
+            <Info label={translate('address')} value={address.name}/>
           </Row>
         </Column>
       </Row>
       <Row>
-        <Column className="ProductImage">
-          <img src="assets/images/cme2110.jpg" width="100"/>
+        <Column>
+          <img src="assets/images/cme2110.jpg" width={100}/>
         </Column>
         <Column className="OverView">
           <Row>
-            <Column>
-              <Row>
-                {translate('gateway id')}
-              </Row>
-              <Row>
-                {gateway.id}
-              </Row>
-            </Column>
-            <Column>
-              <Row>
-                {translate('product model')}
-              </Row>
-              <Row>
-                {gateway.productModel}
-              </Row>
-            </Column>
+            <Info label={translate('gateway id')} value={id}/>
+            <Info label={translate('product model')} value={productModel}/>
           </Row>
           <Row>
-            <Column>
-              <Row>
-                {translate('collection')}
-              </Row>
-              <Status id={gateway.status.id} name={gateway.status.name}/>
-            </Column>
-            <Column>
-              <Row>
-                {translate('interval')}
-              </Row>
-              <Row>
-                24h
-                {/* TODO gateway model is missing this value*/}
-              </Row>
-            </Column>
-            <Column>
-              <Row>
-                {translate('flagged for action')}
-              </Row>
-              <Row>
-                {renderFlags(gateway.flags)}
-              </Row>
-            </Column>
+            <Info label={translate('collection')} value={<Status id={status.id} name={status.name}/>}/>
+            <Info label={translate('interval')} value={'24h'}/>
+            <Info label={translate('flagged for action')} value={renderFlags(flags)}/>
           </Row>
         </Column>
       </Row>
-
     </div>
   );
 };
@@ -205,7 +158,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 }
 
 const GatewayDetails = (props: Props) => (
-  <div className="GatewayDetails">
+  <div>
     <GatewayDetailsInfo gateway={props.gateway}/>
     <GatewayDetailsTabs {...props}/>
   </div>
