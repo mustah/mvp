@@ -29,7 +29,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
     );
   }
 
-  renderDialog = () => {
+  renderDialog = (): Children => {
     const {isOpen} = this.state;
 
     return isOpen && (
