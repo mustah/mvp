@@ -14,18 +14,19 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
   total: 0,
 });
 
-const success = <T>(entity: string, state: NormalizedState<T>, action: Action<Normalized<T>>): NormalizedState<T> => {
-  const {payload} = action;
-  const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
-  const entities: any = payload.entities[entity];
-  return {
-    ...state,
-    isFetching: false,
-    entities,
-    result,
-    total: result.length,
+const addDomainModelFor =
+  <T>(entity: string, state: NormalizedState<T>, action: Action<Normalized<T>>): NormalizedState<T> => {
+    const {payload} = action;
+    const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
+    const entities: any = payload.entities[entity];
+    return {
+      ...state,
+      isFetching: false,
+      entities,
+      result,
+      total: result.length,
+    };
   };
-};
 
 type ActionTypes<T> =
   | EmptyAction<string>
@@ -41,7 +42,7 @@ const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
           isFetching: true,
         };
       case DOMAIN_MODELS_SUCCESS.concat(endPoint):
-        return success<T>(entity, state, action as Action<Normalized<T>>);
+        return addDomainModelFor<T>(entity, state, action as Action<Normalized<T>>);
       case DOMAIN_MODELS_FAILURE.concat(endPoint):
         return {
           ...state,

@@ -35,14 +35,6 @@ describe('selectionReducer', () => {
     });
 
     it('saves selection to already existing saved selections', () => {
-      const payload: SelectionState = {
-        id: 1,
-        name: 'saved parameters',
-        isChanged: false,
-        selected: {
-          cities: [1, 2],
-        },
-      };
       const newPayload: SelectionState = {...mockPayload};
 
       let state = saved([], saveSelectionAction(payload));

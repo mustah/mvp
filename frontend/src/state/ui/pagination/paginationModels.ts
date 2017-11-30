@@ -8,7 +8,7 @@ export interface SelectedPagination  {
   useCase: string;
 }
 
-export type OnChangePage = (page: number) => any;
+export type OnChangePage = (page: number) => void;
 
 export interface PaginationProps {
   pagination: Pagination;

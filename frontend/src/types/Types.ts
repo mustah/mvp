@@ -9,7 +9,7 @@ export type OnClickWithId = (id: uuid) => void;
 export type Children = React.ReactNode | React.ReactNode[];
 
 /**
- * Is a payload action with action type of <code>string</code> and payload of type <code><T></code>.
+ * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
  */
 export type Action<P> = PayloadAction<string, P>;
 
@@ -26,8 +26,8 @@ export interface Clickable {
 }
 
 export interface IdNamed {
-  id: uuid;
-  name: string;
+  readonly id: uuid;
+  readonly name: string;
 }
 
 export interface ErrorResponse {

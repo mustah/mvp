@@ -3,7 +3,7 @@ import {Action} from '../../../types/Types';
 import {SAVE_SELECTION, UPDATE_SELECTION} from './selectionActions';
 import {SelectionState} from './selectionModels';
 
-const updateSelectionById = (state: SelectionState[] = [], {payload}: Action<SelectionState>): SelectionState[] => {
+const updateSelectionById = (state: SelectionState[], {payload}: Action<SelectionState>): SelectionState[] => {
   const index = state.findIndex((selection: SelectionState) => selection.id === payload.id);
   if (index !== -1) {
     state[index] = {...payload};
