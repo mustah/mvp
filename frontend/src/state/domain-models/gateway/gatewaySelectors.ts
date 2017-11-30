@@ -1,5 +1,5 @@
+import {DomainModel} from '../domainModels';
 import {Gateway, GatewaysState} from './gatewayModels';
 
-// TODO: Perhaps move this to domainSelectors
 export const getGatewaysTotal = (state: GatewaysState): number => state.total;
-export const getGatewayEntities = (state: GatewaysState): {[key: string]: Gateway} => state.entities;
+export const getGatewayEntities = (state: GatewaysState): DomainModel<Gateway> => state.entities;

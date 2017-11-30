@@ -5,10 +5,10 @@ import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {translate} from '../../../services/translationService';
+import {Normalized} from '../../../state/domain-models/domainModels';
 import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
 import {OnClickWithId} from '../../../types/Types';
-import {Gateway} from './Gateway';
-import {Normalized} from '../../../state/domain-models/domainModels';
+import {GatewayListItem} from './GatewayListItem';
 
 interface Props {
   selectEntryAdd: OnClickWithId;
@@ -17,8 +17,8 @@ interface Props {
 export const GatewayList = (props: Normalized<GatewayModel> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
+  const renderGatewayListItem = (gateway: GatewayModel) => <GatewayListItem gateway={gateway}/>;
   const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
-  const renderGateway = (gateway: GatewayModel) => <Gateway gateway={gateway}/>;
   const renderCity = (gateway: GatewayModel) => gateway.city.name;
   const renderAddress = (gateway: GatewayModel) => gateway.address.name;
   const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
@@ -31,7 +31,7 @@ export const GatewayList = (props: Normalized<GatewayModel> & Props) => {
     <Table result={result} entities={entities}>
       <TableColumn
         header={<TableHead className="first">{translate('gateway')}</TableHead>}
-        renderCell={renderGateway}
+        renderCell={renderGatewayListItem}
       />
       <TableColumn
         header={<TableHead>{translate('city')}</TableHead>}

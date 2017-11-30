@@ -15,14 +15,10 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-  TopLevelTab,
-} from '../../../state/ui/tabs/tabsModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
@@ -33,6 +29,7 @@ import {changePaginationCollection} from '../../../state/ui/pagination/paginatio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
+import {TabsContainerDispatchToProps, TabsContainerStateToProps, TopLevelTab,} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
@@ -42,7 +39,7 @@ import './CollectionTabsContainer.scss';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
-  entities: {[key: string]: Gateway};
+  entities: DomainModel<Gateway>;
   paginatedList: uuid[];
   pagination: Pagination;
   selectedEntities: uuid[];

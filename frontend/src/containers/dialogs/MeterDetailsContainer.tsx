@@ -1,9 +1,6 @@
 import {Checkbox} from 'material-ui';
-import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {ButtonClose} from '../../components/buttons/ButtonClose';
 import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
 import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
@@ -17,53 +14,42 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import {Normal} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {Normalized} from '../../state/domain-models/domainModels';
+import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
+import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
-import './MeteringPointDialogContainer.scss';
+import './MeterDetailsContainer.scss';
+import {checkbox, checkboxLabel} from '../../app/themes';
 
-interface MeteringPointDialogProps {
+interface OwnProps {
   meter: Meter;
-  displayDialog: boolean;
-  close: any;
 }
 
 interface StateToProps {
-  entities: {[key: string]: Gateway};
+  entities: DomainModel<Gateway>;
 }
 
-interface MeteringPointDialogState {
+interface State {
   selectedTab: TopLevelTab;
 }
 
-class MeteringPointDialog extends React.Component <MeteringPointDialogProps & StateToProps, MeteringPointDialogState> {
+class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
+
   constructor(props) {
     super(props);
-
-    this.state = {
-      selectedTab: TopLevelTab.values,
-    };
+    this.state = {selectedTab: TopLevelTab.values};
   }
 
   render() {
-    const {
-      displayDialog,
-      close,
-      meter,
-      entities,
-    } = this.props;
-
-    const {
-      selectedTab,
-    } = this.state;
+    const {meter, entities} = this.props;
+    const {selectedTab} = this.state;
 
     const renderStatusCell = (item: any) => <Status {...item.status}/>;
     const renderQuantity = (item: any) => item.quantity;
@@ -169,30 +155,8 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
       result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    const changeTab = (option: TopLevelTab) => {
-      this.setState({selectedTab: option});
-    };
-
-    const checkbox: React.CSSProperties = {
-      padding: 0,
-      margin: 5,
-      marginLeft: 0,
-    };
-
-    const checkboxLabel: React.CSSProperties = {
-      padding: 0,
-      margin: 5,
-      marginTop: 10,
-    };
-
     return (
-      <Dialog
-        actions={[(<ButtonClose onClick={close}/>)]}
-        autoScrollBodyContent={true}
-        contentClassName="Dialog"
-        onRequestClose={close}
-        open={displayDialog}
-      >
+      <div>
         <Row>
           <Column className="OverView">
             <Row>
@@ -348,7 +312,7 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
         <Row>
           <Tabs className="full-width first-letter">
             <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+              <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
                 <Tab tab={TopLevelTab.values} title={translate('latest value')}/>
                 <Tab tab={TopLevelTab.log} title={translate('status log')}/>
                 <Tab tab={TopLevelTab.map} title={translate('map')}/>
@@ -402,9 +366,12 @@ class MeteringPointDialog extends React.Component <MeteringPointDialogProps & St
             </TabContent>
           </Tabs>
         </Row>
-      </Dialog>
+      </div>
     );
+  }
 
+  changeTab = (option: TopLevelTab) => {
+    this.setState({selectedTab: option});
   }
 }
 
@@ -414,7 +381,4 @@ const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps =>
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
-
-export const MeteringPointDialogContainer =
-  connect<StateToProps, {}, MeteringPointDialogProps>(mapStateToProps, mapDispatchToProps)(MeteringPointDialog);
+export const MeterDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(MeterDetails);

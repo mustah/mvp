@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Column} from '../../../components/layouts/column/Column';
-import {MeterList} from '../../../components/metering-point/MeterList';
+import {MeterList} from '../../../components/meters/MeterList';
 import {Normalized} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {OnClickWithId} from '../../../types/Types';

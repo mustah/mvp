@@ -5,7 +5,7 @@ import {bindActionCreators} from 'redux';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
-import {MeterList} from '../../../components/metering-point/MeterList';
+import {MeterList} from '../../../components/meters/MeterList';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {PieChartSelector, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -39,10 +39,11 @@ import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
 import {selectEntryAdd} from '../../report/reportActions';
 import './ValidationTabsContainer.scss';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
-  entities: {[key: string]: Meter};
+  entities: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
   selectedEntities: uuid[];

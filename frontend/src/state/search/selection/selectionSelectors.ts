@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
+import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
-import {Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
@@ -14,7 +15,6 @@ import {
   SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
-import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
@@ -98,10 +98,10 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
-export const getSelectionSummary = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionSummary>(
+export const getSelectionSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionSummary>(
   getResultDomainModels,
   getMeterEntities,
-  (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
+  (metersList: uuid[], metersLookup: DomainModel<Meter>) => {
     const cities = new Set<uuid>();
     const addresses = new Set<uuid>();
 
