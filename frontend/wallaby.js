@@ -4,6 +4,7 @@ module.exports = function(wallaby) {
       'tsconfig.json',
       'geocode.js',
       'mockdata.js',
+      'src/**/*.js',
       'src/**/*.ts',
       '!src/**/__tests__/*.test.ts',
     ],

@@ -1,5 +1,9 @@
-import {Flag} from '../../state/domain-models/flag/flagModels';
+import {normalize} from 'normalizr';
 import {translate} from '../../services/translationService';
+import {Normalized} from '../../state/domain-models/domainModels';
+import {Flag} from '../../state/domain-models/flag/flagModels';
+import {Gateway, GatewayStatusChangelog} from '../../state/domain-models/gateway/gatewayModels';
+import {statusChangelogSchema} from '../../state/domain-models/gateway/gatewaySchema';
 
 export const renderFlags = (flags: Flag[]): string => {
   if (flags.length) {
@@ -7,4 +11,12 @@ export const renderFlags = (flags: Flag[]): string => {
   } else {
     return translate('no');
   }
+};
+
+export const normalizedStatusChangelogs = (gateway: Gateway): Normalized<GatewayStatusChangelog> => {
+  const {entities, result} = normalize(gateway, statusChangelogSchema);
+  return {
+    entities: entities.statusChangelog,
+    result: result.statusChangelog,
+  };
 };
