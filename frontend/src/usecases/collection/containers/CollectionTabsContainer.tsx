@@ -29,7 +29,7 @@ import {changePaginationCollection} from '../../../state/ui/pagination/paginatio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabsContainerDispatchToProps, TabsContainerStateToProps, TopLevelTab,} from '../../../state/ui/tabs/tabsModels';
+import {TabsContainerDispatchToProps, TabsContainerStateToProps, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClickWithId, uuid} from '../../../types/Types';
 import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
