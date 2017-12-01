@@ -46,7 +46,7 @@ build:
         - shell
     environment:
         name: review/$CI_COMMIT_REF_NAME
-        url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local
+        url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se
         on_stop: teardown_review
     script:
         - rm -rf app-root-`cat .version`
@@ -54,7 +54,7 @@ build:
         - tar -C app-root-`cat .version` -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
         - docker stop $CONTAINER_NAME || true
         - docker rm $CONTAINER_NAME || true
-        - docker run -v $(pwd)/app-root-`cat .version`/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.local --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
+        - docker run -v $(pwd)/app-root-`cat .version`/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
         - sleep 1
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
