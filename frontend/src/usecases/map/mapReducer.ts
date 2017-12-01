@@ -1,9 +1,6 @@
-import {
-  OPEN_CLUSTER_DIALOG,
-  CLOSE_CLUSTER_DIALOG,
-} from './mapActions';
-import {ExtendedMarker} from './mapModels';
 import {Action} from '../../types/Types';
+import {CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from './mapActions';
+import {ExtendedMarker} from './mapModels';
 
 export interface MapState {
   isClusterDialogOpen: boolean;

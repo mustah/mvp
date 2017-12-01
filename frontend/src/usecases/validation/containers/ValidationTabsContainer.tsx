@@ -41,7 +41,7 @@ import './ValidationTabsContainer.scss';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapState} from '../../map/mapReducer';
-import {MapContainer} from '../../map/containers/MapContainer';
+import {Map} from '../../map/containers/Map';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
@@ -320,9 +320,9 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer>
+        <Map>
           <ClusterContainer markers={entities}/>
-        </MapContainer>
+        </Map>
         {dialog}
       </TabContent>
     </Tabs>

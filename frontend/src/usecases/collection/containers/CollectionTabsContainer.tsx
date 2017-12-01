@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Dialog} from '../../../components/dialog/Dialog';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
@@ -15,6 +16,7 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
@@ -32,15 +34,13 @@ import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/
 import {TabsContainerDispatchToProps, TabsContainerStateToProps, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Map} from '../../map/containers/Map';
+import {closeClusterDialog} from '../../map/mapActions';
+import {MapState} from '../../map/mapReducer';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 import './CollectionTabsContainer.scss';
-import {MapState} from '../../map/mapReducer';
-import {closeClusterDialog} from '../../map/mapActions';
-import {MapContainer} from '../../map/containers/MapContainer';
-import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {Dialog} from '../../../components/dialog/Dialog';
-import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -284,9 +284,9 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer>
+        <Map>
           <ClusterContainer markers={entities}/>
-        </MapContainer>
+        </Map>
         {dialog}
       </TabContent>
     </Tabs>

@@ -1,28 +1,28 @@
-import MarkerClusterGroup from 'react-leaflet-markercluster';
 import * as L from 'leaflet';
 import * as React from 'react';
+import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {IdNamed} from '../../../types/Types';
 import {openClusterDialog} from '../mapActions';
 import {ExtendedMarker, MapMarker} from '../mapModels';
-import {IdNamed} from '../../../types/Types';
 
 interface DispatchToProps {
-  openClusterDialog?: (marker: ExtendedMarker) => any;
+  openClusterDialog?: (marker: ExtendedMarker) => void;
 }
 
 interface OwnProps {
-   markers: { [key: string]: MapMarker } | MapMarker;
- }
+  markers: {[key: string]: MapMarker} | MapMarker;
+}
 
-class Cluster extends React.Component<DispatchToProps & OwnProps, any> {
+class Cluster extends React.Component<DispatchToProps & OwnProps> {
   render() {
     const {
       openClusterDialog,
       markers,
     } = this.props;
 
-    let tmpMarkers: { [key: string]: MapMarker } = {};
+    let tmpMarkers: {[key: string]: MapMarker} = {};
     if (isMapMarker(markers)) {
       tmpMarkers[0] = markers;
     } else {
@@ -92,7 +92,7 @@ const handleIconCreate = (cluster: MarkerClusterGroup) => {
   });
 };
 
-// TODO needs to be shared with MapContainer
+// TODO needs to be shared with Map
 const maxZoom = 18;
 
 const getClusterCssClass = (cluster: MarkerClusterGroup): string => {

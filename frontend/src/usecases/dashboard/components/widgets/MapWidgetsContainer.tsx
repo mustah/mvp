@@ -1,19 +1,19 @@
 import * as React from 'react';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
-import {Widget} from './Widget';
-import {MapMarker} from '../../../map/mapModels';
-import {MapState} from '../../../map/mapReducer';
+import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
+import {RootState} from '../../../../reducers/rootReducer';
 import {GeoPosition} from '../../../../state/domain-models/domainModels';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
-import {bindActionCreators} from 'redux';
-import {closeClusterDialog} from '../../../map/mapActions';
-import {connect} from 'react-redux';
-import {RootState} from '../../../../reducers/rootReducer';
 import {OnClick} from '../../../../types/Types';
-import {MapContainer} from '../../../map/containers/MapContainer';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
-import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
-import {Dialog} from '../../../../components/dialog/Dialog';
+import {Map} from '../../../map/containers/Map';
+import {closeClusterDialog} from '../../../map/mapActions';
+import {MapMarker} from '../../../map/mapModels';
+import {MapState} from '../../../map/mapReducer';
+import {Widget} from './Widget';
 
 interface Props {
   markers: any;
@@ -35,7 +35,7 @@ const MapWidgets = (props: StateToProps & DispatchToProps & Props) => {
   } = props;
 
   // TODO retrieve real data
-  const markersFailing: { [key: string]: MapMarker } = {};
+  const markersFailing: {[key: string]: MapMarker} = {};
   markersFailing[0] = {
     status: {id: 3, name: 'Fel'},
     address: {id: '', cityId: '', name: ''},
@@ -63,33 +63,31 @@ const MapWidgets = (props: StateToProps & DispatchToProps & Props) => {
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <MeterDetailsContainer
-        meter={map.selectedMarker.options.mapMarker as Meter}
-      />
+      <MeterDetailsContainer meter={map.selectedMarker.options.mapMarker as Meter}/>
     </Dialog>
   ) : null;
 
   return (
     <Row className="MapWidgets">
       <Widget title="Perstorp">
-        <MapContainer
+        <Map
           height={400}
           width={400}
           defaultZoom={13}
           viewCenter={centerOfPerstorpMap}
         >
           <ClusterContainer markers={markers}/>
-        </MapContainer>
+        </Map>
       </Widget>
       <Widget title="Fel">
-        <MapContainer
+        <Map
           height={400}
           width={400}
           defaultZoom={8}
           viewCenter={centerOfErrorMap}
         >
           <ClusterContainer markers={markersFailing}/>
-        </MapContainer>
+        </Map>
       </Widget>
       {dialog}
     </Row>

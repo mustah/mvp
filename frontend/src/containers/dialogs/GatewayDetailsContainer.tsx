@@ -21,7 +21,7 @@ import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
-import {MapContainer} from '../../usecases/map/containers/MapContainer';
+import {Map} from '../../usecases/map/containers/Map';
 import {renderFlags} from './dialogHelper';
 import './GatewayDialogContainer.scss';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
@@ -262,9 +262,9 @@ class GatewayDetails extends React.Component<OwnProps & StateToProps, OwnState> 
               </Table>
             </TabContent>
             <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-              <MapContainer height={400} viewCenter={gateway.position}>
+              <Map height={400} viewCenter={gateway.position}>
                 <ClusterContainer markers={gateway}/>
-              </MapContainer>
+              </Map>
             </TabContent>
           </Tabs>
         </Row>

@@ -27,7 +27,7 @@ import {renderFlags} from './dialogHelper';
 import './MeterDetailsContainer.scss';
 import {checkbox, checkboxLabel} from '../../app/themes';
 import './MeteringPointDialogContainer.scss';
-import {MapContainer} from '../../usecases/map/containers/MapContainer';
+import {Map} from '../../usecases/map/containers/Map';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 
 interface OwnProps {
@@ -350,9 +350,9 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
               </Table>
             </TabContent>
             <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-              <MapContainer height={400} viewCenter={meter.position}>
+              <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
-              </MapContainer>
+              </Map>
             </TabContent>
             <TabContent tab={TopLevelTab.connectedGateways} selectedTab={selectedTab}>
               <Row>
