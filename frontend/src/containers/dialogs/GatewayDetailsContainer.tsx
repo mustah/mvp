@@ -94,7 +94,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderDate = (item: Meter) => item.date;
     const renderMedium = (item: Meter) => item.medium;
 
-    const statusChangelog = normalizedStatusChangelogs(gateway);
+    const statusChangelog = normalizedStatusChangelogFor(gateway);
 
     return (
       <Row>
@@ -131,7 +131,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             <Row>
               <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
-            <Table entities={statusChangelog.entities} result={statusChangelog.result}>
+            <Table {...statusChangelog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
                 renderCell={renderDate}

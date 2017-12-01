@@ -30,87 +30,40 @@ import './MeterDetailsContainer.scss';
 
 // TODO We need to support that a meter is connected to several gateways
 // TODO are these example values too large? i.e. current state, not diff between current and last state
-const meterData: Normalized<any> = {
+const measurements: Normalized<any> = {
   entities: {
     id0: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Date',
       value: '2017-11-16 09:34',
-      comment: '',
     },
     id1: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Energy',
       value: '170.97 MWh',
       comment: '',
     },
     id2: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Volume',
       value: '3109.81 m^3',
-      comment: '',
     },
     id3: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Power',
       value: '1.6 kW',
-      comment: '',
     },
     id4: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Volume flow',
       value: '0.029 m^3/h',
-      comment: '',
     },
     id5: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Flow temp.',
       value: '82.5 Celcius',
-      comment: '',
     },
     id6: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 3,
-        name: 'Fel',
-      },
       quantity: 'Return temp.',
       value: '33.7 Celcius',
-      comment: '',
     },
     id7: {
-      date: '2017-11-16 09:34',
-      status: {
-        id: 0,
-        name: 'OK',
-      },
       quantity: 'Difference temp.',
       value: '48.86 Kelvin',
-      comment: '',
     },
   },
   result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
@@ -209,6 +162,8 @@ class MeterDetailsTabs extends React.Component<Props, State> {
       result: [gateway.id],
     };
 
+    const statusChangelog = normalizedStatusChangelogFor(meter);
+
     const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
@@ -230,7 +185,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             <TabSettings/>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
-            <Table {...meterData}>
+            <Table {...measurements}>
               <TableColumn
                 header={<TableHead className="first">{translate('quantity')}</TableHead>}
                 renderCell={renderQuantity}
@@ -245,7 +200,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             <Row>
               <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
-            <Table {...meterData}>
+            <Table {...statusChangelog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
                 renderCell={renderDate}

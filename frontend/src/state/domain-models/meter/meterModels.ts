@@ -2,6 +2,13 @@ import {IdNamed, uuid} from '../../../types/Types';
 import {DomainModel, Location, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
+export interface MeterStatusChangelog {
+  id: uuid;
+  meterId: uuid;
+  status: IdNamed;
+  date: string;
+}
+
 export interface Meter extends Location {
   id: uuid;
   moid: string;
@@ -12,9 +19,10 @@ export interface Meter extends Location {
   medium: string;
   manufacturer: string;
   statusChanged?: string;
+  statusChangelog: MeterStatusChangelog[];
   date?: string;
   status: IdNamed;
-  gatewayId: string;
+  gatewayId: uuid;
   gatewayStatus: IdNamed;
   gatewayProductModel: string;
 }
