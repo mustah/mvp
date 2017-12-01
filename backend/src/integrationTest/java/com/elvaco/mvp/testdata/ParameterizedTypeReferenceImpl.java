@@ -5,8 +5,8 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 
 public class ParameterizedTypeReferenceImpl implements ParameterizedType {
-  private ParameterizedType delegate;
   private final Type[] types;
+  private ParameterizedType delegate;
 
   public ParameterizedTypeReferenceImpl(ParameterizedType delegate, Type[] types) {
     this.delegate = delegate;

@@ -1,13 +1,12 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
-import java.util.List;
+import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.utils.Json.toJsonNode;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
 import lombok.ToString;
-
-import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
-import static com.elvaco.mvp.utils.Json.toJsonNode;
 
 @ToString
 public class PropertyCollection {

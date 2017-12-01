@@ -18,7 +18,8 @@ public class ReportEntity {
   public String author;
   public String title;
 
-  public ReportEntity() {}
+  public ReportEntity() {
+  }
 
   public ReportEntity(String author, String title) {
     this.author = author;

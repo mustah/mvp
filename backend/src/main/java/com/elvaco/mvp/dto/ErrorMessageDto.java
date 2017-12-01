@@ -1,13 +1,14 @@
 package com.elvaco.mvp.dto;
 
-public class ErrorMessageDTO {
+public class ErrorMessageDto {
 
   public String message;
   public int status;
 
-  public ErrorMessageDTO() {}
+  public ErrorMessageDto() {
+  }
 
-  public ErrorMessageDTO(String message, int status) {
+  public ErrorMessageDto(String message, int status) {
     this.message = message;
     this.status = status;
   }

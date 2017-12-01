@@ -1,14 +1,12 @@
 package com.elvaco.mvp.dialect.types;
 
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.Serializable;
-
 import org.hibernate.HibernateException;
 import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
-
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class PropertyCollectionType implements UserType {
 
@@ -55,7 +53,8 @@ public abstract class PropertyCollectionType implements UserType {
     if (copy instanceof Serializable) {
       return (Serializable) value;
     }
-    throw new SerializationException(String.format("Cannot serialize '%s', %s is not Serializable.", value, value.getClass()), null);
+    throw new SerializationException(String.format("Cannot serialize '%s', %s is not Serializable"
+        + ".", value, value.getClass()), null);
   }
 
   @Override

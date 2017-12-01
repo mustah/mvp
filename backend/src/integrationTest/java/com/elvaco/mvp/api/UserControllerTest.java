@@ -1,13 +1,12 @@
 package com.elvaco.mvp.api;
 
-import java.util.List;
-
+import com.elvaco.mvp.dto.UnauthorizedDto;
+import com.elvaco.mvp.entity.user.UserEntity;
+import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import com.elvaco.mvp.dto.UnauthorizedDTO;
-import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.testdata.IntegrationTest;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,9 +15,9 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void FindAllUsers() throws Exception {
     List users = restClient()
-      .loginWith("user", "password")
-      .get("/users", List.class)
-      .getBody();
+        .loginWith("user", "password")
+        .get("/users", List.class)
+        .getBody();
 
     assertThat(users.size()).isGreaterThanOrEqualTo(3);
   }
@@ -26,9 +25,9 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void FindUserById() {
     UserEntity user = restClient()
-      .loginWith("user", "password")
-      .get("/users/1", UserEntity.class)
-      .getBody();
+        .loginWith("user", "password")
+        .get("/users/1", UserEntity.class)
+        .getBody();
 
     assertThat(user.id).isEqualTo(1);
   }
@@ -36,9 +35,9 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void UnableToFindNoneExistingUser() {
     UserEntity user = restClient()
-      .loginWith("user", "password")
-      .get("/users/-999", UserEntity.class)
-      .getBody();
+        .loginWith("user", "password")
+        .get("/users/-999", UserEntity.class)
+        .getBody();
 
     assertThat(user).isNull();
   }
@@ -47,10 +46,10 @@ public class UserControllerTest extends IntegrationTest {
   public void UserIsNotFullyAuthorized() {
     String path = "/users/2";
 
-    UnauthorizedDTO errorMessage = restClient()
-      .logout()
-      .get(path, UnauthorizedDTO.class)
-      .getBody();
+    UnauthorizedDto errorMessage = restClient()
+        .logout()
+        .get(path, UnauthorizedDto.class)
+        .getBody();
 
     assertThat(errorMessage.message).isEqualTo("Full authentication is required to access this resource");
     assertThat(errorMessage.status).isEqualTo(HttpStatus.UNAUTHORIZED.value());
@@ -63,10 +62,10 @@ public class UserControllerTest extends IntegrationTest {
   public void UserWithBadCredentials() {
     String path = "/users/3";
 
-    UnauthorizedDTO errorMessage = restClient()
-      .loginWith("admin", "wrong-password")
-      .get(path, UnauthorizedDTO.class)
-      .getBody();
+    UnauthorizedDto errorMessage = restClient()
+        .loginWith("admin", "wrong-password")
+        .get(path, UnauthorizedDto.class)
+        .getBody();
 
     assertThat(errorMessage.message).isEqualTo("Bad credentials");
     assertThat(errorMessage.status).isEqualTo(HttpStatus.UNAUTHORIZED.value());

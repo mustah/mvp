@@ -12,9 +12,9 @@ public class ApplicationConfig {
   public ModelMapper modelMapper() {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper
-      .getConfiguration()
-      .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(AccessLevel.PUBLIC);
+        .getConfiguration()
+        .setFieldMatchingEnabled(true)
+        .setFieldAccessLevel(AccessLevel.PUBLIC);
     return modelMapper;
   }
 }

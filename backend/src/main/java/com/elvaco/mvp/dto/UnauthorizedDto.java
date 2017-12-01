@@ -1,6 +1,6 @@
 package com.elvaco.mvp.dto;
 
-public class UnauthorizedDTO {
+public class UnauthorizedDto {
 
   public Long timestamp;
   public Integer status;

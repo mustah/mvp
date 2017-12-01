@@ -1,14 +1,18 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
-import javax.persistence.*;
-
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import org.hibernate.annotations.Type;
-
-import lombok.ToString;
-
 import java.util.List;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import lombok.ToString;
+import org.hibernate.annotations.Type;
 
 
 @ToString
@@ -31,5 +35,7 @@ public class MeteringPointEntity {
   @OneToMany(mappedBy = "meteringPoint")
   @JsonManagedReference
   public List<PhysicalMeterEntity> physicalMeters;
-  public MeteringPointEntity() {}
+
+  public MeteringPointEntity() {
+  }
 }

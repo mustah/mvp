@@ -1,13 +1,11 @@
 package com.elvaco.mvp.api;
 
+import com.elvaco.mvp.entity.user.UserEntity;
+import com.elvaco.mvp.repository.UserRepository;
 import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
 
 @RestApi
 public class UserController {

@@ -1,10 +1,9 @@
 package com.elvaco.mvp.dto;
 
+import java.util.Date;
 import org.springframework.hateoas.Link;
 
-import java.util.Date;
-
-public class MeasurementDTO {
+public class MeasurementDto {
   public Long id;
   public String quantity;
   public double value;

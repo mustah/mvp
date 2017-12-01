@@ -16,7 +16,8 @@ public class CollectionEntity {
   public String author;
   public String title;
 
-  public CollectionEntity() {}
+  public CollectionEntity() {
+  }
 
   public CollectionEntity(String author, String title) {
     this.author = author;

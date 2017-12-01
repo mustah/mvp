@@ -1,17 +1,18 @@
 package com.elvaco.mvp.dto.propertycollection;
 
-public class UserPropertyDTO {
+public class UserPropertyDto {
 
   public String externalId;
   public String project;
 
-  public UserPropertyDTO() {}
+  public UserPropertyDto() {
+  }
 
-  public UserPropertyDTO(String externalId) {
+  public UserPropertyDto(String externalId) {
     this(externalId, null);
   }
 
-  public UserPropertyDTO(String externalId, String project) {
+  public UserPropertyDto(String externalId, String project) {
     this.externalId = externalId;
     this.project = project;
   }

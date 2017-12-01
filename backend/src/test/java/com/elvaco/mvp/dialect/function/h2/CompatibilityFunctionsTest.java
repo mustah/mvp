@@ -2,7 +2,7 @@ package com.elvaco.mvp.dialect.function.h2;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class CompatibilityFunctionsTest {
   @Test
@@ -11,7 +11,8 @@ public class CompatibilityFunctionsTest {
   }
 
   /**
-   * Verify that the aliases that we've defined for PostgreSQL also work here
+   * Verify that the aliases that we've defined for PostgreSql also work here
+   *
    * @throws Exception
    */
   @Test

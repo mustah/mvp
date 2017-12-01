@@ -4,10 +4,6 @@ public class MeasurementUnit {
   private double value;
   private String unit;
 
-  /**
-   *
-   * @param valueUnit
-   */
   public MeasurementUnit(String valueUnit) {
     int i = valueUnit.lastIndexOf(' ');
     if (i < 0) {
@@ -29,10 +25,11 @@ public class MeasurementUnit {
 
   @Override
   public String toString() {
-    if (value == (long) value)
+    if (value == (long) value) {
       return String.format("%d %s", (long) value, unit);
-    else
+    } else {
       return String.format("%s %s", value, unit);
+    }
   }
 
   public double getValue() {

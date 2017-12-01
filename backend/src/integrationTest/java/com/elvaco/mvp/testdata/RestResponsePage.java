@@ -133,6 +133,6 @@ public class RestResponsePage<T> extends PageImpl<T> {
 
   public Page<T> pageImpl() {
     return new PageImpl<T>(getContent(), new PageRequest(getNumber(),
-      getSize(), getSort()), getTotalElements());
+        getSize(), getSort()), getTotalElements());
   }
 }

@@ -1,17 +1,15 @@
 package com.elvaco.mvp.api;
 
-import java.util.List;
+import static java.util.Arrays.asList;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.elvaco.mvp.dto.ColoredBoxDTO;
-import com.elvaco.mvp.dto.DashboardDTO;
-import com.elvaco.mvp.dto.SystemOverviewDTO;
+import com.elvaco.mvp.dto.ColoredBoxDto;
+import com.elvaco.mvp.dto.DashboardDto;
+import com.elvaco.mvp.dto.SystemOverviewDto;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 import com.elvaco.mvp.repository.DashboardRepository;
-
-import static java.util.Arrays.asList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestApi
 public class DashboardController {
@@ -29,8 +27,8 @@ public class DashboardController {
   }
 
   @RequestMapping("/dashboards/current")
-  public DashboardDTO myDashboard() {
-    ColoredBoxDTO warning = new ColoredBoxDTO();
+  public DashboardDto myDashboard() {
+    ColoredBoxDto warning = new ColoredBoxDto();
     warning.type = "collection";
     warning.state = "warning";
     warning.value = "95.8";
@@ -38,7 +36,7 @@ public class DashboardController {
     warning.subtitle = "3567 punkter";
     warning.title = "Insamling";
 
-    ColoredBoxDTO critical = new ColoredBoxDTO();
+    ColoredBoxDto critical = new ColoredBoxDto();
     critical.type = "measurementQuality";
     critical.state = "critical";
     critical.value = "93.5";
@@ -46,15 +44,15 @@ public class DashboardController {
     critical.subtitle = "3481 punkter";
     critical.title = "Mätvärdeskvalitet";
 
-    SystemOverviewDTO systemOverviewDTO = new SystemOverviewDTO();
-    systemOverviewDTO.title = "Sven's system overview from the DashboardController";
-    systemOverviewDTO.indicators = asList(warning, critical);
+    SystemOverviewDto systemOverviewDto = new SystemOverviewDto();
+    systemOverviewDto.title = "Sven's system overview from the DashboardController";
+    systemOverviewDto.indicators = asList(warning, critical);
 
-    DashboardDTO dashboard = new DashboardDTO();
+    DashboardDto dashboard = new DashboardDto();
     dashboard.author = "Sven";
     dashboard.id = 3L;
     dashboard.title = "Sven's dashboard from the DashboardController";
-    dashboard.systemOverview = systemOverviewDTO;
+    dashboard.systemOverview = systemOverviewDto;
 
     return dashboard;
   }
