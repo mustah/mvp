@@ -5,7 +5,7 @@ import {Flag} from '../../state/domain-models/flag/flagModels';
 import {Gateway, GatewayStatusChangelog} from '../../state/domain-models/gateway/gatewayModels';
 import {statusChangelogSchema} from '../../state/domain-models/gateway/gatewaySchema';
 
-export const renderFlags = (flags: Flag[]): string => {
+export const titleOf = (flags: Flag[]): string => {
   if (flags.length) {
     return flags.map((flag) => flag.title).join(', ');
   } else {

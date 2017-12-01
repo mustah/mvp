@@ -23,7 +23,7 @@ import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
-import {renderFlags} from './dialogHelper';
+import {titleOf} from './dialogHelper';
 import './MeterDetailsContainer.scss';
 import {checkbox, checkboxLabel} from '../../app/themes';
 import './MeteringPointDialogContainer.scss';
@@ -247,7 +247,7 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
                 <Row>
                   {/*TODO A meter could be found on serveral gateways*/}
                   <Normal className="first-uppercase">
-                    {renderFlags(entities[meter.gatewayId].flags)}
+                    {titleOf(entities[meter.gatewayId].flags)}
                   </Normal>
                 </Row>
               </Column>
@@ -273,7 +273,7 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
                 </Row>
                 <Row>
                   <Normal className="first-uppercase">
-                    {renderFlags(meter.flags)}
+                    {titleOf(meter.flags)}
                   </Normal>
                 </Row>
               </Column>

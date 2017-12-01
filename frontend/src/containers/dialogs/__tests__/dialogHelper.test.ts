@@ -1,7 +1,30 @@
+import {initLanguage} from '../../../i18n/i18n';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {normalizedStatusChangelogs} from '../dialogHelper';
+import {normalizedStatusChangelogs, titleOf} from '../dialogHelper';
 
 describe('dialogSelectors', () => {
+
+  describe('titleOf', () => {
+
+    beforeEach(() => {
+      initLanguage({code: 'en', name: 'english'});
+    });
+
+    it('prints out default message when no flags are available', () => {
+      expect(titleOf([])).toEqual('no');
+    });
+
+    it('renders flags with one item', () => {
+      expect(titleOf([{title: 'has error'}])).toEqual('has error');
+    });
+
+    it('renders all flags and joins them', () => {
+      const flags = [{title: 'has error'}, {title: 'ok'}, {title: 'fixed'}];
+
+      expect(titleOf(flags)).toEqual('has error, ok, fixed');
+    });
+
+  });
 
   describe('normalized status changelogs for a given gateway', () => {
 

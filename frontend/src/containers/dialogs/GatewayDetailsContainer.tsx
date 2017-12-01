@@ -23,7 +23,7 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
-import {normalizedStatusChangelogs, renderFlags} from './dialogHelper';
+import {normalizedStatusChangelogs, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
 
@@ -69,7 +69,7 @@ const GatewayDetailsInfo = ({gateway}: OwnProps) => {
           <Row>
             <Info label={translate('collection')} value={<Status id={status.id} name={status.name}/>}/>
             <Info label={translate('interval')} value={'24h'}/>
-            <Info label={translate('flagged for action')} value={renderFlags(flags)}/>
+            <Info label={translate('flagged for action')} value={titleOf(flags)}/>
           </Row>
         </Column>
       </Row>
