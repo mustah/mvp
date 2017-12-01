@@ -203,6 +203,12 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
+    const gateway = gateways[meter.gatewayId];
+    const normalizedGateways: Normalized<Gateway> = {
+      entities: {[gateway.id]: gateway},
+      result: [gateway.id],
+    };
+
     const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
@@ -257,7 +263,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>
-              <Table result={['id1']} entities={{id1: gateways[meter.gatewayId]}}>
+              <Table result={normalizedGateways.result} entities={normalizedGateways.entities}>
                 <TableColumn
                   header={<TableHead>{translate('gateway id')}</TableHead>}
                   renderCell={renderSerial}
