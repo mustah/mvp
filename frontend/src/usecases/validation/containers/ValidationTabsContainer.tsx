@@ -39,11 +39,12 @@ import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import './ValidationTabsContainer.scss';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {MeteringPointDialogContainer} from '../../../containers/dialogs/MeteringPointDialogContainer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapState} from '../../map/mapReducer';
 import {MapContainer} from '../../map/containers/MapContainer';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Dialog} from '../../../components/dialog/Dialog';
+import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -294,11 +295,11 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
   })(selectedOption);
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
-    <MeteringPointDialogContainer
-      meter={map.selectedMarker.options.mapMarker as Meter}
-      displayDialog={map.isClusterDialogOpen}
-      close={closeClusterDialog}
-    />
+    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
+      <MeterDetailsContainer
+        meter={map.selectedMarker.options.mapMarker as Meter}
+      />
+    </Dialog>
   ) : null;
 
   return (

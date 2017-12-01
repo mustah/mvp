@@ -12,6 +12,8 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {OnClick} from '../../../../types/Types';
 import {MapContainer} from '../../../map/containers/MapContainer';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
+import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
+import {Dialog} from '../../../../components/dialog/Dialog';
 
 interface Props {
   markers: any;
@@ -60,11 +62,11 @@ const MapWidgets = (props: StateToProps & DispatchToProps & Props) => {
   const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
-    <MeteringPointDialogContainer
-      meter={map.selectedMarker.options.mapMarker as Meter}
-      displayDialog={map.isClusterDialogOpen}
-      close={closeClusterDialog}
-    />
+    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
+      <MeterDetailsContainer
+        meter={map.selectedMarker.options.mapMarker as Meter}
+      />
+    </Dialog>
   ) : null;
 
   return (

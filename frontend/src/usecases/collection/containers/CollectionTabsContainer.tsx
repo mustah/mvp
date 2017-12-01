@@ -35,11 +35,12 @@ import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 import './CollectionTabsContainer.scss';
-import {GatewayDialogContainer} from '../../../containers/dialogs/GatewayDialogContainer';
 import {MapState} from '../../map/mapReducer';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapContainer} from '../../map/containers/MapContainer';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Dialog} from '../../../components/dialog/Dialog';
+import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -258,11 +259,11 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   })(selectedOption);
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
-    <GatewayDialogContainer
-      gateway={map.selectedMarker.options.mapMarker as Gateway}
-      displayDialog={map.isClusterDialogOpen}
-      close={closeClusterDialog}
-    />
+    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
+      <GatewayDetailsContainer
+        gateway={map.selectedMarker.options.mapMarker as Gateway}
+      />
+    </Dialog>
   ) : null;
 
   return (

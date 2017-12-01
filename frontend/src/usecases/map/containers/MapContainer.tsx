@@ -53,7 +53,6 @@ class Map extends React.Component<StateToProps & OwnProps, any> {
     );
   }
 
-
 }
 
 const toggleScrollWheelZoom = (e) => {
