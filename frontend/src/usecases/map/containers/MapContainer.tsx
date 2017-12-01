@@ -7,18 +7,19 @@ import {Map, TileLayer} from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/rootReducer';
-import {GatewayDialogContainer} from '../../../containers/dialogs/GatewayDialogContainer';
-import {MeteringPointDialogContainer} from '../../../containers/dialogs/MeteringPointDialogContainer';
+import {Dialog} from '../../../components/dialog/Dialog';
 import {Column} from '../../../components/layouts/column/Column';
+import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
+import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
+import {RootState} from '../../../reducers/rootReducer';
+import {DomainModel, GeoPosition} from '../../../state/domain-models/domainModels';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {OnClick} from '../../../types/Types';
 import {openClusterDialog, toggleClusterDialog} from '../mapActions';
 import {ExtendedMarker, MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import './MapContainer.scss';
-import {isNullOrUndefined} from 'util';
-import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {GeoPosition} from '../../../state/domain-models/domainModels';
 
 interface StateToProps {
   map: MapState;
@@ -26,8 +27,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  toggleClusterDialog: () => any;
-  openClusterDialog: (marker: ExtendedMarker) => any;
+  toggleClusterDialog: OnClick;
+  openClusterDialog: (marker: ExtendedMarker) => void;
 }
 
 interface OwnProps {
@@ -35,7 +36,7 @@ interface OwnProps {
      it should only need to know what to do when a marker is clicked
   */
   popupMode: PopupMode;
-  markers: {[key: string]: MapMarker} | MapMarker;
+  markers: DomainModel<MapMarker> | MapMarker;
   height?: number;
   width?: number;
   defaultZoom?: number;
@@ -48,10 +49,10 @@ export const enum PopupMode {
   none,
 }
 
-class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnProps, any> {
+class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnProps> {
+
   render() {
     const {
-      toggleClusterDialog,
       map,
       markers,
       openClusterDialog,
@@ -69,7 +70,7 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       onMarkerClick = () => void(0);
     }
 
-    let tmpMarkers: {[key: string]: MapMarker} = {};
+    let tmpMarkers: DomainModel<MapMarker> = {};
     if (isMapMarker(markers)) {
       tmpMarkers[0] = markers;
     } else {
@@ -185,28 +186,6 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
       }
     };
 
-    let popup;
-
-    if (!isNullOrUndefined(map.selectedMarker) && map.selectedMarker.options) {
-      if (popupMode === PopupMode.gateway) {
-        popup = map.isClusterDialogOpen && (
-          <GatewayDialogContainer
-            gateway={map.selectedMarker.options.mapMarker as Gateway}
-            displayDialog={map.isClusterDialogOpen}
-            close={toggleClusterDialog}
-          />
-        );
-      } else if (popupMode === PopupMode.meterpoint) {
-        popup = map.isClusterDialogOpen && (
-          <MeteringPointDialogContainer
-            meter={map.selectedMarker.options.mapMarker as Meter}
-            displayDialog={map.isClusterDialogOpen}
-            close={toggleClusterDialog}
-          />
-        );
-      }
-    }
-
     const renderCluster = () => leafletMarkers.length > 0 && (
       <MarkerClusterGroup
         markers={leafletMarkers}
@@ -231,10 +210,33 @@ class MapContainer extends React.Component<StateToProps & DispatchToProps & OwnP
           />
           {renderCluster()}
         </Map>
-        {popup}
+        {map.isClusterDialogOpen && this.renderDialog()}
       </Column>
     );
   }
+
+  renderDialog = () => {
+    const {map, toggleClusterDialog} = this.props;
+    if (map.selectedMarker && map.selectedMarker.options) {
+      const {selectedMarker: {options: {mapMarker}}} = map;
+      return (
+        <Dialog isOpen={map.isClusterDialogOpen} close={toggleClusterDialog}>
+          {this.renderDialogContent(mapMarker)}
+        </Dialog>
+      );
+    }
+    return null;
+  }
+
+  renderDialogContent = (mapMarker: Gateway | Meter) => {
+    const {popupMode} = this.props;
+    if (popupMode === PopupMode.gateway) {
+      return <GatewayDetailsContainer gateway={mapMarker as Gateway}/>;
+    } else {
+      return <MeterDetailsContainer meter={mapMarker as Meter}/>;
+    }
+  }
+
 }
 
 const isMapMarker = (obj: any): obj is MapMarker => {

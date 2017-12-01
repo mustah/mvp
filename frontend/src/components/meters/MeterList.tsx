@@ -5,7 +5,7 @@ import {Separator} from '../separators/Separator';
 import {Status} from '../status/Status';
 import {Table, TableColumn} from '../table/Table';
 import {TableHead} from '../table/TableHead';
-import {MeteringPoint} from './MeteringPoint';
+import {MeterListItem} from './MeterListItem';
 import {ListActionsDropdown} from '../actions-dropdown/ListActionsDropdown';
 import {OnClickWithId} from '../../types/Types';
 import {Normalized} from '../../state/domain-models/domainModels';
@@ -17,7 +17,7 @@ interface Props {
 export const MeterList = (props: Normalized<Meter> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
-  const renderMeteringPointCell = (meter: Meter) => <MeteringPoint meter={meter}/>;
+  const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
   const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
   const renderCityName = (meter: Meter) => meter.city.name;
   const renderAddressName = (meter: Meter) => meter.address.name;
@@ -33,7 +33,7 @@ export const MeterList = (props: Normalized<Meter> & Props) => {
     <Table result={result} entities={entities}>
       <TableColumn
         header={<TableHead className="first">{translate('facility')}</TableHead>}
-        renderCell={renderMeteringPointCell}
+        renderCell={renderMeterListItem}
       />
       <TableColumn
         header={<TableHead>{translate('city')}</TableHead>}

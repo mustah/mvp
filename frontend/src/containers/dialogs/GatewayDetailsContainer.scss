@@ -1,0 +1,28 @@
+@import '../../app/variables';
+
+.GatewayDetails {
+
+  .ProductImage {
+    margin-right: $xl-space;
+  }
+
+  .OverView {
+    .Column {
+      margin: 0 $xl-space $lg-space 0;
+
+      .Row:first-child {
+        display: block !important;
+        font-weight: bold;
+        text-transform: lowercase;
+      }
+
+      .Row:first-letter {
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .Address .Column:first-child {
+    margin-right: $space;
+  }
+}

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import {Row} from '../../../../components/layouts/row/Row';
-import {Widget} from './Widget';
+import {DomainModel, GeoPosition} from '../../../../state/domain-models/domainModels';
 import MapContainer, {PopupMode} from '../../../map/containers/MapContainer';
 import {MapMarker} from '../../../map/mapModels';
-import {GeoPosition} from '../../../../state/domain-models/domainModels';
+import {Widget} from './Widget';
 
 interface Props {
   tmp: any;
@@ -13,7 +13,7 @@ export const MapWidgets = (props: Props) => {
   const {tmp} = props;
 
   // TODO retrieve real data
-  const markers: { [key: string]: MapMarker } = {};
+  const markers: DomainModel<MapMarker> = {};
   markers[0] = {
     status: {id: 3, name: 'Fel'},
     address: {id: '', cityId: '', name: ''},

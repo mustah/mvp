@@ -112,3 +112,15 @@ export const paperStyle: React.CSSProperties = {
   paddingBottom: 24,
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.16)',
 };
+
+export const checkbox: React.CSSProperties = {
+  padding: 0,
+  margin: 4,
+  marginLeft: 0,
+};
+
+export const checkboxLabel: React.CSSProperties = {
+  padding: 0,
+  margin: 4,
+  marginTop: 8,
+};

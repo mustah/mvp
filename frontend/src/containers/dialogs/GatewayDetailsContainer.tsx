@@ -1,9 +1,7 @@
 import Checkbox from 'material-ui/Checkbox';
-import Dialog from 'material-ui/Dialog';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {ButtonClose} from '../../components/buttons/ButtonClose';
+import {checkbox, checkboxLabel} from '../../app/themes';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -15,49 +13,40 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {Normalized} from '../../state/domain-models/domainModels';
+import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
-import {OnClick} from '../../types/Types';
+import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
 import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
-import './GatewayDialogContainer.scss';
+import './GatewayDetailsContainer.scss';
 
-interface GatewayDialogProps {
-  displayDialog: boolean;
-  close: OnClick;
+interface OwnProps {
   gateway: Gateway;
 }
 
-interface StateToProps {
-  entities: {[key: string]: Meter};
-}
-
-interface GatewayDialogState {
+interface OwnState {
   selectedTab: TopLevelTab;
 }
 
-class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, GatewayDialogState> {
+interface StateToProps {
+  meters: DomainModel<Meter>;
+}
+
+class GatewayDetails extends React.Component<OwnProps & StateToProps, OwnState> {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      selectedTab: TopLevelTab.values,
-    };
+    this.state = {selectedTab: TopLevelTab.values};
   }
 
   render() {
     const {selectedTab} = this.state;
-    const {displayDialog} = this.props;
-    const {close} = this.props;
-    const {gateway} = this.props;
-    const {entities} = this.props;
+    const {gateway, meters} = this.props;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
     const renderFacility = (item: Meter) => item.facility;
@@ -149,30 +138,8 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
       result: ['id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
     };
 
-    const checkbox: React.CSSProperties = {
-      padding: 0,
-      margin: 5,
-      marginLeft: 0,
-    };
-
-    const checkboxLabel: React.CSSProperties = {
-      padding: 0,
-      margin: 5,
-      marginTop: 10,
-    };
-
-    const changeTab = (option: TopLevelTab) => {
-      this.setState({selectedTab: option});
-    };
-
     return (
-      <Dialog
-        actions={[(<ButtonClose onClick={close}/>)]}
-        autoScrollBodyContent={true}
-        contentClassName="Dialog"
-        onRequestClose={close}
-        open={displayDialog}
-      >
+      <div className="GatewayDetails">
         <Row className="Column-space-between">
           <Column>
             <MainTitle>{translate('gateway details')}</MainTitle>
@@ -251,7 +218,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
         <Row>
           <Tabs className="full-width">
             <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+              <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
                 <Tab tab={TopLevelTab.values} title={translate('meter')}/>
                 <Tab tab={TopLevelTab.log} title={translate('status log')}/>
                 <Tab tab={TopLevelTab.map} title={translate('map')}/>
@@ -259,7 +226,7 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
               <TabSettings/>
             </TabTopBar>
             <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
-              <Table result={gateway.meterIds} entities={entities}>
+              <Table result={gateway.meterIds} entities={meters}>
                 <TableColumn
                   header={<TableHead className="first">{translate('meter')}</TableHead>}
                   renderCell={renderFacility}
@@ -298,18 +265,19 @@ class GatewayDialog extends React.Component<GatewayDialogProps & StateToProps, G
             </TabContent>
           </Tabs>
         </Row>
-      </Dialog>
+      </div>
     );
+  }
+
+  changeTab = (tab: TopLevelTab) => {
+    this.setState({selectedTab: tab});
   }
 }
 
 const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
   return {
-    entities: getMeterEntities(meters),
+    meters: getMeterEntities(meters),
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({}, dispatch);
-
-export const GatewayDialogContainer =
-  connect<StateToProps, {}, GatewayDialogProps>(mapStateToProps, mapDispatchToProps)(GatewayDialog);
+export const GatewayDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(GatewayDetails);
