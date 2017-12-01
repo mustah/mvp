@@ -1,17 +1,16 @@
 package com.elvaco.mvp.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringPointRepositoryTest extends IntegrationTest {
 
@@ -36,26 +35,30 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
   @Test
   public void containsInPropertyCollection() throws Exception {
     UserPropertyDto user = new UserPropertyDto("abc123");
-    assertThat(repository.containsInPropertyCollection(new PropertyCollectionDto(user))).isNotEmpty();
+    assertThat(repository.containsInPropertyCollection(
+        new PropertyCollectionDto(user))).isNotEmpty();
   }
 
   @Test
   public void containsProjectInPropertyCollection() {
     UserPropertyDto user = new UserPropertyDto();
     user.project = "Under construction";
-    assertThat(repository.containsInPropertyCollection(new PropertyCollectionDto(user))).isNotEmpty();
+    assertThat(repository.containsInPropertyCollection(
+        new PropertyCollectionDto(user))).isNotEmpty();
   }
 
   @Test
   public void containsFullUserPropertyCollection() {
     UserPropertyDto user = new UserPropertyDto("abc123", "Under construction");
-    assertThat(repository.containsInPropertyCollection(new PropertyCollectionDto(user))).isNotEmpty();
+    assertThat(repository.containsInPropertyCollection(
+        new PropertyCollectionDto(user))).isNotEmpty();
   }
 
   @Test
   public void fullUserRequestModelDoesNotContainInPropertyCollection() {
     UserPropertyDto user = new UserPropertyDto("abc123", "building does not exist yet");
-    assertThat(repository.containsInPropertyCollection(new PropertyCollectionDto(user))).isEmpty();
+    assertThat(repository.containsInPropertyCollection(
+        new PropertyCollectionDto(user))).isEmpty();
   }
 
   @Test

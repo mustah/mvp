@@ -1,11 +1,10 @@
 package com.elvaco.mvp.api;
 
-import com.elvaco.mvp.testdata.IntegrationTest;
-import org.junit.Test;
-
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.elvaco.mvp.testdata.IntegrationTest;
+import java.util.List;
+import org.junit.Test;
 
 public class CollectionControllerTest extends IntegrationTest {
 

@@ -1,18 +1,17 @@
 package com.elvaco.mvp.testdata;
 
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import static com.elvaco.mvp.constants.Constants.AUTHORIZATION;
+import static java.util.Collections.singletonList;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
-import static com.elvaco.mvp.constants.Constants.AUTHORIZATION;
-import static java.util.Collections.singletonList;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public final class RestClient {
 
@@ -24,7 +23,7 @@ public final class RestClient {
     this.template = new TestRestTemplate(new RestTemplate());
   }
 
-  public String getBaseURL() {
+  public String getBaseUrl() {
     return baseUrl;
   }
 
@@ -37,12 +36,15 @@ public final class RestClient {
   }
 
   public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
-    ParameterizedTypeReference<RestResponsePage<T>> responseType = new ParameterizedTypeReference<RestResponsePage<T>>() {
-      public Type getType() {
-        return new ParameterizedTypeReferenceImpl((ParameterizedType) super.getType(), new Type[] {pagedClass});
-      }
-    };
-    ResponseEntity<RestResponsePage<T>> r = template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    ParameterizedTypeReference<RestResponsePage<T>> responseType =
+        new ParameterizedTypeReference<RestResponsePage<T>>() {
+          public Type getType() {
+            return new ParameterizedTypeReferenceImpl(
+                (ParameterizedType) super.getType(), new Type[] {pagedClass});
+          }
+        };
+    ResponseEntity<RestResponsePage<T>> r =
+        template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
     return r;
   }
 

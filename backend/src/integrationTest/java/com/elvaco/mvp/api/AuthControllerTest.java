@@ -1,5 +1,7 @@
 package com.elvaco.mvp.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.elvaco.mvp.dto.ErrorMessageDto;
 import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -9,8 +11,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
 

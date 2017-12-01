@@ -1,23 +1,22 @@
 package com.elvaco.mvp.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.repository.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class MeteringPointControllerTest extends IntegrationTest {

@@ -1,5 +1,7 @@
 package com.elvaco.mvp.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
@@ -8,17 +10,14 @@ import com.elvaco.mvp.repository.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
 import com.elvaco.mvp.testdata.RestResponsePage;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementControllerTest extends IntegrationTest {
   @Autowired
@@ -28,9 +27,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() throws Exception {
-    PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(0L /*fixme: this should be an organisation entity*/,
-        "test-butter-meter-1",
-        "Butter");
+    PhysicalMeterEntity physicalMeterEntity =
+        new PhysicalMeterEntity(0L /*fixme: this should be an organisation entity*/,
+            "test-butter-meter-1",
+            "Butter");
     meterRepository.save(physicalMeterEntity);
     Stream.of(
         new MeasurementEntity(
@@ -53,8 +53,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void MeasurementsRetrievableAtEndpoint() {
-    ResponseEntity<RestResponsePage<MeasurementDto>> responseEntity = rest().getPage("/measurements", MeasurementDto.class);
+  public void measurementsRetrievableAtEndpoint() {
+    ResponseEntity<RestResponsePage<MeasurementDto>> responseEntity =
+        rest().getPage("/measurements", MeasurementDto.class);
 
     RestResponsePage<MeasurementDto> measurementsPage = responseEntity.getBody();
     Page<MeasurementDto> page = measurementsPage.pageImpl();
@@ -63,7 +64,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void MeasurementRetrievableById() {
+  public void measurementRetrievableById() {
     MeasurementDto measurement = rest().get("/measurements/1", MeasurementDto.class).getBody();
     assertThat(measurement.id).isEqualTo(1L);
     assertThat(measurement.quantity).isEqualTo("Butter temperature");
@@ -71,8 +72,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void MeasurementUnitScaled() {
-    ResponseEntity<RestResponsePage<MeasurementDto>> responseEntity = rest().getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class);
+  public void measurementUnitScaled() {
+    ResponseEntity<RestResponsePage<MeasurementDto>> responseEntity =
+        rest().getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class);
 
     RestResponsePage<MeasurementDto> measurementsPage = responseEntity.getBody();
     Page<MeasurementDto> page = measurementsPage.pageImpl();
@@ -83,8 +85,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void MeasurementLinksToItsPhysicalMeter() {
+  public void measurementLinksToItsPhysicalMeter() {
     MeasurementDto measurement = rest().get("/measurements/1", MeasurementDto.class).getBody();
-    assertThat(measurement.physicalMeter.getHref()).isEqualTo(restClient().getBaseURL() + "/physical-meters/1");
+    assertThat(measurement.physicalMeter.getHref())
+        .isEqualTo(restClient().getBaseUrl() + "/physical-meters/1");
   }
 }
