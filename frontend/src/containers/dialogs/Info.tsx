@@ -13,6 +13,6 @@ interface InfoProps {
 export const Info = ({label, value}: InfoProps) => (
   <Column className="Info">
     <Row><Normal className="Info-label">{label}</Normal></Row>
-    <Row><Bold>{value}</Bold></Row>
+    <Row><Bold className="first-uppercase">{value}</Bold></Row>
   </Column>
 );
