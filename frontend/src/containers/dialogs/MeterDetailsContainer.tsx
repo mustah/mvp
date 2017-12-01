@@ -23,10 +23,12 @@ import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
-import MapContainer, {PopupMode} from '../../usecases/map/containers/MapContainer';
 import {renderFlags} from './dialogHelper';
 import './MeterDetailsContainer.scss';
 import {checkbox, checkboxLabel} from '../../app/themes';
+import './MeteringPointDialogContainer.scss';
+import {Map} from '../../usecases/map/containers/Map';
+import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 
 interface OwnProps {
   meter: Meter;
@@ -348,7 +350,9 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
               </Table>
             </TabContent>
             <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-              <MapContainer height={400} markers={meter} viewCenter={meter.position} popupMode={PopupMode.none}/>
+              <Map height={400} viewCenter={meter.position}>
+                <ClusterContainer markers={meter}/>
+              </Map>
             </TabContent>
             <TabContent tab={TopLevelTab.connectedGateways} selectedTab={selectedTab}>
               <Row>

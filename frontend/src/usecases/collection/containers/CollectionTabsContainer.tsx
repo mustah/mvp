@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Dialog} from '../../../components/dialog/Dialog';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
@@ -15,6 +16,7 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
@@ -31,8 +33,11 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabsContainerDispatchToProps, TabsContainerStateToProps, TopLevelTab} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, OnClickWithId, uuid} from '../../../types/Types';
-import MapContainer, {PopupMode} from '../../map/containers/MapContainer';
+import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Map} from '../../map/containers/Map';
+import {closeClusterDialog} from '../../map/mapActions';
+import {MapState} from '../../map/mapReducer';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 import './CollectionTabsContainer.scss';
@@ -43,12 +48,14 @@ interface StateToProps extends TabsContainerStateToProps {
   paginatedList: uuid[];
   pagination: Pagination;
   selectedEntities: uuid[];
+  map: MapState;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
   addSelection: (searchParameters: SelectionParameter) => void;
   selectEntryAdd: OnClickWithId;
+  closeClusterDialog: OnClick;
 }
 
 /**
@@ -76,6 +83,8 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     tabs,
     addSelection,
     selectEntryAdd,
+    map,
+    closeClusterDialog,
   } = props;
 
   // [1] from http://materialuicolors.co/ at level 600
@@ -249,6 +258,14 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     );
   })(selectedOption);
 
+  const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
+    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
+      <GatewayDetailsContainer
+        gateway={map.selectedMarker.options.mapMarker as Gateway}
+      />
+    </Dialog>
+  ) : null;
+
   return (
     <Tabs>
       <TabTopBar>
@@ -267,13 +284,16 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
-        <MapContainer markers={entities} popupMode={PopupMode.gateway}/>
+        <Map>
+          <ClusterContainer markers={entities}/>
+        </Map>
+        {dialog}
       </TabContent>
     </Tabs>
   );
 };
 
-const mapStateToProps = ({ui, domainModels: {gateways}}: RootState): StateToProps => {
+const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateToProps => {
   const pagination = getCollectionPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
@@ -283,6 +303,7 @@ const mapStateToProps = ({ui, domainModels: {gateways}}: RootState): StateToProp
     selectedEntities: getResultDomainModels(gateways),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
     pagination,
+    map,
   };
 };
 
@@ -292,6 +313,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   paginationChangePage: changePaginationCollection,
   addSelection,
   selectEntryAdd,
+  closeClusterDialog,
 }, dispatch);
 
 export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);

@@ -5,6 +5,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {SelectedIndicatorWidgetProps} from '../../../components/indicators/SelectableIndicatorWidgets';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
+import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageContainer} from '../../../containers/PageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
@@ -14,11 +15,10 @@ import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
-import {MapWidgets} from '../components/widgets/MapWidgets';
+import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
-import {Loader} from '../../../components/loading/Loader';
 
 interface StateToProps extends SelectedIndicatorWidgetProps {
   isFetching: boolean;
@@ -53,7 +53,7 @@ class DashboardContainerComponent extends React.Component<Props> {
         <Loader isFetching={isFetching}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgets tmp={meters}/>
+            <MapWidgetsContainer markers={meters}/>
           </Column>
         </Loader>
       </PageContainer>
