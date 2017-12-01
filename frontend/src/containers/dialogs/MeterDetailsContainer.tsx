@@ -28,6 +28,7 @@ import {Map} from '../../usecases/map/containers/Map';
 import {titleOf} from './dialogHelper';
 import './MeterDetailsContainer.scss';
 import './MeteringPointDialogContainer.scss';
+import {checkbox, checkboxLabel} from '../../app/themes';
 
 interface OwnProps {
   meter: Meter;
@@ -373,7 +374,7 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
     );
   }
 
-  changeTab = (option: TopLevelTab) => {
+  changeTab = (option: TabName) => {
     this.setState({selectedTab: option});
   }
 }

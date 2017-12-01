@@ -25,7 +25,7 @@ export interface TabsState {
 }
 
 export interface TabSelection {
-  tab: TopLevelTab;
+  tab: TabName;
   useCase: string;
   option?: string;
 }

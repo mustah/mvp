@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Dialog} from '../../../components/dialog/Dialog';
 import {MeterList} from '../../../components/meters/MeterList';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -12,11 +13,7 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {
-  TabName,
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-} from '../../../state/ui/tabs/tabsModels';
+import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
@@ -24,7 +21,10 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {
-  getMeterEntities, getMetersStatusAlarm, getMetersStatusOk, getMetersStatusUnknown,
+  getMeterEntities,
+  getMetersStatusAlarm,
+  getMetersStatusOk,
+  getMetersStatusUnknown,
   getMetersTotal,
 } from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
@@ -33,18 +33,16 @@ import {changePaginationValidation} from '../../../state/ui/pagination/paginatio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Map} from '../../map/containers/Map';
+import {closeClusterDialog} from '../../map/mapActions';
+import {MapState} from '../../map/mapReducer';
 import {selectEntryAdd} from '../../report/reportActions';
 import {Overview} from '../components/Overview';
 import {OverviewHeader} from '../components/OverviewHeader';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import {closeClusterDialog} from '../../map/mapActions';
-import {MapState} from '../../map/mapReducer';
-import {Map} from '../../map/containers/Map';
-import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {Dialog} from '../../../components/dialog/Dialog';
-import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;

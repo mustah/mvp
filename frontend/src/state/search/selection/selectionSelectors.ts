@@ -1,4 +1,5 @@
 import {createSelector} from 'reselect';
+import {getNameTranslation} from '../../../services/translationService';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
@@ -15,8 +16,6 @@ import {
   SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
-import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
-import {getNameTranslation} from '../../../services/translationService';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
