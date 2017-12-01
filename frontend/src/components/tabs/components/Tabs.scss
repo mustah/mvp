@@ -64,12 +64,17 @@
       }
     }
 
+    .Wrapper-indent {
+      padding: 0 $space;
+    }
+
     // To get correct placement of TabSettings if there are no options.
     .TabHeaders + .TabSettings {
       flex: 1;
     }
   }
 }
+
 
 .TabSettings {
   padding-right: $space;

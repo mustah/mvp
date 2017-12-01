@@ -8,6 +8,7 @@ export interface Meter extends Location {
   facility: string;
   alarm: string;
   flags: Flag[];
+  flagged: boolean;
   medium: string;
   manufacturer: string;
   statusChanged?: string;
@@ -47,3 +48,15 @@ export interface SelectionTreeData {
   result: DomainModel<uuid[]>;
   entities: SelectionTreeModel;
 }
+
+export const enum meterStatus {
+  ok = 0,
+  alarm = 3,
+  unknown = 4,
+}
+
+export const meterStatusLabels =  {
+  [meterStatus.ok]: 'ok',
+  [meterStatus.alarm]: 'alarms',
+  [meterStatus.unknown]: 'unknown',
+};

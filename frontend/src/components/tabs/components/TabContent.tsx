@@ -6,15 +6,16 @@ export interface TabContentProps {
   tab: TabName;
   selectedTab: TabName;
   children: any;
+  className?: string;
 }
 
 export const TabContent = (props: TabContentProps) => {
-  const {tab, selectedTab, children} = props;
+  const {tab, selectedTab, children, className} = props;
   if (selectedTab !== tab) {
     return null;
   }
   return (
-    <Column className="TabContent">
+    <Column className={className}>
       {children}
     </Column>
   );

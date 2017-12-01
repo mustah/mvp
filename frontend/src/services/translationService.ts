@@ -25,7 +25,7 @@ export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterNa
 const meterStatus = (idName: IdNamed) => {
   const statuses = {
     0: translate('ok'),
-    3: translate('fault'),
+    3: translate('alarm'),
     4: translate('unknown'),
   };
   return statuses[idName.id] || idName.name;

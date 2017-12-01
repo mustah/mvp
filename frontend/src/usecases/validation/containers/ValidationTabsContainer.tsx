@@ -2,12 +2,8 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
-import {Row, RowRight} from '../../../components/layouts/row/Row';
-import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {MeterList} from '../../../components/meters/MeterList';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
-import {PieChartSelector, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -17,17 +13,20 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {
+  TabName,
   TabsContainerDispatchToProps,
   TabsContainerStateToProps,
-  TabName,
 } from '../../../state/ui/tabs/tabsModels';
 import {RootState} from '../../../reducers/rootReducer';
 import {suffix} from '../../../services/formatters';
 import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {
+  getMeterEntities, getMetersStatusAlarm, getMetersStatusOk, getMetersStatusUnknown,
+  getMetersTotal,
+} from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
@@ -35,10 +34,10 @@ import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationM
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import './ValidationTabsContainer.scss';
+import {Overview} from '../components/Overview';
+import {OverviewHeader} from '../components/OverviewHeader';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapState} from '../../map/mapReducer';
@@ -52,7 +51,10 @@ interface StateToProps extends TabsContainerStateToProps {
   entities: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
-  selectedEntities: uuid[];
+  meters: uuid[];
+  metersStatusOk: uuid[];
+  metersStatusAlarm: uuid[];
+  metersStatusUnknown: uuid[];
   map: MapState;
 }
 
@@ -63,18 +65,8 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   closeClusterDialog: OnClick;
 }
 
-/**
- * Examples:
- * - incProp({}, 'hello') => {hello: 1}
- * - incProp({hello: 2}, 'hello') => {hello: 3}
- *
- * @param obj
- * @param {string} prop
- */
-const incProp = (obj: any, prop: string): void =>
-  typeof obj[prop] === 'undefined' ? obj[prop] = 1 : obj[prop] = obj[prop] + 1;
+const ValidationTabs = (props: StateToProps & DispatchToProps) => {
 
-const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
@@ -82,7 +74,10 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     pagination,
     paginationChangePage,
     paginatedList,
-    selectedEntities,
+    meters,
+    metersStatusOk,
+    metersStatusAlarm,
+    metersStatusUnknown,
     entityCount,
     changeTabOption,
     tabs,
@@ -92,13 +87,15 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     closeClusterDialog,
   } = props;
 
-  // [1] from http://materialuicolors.co/ at level 600
-  const colors: [string[]] = [
-    ['#E91E63', '#fce8cc', '#3F51B5', '#2196F3', '#009688'],
-    ['#1E88E5', '#FDD835', '#D81B60', '#00897B'],
-    ['#b7e000', '#f7be29', '#ed4200'],
-  ];
+  // TODO: this should not be necessary.
+  const counts = {
+    all: meters.length,
+    ok: metersStatusOk.length,
+    alarm: metersStatusAlarm.length,
+    unknown: metersStatusUnknown.length,
+  };
 
+  const {selectedOption} = tabs.overview;
   const headings = {
     all: [
       translate('no meters'),
@@ -118,85 +115,24 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
     ],
   };
 
-  // TODO move this into a backend, it will be too number-crunchy for the front end to handle with big numbers
-  const categories = () => ({flagged: {}, cities: {}, manufacturers: {}, media: {}, status: {}, alarms: {}});
-
-  // neither Object.assign({}, categories) nor {...categories} clones values, they clone references, which is a no no
-  const liveData = {
-    all: categories(),
-    ok: categories(),
-    unknown: categories(),
-    alarms: categories(),
-  };
-
-  const statusLabelOf = (id: uuid) => {
-    if (id === 4) {
-      return 'unknown';
-    } else if (id === 3) {
-      return 'alarms';
-    } else {
-
-      return 'ok';
+  const metersByStatus = (selectedOption: string) => {
+    switch (selectedOption) {
+      case 'ok':
+        return metersStatusOk;
+      case 'alarm':
+        return metersStatusAlarm;
+      case 'unknown':
+        return metersStatusUnknown;
+      default:
+        return meters;
     }
   };
-
-  // categorize the information into a format that's easy to manipulate ...
-  const counts = {all: 0, ok: 0, unknown: 0, alarms: 0};
-  selectedEntities.forEach((id) => {
-    const meter = entities[id];
-    const normalizedStatus = statusLabelOf(meter.status.id);
-
-    incProp(counts, 'all');
-
-    incProp(liveData.all.cities, meter.city.name);
-    incProp(liveData.all.manufacturers, meter.manufacturer);
-    incProp(liveData.all.media, meter.medium);
-    incProp(liveData.all.status, meter.status.name);
-    incProp(liveData.all.alarms, meter.alarm);
-
-    incProp(counts, normalizedStatus);
-
-    incProp(liveData[normalizedStatus].cities, meter.city.name);
-    if (meter.flags.length) {
-      meter.flags.map((flag: Flag) => {
-        incProp(liveData.all.flagged, flag.title);
-        incProp(liveData[normalizedStatus].flagged, flag.title);
-      });
-    } else {
-      incProp(liveData.all.flagged, translate('none'));
-      incProp(liveData[normalizedStatus].flagged, translate('none'));
-    }
-    incProp(liveData[normalizedStatus].manufacturers, meter.manufacturer);
-    incProp(liveData[normalizedStatus].media, meter.medium);
-    incProp(liveData[normalizedStatus].status, meter.status.name);
-    incProp(liveData[normalizedStatus].alarms, meter.alarm);
-  });
-
-  const {selectedOption} = tabs.overview;
-  // ... then normalize the current tab, for the graphs to consume
-  const status: PieData[] = Object.entries(liveData[selectedOption].status).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
-
-  const flagged: PieData[] = Object.entries(liveData[selectedOption].flagged).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
-
-  const alarms: PieData[] = Object.entries(liveData[selectedOption].alarms).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
-
-  const cities: PieData[] = Object.entries(liveData[selectedOption].cities).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
-
-  const manufacturers: PieData[] = Object.entries(liveData[selectedOption].manufacturers).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
-
-  const media: PieData[] = Object.entries(liveData[selectedOption].media).map((entry) =>
-    ({name: entry[0], value: entry[1]}));
 
   const overviewTabOptions: any[] = [
     {id: 'all', label: translate('all')},
     {id: 'ok', label: translate('ok')},
     {id: 'unknown', label: translate('unknown')},
-    {id: 'alarms', label: translate('alarms')},
+    {id: 'alarm', label: translate('alarms')},
   ].map((section) => {
     section.label = `${section.label}: ${suffix(counts[section.id])}`;
     return section;
@@ -208,93 +144,50 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
       title={section.label}
     />));
 
-  const selectStatus = (status: string) => {
-    const statusId = status === 'OK' ? 0 : 3;
+  const selectStatus = (status: IdNamed) => {
     addSelection({
       parameter: ParameterName.meterStatuses,
-      id: statusId,
-      name: status,
+      id: status.id,
+      name: status.name,
     });
   };
 
-  const selectCity = (city: string) => {
+  const selectCity = (city: IdNamed) => {
     addSelection({
       parameter: ParameterName.cities,
-      id: city,
-      name: city,
+      id: city.id,
+      name: city.name,
     });
   };
 
-  const selectManufacturer = (manufacturer: string) => {
+  const selectManufacturer = (manufacturer: IdNamed) => {
     addSelection({
       parameter: ParameterName.manufacturers,
-      id: manufacturer,
-      name: manufacturer,
+      id: manufacturer.id,
+      name: manufacturer.name,
     });
   };
 
-  const overviewTabContents = ((tabName: string): Children => {
-    const count = counts[tabName];
-    const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
+  const count = counts[selectedOption];
+  const header = count ? `${headings[selectedOption][1]}: ${count}` : headings[selectedOption][0];
 
-    const chartRow = count > 0 ? (
-      <Row>
-        <PieChartSelector
-          heading={translate('status')}
-          data={status}
-          colors={colors[0]}
-          onClick={selectStatus}
-        />
-        <PieChartSelector
-          heading={translate('flagged for action')}
-          data={flagged}
-          colors={colors[1]}
-        />
-        <PieChartSelector
-          heading={translate('alarm', {count: alarms.length})}
-          data={alarms}
-          colors={colors[0]}
-        />
-        <PieChartSelector
-          heading={translate('cities')}
-          data={cities}
-          colors={colors[1]}
-          onClick={selectCity}
-        />
-        <PieChartSelector
-          heading={translate('manufacturer')}
-          data={manufacturers}
-          colors={colors[0]}
-          onClick={selectManufacturer}
-        />
-        <PieChartSelector
-          heading={translate('medium')}
-          data={media}
-          colors={colors[1]}
-        />
-      </Row>
-    ) : null;
+  const overviewHeader = (
+    <OverviewHeader header={header}>
+      <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+        {overviewTabOptions}
+      </TabOptions>
+    </OverviewHeader>
+  );
 
-    return (
-      <WrapperIndent>
-        <Row className="StatusControl">
-          <Column>
-            <h2 className="first-uppercase">{header}</h2>
-          </Column>
-          <Column className="flex-1"/>
-          <ColumnCenter className="StatusTabOptions">
-            <RowRight>
-              <div className="first-uppercase">{translate('filter on status') + ':'}</div>
-              <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
-                {overviewTabOptions}
-              </TabOptions>
-            </RowRight>
-          </ColumnCenter>
-        </Row>
-        {chartRow}
-      </WrapperIndent>
-    );
-  })(selectedOption);
+  const overview = count > 0 ? (
+    <Overview
+      selectStatus={selectStatus}
+      selectCity={selectCity}
+      selectManufacturer={selectManufacturer}
+      meters={metersByStatus(selectedOption)}
+      metersLookup={entities}
+    />
+  ) : null;
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
@@ -314,8 +207,9 @@ const ValidationTabsContainer = (props: StateToProps & DispatchToProps) => {
         </TabHeaders>
         <TabSettings/>
       </TabTopBar>
-      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        {overviewTabContents}
+      <TabContent tab={TabName.overview} selectedTab={selectedTab} className="Wrapper-indent">
+        {overviewHeader}
+        {overview}
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <MeterList result={paginatedList} entities={entities} selectEntryAdd={selectEntryAdd}/>
@@ -338,7 +232,10 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
     tabs: getTabs(ui.tabs.validation),
     entityCount: getMetersTotal(meters),
     entities: getMeterEntities(meters),
-    selectedEntities: getResultDomainModels(meters),
+    meters: getResultDomainModels(meters),
+    metersStatusOk: getMetersStatusOk(meters),
+    metersStatusAlarm: getMetersStatusAlarm(meters),
+    metersStatusUnknown: getMetersStatusUnknown(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
     map,
@@ -354,4 +251,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,
 }, dispatch);
 
-export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
+export const ValidationTabsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);

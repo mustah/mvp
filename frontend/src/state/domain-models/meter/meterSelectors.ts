@@ -5,7 +5,7 @@ import {ParameterName} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
   Meter,
-  MetersState,
+  MetersState, meterStatus,
   SelectionTreeData,
   SelectionTreeItem,
   SelectionTreeItemProps,
@@ -78,7 +78,7 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
       });
     });
     // TODO: Perhaps move this moderation into the selectionTreeItemsList to speed up performance.
-    selectionTree.addressClusters.map((item) => {
+    selectionTree.addressClusters.forEach((item) => {
       item.name = item.name + '...(' + item.childNodes.ids.length + ')';
     });
 
@@ -115,9 +115,14 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
   }
 };
 
-const getMeterStatusOverview = (meterStatus: uuid) => createSelector<MetersState, uuid[], DomainModel<Meter>, uuid[]>(
-  getResultDomainModels,
-  getMeterEntities,
-  (meters: uuid[], meterLookup: DomainModel<Meter>) =>
-    meters.filter(meterId => meterLookup[meterId].status.id === meterStatus),
-);
+const getMetersStatus = (meterStatus: uuid) =>
+  createSelector<MetersState, uuid[], DomainModel<Meter>, uuid[]>(
+    getResultDomainModels,
+    getMeterEntities,
+    (meters: uuid[], meterLookup: DomainModel<Meter>) =>
+      meters.filter(meterId => meterLookup[meterId].status.id === meterStatus),
+  );
+
+export const getMetersStatusOk = getMetersStatus(meterStatus.ok);
+export const getMetersStatusAlarm = getMetersStatus(meterStatus.alarm);
+export const getMetersStatusUnknown = getMetersStatus(meterStatus.unknown);
