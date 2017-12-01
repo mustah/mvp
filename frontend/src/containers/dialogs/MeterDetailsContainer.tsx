@@ -1,7 +1,7 @@
 import {Checkbox} from 'material-ui';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {IconDistrictHeating} from '../../components/icons/IconDistrictHeating';
+import {checkbox, checkboxLabel} from '../../app/themes';
 import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
@@ -14,7 +14,6 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {Normal} from '../../components/texts/Texts';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
@@ -26,23 +25,174 @@ import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
 import {titleOf} from './dialogHelper';
+import {Info} from './Info';
 import './MeterDetailsContainer.scss';
-import './MeteringPointDialogContainer.scss';
-import {checkbox, checkboxLabel} from '../../app/themes';
+
+// TODO We need to support that a meter is connected to several gateways
+// TODO are these example values too large? i.e. current state, not diff between current and last state
+const meterData: Normalized<any> = {
+  entities: {
+    id0: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Date',
+      value: '2017-11-16 09:34',
+      comment: '',
+    },
+    id1: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Energy',
+      value: '170.97 MWh',
+      comment: '',
+    },
+    id2: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Volume',
+      value: '3109.81 m^3',
+      comment: '',
+    },
+    id3: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Power',
+      value: '1.6 kW',
+      comment: '',
+    },
+    id4: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Volume flow',
+      value: '0.029 m^3/h',
+      comment: '',
+    },
+    id5: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Flow temp.',
+      value: '82.5 Celcius',
+      comment: '',
+    },
+    id6: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 3,
+        name: 'Fel',
+      },
+      quantity: 'Return temp.',
+      value: '33.7 Celcius',
+      comment: '',
+    },
+    id7: {
+      date: '2017-11-16 09:34',
+      status: {
+        id: 0,
+        name: 'OK',
+      },
+      quantity: 'Difference temp.',
+      value: '48.86 Kelvin',
+      comment: '',
+    },
+  },
+  result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
+};
 
 interface OwnProps {
   meter: Meter;
 }
 
 interface StateToProps {
-  entities: DomainModel<Gateway>;
+  gateways: DomainModel<Gateway>;
 }
 
 interface State {
   selectedTab: TabName;
 }
 
-class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
+type Props = StateToProps & OwnProps;
+
+const MeterDetailsInfo = (props: Props) => {
+  const {gateways, meter} = props;
+
+  const renderAlarm = () => meter.alarm !== ':Inget fel:' && (<Info label={translate('alarm')} value={meter.alarm}/>);
+
+  const gateway = gateways[meter.gatewayId];
+  const status = gateway.status;
+
+  return (
+    <Row>
+      <Column className="OverView">
+        <Row>
+          <Column>
+            <Row>
+              <MainTitle>{translate('meter')}</MainTitle>
+            </Row>
+          </Column>
+          <Info label={translate('meter id')} value={meter.id}/>
+          <Info label={translate('product model')} value={meter.manufacturer}/>
+          <Info label={translate('medium')} value={meter.medium}/>
+          <Info label={translate('city')} value={meter.city.name}/>
+          <Info label={translate('address')} value={meter.address.name}/>
+        </Row>
+        <Row>
+          <Column>
+            <Row>
+              <Subtitle>{translate('collection')}</Subtitle>
+            </Row>
+          </Column>
+          <Info
+            label={translate('status')}
+            value={<IconStatus id={status.id} name={status.name}/>}
+          />
+          <Info label={translate('interval')} value="24h"/>
+          <Info label={translate('resolution')} value="1h"/>
+          <Info label={translate('flagged for action')} value={titleOf(gateway.flags)}/>
+        </Row>
+        <Row>
+          <Column>
+            <Row>
+              <Subtitle>{translate('validation')}</Subtitle>
+            </Row>
+          </Column>
+          <Info label={translate('status')} value={<IconStatus id={meter.status.id} name={meter.status.name}/>}/>
+          {renderAlarm()}
+          <Info label={translate('flagged for action')} value={titleOf(meter.flags)}/>
+        </Row>
+        <Row>
+          <Column>
+            <Row>
+              <Subtitle>{translate('labels')}</Subtitle>
+            </Row>
+          </Column>
+          <Info label={translate('sap id')} value={'123234'}/>
+          <Info label={translate('facility id')} value={meter.facility}/>
+          <Info label={translate('measure id')} value={12312312}/>
+        </Row>
+      </Column>
+    </Row>
+  );
+};
+
+class MeterDetailsTabs extends React.Component<Props, State> {
 
   constructor(props) {
     super(props);
@@ -50,339 +200,96 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
   }
 
   render() {
-    const {meter, entities} = this.props;
     const {selectedTab} = this.state;
+    const {meter, gateways} = this.props;
 
-    const renderStatusCell = (item: any) => <Status {...item.status}/>;
+    const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
     const renderDate = (item: any) => item.date;
-    const renderSerial = (item: any) => item.id;
-    const renderSnr = (item: any) => translate('n/a'); // TODO Gateway should hold SNR (Signal Noise Ratio) information
-    const renderAlarm = () => meter.alarm !== ':Inget fel:' && (
-      <Column>
-        <Row>
-          {translate('alarm')}
-        </Row>
-        <Row>
-          {meter.alarm}
-        </Row>
-      </Column>);
-
-    // TODO We need to support that a meter is connected to several gateways
-    // TODO are these example values too large? i.e. current state, not diff between current and last state
-    const meterData: Normalized<any> = {
-      entities: {
-        id0: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Date',
-          value: '2017-11-16 09:34',
-          comment: '',
-        },
-        id1: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Energy',
-          value: '170.97 MWh',
-          comment: '',
-        },
-        id2: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Volume',
-          value: '3109.81 m^3',
-          comment: '',
-        },
-        id3: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Power',
-          value: '1.6 kW',
-          comment: '',
-        },
-        id4: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Volume flow',
-          value: '0.029 m^3/h',
-          comment: '',
-        },
-        id5: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Flow temp.',
-          value: '82.5 Celcius',
-          comment: '',
-        },
-        id6: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 3,
-            name: 'Fel',
-          },
-          quantity: 'Return temp.',
-          value: '33.7 Celcius',
-          comment: '',
-        },
-        id7: {
-          date: '2017-11-16 09:34',
-          status: {
-            id: 0,
-            name: 'OK',
-          },
-          quantity: 'Difference temp.',
-          value: '48.86 Kelvin',
-          comment: '',
-        },
-      },
-      result: ['id0', 'id1', 'id2', 'id3', 'id4', 'id5', 'id6', 'id7'],
-    };
+    const renderSerial = ({id}: Gateway) => id;
+    // TODO Gateway should hold SNR (Signal Noise Ratio) information
+    const renderSignalNoiseRatio = (gateway: Gateway) => translate('n/a');
 
     return (
-      <div>
-        <Row>
-          <Column className="OverView">
+      <Row>
+        <Tabs className="full-width first-letter">
+          <TabTopBar>
+            <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
+              <Tab tab={TabName.values} title={translate('latest value')}/>
+              <Tab tab={TabName.log} title={translate('status log')}/>
+              <Tab tab={TabName.map} title={translate('map')}/>
+              <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
+            </TabHeaders>
+            <TabSettings/>
+          </TabTopBar>
+          <TabContent tab={TabName.values} selectedTab={selectedTab}>
+            <Table {...meterData}>
+              <TableColumn
+                header={<TableHead className="first">{translate('quantity')}</TableHead>}
+                renderCell={renderQuantity}
+              />
+              <TableColumn
+                header={<TableHead>{translate('value')}</TableHead>}
+                renderCell={renderValue}
+              />
+            </Table>
+          </TabContent>
+          <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Row>
-              <Column>
-                <Row>
-                  <MainTitle>{translate('meter')}</MainTitle>
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('meter id')}
-                </Row>
-                <Row>
-                  {meter.id}
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('product model')}
-                </Row>
-                <Row>
-                  {meter.manufacturer}
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('medium')}
-                </Row>
-                <Row>
-                  <IconDistrictHeating color={'#2b6ea3'}/>
-                  {meter.medium}
-                </Row>
-              </Column>
-              <Column className="address">
-                <Row className="capitalize Bold">
-                  {translate('city')}
-                </Row>
-                <Row>
-                  {meter.city.name}
-                </Row>
-              </Column>
-              <Column className="Column-center">
-                <Row className="capitalize Bold">
-                  {translate('address')}
-                </Row>
-                <Row>
-                  {meter.address.name}
-                </Row>
-              </Column>
+              <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
+            <Table {...meterData}>
+              <TableColumn
+                header={<TableHead>{translate('date')}</TableHead>}
+                renderCell={renderDate}
+              />
+              <TableColumn
+                header={<TableHead>{translate('status')}</TableHead>}
+                renderCell={renderStatusCell}
+              />
+            </Table>
+          </TabContent>
+          <TabContent tab={TabName.map} selectedTab={selectedTab}>
+            <Map height={400} viewCenter={meter.position}>
+              <ClusterContainer markers={meter}/>
+            </Map>
+          </TabContent>
+          <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>
-              <Column>
-                <Row>
-                  <Subtitle>{translate('collection')}</Subtitle>
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('status')}
-                </Row>
-                <Row>
-                  {/*TODO A meter could be found on serveral gateways*/}
-                  <IconStatus id={entities[meter.gatewayId].status.id} name={entities[meter.gatewayId].status.name}/>
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('interval')}
-                </Row>
-                <Row>
-                  24h
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('resolution')}
-                </Row>
-                <Row>
-                  1h
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('flagged for action')}
-                </Row>
-                <Row>
-                  {/*TODO A meter could be found on serveral gateways*/}
-                  <Normal className="first-uppercase">
-                    {titleOf(entities[meter.gatewayId].flags)}
-                  </Normal>
-                </Row>
-              </Column>
-            </Row>
-            <Row>
-              <Column>
-                <Row>
-                  <Subtitle>{translate('validation')}</Subtitle>
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('status')}
-                </Row>
-                <Row>
-                  <IconStatus id={meter.status.id} name={meter.status.name}/>
-                </Row>
-              </Column>
-              {renderAlarm()}
-              <Column>
-                <Row>
-                  {translate('flagged for action')}
-                </Row>
-                <Row>
-                  <Normal className="first-uppercase">
-                    {titleOf(meter.flags)}
-                  </Normal>
-                </Row>
-              </Column>
-            </Row>
-            <Row>
-              <Column>
-                <Row>
-                  <Subtitle>{translate('labels')}</Subtitle>
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('sap id')}
-                </Row>
-                <Row>
-                  123234
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('facility id')}
-                </Row>
-                <Row>
-                  {meter.facility}
-                </Row>
-              </Column>
-              <Column>
-                <Row>
-                  {translate('measure id')}
-                </Row>
-                <Row>
-                  12312312
-                </Row>
-              </Column>
-            </Row>
-          </Column>
-        </Row>
-        <Row>
-          <Tabs className="full-width first-letter">
-            <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
-                <Tab tab={TabName.values} title={translate('latest value')}/>
-                <Tab tab={TabName.log} title={translate('status log')}/>
-                <Tab tab={TabName.map} title={translate('map')}/>
-                <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
-              </TabHeaders>
-              <TabSettings/>
-            </TabTopBar>
-            <TabContent tab={TabName.values} selectedTab={selectedTab}>
-              <Table {...meterData}>
+              <Table result={['id1']} entities={{id1: gateways[meter.gatewayId]}}>
                 <TableColumn
-                  header={<TableHead className="first">{translate('quantity')}</TableHead>}
-                  renderCell={renderQuantity}
+                  header={<TableHead>{translate('gateway id')}</TableHead>}
+                  renderCell={renderSerial}
                 />
                 <TableColumn
-                  header={<TableHead>{translate('value')}</TableHead>}
-                  renderCell={renderValue}
+                  header={<TableHead>{translate('latest snr')}</TableHead>}
+                  renderCell={renderSignalNoiseRatio}
                 />
               </Table>
-            </TabContent>
-            <TabContent tab={TabName.log} selectedTab={selectedTab}>
-              <Row>
-                <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
-              </Row>
-              <Table {...meterData}>
-                <TableColumn
-                  header={<TableHead>{translate('date')}</TableHead>}
-                  renderCell={renderDate}
-                />
-                <TableColumn
-                  header={<TableHead>{translate('status')}</TableHead>}
-                  renderCell={renderStatusCell}
-                />
-              </Table>
-            </TabContent>
-            <TabContent tab={TabName.map} selectedTab={selectedTab}>
-              <Map height={400} viewCenter={meter.position}>
-                <ClusterContainer markers={meter}/>
-              </Map>
-            </TabContent>
-            <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
-              <Row>
-                <Table result={['id1']} entities={{id1: entities[meter.gatewayId]}}>
-                  <TableColumn
-                    header={<TableHead>{translate('gateway id')}</TableHead>}
-                    renderCell={renderSerial}
-                  />
-                  <TableColumn
-                    header={<TableHead>{translate('latest snr')}</TableHead>}
-                    renderCell={renderSnr}
-                  />
-                </Table>
-              </Row>
-            </TabContent>
-          </Tabs>
-        </Row>
-      </div>
+            </Row>
+          </TabContent>
+        </Tabs>
+      </Row>
     );
   }
 
-  changeTab = (option: TabName) => {
-    this.setState({selectedTab: option});
+  changeTab = (selectedTab: TabName) => {
+    this.setState({selectedTab});
   }
 }
 
-const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => {
-  return {
-    entities: getGatewayEntities(gateways),
-  };
+const MeterDetails = (props: Props) => {
+  return (
+    <div>
+      <MeterDetailsInfo {...props}/>
+      <MeterDetailsTabs {...props}/>
+    </div>
+  );
 };
+
+const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => ({
+  gateways: getGatewayEntities(gateways),
+});
 
 export const MeterDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(MeterDetails);
