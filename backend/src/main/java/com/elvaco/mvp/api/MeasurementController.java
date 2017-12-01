@@ -2,7 +2,11 @@ package com.elvaco.mvp.api;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.repository.MeasurementRepository;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.ArrayList;
+import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,19 +37,35 @@ public class MeasurementController {
   }
 
   @RequestMapping("")
-  public Page<MeasurementDto> measurements(@Param("quantity") String quantity, @Param("scale")
-      String scale, Pageable pageable) {
-    Page<MeasurementEntity> entityPage = null;
+  public Page<MeasurementDto> measurements(@Param("quantity") String quantity,
+                                           @Param("meterId") Long meterId,
+                                           @Param("scale") String scale,
+                                           Pageable pageable) {
+    QMeasurementEntity q = QMeasurementEntity.measurementEntity;
+    List<BooleanExpression> predicates = new ArrayList<>();
     if (quantity != null) {
-      if (scale != null) {
-        entityPage = repository.findByQuantityScaled(quantity, scale, pageable);
-      } else {
-        entityPage = repository.findByQuantity(quantity, pageable);
-      }
-    } else {
-      entityPage = repository.findAll(pageable);
+      predicates.add(q.quantity.eq(quantity));
     }
-    return entityPage.map(source -> toDto(source));
+
+    if (meterId != null) {
+      predicates.add(q.physicalMeter.id.eq(meterId));
+    }
+
+    BooleanExpression filter = null;
+    if (predicates.size() > 0) {
+      filter = predicates.get(0);
+      for (BooleanExpression p : predicates) {
+        filter = filter.and(p);
+      }
+    }
+
+    Page<MeasurementEntity> page;
+    if (scale != null) {
+      page = repository.findAllScaled(scale, filter, pageable);
+    } else {
+      page = repository.findAll(filter, pageable);
+    }
+    return page.map(source -> toDto(source));
   }
 
   private MeasurementDto toDto(MeasurementEntity measurementEntity) {

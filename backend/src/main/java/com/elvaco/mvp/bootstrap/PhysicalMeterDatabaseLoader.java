@@ -23,7 +23,7 @@ public class PhysicalMeterDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    PhysicalMeterEntity physicalMeterEntity = repository.findOne(3L);
+    PhysicalMeterEntity physicalMeterEntity = repository.findOne(2L);
     if (physicalMeterEntity == null) {
       physicalMeterEntity = new PhysicalMeterEntity(1L /*fixme: this should be an organisation
       entity*/, "test-butter-meter-1", "Butter");
