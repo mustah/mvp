@@ -2,10 +2,18 @@ package com.elvaco.mvp.entity.measurement;
 
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
 import java.util.Date;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Access(AccessType.FIELD)
@@ -29,7 +37,8 @@ public class MeasurementEntity {
   public MeasurementEntity() {
   }
 
-  public MeasurementEntity(Date created, String quantity, double value, String unit, PhysicalMeterEntity physicalMeter) {
+  public MeasurementEntity(Date created, String quantity, double value, String unit,
+                           PhysicalMeterEntity physicalMeter) {
     this.created = new Date(created.getTime());
     this.quantity = quantity;
     this.value = new MeasurementUnit(unit, value);

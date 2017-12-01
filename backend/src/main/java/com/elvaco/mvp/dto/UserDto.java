@@ -3,7 +3,7 @@ package com.elvaco.mvp.dto;
 import lombok.ToString;
 
 @ToString
-public class UserDTO {
+public class UserDto {
 
   public Long id;
   public String firstName;

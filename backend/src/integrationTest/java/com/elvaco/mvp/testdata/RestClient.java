@@ -1,32 +1,29 @@
 package com.elvaco.mvp.testdata;
 
+import static com.elvaco.mvp.constants.Constants.AUTHORIZATION;
+import static java.util.Collections.singletonList;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static com.elvaco.mvp.constants.Constants.AUTHORIZATION;
-import static java.util.Collections.singletonList;
-
 public final class RestClient {
 
-  private String baseUrl;
-
   private final TestRestTemplate template;
+  private String baseUrl;
 
   protected RestClient(int serverPort) {
     baseUrl = "http://localhost:" + serverPort + "/api";
     this.template = new TestRestTemplate(new RestTemplate());
   }
 
-  public String getBaseURL() {
+  public String getBaseUrl() {
     return baseUrl;
   }
 
@@ -39,12 +36,15 @@ public final class RestClient {
   }
 
   public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
-    ParameterizedTypeReference<RestResponsePage<T>> responseType = new ParameterizedTypeReference<RestResponsePage<T>>() {
-      public Type getType() {
-        return new ParameterizedTypeReferenceImpl((ParameterizedType) super.getType(), new Type[]{pagedClass});
-      }
-    };
-    ResponseEntity<RestResponsePage<T>> r = template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+    ParameterizedTypeReference<RestResponsePage<T>> responseType =
+        new ParameterizedTypeReference<RestResponsePage<T>>() {
+          public Type getType() {
+            return new ParameterizedTypeReferenceImpl(
+                (ParameterizedType) super.getType(), new Type[] {pagedClass});
+          }
+        };
+    ResponseEntity<RestResponsePage<T>> r =
+        template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
     return r;
   }
 
@@ -57,10 +57,10 @@ public final class RestClient {
 
   public RestClient logout() {
     template.getRestTemplate().setInterceptors(
-      singletonList((request, body, execution) -> {
-        request.getHeaders().remove(AUTHORIZATION);
-        return execution.execute(request, body);
-      }));
+        singletonList((request, body, execution) -> {
+          request.getHeaders().remove(AUTHORIZATION);
+          return execution.execute(request, body);
+        }));
     return this;
   }
 
@@ -70,10 +70,10 @@ public final class RestClient {
 
   private RestClient addHeader(String headerName, String value) {
     template.getRestTemplate().setInterceptors(
-      singletonList((request, body, execution) -> {
-        request.getHeaders().add(headerName, value);
-        return execution.execute(request, body);
-      }));
+        singletonList((request, body, execution) -> {
+          request.getHeaders().add(headerName, value);
+          return execution.execute(request, body);
+        }));
     return this;
   }
 

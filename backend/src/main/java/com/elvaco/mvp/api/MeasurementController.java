@@ -1,6 +1,6 @@
 package com.elvaco.mvp.api;
 
-import com.elvaco.mvp.dto.MeasurementDTO;
+import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.MeasurementRepository;
 import org.modelmapper.ModelMapper;
@@ -18,40 +18,42 @@ public class MeasurementController {
   private final MeasurementRepository repository;
   private final ModelMapper modelMapper;
   private final ControllerEntityLinks entityLinks;
+
   @Autowired
-  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper, ControllerEntityLinks entityLinks) {
+  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper,
+                        ControllerEntityLinks entityLinks) {
     this.repository = repository;
     this.modelMapper = modelMapper;
     this.entityLinks = entityLinks;
   }
 
   @RequestMapping("{id}")
-  public MeasurementDTO measurement(@PathVariable("id") Long id) {
-    return toDTO(repository.findOne(id));
+  public MeasurementDto measurement(@PathVariable("id") Long id) {
+    return toDto(repository.findOne(id));
   }
 
   @RequestMapping("")
-  public Page<MeasurementDTO> measurements(@Param("quantity") String quantity, @Param("scale") String scale, Pageable pageable) {
+  public Page<MeasurementDto> measurements(@Param("quantity") String quantity, @Param("scale")
+      String scale, Pageable pageable) {
     Page<MeasurementEntity> entityPage = null;
     if (quantity != null) {
       if (scale != null) {
         entityPage = repository.findByQuantityScaled(quantity, scale, pageable);
-      }
-      else {
+      } else {
         entityPage = repository.findByQuantity(quantity, pageable);
-    }
-  }
-    else {
+      }
+    } else {
       entityPage = repository.findAll(pageable);
     }
-    return entityPage.map(source -> toDTO(source));
+    return entityPage.map(source -> toDto(source));
   }
 
-  private MeasurementDTO toDTO(MeasurementEntity measurementEntity) {
-    MeasurementDTO dto = modelMapper.map(measurementEntity, MeasurementDTO.class);
+  private MeasurementDto toDto(MeasurementEntity measurementEntity) {
+    MeasurementDto dto = modelMapper.map(measurementEntity, MeasurementDto.class);
     dto.unit = measurementEntity.value.getUnit();
     dto.value = measurementEntity.value.getValue();
-    dto.physicalMeter = entityLinks.linkToSingleResource(measurementEntity.physicalMeter.getClass(), measurementEntity.physicalMeter.id);
+    dto.physicalMeter = entityLinks.linkToSingleResource(
+        measurementEntity.physicalMeter.getClass(), measurementEntity.physicalMeter.id);
     return dto;
   }
 

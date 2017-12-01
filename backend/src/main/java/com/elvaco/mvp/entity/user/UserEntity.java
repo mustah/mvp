@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -28,7 +27,8 @@ public class UserEntity {
    */
   public String company; // TODO : should be an instance of Company once we have such an object!
 
-  public UserEntity() {}
+  public UserEntity() {
+  }
 
   public UserEntity(String firstName, String lastName, String email, String company) {
     this.firstName = firstName;

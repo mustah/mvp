@@ -8,15 +8,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @InMemory
-public class InMemoryDatabaseProvisioningLoader implements CommandLineRunner{
+public class InMemoryDatabaseProvisioningLoader implements CommandLineRunner {
   private JdbcTemplate template;
+
   @Autowired
   public InMemoryDatabaseProvisioningLoader(JdbcTemplate template) {
-    this.template= template;
+    this.template = template;
   }
 
   @Override
   public void run(String... args) throws Exception {
-    template.execute("CREATE ALIAS unit_at FOR \"com.elvaco.mvp.dialect.function.h2.CompatibilityFunctions.unitAt\"");
+    template.execute("CREATE ALIAS unit_at FOR \"com.elvaco.mvp.dialect.function"
+        + ".h2.CompatibilityFunctions.unitAt\"");
   }
 }

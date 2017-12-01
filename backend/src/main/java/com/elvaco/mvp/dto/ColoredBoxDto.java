@@ -1,6 +1,6 @@
 package com.elvaco.mvp.dto;
 
-public class ColoredBoxDTO extends WidgetDTO {
+public class ColoredBoxDto extends WidgetDto {
 
   public String type;
   public String subtitle;

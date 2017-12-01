@@ -16,7 +16,8 @@ public class ValidationEntity {
   public String author;
   public String title;
 
-  public ValidationEntity() {}
+  public ValidationEntity() {
+  }
 
   public ValidationEntity(String author, String title) {
     this.author = author;

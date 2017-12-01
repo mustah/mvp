@@ -20,13 +20,21 @@ apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'application'
 apply plugin: 'findbugs'
+apply plugin: 'checkstyle'
 
 applicationName = 'mvp'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+checkstyle {
+  ignoreFailures = false
+  configFile = file('config/checkstyle/checkstyle.xml')
+  toolVersion = '8.5'
+}
+
+
 tasks.withType(FindBugs) {
-  excludeFilter = file("findbugs/excludeFilter.xml")
+  excludeFilter = file("config/findbugs/excludeFilter.xml")
   reports {
     xml.enabled false
   }

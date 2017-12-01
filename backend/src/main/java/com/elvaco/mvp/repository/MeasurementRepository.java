@@ -10,5 +10,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface MeasurementRepository extends PagingAndSortingRepository<MeasurementEntity, Long> {
   Page<MeasurementEntity> findByQuantity(String quantity, Pageable pageable);
 
-  Page<MeasurementEntity> findByQuantityScaled(String quantity, String scaleDimension, Pageable pageable);
+  Page<MeasurementEntity> findByQuantityScaled(String quantity, String scaleDimension, Pageable
+      pageable);
 }

@@ -1,15 +1,14 @@
 package com.elvaco.mvp.dialect.types;
 
 import com.elvaco.mvp.entity.measurement.MeasurementUnit;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
-import org.springframework.util.ObjectUtils;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
+import org.springframework.util.ObjectUtils;
 
 public abstract class MeasurementUnitType implements UserType {
   @Override
@@ -35,10 +34,13 @@ public abstract class MeasurementUnitType implements UserType {
 
 
   @Override
-  public abstract Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner) throws HibernateException, SQLException;
+  public abstract Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session,
+                                     Object owner) throws HibernateException, SQLException;
 
   @Override
-  public abstract void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session) throws HibernateException, SQLException;
+  public abstract void nullSafeSet(PreparedStatement st, Object value, int index,
+                                   SessionImplementor session) throws HibernateException,
+      SQLException;
 
   @Override
   public Object deepCopy(Object value) throws HibernateException {
