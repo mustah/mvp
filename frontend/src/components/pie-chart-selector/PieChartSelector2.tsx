@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {translate} from '../../services/translationService';
-import {IdNamed, uuid} from '../../types/Types';
+import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
 import './PieChartSelector.scss';
 
@@ -16,7 +16,7 @@ export interface PieData2 {
   [key: string]: Pie;
 }
 
-export type PieClick = (field: IdNamed) => void;
+export type PieClick = (id: uuid) => void;
 
 interface PieChartSelector {
   data: PieData2;
@@ -24,6 +24,13 @@ interface PieChartSelector {
   colors: string[];
   heading: string;
   maxLegends: number;
+}
+
+interface Legend {
+  value: string | number;
+  type: string;
+  color: string;
+  id: uuid;
 }
 
 const bundleSmallestToOther = (data: Pie[], maxLegends: number): Pie[] => {
@@ -64,15 +71,23 @@ export const PieChartSelector = (props: PieChartSelector) => {
       stroke={'transparent'}
     />);
 
-  const onPieClick = (data: any) => {
-    return onClick && onClick({id: data.payload.filterParam, name: data.payload.name});
+  const onPieClick = (data) => {
+    if (onClick) {
+      onClick(data.payload.filterParam);
+    }
   };
 
-  const legend = pieSlices.map((dataTuple, index) => ({
+  const onLegendClick = (data: Legend) => {
+    if (onClick) {
+      onClick(data.id);
+    }
+  };
+
+  const legend = pieSlices.map((dataTuple: Pie, index: number): Legend => ({
     value: `${dataTuple.name} (${dataTuple.value})`,
     type: 'square',
     color: colors[index % colors.length],
-    id: dataTuple.name,
+    id: dataTuple.filterParam,
   }));
 
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
@@ -87,6 +102,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
         <Legend
           margin={margins}
           payload={legend}
+          onClick={onLegendClick}
         />
       </PieChart>
     </Widget>

@@ -35,7 +35,7 @@ import {getPaginationList, getValidationPagination} from '../../../state/ui/pagi
 import {changeTabOptionValidation, changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -142,27 +142,24 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
       title={section.label}
     />));
 
-  const selectStatus = (status: IdNamed) => {
+  const selectStatus = (id: uuid) => {
     addSelection({
       parameter: ParameterName.meterStatuses,
-      id: status.id,
-      name: status.name,
+      id,
     });
   };
 
-  const selectCity = (city: IdNamed) => {
+  const selectCity = (id: uuid) => {
     addSelection({
       parameter: ParameterName.cities,
-      id: city.id,
-      name: city.name,
+      id,
     });
   };
 
-  const selectManufacturer = (manufacturer: IdNamed) => {
+  const selectManufacturer = (id: uuid) => {
     addSelection({
       parameter: ParameterName.manufacturers,
-      id: manufacturer.id,
-      name: manufacturer.name,
+      id,
     });
   };
 

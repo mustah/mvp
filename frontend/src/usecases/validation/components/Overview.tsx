@@ -16,9 +16,9 @@ const colors: [string[]] = [
 
 // TODO: Add correct types
 interface OverviewProps {
-  selectStatus: any;
-  selectCity: any;
-  selectManufacturer: any;
+  selectStatus: (id: uuid) => void;
+  selectCity: (id: uuid) => void;
+  selectManufacturer: (id: uuid) => void;
   meters: uuid[];
   metersLookup: DomainModel<Meter>;
 
