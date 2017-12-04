@@ -4,6 +4,7 @@ const glob = require('glob');
 const Bottleneck = require('bottleneck');
 const geocode = require('./geocode');
 const moment = require('moment');
+const {v4: generateId} = require('uuid');
 
 const fromDbJson = {
   authenticate: {
@@ -92,23 +93,55 @@ const fromDbJson = {
   },
 };
 
-const alarmsLookup = [
-  'Låg batterinivå',
-  'Flödessensorfel (luft)',
-  'Flödessensorfel (generisk)',
-  'Flödessensorfel (smutsig)',
-  'Läckage',
-  'Högt flöde',
-  'Felvänt flöde',
-  'Ingående temperatursensorfel',
-  'Utgående temeratursensorfel',
-  'Temperatursensorfel (generisk)',
-  'Temperatursensor inverterad',
-  'Tamperfel',
-  'Matningsspänningsfel',
-  'Behöver batteribyte',
-  'Internt mätarfel',
+const gatewayStatusChangelog = [
+  {
+    date: '2017-11-22 09:34',
+    status: {
+      id: 0,
+      name: 'OK',
+    },
+  },
+  {
+    date: '2017-11-22 10:34',
+    status: {
+      id: 0,
+      name: 'OK',
+    },
+  },
+  {
+    date: '2017-11-22 11:34',
+    status: {
+      id: 3,
+      name: 'Fel',
+    },
+  },
+  {
+    date: '2017-11-22 12:34',
+    status: {
+      id: 0,
+      name: 'OK',
+    },
+  },
 ];
+
+const
+  alarmsLookup = [
+    'Låg batterinivå',
+    'Flödessensorfel (luft)',
+    'Flödessensorfel (generisk)',
+    'Flödessensorfel (smutsig)',
+    'Läckage',
+    'Högt flöde',
+    'Felvänt flöde',
+    'Ingående temperatursensorfel',
+    'Utgående temeratursensorfel',
+    'Temperatursensorfel (generisk)',
+    'Temperatursensor inverterad',
+    'Tamperfel',
+    'Matningsspänningsfel',
+    'Behöver batteribyte',
+    'Internt mätarfel',
+  ];
 
 const getRandomAlarm = (meterStatus) => {
   if (meterStatus === 0 || meterStatus === 4) {
@@ -278,9 +311,13 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
 
       const statusChanged = statusChanges[row.meter_id];
       const alarm = getRandomAlarm(meterStatus.id);
+      const gatewayId = row.gateway_id;
+
+      const statusChangelog = gatewayStatusChangelog
+        .map(changelog => Object.assign({}, changelog, {id: generateId(), gatewayId}));
 
       r.gateways.push({
-        id: row.gateway_id,
+        id: gatewayId,
         facility: row.facility,
         address,
         city,
@@ -290,6 +327,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         ip: nullOr(row.ip),
         port: nullOr(row.port),
         status: gatewayStatus,
+        statusChangelog,
         statusChanged,
         meterIds: [row.meter_id],
         position: objPosition,
@@ -310,7 +348,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         statusChanged,
         position: objPosition,
         alarm,
-        gatewayId: row.gateway_id,
+        gatewayId,
         gatewayStatus,
         gatewayProductModel: row.gateway_product_model,
       });

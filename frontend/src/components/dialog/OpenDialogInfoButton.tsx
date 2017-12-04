@@ -4,7 +4,7 @@ import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {Dialog} from './Dialog';
 
 interface Props {
-  label: string;
+  label: string | number;
   children: Children;
 }
 

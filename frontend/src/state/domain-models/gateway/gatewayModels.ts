@@ -1,18 +1,26 @@
-import {IdNamed} from '../../../types/Types';
+import {IdNamed, uuid} from '../../../types/Types';
 import {NormalizedState, Location} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 
+export interface GatewayStatusChangelog {
+  id: uuid;
+  gatewayId: uuid;
+  status: IdNamed;
+  date: string;
+}
+
 export interface Gateway extends Location {
-  id: string;
+  id: uuid;
   facility: string;
   flags: Flag[];
   productModel: string;
-  telephoneNo: string;
+  telephoneNumber: string;
   statusChanged?: string;
   ip: string | null;
   port: string | null;
   status: IdNamed;
-  meterIds: string[];
+  statusChangelog: GatewayStatusChangelog[];
+  meterIds: uuid[];
   meterStatus: IdNamed;
   meterAlarm: string;
   meterManufacturer: string;
