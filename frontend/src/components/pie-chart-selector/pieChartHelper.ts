@@ -19,14 +19,14 @@ const bundleToOther = (data: Pie[]): Pie => {
   return data.reduce(bundle, initBundle);
 };
 
-export const pieData = (fields: uuid[], data: PieData2, maxLegends: number): Pie[] => {
+export const splitDataIntoSlices = (fields: uuid[], data: PieData2, maxSlices: number): Pie[] => {
 
-  const pieSlices = fields.map((field) => (data[field]));
-  const pieSlicesSorted = sortPieData(pieSlices);
+  const pieSlices: Pie[] = fields.map((field) => (data[field]));
+  const pieSlicesSorted: Pie[] = sortPieData(pieSlices);
 
-  if (fields.length >= maxLegends) {
-    const largestFields = pieSlicesSorted.slice(0, maxLegends - 1);
-    const other = pieSlicesSorted.slice(maxLegends - 1);
+  if (fields.length >= maxSlices) {
+    const largestFields: Pie[] = pieSlicesSorted.slice(0, maxSlices - 1);
+    const other: Pie[] = pieSlicesSorted.slice(maxSlices - 1);
     return [...largestFields, bundleToOther(other)];
   } else {
     return pieSlices;

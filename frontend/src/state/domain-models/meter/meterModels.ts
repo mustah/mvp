@@ -55,6 +55,7 @@ export const enum meterStatus {
   unknown = 4,
 }
 
+// TODO: Is this constant really necessary
 export const meterStatusLabels =  {
   [meterStatus.ok]: 'ok',
   [meterStatus.alarm]: 'alarms',

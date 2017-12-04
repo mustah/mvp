@@ -2,15 +2,14 @@ import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
-import {pieData} from './pieChartHelper';
+import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
-
-type FilterParam = uuid | boolean | Array<uuid | boolean>;
+import {FilterParam} from '../../state/search/selection/selectionModels';
 
 export interface Pie {
   name: string;
   value: number;
-  filterParam: FilterParam;
+  filterParam: FilterParam | FilterParam[];
 }
 
 export interface PieData2 {
@@ -24,21 +23,21 @@ interface PieChartSelector {
   onClick?: PieClick;
   colors: string[];
   heading: string;
-  maxLegends: number;
+  maxSlices: number;
 }
 
 interface Legend {
   value: string | number;
   type: string;
   color: string;
-  filterParam: FilterParam;
+  filterParam: FilterParam | FilterParam[];
 }
 
 export const PieChartSelector = (props: PieChartSelector) => {
-  const {data, colors, heading, onClick, maxLegends} = props;
+  const {data, colors, heading, onClick, maxSlices} = props;
 
   const fields: uuid[] = Object.keys(data);
-  const pieSlices = pieData(fields, data, maxLegends);
+  const pieSlices = splitDataIntoSlices(fields, data, maxSlices);
 
   const renderCell = (entry: any, index: number) => (
     <Cell

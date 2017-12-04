@@ -12,8 +12,10 @@ export const enum ParameterName {
   period = 'period',
 }
 
+export type FilterParam = uuid | boolean;
+
 export interface SelectionParameter {
-  id: uuid;
+  id: FilterParam;
   name?: string;
   parameter: ParameterName;
 }

@@ -36,39 +36,39 @@ export const Overview = (props: OverviewProps) => {
         data={PieChartData.status}
         colors={colors[0]}
         onClick={selectStatus}
-        maxLegends={4}
+        maxSlices={4}
       />
       <PieChartSelector
         heading={translate('flagged for action')}
         data={PieChartData.flagged}
         colors={colors[1]}
-        maxLegends={4}
+        maxSlices={4}
       />
       <PieChartSelector
         heading={translate('alarm', {count: Object.keys(PieChartData.alarm).length})}
         data={PieChartData.alarm}
         colors={colors[0]}
-        maxLegends={4}
+        maxSlices={4}
       />
       <PieChartSelector
         heading={translate('cities')}
         data={PieChartData.city}
         colors={colors[1]}
         onClick={selectCity}
-        maxLegends={4}
+        maxSlices={4}
       />
       <PieChartSelector
         heading={translate('manufacturer')}
         data={PieChartData.manufacturer}
         colors={colors[0]}
         onClick={selectManufacturer}
-        maxLegends={4}
+        maxSlices={4}
       />
       <PieChartSelector
         heading={translate('medium')}
         data={PieChartData.medium}
         colors={colors[1]}
-        maxLegends={4}
+        maxSlices={4}
       />
     </Row>);
 };

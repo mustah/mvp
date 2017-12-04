@@ -13,7 +13,7 @@ export const changeTranslationLanguage = (language: string, callback?: () => any
   i18n.changeLanguage(language, callback);
 
 // TODO: Write tests on this.
-export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterName) => {
+export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterName): string => {
   switch (domainModelName) {
     case ParameterName.meterStatuses:
       return meterStatus(idName);
@@ -22,7 +22,7 @@ export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterNa
   }
 };
 
-const meterStatus = (idName: IdNamed) => {
+const meterStatus = (idName: IdNamed): string => {
   const statuses = {
     0: translate('ok'),
     3: translate('alarm'),
