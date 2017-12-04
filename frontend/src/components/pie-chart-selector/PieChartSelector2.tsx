@@ -1,22 +1,23 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
-import {translate} from '../../services/translationService';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
+import {pieData} from './pieChartHelper';
 import './PieChartSelector.scss';
+
+type FilterParam = uuid | boolean | Array<uuid | boolean>;
 
 export interface Pie {
   name: string;
   value: number;
-  filterParam?: uuid | boolean;
-  other?: Pie[];
+  filterParam: FilterParam;
 }
 
 export interface PieData2 {
   [key: string]: Pie;
 }
 
-export type PieClick = (id: uuid) => void;
+export type PieClick = (id: uuid | boolean) => void;
 
 interface PieChartSelector {
   data: PieData2;
@@ -30,33 +31,8 @@ interface Legend {
   value: string | number;
   type: string;
   color: string;
-  id: uuid;
+  filterParam: FilterParam;
 }
-
-const bundleSmallestToOther = (data: Pie[], maxLegends: number): Pie[] => {
-
-  const sortFunction = ({value: value1}: Pie, {value: value2}: Pie) =>
-    (value1 < value2 ? 1 : value1 > value2 ? -1 : 0);
-
-  const sortedBySize = data.sort(sortFunction);
-  const largestFields = sortedBySize.slice(0, maxLegends - 1);
-
-  const other = sortedBySize.slice(maxLegends - 1).reduce((prev: Pie, curr: Pie) => {
-    return {...prev, value: prev.value + curr.value, other: [...prev.other, {...curr}]};
-  }, {name: translate('other'), value: 0, other: []});
-
-  return [...largestFields, ...other];
-};
-
-const pieData = (fields: uuid[], data: PieData2, maxLegends: number): Pie[] => {
-
-  const pieSlices = fields.map((field) => (data[field]));
-  if (fields.length >= maxLegends) {
-    return bundleSmallestToOther(pieSlices, maxLegends);
-  } else {
-    return pieSlices;
-  }
-};
 
 export const PieChartSelector = (props: PieChartSelector) => {
   const {data, colors, heading, onClick, maxLegends} = props;
@@ -71,23 +47,31 @@ export const PieChartSelector = (props: PieChartSelector) => {
       stroke={'transparent'}
     />);
 
-  const onPieClick = (data) => {
+  const onPieClick = ({payload: {filterParam}}) => {
     if (onClick) {
-      onClick(data.payload.filterParam);
+      if (Array.isArray(filterParam)) {
+        filterParam.map((id: uuid) => onClick(id));
+      } else {
+        onClick(filterParam);
+      }
     }
   };
 
-  const onLegendClick = (data: Legend) => {
+  const onLegendClick = ({filterParam}: Legend) => {
     if (onClick) {
-      onClick(data.id);
+      if (Array.isArray(filterParam)) {
+        filterParam.map((id: uuid) => onClick(id));
+      } else {
+        onClick(filterParam);
+      }
     }
   };
 
-  const legend = pieSlices.map((dataTuple: Pie, index: number): Legend => ({
-    value: `${dataTuple.name} (${dataTuple.value})`,
+  const legend = pieSlices.map(({name, value, filterParam}: Pie, index: number): Legend => ({
+    value: `${name} (${value})`,
     type: 'square',
     color: colors[index % colors.length],
-    id: dataTuple.filterParam,
+    filterParam,
   }));
 
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
