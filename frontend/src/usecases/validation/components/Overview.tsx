@@ -6,6 +6,7 @@ import {uuid} from '../../../types/Types';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {dataSummary} from './overviewHelper';
+import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: [string[]] = [
@@ -16,9 +17,7 @@ const colors: [string[]] = [
 
 // TODO: Add correct types
 interface OverviewProps {
-  selectStatus: (id: uuid) => void;
-  selectCity: (id: uuid) => void;
-  selectManufacturer: (id: uuid) => void;
+  addSelection: (searchParameters: SelectionParameter) => void;
   meters: uuid[];
   metersLookup: DomainModel<Meter>;
 
@@ -27,8 +26,13 @@ interface OverviewProps {
 // TODO: Perhaps make dynamic, to make it more reusable. Have an array of {heading, data, colors, onClick}-objects
 // as an input.
 export const Overview = (props: OverviewProps) => {
-  const {selectStatus, selectManufacturer, selectCity, meters, metersLookup} = props;
+  const {addSelection, meters, metersLookup} = props;
   const PieChartData = dataSummary(meters, metersLookup);
+
+  const selectStatus = (id: uuid) => addSelection({parameter: ParameterName.meterStatuses, id});
+  const selectCity = (id: uuid) => addSelection({parameter: ParameterName.cities, id});
+  const selectManufacturer = (id: uuid) => addSelection({parameter: ParameterName.manufacturers, id});
+
   return (
     <Row>
       <PieChartSelector

@@ -28,7 +28,7 @@ import {
   getMetersTotal,
 } from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
-import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -142,27 +142,6 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
       title={section.label}
     />));
 
-  const selectStatus = (id: uuid) => {
-    addSelection({
-      parameter: ParameterName.meterStatuses,
-      id,
-    });
-  };
-
-  const selectCity = (id: uuid) => {
-    addSelection({
-      parameter: ParameterName.cities,
-      id,
-    });
-  };
-
-  const selectManufacturer = (id: uuid) => {
-    addSelection({
-      parameter: ParameterName.manufacturers,
-      id,
-    });
-  };
-
   const count = counts[selectedOption];
   const header = count ? `${headings[selectedOption][1]}: ${count}` : headings[selectedOption][0];
 
@@ -176,9 +155,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
 
   const overview = count > 0 ? (
     <Overview
-      selectStatus={selectStatus}
-      selectCity={selectCity}
-      selectManufacturer={selectManufacturer}
+      addSelection={addSelection}
       meters={metersByStatus(selectedOption)}
       metersLookup={entities}
     />
