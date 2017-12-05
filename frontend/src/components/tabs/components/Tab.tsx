@@ -1,13 +1,13 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {TopLevelTab} from '../../../state/ui/tabs/tabsModels';
+import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {TabUnderline} from './TabUnderliner';
 import {Column} from '../../layouts/column/Column';
 
 export interface TabProps {
   title: string;
-  tab: TopLevelTab;
-  selectedTab?: TopLevelTab;
+  tab: TabName;
+  selectedTab?: TabName;
   onChangeTab?: (tab: string) => void;
 }
 

@@ -264,7 +264,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -292,9 +292,8 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         : {name: 'Fel', id: 3};
 
       const decorateMeterStatus = (gwStatus, status) =>
-        gwStatus === 'OK'
-          ? {name: status, id: (status === 'OK' ? 0 : 3)}
-          : {name: 'Okänd', id: 4};
+        gwStatus === 'OK' ? status === 'OK' ? {name: 'ok', id: 0} : {name: 'alarm', id: 3}
+          : {name: 'unknown', id: 4};
 
       const nullOr = (str) => str === 'NULL' ? null : str;
 
@@ -342,6 +341,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         address,
         city,
         flags: row.meter_flags,
+        flagged: row.meter_flags.length !== 0,
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: meterStatus,

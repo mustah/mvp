@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-27 15:06+0100\n"
+"POT-Creation-Date: 2017-12-05T10:01:34.315Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
 msgid "export to Excel (.csv)"
 msgstr "exportera till Excel (.csv)"
@@ -167,6 +167,18 @@ msgstr "värde"
 msgid "latest snr"
 msgstr "senaste SNR"
 
+msgid "ok"
+msgstr "ok"
+
+msgid "unknown"
+msgstr "okända"
+
+msgid "flagged"
+msgstr "flaggad"
+
+msgid "unFlagged"
+msgstr "ej flaggad"
+
 msgid "no gateways"
 msgstr "inga gateways"
 
@@ -194,9 +206,6 @@ msgstr "visar alla gateways som har fel"
 msgid "none"
 msgstr "inga"
 
-msgid "ok"
-msgstr "ok"
-
 msgid "warnings"
 msgstr "varningar"
 
@@ -210,7 +219,7 @@ msgid "product models"
 msgstr "produktmodeller"
 
 msgid "filter by status"
-msgstr "filtrera efter status"
+msgstr "filtrera på status"
 
 msgid "overview"
 msgstr "översikt"
@@ -296,14 +305,8 @@ msgstr "inga mätare som har fel"
 msgid "showing all meters that have faults"
 msgstr "visar alla mätare som har fel"
 
-msgid "unknown"
-msgstr "okända"
-
 msgid "alarms"
 msgstr "larm"
-
-msgid "filter on status"
-msgstr "filtrera på status"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"

@@ -1,4 +1,4 @@
-export const enum TopLevelTab {
+export const enum TabName {
   list = 'list',
   map = 'map',
   graph = 'graph',
@@ -16,7 +16,7 @@ export interface TabModel {
 }
 
 export interface SelectedTabs {
-  selectedTab: TopLevelTab;
+  selectedTab: TabName;
   tabs: TabModel;
 }
 
@@ -25,17 +25,17 @@ export interface TabsState {
 }
 
 export interface TabSelection {
-  tab: TopLevelTab;
+  tab: TabName;
   useCase: string;
   option?: string;
 }
 
 export interface TabsContainerStateToProps {
   tabs: TabModel;
-  selectedTab: TopLevelTab;
+  selectedTab: TabName;
 }
 
 export interface TabsContainerDispatchToProps {
-  changeTab: (tab: TopLevelTab) => void;
-  changeTabOption: (tab: TopLevelTab, option: string) => void;
+  changeTab: (tab: TabName) => void;
+  changeTabOption: (tab: TabName, option: string) => void;
 }

@@ -5,16 +5,17 @@ import {ParameterName} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
   Meter,
-  MetersState,
+  MetersState, MeterStatus,
   SelectionTreeData,
   SelectionTreeItem,
   SelectionTreeItemProps,
   SelectionTreeItemsProps,
 } from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
+import {DomainModel} from '../domainModels';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
-export const getMeterEntities = (state: MetersState): {[key: string]: Meter} => state.entities;
+export const getMeterEntities = (state: MetersState): DomainModel<Meter> => state.entities;
 
 export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionTreeData>(
   getResultDomainModels,
@@ -77,7 +78,7 @@ export const getSelectionTree = createSelector<MetersState, uuid[], {[key: strin
       });
     });
     // TODO: Perhaps move this moderation into the selectionTreeItemsList to speed up performance.
-    selectionTree.addressClusters.map((item) => {
+    selectionTree.addressClusters.forEach((item) => {
       item.name = item.name + '...(' + item.childNodes.ids.length + ')';
     });
 
@@ -113,3 +114,15 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
     }
   }
 };
+
+const getMetersStatus = (meterStatus: uuid) =>
+  createSelector<MetersState, uuid[], DomainModel<Meter>, uuid[]>(
+    getResultDomainModels,
+    getMeterEntities,
+    (meters: uuid[], meterLookup: DomainModel<Meter>) =>
+      meters.filter(meterId => meterLookup[meterId].status.id === meterStatus),
+  );
+
+export const getMetersStatusOk = getMetersStatus(MeterStatus.ok);
+export const getMetersStatusAlarm = getMetersStatus(MeterStatus.alarm);
+export const getMetersStatusUnknown = getMetersStatus(MeterStatus.unknown);

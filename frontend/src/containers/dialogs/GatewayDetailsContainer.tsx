@@ -1,7 +1,6 @@
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {checkbox, checkboxLabel} from '../../app/themes';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -20,19 +19,20 @@ import {DomainModel} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
-import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
+import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogs, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
+import {checkbox, checkboxLabel} from '../../app/themes';
 
 interface OwnProps {
   gateway: Gateway;
 }
 
 interface TabsState {
-  selectedTab: TopLevelTab;
+  selectedTab: TabName;
 }
 
 interface StateToProps {
@@ -81,7 +81,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   constructor(props) {
     super(props);
-    this.state = {selectedTab: TopLevelTab.values};
+    this.state = {selectedTab: TabName.values};
   }
 
   render() {
@@ -101,13 +101,13 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
         <Tabs className="full-width">
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
-              <Tab tab={TopLevelTab.values} title={translate('meter')}/>
-              <Tab tab={TopLevelTab.log} title={translate('status log')}/>
-              <Tab tab={TopLevelTab.map} title={translate('map')}/>
+              <Tab tab={TabName.values} title={translate('meter')}/>
+              <Tab tab={TabName.log} title={translate('status log')}/>
+              <Tab tab={TabName.map} title={translate('map')}/>
             </TabHeaders>
             <TabSettings/>
           </TabTopBar>
-          <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
+          <TabContent tab={TabName.values} selectedTab={selectedTab}>
             <Table result={gateway.meterIds} entities={meters}>
               <TableColumn
                 header={<TableHead className="first">{translate('meter')}</TableHead>}
@@ -127,7 +127,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               />
             </Table>
           </TabContent>
-          <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
+          <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Row>
               <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
@@ -142,7 +142,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               />
             </Table>
           </TabContent>
-          <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
+          <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <Map height={400} viewCenter={gateway.position}>
               <ClusterContainer markers={gateway}/>
             </Map>
@@ -152,7 +152,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     );
   }
 
-  changeTab = (tab: TopLevelTab) => {
+  changeTab = (tab: TabName) => {
     this.setState({selectedTab: tab});
   }
 }

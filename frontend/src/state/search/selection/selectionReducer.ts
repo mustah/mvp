@@ -10,7 +10,7 @@ import {
   SET_SELECTION,
   UPDATE_SELECTION,
 } from './selectionActions';
-import {SelectionParameter, SelectionState} from './selectionModels';
+import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 
 export const initialState: SelectionState = {
   id: -1,
@@ -35,7 +35,7 @@ interface SelectionActionModel {
 
 const updateSelected = (state: SelectionState = initialState, action: Action<SelectionParameter>): SelectionState => {
   const {payload: {parameter, id}} = action;
-  const selectedIds: uuid[] = state.selected[parameter] as uuid[];
+  const selectedIds: FilterParam[] = state.selected[parameter] as FilterParam[];
   return {
     ...state,
     isChanged: true,

@@ -3,12 +3,12 @@ import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import * as React from 'react';
 import {colors} from '../../../app/themes';
-import {TopLevelTab} from '../../../state/ui/tabs/tabsModels';
+import {TabName} from '../../../state/ui/tabs/tabsModels';
 
 export interface TabOptionProps {
   className?: string;
-  tab?: TopLevelTab;
-  select?: (tab: TopLevelTab, option: string) => void;
+  tab?: TabName;
+  select?: (tab: TabName, option: string) => void;
   title: React.ReactType;
   id: string;
   selectedOption?: string;
@@ -31,7 +31,7 @@ const statusColors = {
   warnings: colors.orange,
   faults: colors.red,
   unknown: colors.orange,
-  alarms: colors.red,
+  alarm: colors.red,
 };
 
 export const RaisedTabOption = (props: TabOptionProps) => {

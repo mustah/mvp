@@ -22,13 +22,13 @@ import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
-import {TopLevelTab} from '../../state/ui/tabs/tabsModels';
+import {TabName} from '../../state/ui/tabs/tabsModels';
+import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
+import {Map} from '../../usecases/map/containers/Map';
 import {titleOf} from './dialogHelper';
 import './MeterDetailsContainer.scss';
-import {checkbox, checkboxLabel} from '../../app/themes';
 import './MeteringPointDialogContainer.scss';
-import {Map} from '../../usecases/map/containers/Map';
-import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
+import {checkbox, checkboxLabel} from '../../app/themes';
 
 interface OwnProps {
   meter: Meter;
@@ -39,14 +39,14 @@ interface StateToProps {
 }
 
 interface State {
-  selectedTab: TopLevelTab;
+  selectedTab: TabName;
 }
 
 class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
 
   constructor(props) {
     super(props);
-    this.state = {selectedTab: TopLevelTab.values};
+    this.state = {selectedTab: TabName.values};
   }
 
   render() {
@@ -315,14 +315,14 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
           <Tabs className="full-width first-letter">
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
-                <Tab tab={TopLevelTab.values} title={translate('latest value')}/>
-                <Tab tab={TopLevelTab.log} title={translate('status log')}/>
-                <Tab tab={TopLevelTab.map} title={translate('map')}/>
-                <Tab tab={TopLevelTab.connectedGateways} title={translate('gateways')}/>
+                <Tab tab={TabName.values} title={translate('latest value')}/>
+                <Tab tab={TabName.log} title={translate('status log')}/>
+                <Tab tab={TabName.map} title={translate('map')}/>
+                <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
               </TabHeaders>
               <TabSettings/>
             </TabTopBar>
-            <TabContent tab={TopLevelTab.values} selectedTab={selectedTab}>
+            <TabContent tab={TabName.values} selectedTab={selectedTab}>
               <Table {...meterData}>
                 <TableColumn
                   header={<TableHead className="first">{translate('quantity')}</TableHead>}
@@ -334,7 +334,7 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
                 />
               </Table>
             </TabContent>
-            <TabContent tab={TopLevelTab.log} selectedTab={selectedTab}>
+            <TabContent tab={TabName.log} selectedTab={selectedTab}>
               <Row>
                 <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
               </Row>
@@ -349,12 +349,12 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
                 />
               </Table>
             </TabContent>
-            <TabContent tab={TopLevelTab.map} selectedTab={selectedTab}>
+            <TabContent tab={TabName.map} selectedTab={selectedTab}>
               <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
               </Map>
             </TabContent>
-            <TabContent tab={TopLevelTab.connectedGateways} selectedTab={selectedTab}>
+            <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
               <Row>
                 <Table result={['id1']} entities={{id1: entities[meter.gatewayId]}}>
                   <TableColumn
@@ -374,7 +374,7 @@ class MeterDetails extends React.Component <OwnProps & StateToProps, State> {
     );
   }
 
-  changeTab = (option: TopLevelTab) => {
+  changeTab = (option: TabName) => {
     this.setState({selectedTab: option});
   }
 }

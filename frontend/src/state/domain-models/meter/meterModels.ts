@@ -8,6 +8,7 @@ export interface Meter extends Location {
   facility: string;
   alarm: string;
   flags: Flag[];
+  flagged: boolean;
   medium: string;
   manufacturer: string;
   statusChanged?: string;
@@ -46,4 +47,10 @@ export type SelectionTreeModel = DomainModel<SelectionTreeItem>;
 export interface SelectionTreeData {
   result: DomainModel<uuid[]>;
   entities: SelectionTreeModel;
+}
+
+export const enum MeterStatus {
+  ok = 0,
+  alarm = 3,
+  unknown = 4,
 }
