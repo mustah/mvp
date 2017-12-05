@@ -9,14 +9,14 @@ const sortPieData = (data: Pie[]): Pie[] => {
 };
 
 const bundleToOther = (data: Pie[]): Pie => {
-  const bundle = (prev, curr: Pie): Pie =>
+  const bundleValueAndFilterParam = (prev, curr: Pie): Pie =>
     ({...prev, value: prev.value + curr.value, filterParam: [...prev.filterParam, curr.filterParam]});
   const initBundle: Pie = {
     name: translate('other') || 'other',
     value: 0,
     filterParam: [],
   };
-  return data.reduce(bundle, initBundle);
+  return data.reduce(bundleValueAndFilterParam, initBundle);
 };
 
 export const splitDataIntoSlices = (segments: uuid[], data: PieData2, maxSlices: number): Pie[] => {

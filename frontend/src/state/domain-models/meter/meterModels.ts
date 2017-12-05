@@ -49,7 +49,7 @@ export interface SelectionTreeData {
   entities: SelectionTreeModel;
 }
 
-export const enum meterStatus {
+export const enum MeterStatus {
   ok = 0,
   alarm = 3,
   unknown = 4,

@@ -28,7 +28,7 @@ interface PieChartSelector {
 
 interface Legend {
   value: string | number;
-  type: string;
+  type: 'square';
   color: string;
   filterParam: FilterParam | FilterParam[];
 }

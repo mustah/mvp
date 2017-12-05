@@ -5,7 +5,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {uuid} from '../../../types/Types';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {dataSummary} from './overviewHelper';
+import {dataSummary} from './validationOverviewHelper';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 
 // TODO: Perhaps move this to themes and make customizable.
@@ -15,17 +15,13 @@ const colors: [string[]] = [
   ['#b7e000', '#f7be29', '#ed4200'],
 ];
 
-// TODO: Add correct types
-interface OverviewProps {
+interface ValidationOverviewProps {
   addSelection: (searchParameters: SelectionParameter) => void;
   meters: uuid[];
   metersLookup: DomainModel<Meter>;
-
 }
 
-// TODO: Perhaps make dynamic, to make it more reusable. Have an array of {heading, data, colors, onClick}-objects
-// as an input.
-export const Overview = (props: OverviewProps) => {
+export const ValidationOverview = (props: ValidationOverviewProps) => {
   const {addSelection, meters, metersLookup} = props;
   const PieChartData = dataSummary(meters, metersLookup);
 

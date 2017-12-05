@@ -15,7 +15,7 @@ const gatewayParameterNames: ParameterNames = {
   ...baseParameterNames,
   gatewayStatuses: 'status.id',
   productModels: 'productModel',
-  meterStatuses: 'meterStatus.id',
+  meterStatuses: 'MeterStatus.id',
   alarms: 'meterAlarm',
   manufacturers: 'meterManufacturer',
 };

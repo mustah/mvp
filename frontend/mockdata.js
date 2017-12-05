@@ -292,8 +292,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         : {name: 'Fel', id: 3};
 
       const decorateMeterStatus = (gwStatus, status) =>
-        gwStatus === 'OK' ?
-          status === 'OK' ? {name: 'ok', id: 0} : {name: 'alarm', id: 3}
+        gwStatus === 'OK' ? status === 'OK' ? {name: 'ok', id: 0} : {name: 'alarm', id: 3}
           : {name: 'unknown', id: 4};
 
       const nullOr = (str) => str === 'NULL' ? null : str;

@@ -2,8 +2,8 @@ import {InitOptions, TranslationOptions} from 'i18next';
 import i18n from '../i18n/i18n';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed} from '../types/Types';
-import {DataOverviewKey} from '../usecases/validation/components/overviewHelper';
-import {meterStatus} from '../state/domain-models/meter/meterModels';
+import {DataOverviewKey} from '../usecases/validation/components/validationOverviewHelper';
+import {MeterStatus} from '../state/domain-models/meter/meterModels';
 
 export const translate = (key: string, options?: TranslationOptions) => i18n.t(key, options);
 
@@ -26,9 +26,9 @@ export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterNa
 
 const meterStatusTranslate = (idName: IdNamed): string => {
   const statuses = {
-    [meterStatus.ok]: translate('ok'),
-    [meterStatus.alarm]: translate('alarm'),
-    [meterStatus.unknown]: translate('unknown'),
+    [MeterStatus.ok]: translate('ok'),
+    [MeterStatus.alarm]: translate('alarm'),
+    [MeterStatus.unknown]: translate('unknown'),
   };
   return statuses[idName.id] || idName.name;
 };

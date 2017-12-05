@@ -41,8 +41,8 @@ import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapState} from '../../map/mapReducer';
 import {selectEntryAdd} from '../../report/reportActions';
-import {Overview} from '../components/Overview';
-import {OverviewHeader} from '../components/OverviewHeader';
+import {ValidationOverview} from '../components/ValidationOverview';
+import {ValidationOverviewHeader} from '../components/ValidationOverviewHeader';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
@@ -146,15 +146,15 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
   const header = count ? `${headings[selectedOption][1]}: ${count}` : headings[selectedOption][0];
 
   const overviewHeader = (
-    <OverviewHeader header={header}>
+    <ValidationOverviewHeader header={header}>
       <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
         {overviewTabOptions}
       </TabOptions>
-    </OverviewHeader>
+    </ValidationOverviewHeader>
   );
 
   const overview = count > 0 ? (
-    <Overview
+    <ValidationOverview
       addSelection={addSelection}
       meters={metersByStatus(selectedOption)}
       metersLookup={entities}

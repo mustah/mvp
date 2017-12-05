@@ -3,14 +3,14 @@ import {TabOptionsProps} from '../../../components/tabs/components/TabOptions';
 import {Row, RowRight} from '../../../components/layouts/row/Row';
 import {Column, ColumnCenter} from '../../../components/layouts/column/Column';
 import {translate} from '../../../services/translationService';
-import './OverviewHeader.scss';
+import './ValidationOverviewHeader.scss';
 
-interface OverviewHeaderProps {
+interface ValidationOverviewHeaderProps {
   children: React.ReactElement<TabOptionsProps>;
   header: string;
 }
 
-export const OverviewHeader = (props: OverviewHeaderProps) => {
+export const ValidationOverviewHeader = (props: ValidationOverviewHeaderProps) => {
   const {header, children} = props;
   return (
     <Row className="StatusControl">
