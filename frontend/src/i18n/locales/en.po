@@ -218,8 +218,8 @@ msgstr "cities"
 msgid "product models"
 msgstr "product models"
 
-msgid "filter on status"
-msgstr "filter on status"
+msgid "filter by status"
+msgstr "filter by status"
 
 msgid "overview"
 msgstr "overview"

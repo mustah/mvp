@@ -87,6 +87,8 @@ export const PieChartSelector = (props: PieChartSelector) => {
           margin={margins}
           payload={legend}
           onClick={onLegendClick}
+          align={'left'}
+          layout={'vertical'}
         />
       </PieChart>
     </Widget>

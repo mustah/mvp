@@ -20,7 +20,7 @@ export const OverviewHeader = (props: OverviewHeaderProps) => {
       <Column className="flex-1"/>
       <ColumnCenter>
         <RowRight>
-          <div className="first-uppercase">{translate('filter on status') + ':'}</div>
+          <div className="first-uppercase">{translate('filter by status') + ':'}</div>
           {children}
         </RowRight>
       </ColumnCenter>

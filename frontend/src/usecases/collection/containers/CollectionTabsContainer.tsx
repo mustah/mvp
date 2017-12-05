@@ -246,7 +246,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
           <Column className="flex-1"/>
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
-              <div className="first-uppercase">{translate('filter on status') + ':'}</div>
+              <div className="first-uppercase">{translate('filter by status') + ':'}</div>
               <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
                 {overviewTabOptions}
               </TabOptions>

@@ -218,7 +218,7 @@ msgstr "städer"
 msgid "product models"
 msgstr "produktmodeller"
 
-msgid "filter on status"
+msgid "filter by status"
 msgstr "filtrera på status"
 
 msgid "overview"
