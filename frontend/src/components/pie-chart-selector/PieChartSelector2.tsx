@@ -36,8 +36,8 @@ interface Legend {
 export const PieChartSelector = (props: PieChartSelector) => {
   const {data, colors, heading, onClick, maxSlices} = props;
 
-  const fields: uuid[] = Object.keys(data);
-  const pieSlices = splitDataIntoSlices(fields, data, maxSlices);
+  const segments: uuid[] = Object.keys(data);
+  const pieSlices = splitDataIntoSlices(segments, data, maxSlices);
 
   const renderCell = (entry: any, index: number) => (
     <Cell

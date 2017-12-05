@@ -12,19 +12,19 @@ const bundleToOther = (data: Pie[]): Pie => {
   const bundle = (prev, curr: Pie): Pie =>
     ({...prev, value: prev.value + curr.value, filterParam: [...prev.filterParam, curr.filterParam]});
   const initBundle: Pie = {
-    name: translate('other'),
+    name: translate('other') || 'other',
     value: 0,
     filterParam: [],
   };
   return data.reduce(bundle, initBundle);
 };
 
-export const splitDataIntoSlices = (fields: uuid[], data: PieData2, maxSlices: number): Pie[] => {
+export const splitDataIntoSlices = (segments: uuid[], data: PieData2, maxSlices: number): Pie[] => {
 
-  const pieSlices: Pie[] = fields.map((field) => (data[field]));
+  const pieSlices: Pie[] = segments.map((segment) => (data[segment]));
   const pieSlicesSorted: Pie[] = sortPieData(pieSlices);
 
-  if (fields.length > maxSlices) {
+  if (segments.length > maxSlices) {
     const largestFields: Pie[] = pieSlicesSorted.slice(0, maxSlices - 1);
     const other: Pie[] = pieSlicesSorted.slice(maxSlices - 1);
     return [...largestFields, bundleToOther(other)];
