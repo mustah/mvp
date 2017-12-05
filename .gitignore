@@ -33,6 +33,7 @@ backend/.idea/libraries/
 backend/.idea/dictionaries
 backend/.idea/inspectionProfiles/
 backend/.idea/sonarlint/
+backend/.idea/codeStyles/
 backend/.idea/**/tasks.xml
 backend/.idea/**/dataSources/
 backend/.idea/**/dataSources.ids
