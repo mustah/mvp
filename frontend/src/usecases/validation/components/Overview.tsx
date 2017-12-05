@@ -5,7 +5,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {uuid} from '../../../types/Types';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {dataSummary} from './overviewDataHelper';
+import {dataSummary} from './overviewHelper';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: [string[]] = [

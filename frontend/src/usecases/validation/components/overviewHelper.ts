@@ -14,7 +14,7 @@ interface DataOverview {
 
 type DataOverviewKey = keyof DataOverview;
 
-const entityAdd = (summary: DataOverview, fieldKey: DataOverviewKey, meter: Meter): {[key: string]: Pie} => {
+const addToCategory = (category: PieData2, fieldKey: DataOverviewKey, meter: Meter): PieData2 => {
   let label: uuid;
   let existentEntity: Pie | undefined;
   let value: number;
@@ -23,31 +23,31 @@ const entityAdd = (summary: DataOverview, fieldKey: DataOverviewKey, meter: Mete
 
     case 'flagged':
       label = meter[fieldKey] ? 'flagged' : 'unFlagged';
-      existentEntity = summary[fieldKey][label];
+      existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {[label]: {name: label, value, filterParam: meter[fieldKey]}};
+      return {...category, [label]: {name: label, value, filterParam: meter[fieldKey]}};
 
     case 'city':
     case 'status':
       label = meter[fieldKey].id ;
-      existentEntity = summary[fieldKey][label];
+      existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {[label]: {name: meter[fieldKey].name, value, filterParam: label}};
+      return {...category, [label]: {name: meter[fieldKey].name, value, filterParam: label}};
 
     default:
       label = meter[fieldKey];
-      existentEntity = summary[fieldKey][label];
+      existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {[label]: {name: label, value, filterParam: label}};
+      return {...category, [label]: {name: label, value, filterParam: label}};
   }
 };
 
 const addMeterDataToSummary = (summary, fieldKey: DataOverviewKey, meter: Meter): DataOverview => {
+  const category: PieData2 = summary[fieldKey];
   return {
     ...summary,
     [fieldKey]: {
-      ...summary[fieldKey],
-      ...entityAdd(summary, fieldKey, meter),
+      ...addToCategory(category, fieldKey, meter),
     },
   };
 };

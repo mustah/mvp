@@ -46,6 +46,7 @@ export const PieChartSelector = (props: PieChartSelector) => {
       stroke={'transparent'}
     />);
 
+  // TODO: Should perhaps be included in the action to handle array arguments, so it also can be tested.
   const onPieClick = ({payload: {filterParam}}) => {
     if (onClick) {
       if (Array.isArray(filterParam)) {

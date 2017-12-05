@@ -54,10 +54,3 @@ export const enum meterStatus {
   alarm = 3,
   unknown = 4,
 }
-
-// TODO: Is this constant really necessary
-export const meterStatusLabels =  {
-  [meterStatus.ok]: 'ok',
-  [meterStatus.alarm]: 'alarms',
-  [meterStatus.unknown]: 'unknown',
-};

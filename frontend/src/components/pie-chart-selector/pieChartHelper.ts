@@ -24,7 +24,7 @@ export const splitDataIntoSlices = (fields: uuid[], data: PieData2, maxSlices: n
   const pieSlices: Pie[] = fields.map((field) => (data[field]));
   const pieSlicesSorted: Pie[] = sortPieData(pieSlices);
 
-  if (fields.length >= maxSlices) {
+  if (fields.length > maxSlices) {
     const largestFields: Pie[] = pieSlicesSorted.slice(0, maxSlices - 1);
     const other: Pie[] = pieSlicesSorted.slice(maxSlices - 1);
     return [...largestFields, bundleToOther(other)];

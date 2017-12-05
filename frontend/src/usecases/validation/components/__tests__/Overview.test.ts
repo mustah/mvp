@@ -1,7 +1,7 @@
 import {DomainModel} from '../../../../state/domain-models/domainModels';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {uuid} from '../../../../types/Types';
-import {dataSummary} from '../overviewDataHelper';
+import {dataSummary} from '../overviewHelper';
 
 type PartialDomainModel = DomainModel<Partial<Meter>>;
 describe('inc', () => {
