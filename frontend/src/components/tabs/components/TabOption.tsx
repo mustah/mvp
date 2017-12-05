@@ -31,7 +31,7 @@ const statusColors = {
   warnings: colors.orange,
   faults: colors.red,
   unknown: colors.orange,
-  alarms: colors.red,
+  alarm: colors.red,
 };
 
 export const RaisedTabOption = (props: TabOptionProps) => {

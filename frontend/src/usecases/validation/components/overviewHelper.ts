@@ -1,7 +1,9 @@
 import {Pie, PieData2} from '../../../components/pie-chart-selector/PieChartSelector2';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {uuid} from '../../../types/Types';
+import {IdNamed, uuid} from '../../../types/Types';
+import {pieChartTranslation} from '../../../services/translationService';
+import {FilterParam} from '../../../state/search/selection/selectionModels';
 
 interface DataOverview {
   flagged: PieData2;
@@ -12,33 +14,47 @@ interface DataOverview {
   alarm: PieData2;
 }
 
-type DataOverviewKey = keyof DataOverview;
+export type DataOverviewKey = keyof DataOverview;
 
 const addToCategory = (category: PieData2, fieldKey: DataOverviewKey, meter: Meter): PieData2 => {
   let label: uuid;
   let existentEntity: Pie | undefined;
   let value: number;
 
-  switch (fieldKey) {
+  const categoryAdd = (fieldKey: DataOverviewKey, idNamed: IdNamed, filterParam: FilterParam) => ({
+    name: pieChartTranslation(fieldKey, idNamed),
+    value,
+    filterParam,
+  });
 
+  switch (fieldKey) {
     case 'flagged':
       label = meter[fieldKey] ? 'flagged' : 'unFlagged';
       existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {...category, [label]: {name: label, value, filterParam: meter[fieldKey]}};
+      return {
+        ...category,
+        [label]: categoryAdd(fieldKey, {id: label, name: label}, meter[fieldKey]),
+      };
 
     case 'city':
     case 'status':
-      label = meter[fieldKey].id ;
+      label = meter[fieldKey].id;
       existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {...category, [label]: {name: meter[fieldKey].name, value, filterParam: label}};
+      return {
+        ...category,
+        [label]: categoryAdd(fieldKey, meter[fieldKey], label),
+      };
 
     default:
       label = meter[fieldKey];
       existentEntity = category[label];
       value = existentEntity ? ++existentEntity.value : 1;
-      return {...category, [label]: {name: label, value, filterParam: label}};
+      return {
+        ...category,
+        [label]: categoryAdd(fieldKey, {id: label, name: label}, label),
+      };
   }
 };
 

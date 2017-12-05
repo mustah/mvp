@@ -107,7 +107,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
       translate('no meters that have warnings'),
       translate('showing all meters that have warnings'),
     ],
-    alarms: [
+    alarm: [
       translate('no meters that have faults'),
       translate('showing all meters that have faults'),
     ],

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-11-29T09:01:23.159Z\n"
+"POT-Creation-Date: 2017-12-05T10:01:34.315Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -89,8 +89,8 @@ msgstr "next"
 msgid "other"
 msgstr "other"
 
-msgid "meter"
-msgstr "meter"
+msgid "no"
+msgstr "no"
 
 msgid "gateway details"
 msgstr "gateway"
@@ -109,6 +109,9 @@ msgstr "interval"
 
 msgid "flagged for action"
 msgstr "flagged for action"
+
+msgid "meter"
+msgstr "meter"
 
 msgid "status log"
 msgstr "status log"
@@ -164,17 +167,17 @@ msgstr "value"
 msgid "latest snr"
 msgstr "latest SNR"
 
-msgid "no"
-msgstr "no"
-
 msgid "ok"
 msgstr "OK"
 
-msgid "fault"
-msgstr "fault"
-
 msgid "unknown"
 msgstr "unknown"
+
+msgid "flagged"
+msgstr "flagged"
+
+msgid "unFlagged"
+msgstr "no flag"
 
 msgid "no gateways"
 msgstr "no gateways"
@@ -272,11 +275,11 @@ msgstr "no saved selections"
 msgid "saved selections"
 msgstr "saved selections"
 
-msgid "metering"
-msgstr "metering"
-
 msgid "selection overview"
 msgstr "selection overview"
+
+msgid "metering"
+msgstr "metering"
 
 msgid "no meters"
 msgstr "no meters"

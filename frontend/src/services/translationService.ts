@@ -2,6 +2,8 @@ import {InitOptions, TranslationOptions} from 'i18next';
 import i18n from '../i18n/i18n';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed} from '../types/Types';
+import {DataOverviewKey} from '../usecases/validation/components/overviewHelper';
+import {meterStatus} from '../state/domain-models/meter/meterModels';
 
 export const translate = (key: string, options?: TranslationOptions) => i18n.t(key, options);
 
@@ -16,17 +18,36 @@ export const changeTranslationLanguage = (language: string, callback?: () => any
 export const getNameTranslation = (idName: IdNamed, domainModelName: ParameterName): string => {
   switch (domainModelName) {
     case ParameterName.meterStatuses:
-      return meterStatus(idName);
+      return meterStatusTranslate(idName);
     default:
       return idName.name;
   }
 };
 
-const meterStatus = (idName: IdNamed): string => {
+const meterStatusTranslate = (idName: IdNamed): string => {
   const statuses = {
-    0: translate('ok'),
-    3: translate('alarm'),
-    4: translate('unknown'),
+    [meterStatus.ok]: translate('ok'),
+    [meterStatus.alarm]: translate('alarm'),
+    [meterStatus.unknown]: translate('unknown'),
   };
   return statuses[idName.id] || idName.name;
+};
+
+const flagged = (text: string) => {
+  const texts = {
+    flagged: translate('flagged'),
+    unFlagged: translate('unFlagged'),
+  };
+  return texts[text] || text;
+};
+
+export const pieChartTranslation = (fieldKey: DataOverviewKey, toBeTranslated: IdNamed): string | number => {
+  switch (fieldKey) {
+    case 'flagged':
+      return flagged(toBeTranslated.name);
+    case 'status':
+      return meterStatusTranslate(toBeTranslated);
+    default:
+      return toBeTranslated.name;
+  }
 };
