@@ -1,15 +1,13 @@
 import * as React from 'react';
+import {translate} from '../../services/translationService';
 import {IdNamed, statusFor} from '../../types/Types';
-import {Row} from '../layouts/row/Row';
 import {IconStatus} from '../icons/IconStatus';
+import {Row} from '../layouts/row/Row';
 
-export const Status = (props: IdNamed) => {
-  if (!statusFor(props.id)) {
-    return null;
-  }
-  return (
+export const Status = ({id, name}: IdNamed) => {
+  return statusFor(id) && (
     <Row>
-      <IconStatus {...props}/>
+      <IconStatus id={id} name={translate(name)}/>
     </Row>
   );
 };
