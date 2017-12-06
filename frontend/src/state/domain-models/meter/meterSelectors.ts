@@ -5,7 +5,7 @@ import {ParameterName} from '../../search/selection/selectionModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
   Meter,
-  MetersState, MeterStatus,
+  MetersState,
   SelectionTreeData,
   SelectionTreeItem,
   SelectionTreeItemProps,
@@ -114,15 +114,3 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
     }
   }
 };
-
-const getMetersStatus = (meterStatus: uuid) =>
-  createSelector<MetersState, uuid[], DomainModel<Meter>, uuid[]>(
-    getResultDomainModels,
-    getMeterEntities,
-    (meters: uuid[], meterLookup: DomainModel<Meter>) =>
-      meters.filter(meterId => meterLookup[meterId].status.id === meterStatus),
-  );
-
-export const getMetersStatusOk = getMetersStatus(MeterStatus.ok);
-export const getMetersStatusAlarm = getMetersStatus(MeterStatus.alarm);
-export const getMetersStatusUnknown = getMetersStatus(MeterStatus.unknown);

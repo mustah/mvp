@@ -17,6 +17,8 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {addSelection} from '../../../state/search/selection/selectionActions';
+import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -29,11 +31,12 @@ import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapState} from '../../map/mapReducer';
 import {selectEntryAdd} from '../../report/reportActions';
-import {ValidationOverviewContainer} from './ValidationOverviewContainer';
+import {ValidationOverview} from '../components/ValidationOverview';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
-  entities: DomainModel<Meter>;
+  meters: uuid[];
+  metersLookup: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
   map: MapState;
@@ -42,6 +45,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
   selectEntryAdd: OnClickWithId;
+  addSelection: (searchParameters: SelectionParameter) => void;
   closeClusterDialog: OnClick;
 }
 
@@ -50,12 +54,14 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
-    entities,
+    meters,
+    metersLookup,
     pagination,
     paginationChangePage,
     paginatedList,
     entityCount,
     selectEntryAdd,
+    addSelection,
     map,
     closeClusterDialog,
   } = props;
@@ -76,16 +82,16 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         </TabHeaders>
         <TabSettings/>
       </TabTopBar>
-      <TabContent tab={TabName.overview} selectedTab={selectedTab} className="Wrapper-indent">
-        <ValidationOverviewContainer />
+      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
+        <ValidationOverview metersLookup={metersLookup} meters={meters} addSelection={addSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <MeterList result={paginatedList} entities={entities} selectEntryAdd={selectEntryAdd}/>
+        <MeterList result={paginatedList} entities={metersLookup} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={entityCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <Map>
-          <ClusterContainer markers={entities}/>
+          <ClusterContainer markers={metersLookup}/>
         </Map>
         {dialog}
       </TabContent>
@@ -97,8 +103,9 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
   const pagination = getValidationPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
+    meters: getResultDomainModels(meters),
     entityCount: getMetersTotal(meters),
-    entities: getMeterEntities(meters),
+    metersLookup: getMeterEntities(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
     map,
@@ -109,6 +116,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   paginationChangePage: changePaginationValidation,
   selectEntryAdd,
+  addSelection,
   closeClusterDialog,
 }, dispatch);
 
