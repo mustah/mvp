@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/TestDataFactory';
 import {IdNamed, Period} from '../../../../types/Types';
-import {DomainModelsState, SelectionEntity} from '../../../domain-models/domainModels';
+import {DomainModelsState, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
@@ -20,9 +20,22 @@ import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {selectPeriodAction, setSelection} from '../selectionActions';
-import {LookupState, ParameterName, SelectionListItem, SelectionParameter, SelectionState} from '../selectionModels';
+import {
+  LookupState,
+  ParameterName,
+  SelectionListItem,
+  SelectionParameter,
+  SelectionState,
+  SelectionSummary,
+} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
-import {getCities, getEncodedUriParametersForMeters, getSelectedPeriod, getSelection} from '../selectionSelectors';
+import {
+  getCities,
+  getEncodedUriParametersForMeters,
+  getSelectedPeriod,
+  getSelection,
+  getSelectionSummary,
+} from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
@@ -127,7 +140,7 @@ describe('selectionSelectors', () => {
     });
   });
 
-  describe('get sub set of cities', () => {
+  describe('get subset of cities', () => {
 
     it('can detect which the selected entities are', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
@@ -158,6 +171,75 @@ describe('selectionSelectors', () => {
       ];
 
       expect(getCities(state)).toEqual(stockholmSelected);
+    });
+
+  });
+
+  describe('summary of meters in selection', () => {
+
+    const emptySelection = (): SelectionSummary => ({addresses: 0, cities: 0, meters: 0});
+
+    it('handles an empty selection', () => {
+      const meterState: NormalizedState<Meter> = {
+        isFetching: false,
+        total: 0,
+        result: [],
+        entities: {},
+      };
+
+      const summary = getSelectionSummary(meterState);
+      expect(summary).toEqual(emptySelection());
+    });
+
+    it('groups meters into cities and addresses', () => {
+      const makeMeter = (id: number, cityId: number, city: string, addressId: number, address: string): Meter => ({
+        id,
+        moid: String(id),
+        facility: '1',
+        alarm: '1',
+        flags: [],
+        flagged: false,
+        medium: 'asdf',
+        manufacturer: 'asdf',
+        status: {id: 0, name: 'ok'},
+        gatewayId: 'a',
+        gatewayProductModel: 'a',
+        gatewayStatus: {id: 0, name: 'ok'},
+        address: {
+          cityId,
+          id: addressId,
+          name: address,
+        },
+        city: {
+          id: cityId,
+          name: city,
+        },
+        position: {
+          latitude: 1,
+          longitude: 1,
+          confidence: 1,
+        },
+        statusChangelog: [],
+      });
+      const meterState: NormalizedState<Meter> = {
+        isFetching: false,
+        total: 4,
+        result: ['1', '2', '3', '4'],
+        entities: {
+          1: makeMeter(1, 1, 'Helsingborg', 1, 'Storgatan 5'),
+          2: makeMeter(2, 1, 'Helsingborg', 2, 'Storgatan 6'),
+          3: makeMeter(3, 2, 'Luleå', 3, 'Ringvägen 7'),
+          4: makeMeter(4, 2, 'Luleå', 3, 'Ringvägen 7'),
+        },
+      };
+
+      const selection = emptySelection();
+      selection.meters = 4;
+      selection.cities = 2;
+      selection.addresses = 3;
+
+      const summary = getSelectionSummary(meterState);
+      expect(summary).toEqual(selection);
     });
 
   });
