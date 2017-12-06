@@ -22,7 +22,7 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
-import {normalizedStatusChangelogs, titleOf} from './dialogHelper';
+import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
 import {checkbox, checkboxLabel} from '../../app/themes';
