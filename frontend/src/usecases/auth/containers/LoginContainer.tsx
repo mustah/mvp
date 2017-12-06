@@ -25,7 +25,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  login: (email: string, password: string) => any;
+  login: (email: string, password: string) => void;
 }
 
 interface LoginState {

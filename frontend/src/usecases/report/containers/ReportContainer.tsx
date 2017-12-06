@@ -26,7 +26,7 @@ interface StateToProps extends SelectedIndicatorWidgetProps {
 }
 
 interface DispatchToProps {
-  selectIndicatorWidget: (type: IndicatorType) => any;
+  selectIndicatorWidget: (type: IndicatorType) => void;
 }
 
 const ReportContainer = (props: StateToProps & DispatchToProps & InjectedAuthRouterProps) => {
