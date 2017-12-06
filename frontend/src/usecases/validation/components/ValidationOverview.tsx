@@ -28,6 +28,7 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
   const selectStatus = (id: uuid) => addSelection({parameter: ParameterName.meterStatuses, id});
   const selectCity = (id: uuid) => addSelection({parameter: ParameterName.cities, id});
   const selectManufacturer = (id: uuid) => addSelection({parameter: ParameterName.manufacturers, id});
+  const selectAlarm = (id: uuid) => addSelection({parameter: ParameterName.alarms, id});
 
   return (
     <Row>
@@ -48,6 +49,7 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
         heading={translate('alarm', {count: Object.keys(PieChartData.alarm).length})}
         data={PieChartData.alarm}
         colors={colors[0]}
+        onClick={selectAlarm}
         maxSlices={4}
       />
       <PieChartSelector

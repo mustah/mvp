@@ -40,7 +40,7 @@ const flaggedTranslation = (text: string): string => {
   return texts[text] || text;
 };
 
-export const pieChartTranslation = (fieldKey: DataOverviewKey, toBeTranslated: IdNamed): string | number => {
+export const pieChartTranslation = (fieldKey: DataOverviewKey, toBeTranslated: IdNamed): string => {
   switch (fieldKey) {
     case 'flagged':
       return flaggedTranslation(toBeTranslated.name);

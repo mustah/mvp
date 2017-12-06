@@ -21,7 +21,7 @@ const addToCategory = (category: PieData2, fieldKey: DataOverviewKey, meter: Met
   let existentEntity: Pie | undefined;
   let value: number;
 
-  const categoryAdd = (fieldKey: DataOverviewKey, idNamed: IdNamed, filterParam: FilterParam) => ({
+  const categoryAdd = (fieldKey: DataOverviewKey, idNamed: IdNamed, filterParam: FilterParam): Pie => ({
     name: pieChartTranslation(fieldKey, idNamed),
     value,
     filterParam,
@@ -70,7 +70,7 @@ const addMeterDataToSummary = (summary, fieldKey: DataOverviewKey, meter: Meter)
 
 export const dataSummary = (meters: uuid[], metersLookup: DomainModel<Meter>): DataOverview => {
 
-  const summaryTemplate: {[P in DataOverviewKey]: any} = {
+  const summaryTemplate: {[P in DataOverviewKey]: PieData2} = {
     flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
   };
 
