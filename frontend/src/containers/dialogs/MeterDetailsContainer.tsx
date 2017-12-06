@@ -167,8 +167,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const renderValue = (item: any) => item.value;
     const renderDate = (item: any) => item.date;
     const renderSerial = ({id}: Gateway) => id;
-    // TODO Gateway should hold SNR (Signal Noise Ratio) information
-    const renderSignalNoiseRatio = (gateway: Gateway) => translate('n/a');
+    const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) => signalToNoiseRatio || translate('n/a');
 
     return (
       <Row>
