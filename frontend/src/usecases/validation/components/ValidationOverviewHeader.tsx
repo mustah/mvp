@@ -6,7 +6,7 @@ import {translate} from '../../../services/translationService';
 import './ValidationOverviewHeader.scss';
 
 interface ValidationOverviewHeaderProps {
-  children: React.ReactElement<TabOptionsProps>;
+  children: React.ReactElement<TabOptionsProps>; // TODO fix this type
   header: string;
 }
 
