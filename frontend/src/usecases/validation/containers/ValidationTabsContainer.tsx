@@ -153,13 +153,13 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     </ValidationOverviewHeader>
   );
 
-  const overview = count > 0 ? (
+  const overview = count > 0 && (
     <ValidationOverview
       addSelection={addSelection}
       meters={metersByStatus(selectedOption)}
       metersLookup={entities}
     />
-  ) : null;
+  );
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>

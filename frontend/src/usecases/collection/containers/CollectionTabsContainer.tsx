@@ -31,7 +31,7 @@ import {changePaginationCollection} from '../../../state/ui/pagination/paginatio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabsContainerDispatchToProps, TabsContainerStateToProps, TabName} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
 import {Children, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -209,7 +209,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     const count = counts[tabName];
     const header = count ? `${headings[tabName][1]}: ${count}` : headings[tabName][0];
 
-    const chartRow = count > 0 ? (
+    const chartRow = count > 0 && (
       <Row>
         <PieChartSelector
           heading={translate('status')}
@@ -235,7 +235,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
           onClick={selectProductModel}
         />
       </Row>
-    ) : null;
+    );
 
     return (
       <WrapperIndent>
@@ -258,13 +258,13 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     );
   })(selectedOption);
 
-  const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
+  const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
       <GatewayDetailsContainer
         gateway={map.selectedMarker.options.mapMarker as Gateway}
       />
     </Dialog>
-  ) : null;
+  );
 
   return (
     <Tabs>
