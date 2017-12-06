@@ -3,11 +3,9 @@ import 'ValidationOverview.scss';
 import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector} from '../../../components/pie-chart-selector/PieChartSelector2';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {uuid} from '../../../types/Types';
-import {dataSummary} from './validationOverviewHelper';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: string[][] = [
@@ -17,16 +15,14 @@ const colors: string[][] = [
 ];
 
 interface ValidationOverviewProps {
-  metersLookup: DomainModel<Meter>;
-  meters: uuid[];
+  meterDataSummary: MeterDataSummary | null;
   addSelection: (searchParameters: SelectionParameter) => void;
 }
 
 export const ValidationOverview = (props: ValidationOverviewProps) => {
   const {
     addSelection,
-    meters,
-    metersLookup,
+    meterDataSummary,
   } = props;
 
   const selectStatus = (id: uuid) => addSelection({parameter: ParameterName.meterStatuses, id});
@@ -34,51 +30,52 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
   const selectManufacturer = (id: uuid) => addSelection({parameter: ParameterName.manufacturers, id});
   const selectAlarm = (id: uuid) => addSelection({parameter: ParameterName.alarms, id});
 
-  const PieChartData = dataSummary(meters, metersLookup);
-
-// TODO: handle case when there are zero meters.
-  return (
-    <Row className="ValidationOverview">
-      <PieChartSelector
-        heading={translate('status')}
-        data={PieChartData.status}
-        colors={colors[0]}
-        onClick={selectStatus}
-        maxSlices={4}
-      />
-      <PieChartSelector
-        heading={translate('flagged for action')}
-        data={PieChartData.flagged}
-        colors={colors[1]}
-        maxSlices={4}
-      />
-      <PieChartSelector
-        heading={translate('alarm', {count: Object.keys(PieChartData.alarm).length})}
-        data={PieChartData.alarm}
-        colors={colors[0]}
-        onClick={selectAlarm}
-        maxSlices={4}
-      />
-      <PieChartSelector
-        heading={translate('cities')}
-        data={PieChartData.city}
-        colors={colors[1]}
-        onClick={selectCity}
-        maxSlices={4}
-      />
-      <PieChartSelector
-        heading={translate('manufacturer')}
-        data={PieChartData.manufacturer}
-        colors={colors[0]}
-        onClick={selectManufacturer}
-        maxSlices={4}
-      />
-      <PieChartSelector
-        heading={translate('medium')}
-        data={PieChartData.medium}
-        colors={colors[1]}
-        maxSlices={4}
-      />
-    </Row>
-  );
+  if (!meterDataSummary) {
+    return null;
+  } else {
+    return (
+      <Row className="ValidationOverview">
+        <PieChartSelector
+          heading={translate('status')}
+          data={meterDataSummary.status}
+          colors={colors[0]}
+          onClick={selectStatus}
+          maxSlices={4}
+        />
+        <PieChartSelector
+          heading={translate('flagged for action')}
+          data={meterDataSummary.flagged}
+          colors={colors[1]}
+          maxSlices={4}
+        />
+        <PieChartSelector
+          heading={translate('alarm', {count: Object.keys(meterDataSummary.alarm).length})}
+          data={meterDataSummary.alarm}
+          colors={colors[0]}
+          onClick={selectAlarm}
+          maxSlices={4}
+        />
+        <PieChartSelector
+          heading={translate('cities')}
+          data={meterDataSummary.city}
+          colors={colors[1]}
+          onClick={selectCity}
+          maxSlices={4}
+        />
+        <PieChartSelector
+          heading={translate('manufacturer')}
+          data={meterDataSummary.manufacturer}
+          colors={colors[0]}
+          onClick={selectManufacturer}
+          maxSlices={4}
+        />
+        <PieChartSelector
+          heading={translate('medium')}
+          data={meterDataSummary.medium}
+          colors={colors[1]}
+          maxSlices={4}
+        />
+      </Row>
+    );
+  }
 };

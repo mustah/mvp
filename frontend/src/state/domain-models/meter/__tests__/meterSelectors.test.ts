@@ -1,7 +1,7 @@
-import {DomainModel} from '../../../../state/domain-models/domainModels';
-import {Meter} from '../../../../state/domain-models/meter/meterModels';
+import {Meter, MetersState} from '../meterModels';
+import {DomainModel} from '../../domainModels';
 import {uuid} from '../../../../types/Types';
-import {dataSummary} from '../validationOverviewHelper';
+import {getMeterDataSummary} from '../meterSelectors';
 
 type PartialDomainModel = DomainModel<Partial<Meter>>;
 describe('inc', () => {
@@ -36,7 +36,12 @@ describe('inc', () => {
       },
     };
 
-    const reduced = dataSummary(meters, metersLookup as DomainModel<Meter>);
+    const metersState: Partial<MetersState> = {
+      entities: metersLookup as DomainModel<Meter>,
+      result: meters,
+    };
+
+    const reduced = getMeterDataSummary(metersState as MetersState);
 
     expect(reduced).toEqual({
       flagged:

@@ -1,9 +1,8 @@
 import {InitOptions, TranslationOptions} from 'i18next';
 import i18n from '../i18n/i18n';
-import {MeterStatus} from '../state/domain-models/meter/meterModels';
+import {MeterDataSummaryKey, MeterStatus} from '../state/domain-models/meter/meterModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed} from '../types/Types';
-import {DataOverviewKey} from '../usecases/validation/components/validationOverviewHelper';
 
 export const translate = (key: string, options?: TranslationOptions) => i18n.t(key, options);
 
@@ -40,7 +39,7 @@ const flaggedTranslation = (text: string): string => {
   return texts[text] || text;
 };
 
-export const pieChartTranslation = (fieldKey: DataOverviewKey, toBeTranslated: IdNamed): string => {
+export const pieChartTranslation = (fieldKey: MeterDataSummaryKey, toBeTranslated: IdNamed): string => {
   switch (fieldKey) {
     case 'flagged':
       return flaggedTranslation(toBeTranslated.name);

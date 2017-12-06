@@ -15,8 +15,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
+import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
@@ -35,7 +35,7 @@ import {ValidationOverview} from '../components/ValidationOverview';
 
 interface StateToProps extends TabsContainerStateToProps {
   entityCount: number;
-  meters: uuid[];
+  meterDataSummary: MeterDataSummary | null;
   metersLookup: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
@@ -54,8 +54,8 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
-    meters,
     metersLookup,
+    meterDataSummary,
     pagination,
     paginationChangePage,
     paginatedList,
@@ -83,7 +83,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <ValidationOverview metersLookup={metersLookup} meters={meters} addSelection={addSelection}/>
+        <ValidationOverview meterDataSummary={meterDataSummary} addSelection={addSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <MeterList result={paginatedList} entities={metersLookup} selectEntryAdd={selectEntryAdd}/>
@@ -103,7 +103,7 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
   const pagination = getValidationPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
-    meters: getResultDomainModels(meters),
+    meterDataSummary: getMeterDataSummary(meters),
     entityCount: getMetersTotal(meters),
     metersLookup: getMeterEntities(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),

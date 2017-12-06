@@ -1,6 +1,7 @@
 import {IdNamed, uuid} from '../../../types/Types';
 import {DomainModel, Location, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
+import {PieData2} from '../../../components/pie-chart-selector/PieChartSelector2';
 
 export interface MeterStatusChangelog {
   id: uuid;
@@ -64,3 +65,14 @@ export const enum MeterStatus {
   alarm = 3,
   unknown = 4,
 }
+
+export interface MeterDataSummary {
+  flagged: PieData2;
+  city: PieData2;
+  manufacturer: PieData2;
+  medium: PieData2;
+  status: PieData2;
+  alarm: PieData2;
+}
+
+export type MeterDataSummaryKey = keyof MeterDataSummary;
