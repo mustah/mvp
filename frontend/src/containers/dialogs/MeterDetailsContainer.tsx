@@ -28,6 +28,7 @@ import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import {Info} from './Info';
 import './MeterDetailsContainer.scss';
 
+// TODO[!must!] use real measurement data from backend (another MR)
 const measurements: Normalized<any> = {
   entities: {
     id0: {
