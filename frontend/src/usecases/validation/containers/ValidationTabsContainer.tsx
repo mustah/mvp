@@ -161,13 +161,11 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     />
   ) : null;
 
-  const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
+  const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <MeterDetailsContainer
-        meter={map.selectedMarker.options.mapMarker as Meter}
-      />
+      <MeterDetailsContainer meter={map.selectedMarker.options.mapMarker as Meter}/>
     </Dialog>
-  ) : null;
+  );
 
   return (
     <Tabs>
