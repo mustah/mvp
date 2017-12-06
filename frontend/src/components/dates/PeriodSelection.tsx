@@ -73,9 +73,7 @@ export class PeriodSelection extends React.Component<Props, State> {
     const {period, selectPeriod} = this.props;
     const {timePickerVisible} = this.state;
 
-    const onSelectPeriod = (event, index, period: Period) => {
-      selectPeriod(period);
-    };
+    const onSelectPeriod = (event, index: number, period: Period) => selectPeriod(period);
 
     const timePeriods = [
       {

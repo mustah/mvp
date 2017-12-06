@@ -10,6 +10,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {Logo} from '../../../components/logo/Logo';
+import {NativeEvent} from '../../../types/Types';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
@@ -42,8 +43,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
     this.state = {email: '', password: ''};
   }
 
-  onChange = (event: any): void => {
-    const {target: {id, value}} = event;
+  onChange = ({target: {id, value}}: React.ChangeEvent<any>): void => {
     this.setState({[id]: value});
   }
 
@@ -52,15 +52,15 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
     this.props.login(email, password);
   }
 
-  onKeyPress = (event: any): void => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
+  onKeyPress = ({key, preventDefault}: React.KeyboardEvent<any>): void => {
+    if (key === 'Enter') {
+      preventDefault();
       this.login();
     }
   }
 
-  onSubmit = (event: any): void => {
-    event.preventDefault();
+  onSubmit = ({preventDefault}: NativeEvent): void => {
+    preventDefault();
     this.login();
   }
 

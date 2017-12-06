@@ -15,7 +15,7 @@ import {MapMarker} from '../../../map/mapModels';
 import {MapState} from '../../../map/mapReducer';
 import {Widget} from './Widget';
 
-interface Props {
+interface OwnProps {
   markers: any;
 }
 
@@ -27,7 +27,7 @@ interface DispatchToProps {
   closeClusterDialog: OnClick;
 }
 
-const MapWidgets = (props: StateToProps & DispatchToProps & Props) => {
+const MapWidgets = (props: StateToProps & DispatchToProps & OwnProps) => {
   const {
     markers,
     map,

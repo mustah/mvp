@@ -22,7 +22,7 @@ const getSelectedIds = (state: LookupState): SelectedParameters => state.selecti
 const getSelectionGroup = (entityType: string) =>
   (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
 
-const getSelectedEntityIdsSelector = (entityType: string): any =>
+const getSelectedEntityIdsSelector = (entityType: string) =>
   createSelector<LookupState, SelectedParameters, uuid[]>(
     getSelectedIds,
     (selectedParameters: SelectedParameters) => selectedParameters[entityType],
@@ -30,21 +30,21 @@ const getSelectedEntityIdsSelector = (entityType: string): any =>
 
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
-const deselectedIdsSelector = (entityType: string): any =>
+const deselectedIdsSelector = (entityType: string) =>
   createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
     ({result}: Normalized<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
-const getDeselectedEntities = (entityType: string): any =>
+const getDeselectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
     getSelectionGroup(entityType),
     (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map(id => entities[id]),
   );
 
-const getSelectedEntities = (entityType: string): any =>
+const getSelectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
@@ -54,7 +54,7 @@ const getSelectedEntities = (entityType: string): any =>
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
 
-const getList = (entityType: ParameterName): any =>
+const getList = (entityType: ParameterName) =>
   createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[] | null[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),

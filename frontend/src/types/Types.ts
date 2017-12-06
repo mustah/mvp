@@ -7,7 +7,13 @@ export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 
+// React helper types
 export type Children = React.ReactNode | React.ReactNode[];
+/**
+ * Your event handlers will be passed instances of SyntheticEvent,
+ * a cross-browser wrapper around the browser’s native event.
+ */
+export type NativeEvent = React.SyntheticEvent<any>;
 
 /**
  * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.

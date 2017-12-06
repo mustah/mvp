@@ -3,7 +3,7 @@ import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
 import {wrapComponent} from '../../helpers/componentHelpers';
-import {Children, Clickable, OnClick} from '../../types/Types';
+import {Children, Clickable, NativeEvent, OnClick} from '../../types/Types';
 import {IconMore} from '../icons/IconMore';
 import {Row} from '../layouts/row/Row';
 
@@ -50,11 +50,11 @@ export class PopoverMenu extends React.Component<Props, State> {
     );
   }
 
-  onOpenMenu = (event: React.SyntheticEvent<any>): void => {
-    event.preventDefault();
+  onOpenMenu = ({preventDefault, currentTarget}: NativeEvent): void => {
+    preventDefault();
     this.setState({
       isOpen: true,
-      anchorElement: event.currentTarget,
+      anchorElement: currentTarget,
     });
   }
 
