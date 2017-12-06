@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'ValidationOverview.scss';
 import {Row} from '../../../components/layouts/row/Row';
-import {PieChartSelector} from '../../../components/pie-chart-selector/PieChartSelector2';
+import {PieChartSelector} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';

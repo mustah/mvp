@@ -34,6 +34,7 @@ describe('dialogSelectors', () => {
       address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33', cityId: 'Perstorp'},
       city: {id: 'Perstorp', name: 'Perstorp'},
       flags: [],
+      flagged: false,
       productModel: 'CMi2110',
       telephoneNumber: '07190000355051',
       ip: null,

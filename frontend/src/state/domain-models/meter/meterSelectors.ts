@@ -13,7 +13,7 @@ import {
 } from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
 import {DomainModel} from '../domainModels';
-import {Pie, PieData2} from '../../../components/pie-chart-selector/PieChartSelector2';
+import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {pieChartTranslation} from '../../../services/translationService';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
@@ -117,7 +117,7 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
   }
 };
 
-const addToCategory = (category: PieData2, fieldKey: MeterDataSummaryKey, meter: Meter): PieData2 => {
+const addToCategory = (category: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
   let label: uuid;
   let existentEntity: Pie | undefined;
   let value: number;
@@ -160,7 +160,7 @@ const addToCategory = (category: PieData2, fieldKey: MeterDataSummaryKey, meter:
 };
 
 const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Meter): MeterDataSummary => {
-  const category: PieData2 = summary[fieldKey];
+  const category: PieData = summary[fieldKey];
   return {
     ...summary,
     [fieldKey]: {
@@ -173,7 +173,7 @@ export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainMod
   getResultDomainModels,
   getMeterEntities,
   (meters: uuid[], metersLookup: DomainModel<Meter>) => {
-    const summaryTemplate: {[P in MeterDataSummaryKey]: PieData2} = {
+    const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
       flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
     };
     if (!meters.length) {

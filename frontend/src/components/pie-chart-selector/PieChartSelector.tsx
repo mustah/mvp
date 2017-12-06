@@ -1,52 +1,43 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
-import {translate} from '../../services/translationService';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
+import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
+import {FilterParam} from '../../state/search/selection/selectionModels';
 
-export interface PieData {
+export interface Pie {
   name: string;
   value: number;
+  filterParam: FilterParam | FilterParam[];
 }
 
-export type PieClick = (name: uuid) => void;
+export interface PieData {
+  [key: string]: Pie;
+}
 
-interface PieChartSelector {
-  data: PieData[];
+export type PieClick = (id: uuid | boolean) => void;
+
+export interface PieChartSelectorProps {
+  data: PieData;
   onClick?: PieClick;
   colors: string[];
   heading: string;
+  maxSlices: number;
 }
 
-/**
- * Known issue: if there is no data, the chart's legend will be shown, but there is no "empty" pie chart visualized.
- */
-export const PieChartSelector = (props: PieChartSelector) => {
-  const {data, colors, heading, onClick} = props;
+interface Legend {
+  value: string | number;
+  type: 'square';
+  color: string;
+  filterParam: FilterParam | FilterParam[];
+}
 
-  const showIfGreaterPartThan = 0.006;
+export const PieChartSelector = (props: PieChartSelectorProps) => {
+  const {data, colors, heading, onClick, maxSlices} = props;
 
-  // lump together all values under a certain percentage, as "other"
-  // clicking on "other", is.. undefined behavior, for now
-  const total: number = data.reduce((sum, piece) => sum + piece.value, 0);
-
-  const localizedOther = translate('other');
-
-  const filteredData: PieData[] = data
-    .reduce((filtered: PieData[], current: PieData) => {
-      if ((current.value / total) >= showIfGreaterPartThan) {
-        filtered.push(current);
-      } else {
-        const indexOfOther = filtered.findIndex((current: PieData) => current.name === localizedOther);
-        if (indexOfOther !== -1) {
-          filtered[indexOfOther].value += current.value;
-        } else {
-          filtered.push({name: localizedOther, value: current.value});
-        }
-      }
-      return filtered;
-    }, []);
+  const segments: uuid[] = Object.keys(data);
+  const pieSlices = splitDataIntoSlices(segments, data, maxSlices);
 
   const renderCell = (entry: any, index: number) => (
     <Cell
@@ -55,16 +46,32 @@ export const PieChartSelector = (props: PieChartSelector) => {
       stroke={'transparent'}
     />);
 
-  // TODO typing for handling rechart's onClick events is broken, see
-  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20722
-  const onPieClick = (data: any) => onClick && onClick(data.payload.name);
+  // TODO: Should perhaps be included in the action to handle array arguments, so it also can be tested.
+  const onPieClick = ({payload: {filterParam}}) => {
+    if (onClick) {
+      if (Array.isArray(filterParam)) {
+        filterParam.map((id: uuid) => onClick(id));
+      } else {
+        onClick(filterParam);
+      }
+    }
+  };
 
-  // the default legend only shows labels, I want to include the count as well
-  const legend = filteredData.map((dataTuple, index) => ({
-    value: `${dataTuple.name} (${dataTuple.value})`,
+  const onLegendClick = ({filterParam}: Legend) => {
+    if (onClick) {
+      if (Array.isArray(filterParam)) {
+        filterParam.map((id: uuid) => onClick(id));
+      } else {
+        onClick(filterParam);
+      }
+    }
+  };
+
+  const legend = pieSlices.map(({name, value, filterParam}: Pie, index: number): Legend => ({
+    value: `${name} (${value})`,
     type: 'square',
     color: colors[index % colors.length],
-    id: dataTuple.name,
+    filterParam,
   }));
 
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
@@ -72,13 +79,16 @@ export const PieChartSelector = (props: PieChartSelector) => {
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={data} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
-          {filteredData.map(renderCell)}
+        <Pie onClick={onPieClick} data={pieSlices} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
+          {pieSlices.map(renderCell)}
         </Pie>
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
         <Legend
           margin={margins}
           payload={legend}
+          onClick={onLegendClick}
+          align={'left'}
+          layout={'vertical'}
         />
       </PieChart>
     </Widget>

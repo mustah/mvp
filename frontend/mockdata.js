@@ -325,6 +325,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         address,
         city,
         flags: row.gateway_flags,
+        flagged: row.gateway_flags.length !== 0,
         productModel: row.gateway_product_model,
         telephoneNumber: row.tel,
         ip: nullOr(row.ip),
