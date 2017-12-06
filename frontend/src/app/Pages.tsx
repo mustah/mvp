@@ -5,7 +5,7 @@ import {LoginContainer} from '../usecases/auth/containers/LoginContainer';
 import {Collection} from '../usecases/collection/components/Collection';
 import {Layout} from '../components/layouts/layout/Layout';
 import {DashboardContainer} from '../usecases/dashboard/containers/DashboardContainer';
-import ReportContainer from '../usecases/report/containers/ReportContainer';
+import {ReportContainer} from '../usecases/report/containers/ReportContainer';
 import {SelectionContainer} from '../usecases/selection/containers/SelectionContainer';
 import {Validation} from '../usecases/validation/components/Validation';
 import {routes} from './routes';
