@@ -28,8 +28,6 @@ import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import {Info} from './Info';
 import './MeterDetailsContainer.scss';
 
-// TODO We need to support that a meter is connected to several gateways
-// TODO are these example values too large? i.e. current state, not diff between current and last state
 const measurements: Normalized<any> = {
   entities: {
     id0: {

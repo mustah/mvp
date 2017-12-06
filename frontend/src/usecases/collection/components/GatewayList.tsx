@@ -6,7 +6,8 @@ import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {translate} from '../../../services/translationService';
 import {Normalized} from '../../../state/domain-models/domainModels';
-import {Gateway as GatewayModel} from '../../../state/domain-models/gateway/gatewayModels';
+import {Flag} from '../../../state/domain-models/flag/flagModels';
+import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {OnClickWithId} from '../../../types/Types';
 import {GatewayListItem} from './GatewayListItem';
 
@@ -14,18 +15,18 @@ interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const GatewayList = (props: Normalized<GatewayModel> & Props) => {
+export const GatewayList = (props: Normalized<Gateway> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
-  const renderGatewayListItem = (gateway: GatewayModel) => <GatewayListItem gateway={gateway}/>;
-  const renderStatusCell = (gateway: GatewayModel) => <Status {...gateway.status}/>;
-  const renderCity = (gateway: GatewayModel) => gateway.city.name;
-  const renderAddress = (gateway: GatewayModel) => gateway.address.name;
-  const renderFlags = (gateway: GatewayModel) => gateway.flags.map((flag) => flag.title).join(', ');
-  const renderActionDropdown = (gateway: GatewayModel) =>
-    <ListActionsDropdown item={{id: gateway.id, name: gateway.productModel}} selectEntryAdd={selectEntryAdd}/>;
-  const renderStatusChanged = (gateway: GatewayModel) => gateway.statusChanged || <Separator/>;
-  const renderProductModel = (gateway: GatewayModel) => gateway.productModel;
+  const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
+  const renderStatusCell = ({status}: Gateway) => <Status {...status}/>;
+  const renderCity = ({city}: Gateway) => city.name;
+  const renderAddress = ({address}: Gateway) => address.name;
+  const renderFlags = ({flags}: Gateway) => flags.map((flag: Flag) => flag.title).join(', ');
+  const renderActionDropdown = ({id, productModel}: Gateway) =>
+    <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
+  const renderStatusChanged = ({statusChanged}: Gateway) => statusChanged || <Separator/>;
+  const renderProductModel = ({productModel}: Gateway) => productModel;
 
   return (
     <Table result={result} entities={entities}>
