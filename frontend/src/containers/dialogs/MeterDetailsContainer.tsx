@@ -135,9 +135,9 @@ const MeterDetailsInfo = (props: Props) => {
               <Subtitle>{translate('labels')}</Subtitle>
             </Row>
           </Column>
-          <Info label={translate('sap id')} value={'123234'}/>
+          <Info label={translate('sap id')} value={meter.sapId}/>
           <Info label={translate('facility id')} value={meter.facility}/>
-          <Info label={translate('measure id')} value={12312312}/>
+          <Info label={translate('measure id')} value={meter.measurementId}/>
         </Row>
       </Column>
     </Row>

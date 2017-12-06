@@ -1,13 +1,14 @@
 import * as classNames from 'classnames';
 import 'Layout.scss';
 import * as React from 'react';
+import {Children, OnClick} from '../../../types/Types';
 
 export interface AllLayoutProps {
   hide: boolean;
   className: string;
   style: React.CSSProperties;
-  children: React.ReactNode;
-  onClick: (...args) => void;
+  children: Children;
+  onClick: OnClick;
 }
 
 export type LayoutProps = Partial<AllLayoutProps>;
