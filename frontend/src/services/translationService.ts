@@ -1,4 +1,4 @@
-import {InitOptions, TranslationOptions} from 'i18next';
+import {Callback, InitOptions, TranslationOptions} from 'i18next';
 import i18n from '../i18n/i18n';
 import {MeterDataSummaryKey, MeterStatus} from '../state/domain-models/meter/meterModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
@@ -7,10 +7,11 @@ import {GatewayDataSummaryKey} from '../state/domain-models/gateway/gatewayModel
 
 export const translate = (key: string, options?: TranslationOptions) => i18n.t(key, options);
 
-export const onTranslationInitialized = (callback: (options: InitOptions) => void) =>
- i18n.on('initialized', callback);
+export const onTranslationInitialized = (callback: (options: InitOptions) => void) => {
+  i18n.on('initialized', callback);
+};
 
-export const changeTranslationLanguage = (language: string, callback?: () => any) =>
+export const changeTranslationLanguage = (language: string, callback?: Callback) =>
   i18n.changeLanguage(language, callback);
 
 // TODO: Write tests on this.

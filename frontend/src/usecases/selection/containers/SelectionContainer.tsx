@@ -13,6 +13,7 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
+import {Callback} from '../../../types/Types';
 import {SelectionContentContainer} from './SelectionContentContainer';
 
 interface StateToProps {
@@ -21,7 +22,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchSelections: () => void;
+  fetchSelections: Callback;
 }
 
 type Props = StateToProps & InjectedAuthRouterProps & DispatchToProps;

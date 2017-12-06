@@ -6,7 +6,7 @@ import './Checkbox.scss';
 interface CheckBox extends Clickable {
   id: uuid;
   checked?: boolean;
-  style: any;
+  style: React.CSSProperties;
   label: Children;
 }
 

@@ -2,17 +2,16 @@ import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {translate} from '../../services/translationService';
 import './ButtonClose.scss';
-
-type Callback = (event: any) => any;
+import {OnClick} from '../../types/Types';
 
 interface ButtonCloseProps {
-  onClick: Callback;
+  onClick: OnClick;
 }
 
-export const ButtonClose = (props: ButtonCloseProps) => (
+export const ButtonClose = ({onClick}: ButtonCloseProps) => (
   <FlatButton
     label={translate('close')}
-    onClick={props.onClick}
+    onClick={onClick}
     className="FlatButton"
   />
 );
