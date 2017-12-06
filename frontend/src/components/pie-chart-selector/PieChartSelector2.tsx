@@ -18,7 +18,7 @@ export interface PieData2 {
 
 export type PieClick = (id: uuid | boolean) => void;
 
-interface PieChartSelector {
+export interface PieChartSelectorProps {
   data: PieData2;
   onClick?: PieClick;
   colors: string[];
@@ -33,7 +33,7 @@ interface Legend {
   filterParam: FilterParam | FilterParam[];
 }
 
-export const PieChartSelector = (props: PieChartSelector) => {
+export const PieChartSelector = (props: PieChartSelectorProps) => {
   const {data, colors, heading, onClick, maxSlices} = props;
 
   const segments: uuid[] = Object.keys(data);

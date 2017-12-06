@@ -152,7 +152,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     incProp(liveData[normalizedStatus].status, gateway.status.name);
   });
 
-  const {selectedOption} = tabs.overview;
+  const {selectedOption} = tabs!.overview;
 
   // ... then normalize the current tab, for the graphs to consume
   const status: PieData[] = Object.entries(liveData[selectedOption].status).map((entry) =>
@@ -247,7 +247,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
           <ColumnCenter className="StatusTabOptions">
             <RowRight>
               <div className="first-uppercase">{translate('filter by status') + ':'}</div>
-              <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption} tabs={tabs}>
+              <TabOptions tab={TabName.overview} selectedTab={selectedTab} select={changeTabOption!} tabs={tabs!}>
                 {overviewTabOptions}
               </TabOptions>
             </RowRight>

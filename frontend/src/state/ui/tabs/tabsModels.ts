@@ -31,11 +31,11 @@ export interface TabSelection {
 }
 
 export interface TabsContainerStateToProps {
-  tabs: TabModel;
+  tabs?: TabModel;
   selectedTab: TabName;
 }
 
 export interface TabsContainerDispatchToProps {
   changeTab: (tab: TabName) => void;
-  changeTabOption: (tab: TabName, option: string) => void;
+  changeTabOption?: (tab: TabName, option: string) => void;
 }
