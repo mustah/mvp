@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {Children} from '../../types/Types';
+import {Children, Maybe} from '../../types/Types';
 import {Indicator} from '../../usecases/report/models/reportModels';
 import {Row} from '../layouts/row/Row';
 import {IndicatorType} from './models/widgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedWidget?: IndicatorType | null;
+  selectedWidget?: Maybe<IndicatorType>;
 }
 
 export interface IndicatorWidgetsDispatchProps {

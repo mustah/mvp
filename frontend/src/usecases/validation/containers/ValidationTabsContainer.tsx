@@ -25,7 +25,7 @@ import {getPaginationList, getValidationPagination} from '../../../state/ui/pagi
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -35,11 +35,11 @@ import {ValidationOverview} from '../components/ValidationOverview';
 
 interface StateToProps extends TabsContainerStateToProps {
   metersCount: number;
-  meterDataSummary: MeterDataSummary | null;
+  meterDataSummary: Maybe<MeterDataSummary>;
   metersLookup: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
-  selectedMarker?: Meter;
+  selectedMarker?: Maybe<Meter>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {

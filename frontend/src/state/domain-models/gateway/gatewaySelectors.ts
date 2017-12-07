@@ -1,6 +1,6 @@
 import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {pieChartTranslation} from '../../../services/translationService';
-import {IdNamed, uuid} from '../../../types/Types';
+import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
 import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
@@ -12,7 +12,7 @@ export const getGatewayEntities = (state: GatewaysState): DomainModel<Gateway> =
 
 const addToCategory = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
   let label: uuid;
-  let existentEntity: Pie | undefined;
+  let existentEntity: Maybe<Pie>;
   let value: number;
 
   const categoryAdd = (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): Pie => ({
@@ -63,7 +63,7 @@ const addGatewayDataToSummary = (summary, fieldKey: GatewayDataSummaryKey, gatew
 };
 
 export const getGatewayDataSummary =
-  createSelector<GatewaysState, uuid[], DomainModel<Gateway>, GatewayDataSummary | null>(
+  createSelector<GatewaysState, uuid[], DomainModel<Gateway>, Maybe<GatewayDataSummary>>(
     getResultDomainModels,
     getGatewayEntities,
     (gateways: uuid[], gatewayLookup: DomainModel<Gateway>) => {

@@ -2,7 +2,7 @@ import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
 import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {pieChartTranslation} from '../../../services/translationService';
-import {IdNamed, uuid} from '../../../types/Types';
+import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
@@ -128,7 +128,7 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
 
 const addToCategory = (category: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
   let label: uuid;
-  let existentEntity: Pie | undefined;
+  let existentEntity: Maybe<Pie>;
   let value: number;
 
   const categoryAdd = (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): Pie => ({
@@ -178,7 +178,7 @@ const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Me
   };
 };
 
-export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, MeterDataSummary | null>(
+export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, Maybe<MeterDataSummary>>(
   getResultDomainModels,
   getMeterEntities,
   (meters: uuid[], metersLookup: DomainModel<Meter>) => {

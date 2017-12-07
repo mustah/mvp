@@ -1,4 +1,4 @@
-import {IdNamed, uuid} from '../../../types/Types';
+import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {NormalizedState, Location} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
@@ -18,8 +18,8 @@ export interface Gateway extends Location {
   productModel: string;
   telephoneNumber: string;
   statusChanged?: string;
-  ip: string | null;
-  port: string | null;
+  ip?: Maybe<string>;
+  port?: Maybe<string>;
   signalToNoiseRatio?: number;
   status: IdNamed;
   statusChangelog: GatewayStatusChangelog[];

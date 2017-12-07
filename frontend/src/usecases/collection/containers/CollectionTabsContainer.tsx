@@ -28,7 +28,7 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -41,10 +41,10 @@ import './CollectionTabsContainer.scss';
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
   gatewaysLookup: DomainModel<Gateway>;
-  gatewayDataSummary: GatewayDataSummary | null;
+  gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
-  selectedMaker?: Gateway;
+  selectedMaker?: Maybe<Gateway>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
