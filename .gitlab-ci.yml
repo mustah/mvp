@@ -42,6 +42,8 @@ build:
         - echo "Removing review container $CONTAINER_NAME"
         - docker stop $CONTAINER_NAME || true
         - docker rm $CONTAINER_NAME || true
+        - echo "Removing previously deployed directory app-root-$CI_COMMIT_REF_SLUG"
+        - rm -rf app-root-$CI_COMMIT_REF_SLUG
     tags:
         - shell
     environment:
@@ -49,9 +51,6 @@ build:
         url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se
         on_stop: teardown_review
     script:
-        - docker stop $CONTAINER_NAME || true
-        - docker rm $CONTAINER_NAME || true
-        - rm -rf app-root-$CI_COMMIT_REF_SLUG
         - mkdir app-root-$CI_COMMIT_REF_SLUG
         - tar -C app-root-$CI_COMMIT_REF_SLUG -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
         - docker run -v $(pwd)/app-root-$CI_COMMIT_REF_SLUG/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
