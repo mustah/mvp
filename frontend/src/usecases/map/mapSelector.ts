@@ -3,11 +3,10 @@ import {MapMarker} from './mapModels';
 import {IdNamed} from '../../types/Types';
 import * as L from 'leaflet';
 
-type arrayOfMapMarkerOrMarker = {[key: string]: MapMarker} | MapMarker;
-const getMarkers = (markers: arrayOfMapMarkerOrMarker): arrayOfMapMarkerOrMarker => markers;
+type MapMarkerType = {[key: string]: MapMarker} | MapMarker;
 
-export const getExtendedMarkers = createSelector<arrayOfMapMarkerOrMarker, arrayOfMapMarkerOrMarker, any[]>(
-  [getMarkers], (markers: arrayOfMapMarkerOrMarker) => {
+export const getExtendedMarkers = createSelector<MapMarkerType, MapMarkerType, any[]>(
+  [ markers => markers], (markers: MapMarkerType) => {
     let tmpMarkers: { [key: string]: MapMarker } = {};
     if (isMapMarker(markers)) {
       tmpMarkers[0] = markers;
