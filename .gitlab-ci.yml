@@ -31,7 +31,7 @@ build:
             - frontend/template.pot
             - frontend/mockup
             - .version
-        expire_in: 1 month
+        expire_in: 1 week
 
 .review_app_job_template: &review_app
     stage: deploy
