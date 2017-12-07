@@ -133,6 +133,23 @@ The H2 console is only intended for use during development so make sure that
 Navigate to `http://localhost:8080/h2-console` and use `Generic H2 (Server)`
 settings and the JDBC URL should be `jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1`.
 
+## Proxying non-existent REST API endpoints to json-server
+
+It is possible to have the backend proxy requests to non-existent endpoints to
+a `json-server` instance. This functionality is enabled by activating the
+`json-server-proxy` Spring profile.
+
+By default, if the `json-server-proxy` profile is active, a new `json-server`
+will be started on boot. The exact behaviour of this depends on the values of
+provided properties, documented below.
+
+|Property|Description|Note|
+|--------|-----------|----|
+|json-server-proxy.db|Path to db.json|If not supplied, the proxy will look for `db.json` on the classpath instead|
+|json-server-proxy.path|Path to json-server node module|If not supplied, the proxy will look for `json-server` on the classpath instead|
+|json-server-proxy.proxy-only|If true, don't start `json-server`, only proxy requests||
+|json-server-proxy.nodejs.path|Path to `nodejs` executable|If not supplied, the proxy will look for `node` on `$PATH`|
+
 ## Addendum
 
 ### Installing Docker
