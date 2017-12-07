@@ -1,10 +1,10 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
-import {setSelection} from '../../../state/search/selection/selectionActions';
+import {selectionsSchema} from '../../../state/domain-models/domainModelsSchemas';
+import {addSelectionAction} from '../../../state/search/selection/selectionActions';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';
 import {IdNamed} from '../../../types/Types';
-import {selectionsSchema} from '../../../state/domain-models/domainModelsSchemas';
 
 describe('searchReducer', () => {
 
@@ -13,7 +13,7 @@ describe('searchReducer', () => {
     const stockholm: IdNamed = {...testData.selections.cities[0]};
     const searchParameters: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
-    expect(selection(state, setSelection(searchParameters))).toEqual({
+    expect(selection(state, addSelectionAction(searchParameters))).toEqual({
       ...initialState,
       isChanged: true,
       selected: {

@@ -16,7 +16,7 @@ import {
   selectPeriodAction,
   selectSavedSelection,
   selectSavedSelectionAction,
-  setSelection,
+  addSelectionAction,
   toggleSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
@@ -70,7 +70,7 @@ describe('selectionActions', () => {
       store.dispatch(toggleSelection(parameter));
 
       expect(store.getActions()).toEqual([
-        setSelection(parameter),
+        addSelectionAction(parameter),
         meterRequest.request(),
         gatewayRequest.request(),
       ]);
@@ -94,7 +94,7 @@ describe('selectionActions', () => {
 
     it('deselects selected city', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: SelectionState = selection(initialState, setSelection(payload));
+      const state: SelectionState = selection(initialState, addSelectionAction(payload));
 
       const rootState = {searchParameters: {selection: state, saved: []}};
       onFakeFetchMetersAndGateways(rootState.searchParameters);
@@ -123,10 +123,10 @@ describe('selectionActions', () => {
       store.dispatch(toggleSelection(p2));
 
       expect(store.getActions()).toEqual([
-        setSelection(p1),
+        addSelectionAction(p1),
         meterRequest.request(),
         gatewayRequest.request(),
-        setSelection(p2),
+        addSelectionAction(p2),
         meterRequest.request(),
         gatewayRequest.request(),
       ]);

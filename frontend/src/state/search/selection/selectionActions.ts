@@ -8,7 +8,7 @@ import {getEncodedUriParametersForGateways, getEncodedUriParametersForMeters, ge
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 
-export const SET_SELECTION = 'SET_SELECTION';
+export const ADD_SELECTION = 'ADD_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_PERIOD = 'SELECT_PERIOD';
@@ -19,7 +19,7 @@ export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
 export const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 
-export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
+export const addSelectionAction = createPayloadAction<string, SelectionParameter>(ADD_SELECTION);
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
 export const resetSelectionAction = createEmptyAction(RESET_SELECTION);
 export const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
@@ -78,14 +78,14 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
     if (selectedParameter instanceof Array && selectedParameter.includes(id)) {
       dispatch(deselectSelection(selectionParameter));
     } else {
-      dispatch(setSelection(selectionParameter));
+      dispatch(addSelectionAction(selectionParameter));
     }
     dispatch(fetchMetersAndGateways());
   };
 
 export const addSelection = (selectionParameter: SelectionParameter) =>
   (dispatch) => {
-    dispatch(setSelection(selectionParameter));
+    dispatch(addSelectionAction(selectionParameter));
     dispatch(fetchMetersAndGateways());
   };
 

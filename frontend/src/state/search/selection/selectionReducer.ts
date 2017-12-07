@@ -7,7 +7,7 @@ import {
   SAVE_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
+  ADD_SELECTION,
   UPDATE_SELECTION,
 } from './selectionActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
@@ -81,7 +81,7 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
   switch (action.type) {
     case RESET_SELECTION:
       return {...initialState};
-    case SET_SELECTION:
+    case ADD_SELECTION:
       return updateSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:
       return removeSelected(state, action as Action<SelectionParameter>);
