@@ -1,4 +1,4 @@
-import {Pie, PieData2} from './PieChartSelector2';
+import {Pie, PieData} from './PieChartSelector';
 import {uuid} from '../../types/Types';
 import {translate} from '../../services/translationService';
 
@@ -19,7 +19,7 @@ const bundleToOther = (data: Pie[]): Pie => {
   return data.reduce(bundleValueAndFilterParam, initBundle);
 };
 
-export const splitDataIntoSlices = (segments: uuid[], data: PieData2, maxSlices: number): Pie[] => {
+export const splitDataIntoSlices = (segments: uuid[], data: PieData, maxSlices: number): Pie[] => {
 
   const pieSlices: Pie[] = segments.map((segment) => (data[segment]));
   const pieSlicesSorted: Pie[] = sortPieData(pieSlices);

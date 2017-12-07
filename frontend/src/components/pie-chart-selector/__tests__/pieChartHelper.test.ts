@@ -1,9 +1,9 @@
-import {Pie, PieData2} from '../PieChartSelector2';
+import {Pie, PieData} from '../PieChartSelector';
 import {splitDataIntoSlices} from '../pieChartHelper';
 import {uuid} from '../../../types/Types';
 
 describe('pieChartHelper', () => {
-  const testData: PieData2 = {
+  const testData: PieData = {
     sto: {name: 'Stockholm', value: 3, filterParam: 'sto'},
     got: {name: 'Göteborg', value: 2, filterParam: 'got'},
     kba: {name: 'Kungsbacka', value: 4, filterParam: 'kba'},
