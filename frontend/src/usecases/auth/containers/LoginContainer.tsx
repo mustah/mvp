@@ -6,15 +6,14 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/rootReducer';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
-import {NativeEvent} from '../../../types/Types';
+import {RootState} from '../../../reducers/rootReducer';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
-import {RowCenter} from '../../../components/layouts/row/Row';
 
 const loginButtonStyle = {
   backgroundColor: colors.blue,
@@ -43,8 +42,8 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
     this.state = {email: '', password: ''};
   }
 
-  onChange = ({target: {id, value}}: React.ChangeEvent<any>): void => {
-    this.setState({[id]: value});
+  onChange = (event: any): void => {
+    this.setState({[event.target.id]: event.target.value});
   }
 
   login = (): void => {
@@ -52,15 +51,15 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
     this.props.login(email, password);
   }
 
-  onKeyPress = ({key, preventDefault}: React.KeyboardEvent<any>): void => {
-    if (key === 'Enter') {
-      preventDefault();
+  onKeyPress = (event: any): void => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
       this.login();
     }
   }
 
-  onSubmit = ({preventDefault}: NativeEvent): void => {
-    preventDefault();
+  onSubmit = (event: any): void => {
+    event.preventDefault();
     this.login();
   }
 

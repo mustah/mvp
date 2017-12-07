@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Children, NativeEvent} from '../../types/Types';
+import {Children} from '../../types/Types';
 import {ButtonInfoLink} from '../buttons/ButtonInfoLink';
 import {Dialog} from './Dialog';
 
@@ -39,8 +39,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
     );
   }
 
-  open = ({preventDefault}: NativeEvent): void => {
-    preventDefault();
+  open = (): void => {
     this.setState({isOpen: true});
   }
 

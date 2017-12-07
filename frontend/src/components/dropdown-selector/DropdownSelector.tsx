@@ -6,7 +6,7 @@ import {List, ListRowProps} from 'react-virtualized';
 import {dropDownStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
-import {Children, IdNamed, NativeEvent} from '../../types/Types';
+import {Children, IdNamed} from '../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
@@ -103,11 +103,11 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     );
   }
 
-  openMenu = ({preventDefault, currentTarget}: NativeEvent): void => {
-    preventDefault();
+  openMenu = (event: any): void => {
+    event.preventDefault();
     this.setState({
       isOpen: true,
-      anchorElement: currentTarget,
+      anchorElement: event.currentTarget,
       filteredList: [...this.props.list],
     });
   }
@@ -116,11 +116,11 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     this.setState({isOpen: false, searchText: ''});
   }
 
-  whenSearchUpdate = ({preventDefault, target: {value}}: React.ChangeEvent<any>) => {
-    preventDefault();
+  whenSearchUpdate = (event: any) => {
+    event.preventDefault();
     this.setState({
-      searchText: value,
-      filteredList: filterBy(this.props.list, value),
+      searchText: event.target.value,
+      filteredList: filterBy(this.props.list, event.target.value),
     });
   }
 
