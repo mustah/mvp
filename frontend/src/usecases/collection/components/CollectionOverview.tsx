@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Row} from '../../../components/layouts/row/Row';
-import {PieChartSelector} from '../../../components/pie-chart-selector/PieChartSelector';
+import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
@@ -29,38 +29,38 @@ export const CollectionOverview = (props: CollectionOverviewProps) => {
   if (!gatewayDataSummary) {
     return null;
   } else {
+    const pieCharts: PieChartSelectorProps[] = [
+      {
+        heading: translate('status'),
+        data: gatewayDataSummary.status,
+        colors: colors[0],
+        onClick: selectStatus,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('flagged for action'),
+        data: gatewayDataSummary.flagged,
+        colors: colors[1],
+        maxSlices: 4,
+      },
+      {
+        heading: translate('cities'),
+        data: gatewayDataSummary.city,
+        colors: colors[0],
+        onClick: selectCity,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('product models'),
+        data: gatewayDataSummary.productModel,
+        colors: colors[1],
+        onClick: selectProductModel,
+        maxSlices: 4,
+      },
+    ];
     return (
       <Row className="CollectionOverview">
-        <PieChartSelector
-          heading={translate('status')}
-          data={gatewayDataSummary.status}
-          colors={colors[0]}
-          onClick={selectStatus}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('flagged for action')}
-          data={gatewayDataSummary.flagged}
-          colors={colors[1]}
-          maxSlices={4}
-
-        />
-        <PieChartSelector
-          heading={translate('cities')}
-          data={gatewayDataSummary.city}
-          colors={colors[0]}
-          onClick={selectCity}
-          maxSlices={4}
-
-        />
-        <PieChartSelector
-          heading={translate('product models')}
-          data={gatewayDataSummary.productModel}
-          colors={colors[1]}
-          onClick={selectProductModel}
-          maxSlices={4}
-
-        />
+        {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
       </Row>
     );
   }

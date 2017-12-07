@@ -39,6 +39,8 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   const segments: uuid[] = Object.keys(data);
   const pieSlices = splitDataIntoSlices(segments, data, maxSlices);
 
+  // TODO typing for handling rechart's onClick events is broken, see
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20722
   const renderCell = (entry: any, index: number) => (
     <Cell
       key={index}

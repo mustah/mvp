@@ -1,7 +1,7 @@
 import * as React from 'react';
 import 'ValidationOverview.scss';
 import {Row} from '../../../components/layouts/row/Row';
-import {PieChartSelector} from '../../../components/pie-chart-selector/PieChartSelector';
+import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
@@ -33,48 +33,51 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
   if (!meterDataSummary) {
     return null;
   } else {
+    const pieCharts: PieChartSelectorProps[] = [
+      {
+        heading: translate('status'),
+        data: meterDataSummary.status,
+        colors: colors[0],
+        onClick: selectStatus,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('flagged for action'),
+        data: meterDataSummary.flagged,
+        colors: colors[1],
+        maxSlices: 4,
+      },
+      {
+        heading: translate('alarm', {count: Object.keys(meterDataSummary.alarm).length}),
+        data: meterDataSummary.alarm,
+        colors: colors[0],
+        onClick: selectAlarm,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('cities'),
+        data: meterDataSummary.city,
+        colors: colors[1],
+        onClick: selectCity,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('manufacturer'),
+        data: meterDataSummary.manufacturer,
+        colors: colors[0],
+        onClick: selectManufacturer,
+        maxSlices: 4,
+      },
+      {
+        heading: translate('medium'),
+        data: meterDataSummary.medium,
+        colors: colors[1],
+        maxSlices: 4,
+      },
+    ];
     return (
       <Row className="ValidationOverview">
-        <PieChartSelector
-          heading={translate('status')}
-          data={meterDataSummary.status}
-          colors={colors[0]}
-          onClick={selectStatus}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('flagged for action')}
-          data={meterDataSummary.flagged}
-          colors={colors[1]}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('alarm', {count: Object.keys(meterDataSummary.alarm).length})}
-          data={meterDataSummary.alarm}
-          colors={colors[0]}
-          onClick={selectAlarm}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('cities')}
-          data={meterDataSummary.city}
-          colors={colors[1]}
-          onClick={selectCity}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('manufacturer')}
-          data={meterDataSummary.manufacturer}
-          colors={colors[0]}
-          onClick={selectManufacturer}
-          maxSlices={4}
-        />
-        <PieChartSelector
-          heading={translate('medium')}
-          data={meterDataSummary.medium}
-          colors={colors[1]}
-          maxSlices={4}
-        />
+        {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
       </Row>
     );
   }

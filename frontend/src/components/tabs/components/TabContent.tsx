@@ -8,14 +8,6 @@ export interface TabContentProps {
   children: any;
 }
 
-export const TabContent = (props: TabContentProps) => {
-  const {tab, selectedTab, children} = props;
-  if (selectedTab !== tab) {
-    return null;
-  }
-  return (
-    <Column >
-      {children}
-    </Column>
-  );
+export const TabContent = ({tab, selectedTab, children}: TabContentProps) => {
+  return selectedTab === tab ? <Column>{children}</Column> : null;
 };
