@@ -4,10 +4,9 @@ import {uuid} from '../../../../types/Types';
 import {getMeterDataSummary} from '../meterSelectors';
 
 type PartialDomainModel = DomainModel<Partial<Meter>>;
-describe('inc', () => {
+describe('meterSelectors', () => {
 
-  it('counts', () => {
-
+  it('can summarize a list of meters into groups with a tally each (like, 5 in NY, 3 in LA)', () => {
     const meters: uuid[] = [1, 2, 3];
     const metersLookup: PartialDomainModel = {
       1: {
