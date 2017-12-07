@@ -2,11 +2,8 @@ import {createSelector} from 'reselect';
 import {MapMarker} from './mapModels';
 import {IdNamed} from '../../types/Types';
 import * as L from 'leaflet';
-import {ClusterContainerProps} from './containers/ClusterContainer';
 
-const getMarkers = (props: ClusterContainerProps): {[key: string]: MapMarker} | MapMarker => {
-  return props.markers;
-} ;
+const getMarkers = (markers: {[key: string]: MapMarker} | MapMarker): {[key: string]: MapMarker} | MapMarker => markers;
 
 export const getExtendedMarkers = createSelector([getMarkers], (markers: {[key: string]: MapMarker} | MapMarker) => {
     let tmpMarkers: { [key: string]: MapMarker } = {};

@@ -11,17 +11,17 @@ interface DispatchToProps {
   openClusterDialog?: (marker: ExtendedMarker) => void;
 }
 
-export interface ClusterContainerProps {
+interface OwnProps {
   markers: {[key: string]: MapMarker} | MapMarker;
 }
 
-class Cluster extends React.Component<DispatchToProps & ClusterContainerProps> {
-  render() {
+const Cluster = (props: DispatchToProps & OwnProps) => {
     const {
       openClusterDialog,
-    } = this.props;
+      markers,
+    } = props;
 
-    const leafletMarkers: any[] = getExtendedMarkers(this.props);
+    const leafletMarkers: any[] = getExtendedMarkers(markers);
 
     const markerClusterOptions = {
       iconCreateFunction: handleIconCreate,
@@ -30,17 +30,12 @@ class Cluster extends React.Component<DispatchToProps & ClusterContainerProps> {
       maxClusterRadius: getZoomBasedRadius,
     };
 
-    const renderCluster = () => leafletMarkers.length > 0 && (
+    return leafletMarkers.length > 0 ? (
       <MarkerClusterGroup
         markers={leafletMarkers}
         onMarkerClick={openClusterDialog}
         options={markerClusterOptions}
-      />);
-
-    return (
-      renderCluster()
-    );
-  }
+      />): null;
 }
 
 const getZoomBasedRadius = (zoom: number) => {
@@ -113,4 +108,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
   openClusterDialog,
 }, dispatch);
 
-export const ClusterContainer = connect<{}, DispatchToProps, ClusterContainerProps>(null, mapDispatchToProps)(Cluster);
+export const ClusterContainer = connect<{}, DispatchToProps, OwnProps>(null, mapDispatchToProps)(Cluster);
