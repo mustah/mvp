@@ -35,8 +35,8 @@ const Cluster = (props: DispatchToProps & OwnProps) => {
         markers={leafletMarkers}
         onMarkerClick={openClusterDialog}
         options={markerClusterOptions}
-      />): null;
-}
+      />) : null;
+};
 
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
