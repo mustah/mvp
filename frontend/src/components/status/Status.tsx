@@ -1,13 +1,13 @@
 import * as React from 'react';
-import {translate} from '../../services/translationService';
+import {meterStatusTranslation} from '../../services/translationService';
 import {IdNamed, statusFor} from '../../types/Types';
 import {IconStatus} from '../icons/IconStatus';
 import {Row} from '../layouts/row/Row';
 
-export const Status = ({id, name}: IdNamed) => {
-  return statusFor(id) && (
+export const Status = (status: IdNamed) => {
+  return statusFor(status.id) && (
     <Row>
-      <IconStatus id={id} name={translate(name)}/>
+      <IconStatus id={status.id} name={meterStatusTranslation(status)}/>
     </Row>
   );
 };
