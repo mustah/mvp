@@ -8,6 +8,9 @@ import {IdNamed} from '../../../types/Types';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, MapMarkerItem, Marker} from '../mapModels';
 
+// TODO[!must!] extract all these methods to its own helper file and write test on them!
+// TODO[!must!] this file should only contain react jsx container logic, e.g. render logic.
+
 const icons = {
   0: 'assets/images/marker-icon-ok.png',
   1: 'assets/images/marker-icon-ok.png',
