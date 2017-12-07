@@ -3,10 +3,10 @@ import Popover from 'material-ui/Popover/Popover';
 import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertical';
 import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
+import {dropDownStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
 import {Children, IdNamed} from '../../types/Types';
-import {dropDownStyle} from '../../app/themes';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';
 import {Row, RowMiddle} from '../layouts/row/Row';
@@ -35,13 +35,13 @@ interface State {
 }
 
 const filterBy = (list: SelectionListItem[], exp: string) => {
-  const re = new RegExp(exp, 'i');
-  return list.filter((value: IdNamed) => value.name.match(re));
+  const regExp = new RegExp(exp, 'i');
+  return list.filter((value: IdNamed) => value.name.match(regExp));
 };
 
 const selectedOptions = (list: SelectionListItem[]) => list.filter((item: SelectionListItem) => item.selected).length;
 
-const replaceArrayItem = (array: any[], newItem: any, index: number): any[] =>
+const replaceAtIndex = (array: SelectionListItem[], newItem: SelectionListItem, index: number): SelectionListItem[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
 
 export class DropdownSelector extends React.PureComponent<GenericDropdownProps, State> {
@@ -103,7 +103,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     );
   }
 
-  openMenu = (event: React.SyntheticEvent<any>): void => {
+  openMenu = (event: any): void => {
     event.preventDefault();
     this.setState({
       isOpen: true,
@@ -116,7 +116,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     this.setState({isOpen: false, searchText: ''});
   }
 
-  whenSearchUpdate = (event) => {
+  whenSearchUpdate = (event: any) => {
     event.preventDefault();
     this.setState({
       searchText: event.target.value,
@@ -130,7 +130,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
 
     this.props.select({id, name});
     this.setState({
-      filteredList: replaceArrayItem(filteredList, {...selectedItem, selected: !selectedItem.selected}, index),
+      filteredList: replaceAtIndex(filteredList, {...selectedItem, selected: !selectedItem.selected}, index),
     });
   }
 

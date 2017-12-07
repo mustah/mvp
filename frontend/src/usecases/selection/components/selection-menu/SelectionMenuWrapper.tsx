@@ -7,7 +7,7 @@ import {routes} from '../../../../app/routes';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Logo} from '../../../../components/logo/Logo';
 import {RootState} from '../../../../reducers/rootReducer';
-import {ClassNamed} from '../../../../types/Types';
+import {ClassNamed, OnClick} from '../../../../types/Types';
 import {logout} from '../../../auth/authActions';
 import {AuthState} from '../../../auth/authModels';
 import {Profile} from '../profile/Profile';
@@ -19,7 +19,7 @@ interface StateToProps extends ClassNamed {
 }
 
 interface DispatchToProps {
-  logout: () => void;
+  logout: OnClick;
 }
 
 interface OwnProps {

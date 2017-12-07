@@ -39,8 +39,7 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
     );
   }
 
-  open = (event: any): void => {
-    event.preventDefault();
+  open = (): void => {
     this.setState({isOpen: true});
   }
 

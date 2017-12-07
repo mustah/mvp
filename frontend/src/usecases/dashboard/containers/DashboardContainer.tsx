@@ -15,6 +15,7 @@ import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {Callback} from '../../../types/Types';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
@@ -27,7 +28,7 @@ interface StateToProps extends SelectedIndicatorWidgetProps {
 }
 
 interface DispatchToProps {
-  fetchDashboard: () => any;
+  fetchDashboard: Callback;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;

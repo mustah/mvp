@@ -12,6 +12,7 @@ export interface PaginatedDomainModel {
 const getPaginationState = (state: UiState): PaginationState => state.pagination;
 
 type UseCasePaginationSelector = OutputSelector<UiState, Pagination, (res: PaginationState) => Pagination>;
+
 const getPaginationFor: (useCase: string) => UseCasePaginationSelector = (useCase: string) =>
   createSelector<UiState, PaginationState, Pagination>(
     getPaginationState,
@@ -22,6 +23,7 @@ const getResult = (state: PaginatedDomainModel): uuid[] => state.result;
 const getPagination = (state: PaginatedDomainModel): Pagination => state.pagination;
 
 type PaginationListSelector = OutputSelector<PaginatedDomainModel, uuid[], (res1: uuid[], res2: Pagination) => uuid[]>;
+
 export const getPaginationList: PaginationListSelector =
   createSelector<PaginatedDomainModel, uuid[], Pagination, uuid[]>(
     getResult,
@@ -30,6 +32,6 @@ export const getPaginationList: PaginationListSelector =
       return result.slice((page - 1) * limit, page * limit);
     });
 
-export const getCollectionPagination: UseCasePaginationSelector = getPaginationFor(useCases.collection);
-export const getValidationPagination: UseCasePaginationSelector = getPaginationFor(useCases.validation);
-export const getSelectionPagination: UseCasePaginationSelector = getPaginationFor(useCases.selection);
+export const getCollectionPagination = getPaginationFor(useCases.collection);
+export const getValidationPagination = getPaginationFor(useCases.validation);
+export const getSelectionPagination = getPaginationFor(useCases.selection);

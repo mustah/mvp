@@ -6,6 +6,7 @@ import {IndicatorState} from './indicatorReducer';
 const getIndicatorState = (state: UiState): IndicatorState => state.indicator;
 
 type SelectedIndicatorSelector = OutputSelector<UiState, IndicatorType, (res: IndicatorState) => IndicatorType>;
+
 const getSelectedIndicator = (useCase: string): SelectedIndicatorSelector =>
   createSelector<UiState, IndicatorState, IndicatorType>(
     getIndicatorState,

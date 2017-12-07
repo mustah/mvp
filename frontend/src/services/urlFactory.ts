@@ -1,5 +1,5 @@
 import {SelectedParameters} from '../state/search/selection/selectionModels';
-import {uuid} from '../types/Types';
+import {Period, uuid} from '../types/Types';
 
 interface ParameterNames {
   [key: string]: string;
@@ -40,9 +40,8 @@ export const encodedUriParametersForGateways = (selectedIds: SelectedParameters)
 const encodedUriParametersFrom = (selectedIds: SelectedParameters, parameterNames: ParameterNames): string => {
   const parameters: string[] = [];
 
-  const addParameterWith = (name: string, value: any) => {
+  const addParameterWith = (name: string, value: uuid | Period) =>
     parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
-  };
 
   Object.keys(selectedIds).forEach((name: string) => {
     const selection = selectedIds[name];

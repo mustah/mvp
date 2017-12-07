@@ -5,6 +5,7 @@ export type uuid = string | number;
 
 export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
+export type Callback = () => void;
 
 export type Children = React.ReactNode | React.ReactNode[];
 

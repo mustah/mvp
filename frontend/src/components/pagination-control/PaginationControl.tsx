@@ -1,9 +1,16 @@
 import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
+import {wrapComponent} from '../../helpers/componentHelpers';
 import {translate} from '../../services/translationService';
 import {PaginationProps} from '../../state/ui/pagination/paginationModels';
 import {RowCenter} from '../layouts/row/Row';
 import './PaginationControl.scss';
+import FlatButtonProps = __MaterialUI.FlatButtonProps;
+
+type PageElements = Array<React.ReactElement<FlatButton | HTMLSpanElement>>;
+
+const PageNumberButton = wrapComponent<FlatButtonProps>((props: FlatButtonProps) =>
+  <FlatButton className="PageNumber" {...props}/>);
 
 export const PaginationControl = (props: PaginationProps) => {
   const {pagination: {page, limit}, changePage, numOfEntities} = props;
@@ -23,23 +30,21 @@ export const PaginationControl = (props: PaginationProps) => {
   const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
   const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
 
-  const numbers = (current: number, total: number): any[] => {
-    const pages: Array<React.ReactElement<FlatButton | HTMLSpanElement>> = [];
+  const numbers = (current: number, total: number): PageElements => {
+    const pages: PageElements = [];
     const visibilityProximity: number = 3;
     let lastPrintedAreDots = false;
 
     // current starts with 1, meaning page should too
     for (let page = 1; page <= total; page++) {
       if (page === current) {
-        pages.push(<FlatButton className="PageNumber" disabled={true} key={page}>{page}</FlatButton>);
-        // pages.push(<span>{page}</span>);
+        pages.push(<PageNumberButton disabled={true} key={page}>{page}</PageNumberButton>);
         lastPrintedAreDots = false;
       } else if (Math.abs(page - current) <= visibilityProximity
                  || page <= visibilityProximity
                  || page > (total - visibilityProximity)) {
-        const cb = () => changePage(page);
-        pages.push(<FlatButton className="PageNumber" disabled={false} key={page} onClick={cb}>{page}</FlatButton>);
-        // pages.push(<span>{page}</span>);
+        const callback = () => changePage(page);
+        pages.push(<PageNumberButton disabled={false} key={page} onClick={callback}>{page}</PageNumberButton>);
         lastPrintedAreDots = false;
       } else if (!lastPrintedAreDots) {
         pages.push(<span key={page}>...</span>);

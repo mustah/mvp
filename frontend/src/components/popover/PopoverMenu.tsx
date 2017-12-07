@@ -34,7 +34,7 @@ export class PopoverMenu extends React.Component<Props, State> {
 
     return (
       <Row className={classNames('PopoverMenu', className)}>
-        {OpenIconComponent({onClick: this.onOpenMenu})}
+        <OpenIconComponent onClick={this.onOpenMenu}/>
         <Popover
           open={isOpen}
           anchorEl={anchorElement}
@@ -50,7 +50,7 @@ export class PopoverMenu extends React.Component<Props, State> {
     );
   }
 
-  onOpenMenu = (event: React.SyntheticEvent<any>): void => {
+  onOpenMenu = (event: any): void => {
     event.preventDefault();
     this.setState({
       isOpen: true,

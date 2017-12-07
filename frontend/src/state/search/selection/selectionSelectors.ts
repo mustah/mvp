@@ -1,4 +1,4 @@
-import {createSelector} from 'reselect';
+import {createSelector, OutputSelector} from 'reselect';
 import {getTranslationOrName} from '../../../services/translationService';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
@@ -22,7 +22,7 @@ const getSelectedIds = (state: LookupState): SelectedParameters => state.selecti
 const getSelectionGroup = (entityType: string) =>
   (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
 
-const getSelectedEntityIdsSelector = (entityType: string): any =>
+const getSelectedEntityIdsSelector = (entityType: string) =>
   createSelector<LookupState, SelectedParameters, uuid[]>(
     getSelectedIds,
     (selectedParameters: SelectedParameters) => selectedParameters[entityType],
@@ -30,21 +30,21 @@ const getSelectedEntityIdsSelector = (entityType: string): any =>
 
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
 
-const deselectedIdsSelector = (entityType: string): any =>
+const deselectedIdsSelector = (entityType: string) =>
   createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
     ({result}: Normalized<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
-const getDeselectedEntities = (entityType: string): any =>
+const getDeselectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
     getSelectionGroup(entityType),
     (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map(id => entities[id]),
   );
 
-const getSelectedEntities = (entityType: string): any =>
+const getSelectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
@@ -54,19 +54,32 @@ const getSelectedEntities = (entityType: string): any =>
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
 
-const getList = (entityType: ParameterName): any =>
-  createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[] | null[]>(
+type ListResultCombiner = (selected: SelectionEntity[], deselected: SelectionEntity[]) => SelectionListItem[];
+
+type ListSelector = OutputSelector<LookupState, SelectionListItem[], ListResultCombiner>;
+
+const getList = (entityType: ParameterName): ListSelector =>
+  createSelector<LookupState, SelectionEntity[], SelectionEntity[], SelectionListItem[]>(
     getSelectedEntities(entityType),
     getDeselectedEntities(entityType),
-    (selected: SelectionEntity[], deselected: SelectionEntity[]) => {
-      const selectedEntities = selected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
-        ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: true}));
-      const deselectedEntities = deselected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
-        ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: false}));
+    (selected: SelectionEntity[], deselected: SelectionEntity[]): SelectionListItem[] => {
+      const selectedEntities: SelectionListItem[] =
+        selected
+          .sort(comparatorByNameAsc)
+          .map(({id, name, ...extra}: SelectionEntity) =>
+            ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: true}));
+
+      const deselectedEntities: SelectionListItem[] =
+        deselected
+          .sort(comparatorByNameAsc)
+          .map(({id, name, ...extra}: SelectionEntity) =>
+            ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: false}));
+
       return [...selectedEntities, ...deselectedEntities];
     },
   );
-const entitySort = (objA: SelectionEntity, objB: SelectionEntity) =>
+
+const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
   (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters => state.selection.selected;

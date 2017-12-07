@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {Children} from '../../types/Types';
 import {Indicator} from '../../usecases/report/models/reportModels';
 import {Row} from '../layouts/row/Row';
 import {IndicatorType} from './models/widgetModels';
@@ -9,12 +10,12 @@ export interface SelectedIndicatorWidgetProps {
 }
 
 export interface IndicatorWidgetsDispatchProps {
-  selectIndicatorWidget: (type: IndicatorType) => any;
+  selectIndicatorWidget: (type: IndicatorType) => void;
 }
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {
   indicators: Indicator[];
-  children?: React.ReactElement<any>;
+  children?: Children;
   className?: string;
 }
 

@@ -6,14 +6,14 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/rootReducer';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
+import {RootState} from '../../../reducers/rootReducer';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
-import {RowCenter} from '../../../components/layouts/row/Row';
 
 const loginButtonStyle = {
   backgroundColor: colors.blue,
@@ -25,7 +25,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  login: (email: string, password: string) => any;
+  login: (email: string, password: string) => void;
 }
 
 interface LoginState {
@@ -43,8 +43,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
   }
 
   onChange = (event: any): void => {
-    const {target: {id, value}} = event;
-    this.setState({[id]: value});
+    this.setState({[event.target.id]: event.target.value});
   }
 
   login = (): void => {

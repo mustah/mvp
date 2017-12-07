@@ -6,10 +6,10 @@ import MenuItem from 'material-ui/MenuItem';
 import AlertAddAlert from 'material-ui/svg-icons/alert/add-alert';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import {Clickable} from '../../../types/Types';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowBottom} from '../../../components/layouts/row/Row';
+import {Clickable} from '../../../types/Types';
 
 const textFieldStyle: React.CSSProperties = {
   marginBottom: -8, /* TODO another instance of "wasted too much time to find the hidden inlined style". So sorry */
@@ -53,21 +53,13 @@ export class SelectionQuantity extends React.Component<{}, State> {
     };
   }
 
-  showDiffStuff = () => {
-    this.setState({showDiffTempDialog: true});
-  }
+  showDiffStuff = () => this.setState({showDiffTempDialog: true});
 
-  hideDiffTempDialog = () => {
-    this.setState({showDiffTempDialog: false});
-  }
+  hideDiffTempDialog = () => this.setState({showDiffTempDialog: false});
 
-  selectQuantity = (event, index, value) => {
-    this.setState({chosenQuantity: value});
-  }
+  selectQuantity = (event, index: number, chosenQuantity: string) => this.setState({chosenQuantity});
 
-  selectDirection = (event, index, value) => {
-    this.setState({chosenDirection: value});
-  }
+  selectDirection = (event, index: number, chosenDirection: string) => this.setState({chosenDirection});
 
   render() {
     const {showDiffTempDialog, chosenDirection, chosenQuantity} = this.state;
@@ -80,7 +72,7 @@ export class SelectionQuantity extends React.Component<{}, State> {
       'Flödestemperatur',
       'Returtemperatur',
       'Temperaturskillnad',
-    ].map((quantity) => (
+    ].map((quantity: string) => (
       <MenuItem
         key={quantity}
         label={quantity}
