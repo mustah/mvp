@@ -3,9 +3,9 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {IdNamed} from '../../../types/Types';
 import {openClusterDialog} from '../mapActions';
 import {ExtendedMarker, MapMarker} from '../mapModels';
+import {getExtendedMarkers} from '../mapSelector';
 
 interface DispatchToProps {
   openClusterDialog?: (marker: ExtendedMarker) => void;
@@ -15,44 +15,13 @@ interface OwnProps {
   markers: {[key: string]: MapMarker} | MapMarker;
 }
 
-class Cluster extends React.Component<DispatchToProps & OwnProps> {
-  render() {
+const Cluster = (props: DispatchToProps & OwnProps) => {
     const {
       openClusterDialog,
       markers,
-    } = this.props;
+    } = props;
 
-    let tmpMarkers: {[key: string]: MapMarker} = {};
-    if (isMapMarker(markers)) {
-      tmpMarkers[0] = markers;
-    } else {
-      tmpMarkers = markers;
-    }
-
-    const confidenceThreshold: number = 0.7;
-    // TODO type array
-    const leafletMarkers: any[] = [];
-
-    // TODO break up marker icon logic into methods and add tests
-    if (tmpMarkers) {
-      Object.keys(tmpMarkers).forEach((key: string) => {
-        const marker = tmpMarkers[key];
-        const {latitude, longitude, confidence} = marker.position;
-
-        if (latitude && longitude && confidence >= confidenceThreshold) {
-          leafletMarkers.push({
-            lat: latitude,
-            lng: longitude,
-            options: {
-              icon: L.icon({
-                iconUrl: getStatusIcon(marker.status),
-              }),
-              mapMarker: marker,
-            },
-          });
-        }
-      });
-    }
+    const leafletMarkers: any[] = getExtendedMarkers(markers);
 
     const markerClusterOptions = {
       iconCreateFunction: handleIconCreate,
@@ -61,18 +30,13 @@ class Cluster extends React.Component<DispatchToProps & OwnProps> {
       maxClusterRadius: getZoomBasedRadius,
     };
 
-    const renderCluster = () => leafletMarkers.length > 0 && (
+    return leafletMarkers.length > 0 ? (
       <MarkerClusterGroup
         markers={leafletMarkers}
         onMarkerClick={openClusterDialog}
         options={markerClusterOptions}
-      />);
-
-    return (
-      renderCluster()
-    );
-  }
-}
+      />) : null;
+};
 
 const getZoomBasedRadius = (zoom: number) => {
   if (zoom < maxZoom) {
@@ -128,15 +92,6 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   return cssClass;
 };
 
-const icons = {
-  0: 'assets/images/marker-icon-ok.png',
-  1: 'assets/images/marker-icon-ok.png',
-  2: 'assets/images/marker-icon-warning.png',
-  3: 'assets/images/marker-icon-error.png',
-};
-
-const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
-
 const getClusterDimensions = (clusterCount: number): number => {
   let x = clusterCount / 9;
 
@@ -147,10 +102,6 @@ const getClusterDimensions = (clusterCount: number): number => {
   }
 
   return x;
-};
-
-const isMapMarker = (obj: any): obj is MapMarker => {
-  return obj && obj.status !== undefined && obj.position !== undefined;
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
