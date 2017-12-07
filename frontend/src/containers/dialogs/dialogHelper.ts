@@ -4,6 +4,7 @@ import {Normalized} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
 import {Gateway, GatewayStatusChangelog} from '../../state/domain-models/gateway/gatewayModels';
 import {statusChangelogSchema} from '../../state/domain-models/gateway/gatewaySchema';
+import {Meter, MeterStatusChangelog} from '../../state/domain-models/meter/meterModels';
 
 export const titleOf = (flags: Flag[]): string => {
   if (flags.length) {
@@ -13,8 +14,10 @@ export const titleOf = (flags: Flag[]): string => {
   }
 };
 
-export const normalizedStatusChangelogs = (gateway: Gateway): Normalized<GatewayStatusChangelog> => {
-  const {entities, result} = normalize(gateway, statusChangelogSchema);
+type Changelogs = GatewayStatusChangelog | MeterStatusChangelog;
+
+export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Normalized<Changelogs> => {
+  const {entities, result} = normalize(domainModel, statusChangelogSchema);
   return {
     entities: entities.statusChangelog,
     result: result.statusChangelog,

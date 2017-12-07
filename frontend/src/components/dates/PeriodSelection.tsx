@@ -160,7 +160,7 @@ export class PeriodSelection extends React.Component<Props, State> {
       </Dialog>
     );
 
-    const customPicker = timePickerVisible ? customPickerDialog : null;
+    const customPicker = timePickerVisible && customPickerDialog;
 
     return (
       <Row className="PeriodSelection">

@@ -93,7 +93,7 @@ const fromDbJson = {
   },
 };
 
-const gatewayStatusChangelog = [
+const statusChangelog = [
   {
     date: '2017-11-22 09:34',
     status: {
@@ -308,12 +308,16 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       const city = {id: cityId, name: row.city};
       const address = {id: addressId, name: row.address, cityId};
 
-      const statusChanged = statusChanges[row.meter_id];
-      const alarm = getRandomAlarm(meterStatus.id);
       const gatewayId = row.gateway_id;
+      const meterId = row.meter_id;
+      const statusChanged = statusChanges[meterId];
+      const alarm = getRandomAlarm(meterStatus.id);
 
-      const statusChangelog = gatewayStatusChangelog
+      const gatewayStatusChangelog = statusChangelog
         .map(changelog => Object.assign({}, changelog, {id: generateId(), gatewayId}));
+
+      const meterStatusChangelog = statusChangelog
+        .map(changelog => Object.assign({}, changelog, {id: generateId(), meterId}));
 
       r.gateways.push({
         id: gatewayId,
@@ -326,9 +330,9 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         ip: nullOr(row.ip),
         port: nullOr(row.port),
         status: gatewayStatus,
-        statusChangelog,
+        statusChangelog: gatewayStatusChangelog,
         statusChanged,
-        meterIds: [row.meter_id],
+        meterIds: [meterId],
         position: objPosition,
         meterStatus,
         meterAlarm: alarm,
@@ -336,7 +340,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
       });
 
       r.meters.push({
-        id: row.meter_id,
+        id: meterId,
         facility: row.facility,
         address,
         city,
@@ -345,6 +349,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         medium: row.medium,
         manufacturer: row.meter_manufacturer,
         status: meterStatus,
+        statusChangelog: meterStatusChangelog,
         statusChanged,
         position: objPosition,
         alarm,
@@ -360,9 +365,9 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         r.selections.addresses.push({id: addressId, name: row.address, cityId});
         addresses.add(addressId);
       }
-      if (!meteringPoints.has(row.meter_id)) {
-        r.selections.meteringPoints.push({id: row.meter_id, name: row.meter_id});
-        meteringPoints.add(row.meter_id);
+      if (!meteringPoints.has(meterId)) {
+        r.selections.meteringPoints.push({id: meterId, name: meterId});
+        meteringPoints.add(meterId);
       }
       if (!meterStatuses.has(meterStatus.id)) {
         r.selections.meterStatuses.push(meterStatus);

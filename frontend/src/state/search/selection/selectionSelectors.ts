@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {getNameTranslation} from '../../../services/translationService';
+import {getTranslationOrName} from '../../../services/translationService';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
@@ -60,9 +60,9 @@ const getList = (entityType: ParameterName): any =>
     getDeselectedEntities(entityType),
     (selected: SelectionEntity[], deselected: SelectionEntity[]) => {
       const selectedEntities = selected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
-        ({id, name: getNameTranslation({id, name}, entityType), ...extra, selected: true}));
+        ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: true}));
       const deselectedEntities = deselected.sort(entitySort).map(({id, name, ...extra}: SelectionEntity) =>
-        ({id, name: getNameTranslation({id, name}, entityType), ...extra, selected: false}));
+        ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: false}));
       return [...selectedEntities, ...deselectedEntities];
     },
   );

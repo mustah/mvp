@@ -7,11 +7,8 @@ interface Props {
   meter: Meter;
 }
 
-export const MeterListItem = (props: Props) => {
-  const {meter} = props;
-  return (
-    <OpenDialogInfoButton label={meter.facility}>
-      <MeterDetailsContainer meter={meter}/>
-    </OpenDialogInfoButton>
-  );
-};
+export const MeterListItem = ({meter}: Props) => (
+  <OpenDialogInfoButton label={meter.facility}>
+    <MeterDetailsContainer meter={meter}/>
+  </OpenDialogInfoButton>
+);

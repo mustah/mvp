@@ -22,7 +22,7 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
-import {normalizedStatusChangelogs, titleOf} from './dialogHelper';
+import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
 import {checkbox, checkboxLabel} from '../../app/themes';
@@ -94,7 +94,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderDate = (item: Meter) => item.date;
     const renderMedium = (item: Meter) => item.medium;
 
-    const statusChangelog = normalizedStatusChangelogs(gateway);
+    const statusChangelog = normalizedStatusChangelogFor(gateway);
 
     return (
       <Row>
@@ -131,7 +131,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             <Row>
               <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
             </Row>
-            <Table entities={statusChangelog.entities} result={statusChangelog.result}>
+            <Table {...statusChangelog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
                 renderCell={renderDate}
@@ -152,8 +152,8 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     );
   }
 
-  changeTab = (tab: TabName) => {
-    this.setState({selectedTab: tab});
+  changeTab = (selectedTab: TabName) => {
+    this.setState({selectedTab});
   }
 }
 

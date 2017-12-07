@@ -18,6 +18,7 @@ export interface Gateway extends Location {
   statusChanged?: string;
   ip: string | null;
   port: string | null;
+  signalToNoiseRatio?: number;
   status: IdNamed;
   statusChangelog: GatewayStatusChangelog[];
   meterIds: uuid[];

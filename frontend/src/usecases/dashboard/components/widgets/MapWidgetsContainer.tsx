@@ -61,11 +61,11 @@ const MapWidgets = (props: StateToProps & DispatchToProps & Props) => {
   const centerOfPerstorpMap: GeoPosition = {latitude: 56.138288, longitude: 13.394854, confidence: 1};
   const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
 
-  const dialog = map.selectedMarker && map.isClusterDialogOpen ? (
+  const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
       <MeterDetailsContainer meter={map.selectedMarker.options.mapMarker as Meter}/>
     </Dialog>
-  ) : null;
+  );
 
   return (
     <Row className="MapWidgets">

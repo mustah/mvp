@@ -1,6 +1,6 @@
 import {initLanguage} from '../../../i18n/i18n';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
-import {normalizedStatusChangelogs, titleOf} from '../dialogHelper';
+import {normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 
 describe('dialogSelectors', () => {
 
@@ -69,7 +69,7 @@ describe('dialogSelectors', () => {
     };
 
     it('normalizes and uses only statusChangelog property', () => {
-      expect(normalizedStatusChangelogs(gateway)).toEqual({
+      expect(normalizedStatusChangelogFor(gateway)).toEqual({
         entities:
           {
             '967af275-0026-43b9-a0ef-123dfb05612a':
