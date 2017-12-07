@@ -29,7 +29,7 @@ import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
-import {MapState} from '../../map/mapReducer';
+import {getSelectedMeterMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {ValidationOverview} from '../components/ValidationOverview';
 
@@ -39,7 +39,7 @@ interface StateToProps extends TabsContainerStateToProps {
   metersLookup: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
-  map: MapState;
+  selectedMarker?: Meter;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -50,7 +50,6 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
 }
 
 const ValidationTabs = (props: StateToProps & DispatchToProps) => {
-
   const {
     selectedTab,
     changeTab,
@@ -62,13 +61,13 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     metersCount,
     selectEntryAdd,
     addSelection,
-    map,
+    selectedMarker,
     closeClusterDialog,
   } = props;
 
-  const dialog = map.selectedMarker && map.isClusterDialogOpen && (
-    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={map.selectedMarker.options.mapMarker as Meter}/>
+  const dialog = selectedMarker && (
+    <Dialog isOpen={true} close={closeClusterDialog}>
+      <MeterDetailsContainer meter={selectedMarker}/>
     </Dialog>
   );
 
@@ -108,7 +107,7 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
     metersLookup: getMeterEntities(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
-    map,
+    selectedMarker: getSelectedMeterMarker(map),
   };
 };
 

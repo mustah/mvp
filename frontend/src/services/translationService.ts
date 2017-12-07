@@ -1,9 +1,9 @@
 import {Callback, InitOptions, TranslationOptions} from 'i18next';
 import i18n from '../i18n/i18n';
+import {GatewayDataSummaryKey} from '../state/domain-models/gateway/gatewayModels';
 import {MeterDataSummaryKey, MeterStatus} from '../state/domain-models/meter/meterModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed} from '../types/Types';
-import {GatewayDataSummaryKey} from '../state/domain-models/gateway/gatewayModels';
 
 export const translate = (key: string, options?: TranslationOptions) => i18n.t(key, options);
 
@@ -42,6 +42,7 @@ const flaggedTranslation = (text: string): string => {
 };
 
 type MeterGatewaySummaryKey = MeterDataSummaryKey | GatewayDataSummaryKey;
+
 export const pieChartTranslation = (fieldKey: MeterGatewaySummaryKey, toBeTranslated: IdNamed): string => {
   switch (fieldKey) {
     case 'flagged':

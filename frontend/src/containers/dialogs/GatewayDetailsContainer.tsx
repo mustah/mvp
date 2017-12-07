@@ -22,6 +22,7 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
+import {MapMarker} from '../../usecases/map/mapModels';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
@@ -96,6 +97,8 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 
+    const gatewayMarker: DomainModel<MapMarker> = {gateway};
+
     return (
       <Row>
         <Tabs className="full-width">
@@ -144,7 +147,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <Map height={400} viewCenter={gateway.position}>
-              <ClusterContainer markers={gateway}/>
+              <ClusterContainer markers={gatewayMarker}/>
             </Map>
           </TabContent>
         </Tabs>
