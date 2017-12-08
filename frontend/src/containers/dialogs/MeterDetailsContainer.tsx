@@ -24,7 +24,6 @@ import {Meter} from '../../state/domain-models/meter/meterModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
-import {MapMarker} from '../../usecases/map/mapModels';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import {Info} from './Info';
 import './MeterDetailsContainer.scss';
@@ -162,8 +161,6 @@ class MeterDetailsTabs extends React.Component<Props, State> {
       result: [gateway.id],
     };
 
-    const meterMarker: DomainModel<MapMarker> = {meter};
-
     const statusChangelog = normalizedStatusChangelogFor(meter);
 
     const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
@@ -214,7 +211,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <Map height={400} viewCenter={meter.position}>
-              <ClusterContainer markers={meterMarker}/>
+              <ClusterContainer markers={meter}/>
             </Map>
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>

@@ -23,9 +23,14 @@ const makeMarker = (marker: MapMarker): Marker => ({
   },
 });
 
-export const makeLeafletMarkerFrom = (markers: DomainModel<MapMarker>): Marker[] => {
-  return Object.keys(markers)
-    .map((key: string) => markers[key])
+export const isMapMarker = (markers: DomainModel<MapMarker> | MapMarker): markers is MapMarker =>
+  (markers as MapMarker).status !== undefined &&
+  (markers as MapMarker).position !== undefined;
+
+export const makeLeafletMarkerFrom = (markers: DomainModel<MapMarker> | MapMarker): Marker[] => {
+  const mapMarkers = isMapMarker(markers) ? {markers} : markers;
+  return Object.keys(mapMarkers)
+    .map((key: string) => mapMarkers[key])
     .filter(isWithinThreshold)
     .map(makeMarker);
 };

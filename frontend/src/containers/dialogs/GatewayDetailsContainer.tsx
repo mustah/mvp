@@ -1,6 +1,7 @@
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {checkbox, checkboxLabel} from '../../app/themes';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -22,11 +23,9 @@ import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
-import {MapMarker} from '../../usecases/map/mapModels';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
-import {checkbox, checkboxLabel} from '../../app/themes';
 
 interface OwnProps {
   gateway: Gateway;
@@ -97,8 +96,6 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 
-    const gatewayMarker: DomainModel<MapMarker> = {gateway};
-
     return (
       <Row>
         <Tabs className="full-width">
@@ -147,7 +144,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <Map height={400} viewCenter={gateway.position}>
-              <ClusterContainer markers={gatewayMarker}/>
+              <ClusterContainer markers={gateway}/>
             </Map>
           </TabContent>
         </Tabs>

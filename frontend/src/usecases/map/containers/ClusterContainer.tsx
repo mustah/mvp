@@ -13,7 +13,7 @@ interface DispatchToProps {
 }
 
 interface OwnProps {
-  markers: DomainModel<MapMarker>;
+  markers: DomainModel<MapMarker> | MapMarker;
 }
 
 const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
