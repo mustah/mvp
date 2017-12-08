@@ -3,8 +3,8 @@
 .AppTitle {
   box-shadow: none !important;
 
-  h1 {
-    text-transform: capitalize;
+  h1:first-letter {
+    text-transform: uppercase;
   }
 }
 
