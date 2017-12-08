@@ -3,19 +3,19 @@ import * as React from 'react';
 import {Children, OnClick} from '../../types/Types';
 import {ButtonClose} from '../buttons/ButtonClose';
 
-export interface Props {
+interface Props {
   children: Children;
   isOpen: boolean;
   close: OnClick;
 }
 
-export const Dialog = (props: Props) => {
-  const {children, isOpen, close} = props;
+export const Dialog = ({children, isOpen, close}: Props) => {
+  const actions = [(<ButtonClose onClick={close}/>)];
 
   return (
     <MaterialDialog
       contentClassName="Dialog"
-      actions={[(<ButtonClose onClick={close}/>)]}
+      actions={actions}
       autoScrollBodyContent={true}
       onRequestClose={close}
       open={isOpen}
