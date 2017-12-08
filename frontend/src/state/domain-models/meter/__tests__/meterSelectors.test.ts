@@ -1,4 +1,4 @@
-import {makeMeter} from '../../../../services/mockService';
+import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {uuid} from '../../../../types/Types';
 import {DomainModel} from '../../domainModels';
 import {Meter, MetersState, SelectionTreeData} from '../meterModels';

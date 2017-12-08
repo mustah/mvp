@@ -1,5 +1,5 @@
 import {normalize} from 'normalizr';
-import {testData} from '../../../__tests__/TestDataFactory';
+import {testData} from '../../../__tests__/testDataFactory';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {initialState, selection} from '../../../state/search/selection/selectionReducer';

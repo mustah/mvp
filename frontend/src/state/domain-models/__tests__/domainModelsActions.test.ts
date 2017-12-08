@@ -2,7 +2,7 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {testData} from '../../../__tests__/TestDataFactory';
+import {testData} from '../../../__tests__/testDataFactory';
 import {makeRestClient} from '../../../services/restClient';
 import {fetchSelections, selectionsRequest} from '../domainModelsActions';
 import {selectionsSchema} from '../domainModelsSchemas';

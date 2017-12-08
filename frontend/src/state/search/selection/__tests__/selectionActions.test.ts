@@ -2,7 +2,7 @@ import axios from 'axios';
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {testData} from '../../../../__tests__/TestDataFactory';
+import {testData} from '../../../../__tests__/testDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {makeUrl} from '../../../../services/urlFactory';
 import {IdNamed, Period} from '../../../../types/Types';
