@@ -17,3 +17,5 @@ export interface WidgetModel {
   status: Status;
   pending: number;
 }
+
+export type OnSelectIndicator = (type: IndicatorType) => void;
