@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
-import org.springframework.hateoas.core.ControllerEntityLinks;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,19 +20,16 @@ public class MeasurementController {
 
   private final MeasurementRepository repository;
   private final ModelMapper modelMapper;
-  private final ControllerEntityLinks entityLinks;
 
   @Autowired
-  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper,
-                        ControllerEntityLinks entityLinks) {
+  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper) {
     this.repository = repository;
     this.modelMapper = modelMapper;
-    this.entityLinks = entityLinks;
   }
 
   @RequestMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
-    return toDto(repository.findOne(id));
+    return modelMapper.map(repository.findOne(id), MeasurementDto.class);
   }
 
   @RequestMapping("")
@@ -65,16 +61,8 @@ public class MeasurementController {
     } else {
       page = repository.findAll(filter, pageable);
     }
-    return page.map(source -> toDto(source));
+    return page.map(source -> modelMapper.map(source, MeasurementDto.class));
   }
 
-  private MeasurementDto toDto(MeasurementEntity measurementEntity) {
-    MeasurementDto dto = modelMapper.map(measurementEntity, MeasurementDto.class);
-    dto.unit = measurementEntity.value.getUnit();
-    dto.value = measurementEntity.value.getValue();
-    dto.physicalMeter = entityLinks.linkToSingleResource(
-        measurementEntity.physicalMeter.getClass(), measurementEntity.physicalMeter.id);
-    return dto;
-  }
 
 }
