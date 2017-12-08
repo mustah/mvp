@@ -57,7 +57,7 @@ export type SelectionTreeModel = DomainModel<SelectionTreeItem>;
 
 export interface SelectionTreeData {
   result: DomainModel<uuid[]>;
-  entities: SelectionTreeModel;
+  entities: {[key: string]: SelectionTreeModel};
 }
 
 export const enum MeterStatus {
