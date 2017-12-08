@@ -1,22 +1,22 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
-import {FilterParam} from '../../state/search/selection/selectionModels';
-import {uuid} from '../../types/Types';
+import {ItemOrArray, uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
 import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
+import {FilterParam} from '../../state/search/selection/selectionModels';
 
-export interface Pie {
+export interface PieSlice {
   name: string;
   value: number;
-  filterParam: FilterParam | FilterParam[];
+  filterParam: ItemOrArray<FilterParam>;
 }
 
 export interface PieData {
-  [key: string]: Pie;
+  [key: string]: PieSlice;
 }
 
-export type PieClick = (id: uuid | boolean) => void;
+export type PieClick = (id: ItemOrArray<FilterParam>) => void;
 
 export interface PieChartSelectorProps {
   data: PieData;
@@ -30,18 +30,20 @@ interface Legend {
   value: string | number;
   type: 'square';
   color: string;
-  filterParam: FilterParam | FilterParam[];
+  filterParam: ItemOrArray<FilterParam>;
 }
 
-const margins = {top: 20, right: 0, bottom: 0, left: 0};
-const viewBox = {x: 1, y: 2, width: 200, height: 200};
-const activeIndex = [];
+interface PieSliceCallback {
+  payload: PieSlice;
+
+  [key: string]: any;
+}
 
 export const PieChartSelector = (props: PieChartSelectorProps) => {
   const {data, colors, heading, onClick, maxSlices} = props;
 
   const segments: uuid[] = Object.keys(data);
-  const pieSlices = splitDataIntoSlices(segments, data, maxSlices);
+  const pieSlices: PieSlice[] = splitDataIntoSlices(segments, data, maxSlices);
 
   // TODO typing for handling rechart's onClick events is broken, see
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20722
@@ -52,48 +54,24 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
       stroke={'transparent'}
     />);
 
-  // TODO: Should perhaps be included in the action to handle array arguments, so it also can be tested.
-  const onPieClick = ({payload: {filterParam}}) => {
-    if (onClick) {
-      if (Array.isArray(filterParam)) {
-        filterParam.map((id: uuid) => onClick(id));
-      } else {
-        onClick(filterParam);
-      }
-    }
-  };
-
-  const onLegendClick = ({filterParam}: Legend) => {
-    if (onClick) {
-      if (Array.isArray(filterParam)) {
-        filterParam.map((id: uuid) => onClick(id));
-      } else {
-        onClick(filterParam);
-      }
-    }
-  };
-
-  const legend = pieSlices.map(({name, value, filterParam}: Pie, index: number): Legend => ({
+  const legend = pieSlices.map(({name, value, filterParam}: PieSlice, index: number): Legend => ({
     value: `${name} (${value})`,
     type: 'square',
     color: colors[index % colors.length],
     filterParam,
   }));
+  const margins = {top: 20, right: 0, bottom: 0, left: 0};
+
+  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => onClick && onClick(filterParam);
+  const onLegendClick = ({filterParam}: Legend) => onClick && onClick(filterParam);
 
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie
-          onClick={onPieClick}
-          data={pieSlices}
-          activeIndex={activeIndex}
-          activeShape={null}
-          animationDuration={500}
-          cy={110}
-        >
+        <Pie onClick={onPieClick} data={pieSlices} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
           {pieSlices.map(renderCell)}
         </Pie>
-        <Tooltip viewBox={viewBox}/>
+        <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
         <Legend
           margin={margins}
           payload={legend}

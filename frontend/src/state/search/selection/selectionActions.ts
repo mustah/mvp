@@ -10,6 +10,7 @@ export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 
 export const ADD_SELECTION = 'ADD_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
+export const SET_SELECTION = 'SET_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_PERIOD = 'SELECT_PERIOD';
 
@@ -20,7 +21,10 @@ export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 export const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 
 export const addSelectionAction = createPayloadAction<string, SelectionParameter>(ADD_SELECTION);
+export const setSelectionAction = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
+
 export const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
+
 export const resetSelectionAction = createEmptyAction(RESET_SELECTION);
 export const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
 
@@ -75,7 +79,7 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
       getSelection(getState().searchParameters).selected[parameter];
 
     // TODO selectedParameter's type is too ambiguous, we should split Period from uuid[]s
-    if (selectedParameter instanceof Array && selectedParameter.includes(id)) {
+    if (Array.isArray(selectedParameter) && selectedParameter.includes(id as FilterParam)) {
       dispatch(deselectSelection(selectionParameter));
     } else {
       dispatch(addSelectionAction(selectionParameter));
@@ -83,9 +87,9 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
     dispatch(fetchMetersAndGateways());
   };
 
-export const addSelection = (selectionParameter: SelectionParameter) =>
-  (dispatch) => {
-    dispatch(addSelectionAction(selectionParameter));
+export const setSelection = (selectionParameter: SelectionParameter) =>
+  dispatch => {
+    dispatch(setSelectionAction(selectionParameter));
     dispatch(fetchMetersAndGateways());
   };
 

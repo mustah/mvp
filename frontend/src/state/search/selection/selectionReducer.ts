@@ -1,13 +1,14 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action, Period, uuid} from '../../../types/Types';
 import {
+  ADD_SELECTION,
   CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SAVE_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  ADD_SELECTION,
+  SET_SELECTION,
   UPDATE_SELECTION,
 } from './selectionActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
@@ -33,33 +34,44 @@ interface SelectionActionModel {
   type: string;
 }
 
-const updateSelected = (state: SelectionState = initialState, action: Action<SelectionParameter>): SelectionState => {
-  const {payload: {parameter, id}} = action;
-  const selectedIds: FilterParam[] = state.selected[parameter] as FilterParam[];
+const addSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
+  const selectedIds: Set<FilterParam> =  new Set<FilterParam>(state.selected[parameter] as FilterParam[]);
+  Array.isArray(id) ? id.forEach((filterParam) => selectedIds.add(filterParam)) : selectedIds.add(id);
   return {
     ...state,
     isChanged: true,
     selected: {
       ...state.selected,
-      [parameter]: Array.from(new Set([...selectedIds]).add(id)),
+      [parameter]: Array.from(selectedIds),
     },
   };
 };
 
-const updatePeriod = (state: SelectionState = initialState, action: Action<Period>): SelectionState => {
-  const {payload} = action;
+const setSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
+
+  const selected = Array.isArray(id) ? [...id] : [id];
   return {
+    ...state,
+    isChanged: true,
+    selected: {
+      ...state.selected,
+      [parameter]: selected,
+    },
+  };
+};
+
+const updatePeriod = (state: SelectionState, {payload}: Action<Period>): SelectionState => (
+  {
     ...state,
     isChanged: true,
     selected: {
       ...state.selected,
       period: payload,
     },
-  };
-};
+  });
 
-const removeSelected = (state: SelectionState = initialState, action: Action<SelectionParameter>): SelectionState => {
-  const {payload: {parameter, id}} = action;
+const removeSelected = (state: SelectionState, {payload}: Action<SelectionParameter>): SelectionState => {
+  const {parameter, id} = payload;
   const selectedIds: uuid[] = state.selected[parameter]! as uuid[];
   return {
     ...state,
@@ -82,7 +94,9 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
     case RESET_SELECTION:
       return {...initialState};
     case ADD_SELECTION:
-      return updateSelected(state, action as Action<SelectionParameter>);
+      return addSelected(state, action as Action<SelectionParameter>);
+    case SET_SELECTION:
+      return setSelected(state, action as Action<SelectionParameter>);
     case DESELECT_SELECTION:
       return removeSelected(state, action as Action<SelectionParameter>);
     case SELECT_PERIOD:

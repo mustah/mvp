@@ -7,7 +7,9 @@ export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 
-export type Children = React.ReactNode | React.ReactNode[];
+export type ItemOrArray<T> = T | T[];
+
+export type Children = ItemOrArray<React.ReactNode>;
 
 /**
  * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.

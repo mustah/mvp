@@ -4,8 +4,8 @@ import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
-import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {Maybe, uuid} from '../../../types/Types';
+import {FilterParam, ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {ItemOrArray, Maybe} from '../../../types/Types';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: string[][] = [
@@ -16,19 +16,20 @@ const colors: string[][] = [
 
 interface ValidationOverviewProps {
   meterDataSummary: Maybe<MeterDataSummary>;
-  addSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: (searchParameters: SelectionParameter) => void;
 }
 
 export const ValidationOverview = (props: ValidationOverviewProps) => {
   const {
-    addSelection,
+    setSelection,
     meterDataSummary,
   } = props;
 
-  const selectStatus = (id: uuid) => addSelection({parameter: ParameterName.meterStatuses, id});
-  const selectCity = (id: uuid) => addSelection({parameter: ParameterName.cities, id});
-  const selectManufacturer = (id: uuid) => addSelection({parameter: ParameterName.manufacturers, id});
-  const selectAlarm = (id: uuid) => addSelection({parameter: ParameterName.alarms, id});
+  const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.meterStatuses, id});
+  const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.cities, id});
+  const selectManufacturer = (id: ItemOrArray<FilterParam>) =>
+    setSelection({parameter: ParameterName.manufacturers, id});
+  const selectAlarm = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.alarms, id});
 
   if (!meterDataSummary) {
     return null;

@@ -1,4 +1,4 @@
-import {IdNamed, Period, uuid} from '../../../types/Types';
+import {ItemOrArray, IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
 
 export const enum ParameterName {
@@ -15,7 +15,7 @@ export const enum ParameterName {
 export type FilterParam = uuid | boolean;
 
 export interface SelectionParameter {
-  id: FilterParam;
+  id: ItemOrArray<FilterParam>;
   name?: string;
   parameter: ParameterName;
 }

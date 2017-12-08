@@ -17,7 +17,7 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
-import {addSelection} from '../../../state/search/selection/selectionActions';
+import {setSelection} from '../../../state/search/selection/selectionActions';
 import {SelectionParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
@@ -45,7 +45,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
   selectEntryAdd: OnClickWithId;
-  addSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: (searchParameters: SelectionParameter) => void;
   closeClusterDialog: OnClick;
 }
 
@@ -60,7 +60,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     paginatedList,
     metersCount,
     selectEntryAdd,
-    addSelection,
+    setSelection,
     selectedMarker,
     closeClusterDialog,
   } = props;
@@ -82,7 +82,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <ValidationOverview meterDataSummary={meterDataSummary} addSelection={addSelection}/>
+        <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <MeterList result={paginatedList} entities={metersLookup} selectEntryAdd={selectEntryAdd}/>
@@ -115,7 +115,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   paginationChangePage: changePaginationValidation,
   selectEntryAdd,
-  addSelection,
+  setSelection,
   closeClusterDialog,
 }, dispatch);
 
