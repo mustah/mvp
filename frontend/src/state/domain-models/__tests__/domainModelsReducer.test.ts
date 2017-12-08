@@ -1,5 +1,5 @@
 import {normalize} from 'normalizr';
-import {testData} from '../../../__tests__/TestDataFactory';
+import {testData} from '../../../__tests__/testDataFactory';
 import {addresses, cities, initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {selectionsRequest} from '../domainModelsActions';
