@@ -25,7 +25,7 @@ const style: React.CSSProperties = {
 };
 
 const menuItemStyle: React.CSSProperties = {
-  fontWeight: 'bold'
+  fontWeight: 'bold',
 };
 
 const IconInput = (props: Clickable) => (
