@@ -37,31 +37,7 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 class LoginContainerComponent extends React.Component<Props, LoginState> {
 
-  constructor(props: Props) {
-    super(props);
-    this.state = {email: '', password: ''};
-  }
-
-  onChange = (event: any): void => {
-    this.setState({[event.target.id]: event.target.value});
-  }
-
-  login = (): void => {
-    const {email, password} = this.state;
-    this.props.login(email, password);
-  }
-
-  onKeyPress = (event: any): void => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.login();
-    }
-  }
-
-  onSubmit = (event: any): void => {
-    event.preventDefault();
-    this.login();
-  }
+  state: LoginState = {email: '', password: ''};
 
   render() {
     const {auth} = this.props;
@@ -107,6 +83,25 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
         </Paper>
       </ColumnCenter>
     );
+  }
+
+  onChange = (event: any): void => this.setState({[event.target.id]: event.target.value});
+
+  login = (): void => {
+    const {email, password} = this.state;
+    this.props.login(email, password);
+  }
+
+  onKeyPress = (event: any): void => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.login();
+    }
+  }
+
+  onSubmit = (event: any): void => {
+    event.preventDefault();
+    this.login();
   }
 }
 

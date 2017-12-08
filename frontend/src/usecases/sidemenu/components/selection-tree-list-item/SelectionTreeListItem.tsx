@@ -1,23 +1,8 @@
-import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
+import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {OnClickWithId, uuid} from '../../../../types/Types';
-import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
-import ListItemProps = __MaterialUI.List.ListItemProps;
-
-export const SelectableListItem = (props: ListItemProps & {selectable: boolean; selected: boolean}) => {
-
-  const {selectable, selected, ...ListItemProps} = props;
-  const selectableStyle: React.CSSProperties = selectable ? {} : sideBarStyles.notSelectable;
-  const selectedStyle: React.CSSProperties = selected ? sideBarStyles.selected : selectableStyle;
-  return (
-    <ListItem
-      {...ListItemProps}
-      style={{...listItemStyle, ...selectedStyle}}
-      hoverColor={sideBarStyles.onHover.color}
-    />
-  );
-};
+import {SelectableListItem} from './SelectableListItem';
 
 interface RenderSelectionTreeFunctionProps {
   id: uuid;

@@ -14,6 +14,7 @@ import {Normal} from '../texts/Texts';
 import {Checkbox} from './Checkbox';
 import './DropdownSelector.scss';
 import {SearchBox} from './SearchBox';
+import origin = __MaterialUI.propTypes.origin;
 
 export interface DropdownProps {
   selectionText: string;
@@ -43,6 +44,9 @@ const selectedOptions = (list: SelectionListItem[]) => list.filter((item: Select
 
 const replaceAtIndex = (array: SelectionListItem[], newItem: SelectionListItem, index: number): SelectionListItem[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
+
+const anchorOrigin: origin = {horizontal: 'left', vertical: 'bottom'};
+const targetOrigin: origin = {horizontal: 'left', vertical: 'top'};
 
 export class DropdownSelector extends React.PureComponent<GenericDropdownProps, State> {
 
@@ -79,8 +83,8 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
           style={dropDownStyle.popoverStyle}
           open={isOpen}
           anchorEl={anchorElement}
-          anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'left', vertical: 'top'}}
+          anchorOrigin={anchorOrigin}
+          targetOrigin={targetOrigin}
           onRequestClose={this.closeMenu}
           animation={PopoverAnimationVertical}
         >
@@ -112,9 +116,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     });
   }
 
-  closeMenu = (): void => {
-    this.setState({isOpen: false, searchText: ''});
-  }
+  closeMenu = (): void => this.setState({isOpen: false, searchText: ''});
 
   whenSearchUpdate = (event: any) => {
     event.preventDefault();

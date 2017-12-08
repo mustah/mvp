@@ -1,6 +1,7 @@
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
+import {LatLngTuple} from 'leaflet';
 import * as React from 'react';
 import {Map as LeafletMap, TileLayer} from 'react-leaflet';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
@@ -17,8 +18,17 @@ interface Props {
   children?: Children;
 }
 
+const defaultViewCenter: GeoPosition = {latitude: 56.142226, longitude: 13.402965, confidence: 1};
+
+const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
+  if (target.scrollWheelZoom.enabled()) {
+    target.scrollWheelZoom.disable();
+  } else {
+    target.scrollWheelZoom.enable();
+  }
+};
+
 export const Map = (props: Props) => {
-  const defaultViewCenter: GeoPosition = {latitude: 56.142226, longitude: 13.402965, confidence: 1};
   const {
     height,
     width,
@@ -27,20 +37,13 @@ export const Map = (props: Props) => {
     children,
   } = props;
 
-  const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
-    if (target.scrollWheelZoom.enabled()) {
-      target.scrollWheelZoom.disable();
-    } else {
-      target.scrollWheelZoom.enable();
-    }
-  };
-
   const style = {height, width};
+  const center: LatLngTuple = [viewCenter.latitude, viewCenter.longitude];
 
   return (
     <Column>
       <LeafletMap
-        center={[viewCenter.latitude, viewCenter.longitude]}
+        center={center}
         maxZoom={18}
         minZoom={3}
         zoom={defaultZoom}

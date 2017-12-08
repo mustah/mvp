@@ -27,6 +27,8 @@ interface DispatchToProps {
 
 type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
+const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
+
 const ReportComponent = ({selectedWidget, selectIndicatorWidget}: Props) => (
   <PageContainer>
     <Row className="space-between">
@@ -43,7 +45,7 @@ const ReportComponent = ({selectedWidget, selectIndicatorWidget}: Props) => (
       selectIndicatorWidget={selectIndicatorWidget}
     />
 
-    <Paper style={{...paperStyle, marginTop: 24}}>
+    <Paper style={contentStyle}>
       <GraphContainer/>
     </Paper>
   </PageContainer>

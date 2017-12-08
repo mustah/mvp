@@ -8,62 +8,56 @@ import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {TabModel, TabName} from '../../../state/ui/tabs/tabsModels';
 import {Bold} from '../../../components/texts/Texts';
 import {translate} from '../../../services/translationService';
+import {TabModel, TabName} from '../../../state/ui/tabs/tabsModels';
 import './GraphContainer.scss';
 
-interface GraphContainerState {
+interface State {
   selectedTabOption: string;
 }
 
-export class GraphContainer extends React.Component<{}, GraphContainerState> {
+/**
+ * protip for generating these numbers:
+ * $ python
+ * >>> import random as r
+ * >>> for _ in range(7): str(r.randrange(63, 82)) + "." + str(r.randrange(0, 999))
+ * ...
+ * '78.583'
+ * '77.715'
+ * '73.950'
+ * '77.798'
+ * '66.593'
+ * '81.817'
+ * '69.131'
+ */
 
-  constructor() {
-    super({});
-    this.state = {
-      selectedTabOption: 'power',
-    };
-  }
+const data = [
+  {name: '15 nov 09:00', asdf1: 68.423, asdf2: 71.505, asdf0: 81.817},
+  {name: '15 nov 10:00', asdf1: 65.590, asdf2: 71.318, asdf0: 69.131},
+  {name: '15 nov 11:00', asdf1: 78.583, asdf2: 73.830, asdf0: 69.586},
+  {name: '15 nov 12:00', asdf1: 77.715, asdf2: 77.821, asdf0: 72.874},
+  {name: '15 nov 13:00', asdf1: 73.950, asdf2: 73.661, asdf0: 66.502},
+  {name: '15 nov 14:00', asdf1: 77.798, asdf2: 75.292, asdf0: 80.894},
+  {name: '15 nov 15:00', asdf1: 66.593, asdf2: 81.150, asdf0: 74.864},
+];
+
+const labels = {
+  asdf0: 'Medel i Perstorp',
+  asdf1: 'Mätare 67606252',
+  asdf2: 'Mätare 67190406',
+};
+
+const activeDot = {r: 8};
+
+const style: React.CSSProperties = {width: '100%', height: '100%'};
+const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
+
+export class GraphContainer extends React.Component<{}, State> {
+
+  state: State = {selectedTabOption: 'power'};
 
   render() {
-    /**
-     * protip for generating these numbers:
-     * $ python
-     * >>> import random as r
-     * >>> for _ in range(7): str(r.randrange(63, 82)) + "." + str(r.randrange(0, 999))
-     * ...
-     * '78.583'
-     * '77.715'
-     * '73.950'
-     * '77.798'
-     * '66.593'
-     * '81.817'
-     * '69.131'
-     */
-
-    const data = [
-      {name: '15 nov 09:00', asdf1: 68.423, asdf2: 71.505, asdf0: 81.817},
-      {name: '15 nov 10:00', asdf1: 65.590, asdf2: 71.318, asdf0: 69.131},
-      {name: '15 nov 11:00', asdf1: 78.583, asdf2: 73.830, asdf0: 69.586},
-      {name: '15 nov 12:00', asdf1: 77.715, asdf2: 77.821, asdf0: 72.874},
-      {name: '15 nov 13:00', asdf1: 73.950, asdf2: 73.661, asdf0: 66.502},
-      {name: '15 nov 14:00', asdf1: 77.798, asdf2: 75.292, asdf0: 80.894},
-      {name: '15 nov 15:00', asdf1: 66.593, asdf2: 81.150, asdf0: 74.864},
-    ];
-
-    const labels = {
-      asdf0: 'Medel i Perstorp',
-      asdf1: 'Mätare 67606252',
-      asdf2: 'Mätare 67190406',
-    };
-
-    const onChangeTab = (tab: TabName) => void(0);
-
-    const onChangeTabOption = (tab: TabName, option: string): void => {
-      this.setState({selectedTabOption: option});
-    };
-
     const selectedTab: TabName = TabName.graph;
 
     const tabs: TabModel = {
@@ -75,14 +69,14 @@ export class GraphContainer extends React.Component<{}, GraphContainerState> {
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>, it breaks
     // Setting width of ResponsiveContainer to 100% will case the menu to overlap when toggled
     return (
-      <div style={{width: '100%', height: '100%'}}>
+      <div style={style}>
         <Tabs>
           <TabTopBar>
-            <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
+            <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
               <Tab tab={TabName.graph} title={translate('graph')}/>
               <Tab tab={TabName.table} title={translate('table')}/>
             </TabHeaders>
-            <TabOptions tab={TabName.graph} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
+            <TabOptions tab={TabName.graph} selectedTab={selectedTab} select={this.onChangeTabOption} tabs={tabs}>
               <TabOption title={'Energi'} id={'energy'}/>
               <TabOption title={'Volym'} id={'volume'}/>
               <TabOption title={'Effekt'} id={'power'}/>
@@ -99,7 +93,7 @@ export class GraphContainer extends React.Component<{}, GraphContainerState> {
                 width={10}
                 height={30}
                 data={data}
-                margin={{top: 40, right: 0, bottom: 0, left: 0}}
+                margin={margin}
               >
                 <XAxis dataKey="name"/>
                 <YAxis label="MW" yAxisId="left"/>
@@ -113,7 +107,7 @@ export class GraphContainer extends React.Component<{}, GraphContainerState> {
                   type="monotone"
                   dataKey="asdf0"
                   stroke="#8884d8"
-                  activeDot={{r: 8}}
+                  activeDot={activeDot}
                 />
                 <Line
                   yAxisId="right"
@@ -139,4 +133,9 @@ export class GraphContainer extends React.Component<{}, GraphContainerState> {
       </div>
     );
   }
+
+  onChangeTabOption = (tab: TabName, selectedTabOption: string): void => this.setState({selectedTabOption});
+
+  onChangeTab = (tab: TabName) => void(0);
+
 }

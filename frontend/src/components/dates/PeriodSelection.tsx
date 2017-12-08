@@ -46,6 +46,8 @@ const iconStyle: React.CSSProperties = {
   padding: 0,
 };
 
+const selectedMenuItemStyle: React.CSSProperties = {color: colors.blue};
+
 interface Props {
   period: Period;
   selectPeriod: OnSelectPeriod;
@@ -60,14 +62,6 @@ export class PeriodSelection extends React.Component<Props, State> {
   state: State = {
     timePickerVisible: false,
   };
-
-  hideCustomPicker = () => {
-    this.setState({timePickerVisible: false});
-  }
-
-  showCustomPicker = () => {
-    this.setState({timePickerVisible: true});
-  }
 
   render() {
     const {period, selectPeriod} = this.props;
@@ -173,11 +167,15 @@ export class PeriodSelection extends React.Component<Props, State> {
           value={period}
           onChange={onSelectPeriod}
           iconButton={<IconCalendar className="IconCalendar"/>}
-          selectedMenuItemStyle={{color: colors.blue}}
+          selectedMenuItemStyle={selectedMenuItemStyle}
         >
           {timePeriodComponents}
         </DropDownMenu>
       </Row>
     );
   }
+
+  hideCustomPicker = () => this.setState({timePickerVisible: false});
+
+  showCustomPicker = () => this.setState({timePickerVisible: true});
 }
