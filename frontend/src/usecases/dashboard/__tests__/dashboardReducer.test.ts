@@ -1,4 +1,4 @@
-import {IndicatorType, WidgetModel} from '../../../components/indicators/models/widgetModels';
+import {IndicatorType, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Status} from '../../../types/Types';
 import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';

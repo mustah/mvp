@@ -6,7 +6,7 @@ import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
-import {WidgetModel} from './models/widgetModels';
+import {WidgetModel} from './indicatorWidgetModels';
 import {iconComponentFor} from './SelectableIndicatorWidget';
 import classNames = require('classnames');
 

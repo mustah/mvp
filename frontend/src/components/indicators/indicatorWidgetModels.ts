@@ -1,4 +1,4 @@
-import {Status} from '../../../types/Types';
+import {Status} from '../../types/Types';
 
 export const enum IndicatorType {
   collection = 'collection',

@@ -1,5 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
 import {Action, Maybe} from '../../../types/Types';
 import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
 

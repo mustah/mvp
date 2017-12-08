@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import {Indicator} from '../../usecases/report/models/reportModels';
+import {Indicator} from '../../usecases/report/reportModels';
 import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
@@ -11,7 +11,7 @@ import {Column} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
-import {IndicatorType, OnSelectIndicator} from './models/widgetModels';
+import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface IndicatorComponentType {
