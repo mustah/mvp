@@ -17,7 +17,7 @@ export const Tab = (props: TabProps) => {
   const isSelected = tab === selectedTab;
   return (
     <Column className={classNames('Tab', {isSelected})} onClick={selectTab}>
-      <div className="Tab-header">
+      <div className="Tab-header first-uppercase">
         {title}
       </div>
       <TabUnderline isSelected={isSelected}/>
