@@ -1,10 +1,15 @@
 import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
+import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {pieChartTranslation} from '../../../services/translationService';
 import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
+import {DomainModel} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
-  Meter, MeterDataSummary, MeterDataSummaryKey,
+  Meter,
+  MeterDataSummary,
+  MeterDataSummaryKey,
   MetersState,
   SelectionTreeData,
   SelectionTreeItem,
@@ -12,9 +17,6 @@ import {
   SelectionTreeItemsProps,
 } from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
-import {DomainModel} from '../domainModels';
-import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
-import {pieChartTranslation} from '../../../services/translationService';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
 export const getMeterEntities = (state: MetersState): DomainModel<Meter> => state.entities;
@@ -32,8 +34,15 @@ export const getSelectionTree = createSelector<MetersState, uuid[], DomainModel<
     const addresses = new Set<uuid>();
     const meters = new Set<uuid>();
 
-    metersList.map((meterId: uuid) => {
-      const {city, address, facility} = metersLookup[meterId];
+    metersList.forEach((meterId: uuid) => {
+      const meterRelations = metersLookup[meterId];
+      if (!meterRelations) {
+        // Since we cannot use types to assure that all results included
+        // in a normalized state, we must detect when a result is not in
+        // the included entities in runtime.
+        return;
+      }
+      const {city, address, facility} = meterRelations;
       const clusterName = address.name[0];
       const clusterId = city.name + ':' + clusterName;
       const cluster: IdNamed = {id: clusterId, name: clusterName};
