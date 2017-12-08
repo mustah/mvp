@@ -19,10 +19,10 @@ import {pieChartTranslation} from '../../../services/translationService';
 export const getMetersTotal = (state: MetersState): number => state.total;
 export const getMeterEntities = (state: MetersState): DomainModel<Meter> => state.entities;
 
-export const getSelectionTree = createSelector<MetersState, uuid[], {[key: string]: Meter}, SelectionTreeData>(
+export const getSelectionTree = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionTreeData>(
   getResultDomainModels,
   getMeterEntities,
-  (metersList: uuid[], metersLookup: {[key: string]: Meter}) => {
+  (metersList: uuid[], metersLookup: DomainModel<Meter>) => {
 
     const selectionTree: {[key: string]: SelectionTreeItem[]} = {
       cities: [], addresses: [], addressClusters: [], meters: [],
