@@ -18,10 +18,14 @@ const textFieldStyle: React.CSSProperties = {
   width: 180,
 };
 
-const style = {
+const style: React.CSSProperties = {
   padding: 2,
   width: 35,
   height: 35,
+};
+
+const menuItemStyle: React.CSSProperties = {
+  fontWeight: 'bold'
 };
 
 const IconInput = (props: Clickable) => (
@@ -121,7 +125,7 @@ export class SelectionQuantity extends React.Component<{}, State> {
                   key={'Heat, return temp'}
                   label={'Heat, return temp'}
                   primaryText={'Heat, return temp'}
-                  style={{fontWeight: 'bold'}}
+                  style={menuItemStyle}
                   value={'Heat, return temp'}
                 />
                 {quantities}

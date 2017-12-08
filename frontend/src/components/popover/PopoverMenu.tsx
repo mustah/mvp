@@ -6,6 +6,7 @@ import {wrapComponent} from '../../helpers/componentHelpers';
 import {Children, Clickable, OnClick} from '../../types/Types';
 import {IconMore} from '../icons/IconMore';
 import {Row} from '../layouts/row/Row';
+import origin = __MaterialUI.propTypes.origin;
 
 interface Props {
   children?: Children;
@@ -19,12 +20,12 @@ interface State {
   anchorElement?: React.ReactInstance;
 }
 
+const anchorOrigin: origin = {horizontal: 'right', vertical: 'bottom'};
+const targetOrigin: origin = {horizontal: 'right', vertical: 'top'};
+
 export class PopoverMenu extends React.Component<Props, State> {
 
-  constructor(props) {
-    super(props);
-    this.state = {isOpen: false};
-  }
+  state: State = {isOpen: false};
 
   render() {
     const {isOpen, anchorElement} = this.state;
@@ -38,8 +39,8 @@ export class PopoverMenu extends React.Component<Props, State> {
         <Popover
           open={isOpen}
           anchorEl={anchorElement}
-          anchorOrigin={{horizontal: 'right', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'right', vertical: 'top'}}
+          anchorOrigin={anchorOrigin}
+          targetOrigin={targetOrigin}
           onRequestClose={this.close}
         >
           <Menu>

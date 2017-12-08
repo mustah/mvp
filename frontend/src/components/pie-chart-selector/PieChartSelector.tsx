@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
+import {FilterParam} from '../../state/search/selection/selectionModels';
 import {uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
 import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
-import {FilterParam} from '../../state/search/selection/selectionModels';
 
 export interface Pie {
   name: string;
@@ -32,6 +32,10 @@ interface Legend {
   color: string;
   filterParam: FilterParam | FilterParam[];
 }
+
+const margins = {top: 20, right: 0, bottom: 0, left: 0};
+const viewBox = {x: 1, y: 2, width: 200, height: 200};
+const activeIndex = [];
 
 export const PieChartSelector = (props: PieChartSelectorProps) => {
   const {data, colors, heading, onClick, maxSlices} = props;
@@ -76,15 +80,20 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
     filterParam,
   }));
 
-  const margins = {top: 20, right: 0, bottom: 0, left: 0};
-
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={pieSlices} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
+        <Pie
+          onClick={onPieClick}
+          data={pieSlices}
+          activeIndex={activeIndex}
+          activeShape={null}
+          animationDuration={500}
+          cy={110}
+        >
           {pieSlices.map(renderCell)}
         </Pie>
-        <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
+        <Tooltip viewBox={viewBox}/>
         <Legend
           margin={margins}
           payload={legend}
