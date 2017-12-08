@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {translate} from '../../../services/translationService';
-import {ActionsDropdown, menuItem, MenuItems} from '../../actions-dropdown/ActionsDropdown';
+import {ActionMenuItem} from '../../actions-dropdown/ActionMenuItem';
+import {ActionsDropdown, MenuItems} from '../../actions-dropdown/ActionsDropdown';
 import {Column} from '../../layouts/column/Column';
 import {TabUnderline} from './TabUnderliner';
 
@@ -10,7 +11,7 @@ export const TabSettings = () => {
   const menuItems: MenuItems = [
     {name: translate('export to Excel (.csv)'), onClick: noop},
     {name: translate('export to JSON'), onClick: noop},
-  ].map(menuItem);
+  ].map(ActionMenuItem);
 
   return (
     <Column className="TabSettings">
