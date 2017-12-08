@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
-import {makeLeafletMarkerFrom} from './clusterHelper';
+import {makeLeafletCompatibleMarkersFrom} from './clusterHelper';
 
 interface DispatchToProps {
   openClusterDialog: (marker: Marker) => void;
@@ -17,7 +17,7 @@ interface OwnProps {
 }
 
 const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
-  const leafletMarkers: Marker[] = makeLeafletMarkerFrom(markers);
+  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
 
   const markerClusterOptions = {
     iconCreateFunction: handleIconCreate,

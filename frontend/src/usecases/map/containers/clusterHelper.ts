@@ -27,7 +27,7 @@ export const isMapMarker = (markers: DomainModel<MapMarker> | MapMarker): marker
   (markers as MapMarker).status !== undefined &&
   (markers as MapMarker).position !== undefined;
 
-export const makeLeafletMarkerFrom = (markers: DomainModel<MapMarker> | MapMarker): Marker[] => {
+export const makeLeafletCompatibleMarkersFrom = (markers: DomainModel<MapMarker> | MapMarker): Marker[] => {
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])
