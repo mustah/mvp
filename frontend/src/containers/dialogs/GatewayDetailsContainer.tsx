@@ -149,9 +149,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     );
   }
 
-  changeTab = (selectedTab: TabName) => {
-    this.setState({selectedTab});
-  }
+  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
 }
 
 const GatewayDetails = (props: Props) => (

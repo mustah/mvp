@@ -134,9 +134,7 @@ export class GraphContainer extends React.Component<{}, State> {
     );
   }
 
-  onChangeTabOption = (tab: TabName, selectedTabOption: string): void => {
-    this.setState({selectedTabOption});
-  }
+  onChangeTabOption = (tab: TabName, selectedTabOption: string): void => this.setState({selectedTabOption});
 
   onChangeTab = (tab: TabName) => void(0);
 

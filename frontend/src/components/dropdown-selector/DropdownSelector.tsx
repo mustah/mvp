@@ -116,9 +116,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     });
   }
 
-  closeMenu = (): void => {
-    this.setState({isOpen: false, searchText: ''});
-  }
+  closeMenu = (): void => this.setState({isOpen: false, searchText: ''});
 
   whenSearchUpdate = (event: any) => {
     event.preventDefault();

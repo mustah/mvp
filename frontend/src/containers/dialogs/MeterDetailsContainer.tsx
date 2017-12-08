@@ -230,9 +230,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     );
   }
 
-  changeTab = (selectedTab: TabName) => {
-    this.setState({selectedTab});
-  }
+  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
 }
 
 const MeterDetails = (props: Props) => {

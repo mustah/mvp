@@ -85,9 +85,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
     );
   }
 
-  onChange = (event: any): void => {
-    this.setState({[event.target.id]: event.target.value});
-  }
+  onChange = (event: any): void => this.setState({[event.target.id]: event.target.value});
 
   login = (): void => {
     const {email, password} = this.state;

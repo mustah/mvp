@@ -175,11 +175,7 @@ export class PeriodSelection extends React.Component<Props, State> {
     );
   }
 
-  hideCustomPicker = () => {
-    this.setState({timePickerVisible: false});
-  }
+  hideCustomPicker = () => this.setState({timePickerVisible: false});
 
-  showCustomPicker = () => {
-    this.setState({timePickerVisible: true});
-  }
+  showCustomPicker = () => this.setState({timePickerVisible: true});
 }
