@@ -1,6 +1,7 @@
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {checkbox, checkboxLabel} from '../../app/themes';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -25,7 +26,6 @@ import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
-import {checkbox, checkboxLabel} from '../../app/themes';
 
 interface OwnProps {
   gateway: Gateway;
@@ -79,10 +79,7 @@ const GatewayDetailsInfo = ({gateway}: OwnProps) => {
 
 class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
-  constructor(props) {
-    super(props);
-    this.state = {selectedTab: TabName.values};
-  }
+  state: TabsState = {selectedTab: TabName.values};
 
   render() {
     const {selectedTab} = this.state;

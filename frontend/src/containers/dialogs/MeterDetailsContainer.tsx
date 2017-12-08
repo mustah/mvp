@@ -146,10 +146,7 @@ const MeterDetailsInfo = (props: Props) => {
 
 class MeterDetailsTabs extends React.Component<Props, State> {
 
-  constructor(props) {
-    super(props);
-    this.state = {selectedTab: TabName.values};
-  }
+  state: State = {selectedTab: TabName.values};
 
   render() {
     const {selectedTab} = this.state;

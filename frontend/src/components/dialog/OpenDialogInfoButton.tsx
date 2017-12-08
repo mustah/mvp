@@ -14,10 +14,7 @@ interface State {
 
 export class OpenDialogInfoButton extends React.Component<Props, State> {
 
-  constructor(props) {
-    super(props);
-    this.state = {isOpen: false};
-  }
+  state: State = {isOpen: false};
 
   render() {
     const {label} = this.props;

@@ -28,11 +28,11 @@ const menuItemStyle: React.CSSProperties = {
   fontWeight: 'bold',
 };
 
-const IconInput = (props: Clickable) => (
+const IconInput = ({onClick}: Clickable) => (
   <IconButton
     className="IconButton"
     style={style}
-    onClick={props.onClick}
+    onClick={onClick}
   >
     <AlertAddAlert
       color={colors.blue}
@@ -48,22 +48,11 @@ interface State {
 
 export class SelectionQuantity extends React.Component<{}, State> {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      showDiffTempDialog: false,
-      chosenQuantity: 'Heat, return temp',
-      chosenDirection: '>=',
-    };
-  }
-
-  showDiffStuff = () => this.setState({showDiffTempDialog: true});
-
-  hideDiffTempDialog = () => this.setState({showDiffTempDialog: false});
-
-  selectQuantity = (event, index: number, chosenQuantity: string) => this.setState({chosenQuantity});
-
-  selectDirection = (event, index: number, chosenDirection: string) => this.setState({chosenDirection});
+  state: State = {
+    showDiffTempDialog: false,
+    chosenQuantity: 'Heat, return temp',
+    chosenDirection: '>=',
+  };
 
   render() {
     const {showDiffTempDialog, chosenDirection, chosenQuantity} = this.state;
@@ -151,4 +140,12 @@ export class SelectionQuantity extends React.Component<{}, State> {
       </div>
     );
   }
+
+  showDiffStuff = () => this.setState({showDiffTempDialog: true});
+
+  hideDiffTempDialog = () => this.setState({showDiffTempDialog: false});
+
+  selectQuantity = (event, index: number, chosenQuantity: string) => this.setState({chosenQuantity});
+
+  selectDirection = (event, index: number, chosenDirection: string) => this.setState({chosenDirection});
 }
