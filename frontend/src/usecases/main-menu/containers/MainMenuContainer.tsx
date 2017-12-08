@@ -40,7 +40,7 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
 
   return (
     <Column className="MainMenuContainer">
-      <Column className="MenuItems Column-space-between">
+      <Column className="MenuItems space-between">
         <Column>
           <Link to={routes.selection} className="link">
             <MenuItem

@@ -13,7 +13,3 @@ export const Column = ({className, onClick, children}: LayoutProps) => {
 
 export const ColumnCenter = (props: LayoutProps) =>
   <Column {...props} className={classNames(props.className, 'Column-center')}/>;
-
-// TODO: Remove this since it's not used?
-export const ColumnEnd = (props: LayoutProps) =>
-  <Column {...props} className={classNames(props.className, 'Column-end')}/>;

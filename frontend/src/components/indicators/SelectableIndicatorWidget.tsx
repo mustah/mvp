@@ -7,7 +7,7 @@ import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
 import {IconTemperature} from '../icons/IconTemperature';
 import {IconValidation} from '../icons/IconValidation';
-import {Column} from '../layouts/column/Column';
+import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold, Normal, Xlarge} from '../texts/Texts';
 import './IndicatorWidget.scss';
@@ -49,7 +49,7 @@ export const SelectableIndicatorWidget = (props: IndicatorProps) => {
   return (
     <div onClick={selectWidget}>
       <Column className="Indicator-wrapper">
-        <Column className={classNames('Indicator Column-center', state)}>
+        <ColumnCenter className={classNames('Indicator', state)}>
           <Row className="Indicator-name Row-center">
             <Bold>{title}</Bold>
           </Row>
@@ -61,7 +61,7 @@ export const SelectableIndicatorWidget = (props: IndicatorProps) => {
             <IndicatorIcon className="Indicator-icon" color="black"/>
             <Bold>{subtitle}</Bold>
           </Row>
-        </Column>
+        </ColumnCenter>
 
         <div className={classNames('Indicator-separator', {isSelected}, state)}/>
       </Column>
