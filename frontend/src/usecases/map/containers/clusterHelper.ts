@@ -12,7 +12,7 @@ const icons = {
 
 const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
 
-export const isWithinThreshold = ({position: {latitude, longitude, confidence}}: MapMarker) =>
+export const isGeoPositionWithinThreshold = ({position: {latitude, longitude, confidence}}: MapMarker) =>
   latitude && longitude && confidence >= 0.7;
 
 const makeMarker = (marker: MapMarker): Marker => ({
@@ -31,6 +31,6 @@ export const makeLeafletCompatibleMarkersFrom = (markers: DomainModel<MapMarker>
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])
-    .filter(isWithinThreshold)
+    .filter(isGeoPositionWithinThreshold)
     .map(makeMarker);
 };

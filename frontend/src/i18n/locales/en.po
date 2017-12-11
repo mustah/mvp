@@ -281,6 +281,9 @@ msgstr "selection overview"
 msgid "metering"
 msgstr "metering"
 
+msgid "no reliable position"
+msgstr "no reliable position"
+
 msgid "no meters"
 msgstr "no meters"
 

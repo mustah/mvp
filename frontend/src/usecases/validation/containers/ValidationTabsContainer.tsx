@@ -32,6 +32,7 @@ import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedMeterMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {ValidationOverview} from '../components/ValidationOverview';
+import {Content} from '../../../components/content/Content';
 
 interface StateToProps extends TabsContainerStateToProps {
   metersCount: number;
@@ -71,6 +72,8 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     </Dialog>
   );
 
+  const hasMeters: boolean = metersCount !== 0;
+
   return (
     <Tabs>
       <TabTopBar>
@@ -89,9 +92,11 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
+        <Content hasContent={hasMeters} noContentTextKey={'no meters'}>
         <Map>
           <ClusterContainer markers={meters}/>
         </Map>
+        </Content>
         {dialog}
       </TabContent>
     </Tabs>
