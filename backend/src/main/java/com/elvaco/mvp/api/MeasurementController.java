@@ -2,29 +2,30 @@ package com.elvaco.mvp.api;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.repository.MeasurementRepository;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import java.util.ArrayList;
-import java.util.List;
+import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestApi("/api/measurements")
 public class MeasurementController {
 
   private final MeasurementRepository repository;
   private final ModelMapper modelMapper;
+  private final MeasurementFilterToPredicateMapper predicateMapper;
 
   @Autowired
-  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper) {
+  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper,
+                        MeasurementFilterToPredicateMapper measurementFilterToPredicateMapper) {
     this.repository = repository;
     this.modelMapper = modelMapper;
+    this.predicateMapper = measurementFilterToPredicateMapper;
   }
 
   @RequestMapping("{id}")
@@ -33,28 +34,11 @@ public class MeasurementController {
   }
 
   @RequestMapping("")
-  public Page<MeasurementDto> measurements(@Param("quantity") String quantity,
-                                           @Param("meterId") Long meterId,
-                                           @Param("scale") String scale,
-                                           Pageable pageable) {
-    QMeasurementEntity q = QMeasurementEntity.measurementEntity;
-    List<BooleanExpression> predicates = new ArrayList<>();
-    if (quantity != null) {
-      predicates.add(q.quantity.eq(quantity));
-    }
-
-    if (meterId != null) {
-      predicates.add(q.physicalMeter.id.eq(meterId));
-    }
-
-    BooleanExpression filter = null;
-    if (predicates.size() > 0) {
-      filter = predicates.get(0);
-      for (BooleanExpression p : predicates) {
-        filter = filter.and(p);
-      }
-    }
-
+  public Page<MeasurementDto> measurements(
+      @RequestParam(value = "scale", required = false) String scale,
+      @RequestParam MultiValueMap<String, String> requestParams,
+      Pageable pageable) {
+    Predicate filter = predicateMapper.map(requestParams);
     Page<MeasurementEntity> page;
     if (scale != null) {
       page = repository.findAllScaled(scale, filter, pageable);

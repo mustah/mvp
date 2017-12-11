@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
+
 public class PhysicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
@@ -118,7 +119,6 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
     RestResponsePage<MeasurementDto> measurementsPage = responseEntity.getBody();
     Page<MeasurementDto> page = measurementsPage.pageImpl();
     List<MeasurementDto> contents = page.getContent();
-    assertThat(contents).isNotEmpty();
     assertThat(contents).size().isEqualTo(1);
     MeasurementDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
@@ -135,7 +135,6 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
     RestResponsePage<MeasurementDto> measurementsPage = responseEntity.getBody();
     Page<MeasurementDto> page = measurementsPage.pageImpl();
     List<MeasurementDto> contents = page.getContent();
-    assertThat(contents).isNotEmpty();
     assertThat(contents).size().isEqualTo(1);
     MeasurementDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
