@@ -46,31 +46,10 @@
         border-bottom: solid 4px $blue;
       }
     }
-
-    .TabOption {
-      font-size: $xs;
-      background-color: $dark-grey;
-      margin-right: $sm-space;
-      margin-bottom: $xs-space;
-      padding: 4px 4px 2px 4px;
-      text-transform: uppercase;
-      border-radius: 2px;
-
-      &.isSelected {
-        font-weight: bold;
-        background-color: $blue;
-        color: $white;
-      }
-    }
-
-    // To get correct placement of TabSettings if there are no options.
-    .TabHeaders + .TabSettings {
-      flex: 1;
-    }
   }
 }
 
-
 .TabSettings {
   padding-right: $space;
+  flex: 1;
 }

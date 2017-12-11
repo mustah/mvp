@@ -25,9 +25,9 @@ import {OnSelectParameter} from '../../../state/search/selection/selectionModels
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
-import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
+import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
-import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
+import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
@@ -36,7 +36,6 @@ import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
-import './CollectionTabsContainer.scss';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
@@ -107,7 +106,6 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
   const pagination = getCollectionPagination(ui);
   return {
     selectedTab: getSelectedTab(ui.tabs.collection),
-    tabs: getTabs(ui.tabs.collection),
     gatewayCount: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
@@ -119,7 +117,6 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
-  changeTabOption: changeTabOptionCollection,
   paginationChangePage: changePaginationCollection,
   setSelection,
   selectEntryAdd,
