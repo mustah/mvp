@@ -1,4 +1,4 @@
-import {WidgetModel} from '../../components/indicators/models/widgetModels';
+import {WidgetModel} from '../../components/indicators/indicatorWidgetModels';
 import {uuid} from '../../types/Types';
 
 export interface DashboardModel {

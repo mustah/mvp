@@ -2,7 +2,7 @@ import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {checkbox, checkboxLabel} from '../../app/themes';
-import {Column} from '../../components/layouts/column/Column';
+import {Column, ColumnCenter} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
@@ -46,16 +46,16 @@ const GatewayDetailsInfo = ({gateway}: OwnProps) => {
 
   return (
     <div className="GatewayDetailsInfo">
-      <Row className="Column-space-between">
+      <Row className="space-between">
         <Column>
           <MainTitle>{translate('gateway details')}</MainTitle>
         </Column>
-        <Column className="Column-center">
+        <ColumnCenter>
           <Row className="Address">
             <Info label={translate('city')} value={city.name}/>
             <Info label={translate('address')} value={address.name}/>
           </Row>
-        </Column>
+        </ColumnCenter>
       </Row>
       <Row>
         <Column>

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Children, Maybe} from '../../types/Types';
-import {Indicator} from '../../usecases/report/models/reportModels';
+import {Indicator} from '../../usecases/report/reportModels';
 import {Row} from '../layouts/row/Row';
-import {IndicatorType} from './models/widgetModels';
+import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
@@ -10,7 +10,7 @@ export interface SelectedIndicatorWidgetProps {
 }
 
 export interface IndicatorWidgetsDispatchProps {
-  selectIndicatorWidget: (type: IndicatorType) => void;
+  selectIndicatorWidget: OnSelectIndicator;
 }
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {

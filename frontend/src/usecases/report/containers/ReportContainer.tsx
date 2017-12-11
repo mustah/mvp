@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
-import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {
   SelectableIndicatorWidgets,
   SelectedIndicatorWidgetProps,
@@ -18,11 +18,11 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
-import {indicators} from '../models/reportModels';
+import {indicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 
 interface DispatchToProps {
-  selectIndicatorWidget: (type: IndicatorType) => void;
+  selectIndicatorWidget: OnSelectIndicator;
 }
 
 type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;

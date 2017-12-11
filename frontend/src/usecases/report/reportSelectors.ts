@@ -1,5 +1,5 @@
 import {uuid} from '../../types/Types';
-import {ReportState} from './models/reportModels';
+import {ReportState} from './reportModels';
 import {createSelector} from 'reselect';
 
 const getSelectedItems = (state: ReportState): uuid[] => state.selectedListItems;

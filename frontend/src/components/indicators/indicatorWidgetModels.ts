@@ -1,4 +1,4 @@
-import {Status} from '../../../types/Types';
+import {Status} from '../../types/Types';
 
 export const enum IndicatorType {
   collection = 'collection',
@@ -17,3 +17,5 @@ export interface WidgetModel {
   status: Status;
   pending: number;
 }
+
+export type OnSelectIndicator = (type: IndicatorType) => void;

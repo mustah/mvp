@@ -1,4 +1,4 @@
-import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
 import {getSelectedIndicatorReport} from '../indicator/indicatorSelectors';
 import {UiState} from '../uiReducer';
 

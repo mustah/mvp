@@ -1,5 +1,5 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
 import {UiState} from '../uiReducer';
 import {IndicatorState} from './indicatorReducer';
 

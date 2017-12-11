@@ -1,5 +1,5 @@
 import {Action, uuid} from '../../types/Types';
-import {ReportState} from './models/reportModels';
+import {ReportState} from './reportModels';
 import {SET_SELECTED_ENTRIES} from './reportActions';
 
 const initialState: ReportState = {

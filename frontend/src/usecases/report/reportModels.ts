@@ -1,5 +1,5 @@
-import {Status, uuid} from '../../../types/Types';
-import {IndicatorType} from '../../../components/indicators/models/widgetModels';
+import {Status, uuid} from '../../types/Types';
+import {IndicatorType} from '../../components/indicators/indicatorWidgetModels';
 
 export interface ReportState {
   selectedListItems: uuid[];
