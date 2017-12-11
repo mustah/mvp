@@ -74,6 +74,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
       key={index}
       fill={colors[index % colors.length]}
       stroke={'transparent'}
+      cursor="pointer"
     />);
   const renderLegends = (props: RenderLegendProps) => {
     const {payload} = props;
@@ -81,7 +82,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
       const onClick = () => onLegendClick(filterParam);
       const legendStyle = {height: 10, width: 10, marginRight: 5, backgroundColor: color};
       return (
-        <Row key={i} onClick={onClick}>
+        <Row key={i} onClick={onClick} className="clickable">
           <ColumnCenter>
             <div style={legendStyle}/>
           </ColumnCenter>
