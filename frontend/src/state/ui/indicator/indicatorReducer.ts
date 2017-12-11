@@ -1,11 +1,11 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {IndicatorType} from '../../../components/indicators/models/widgetModels';
-import {Action} from '../../../types/Types';
+import {Action, Maybe} from '../../../types/Types';
 import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
 
 export interface SelectedIndicators {
-  dashboard?: IndicatorType | null;
-  report?: IndicatorType | null;
+  dashboard?: Maybe<IndicatorType>;
+  report?: Maybe<IndicatorType>;
 }
 
 export interface IndicatorState {

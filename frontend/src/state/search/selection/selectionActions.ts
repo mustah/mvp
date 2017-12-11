@@ -1,7 +1,7 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {RootState} from '../../../reducers/rootReducer';
-import {Period, uuid} from '../../../types/Types';
+import {Maybe, Period, uuid} from '../../../types/Types';
 import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {getEncodedUriParametersForGateways, getEncodedUriParametersForMeters, getSelection} from './selectionSelectors';
@@ -53,7 +53,7 @@ export const updateSelection = (selection: SelectionState) =>
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: () => RootState) => {
 
-    const selected: SelectionState | undefined = getState().searchParameters.saved
+    const selected: Maybe<SelectionState> = getState().searchParameters.saved
       .find((item: SelectionState) => item.id === selectedId);
 
     if (selected) {
@@ -71,7 +71,7 @@ export const resetSelection = () =>
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: () => RootState) => {
     const {parameter, id} = selectionParameter;
-    const selectedParameter: Period | FilterParam[] | undefined =
+    const selectedParameter: Maybe<Period | FilterParam[]> =
       getSelection(getState().searchParameters).selected[parameter];
 
     // TODO selectedParameter's type is too ambiguous, we should split Period from uuid[]s

@@ -5,7 +5,7 @@ import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {GeoPosition} from '../../../../state/domain-models/domainModels';
+import {DomainModel, GeoPosition} from '../../../../state/domain-models/domainModels';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
@@ -16,7 +16,7 @@ import {MapState} from '../../../map/mapReducer';
 import {Widget} from './Widget';
 
 interface OwnProps {
-  markers: any;
+  markers: DomainModel<MapMarker>;
 }
 
 interface StateToProps {
@@ -27,34 +27,30 @@ interface DispatchToProps {
   closeClusterDialog: OnClick;
 }
 
-const MapWidgets = (props: StateToProps & DispatchToProps & OwnProps) => {
-  const {
-    markers,
-    map,
-    closeClusterDialog,
-  } = props;
+type Props = StateToProps & DispatchToProps & OwnProps;
 
+const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   // TODO retrieve real data
-  const markersFailing: {[key: string]: MapMarker} = {};
-  markersFailing[0] = {
-    status: {id: 3, name: 'Fel'},
-    address: {id: '', cityId: '', name: ''},
-    city: {id: '', name: ''},
-    position: {
-      confidence: 1,
-      latitude: 56.138288,
-      longitude: 13.394854,
+  const markersFailing: DomainModel<MapMarker> = {
+    0: {
+      status: {id: 3, name: 'Fel'},
+      address: {id: '', cityId: '', name: ''},
+      city: {id: '', name: ''},
+      position: {
+        confidence: 1,
+        latitude: 56.138288,
+        longitude: 13.394854,
+      },
     },
-  };
-
-  markersFailing[1] = {
-    status: {id: 3, name: 'Fel'},
-    address: {id: '', cityId: '', name: ''},
-    city: {id: '', name: ''},
-    position: {
-      confidence: 1,
-      latitude: 56.552119,
-      longitude: 14.137460,
+    1: {
+      status: {id: 3, name: 'Fel'},
+      address: {id: '', cityId: '', name: ''},
+      city: {id: '', name: ''},
+      position: {
+        confidence: 1,
+        latitude: 56.552119,
+        longitude: 14.137460,
+      },
     },
   };
 
@@ -63,7 +59,7 @@ const MapWidgets = (props: StateToProps & DispatchToProps & OwnProps) => {
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={map.selectedMarker.options.mapMarker as Meter}/>
+      <MeterDetailsContainer meter={map.selectedMarker as Meter}/>
     </Dialog>
   );
 
@@ -94,11 +90,7 @@ const MapWidgets = (props: StateToProps & DispatchToProps & OwnProps) => {
   );
 };
 
-const mapStateToProps = ({map}: RootState): StateToProps => {
-  return {
-    map,
-  };
-};
+const mapStateToProps = ({map}: RootState): StateToProps => ({map});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,

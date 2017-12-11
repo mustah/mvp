@@ -4,11 +4,11 @@ import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-c
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {uuid} from '../../../types/Types';
+import {Maybe, uuid} from '../../../types/Types';
 import './CollectionOverview.scss';
 
 interface CollectionOverviewProps {
-  gatewayDataSummary: GatewayDataSummary | null;
+  gatewayDataSummary: Maybe<GatewayDataSummary>;
   addSelection: (searchParameters: SelectionParameter) => void;
 }
 

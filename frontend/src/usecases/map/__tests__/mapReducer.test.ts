@@ -12,7 +12,7 @@ describe('mapReducer', () => {
   });
 
   it('should handle OPEN_CLUSTER_DIALOG', () => {
-    const state: MapState = map(initialState, {type: 'OPEN_CLUSTER_DIALOG', payload: {options: {mapMarker: {}}}});
-    expect(state).toEqual({isClusterDialogOpen: true, selectedMarker: {options: {mapMarker: {}}}});
+    const state: MapState = map(initialState, {type: 'OPEN_CLUSTER_DIALOG', payload: {}});
+    expect(state).toEqual({isClusterDialogOpen: true, selectedMarker: {}});
   });
 });

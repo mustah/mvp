@@ -16,7 +16,8 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {
-  getGatewayDataSummary, getGatewayEntities,
+  getGatewayDataSummary,
+  getGatewayEntities,
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {addSelection} from '../../../state/search/selection/selectionActions';
@@ -27,11 +28,11 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection, changeTabOptionCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab, getTabs} from '../../../state/ui/tabs/tabsSelectors';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
-import {MapState} from '../../map/mapReducer';
+import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
@@ -40,10 +41,10 @@ import './CollectionTabsContainer.scss';
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
   gatewaysLookup: DomainModel<Gateway>;
-  gatewayDataSummary: GatewayDataSummary | null;
+  gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
-  map: MapState;
+  selectedMaker?: Maybe<Gateway>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -65,15 +66,13 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     gatewayCount,
     addSelection,
     selectEntryAdd,
-    map,
+    selectedMaker,
     closeClusterDialog,
   } = props;
 
-  const dialog = map.selectedMarker && map.isClusterDialogOpen && (
-    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <GatewayDetailsContainer
-        gateway={map.selectedMarker.options.mapMarker as Gateway}
-      />
+  const dialog = selectedMaker && (
+    <Dialog isOpen={true} close={closeClusterDialog}>
+      <GatewayDetailsContainer gateway={selectedMaker}/>
     </Dialog>
   );
 
@@ -114,7 +113,7 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
     gatewayDataSummary: getGatewayDataSummary(gateways),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
     pagination,
-    map,
+    selectedMaker: getSelectedGatewayMarker(map),
   };
 };
 

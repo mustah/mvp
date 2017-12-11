@@ -5,7 +5,7 @@ import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-c
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {uuid} from '../../../types/Types';
+import {Maybe, uuid} from '../../../types/Types';
 
 // TODO: Perhaps move this to themes and make customizable.
 const colors: string[][] = [
@@ -15,7 +15,7 @@ const colors: string[][] = [
 ];
 
 interface ValidationOverviewProps {
-  meterDataSummary: MeterDataSummary | null;
+  meterDataSummary: Maybe<MeterDataSummary>;
   addSelection: (searchParameters: SelectionParameter) => void;
 }
 

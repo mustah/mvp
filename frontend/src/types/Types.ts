@@ -14,6 +14,8 @@ export type Children = React.ReactNode | React.ReactNode[];
  */
 export type Action<P> = PayloadAction<string, P>;
 
+export type Maybe<T> = null | undefined | T;
+
 export interface ClassNamed {
   className?: string;
 }
