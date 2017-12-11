@@ -66,15 +66,15 @@ export const getGatewayDataSummary =
   createSelector<GatewaysState, uuid[], DomainModel<Gateway>, Maybe<GatewayDataSummary>>(
     getResultDomainModels,
     getGatewayEntities,
-    (gateways: uuid[], gatewayLookup: DomainModel<Gateway>) => {
+    (gatewayIds: uuid[], gateways: DomainModel<Gateway>) => {
       const summaryTemplate: {[P in GatewayDataSummaryKey]: PieData} = {
         status: {}, flagged: {}, city: {}, productModel: {},
       };
-      if (!gateways.length) {
+      if (!gatewayIds.length) {
         return null;
       } else {
-        return gateways.reduce((summary, gatewayId: uuid) => {
-          const gateway = gatewayLookup[gatewayId];
+        return gatewayIds.reduce((summary, gatewayId: uuid) => {
+          const gateway = gateways[gatewayId];
           return Object.keys(summaryTemplate).reduce(
             (summaryAggregated, fieldKey: GatewayDataSummaryKey) =>
               addGatewayDataToSummary(summaryAggregated, fieldKey, gateway), summary);
