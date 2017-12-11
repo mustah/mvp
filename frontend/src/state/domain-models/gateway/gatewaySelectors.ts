@@ -1,4 +1,4 @@
-import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {PieSlice, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {pieChartTranslation} from '../../../services/translationService';
 import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
@@ -12,10 +12,10 @@ export const getGatewayEntities = (state: GatewaysState): DomainModel<Gateway> =
 
 const addToCategory = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
   let label: uuid;
-  let existentEntity: Maybe<Pie>;
+  let existentEntity: Maybe<PieSlice>;
   let value: number;
 
-  const categoryAdd = (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): Pie => ({
+  const categoryAdd = (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): PieSlice => ({
     name: pieChartTranslation(fieldKey, idNamed),
     value,
     filterParam,

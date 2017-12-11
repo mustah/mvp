@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
-import {Pie, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChartSelector';
 import {pieChartTranslation} from '../../../services/translationService';
 import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
@@ -128,10 +128,10 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
 
 const addToCategory = (category: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
   let label: uuid;
-  let existentEntity: Maybe<Pie>;
+  let existentEntity: Maybe<PieSlice>;
   let value: number;
 
-  const categoryAdd = (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): Pie => ({
+  const categoryAdd = (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): PieSlice => ({
     name: pieChartTranslation(fieldKey, idNamed),
     value,
     filterParam,

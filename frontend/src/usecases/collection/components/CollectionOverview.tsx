@@ -3,13 +3,13 @@ import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
-import {ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
-import {Maybe, uuid} from '../../../types/Types';
+import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
+import {ItemOrArray, Maybe} from '../../../types/Types';
 import './CollectionOverview.scss';
 
 interface CollectionOverviewProps {
   gatewayDataSummary: Maybe<GatewayDataSummary>;
-  addSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
 }
 
 const colors: string[][] = [
@@ -20,11 +20,12 @@ const colors: string[][] = [
 
 export const CollectionOverview = (props: CollectionOverviewProps) => {
 
-  const {gatewayDataSummary, addSelection} = props;
+  const {gatewayDataSummary, setSelection} = props;
 
-  const selectStatus = (id: uuid) => addSelection({parameter: ParameterName.gatewayStatuses, id});
-  const selectCity = (id: uuid) => addSelection({parameter: ParameterName.cities, id});
-  const selectProductModel = (id: uuid) => addSelection({parameter: ParameterName.productModels, id});
+  const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.gatewayStatuses, id});
+  const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.cities, id});
+  const selectProductModel = (id: ItemOrArray<FilterParam>) =>
+    setSelection({parameter: ParameterName.productModels, id});
 
   if (!gatewayDataSummary) {
     return null;
@@ -34,7 +35,7 @@ export const CollectionOverview = (props: CollectionOverviewProps) => {
         heading: translate('status'),
         data: gatewayDataSummary.status,
         colors: colors[0],
-        onClick: selectStatus,
+        setSelection: selectStatus,
         maxSlices: 4,
       },
       {
@@ -47,14 +48,14 @@ export const CollectionOverview = (props: CollectionOverviewProps) => {
         heading: translate('cities'),
         data: gatewayDataSummary.city,
         colors: colors[0],
-        onClick: selectCity,
+        setSelection: selectCity,
         maxSlices: 4,
       },
       {
         heading: translate('product models'),
         data: gatewayDataSummary.productModel,
         colors: colors[1],
-        onClick: selectProductModel,
+        setSelection: selectProductModel,
         maxSlices: 4,
       },
     ];

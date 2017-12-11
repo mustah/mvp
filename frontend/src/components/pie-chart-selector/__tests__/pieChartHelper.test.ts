@@ -1,4 +1,4 @@
-import {Pie, PieData} from '../PieChartSelector';
+import {PieSlice, PieData} from '../PieChartSelector';
 import {splitDataIntoSlices} from '../pieChartHelper';
 import {uuid} from '../../../types/Types';
 
@@ -14,7 +14,7 @@ describe('pieChartHelper', () => {
 
   it('splitDataIntoSlices, order input', () => {
 
-    const pieSlices: Pie[] = splitDataIntoSlices(segments, testData, 10);
+    const pieSlices: PieSlice[] = splitDataIntoSlices(segments, testData, 10);
 
     expect(pieSlices).toEqual([
       {name: 'Borås', value: 100, filterParam: 'bor'},
@@ -26,7 +26,7 @@ describe('pieChartHelper', () => {
   });
 
   it('splitDataIntoSlices, group input', () => {
-    const pieSlices: Pie[] = splitDataIntoSlices(segments, testData, 3);
+    const pieSlices: PieSlice[] = splitDataIntoSlices(segments, testData, 3);
 
     expect(pieSlices).toEqual([
       {name: 'Borås', value: 100, filterParam: 'bor'},

@@ -20,8 +20,8 @@ import {
   getGatewayEntities,
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
-import {addSelection} from '../../../state/search/selection/selectionActions';
-import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {setSelection} from '../../../state/search/selection/selectionActions';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -49,7 +49,7 @@ interface StateToProps extends TabsContainerStateToProps {
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
-  addSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
 }
@@ -64,7 +64,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     paginationChangePage,
     paginatedList,
     gatewayCount,
-    addSelection,
+    setSelection,
     selectEntryAdd,
     selectedMaker,
     closeClusterDialog,
@@ -87,7 +87,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <CollectionOverview gatewayDataSummary={gatewayDataSummary} addSelection={addSelection}/>
+        <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <GatewayList result={paginatedList} entities={gatewaysLookup} selectEntryAdd={selectEntryAdd}/>
@@ -121,7 +121,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
   changeTabOption: changeTabOptionCollection,
   paginationChangePage: changePaginationCollection,
-  addSelection,
+  setSelection,
   selectEntryAdd,
   closeClusterDialog,
 }, dispatch);

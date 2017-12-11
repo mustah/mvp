@@ -13,9 +13,9 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
+  OnSelectParameter,
   ParameterName,
   SelectionListItem,
-  SelectionParameter,
 } from '../../../state/search/selection/selectionModels';
 import {
   getAddresses,
@@ -43,7 +43,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  toggleSelection: (searchParameters: SelectionParameter) => void;
+  toggleSelection: OnSelectParameter;
 }
 
 const SelectionContent = (props: StateToProps & DispatchToProps) => {
