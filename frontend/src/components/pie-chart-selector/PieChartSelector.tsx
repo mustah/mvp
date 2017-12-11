@@ -88,11 +88,10 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
     return payload.map(render);
   };
 
-  // TODO: Check if all props in Pie is necessary.
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={pieSlices} activeIndex={[]} activeShape={null} animationDuration={500} cy={110}>
+        <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110}>
           {pieSlices.map(renderCell)}
         </Pie>
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
