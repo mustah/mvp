@@ -36,7 +36,7 @@ import {ValidationOverview} from '../components/ValidationOverview';
 interface StateToProps extends TabsContainerStateToProps {
   metersCount: number;
   meterDataSummary: Maybe<MeterDataSummary>;
-  metersLookup: DomainModel<Meter>;
+  meters: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
   selectedMarker?: Maybe<Meter>;
@@ -53,7 +53,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
-    metersLookup,
+    meters,
     meterDataSummary,
     pagination,
     paginationChangePage,
@@ -85,12 +85,12 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <ValidationOverview meterDataSummary={meterDataSummary} addSelection={addSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <MeterList result={paginatedList} entities={metersLookup} selectEntryAdd={selectEntryAdd}/>
+        <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <Map>
-          <ClusterContainer markers={metersLookup}/>
+          <ClusterContainer markers={meters}/>
         </Map>
         {dialog}
       </TabContent>
@@ -104,7 +104,7 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterDataSummary: getMeterDataSummary(meters),
     metersCount: getMetersTotal(meters),
-    metersLookup: getMeterEntities(meters),
+    meters: getMeterEntities(meters),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
     selectedMarker: getSelectedMeterMarker(map),

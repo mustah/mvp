@@ -24,7 +24,7 @@ export const getMeterEntities = (state: MetersState): DomainModel<Meter> => stat
 export const getSelectionTree = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionTreeData>(
   getResultDomainModels,
   getMeterEntities,
-  (metersList: uuid[], metersLookup: DomainModel<Meter>) => {
+  (meterIds: uuid[], metersDict: DomainModel<Meter>) => {
 
     const selectionTree: {[key: string]: SelectionTreeItem[]} = {
       cities: [], addresses: [], addressClusters: [], meters: [],
@@ -34,8 +34,8 @@ export const getSelectionTree = createSelector<MetersState, uuid[], DomainModel<
     const addresses = new Set<uuid>();
     const meters = new Set<uuid>();
 
-    metersList.forEach((meterId: uuid) => {
-      const meterRelations = metersLookup[meterId];
+    meterIds.forEach((meterId: uuid) => {
+      const meterRelations = metersDict[meterId];
       if (!meterRelations) {
         // Since we cannot use types to assure that all results included
         // in a normalized state, we must detect when a result is not in
@@ -181,15 +181,15 @@ const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Me
 export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, Maybe<MeterDataSummary>>(
   getResultDomainModels,
   getMeterEntities,
-  (meters: uuid[], metersLookup: DomainModel<Meter>) => {
+  (meterIds: uuid[], meters: DomainModel<Meter>) => {
     const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
       flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
     };
-    if (!meters.length) {
+    if (!meterIds.length) {
       return null;
     } else {
-      return meters.reduce((summary, meterId: uuid) => {
-        const meter = metersLookup[meterId];
+      return meterIds.reduce((summary, meterId: uuid) => {
+        const meter = meters[meterId];
         return Object.keys(summaryTemplate).reduce(
           (summaryAggregated, fieldKey: MeterDataSummaryKey) =>
             addMeterDataToSummary(summaryAggregated, fieldKey, meter), summary);

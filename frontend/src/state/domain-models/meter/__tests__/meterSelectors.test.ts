@@ -9,8 +9,8 @@ describe('meterSelectors', () => {
 
   describe('summary', () => {
     it('can group a list of meters with a tally each (like, 5 in NY, 3 in LA)', () => {
-      const meters: uuid[] = [1, 2, 3];
-      const metersLookup: PartialDomainModel = {
+      const meterIds: uuid[] = [1, 2, 3];
+      const meters: PartialDomainModel = {
         1: {
           flagged: false,
           city: {id: 'sto', name: 'stockholm'},
@@ -38,8 +38,8 @@ describe('meterSelectors', () => {
       };
 
       const metersState: Partial<MetersState> = {
-        entities: metersLookup as DomainModel<Meter>,
-        result: meters,
+        entities: meters as DomainModel<Meter>,
+        result: meterIds,
       };
 
       const reduced = getMeterDataSummary(metersState as MetersState);

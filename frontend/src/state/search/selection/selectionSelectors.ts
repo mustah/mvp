@@ -117,12 +117,12 @@ export const getSelection = (state: SearchParameterState): SelectionState => sta
 export const getSelectionSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionSummary>(
   getResultDomainModels,
   getMeterEntities,
-  (metersList: uuid[], metersLookup: DomainModel<Meter>) => {
+  (metersIds: uuid[], meters: DomainModel<Meter>) => {
     const cities = new Set<uuid>();
     const addresses = new Set<uuid>();
 
-    metersList.map((meterId: uuid) => {
-        const {city, address} = metersLookup[meterId];
+    metersIds.map((meterId: uuid) => {
+        const {city, address} = meters[meterId];
         cities.add(city.id);
         addresses.add(address.id);
       },
@@ -130,7 +130,7 @@ export const getSelectionSummary = createSelector<MetersState, uuid[], DomainMod
     return ({
       cities: cities.size,
       addresses: addresses.size,
-      meters: metersList.length,
+      meters: metersIds.length,
     });
   },
 );

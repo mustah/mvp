@@ -40,7 +40,7 @@ import './CollectionTabsContainer.scss';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
-  gatewaysLookup: DomainModel<Gateway>;
+  gateways: DomainModel<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
@@ -58,7 +58,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   const {
     selectedTab,
     changeTab,
-    gatewaysLookup,
+    gateways,
     gatewayDataSummary,
     pagination,
     paginationChangePage,
@@ -90,12 +90,12 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <CollectionOverview gatewayDataSummary={gatewayDataSummary} addSelection={addSelection}/>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <GatewayList result={paginatedList} entities={gatewaysLookup} selectEntryAdd={selectEntryAdd}/>
+        <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         <Map>
-          <ClusterContainer markers={gatewaysLookup}/>
+          <ClusterContainer markers={gateways}/>
         </Map>
         {dialog}
       </TabContent>
@@ -109,7 +109,7 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
     selectedTab: getSelectedTab(ui.tabs.collection),
     tabs: getTabs(ui.tabs.collection),
     gatewayCount: getGatewaysTotal(gateways),
-    gatewaysLookup: getGatewayEntities(gateways),
+    gateways: getGatewayEntities(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
     pagination,
