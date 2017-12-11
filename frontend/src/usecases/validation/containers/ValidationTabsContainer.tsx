@@ -18,7 +18,7 @@ import {getResultDomainModels} from '../../../state/domain-models/domainModelsSe
 import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -45,7 +45,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
   selectEntryAdd: OnClickWithId;
-  setSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
 }
 

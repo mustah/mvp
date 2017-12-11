@@ -4,7 +4,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
-import {FilterParam, ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
 import {ItemOrArray, Maybe} from '../../../types/Types';
 
 // TODO: Perhaps move this to themes and make customizable.
@@ -16,7 +16,7 @@ const colors: string[][] = [
 
 interface ValidationOverviewProps {
   meterDataSummary: Maybe<MeterDataSummary>;
-  setSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
 }
 
 export const ValidationOverview = (props: ValidationOverviewProps) => {

@@ -3,13 +3,13 @@ import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
-import {FilterParam, ParameterName, SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
 import {ItemOrArray, Maybe} from '../../../types/Types';
 import './CollectionOverview.scss';
 
 interface CollectionOverviewProps {
   gatewayDataSummary: Maybe<GatewayDataSummary>;
-  setSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
 }
 
 const colors: string[][] = [

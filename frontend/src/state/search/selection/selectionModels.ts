@@ -20,6 +20,8 @@ export interface SelectionParameter {
   parameter: ParameterName;
 }
 
+export type OnSelectParameter = (searchParameters: SelectionParameter) => void;
+
 /**
  * After https://github.com/Microsoft/TypeScript/issues/13042 is resolved, we can replace the repetitive definitions
  * below with something prettier, like:

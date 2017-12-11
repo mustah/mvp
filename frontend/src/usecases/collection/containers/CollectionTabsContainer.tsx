@@ -21,7 +21,7 @@ import {
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {SelectionParameter} from '../../../state/search/selection/selectionModels';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -49,7 +49,7 @@ interface StateToProps extends TabsContainerStateToProps {
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   paginationChangePage: OnChangePage;
-  setSelection: (searchParameters: SelectionParameter) => void;
+  setSelection: OnSelectParameter;
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
 }

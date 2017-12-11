@@ -29,16 +29,17 @@ export interface PieChartSelectorProps {
 }
 
 interface LegendPayload extends PieSlice {
-  fill: any;
   payload: PieSlice;
-  stroke: any;
+
+  [key: string]: any;
 }
 
 interface Legend {
   color: any;
   value: string;
   payload: LegendPayload;
-  type: any;
+
+  [key: string]: any;
 }
 
 interface RenderLegendProps {
@@ -74,14 +75,15 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
       fill={colors[index % colors.length]}
       stroke={'transparent'}
     />);
-  const renderLegend = (props: RenderLegendProps) => {
+  const renderLegends = (props: RenderLegendProps) => {
     const {payload} = props;
     const render = ({color, payload: {value, name, filterParam}}: Legend, i) => {
       const onClick = () => onLegendClick(filterParam);
+      const legendStyle = {height: 10, width: 10, marginRight: 5, backgroundColor: color};
       return (
         <Row key={i} onClick={onClick}>
           <ColumnCenter>
-            <div style={{height: 10, width: 10, marginRight: 5, backgroundColor: color}}/>
+            <div style={legendStyle}/>
           </ColumnCenter>
           <div className="first-uppercase">{name} ({value})</div>
         </Row>);
@@ -99,7 +101,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
         <Legend
           margin={margins}
           align={'left'}
-          content={renderLegend}
+          content={renderLegends}
           layout={'vertical'}
         />
       </PieChart>
