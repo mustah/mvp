@@ -3,14 +3,12 @@ import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XA
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
-import {TabOption} from '../../../components/tabs/components/TabOption';
-import {TabOptions} from '../../../components/tabs/components/TabOptions';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {Bold} from '../../../components/texts/Texts';
 import {translate} from '../../../services/translationService';
-import {TabModel, TabName} from '../../../state/ui/tabs/tabsModels';
+import {TabName} from '../../../state/ui/tabs/tabsModels';
 import './GraphContainer.scss';
 
 interface State {
@@ -60,12 +58,6 @@ export class GraphContainer extends React.Component<{}, State> {
   render() {
     const selectedTab: TabName = TabName.graph;
 
-    const tabs: TabModel = {
-      [TabName.graph]: {
-        selectedOption: this.state.selectedTabOption,
-      },
-    };
-
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>, it breaks
     // Setting width of ResponsiveContainer to 100% will case the menu to overlap when toggled
     return (
@@ -76,15 +68,6 @@ export class GraphContainer extends React.Component<{}, State> {
               <Tab tab={TabName.graph} title={translate('graph')}/>
               <Tab tab={TabName.table} title={translate('table')}/>
             </TabHeaders>
-            <TabOptions tab={TabName.graph} selectedTab={selectedTab} select={this.onChangeTabOption} tabs={tabs}>
-              <TabOption title={'Energi'} id={'energy'}/>
-              <TabOption title={'Volym'} id={'volume'}/>
-              <TabOption title={'Effekt'} id={'power'}/>
-              <TabOption title={'Flöde'} id={'flow'}/>
-              <TabOption title={'Flödestemp.'} id={'temp_flow'}/>
-              <TabOption title={'Returtemp.'} id={'temp_return'}/>
-              <TabOption title={'Temp.-skillnad'} id={'temp_difference'}/>
-            </TabOptions>
             <TabSettings/>
           </TabTopBar>
           <TabContent tab={TabName.graph} selectedTab={selectedTab}>
@@ -134,8 +117,6 @@ export class GraphContainer extends React.Component<{}, State> {
     );
   }
 
-  onChangeTabOption = (tab: TabName, selectedTabOption: string): void => this.setState({selectedTabOption});
-
-  onChangeTab = (tab: TabName) => void(0);
+  onChangeTab = () => void(0);
 
 }

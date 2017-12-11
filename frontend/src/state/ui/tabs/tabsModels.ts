@@ -9,15 +9,8 @@ export const enum TabName {
   connectedGateways = 'connectedGateways',
 }
 
-export interface TabModel {
-  [key: string]: {
-    selectedOption: string;
-  };
-}
-
 export interface SelectedTabs {
   selectedTab: TabName;
-  tabs: TabModel;
 }
 
 export interface TabsState {
@@ -27,15 +20,12 @@ export interface TabsState {
 export interface TabSelection {
   tab: TabName;
   useCase: string;
-  option?: string;
 }
 
 export interface TabsContainerStateToProps {
-  tabs?: TabModel;
   selectedTab: TabName;
 }
 
 export interface TabsContainerDispatchToProps {
   changeTab: (tab: TabName) => void;
-  changeTabOption?: (tab: TabName, option: string) => void;
 }
