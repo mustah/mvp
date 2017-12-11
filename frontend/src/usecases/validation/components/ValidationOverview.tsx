@@ -39,7 +39,7 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
         heading: translate('status'),
         data: meterDataSummary.status,
         colors: colors[0],
-        onClick: selectStatus,
+        setSelection: selectStatus,
         maxSlices: 4,
       },
       {
@@ -52,21 +52,21 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
         heading: translate('alarm', {count: Object.keys(meterDataSummary.alarm).length}),
         data: meterDataSummary.alarm,
         colors: colors[0],
-        onClick: selectAlarm,
+        setSelection: selectAlarm,
         maxSlices: 4,
       },
       {
         heading: translate('cities'),
         data: meterDataSummary.city,
         colors: colors[1],
-        onClick: selectCity,
+        setSelection: selectCity,
         maxSlices: 4,
       },
       {
         heading: translate('manufacturer'),
         data: meterDataSummary.manufacturer,
         colors: colors[0],
-        onClick: selectManufacturer,
+        setSelection: selectManufacturer,
         maxSlices: 4,
       },
       {

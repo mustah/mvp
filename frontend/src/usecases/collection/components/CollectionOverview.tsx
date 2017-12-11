@@ -35,7 +35,7 @@ export const CollectionOverview = (props: CollectionOverviewProps) => {
         heading: translate('status'),
         data: gatewayDataSummary.status,
         colors: colors[0],
-        onClick: selectStatus,
+        setSelection: selectStatus,
         maxSlices: 4,
       },
       {
@@ -48,14 +48,14 @@ export const CollectionOverview = (props: CollectionOverviewProps) => {
         heading: translate('cities'),
         data: gatewayDataSummary.city,
         colors: colors[0],
-        onClick: selectCity,
+        setSelection: selectCity,
         maxSlices: 4,
       },
       {
         heading: translate('product models'),
         data: gatewayDataSummary.productModel,
         colors: colors[1],
-        onClick: selectProductModel,
+        setSelection: selectProductModel,
         maxSlices: 4,
       },
     ];

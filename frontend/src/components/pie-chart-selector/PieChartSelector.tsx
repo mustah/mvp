@@ -1,10 +1,12 @@
 import * as React from 'react';
 import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
+import {FilterParam} from '../../state/search/selection/selectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
+import {ColumnCenter} from '../layouts/column/Column';
+import {Row} from '../layouts/row/Row';
 import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
-import {FilterParam} from '../../state/search/selection/selectionModels';
 
 export interface PieSlice {
   name: string;
@@ -20,17 +22,29 @@ export type PieClick = (id: ItemOrArray<FilterParam>) => void;
 
 export interface PieChartSelectorProps {
   data: PieData;
-  onClick?: PieClick;
+  setSelection?: PieClick;
   colors: string[];
   heading: string;
   maxSlices: number;
 }
 
+interface LegendPayload extends PieSlice {
+  fill: any;
+  payload: PieSlice;
+  stroke: any;
+}
+
 interface Legend {
-  value: string | number;
-  type: 'square';
-  color: string;
-  filterParam: ItemOrArray<FilterParam>;
+  color: any;
+  value: string;
+  payload: LegendPayload;
+  type: any;
+}
+
+interface RenderLegendProps {
+  payload: Legend[];
+
+  [key: string]: any;
 }
 
 interface PieSliceCallback {
@@ -40,7 +54,7 @@ interface PieSliceCallback {
 }
 
 export const PieChartSelector = (props: PieChartSelectorProps) => {
-  const {data, colors, heading, onClick, maxSlices} = props;
+  const {data, colors, heading, setSelection, maxSlices} = props;
 
   const segments: uuid[] = Object.keys(data);
   const pieSlices: PieSlice[] = splitDataIntoSlices(segments, data, maxSlices);
@@ -54,17 +68,27 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
       stroke={'transparent'}
     />);
 
-  const legend = pieSlices.map(({name, value, filterParam}: PieSlice, index: number): Legend => ({
-    value: `${name} (${value})`,
-    type: 'square',
-    color: colors[index % colors.length],
-    filterParam,
-  }));
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
 
-  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => onClick && onClick(filterParam);
-  const onLegendClick = ({filterParam}: Legend) => onClick && onClick(filterParam);
+  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(filterParam);
+  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(filterParam);
 
+  const renderLegend = (props: RenderLegendProps) => {
+    const {payload} = props;
+    const render = ({color, payload: {value, name, filterParam}}: Legend, i) => {
+      const onClick = () => onLegendClick(filterParam);
+      return (
+        <Row key={i} onClick={onClick}>
+          <ColumnCenter>
+            <div style={{height: 10, width: 10, marginRight: 5, backgroundColor: color}}/>
+          </ColumnCenter>
+          <div>{name} ({value})</div>
+        </Row>);
+    };
+    return payload.map(render);
+  };
+
+  // TODO: Check if all props in Pie is necessary.
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
@@ -74,9 +98,8 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
         <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
         <Legend
           margin={margins}
-          payload={legend}
-          onClick={onLegendClick}
           align={'left'}
+          content={renderLegend}
           layout={'vertical'}
         />
       </PieChart>
