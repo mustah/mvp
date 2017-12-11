@@ -12,7 +12,7 @@ const icons = {
 
 const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
 
-const isWithinThreshold = ({position: {latitude, longitude, confidence}}: MapMarker) =>
+export const isWithinThreshold = ({position: {latitude, longitude, confidence}}: MapMarker) =>
   latitude && longitude && confidence >= 0.7;
 
 const makeMarker = (marker: MapMarker): Marker => ({
