@@ -72,6 +72,7 @@ export const resetSelection = () =>
     dispatch(fetchMetersAndGateways());
   };
 
+// TODO: ToggleSelection should not be able to accept array values for "id" as the typing suggest now.
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: () => RootState) => {
     const {parameter, id} = selectionParameter;

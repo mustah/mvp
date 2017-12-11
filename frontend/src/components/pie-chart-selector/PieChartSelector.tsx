@@ -59,20 +59,21 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   const segments: uuid[] = Object.keys(data);
   const pieSlices: PieSlice[] = splitDataIntoSlices(segments, data, maxSlices);
 
+  const margins = {top: 20, right: 0, bottom: 0, left: 0};
+  const viewBoxStyle = {x: 1, y: 2, width: 200, height: 200};
+
   // TODO typing for handling rechart's onClick events is broken, see
   // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20722
+
+  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(filterParam);
+  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(filterParam);
+
   const renderCell = (entry: any, index: number) => (
     <Cell
       key={index}
       fill={colors[index % colors.length]}
       stroke={'transparent'}
     />);
-
-  const margins = {top: 20, right: 0, bottom: 0, left: 0};
-
-  const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(filterParam);
-  const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(filterParam);
-
   const renderLegend = (props: RenderLegendProps) => {
     const {payload} = props;
     const render = ({color, payload: {value, name, filterParam}}: Legend, i) => {
@@ -82,7 +83,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
           <ColumnCenter>
             <div style={{height: 10, width: 10, marginRight: 5, backgroundColor: color}}/>
           </ColumnCenter>
-          <div>{name} ({value})</div>
+          <div className="first-uppercase">{name} ({value})</div>
         </Row>);
     };
     return payload.map(render);
@@ -94,7 +95,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
         <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110}>
           {pieSlices.map(renderCell)}
         </Pie>
-        <Tooltip viewBox={{x: 1, y: 2, width: 200, height: 200}}/>
+        <Tooltip viewBox={viewBoxStyle}/>
         <Legend
           margin={margins}
           align={'left'}

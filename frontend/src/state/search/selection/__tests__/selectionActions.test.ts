@@ -9,6 +9,7 @@ import {IdNamed, Period} from '../../../../types/Types';
 import {gatewayRequest, meterRequest} from '../../../domain-models/domainModelsActions';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
+  addSelectionAction,
   closeSelectionPage,
   closeSelectionPageAction,
   deselectSelection,
@@ -16,7 +17,8 @@ import {
   selectPeriodAction,
   selectSavedSelection,
   selectSavedSelectionAction,
-  addSelectionAction,
+  setSelection,
+  setSelectionAction,
   toggleSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
@@ -28,8 +30,8 @@ const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const gothenburg = {...testData.selections.cities[0]};
-  const stockholm = {...testData.selections.cities[1]};
+  const gothenburg: IdNamed = {...testData.selections.cities[0]};
+  const stockholm: IdNamed = {...testData.selections.cities[1]};
 
   let mockRestClient;
   let store;
@@ -54,6 +56,64 @@ describe('selectionActions', () => {
         routerActions.goBack(),
       ]);
     });
+  });
+
+  describe('select from saved selections', () => {
+
+    it('sets new selection', () => {
+      const savedSelection21 = {
+        ...initialState,
+        id: 21,
+        name: 'test 21',
+      };
+
+      const saved: SelectionState[] = [
+        {
+          ...initialState,
+          id: 1,
+          name: 'test 1',
+        },
+        savedSelection21,
+      ];
+
+      const rootState = {searchParameters: {selection: initialState, saved}};
+      onFakeFetchMetersAndGateways(rootState.searchParameters);
+      store = configureMockStore(rootState);
+
+      store.dispatch(selectSavedSelection(savedSelection21.id));
+
+      expect(store.getActions()).toEqual([
+        selectSavedSelectionAction(savedSelection21),
+        meterRequest.request(),
+        gatewayRequest.request(),
+      ]);
+    });
+
+    it('does not dispatch if the selection cannot be found', () => {
+      const saved: SelectionState[] = [
+        {
+          ...initialState,
+          id: 1,
+          name: 'test 1',
+        },
+        {
+          ...initialState,
+          id: 21,
+          name: 'test 21',
+        },
+      ];
+
+      store = configureMockStore({searchParameters: {selection: initialState, saved}});
+
+      store.dispatch(selectSavedSelection({
+        ...initialState,
+        id: 99,
+        name: 'test 99',
+      }.id));
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
 
   describe('toggle selection', () => {
@@ -133,62 +193,23 @@ describe('selectionActions', () => {
     });
   });
 
-  describe('select from saved selections', () => {
+  describe('set selection action', () => {
+    it('set the selection of one parameter id', () => {
 
-    it('sets new selection', () => {
-      const savedSelection21 = {
-        ...initialState,
-        id: 21,
-        name: 'test 21',
-      };
-
-      const saved: SelectionState[] = [
-        {
-          ...initialState,
-          id: 1,
-          name: 'test 1',
-        },
-        savedSelection21,
-      ];
-
-      const rootState = {searchParameters: {selection: initialState, saved}};
+      const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
       onFakeFetchMetersAndGateways(rootState.searchParameters);
       store = configureMockStore(rootState);
 
-      store.dispatch(selectSavedSelection(savedSelection21.id));
+      const selection: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
+
+      store.dispatch(setSelection(selection));
 
       expect(store.getActions()).toEqual([
-        selectSavedSelectionAction(savedSelection21),
+        setSelectionAction(selection),
         meterRequest.request(),
         gatewayRequest.request(),
       ]);
     });
-
-    it('does not dispatch if the selection cannot be found', () => {
-      const saved: SelectionState[] = [
-        {
-          ...initialState,
-          id: 1,
-          name: 'test 1',
-        },
-        {
-          ...initialState,
-          id: 21,
-          name: 'test 21',
-        },
-      ];
-
-      store = configureMockStore({searchParameters: {selection: initialState, saved}});
-
-      store.dispatch(selectSavedSelection({
-        ...initialState,
-        id: 99,
-        name: 'test 99',
-      }.id));
-
-      expect(store.getActions()).toEqual([]);
-    });
-
   });
 
   const onFakeFetchMetersAndGateways = (searchParameters: SearchParameterState) => {
