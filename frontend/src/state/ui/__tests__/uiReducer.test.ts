@@ -18,7 +18,6 @@ describe('uiReducer', () => {
 
       const selectedIndicators = {
         dashboard: IndicatorType.collection,
-        report: null,
       };
 
       expect(state).toEqual({selectedIndicators});
@@ -29,7 +28,6 @@ describe('uiReducer', () => {
       const state: IndicatorState = indicator(initialState, action);
 
       const selectedIndicators = {
-        dashboard: null,
         report: IndicatorType.districtHeating,
       };
 
@@ -45,20 +43,6 @@ describe('uiReducer', () => {
       const selectedIndicators = {
         dashboard: IndicatorType.measurementQuality,
         report: IndicatorType.districtHeating,
-      };
-
-      expect(state).toEqual({selectedIndicators});
-    });
-
-    it('clears any previous selections', () => {
-      const oldState: IndicatorState =
-        indicator(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
-      const state: IndicatorState =
-        indicator(oldState, selectIndicatorWidget({report: null}));
-
-      const selectedIndicators = {
-        dashboard: null,
-        report: null,
       };
 
       expect(state).toEqual({selectedIndicators});

@@ -10,7 +10,6 @@ describe('gatewaySelectors', () => {
   describe('getGatewayDataSummary', () => {
 
     it('aggregates gateway data to a summary structure', () => {
-
       const gatewayIds: uuid[] = [1, 2, 3];
       const gateways: PartialDomainModel = {
         1: {
@@ -39,7 +38,7 @@ describe('gatewaySelectors', () => {
 
       const gatewayDataSummary = getGatewayDataSummary(gatewayState as GatewaysState);
 
-      expect(gatewayDataSummary).toEqual({
+      expect(gatewayDataSummary.get()).toEqual({
         status: {
           0: {name: 'ok', value: 3, filterParam: 0},
         },
@@ -61,8 +60,7 @@ describe('gatewaySelectors', () => {
       });
     });
 
-    it('returns null if there are no gateways', () => {
-
+    it('is not defined when there are no gateways', () => {
       const gatewayState: Partial<GatewaysState> = {
         entities: {},
         result: [],
@@ -70,7 +68,7 @@ describe('gatewaySelectors', () => {
 
       const gatewayDataSummary = getGatewayDataSummary(gatewayState as GatewaysState);
 
-      expect(gatewayDataSummary).toEqual(null);
+      expect(gatewayDataSummary.isNothing()).toBe(true);
     });
   });
 });

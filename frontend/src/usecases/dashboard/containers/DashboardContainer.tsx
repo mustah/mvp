@@ -2,7 +2,6 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {SelectedIndicatorWidgetProps} from '../../../components/indicators/SelectableIndicatorWidgets';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
@@ -21,7 +20,7 @@ import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 
-interface StateToProps extends SelectedIndicatorWidgetProps {
+interface StateToProps {
   isFetching: boolean;
   dashboard?: DashboardModel;
   meters: DomainModel<Meter>;

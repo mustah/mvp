@@ -1,10 +1,15 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {Maybe, Period, uuid} from '../../../types/Types';
+import {Period, uuid} from '../../../types/Types';
 import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
-import {getEncodedUriParametersForGateways, getEncodedUriParametersForMeters, getSelection} from './selectionSelectors';
+import {
+  getEncodedUriParametersForGateways,
+  getEncodedUriParametersForMeters,
+  getSelection,
+} from './selectionSelectors';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 
@@ -56,14 +61,15 @@ export const updateSelection = (selection: SelectionState) =>
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: () => RootState) => {
-
-    const selected: Maybe<SelectionState> = getState().searchParameters.saved
+    const savedSelection = getState().searchParameters.saved
       .find((item: SelectionState) => item.id === selectedId);
 
-    if (selected) {
-      dispatch(selectSavedSelectionAction(selected));
-      dispatch(fetchMetersAndGateways());
-    }
+    Maybe.maybe<SelectionState>(savedSelection)
+      .map((selected: SelectionState) => {
+        dispatch(selectSavedSelectionAction(selected));
+        dispatch(fetchMetersAndGateways());
+      });
+
   };
 
 export const resetSelection = () =>
@@ -76,15 +82,13 @@ export const resetSelection = () =>
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: () => RootState) => {
     const {parameter, id} = selectionParameter;
-    const selectedParameter: Maybe<Period | FilterParam[]> =
-      getSelection(getState().searchParameters).selected[parameter];
+    const selected = getSelection(getState().searchParameters).selected[parameter];
 
-    // TODO selectedParameter's type is too ambiguous, we should split Period from uuid[]s
-    if (Array.isArray(selectedParameter) && selectedParameter.includes(id as FilterParam)) {
-      dispatch(deselectSelection(selectionParameter));
-    } else {
-      dispatch(addSelectionAction(selectionParameter));
-    }
+    Maybe.maybe<Period | FilterParam[]>(selected)
+      .filter((value: Period | FilterParam[]) => Array.isArray(value) && value.includes(id as FilterParam))
+      .map(() => dispatch(deselectSelection(selectionParameter)))
+      .orElseGet(() => dispatch(addSelectionAction(selectionParameter)));
+
     dispatch(fetchMetersAndGateways());
   };
 

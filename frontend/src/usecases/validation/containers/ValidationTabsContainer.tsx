@@ -11,6 +11,7 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -25,7 +26,7 @@ import {getPaginationList, getValidationPagination} from '../../../state/ui/pagi
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -41,7 +42,7 @@ interface StateToProps extends TabsContainerStateToProps {
   meters: DomainModel<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
-  selectedMarker?: Maybe<Meter>;
+  selectedMarker: Maybe<Meter>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -67,9 +68,9 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     closeClusterDialog,
   } = props;
 
-  const dialog = selectedMarker && (
+  const dialog = selectedMarker.isDefined() && (
     <Dialog isOpen={true} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={selectedMarker}/>
+      <MeterDetailsContainer meter={selectedMarker.get()}/>
     </Dialog>
   );
 

@@ -1,4 +1,5 @@
-import {IdNamed, Maybe, uuid} from '../../../types/Types';
+import {Maybe} from '../../../helpers/Maybe';
+import {IdNamed, uuid} from '../../../types/Types';
 import {NormalizedState, Location} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
