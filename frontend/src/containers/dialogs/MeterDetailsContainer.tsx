@@ -210,7 +210,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content hasContent={hasConfidentPosition} noContentTextKey={'no reliable position'}>
+            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
               <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
               </Map>

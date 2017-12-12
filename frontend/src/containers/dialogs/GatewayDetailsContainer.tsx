@@ -143,7 +143,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content hasContent={hasConfidentPosition} noContentTextKey={'no reliable position'}>
+            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
             <Map height={400} viewCenter={gateway.position}>
               <ClusterContainer markers={gateway}/>
             </Map>

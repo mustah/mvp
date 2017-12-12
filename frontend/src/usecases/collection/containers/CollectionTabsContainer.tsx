@@ -37,6 +37,7 @@ import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
 import {Content} from '../../../components/content/Content';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
@@ -70,7 +71,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     closeClusterDialog,
   } = props;
 
-  const hasGateways = gatewayCount !== 0;
+  const hasGateways: boolean = isMarkersWithinThreshold(gateways);
 
   const dialog = selectedMaker && (
     <Dialog isOpen={true} close={closeClusterDialog}>
@@ -96,10 +97,10 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Content hasContent={hasGateways} noContentTextKey={'no gateways'}>
-        <Map>
-          <ClusterContainer markers={gateways}/>
-        </Map>
+        <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
+          <Map>
+            <ClusterContainer markers={gateways}/>
+          </Map>
         </Content>
         {dialog}
       </TabContent>

@@ -15,6 +15,8 @@ import {MapMarker} from '../../../map/mapModels';
 import {MapState} from '../../../map/mapReducer';
 import {Widget} from './Widget';
 import {Content} from '../../../../components/content/Content';
+import {translate} from '../../../../services/translationService';
+import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
 
 interface OwnProps {
   markers: DomainModel<MapMarker>;
@@ -55,7 +57,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
     },
   };
 
-  const hasMeters: boolean = !!markers;
+  const hasMeters: boolean = isMarkersWithinThreshold(markers);
 
   const centerOfPerstorpMap: GeoPosition = {latitude: 56.138288, longitude: 13.394854, confidence: 1};
   const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
@@ -69,7 +71,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   return (
     <Row className="MapWidgets">
       <Widget title="Perstorp">
-        <Content hasContent={hasMeters} noContentTextKey={'no meters'}>
+        <Content hasContent={hasMeters} noContentText={translate('no meters')}>
           <Map
             height={400}
             width={400}

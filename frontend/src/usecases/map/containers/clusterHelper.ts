@@ -12,6 +12,13 @@ const icons = {
 
 const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
 
+export const isMarkersWithinThreshold = (markers: DomainModel<MapMarker>): boolean => {
+  return markers && Object.keys(markers)
+    .map((key: string) => markers[key])
+    .filter(isGeoPositionWithinThreshold)
+    .length >= 0;
+};
+
 export const isGeoPositionWithinThreshold = ({position: {latitude, longitude, confidence}}: MapMarker) =>
   latitude && longitude && confidence >= 0.7;
 
