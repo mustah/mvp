@@ -1,8 +1,5 @@
-import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {isMapMarker} from '../containers/clusterHelper';
-import {MapMarker} from '../mapModels';
 import {MapState} from '../mapReducer';
 import {getSelectedGatewayMarker, getSelectedMeterMarker} from '../mapSelectors';
 
@@ -41,41 +38,4 @@ describe('mapSelectors', () => {
       expect(getSelectedGatewayMarker(state as MapState)).toEqual({id: 1});
     });
   });
-
-  describe('test', () => {
-    it('is of type MapMarker', () => {
-      const markers: Partial<MapMarker> = {
-        status: {id: 1, name: 'foo'},
-        position: {
-          latitude: 1,
-          longitude: 2,
-          confidence: 3,
-        },
-      };
-
-      expect(isMapMarker(markers as MapMarker)).toBe(true);
-    });
-
-    it('is not of type MapMarker', () => {
-      const markers: DomainModel<MapMarker> = {
-        foo: {
-          status: {id: 1, name: 'foo'},
-          city: {id: 1, name: 'stockholm'},
-          address: {
-            cityId: 1,
-            id: 2,
-            name: 'stampgatan',
-          },
-          position: {
-            latitude: 1,
-            longitude: 2,
-            confidence: 3,
-          },
-        },
-      };
-
-      expect(isMapMarker(markers as DomainModel<MapMarker>)).toBe(false);
-    });
-  });
-
 });
