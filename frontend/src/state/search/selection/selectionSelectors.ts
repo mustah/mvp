@@ -1,6 +1,6 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {getTranslationOrName} from '../../../services/translationService';
-import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../services/urlFactory';
+import {getTranslationOrName} from '../../../helpers/translations';
+import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, Period, uuid} from '../../../types/Types';
 import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';

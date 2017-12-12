@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
-import {makeUrl} from '../../../../services/urlFactory';
+import {makeUrl} from '../../../../helpers/urlFactory';
 import {IdNamed, Period} from '../../../../types/Types';
 import {gatewayRequest, meterRequest} from '../../../domain-models/domainModelsActions';
 import {SearchParameterState} from '../../searchParameterReducer';
