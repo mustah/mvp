@@ -22,22 +22,18 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
 export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
   const {className, children, indicators, selectedIndicatorType, selectIndicatorWidget} = props;
 
-  const renderIndicator = (indicator: Indicator, index: number) => {
-    const isSelected = indicator.type === selectedIndicatorType ||
-                       indicator.type === IndicatorType.districtHeating;
-    return (
-      <SelectableIndicatorWidget
-        key={indicator.type || index}
-        indicator={indicator}
-        isSelected={isSelected}
-        select={selectIndicatorWidget}
-      />
-    );
-  };
+  const indicatorWidgets = indicators.map((indicator: Indicator) => (
+    <SelectableIndicatorWidget
+      key={indicator.type}
+      indicator={indicator}
+      isSelected={indicator.type === selectedIndicatorType}
+      select={selectIndicatorWidget}
+    />
+  ));
 
   return (
     <Row className={className}>
-      {indicators.map(renderIndicator)}
+      {indicatorWidgets}
       {children}
     </Row>);
 };
