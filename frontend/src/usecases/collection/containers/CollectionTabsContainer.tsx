@@ -21,7 +21,6 @@ import {
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -36,6 +35,9 @@ import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
+import {Content} from '../../../components/content/Content';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
@@ -69,6 +71,8 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     closeClusterDialog,
   } = props;
 
+  const hasGateways: boolean = isMarkersWithinThreshold(gateways);
+
   const dialog = selectedMaker && (
     <Dialog isOpen={true} close={closeClusterDialog}>
       <GatewayDetailsContainer gateway={selectedMaker}/>
@@ -93,9 +97,11 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Map>
-          <ClusterContainer markers={gateways}/>
-        </Map>
+        <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
+          <Map>
+            <ClusterContainer markers={gateways}/>
+          </Map>
+        </Content>
         {dialog}
       </TabContent>
     </Tabs>

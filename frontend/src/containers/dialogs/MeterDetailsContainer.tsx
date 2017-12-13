@@ -27,6 +27,8 @@ import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import {Info} from './Info';
 import './MeterDetailsContainer.scss';
+import {Content} from '../../components/content/Content';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 
 // TODO[!must!] use real measurement data from backend (another MR)
 const measurements: Normalized<any> = {
@@ -166,6 +168,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const renderDate = (item: any) => item.date;
     const renderSerial = ({id}: Gateway) => id;
     const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) => signalToNoiseRatio || translate('n/a');
+    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(meter) ? true : false;
 
     return (
       <Row>
@@ -207,9 +210,11 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Map height={400} viewCenter={meter.position}>
-              <ClusterContainer markers={meter}/>
-            </Map>
+            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
+              <Map height={400} viewCenter={meter.position}>
+                <ClusterContainer markers={meter}/>
+              </Map>
+            </Content>
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>

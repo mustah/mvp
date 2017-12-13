@@ -1,5 +1,5 @@
 import {MapMarker, Marker} from '../../mapModels';
-import {isMapMarker, makeLeafletCompatibleMarkersFrom, isWithinThreshold} from '../clusterHelper';
+import {isMapMarker, makeLeafletCompatibleMarkersFrom, isGeoPositionWithinThreshold} from '../clusterHelper';
 import {DomainModel} from '../../../../state/domain-models/domainModels';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
 
@@ -98,15 +98,15 @@ describe('clusterHelper', () => {
     });
   });
 
-  describe('isWithinThreshold', () => {
+  describe('isGeoPositionWithinThreshold', () => {
     it('it should accept confidence of 0.7 and above', () => {
-      expect(isWithinThreshold(mapMarker1 as MapMarker)).toBe(true);
-      expect(isWithinThreshold(mapMarker2 as MapMarker)).toBe(true);
-      expect(isWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
+      expect(isGeoPositionWithinThreshold(mapMarker1 as MapMarker)).toBe(true);
+      expect(isGeoPositionWithinThreshold(mapMarker2 as MapMarker)).toBe(true);
+      expect(isGeoPositionWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
     });
 
     it('it should not accept confidence less than 0.7', () => {
-      expect(isWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
+      expect(isGeoPositionWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
     });
   });
 

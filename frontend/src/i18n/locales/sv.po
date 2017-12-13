@@ -20,6 +20,9 @@ msgstr "exportera till JSON"
 msgid "add to report"
 msgstr "lägg till i rapport"
 
+msgid "no reliable position"
+msgstr "ingen tillförlitlig position"
+
 msgid "close"
 msgstr "stäng"
 
