@@ -24,7 +24,7 @@ describe('Maybe', () => {
   describe('creates with value and will be defined', () => {
 
     it('creates with a string value', () => {
-      expect(Maybe.maybe(1).isDefined()).toBe(true);
+      expect(Maybe.maybe<string>('something').isDefined()).toBe(true);
     });
   });
 

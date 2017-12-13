@@ -70,8 +70,8 @@ export class Maybe<T> implements MaybeApi<T> {
   }
 
   filter(predicate: Predicate<T>): Maybe<T> {
-    return this.isDefined()
-      ? predicate(this.get()) ? this : Maybe.nothing<T>()
+    return this.isDefined() && predicate(this.get())
+      ? this
       : Maybe.nothing<T>();
   }
 }
