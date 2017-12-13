@@ -8,12 +8,13 @@ import {IndicatorState} from './indicatorReducer';
 const getIndicatorState = (state: UiState): IndicatorState => state.indicator;
 
 type SelectedIndicatorSelector =
-  OutputSelector<UiState, Maybe<IndicatorType>, (res: IndicatorState) => Maybe<IndicatorType>>;
+  OutputSelector<UiState, IndicatorType, (state: IndicatorState) => IndicatorType>;
 
 const getSelectedIndicator = (useCase: string): SelectedIndicatorSelector =>
-  createSelector<UiState, IndicatorState, Maybe<IndicatorType>>(
+  createSelector<UiState, IndicatorState, IndicatorType>(
     getIndicatorState,
-    (indicator: IndicatorState) => Maybe.maybe<IndicatorType>(indicator.selectedIndicators[useCase]),
+    (indicator: IndicatorState) => Maybe.maybe<IndicatorType>(indicator.selectedIndicators[useCase])
+      .orElse(IndicatorType.districtHeating),
   );
 
 export const getSelectedIndicatorTypeForReport = getSelectedIndicator(useCases.report);

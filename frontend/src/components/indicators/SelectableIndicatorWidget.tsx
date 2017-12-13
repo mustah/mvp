@@ -29,7 +29,8 @@ const indicatorIconFor: IndicatorComponentType = {
   [IndicatorType.temperatureOutside]: IconTemperature,
 };
 
-export const iconComponentFor = (type: IndicatorType): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
+export const iconComponentFor =
+  (type: IndicatorType): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
 
 interface IndicatorProps {
   indicator: Indicator;
@@ -37,8 +38,7 @@ interface IndicatorProps {
   isSelected?: boolean;
 }
 
-export const SelectableIndicatorWidget = (props: IndicatorProps) => {
-  const {select, indicator, isSelected} = props;
+export const SelectableIndicatorWidget = ({select, indicator, isSelected}: IndicatorProps) => {
   const {state, title, value, unit, subtitle, type} = indicator;
 
   const selectWidget = () => select(type);

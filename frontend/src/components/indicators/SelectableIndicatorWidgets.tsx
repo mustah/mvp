@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {Maybe} from '../../helpers/Maybe';
 import {Children} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
 import {Row} from '../layouts/row/Row';
@@ -7,7 +6,7 @@ import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedIndicatorType: Maybe<IndicatorType>;
+  selectedIndicatorType: IndicatorType;
 }
 
 export interface IndicatorWidgetsDispatchProps {
@@ -24,10 +23,8 @@ export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
   const {className, children, indicators, selectedIndicatorType, selectIndicatorWidget} = props;
 
   const renderIndicator = (indicator: Indicator, index: number) => {
-    const isSelected = selectedIndicatorType.isDefined()
-      ? selectedIndicatorType.get() === indicator.type
-      : indicator.type === IndicatorType.districtHeating;
-
+    const isSelected = indicator.type === selectedIndicatorType ||
+                       indicator.type === IndicatorType.districtHeating;
     return (
       <SelectableIndicatorWidget
         key={indicator.type || index}

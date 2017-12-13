@@ -1,5 +1,4 @@
 import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
-import {Maybe} from '../../../helpers/Maybe';
 import {getSelectedIndicatorTypeForReport} from '../indicator/indicatorSelectors';
 import {UiState} from '../uiReducer';
 
@@ -27,12 +26,12 @@ describe('indicatorSelector', () => {
   };
 
   it('can select the chosen indicators for the report view', () => {
-    const indicatorType = getSelectedIndicatorTypeForReport({...mockedUiState}).get();
+    const indicatorType = getSelectedIndicatorTypeForReport({...mockedUiState});
 
     expect(indicatorType).toEqual(IndicatorType.districtHeating);
   });
 
-  it('defaults to undefined when not having a selected indicator for the report view', () => {
+  it('defaults to districtHeating when not having a selected indicator for the report view', () => {
     const state: UiState = {
       ...mockedUiState,
       indicator: {
@@ -40,9 +39,9 @@ describe('indicatorSelector', () => {
       },
     };
 
-    const indicatorType: Maybe<IndicatorType> = getSelectedIndicatorTypeForReport(state);
+    const indicatorType = getSelectedIndicatorTypeForReport(state);
 
-    expect(indicatorType.isNothing()).toBe(true);
+    expect(indicatorType).toBe(IndicatorType.districtHeating);
   });
 
 });
