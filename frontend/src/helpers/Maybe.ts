@@ -32,7 +32,11 @@ export class Maybe<T> implements MaybeApi<T> {
     return new Maybe<T>(Type.nothing);
   }
 
-  private constructor(private readonly type: Type, private readonly value?: T) {}
+  private constructor(private readonly type: Type, private readonly value?: T) {
+    if (type === Type.nothing && value !== undefined) {
+      throw new Error('Maybe cannot be of type nothing and have a value!');
+    }
+  }
 
   isNothing(): boolean {
     return this.type === Type.nothing;
