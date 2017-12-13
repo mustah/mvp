@@ -74,7 +74,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const hasGateways: boolean = isMarkersWithinThreshold(gateways);
 
-  const dialog = selectedMaker.isDefined() && (
+  const dialog = selectedMaker.isJust() && (
     <Dialog isOpen={true} close={closeClusterDialog}>
       <GatewayDetailsContainer gateway={selectedMaker.get()}/>
     </Dialog>

@@ -68,7 +68,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     closeClusterDialog,
   } = props;
 
-  const dialog = selectedMarker.isDefined() && (
+  const dialog = selectedMarker.isJust() && (
     <Dialog isOpen={true} close={closeClusterDialog}>
       <MeterDetailsContainer meter={selectedMarker.get()}/>
     </Dialog>

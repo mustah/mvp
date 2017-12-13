@@ -7,7 +7,7 @@ const enum Type {
 
 interface MaybeApi<T> {
   isNothing: () => boolean;
-  isDefined: () => boolean;
+  isJust: () => boolean;
   map: <U>(f: (value: T) => U) => Maybe<U>;
   flatMap: <U>(f: (value: T) => Maybe<U>) => Maybe<U>;
   get: () => T;
@@ -38,18 +38,18 @@ export class Maybe<T> implements MaybeApi<T> {
     return this.type === Type.nothing;
   }
 
-  isDefined(): boolean {
+  isJust(): boolean {
     return this.type === Type.just;
   }
 
   map<U>(f: (value: T) => U): Maybe<U> {
-    return this.isDefined()
+    return this.isJust()
       ? Maybe.maybe<U>(f(this.get()))
       : Maybe.nothing<U>();
   }
 
   flatMap<U>(f: (value: T) => Maybe<U>): Maybe<U> {
-    return this.isDefined()
+    return this.isJust()
       ? f(this.get())
       : Maybe.nothing<U>();
   }
@@ -62,15 +62,15 @@ export class Maybe<T> implements MaybeApi<T> {
   }
 
   orElse(value: T): T {
-    return this.isDefined() ? this.get() : value;
+    return this.isJust() ? this.get() : value;
   }
 
   orElseGet(f: () => T): T {
-    return this.isDefined() ? this.get() : f();
+    return this.isJust() ? this.get() : f();
   }
 
   filter(predicate: Predicate<T>): Maybe<T> {
-    return this.isDefined() && predicate(this.get())
+    return this.isJust() && predicate(this.get())
       ? this
       : Maybe.nothing<T>();
   }
