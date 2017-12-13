@@ -1,5 +1,5 @@
 import {PieSlice, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
-import {pieChartTranslation} from '../../../services/translationService';
+import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';

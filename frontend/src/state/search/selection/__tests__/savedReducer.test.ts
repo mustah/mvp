@@ -1,4 +1,4 @@
-import {idGenerator} from '../../../../services/idGenerator';
+import {idGenerator} from '../../../../helpers/idGenerator';
 import {saved} from '../saveReducer';
 import {saveSelectionAction, updateSelectionAction} from '../selectionActions';
 import {SelectionState} from '../selectionModels';

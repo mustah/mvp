@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {meterStatusTranslation} from '../../services/translationService';
+import {meterStatusTranslation} from '../../helpers/translations';
 import {IdNamed, statusFor} from '../../types/Types';
 import {IconStatus} from '../icons/IconStatus';
 import {Row} from '../layouts/row/Row';

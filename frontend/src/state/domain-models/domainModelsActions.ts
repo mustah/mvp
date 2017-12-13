@@ -1,7 +1,7 @@
 import {normalize, Schema} from 'normalizr';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {restClient} from '../../services/restClient';
-import {makeUrl} from '../../services/urlFactory';
+import {makeUrl} from '../../helpers/urlFactory';
 import {ErrorResponse, IdNamed} from '../../types/Types';
 import {EndPoints, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';

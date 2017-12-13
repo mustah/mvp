@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
 import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChartSelector';
-import {pieChartTranslation} from '../../../services/translationService';
+import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, Maybe, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
