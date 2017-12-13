@@ -45,7 +45,7 @@ describe('Maybe', () => {
   describe('map', () => {
 
     it('will throw when mapping over type of nothing', () => {
-      expect(Maybe.nothing<number>().map((n: number) => n + 1).isNothing()).toBe(true);
+      expect(() => Maybe.nothing<number>().map((n: number) => n + 1).get()).toThrow(mapErrorMessage);
     });
 
     it('will map over value', () => {
