@@ -1,53 +1,60 @@
-import {PieSlice, PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {createSelector} from 'reselect';
+import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChartSelector';
+import {hasItems} from '../../../helpers/functionalHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
-import {IdNamed, Maybe, uuid} from '../../../types/Types';
+import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
-import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
-import {createSelector} from 'reselect';
 import {getResultDomainModels} from '../domainModelsSelectors';
+import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
 
 export const getGatewaysTotal = (state: GatewaysState): number => state.total;
 export const getGatewayEntities = (state: GatewaysState): DomainModel<Gateway> => state.entities;
 
 const addToCategory = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
-  let label: uuid;
-  let existentEntity: Maybe<PieSlice>;
-  let value: number;
 
-  const categoryAdd = (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): PieSlice => ({
-    name: pieChartTranslation(fieldKey, idNamed),
-    value,
-    filterParam,
-  });
+  const categoryAdd =
+    (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam, value: number): PieSlice => ({
+      name: pieChartTranslation(fieldKey, idNamed),
+      value,
+      filterParam,
+    });
+
+  const valueOf = (pieSlice: PieSlice): number => {
+    return Maybe.maybe<PieSlice>(pieSlice)
+      .map((pieSlice: PieSlice) => ++pieSlice.value)
+      .orElse(1);
+  };
+
+  let label: uuid;
 
   switch (fieldKey) {
     case 'flagged':
       label = gateway[fieldKey] ? 'flagged' : 'unFlagged';
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, {id: label, name: label}, gateway[fieldKey]),
+        [label]: categoryAdd(fieldKey, {
+          id: label,
+          name: label,
+        }, gateway[fieldKey], valueOf(category[label])),
       };
-
     case 'city':
     case 'status':
       label = gateway[fieldKey].id;
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, gateway[fieldKey], label),
+        [label]: categoryAdd(fieldKey, gateway[fieldKey], label, valueOf(category[label])),
       };
 
     default:
       label = gateway[fieldKey];
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, {id: label, name: label as string}, label),
+        [label]: categoryAdd(fieldKey, {
+          id: label,
+          name: label as string,
+        }, label, valueOf(category[label])),
       };
   }
 };
@@ -66,19 +73,20 @@ export const getGatewayDataSummary =
   createSelector<GatewaysState, uuid[], DomainModel<Gateway>, Maybe<GatewayDataSummary>>(
     getResultDomainModels,
     getGatewayEntities,
-    (gatewayIds: uuid[], gateways: DomainModel<Gateway>) => {
+    (gatewayIds: uuid[], gateways: DomainModel<Gateway>): Maybe<GatewayDataSummary> => {
       const summaryTemplate: {[P in GatewayDataSummaryKey]: PieData} = {
         status: {}, flagged: {}, city: {}, productModel: {},
       };
-      if (!gatewayIds.length) {
-        return null;
-      } else {
-        return gatewayIds.reduce((summary, gatewayId: uuid) => {
-          const gateway = gateways[gatewayId];
-          return Object.keys(summaryTemplate).reduce(
-            (summaryAggregated, fieldKey: GatewayDataSummaryKey) =>
-              addGatewayDataToSummary(summaryAggregated, fieldKey, gateway), summary);
-        }, summaryTemplate);
-      }
+
+      return Maybe.just(gatewayIds)
+        .filter(hasItems)
+        .flatMap((ids: uuid[]) => Maybe.just<GatewayDataSummary>(
+          ids.reduce((summary, gatewayId: uuid) => {
+            const gateway = gateways[gatewayId];
+            return Object.keys(summaryTemplate).reduce(
+              (summaryAggregated, fieldKey: GatewayDataSummaryKey) =>
+                addGatewayDataToSummary(summaryAggregated, fieldKey, gateway), summary);
+          }, summaryTemplate)),
+        );
     },
   );

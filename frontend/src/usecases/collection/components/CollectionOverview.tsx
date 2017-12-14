@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {Row} from '../../../components/layouts/row/Row';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
+import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
-import {ItemOrArray, Maybe} from '../../../types/Types';
+import {ItemOrArray} from '../../../types/Types';
 import './CollectionOverview.scss';
 
 interface CollectionOverviewProps {
@@ -18,42 +19,44 @@ const colors: string[][] = [
   ['#b7e000', '#f7be29', '#ed4200'],
 ];
 
-export const CollectionOverview = (props: CollectionOverviewProps) => {
+export const CollectionOverview = ({gatewayDataSummary, setSelection}: CollectionOverviewProps) => {
+  const selectStatus = (id: ItemOrArray<FilterParam>) =>
+    setSelection({parameter: ParameterName.gatewayStatuses, id});
 
-  const {gatewayDataSummary, setSelection} = props;
+  const selectCity = (id: ItemOrArray<FilterParam>) =>
+    setSelection({parameter: ParameterName.cities, id});
 
-  const selectStatus = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.gatewayStatuses, id});
-  const selectCity = (id: ItemOrArray<FilterParam>) => setSelection({parameter: ParameterName.cities, id});
   const selectProductModel = (id: ItemOrArray<FilterParam>) =>
     setSelection({parameter: ParameterName.productModels, id});
 
-  if (!gatewayDataSummary) {
+  if (gatewayDataSummary.isNothing()) {
     return null;
   } else {
+    const {status, flagged, city, productModel} = gatewayDataSummary.get();
     const pieCharts: PieChartSelectorProps[] = [
       {
         heading: translate('status'),
-        data: gatewayDataSummary.status,
+        data: status,
         colors: colors[0],
         setSelection: selectStatus,
         maxSlices: 4,
       },
       {
         heading: translate('flagged for action'),
-        data: gatewayDataSummary.flagged,
+        data: flagged,
         colors: colors[1],
         maxSlices: 4,
       },
       {
         heading: translate('cities'),
-        data: gatewayDataSummary.city,
+        data: city,
         colors: colors[0],
         setSelection: selectCity,
         maxSlices: 4,
       },
       {
         heading: translate('product models'),
-        data: gatewayDataSummary.productModel,
+        data: productModel,
         colors: colors[1],
         setSelection: selectProductModel,
         maxSlices: 4,

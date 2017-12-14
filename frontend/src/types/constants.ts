@@ -3,4 +3,5 @@ export const useCases = {
   collection: 'collection',
   validation: 'validation',
   selection: 'selection',
+  report: 'report',
 };

@@ -12,14 +12,14 @@ describe('mapSelectors', () => {
     it('has no selected meter marker', () => {
       const state: MapState = {isClusterDialogOpen: false};
 
-      expect(getSelectedMeterMarker(state)).toBeUndefined();
+      expect(getSelectedMeterMarker(state).isNothing()).toBe(true);
     });
 
     it('has selected meter marker', () => {
       const meter: Partial<Meter> = {id: 1};
       const state: MapStateType<Meter> = {isClusterDialogOpen: true, selectedMarker: meter};
 
-      expect(getSelectedMeterMarker(state as MapState)).toEqual({id: 1});
+      expect(getSelectedMeterMarker(state as MapState).get()).toEqual({id: 1});
     });
 
   });
@@ -28,14 +28,14 @@ describe('mapSelectors', () => {
     it('has no selected gateway marker', () => {
       const state: MapState = {isClusterDialogOpen: false};
 
-      expect(getSelectedGatewayMarker(state)).toBeUndefined();
+      expect(getSelectedGatewayMarker(state).isNothing()).toBe(true);
     });
 
     it('has selected meter marker', () => {
       const gateway: Partial<Gateway> = {id: 1};
       const state: MapStateType<Gateway> = {isClusterDialogOpen: true, selectedMarker: gateway};
 
-      expect(getSelectedGatewayMarker(state as MapState)).toEqual({id: 1});
+      expect(getSelectedGatewayMarker(state as MapState).get()).toEqual({id: 1});
     });
   });
 });

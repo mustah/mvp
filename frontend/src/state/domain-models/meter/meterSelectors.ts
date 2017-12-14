@@ -1,8 +1,10 @@
 import {normalize} from 'normalizr';
 import {createSelector} from 'reselect';
 import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChartSelector';
+import {hasItems} from '../../../helpers/functionalHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
-import {IdNamed, Maybe, uuid} from '../../../types/Types';
+import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
@@ -127,43 +129,46 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
 };
 
 const addToCategory = (category: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
-  let label: uuid;
-  let existentEntity: Maybe<PieSlice>;
-  let value: number;
 
-  const categoryAdd = (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam): PieSlice => ({
-    name: pieChartTranslation(fieldKey, idNamed),
-    value,
-    filterParam,
-  });
+  const categoryAdd =
+    (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam, value: number): PieSlice => ({
+      name: pieChartTranslation(fieldKey, idNamed),
+      value,
+      filterParam,
+    });
+
+  const valueOf = (pieSlice: PieSlice): number => {
+    return Maybe.maybe<PieSlice>(pieSlice)
+      .map((pieSlice: PieSlice) => ++pieSlice.value)
+      .orElse(1);
+  };
+
+  let label: uuid;
 
   switch (fieldKey) {
     case 'flagged':
       label = meter[fieldKey] ? 'flagged' : 'unFlagged';
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, {id: label, name: label}, meter[fieldKey]),
+        [label]: categoryAdd(fieldKey, {
+          id: label,
+          name: label,
+        }, meter[fieldKey], valueOf(category[label])),
       };
 
     case 'city':
     case 'status':
       label = meter[fieldKey].id;
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, meter[fieldKey], label),
+        [label]: categoryAdd(fieldKey, meter[fieldKey], label, valueOf(category[label])),
       };
 
     default:
       label = meter[fieldKey];
-      existentEntity = category[label];
-      value = existentEntity ? ++existentEntity.value : 1;
       return {
         ...category,
-        [label]: categoryAdd(fieldKey, {id: label, name: label}, label),
+        [label]: categoryAdd(fieldKey, {id: label, name: label}, label, valueOf(category[label])),
       };
   }
 };
@@ -181,19 +186,20 @@ const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Me
 export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, Maybe<MeterDataSummary>>(
   getResultDomainModels,
   getMeterEntities,
-  (meterIds: uuid[], meters: DomainModel<Meter>) => {
+  (metersIds: uuid[], meters: DomainModel<Meter>): Maybe<MeterDataSummary> => {
     const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
       flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
     };
-    if (!meterIds.length) {
-      return null;
-    } else {
-      return meterIds.reduce((summary, meterId: uuid) => {
-        const meter = meters[meterId];
-        return Object.keys(summaryTemplate).reduce(
-          (summaryAggregated, fieldKey: MeterDataSummaryKey) =>
-            addMeterDataToSummary(summaryAggregated, fieldKey, meter), summary);
-      }, summaryTemplate);
-    }
+
+    return Maybe.just<uuid[]>(metersIds)
+      .filter(hasItems)
+      .flatMap(() => Maybe.just<MeterDataSummary>(
+        metersIds.reduce((summary: MeterDataSummary, meterId: uuid) => {
+          const meter = meters[meterId];
+          return Object.keys(summaryTemplate)
+            .reduce((summaryAggregated, fieldKey: MeterDataSummaryKey) =>
+              addMeterDataToSummary(summaryAggregated, fieldKey, meter), summary);
+        }, summaryTemplate),
+      ));
   },
 );

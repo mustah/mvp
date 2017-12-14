@@ -44,7 +44,7 @@ describe('meterSelectors', () => {
 
       const reduced = getMeterDataSummary(metersState as MetersState);
 
-      expect(reduced).toEqual({
+      expect(reduced.get()).toEqual({
         flagged:
           {
             flagged: {name: 'flagged', value: 1, filterParam: true},

@@ -10,6 +10,7 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -27,7 +28,7 @@ import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagi
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {Maybe, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
@@ -45,7 +46,7 @@ interface StateToProps extends TabsContainerStateToProps {
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
-  selectedMaker?: Maybe<Gateway>;
+  selectedMaker: Maybe<Gateway>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -73,9 +74,9 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 
   const hasGateways: boolean = isMarkersWithinThreshold(gateways);
 
-  const dialog = selectedMaker && (
+  const dialog = selectedMaker.isJust() && (
     <Dialog isOpen={true} close={closeClusterDialog}>
-      <GatewayDetailsContainer gateway={selectedMaker}/>
+      <GatewayDetailsContainer gateway={selectedMaker.get()}/>
     </Dialog>
   );
 

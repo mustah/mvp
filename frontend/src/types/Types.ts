@@ -7,6 +7,8 @@ export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 
+export type Predicate<T> = (value: T) => boolean;
+
 export type ItemOrArray<T> = T | T[];
 
 export type Children = ItemOrArray<React.ReactNode>;
@@ -15,8 +17,6 @@ export type Children = ItemOrArray<React.ReactNode>;
  * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
  */
 export type Action<P> = PayloadAction<string, P>;
-
-export type Maybe<T> = null | undefined | T;
 
 export interface ClassNamed {
   className?: string;

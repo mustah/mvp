@@ -17,7 +17,7 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
-import {getSelectedIndicatorReport} from '../../../state/ui/indicator/indicatorSelectors';
+import {getSelectedIndicatorTypeForReport} from '../../../state/ui/indicator/indicatorSelectors';
 import {indicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 
@@ -29,7 +29,7 @@ type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouter
 
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 
-const ReportComponent = ({selectedWidget, selectIndicatorWidget}: Props) => (
+const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) => (
   <PageContainer>
     <Row className="space-between">
       <MainTitle>{translate('report')}</MainTitle>
@@ -41,7 +41,7 @@ const ReportComponent = ({selectedWidget, selectIndicatorWidget}: Props) => (
 
     <SelectableIndicatorWidgets
       indicators={indicators}
-      selectedWidget={selectedWidget}
+      selectedIndicatorType={selectedIndicatorType}
       selectIndicatorWidget={selectIndicatorWidget}
     />
 
@@ -52,7 +52,7 @@ const ReportComponent = ({selectedWidget, selectIndicatorWidget}: Props) => (
 );
 
 const mapStateToProps = ({ui}: RootState): SelectedIndicatorWidgetProps => ({
-  selectedWidget: getSelectedIndicatorReport(ui),
+  selectedIndicatorType: getSelectedIndicatorTypeForReport(ui),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
