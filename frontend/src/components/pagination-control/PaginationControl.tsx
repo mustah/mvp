@@ -1,70 +1,88 @@
 import FlatButton from 'material-ui/FlatButton';
+import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
+import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
-import {wrapComponent} from '../../helpers/componentHelpers';
-import {translate} from '../../services/translationService';
-import {PaginationProps} from '../../state/ui/pagination/paginationModels';
+import {idGenerator} from '../../helpers/idGenerator';
+import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
+import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
+import {PageNumberButton} from './PageNumberButton';
 import './PaginationControl.scss';
-import FlatButtonProps = __MaterialUI.FlatButtonProps;
 
 type PageElements = Array<React.ReactElement<FlatButton | HTMLSpanElement>>;
 
-const PageNumberButton = wrapComponent<FlatButtonProps>((props: FlatButtonProps) =>
-  <FlatButton className="PageNumber" {...props}/>);
+interface PageNumberProps {
+  current: number;
+  total: number;
+  changePage: OnChangePage;
+}
 
-export const PaginationControl = (props: PaginationProps) => {
-  const {pagination: {page, limit}, changePage, numOfEntities} = props;
-  const pages = Math.ceil(numOfEntities / limit);
+const visibilityProximity: number = 5;
 
-  if (pages <= 1) {
-    return null;
-  }
+const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps): PageElements => {
+  const pages: PageElements = [];
+  const paginationUuid: uuid = idGenerator.uuid();
 
-  /**
-   * I generally don't like "negative" variables, but I favor noPrev over hasPrev because the React component can use
-   * the variable without !inverting it, and thus not be forced to re-render as often.
-   */
-  const noPrev = page === 1;
-  const noNext = page >= pages;
+  let lastPrintedAreDots = false;
 
-  const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
-  const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
-
-  const numbers = (current: number, total: number): PageElements => {
-    const pages: PageElements = [];
-    const visibilityProximity: number = 3;
-    let lastPrintedAreDots = false;
-
-    // current starts with 1, meaning page should too
-    for (let page = 1; page <= total; page++) {
-      if (page === current) {
-        pages.push(<PageNumberButton disabled={true} key={page}>{page}</PageNumberButton>);
-        lastPrintedAreDots = false;
-      } else if (Math.abs(page - current) <= visibilityProximity
-                 || page <= visibilityProximity
-                 || page > (total - visibilityProximity)) {
-        const callback = () => changePage(page);
-        pages.push(<PageNumberButton disabled={false} key={page} onClick={callback}>{page}</PageNumberButton>);
-        lastPrintedAreDots = false;
-      } else if (!lastPrintedAreDots) {
-        pages.push(<span key={page}>...</span>);
-        lastPrintedAreDots = true;
-      }
+  for (let page = 1; page <= total; page++) {
+    const key = `${page}-${paginationUuid}`;
+    if (page === current) {
+      pages.push(<PageNumberButton disabled={true} key={key} page={page}/>);
+      lastPrintedAreDots = false;
+    } else if (Math.abs(page - current) <= visibilityProximity
+               || page <= visibilityProximity
+               || page > (total - visibilityProximity)) {
+      const onClick = () => changePage(page);
+      pages.push(<PageNumberButton onClick={onClick} key={key} page={page}/>);
+      lastPrintedAreDots = false;
+    } else if (!lastPrintedAreDots) {
+      pages.push(<span key={key}>...</span>);
+      lastPrintedAreDots = true;
     }
-    return pages;
-  };
-
-  const renderedNumbers = numbers(page, pages);
-
-  return (
-    <RowCenter className="PaginationControl">
-      <FlatButton disabled={noPrev} onClick={changePagePrev} className="first-uppercase">
-        {translate('previous')}
-      </FlatButton>
-      {renderedNumbers}
-      <FlatButton disabled={noNext} onClick={changePageNext} className="first-uppercase">
-        {translate('next')}
-      </FlatButton>
-    </RowCenter>
-  );
+  }
+  return pages;
 };
+
+const iconArrowStyle = {marginTop: 8};
+
+interface Props {
+  pagination: Pagination;
+  numOfEntities: number;
+  changePage: OnChangePage;
+}
+
+export const PaginationControl =
+  ({pagination: {page, limit}, changePage, numOfEntities}: Props) => {
+    const numPages = Math.ceil(numOfEntities / limit);
+
+    if (numPages <= 1) {
+      return null;
+    }
+
+    const noPrev = page === 1;
+    const noNext = page >= numPages;
+
+    const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
+    const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
+
+    const pageNumberButtons = renderPageNumberButtons({
+      current: page,
+      total: numPages,
+      changePage,
+    });
+
+    return (
+      <RowCenter>
+        <RowCenter className="PaginationControl">
+          <FlatButton disabled={noPrev} onClick={changePagePrev} className="PageNumber-arrow">
+            <NavigationChevronLeft style={iconArrowStyle}/>
+          </FlatButton>
+          {pageNumberButtons}
+          <FlatButton disabled={noNext} onClick={changePageNext} className="PageNumber-arrow">
+            <NavigationChevronRight style={iconArrowStyle}/>
+          </FlatButton>
+        </RowCenter>
+      </RowCenter>
+    );
+  };

@@ -10,12 +10,6 @@ export interface SelectedPagination  {
 
 export type OnChangePage = (page: number) => void;
 
-export interface PaginationProps {
-  pagination: Pagination;
-  numOfEntities: number;
-  changePage: OnChangePage;
-}
-
 export interface PaginationState {
   dashboard: Pagination;
   collection: Pagination;
