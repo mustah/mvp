@@ -1,9 +1,13 @@
-import {getCollectionPagination, getPaginationList, PaginatedDomainModel} from '../pagination/paginationSelectors';
-import {UiState} from '../uiReducer';
+import {UiState} from '../../uiReducer';
+import {
+  getCollectionPagination,
+  getPaginationList,
+  PaginatedDomainModel,
+} from '../paginationSelectors';
 
 describe('paginationSelectors', () => {
 
-  it('can retreive the correct pagination metadata', () => {
+  it('can retrieve the correct pagination metadata', () => {
     const fakedCollectionState: UiState = {
       tabs: {},
       indicator: {
@@ -16,10 +20,6 @@ describe('paginationSelectors', () => {
         openListItems: [],
       },
       pagination: {
-        dashboard: {
-          page: 1,
-          limit: 2,
-        },
         collection: {
           page: 3,
           limit: 4,
@@ -34,8 +34,8 @@ describe('paginationSelectors', () => {
         },
       },
     };
-    const collectionPagination = getCollectionPagination(fakedCollectionState);
-    expect(collectionPagination).toEqual({limit: 4, page: 3});
+
+    expect(getCollectionPagination(fakedCollectionState)).toEqual({limit: 4, page: 3});
   });
 
   it('can paginate the collection result, based on pagination metadata', () => {
@@ -44,10 +44,7 @@ describe('paginationSelectors', () => {
         page: 2,
         limit: 1,
       },
-      result: [
-        1,
-        2,
-      ],
+      result: [1, 2],
     };
 
     expect(getPaginationList(paginationData)).toEqual([2]);
@@ -59,9 +56,7 @@ describe('paginationSelectors', () => {
         page: 1,
         limit: 0,
       },
-      result: [
-        1,
-      ],
+      result: [1],
     };
 
     expect(getPaginationList(paginationData)).toEqual([]);
@@ -73,9 +68,7 @@ describe('paginationSelectors', () => {
         page: 0,
         limit: 1,
       },
-      result: [
-        1,
-      ],
+      result: [1],
     };
 
     expect(getPaginationList(paginationData)).toEqual([]);

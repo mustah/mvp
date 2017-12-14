@@ -1,5 +1,6 @@
 import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
 import {getSelectedIndicatorTypeForReport} from '../indicator/indicatorSelectors';
+import {initialState} from '../pagination/paginationReducer';
 import {UiState} from '../uiReducer';
 
 describe('indicatorSelector', () => {
@@ -14,12 +15,7 @@ describe('indicatorSelector', () => {
     sideMenu: {
       isOpen: false,
     },
-    pagination: {
-      dashboard: {page: 0, limit: 0},
-      collection: {page: 0, limit: 0},
-      validation: {page: 0, limit: 0},
-      selection: {page: 0, limit: 0},
-    },
+    pagination: {...initialState},
     selectionTree: {
       openListItems: [],
     },
