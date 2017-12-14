@@ -20,10 +20,6 @@ describe('paginationSelectors', () => {
         openListItems: [],
       },
       pagination: {
-        dashboard: {
-          page: 1,
-          limit: 2,
-        },
         collection: {
           page: 3,
           limit: 4,
@@ -48,10 +44,7 @@ describe('paginationSelectors', () => {
         page: 2,
         limit: 1,
       },
-      result: [
-        1,
-        2,
-      ],
+      result: [1, 2],
     };
 
     expect(getPaginationList(paginationData)).toEqual([2]);
@@ -63,9 +56,7 @@ describe('paginationSelectors', () => {
         page: 1,
         limit: 0,
       },
-      result: [
-        1,
-      ],
+      result: [1],
     };
 
     expect(getPaginationList(paginationData)).toEqual([]);
@@ -77,9 +68,7 @@ describe('paginationSelectors', () => {
         page: 0,
         limit: 1,
       },
-      result: [
-        1,
-      ],
+      result: [1],
     };
 
     expect(getPaginationList(paginationData)).toEqual([]);
