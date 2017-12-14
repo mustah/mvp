@@ -1,5 +1,5 @@
 import {Action} from '../../../types/Types';
-import {TABS_CHANGE_TAB} from './tabsActions';
+import {CHANGE_TAB} from './tabsActions';
 import {SelectedTabs, TabName, TabSelection, TabsState} from './tabsModels';
 
 const overviewTab: SelectedTabs = {
@@ -26,7 +26,7 @@ const changeTab = (state: TabsState = initialState, action: Action<TabSelection>
 
 export const tabs = (state: TabsState = initialState, action: ActionType): TabsState => {
   switch (action.type) {
-    case TABS_CHANGE_TAB:
+    case CHANGE_TAB:
       return changeTab(state, action);
     default:
       return state;

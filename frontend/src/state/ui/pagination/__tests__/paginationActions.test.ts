@@ -1,5 +1,5 @@
 import configureStore, {MockStore} from 'redux-mock-store';
-import {useCases} from '../../../../types/constants';
+import {UseCases} from '../../../../types/Types';
 import {
   changePaginationCollection,
   changePaginationSelection,
@@ -26,7 +26,7 @@ describe('paginationActions', () => {
         type: PAGINATION_CHANGE_PAGE,
         payload: {
           page: 2,
-          useCase: useCases.collection,
+          useCase: UseCases.collection,
         },
       }]);
     });
@@ -40,7 +40,7 @@ describe('paginationActions', () => {
         type: PAGINATION_CHANGE_PAGE,
         payload: {
           page: 3,
-          useCase: useCases.validation,
+          useCase: UseCases.validation,
         },
       }]);
     });
@@ -54,7 +54,7 @@ describe('paginationActions', () => {
         type: PAGINATION_CHANGE_PAGE,
         payload: {
           page: 6,
-          useCase: useCases.selection,
+          useCase: UseCases.selection,
         },
       }]);
     });
