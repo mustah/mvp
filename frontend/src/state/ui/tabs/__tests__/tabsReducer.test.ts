@@ -6,12 +6,6 @@ describe('tabsReducer', () => {
 
   describe('changeTab', () => {
 
-    it('returns previous state when action type is not matched', () => {
-      const state = tabs(initialState, changeTabValidation(TabName.map));
-
-      expect(tabs(state, {type: 'unknown'})).toBe(state);
-    });
-
     it('changes tab to map in validation use case', () => {
       const state = tabs(initialState, changeTabValidation(TabName.map));
 

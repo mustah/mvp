@@ -6,12 +6,6 @@ describe('uiReducer', () => {
 
   describe('indicators -> selectedIndicators', () => {
 
-    it('will have initial state when the action is not matched', () => {
-      const state: IndicatorState = indicator(initialState, {type: 'UNKNOWN_ACTION'});
-
-      expect(state).toBe(initialState);
-    });
-
     it('will have dashboard indicator state after initial state', () => {
       const action = selectIndicatorWidget({dashboard: IndicatorType.collection});
       const state: IndicatorState = indicator(initialState, action);
