@@ -1,9 +1,13 @@
-import {getCollectionPagination, getPaginationList, PaginatedDomainModel} from '../pagination/paginationSelectors';
-import {UiState} from '../uiReducer';
+import {UiState} from '../../uiReducer';
+import {
+  getCollectionPagination,
+  getPaginationList,
+  PaginatedDomainModel,
+} from '../paginationSelectors';
 
 describe('paginationSelectors', () => {
 
-  it('can retreive the correct pagination metadata', () => {
+  it('can retrieve the correct pagination metadata', () => {
     const fakedCollectionState: UiState = {
       tabs: {},
       indicator: {
@@ -34,8 +38,8 @@ describe('paginationSelectors', () => {
         },
       },
     };
-    const collectionPagination = getCollectionPagination(fakedCollectionState);
-    expect(collectionPagination).toEqual({limit: 4, page: 3});
+
+    expect(getCollectionPagination(fakedCollectionState)).toEqual({limit: 4, page: 3});
   });
 
   it('can paginate the collection result, based on pagination metadata', () => {
