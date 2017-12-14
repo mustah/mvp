@@ -26,7 +26,7 @@ const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps):
   let lastPrintedAreDots = false;
 
   for (let page = 1; page <= total; page++) {
-    const key = `${page}-${paginationUuid}`;
+    const key = `pagination-${page}-${paginationUuid}`;
     if (page === current) {
       pages.push(<PageNumberButton disabled={true} key={key} page={page}/>);
       lastPrintedAreDots = false;
