@@ -2,8 +2,8 @@ import {createSelector} from 'reselect';
 import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChartSelector';
 import {hasItems} from '../../../helpers/functionalHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {IdNamed, uuid} from '../../../types/Types';
 import {pieChartTranslation} from '../../../helpers/translations';
+import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
 import {DomainModel} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
@@ -80,11 +80,13 @@ export const getGatewayDataSummary =
 
       return Maybe.just(gatewayIds)
         .filter(hasItems)
-        .flatMap(() => Maybe.just(gatewayIds.reduce((summary, gatewayId: uuid) => {
-          const gateway = gateways[gatewayId];
-          return Object.keys(summaryTemplate).reduce(
-            (summaryAggregated, fieldKey: GatewayDataSummaryKey) =>
-              addGatewayDataToSummary(summaryAggregated, fieldKey, gateway), summary);
-        }, summaryTemplate)));
+        .flatMap((ids: uuid[]) => Maybe.just<GatewayDataSummary>(
+          ids.reduce((summary, gatewayId: uuid) => {
+            const gateway = gateways[gatewayId];
+            return Object.keys(summaryTemplate).reduce(
+              (summaryAggregated, fieldKey: GatewayDataSummaryKey) =>
+                addGatewayDataToSummary(summaryAggregated, fieldKey, gateway), summary);
+          }, summaryTemplate)),
+        );
     },
   );
