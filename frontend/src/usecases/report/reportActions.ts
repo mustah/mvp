@@ -4,7 +4,7 @@ import {RootState} from '../../reducers/rootReducer';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
-export const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
+const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
 
 export const selectEntryToggle = (id: uuid) =>
   (dispatch, getState: () => RootState): void => {

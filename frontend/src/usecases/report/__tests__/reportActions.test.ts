@@ -1,6 +1,6 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {selectEntryAdd, selectEntryToggle, setSelectedEntries} from '../reportActions';
+import {selectEntryAdd, selectEntryToggle, SET_SELECTED_ENTRIES} from '../reportActions';
 import {ReportState} from '../reportModels';
 
 const configureMockStore = configureStore([thunk]);
@@ -14,7 +14,10 @@ describe('reportActions', () => {
     store.dispatch(selectEntryToggle(1));
 
     expect(store.getActions()).toEqual([
-      setSelectedEntries([2, 3, 1]),
+      {
+        type: SET_SELECTED_ENTRIES,
+        payload: [2, 3, 1],
+      },
     ]);
 
   });
@@ -25,7 +28,10 @@ describe('reportActions', () => {
     store.dispatch(selectEntryToggle(1));
 
     expect(store.getActions()).toEqual([
-      setSelectedEntries([2, 3]),
+      {
+        type: SET_SELECTED_ENTRIES,
+        payload: [2, 3],
+      },
     ]);
   });
   it('test that selectEntryAdd adds "id" to selected if not there', () => {
@@ -35,7 +41,10 @@ describe('reportActions', () => {
     store.dispatch(selectEntryAdd(3));
 
     expect(store.getActions()).toEqual([
-      setSelectedEntries([1, 2, 3]),
+      {
+        type: SET_SELECTED_ENTRIES,
+        payload: [1, 2, 3],
+      },
     ]);
   });
   it('test that selectEntryAdd do nothing when "id" already exist in selected', () => {
@@ -45,7 +54,10 @@ describe('reportActions', () => {
     store.dispatch(selectEntryAdd(3));
 
     expect(store.getActions()).toEqual([
-      setSelectedEntries([1, 2, 3]),
+      {
+        type: SET_SELECTED_ENTRIES,
+        payload: [1, 2, 3],
+      },
     ]);
   });
 });
