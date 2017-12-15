@@ -71,6 +71,9 @@ distributions {
   }
 }
 
+// by default, we get both a tar and a zip; but we are satisfied with only a tar
+distZip.enabled = false
+
 idea {
   module {
     outputDir = file("$buildDir/classes/main")
