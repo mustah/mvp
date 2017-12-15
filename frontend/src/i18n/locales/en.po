@@ -1,89 +1,332 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2017-10-13 16:06+0200\n"
-"PO-Revision-Date: 2017-10-13 16:06+0200\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-12-05T10:01:34.315Z\n"
+"PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.4\n"
 
-msgid "email"
-msgstr "email"
+msgid "export to Excel (.csv)"
+msgstr "export to Excel (.csv)"
 
-msgid "password"
-msgstr "password"
+msgid "export to JSON"
+msgstr "export to JSON"
 
-msgid "current filter"
-msgstr "current filter"
+msgid "add to report"
+msgstr "add to report"
 
-msgid "gateway"
-msgstr "gateway"
+msgid "close"
+msgstr "close"
 
-msgid "product model"
-msgstr "product model"
+msgid "latest"
+msgstr "latest"
 
-msgid "meter"
-msgstr "meter"
+msgid "current month"
+msgstr "current month"
 
-msgid "status"
-msgstr "status"
+msgid "previous month"
+msgstr "previous month"
 
-msgid "action"
-msgstr "action"
+msgid "current week"
+msgstr "current week"
 
-msgid "collection"
-msgstr "collection"
+msgid "last 7 days"
+msgstr "last 7 days"
+
+msgid "pick a date"
+msgstr "pick a date"
+
+msgid "starting date"
+msgstr "starting date"
+
+msgid "end date"
+msgstr "end date"
 
 msgid "all"
 msgstr "all"
 
-msgid "list"
-msgstr "list"
-
-msgid "unhandled problems"
-msgstr "unhandled problems"
-
-msgid "grouping"
-msgstr "grouping"
-
-msgid "count"
-msgstr "count"
-
-msgid "action pending"
-msgstr "action pending"
-
-msgid "map"
-msgstr "map"
-
-msgid "area"
-msgstr "area"
-
-msgid "object"
-msgstr "object"
+msgid "of {{count}} metering point"
+msgstr "of {{count}} metering point"
 
 msgid "facility"
 msgstr "facility"
 
-msgid "type"
+msgid "city"
+msgstr "city"
+
+msgid "address"
+msgstr "address"
+
+msgid "manufacturer"
+msgstr "manufacturer"
+
+msgid "medium"
 msgstr "type"
 
-msgid "location"
-msgstr "location"
+msgid "gateway"
+msgstr "gateway"
 
-msgid "saved search"
-msgstr "saved search"
+msgid "status"
+msgstr "status"
+
+msgid "status change"
+msgstr "status change"
+
+msgid "flags"
+msgstr "flags"
+
+msgid "previous"
+msgstr "previous"
+
+msgid "next"
+msgstr "next"
+
+msgid "other"
+msgstr "other"
+
+msgid "no"
+msgstr "no"
+
+msgid "gateway details"
+msgstr "gateway"
+
+msgid "gateway id"
+msgstr "gateway id"
+
+msgid "product model"
+msgstr "product model"
+
+msgid "collection"
+msgstr "collection"
+
+msgid "interval"
+msgstr "interval"
+
+msgid "flagged for action"
+msgstr "flagged for action"
+
+msgid "meter"
+msgstr "meter"
+
+msgid "status log"
+msgstr "status log"
+
+msgid "map"
+msgstr "map"
+
+msgid "show only changes"
+msgstr "show only changes"
+
+msgid "date"
+msgstr "date"
+
+msgid "n/a"
+msgstr "N/A"
+
+msgid "alarm"
+msgstr "alarm"
+
+msgid "meter id"
+msgstr "MOID"
+
+msgid "resolution"
+msgstr "resolution"
+
+msgid "validation"
+msgstr "validation"
+
+msgid "labels"
+msgstr "labels"
+
+msgid "sap id"
+msgstr "sap ID"
+
+msgid "facility id"
+msgstr "facility ID"
+
+msgid "measure id"
+msgstr "measure ID"
+
+msgid "latest value"
+msgstr "latest"
+
+msgid "gateways"
+msgstr "gateways"
+
+msgid "quantity"
+msgstr "quantity"
+
+msgid "value"
+msgstr "value"
+
+msgid "latest snr"
+msgstr "latest SNR"
+
+msgid "ok"
+msgstr "OK"
+
+msgid "unknown"
+msgstr "unknown"
+
+msgid "flagged"
+msgstr "flagged"
+
+msgid "unFlagged"
+msgstr "no flag"
+
+msgid "no gateways"
+msgstr "no gateways"
+
+msgid "showing all gateways"
+msgstr "showing all gateways"
+
+msgid "no gateways that are ok"
+msgstr "no gateways that are OK"
+
+msgid "showing all gateways that are ok"
+msgstr "showing all gateways that are OK"
+
+msgid "no gateways that have warnings"
+msgstr "no gateways that have warnings"
+
+msgid "showing all gateways that have warnings"
+msgstr "showing all gateways that have warnings"
+
+msgid "no gateways that have faults"
+msgstr "no gateways that have faults"
+
+msgid "showing all gateways that have faults"
+msgstr "showing all gateways that have faults"
+
+msgid "none"
+msgstr "none"
+
+msgid "warnings"
+msgstr "warnings"
+
+msgid "faults"
+msgstr "faults"
+
+msgid "cities"
+msgstr "cities"
+
+msgid "product models"
+msgstr "product models"
+
+msgid "filter by status"
+msgstr "filter by status"
+
+msgid "overview"
+msgstr "overview"
+
+msgid "list"
+msgstr "list"
+
+msgid "edit"
+msgstr "edit"
+
+msgid "delete"
+msgstr "delete"
+
+msgid "dashboard"
+msgstr "dashboard"
+
+msgid "selection"
+msgstr "selection"
+
+msgid "report"
+msgstr "report"
+
+msgid "graph"
+msgstr "graph"
+
+msgid "table"
+msgstr "table"
+
+msgid "logout"
+msgstr "logout"
+
+msgid "save"
+msgstr "save"
+
+msgid "save as"
+msgstr "save as"
+
+msgid "reset"
+msgstr "reset"
+
+msgid "meter status"
+msgstr "meter status"
+
+msgid "gateway status"
+msgstr "gateway status"
+
+msgid "filter"
+msgstr "filter"
+
+msgid "no saved selections"
+msgstr "no saved selections"
+
+msgid "saved selections"
+msgstr "saved selections"
+
+msgid "selection overview"
+msgstr "selection overview"
+
+msgid "metering"
+msgstr "metering"
+
+msgid "no reliable position"
+msgstr "no reliable position"
+
+msgid "no meters"
+msgstr "no meters"
+
+msgid "showing all meters"
+msgstr "showing all meters"
+
+msgid "no meters that are ok"
+msgstr "no meters that are ok"
+
+msgid "showing all meters that are ok"
+msgstr "showing all meters that are ok"
+
+msgid "no meters that have warnings"
+msgstr "no meters that have warnings"
+
+msgid "showing all meters that have warnings"
+msgstr "showing all meters that have warnings"
+
+msgid "no meters that have faults"
+msgstr "no meters that have faults"
+
+msgid "showing all meters that have faults"
+msgstr "showing all meters that have faults"
+
+msgid "alarms"
+msgstr "alarms"
+
+msgctxt "°plural"
+msgid "of {{count}} metering point°"
+msgstr "of {{count}} metering points"
+
+msgctxt "°plural"
+msgid "city°"
+msgstr "cities"
+
+msgctxt "°plural"
+msgid "address°"
+msgstr "addresses"
 
 msgctxt "°plural"
 msgid "meter°"
 msgstr "meters"
 
-#~ msgid "sort descending"
-#~ msgstr "sort descending"
-
-#~ msgid "sort ascending"
-#~ msgstr "sort ascending"
+msgctxt "°plural"
+msgid "alarm°"
+msgstr "alarms"

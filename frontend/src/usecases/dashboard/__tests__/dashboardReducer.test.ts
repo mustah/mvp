@@ -1,69 +1,68 @@
-import {DASHBOARD_SUCCESS} from '../../../types/ActionTypes';
-import {State} from '../../../types/Types';
-import {Indicator, IndicatorType} from '../../common/components/indicators/models/IndicatorModels';
+import {IndicatorType, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
+import {Status} from '../../../types/Types';
+import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
+import {DashboardModel} from '../dashboardModels';
 import {dashboard, DashboardState, initialState} from '../dashboardReducer';
-import {DashboardModel} from '../models/dashboardModels';
 
-describe('Dashboard', () => {
+describe('dashboardReducer', () => {
+
+  it('returns input state when no action type is matched', () => {
+    const state: DashboardState = dashboard(initialState, {type: 'UNKNOWN', payload: {}});
+
+    expect(state).toBe(initialState);
+  });
 
   it('extracts valid widgets from JSON response', () => {
-    const indicators: Indicator[] = [
+    const widgets: WidgetModel[] = [
       {
         type: IndicatorType.coldWater,
-        state: State.warning,
-        subtitle: '-_-3567 punkter',
-        title: 'Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.warning,
+        total: 1000,
+        pending: 20,
       },
       {
         type: IndicatorType.current,
-        state: State.ok,
-        subtitle: '-_-3567 punkter',
-        title: '-_-Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.ok,
+        total: 3000,
+        pending: 17,
       },
       {
         type: IndicatorType.districtHeating,
-        state: State.crititcal,
-        subtitle: '-_-3567 punkter',
-        title: '-_-Insamling',
-        unit: '%',
-        value: '95.98',
+        status: Status.critical,
+        total: 1000,
+        pending: 122,
       },
     ];
 
     const capturedApiResponse: DashboardModel = {
       id: 3,
-      author: 'Sven',
-      title: 'Sven dashboard from the DashboardController',
-      systemOverview: {
-        title: 'Sven system overview from the DashboardController',
-        indicators,
-      },
+      widgets: [...widgets],
     };
 
-    const stateAfterReducer: DashboardState = dashboard(initialState, {
-      type: DASHBOARD_SUCCESS,
-      payload: capturedApiResponse,
-    });
+    const state: DashboardState = dashboard(initialState, dashboardSuccess(capturedApiResponse));
 
     const expected = {
       isFetching: false,
       record: {
-        author: 'Sven',
         id: 3,
-        systemOverview: {
-          title: 'Sven system overview from the DashboardController',
-          indicators,
-        },
-        title: 'Sven dashboard from the DashboardController',
+        widgets: [...widgets],
       },
     };
 
-    expect(stateAfterReducer).toEqual(expected);
-    expect(stateAfterReducer).not.toBe(expected);
+    expect(state).toEqual(expected);
+    expect(state).not.toBe(expected);
+  });
+
+  it('is fetching when dashboard request is dispatched', () => {
+    const state: DashboardState = dashboard(initialState, dashboardRequest());
+
+    expect(state).toEqual({isFetching: true});
+  });
+
+  it('fails with error response', () => {
+    const state: DashboardState = dashboard(initialState, dashboardFailure({message: 'error'}));
+
+    expect(state).toEqual({isFetching: false, error: {message: 'error'}});
   });
 
 });

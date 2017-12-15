@@ -1,0 +1,16 @@
+@import '../../app/variables';
+@import '../../app/flex';
+
+.GatewayDetailsInfo {
+  .OverView {
+    .Column {
+      margin: 0 $xl-space $lg-space $xl-space;
+    }
+  }
+
+  .Address {
+    .Column:first-child {
+      margin-right: $space;
+    }
+  }
+}

@@ -1,57 +1,48 @@
 import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
-import List from 'material-ui/List/List';
-import ListItem from 'material-ui/List/ListItem';
-import ToggleStar from 'material-ui/svg-icons/toggle/star';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {drawerWidth} from '../../../app/themes';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {NavigationMenuIcon} from '../../common/components/icons/NavigationMenuIcon';
-import {toggleShowHideSideMenu} from '../sideMenuActions';
-import {SideMenuState} from '../sideMenuReducer';
+import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
+import {SavedSelectionsContainer} from '../components/savedSelections/SavedSelections';
+import {SelectionTreeContainer} from './selection-tree/SelectionTreeContainer';
+import './SideMenuContainer.scss';
 
-interface SideMenuContainerProps {
-  sideMenu: SideMenuState;
-  toggleShowHideSideMenu: () => void;
+interface StateToProps {
+  isSideMenuOpen: boolean;
 }
 
-const SideMenuContainer = (props: SideMenuContainerProps) => {
-  const listItems = [
-    <ListItem primaryText="Göteborg - Centrum" key={1}/>,
-    <ListItem primaryText="Gateways med fel" key={2}/>,
-  ];
+const SideMenuContainerComponent = (props: StateToProps) => {
+  const {isSideMenuOpen} = props;
+
+  const containerStyle: React.CSSProperties = {left: isSideMenuOpen ? drawerWidth : 0};
 
   return (
-    <Drawer open={props.sideMenu.isOpen} docked={true}>
+    <Drawer
+      containerClassName="DrawerContainer"
+      open={isSideMenuOpen}
+      docked={true}
+      containerStyle={containerStyle}
+    >
       <AppBar
-        title="MVP"
-        iconElementRight={<NavigationMenuIcon onClick={props.toggleShowHideSideMenu}/>}
+        className="AppTitle"
+        title={translate('metering')}
         showMenuIconButton={false}
       />
-      <List>
-        <ListItem
-          className="ListItem"
-          primaryText={translate('saved search')}
-          leftIcon={<ToggleStar/>}
-          initiallyOpen={true}
-          nestedItems={listItems}
-        />
-      </List>
+      <SavedSelectionsContainer/>
+
+      <SelectionTreeContainer topLevel={'cities'}/>
     </Drawer>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui: {sideMenu}} = state;
+const mapStateToProps = ({ui}: RootState): StateToProps => {
   return {
-    sideMenu,
+    isSideMenuOpen: isSideMenuOpen(ui),
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  toggleShowHideSideMenu,
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(SideMenuContainer);
+export const SideMenuContainer =
+  connect<StateToProps>(mapStateToProps)(SideMenuContainerComponent);

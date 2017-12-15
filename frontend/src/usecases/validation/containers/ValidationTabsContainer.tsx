@@ -1,82 +1,130 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../../../reducers/index';
+import {Dialog} from '../../../components/dialog/Dialog';
+import {MeterList} from '../../../components/meters/MeterList';
+import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
+import {Tab} from '../../../components/tabs/components/Tab';
+import {TabContent} from '../../../components/tabs/components/TabContent';
+import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
+import {Tabs} from '../../../components/tabs/components/Tabs';
+import {TabSettings} from '../../../components/tabs/components/TabSettings';
+import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
+import {Maybe} from '../../../helpers/Maybe';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
-import {Tab} from '../../common/components/tabs/components/Tab';
-import {TabContent} from '../../common/components/tabs/components/TabContent';
-import {TabHeaders} from '../../common/components/tabs/components/TabHeaders';
-import {TabOption} from '../../common/components/tabs/components/TabOption';
-import {TabOptions} from '../../common/components/tabs/components/TabOptions';
-import {Tabs} from '../../common/components/tabs/components/Tabs';
-import {TabSettings} from '../../common/components/tabs/components/TabSettings';
-import {TabTopBar} from '../../common/components/tabs/components/TabTopBar';
-import {TabsContainerProps, tabType} from '../../common/components/tabs/models/TabsModel';
-import {changeTab, changeTabOption} from '../../ui/tabsActions';
-import {ValidationList} from '../components/ValidationList';
-import {normalizedValidationData} from '../models/normalizedValidationData';
+import {DomainModel} from '../../../state/domain-models/domainModels';
+import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
+import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {setSelection} from '../../../state/search/selection/selectionActions';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
+import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
+import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {Map} from '../../map/containers/Map';
+import {closeClusterDialog} from '../../map/mapActions';
+import {getSelectedMeterMarker} from '../../map/mapSelectors';
+import {selectEntryAdd} from '../../report/reportActions';
+import {ValidationOverview} from '../components/ValidationOverview';
+import {Content} from '../../../components/content/Content';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
-const ValidationTabsContainer = (props: TabsContainerProps) => {
-  const {tabs, selectedTab, changeTab, changeTabOption} = props;
-  const onChangeTab = (tab: tabType) => {
-    changeTab({
-      useCase: 'validation',
-      tab,
-    });
-  };
-  const onChangeTabOption = (tab: tabType, option: string): void => {
-    changeTabOption({
-      useCase: 'validation',
-      tab,
-      option,
-    });
-  };
+interface StateToProps extends TabsContainerStateToProps {
+  metersCount: number;
+  meterDataSummary: Maybe<MeterDataSummary>;
+  meters: DomainModel<Meter>;
+  paginatedList: uuid[];
+  pagination: Pagination;
+  selectedMarker: Maybe<Meter>;
+}
+
+interface DispatchToProps extends TabsContainerDispatchToProps {
+  paginationChangePage: OnChangePage;
+  selectEntryAdd: OnClickWithId;
+  setSelection: OnSelectParameter;
+  closeClusterDialog: OnClick;
+}
+
+const ValidationTabs = (props: StateToProps & DispatchToProps) => {
+  const {
+    selectedTab,
+    changeTab,
+    meters,
+    meterDataSummary,
+    pagination,
+    paginationChangePage,
+    paginatedList,
+    metersCount,
+    selectEntryAdd,
+    setSelection,
+    selectedMarker,
+    closeClusterDialog,
+  } = props;
+
+  const dialog = selectedMarker.isJust() && (
+    <Dialog isOpen={true} close={closeClusterDialog}>
+      <MeterDetailsContainer meter={selectedMarker.get()}/>
+    </Dialog>
+  );
+
+  const hasMeters: boolean = isMarkersWithinThreshold(meters);
 
   return (
     <Tabs>
       <TabTopBar>
-        <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
-          <Tab title={translate('map')} tab={tabType.map} />
-          <Tab title={translate('list')} tab={tabType.list}/>
+        <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+          <Tab tab={TabName.overview} title={translate('overview')}/>
+          <Tab tab={TabName.list} title={translate('list')}/>
+          <Tab tab={TabName.map} title={translate('map')}/>
         </TabHeaders>
-        <TabOptions tab={tabType.map} selectedTab={selectedTab} select={onChangeTabOption} tabs={tabs}>
-          <TabOption
-            title={translate('area')}
-            id={'area'}
-          />
-          <TabOption
-            title={translate('object')}
-            id={'object'}
-          />
-          <TabOption
-            title={translate('facility')}
-            id={'facility'}
-          />
-        </TabOptions>
-        <TabSettings useCase="validation"/>
+        <TabSettings/>
       </TabTopBar>
-      <TabContent tab={tabType.map} selectedTab={selectedTab}>
-        <Image src="usecases/validation/img/map.png"/>
+      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
+        <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
       </TabContent>
-      <TabContent tab={tabType.list} selectedTab={selectedTab}>
-        <ValidationList data={normalizedValidationData.meteringPoints}/>
+      <TabContent tab={TabName.list} selectedTab={selectedTab}>
+        <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
+        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
+      </TabContent>
+      <TabContent tab={TabName.map} selectedTab={selectedTab}>
+        <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+          <Map>
+          <ClusterContainer markers={meters}/>
+          </Map>
+        </Content>
+        {dialog}
       </TabContent>
     </Tabs>
   );
 };
 
-const mapStateToProps = (state: RootState) => {
-  const {ui: {tabs: {validation: {tabs, selectedTab}}}} = state;
+const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToProps => {
+  const pagination = getValidationPagination(ui);
   return {
-    selectedTab,
-    tabs,
+    selectedTab: getSelectedTab(ui.tabs.validation),
+    meterDataSummary: getMeterDataSummary(meters),
+    metersCount: getMetersTotal(meters),
+    meters: getMeterEntities(meters),
+    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
+    pagination,
+    selectedMarker: getSelectedMeterMarker(map),
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  changeTab,
-  changeTabOption,
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  changeTab: changeTabValidation,
+  paginationChangePage: changePaginationValidation,
+  selectEntryAdd,
+  setSelection,
+  closeClusterDialog,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ValidationTabsContainer);
+export const ValidationTabsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);

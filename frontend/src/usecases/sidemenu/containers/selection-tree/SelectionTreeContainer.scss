@@ -1,0 +1,22 @@
+@import '../../../../app/variables';
+
+.TreeListItem {
+  $iconSize: 18px;
+  $iconPadding: 4px;
+
+  &:first-letter {
+    text-transform: uppercase;
+  }
+
+  button {
+    padding: $iconPadding !important;
+    height: 2 * $iconPadding + $iconSize !important;
+    width: 2 * $iconPadding + $iconSize !important;
+    margin-right: 11px !important;
+
+    svg {
+      height: $iconSize !important;
+      width: $iconSize !important;
+    }
+  }
+}

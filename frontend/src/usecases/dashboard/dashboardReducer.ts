@@ -1,20 +1,42 @@
-import {AnyAction} from 'redux';
-import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
-import {DashboardModel} from './models/dashboardModels';
+import {EmptyAction} from 'react-redux-typescript';
+import {Action, ErrorResponse} from '../../types/Types';
+import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from './dashboardActions';
+import {DashboardModel} from './dashboardModels';
 
 export interface DashboardState {
   isFetching: boolean;
   record?: DashboardModel;
-  error?: string;
+  error?: ErrorResponse;
 }
 
 export const initialState: DashboardState = {
   isFetching: false,
 };
 
-export const dashboard = (state: DashboardState = initialState, action: AnyAction): DashboardState => {
+const success = (state: DashboardState = initialState, action: Action<DashboardModel>): DashboardState => {
   const {payload} = action;
+  return {
+    ...state,
+    isFetching: false,
+    record: {
+      ...payload,
+      widgets: [...payload.widgets],
+    },
+  };
+};
 
+const failure = (state: DashboardState = initialState, action: Action<ErrorResponse>): DashboardState => {
+  const {payload} = action;
+  return {
+    ...state,
+    isFetching: false,
+    error: {...payload},
+  };
+};
+
+type ActionTypes = Action<DashboardModel> | Action<ErrorResponse> | EmptyAction<string>;
+
+export const dashboard = (state: DashboardState = initialState, action: ActionTypes): DashboardState => {
   switch (action.type) {
     case DASHBOARD_REQUEST:
       return {
@@ -22,22 +44,9 @@ export const dashboard = (state: DashboardState = initialState, action: AnyActio
         isFetching: true,
       };
     case DASHBOARD_SUCCESS:
-      return {
-        ...state,
-        isFetching: false,
-        record: {
-          ...payload,
-          systemOverview: {
-            ...payload.systemOverview,
-          },
-        },
-      };
+      return success(state, action as Action<DashboardModel>);
     case DASHBOARD_FAILURE:
-      return {
-        ...state,
-        isFetching: false,
-        error: payload,
-      };
+      return failure(state, action as Action<ErrorResponse>);
     default:
       return state;
   }

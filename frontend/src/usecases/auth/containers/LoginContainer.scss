@@ -1,14 +1,20 @@
-@import "../../app/variables";
+@import "../../../app/variables";
 
 .LoginContainer {
-  margin-top: $xl-space * 2;
   flex: 1;
   align-items: center;
+  margin-bottom: 15%;
 
-  input {
-    cursor: pointer;
-    margin-bottom: $space;
-    width: 250px;
+  .customerLogo {
+    margin: 20px 0;
+  }
+
+  .LoginPaper {
+    padding: 24px !important;
+
+    .TextField {
+      margin-bottom: 20px;
+    }
   }
 
   .error-message {

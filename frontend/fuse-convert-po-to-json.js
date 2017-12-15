@@ -37,9 +37,10 @@ const convertPoToJson = async ({base}) => {
           }
         });
 
-        fs.writeFileSync(base + '/i18n/locales/' + language + '.json', data, utf8)
+        fs.writeFileSync(base + '/i18n/locales/' + language + '.json', data, utf8);
       });
-    }).exec()
+    })
+    .exec();
 };
 
 module.exports = {convertPoToJson};

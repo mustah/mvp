@@ -1,6 +1,7 @@
 import * as i18n from 'i18next';
 import * as Backend from 'i18next-xhr-backend';
-import {Language} from '../usecases/topmenu/languageReducer';
+import {Language} from '../usecases/main-menu/languageModels';
+
 const {i18nextConfig} = require('./i18nextConfig');
 
 export const initLanguage = (language: Language) => {
@@ -8,7 +9,7 @@ export const initLanguage = (language: Language) => {
     .use(Backend)
     .init({
       lng: language.code,
-      debug: true,
+      debug: false,
       ...i18nextConfig,
       backend: {
         loadPath: 'i18n/locales/{{lng}}.json',

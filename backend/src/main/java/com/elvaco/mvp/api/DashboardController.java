@@ -42,7 +42,7 @@ public class DashboardController {
     critical.value = "93.5";
     critical.unit = "%";
     critical.subtitle = "3481 punkter";
-    critical.title = "Mätvärdeskvalitet";
+    critical.title = "Validering";
 
     SystemOverviewDto systemOverviewDto = new SystemOverviewDto();
     systemOverviewDto.title = "Sven's system overview from the DashboardController";

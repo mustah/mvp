@@ -1,0 +1,31 @@
+@import "../../../app/variables";
+
+.Map {
+  height: 800px;
+  width: 100%;
+}
+
+.marker-cluster {
+  border: 3px solid #ededed;
+  border-radius: 50%;
+  color: #ededed;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-cluster-warning {
+  @extend .marker-cluster;
+  background: $dark-orange;
+}
+
+.marker-cluster-ok {
+  @extend .marker-cluster;
+  background: $dark-green;
+}
+
+.marker-cluster-error {
+  @extend .marker-cluster;
+  background: $red;
+}

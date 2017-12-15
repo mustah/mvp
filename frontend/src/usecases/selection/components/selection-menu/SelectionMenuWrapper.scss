@@ -1,0 +1,38 @@
+@import "../../../../app/variables";
+
+.SelectionMenuWrapper {
+  position: fixed;
+  top: 0;
+  left: $main-menu-width;
+  right: 0;
+  z-index: $selection-header-z-index;
+  padding: 0 0 0 $lg-space;
+  background-color: $white;
+  height: $main-menu-height;
+  justify-content: space-between;
+  box-shadow: $box-shadow;
+
+  &.isSideMenuOpen {
+    left: $opened-side-menu-width;
+  }
+
+  .SelectionMenu {
+    color: $blackest;
+    align-items: center;
+  }
+
+  .SelectionMenuSummary {
+    .Normal {
+      margin-right: $space;
+
+      &:first-letter {
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+a.Logo {
+  display: flex;
+}
+

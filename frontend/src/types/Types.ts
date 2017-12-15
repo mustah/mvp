@@ -1,41 +1,71 @@
+import * as React from 'react';
+import {PayloadAction} from 'react-redux-typescript';
+
+export type uuid = string | number;
+
+export type OnClick = (...args) => void;
+export type OnClickWithId = (id: uuid) => void;
+export type Callback = () => void;
+
+export type Predicate<T> = (value: T) => boolean;
+
+export type ItemOrArray<T> = T | T[];
+
+export type Children = ItemOrArray<React.ReactNode>;
+
+/**
+ * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
+ */
+export type Action<P> = PayloadAction<string, P>;
+
 export interface ClassNamed {
   className?: string;
-}
-
-export interface Expandable {
-  isExpanded?: boolean;
 }
 
 export interface Selectable {
   isSelected?: boolean;
 }
 
-export enum State {
-  ok = 'ok',
-  warning = 'warning',
-  crititcal = 'critical',
-  info = 'info',
+export interface Clickable {
+  onClick: OnClick;
 }
 
-// TODO this is up for refactoring:
-// - we want a more solid number -> string, and also string -> number connection
-// - this implementation uses an ad-hoc Maybe structure, which is not used
-//   in other places throughout the code
-export const states = (numeric: number): { valid: boolean, state?: State } => {
-  switch (numeric) {
-    case 0:
-      return {valid: true, state: State.ok};
-    case 1:
-      return {valid: true, state: State.info};
-    case 2:
-      return {valid: true, state: State.warning};
-    case 3:
-      return {valid: true, state: State.crititcal};
-    case 10:
-      return {valid: true, state: State.ok};
-    case 11:
-      return {valid: true, state: State.warning};
-    default:
-      return {valid: false};
-  }
+export interface IdNamed {
+  readonly id: uuid;
+  readonly name: string;
+}
+
+export interface ErrorResponse {
+  type?: string | number;
+  data?: any;
+  message: string;
+}
+
+export const enum Status {
+  ok = 'ok',
+  warning = 'warning',
+  critical = 'critical',
+  info = 'info',
+  unknown = 'unknown',
+}
+
+export const enum Period {
+  latest = 'latest',
+  currentMonth = 'current_month',
+  previousMonth = 'previous_month',
+  currentWeek = 'current_week',
+  previous7Days = 'previous_7_days',
+  custom = 'custom',
+}
+
+const status = {
+  0: Status.ok,
+  1: Status.info,
+  2: Status.warning,
+  3: Status.critical,
+  4: Status.unknown,
+  10: Status.ok,
+  11: Status.warning,
 };
+
+export const statusFor = (statusCode: uuid): Status | null => status[statusCode];

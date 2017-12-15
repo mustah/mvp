@@ -1,0 +1,55 @@
+@import '../../../app/variables';
+
+.Tabs {
+  .TabList {
+    align-items: flex-end;
+    border-bottom: solid 1px $dark-grey;
+
+    .Tab {
+      cursor: pointer;
+
+      .Tab-header {
+        font-weight: bold;
+        font-size: $normal;
+        text-align: center;
+        padding: 4px $lg-space;
+        color: $lightest-black;
+
+        &:hover {
+          color: $black;
+        }
+      }
+
+      &.isSelected {
+        .Tab-header {
+          color: $black;
+        }
+
+        &:hover {
+          .TabUnderline {
+            border-bottom: solid 4px $blue;
+          }
+        }
+      }
+
+      &:hover {
+        .TabUnderline {
+          border-bottom: solid 4px $grey;
+        }
+      }
+    }
+
+    .TabUnderline {
+      height: 4px;
+
+      &.isSelected {
+        border-bottom: solid 4px $blue;
+      }
+    }
+  }
+}
+
+.TabSettings {
+  padding-right: $space;
+  flex: 1;
+}

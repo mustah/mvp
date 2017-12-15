@@ -1,0 +1,35 @@
+@import "../../../../app/variables";
+
+.Widget {
+  padding: $space 0;
+  margin-right: $lg-space;
+  margin-bottom: $lg-space;
+
+  a {
+    text-decoration: none;
+  }
+
+  .Content {
+    padding: 0 $space;
+  }
+
+  .PopoverMenu {
+    margin: 0 $sm-space $sm-space 0;
+  }
+
+  .Indicator-wrapper {
+    margin-right: 0;
+
+    .Indicator {
+      box-shadow: none;
+      border: 1px solid $border-color;
+      margin-bottom: 0;
+      width: 180px;
+
+      .Indicator-icon {
+        width: 32px !important;
+        height: 32px !important;
+      }
+    }
+  }
+}

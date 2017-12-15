@@ -1,61 +1,63 @@
+import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/index';
+import {paperStyle} from '../../../app/themes';
+import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
+import {
+  SelectableIndicatorWidgets,
+  SelectedIndicatorWidgetProps,
+} from '../../../components/indicators/SelectableIndicatorWidgets';
+import {Row} from '../../../components/layouts/row/Row';
+import {MainTitle} from '../../../components/texts/Titles';
+import {PageContainer} from '../../../containers/PageContainer';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Image} from '../../common/components/images/Image';
-import {IndicatorWidgets, SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
-import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Content} from '../../common/components/layouts/content/Content';
-import {Layout} from '../../common/components/layouts/layout/Layout';
-import {ReportOverview} from '../components/ReportOverview';
-import {indicators, ReportState} from '../models/ReportModels';
-import {fetchReports} from '../reportActions';
-import {selectReportIndicatorWidget} from '../../ui/indicatorActions';
+import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {getSelectedIndicatorTypeForReport} from '../../../state/ui/indicator/indicatorSelectors';
+import {indicators} from '../reportModels';
+import {GraphContainer} from './GraphContainer';
 
-export interface ReportContainerProps extends SelectedIndicatorWidgetProps {
-  fetchReports: () => any;
-  report: ReportState;
+interface DispatchToProps {
+  selectIndicatorWidget: OnSelectIndicator;
 }
 
-const ReportContainer = (props: ReportContainerProps & InjectedAuthRouterProps) => {
-  const {selectedWidget, selectIndicatorWidget} = props;
-  return (
-    <Layout>
-      <Column className="flex-1">
-        <SelectionOverview title={translate('all')}/>
-        <Content>
-          <ReportOverview/>
+type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
-          <IndicatorWidgets
-            indicators={indicators}
-            selectedWidget={selectedWidget}
-            selectIndicatorWidget={selectIndicatorWidget}
-            className="small"
-          />
+const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 
-          <Column className="Section">
-            <Image src="usecases/report/img/graph-map.png"/>
-          </Column>
-        </Content>
-      </Column>
-    </Layout>
-  );
-};
+const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) => (
+  <PageContainer>
+    <Row className="space-between">
+      <MainTitle>{translate('report')}</MainTitle>
+      <Row>
+        <SummaryContainer/>
+        <PeriodContainer/>
+      </Row>
+    </Row>
 
-const mapStateToProps = (state: RootState) => {
-  const {report} = state;
-  return {
-    report,
-    selectedWidget: state.ui.indicator.selectedIndicators.report,
-  };
-};
+    <SelectableIndicatorWidgets
+      indicators={indicators}
+      selectedIndicatorType={selectedIndicatorType}
+      selectIndicatorWidget={selectIndicatorWidget}
+    />
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchReports,
+    <Paper style={contentStyle}>
+      <GraphContainer/>
+    </Paper>
+  </PageContainer>
+);
+
+const mapStateToProps = ({ui}: RootState): SelectedIndicatorWidgetProps => ({
+  selectedIndicatorType: getSelectedIndicatorTypeForReport(ui),
+});
+
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectIndicatorWidget: selectReportIndicatorWidget,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReportContainer);
+export const ReportContainer =
+  connect<SelectedIndicatorWidgetProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ReportComponent);

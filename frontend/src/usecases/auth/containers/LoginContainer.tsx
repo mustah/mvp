@@ -1,59 +1,115 @@
 import * as classNames from 'classnames';
+import {Paper} from 'material-ui';
+import FlatButton from 'material-ui/FlatButton';
+import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/index';
-import {translate} from '../../../services/translationService';
-import {Column} from '../../common/components/layouts/column/Column';
+import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {ColumnCenter} from '../../../components/layouts/column/Column';
+import {RowCenter} from '../../../components/layouts/row/Row';
+import {Logo} from '../../../components/logo/Logo';
+import {RootState} from '../../../reducers/rootReducer';
 import {login} from '../authActions';
-import {AuthState} from '../authReducer';
+import {AuthState} from '../authModels';
 import './LoginContainer.scss';
 
-export interface LoginProps {
-  login: (email: string, password: string) => any;
+const loginButtonStyle = {
+  backgroundColor: colors.blue,
+  color: '#fff',
+};
+
+interface StateToProps {
   auth: AuthState;
 }
 
-class LoginContainer extends React.Component<LoginProps & InjectedAuthRouterProps> {
+interface DispatchToProps {
+  login: (email: string, password: string) => void;
+}
 
-  private emailComponent: HTMLInputElement | null;
-  private passwordComponent: HTMLInputElement | null;
+interface LoginState {
+  email: string;
+  password: string;
+}
 
-  login = () => {
-    this.props.login(this.emailComponent!.value, this.passwordComponent!.value);
-  }
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class LoginContainerComponent extends React.Component<Props, LoginState> {
+
+  state: LoginState = {email: '', password: ''};
 
   render() {
     const {auth} = this.props;
+
     return (
-      <Column className={classNames('LoginContainer', 'Column-center')}>
-        <form onSubmit={this.login}>
-          <div>
-            <input type="text" placeholder={translate('email')} ref={component => this.emailComponent = component}/>
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder={translate('password')}
-              ref={component => this.passwordComponent = component}
+      <ColumnCenter className={classNames('LoginContainer')}>
+        <Paper zDepth={5} className="LoginPaper">
+          <RowCenter className="customerLogo">
+            <Logo/>
+          </RowCenter>
+          <form onSubmit={this.onSubmit}>
+            <TextField
+              className="TextField"
+              floatingLabelText="Email"
+              floatingLabelFocusStyle={floatingLabelFocusStyle}
+              fullWidth={true}
+              hintText="Din email-adress"
+              id="email"
+              onChange={this.onChange}
+              onKeyPress={this.onKeyPress}
+              underlineFocusStyle={underlineFocusStyle}
             />
-          </div>
-          <div>
-            <input type="submit" onClick={this.login} value="Login"/>
-          </div>
-          {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
-        </form>
-      </Column>
+            <TextField
+              className="TextField"
+              floatingLabelText="Lösenord"
+              floatingLabelFocusStyle={floatingLabelFocusStyle}
+              fullWidth={true}
+              hintText="Ditt lösenord"
+              id="password"
+              onChange={this.onChange}
+              onKeyPress={this.onKeyPress}
+              type="password"
+              underlineFocusStyle={underlineFocusStyle}
+            />
+            <FlatButton
+              fullWidth={true}
+              label="Logga in"
+              onClick={this.onSubmit}
+              style={loginButtonStyle}
+            />
+            {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
+          </form>
+        </Paper>
+      </ColumnCenter>
     );
   }
 
+  onChange = (event: any): void => this.setState({[event.target.id]: event.target.value});
+
+  login = (): void => {
+    const {email, password} = this.state;
+    this.props.login(email, password);
+  }
+
+  onKeyPress = (event: any): void => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.login();
+    }
+  }
+
+  onSubmit = (event: any): void => {
+    event.preventDefault();
+    this.login();
+  }
 }
 
-const mapStateToProps = (state: RootState) => ({auth: state.auth});
+const mapStateToProps = (state: RootState): StateToProps => ({auth: state.auth});
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   login,
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
+export const LoginContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);

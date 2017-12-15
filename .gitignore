@@ -7,6 +7,7 @@ node_modules/
 .version
 .gradle/
 build/
+frontend/mockup/
 out/
 gradle
 gradlew
@@ -32,6 +33,7 @@ backend/.idea/libraries/
 backend/.idea/dictionaries
 backend/.idea/inspectionProfiles/
 backend/.idea/sonarlint/
+backend/.idea/codeStyles/
 backend/.idea/**/tasks.xml
 backend/.idea/**/dataSources/
 backend/.idea/**/dataSources.ids
@@ -47,6 +49,7 @@ backend/.idea/misc.xml
 backend/.idea/encodings.xml
 backend/.idea/gradle.xml
 backend/.idea/workspace.xml
+backend/.idea/typescript-compiler.xml
 
 *.iws
 *.iml

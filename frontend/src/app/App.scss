@@ -1,0 +1,50 @@
+@import "variables";
+@import "common";
+@import "fonts";
+@import "flex";
+@import "input";
+
+html {
+  font-family: $font-family;
+  font-size: $normal;
+  color: $black;
+  height: 100%;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background-color: $light-grey;
+}
+
+.link {
+  color: $black;
+  text-decoration: none;
+}
+
+.App {
+  .PageContent {
+    padding: $lg-space + $main-menu-height $lg-space $lg-space $lg-space;
+  }
+
+  .SideMenuContainer {
+    width: $main-menu-width;
+
+    &.isSideMenuOpen {
+      width: $opened-side-menu-width;
+    }
+  }
+
+  .Section {
+    margin: $lg-space 0;
+  }
+
+  &.FullPageLogin {
+    background: url(../assets/images/login_bg.jpg) bottom left no-repeat;
+    height: 100%;
+    position: fixed;
+    width: 100%;
+  }
+
+  @import "material-design";
+}

@@ -1,0 +1,13 @@
+@import "../../../app/variables";
+
+.SearchResultList {
+  margin-top: 40px;
+
+  .SearchResultList-Summary {
+    margin-bottom: $sm-space;
+
+    .Bold {
+      margin-right: $sm-space;
+    }
+  }
+}

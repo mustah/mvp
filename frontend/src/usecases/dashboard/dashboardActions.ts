@@ -1,18 +1,24 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {restClient} from '../../services/restClient';
-import {DASHBOARD_FAILURE, DASHBOARD_REQUEST, DASHBOARD_SUCCESS} from '../../types/ActionTypes';
+import {ErrorResponse} from '../../types/Types';
+import {DashboardModel} from './dashboardModels';
 
-const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
-const dashboardSuccess = createPayloadAction(DASHBOARD_SUCCESS);
-const dashboardFailure = createPayloadAction(DASHBOARD_FAILURE);
+export const DASHBOARD_REQUEST = 'DASHBOARD_REQUEST';
+export const DASHBOARD_SUCCESS = 'DASHBOARD_SUCCESS';
+export const DASHBOARD_FAILURE = 'DASHBOARD_FAILURE';
 
-export const fetchDashboard = () => {
-  return (dispatch) => {
-    dispatch(dashboardRequest());
+export const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
+export const dashboardSuccess = createPayloadAction<string, DashboardModel>(DASHBOARD_SUCCESS);
+export const dashboardFailure = createPayloadAction<string, ErrorResponse>(DASHBOARD_FAILURE);
 
-    restClient.get('/dashboards/current')
-      .then(response => response.data)
-      .then(dashboards => dispatch(dashboardSuccess(dashboards)))
-      .catch(error => dispatch(dashboardFailure(error)));
+export const fetchDashboard = () =>
+  async (dispatch) => {
+    try {
+      dispatch(dashboardRequest());
+      const {data: dashboard} = await restClient.get('/dashboards/current');
+      dispatch(dashboardSuccess(dashboard));
+    } catch (error) {
+      const {response: {data}} = error;
+      dispatch(dashboardFailure(data));
+    }
   };
-};

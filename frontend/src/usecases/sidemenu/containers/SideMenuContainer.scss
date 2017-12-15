@@ -1,0 +1,13 @@
+@import "../../../app/variables";
+
+.AppTitle {
+  box-shadow: none !important;
+
+  h1:first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.DrawerContainer {
+  box-shadow: $box-shadow !important;
+}

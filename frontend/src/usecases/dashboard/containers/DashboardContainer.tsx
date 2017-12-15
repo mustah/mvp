@@ -2,93 +2,76 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../../../reducers/index';
+import {Column} from '../../../components/layouts/column/Column';
+import {Row} from '../../../components/layouts/row/Row';
+import {Loader} from '../../../components/loading/Loader';
+import {MainTitle} from '../../../components/texts/Titles';
+import {PageContainer} from '../../../containers/PageContainer';
+import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {SelectedIndicatorWidgetProps} from '../../common/components/indicators/IndicatorWidgets';
-import {SelectionOverview} from '../../common/components/selection-overview/SelectionOverview';
-import {Title} from '../../common/components/texts/Title';
-import {Column} from '../../common/components/layouts/column/Column';
-import {Content} from '../../common/components/layouts/content/Content';
-import {Layout} from '../../common/components/layouts/layout/Layout';
-import {selectDashboardIndicatorWidget} from '../../ui/indicatorActions';
-import {SystemOverview} from '../components/system-overview/SystemOverview';
+import {DomainModel} from '../../../state/domain-models/domainModels';
+import {Meter} from '../../../state/domain-models/meter/meterModels';
+import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {Callback} from '../../../types/Types';
+import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
+import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
-import {DashboardState} from '../dashboardReducer';
-import {SystemOverviewState} from '../models/dashboardModels';
-import DashboardTabsContainer from './DashboardTabsContainer';
+import {DashboardModel} from '../dashboardModels';
 
-export interface DashboardContainerProps extends SelectedIndicatorWidgetProps {
-  fetchDashboard: () => any;
-  dashboard: DashboardState;
+interface StateToProps {
+  isFetching: boolean;
+  dashboard?: DashboardModel;
+  meters: DomainModel<Meter>;
 }
 
-class DashboardContainer extends React.Component<DashboardContainerProps & InjectedAuthRouterProps, any> {
+interface DispatchToProps {
+  fetchDashboard: Callback;
+}
+
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+
+class DashboardContainerComponent extends React.Component<Props> {
+
   componentDidMount() {
-    if (this.props.isAuthenticated) {
-      this.props.fetchDashboard();
-    }
+    this.props.fetchDashboard();
   }
 
   render() {
-    const {
-      dashboard: {record},
-      selectIndicatorWidget,
-      selectedWidget,
-    } = this.props;
-
-    const renderSystemOverview = (systemOverview: SystemOverviewState) => (
-      <SystemOverview
-        title={systemOverview.title}
-        indicators={systemOverview.indicators}
-        selectedWidget={selectedWidget}
-        selectIndicatorWidget={selectIndicatorWidget}
-      />
-    );
-
+    const {isFetching, dashboard, meters} = this.props;
     return (
-      <Layout>
-        <Column className="flex-1">
-          <SelectionOverview title={translate('all')}/>
-          <Content>
-            {record && renderSystemOverview(record.systemOverview)}
+      <PageContainer>
+        <Row className="space-between">
+          <MainTitle>{translate('dashboard')}</MainTitle>
+          <Row>
+            <SummaryContainer/>
+            <PeriodContainer/>
+          </Row>
+        </Row>
 
-            <Title>{translate('collection')}</Title>
-
-            <DashboardTabsContainer/>
-
-          </Content>
-        </Column>
-      </Layout>
+        <Loader isFetching={isFetching}>
+          <Column>
+            {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
+            <MapWidgetsContainer markers={meters}/>
+          </Column>
+        </Loader>
+      </PageContainer>
     );
   }
 }
 
-/**
- * React deals with both state and props, but when we introduce
- * Redux, Redux takes over the ownership of state.
- *
- * Changing the state of a React component is called to "dispatch"
- * in Redux.
- *
- * @param {RootState} state
- * @returns {{dashboard: DashboardState}}
- */
-const mapStateToProps = (state: RootState) => {
-  const {dashboard} = state;
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  fetchDashboard,
+}, dispatch);
+
+const mapStateToProps = ({dashboard, domainModels: {meters}}: RootState): StateToProps => {
   return {
-    dashboard,
-    selectedWidget: state.ui.indicator.selectedIndicators.dashboard,
+    isFetching: dashboard.isFetching,
+    dashboard: dashboard.record,
+    meters: getMeterEntities(meters),
   };
 };
 
-/**
- * Handle both triggering of and listening to events in the DashboardContainer
- *
- * @param dispatch
- */
-const mapDispatchToProps = dispatch => bindActionCreators({
-  fetchDashboard,
-  selectIndicatorWidget: selectDashboardIndicatorWidget,
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(DashboardContainer);
+export const DashboardContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardContainerComponent);

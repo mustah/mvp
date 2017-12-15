@@ -1,3 +1,4 @@
+import 'es6-shim'; // adds polyfills for a host of functions that might otherwise be missing in older browsers
 import {History} from 'history';
 import createHashHistory from 'history/createHashHistory';
 import {InitOptions} from 'i18next';
@@ -10,23 +11,22 @@ import {ConnectedRouter} from 'react-router-redux';
 import {Store} from 'redux';
 import {persistStore} from 'redux-persist';
 import {initLanguage} from './i18n/i18n';
-import {RootState} from './reducers/index';
+import {RootState} from './reducers/rootReducer';
 import {initRestClient} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
-import App from './usecases/app/App';
-import {mvpTheme} from './usecases/app/themes';
+import {App} from './app/App';
+import {mvpTheme} from './app/themes';
 
-const history: History = createHashHistory();
+export const history: History = createHashHistory();
 
 const appStore: Store<RootState> = configureStore(history);
 
-persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'tabs']}, (error?: any) => {
+persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
   if (!error) {
-    const state = appStore.getState();
-    const {token} = state.auth;
+    const {auth: {token}, language: {language}} = appStore.getState();
     initRestClient(token);
-    initLanguage(state.language.language);
+    initLanguage(language);
   }
 });
 

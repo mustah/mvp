@@ -1,23 +1,23 @@
-import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../services/restClient';
+import {uuid} from '../../types/Types';
+import {createPayloadAction} from 'react-redux-typescript';
+import {RootState} from '../../reducers/rootReducer';
 
-export const REPORTS_REQUEST = 'REPORTS_REQUEST';
-export const REPORTS_SUCCESS = 'REPORTS_SUCCESS';
-export const REPORTS_FAILURE = 'REPORTS_FAILURE';
+export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 
-const reportsRequest = createEmptyAction(REPORTS_REQUEST);
-const reportsSuccess = createPayloadAction(REPORTS_SUCCESS);
-const reportsFailure = createPayloadAction(REPORTS_FAILURE);
+const setSelectedEntries = createPayloadAction<string, uuid[]>(SET_SELECTED_ENTRIES);
 
-export const fetchReports = () => {
-  return async (dispatch) => {
-    dispatch(reportsRequest());
-    try {
-      const {data: reports} = await restClient.get('/reports');
-      dispatch(reportsSuccess(reports));
-    } catch (error) {
-      const {response: {data}} = error;
-      dispatch(reportsFailure(data));
-    }
+export const selectEntryToggle = (id: uuid) =>
+  (dispatch, getState: () => RootState): void => {
+    const {selectedListItems} = getState().report;
+    const newSelectedListItems = new Set<uuid>(selectedListItems);
+    newSelectedListItems.delete(id) ?
+      dispatch(setSelectedEntries(Array.from(newSelectedListItems))) :
+      dispatch(setSelectedEntries(Array.from(newSelectedListItems.add(id))));
   };
-};
+
+export const selectEntryAdd = (id: uuid) =>
+  (dispatch, getState: () => RootState): void => {
+    const {selectedListItems} = getState().report;
+    const newSelectedListItems = new Set<uuid>(selectedListItems);
+    dispatch(setSelectedEntries(Array.from(newSelectedListItems.add(id))));
+  };

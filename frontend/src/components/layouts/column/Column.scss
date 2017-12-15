@@ -1,0 +1,10 @@
+@import "../../../app/variables";
+
+.Column {
+  display: flex;
+  flex-direction: column;
+}
+
+.Column-center {
+  justify-content: center;
+}

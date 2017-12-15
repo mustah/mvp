@@ -16,9 +16,14 @@
       true,
       "redux-auth-wrapper",
       "history",
-      "material-ui"
+      "material-ui",
+      "leaflet",
+      "leaflet.markercluster"
     ],
     "no-shadowed-variable": false,
+    "no-implicit-dependencies": [
+      [true, "dev"]
+    ],
     "object-literal-sort-keys": false,
     "no-var-requires": false,
     "no-trailing-whitespace": false,

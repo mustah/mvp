@@ -11,6 +11,7 @@ import {config} from '../config';
 describe('Configuration', () => {
 
   const originalEnv = {...process.env};
+
   const configByEnvironment = (env: string): LazyAppConfig => {
     process.env.NODE_ENV = env;
     return config;
@@ -31,28 +32,31 @@ describe('Configuration', () => {
 
   it('has to be executed in order to retrieve actual values', () => {
     const config: LazyAppConfig = configByEnvironment('development');
-    expect(config).toBeInstanceOf(Function);
-    const actualValues = config();
-    expect(actualValues).toHaveProperty('environment');
+
+    expect(config()).toHaveProperty('environment');
   });
 
   it('reacts to development environment', () => {
     const actualValues: AppConfig = configByEnvironment('development')();
+
     expect(actualValues.environment).toEqual('development');
   });
 
   it('reacts to production environment', () => {
     const actualValues: AppConfig = configByEnvironment('production')();
+
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if no environment given', () => {
     const actualValues: AppConfig = configWithoutEnvironment()();
+
     expect(actualValues.environment).toEqual('production');
   });
 
   it('defaults to production environment if invalid environment given', () => {
     const actualValues: AppConfig = configByEnvironment('hakuna matata robocop marshmallow')();
+
     expect(actualValues.environment).toEqual('production');
   });
 });

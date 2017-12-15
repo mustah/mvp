@@ -1,0 +1,32 @@
+@import '../../app/variables';
+
+.PaginationControl {
+  width: 700px;
+  margin: 20px 0 10px;
+
+  .rounded {
+    min-height: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    width: 40px !important;
+    border-radius: 20px !important;
+  }
+
+  .PageNumber {
+    @extend .rounded;
+
+    &:disabled {
+      background: $blue !important;
+      color: $white !important;
+      box-shadow: $box-shadow;
+    }
+  }
+
+  .PageNumber-arrow {
+    @extend .rounded;
+  }
+
+  .PaginationDots {
+    width: 40px;
+  }
+}
