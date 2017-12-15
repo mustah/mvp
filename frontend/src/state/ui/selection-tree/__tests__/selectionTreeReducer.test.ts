@@ -1,17 +1,27 @@
-import {Action, uuid} from '../../../../types/Types';
-import {SELECTION_TREE_TOGGLE_ENTRY} from '../selectionTreeActions';
-import {SelectionTreeState} from '../selectionTreeModels';
+import {addSelectedIds} from '../selectionTreeActions';
 import {selectionTree} from '../selectionTreeReducer';
 
 describe('selectionTreeReducer', () => {
-  it('makes sure the selectedListItems is set to payload', () => {
-    const state: SelectionTreeState = {openListItems: [4, 5]};
-    const payload: uuid[] = [1, 2, 3];
-    const action: Action<uuid[]> =  {type: SELECTION_TREE_TOGGLE_ENTRY, payload};
 
-    expect(selectionTree(state, action)).toEqual({
-      ...state,
-      openListItems: payload,
-    });
+  it('just adds to open items array', () => {
+    const state = selectionTree(null!, addSelectedIds([1, 2, 3]));
+
+    expect(state).toEqual({openListItems: [1, 2, 3]});
+  });
+
+  it('will replace previous selected item with the new ones', () => {
+    let state = selectionTree(null!, addSelectedIds([1, 2, 3]));
+
+    state = selectionTree(state, addSelectedIds([42]));
+
+    expect(state).toEqual({openListItems: [42]});
+  });
+
+  it('can add empty list of ids', () => {
+    let state = selectionTree(null!, addSelectedIds([1, 2, 3]));
+
+    state = selectionTree(state, addSelectedIds([]));
+
+    expect(state).toEqual({openListItems: []});
   });
 });
