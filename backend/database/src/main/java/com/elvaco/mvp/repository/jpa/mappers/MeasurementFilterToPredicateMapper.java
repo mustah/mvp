@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.elvaco.mvp.entity.measurement.QMeasurementEntity;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.lang.Long.parseLong;
@@ -21,8 +20,7 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
 
   static {
     FILTERABLE_PROPERTIES.put(
-      "meterId",
-      (String meterId) -> Q.physicalMeter.id.eq(parseLong(meterId))
+      "meterId", (String meterId) -> Q.physicalMeter.id.eq(parseLong(meterId))
     );
 
     FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));

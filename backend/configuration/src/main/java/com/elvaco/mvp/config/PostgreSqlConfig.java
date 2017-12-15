@@ -2,9 +2,6 @@ package com.elvaco.mvp.config;
 
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
-import com.elvaco.mvp.repository.jpa.postgresql.PostgreSqlMeteringPointRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,10 +25,5 @@ class PostgreSqlConfig {
   @Bean
   UserDetailsService userDetailsService() {
     return new H2Config(entityManager).userDetailsService();
-  }
-
-  @Bean
-  MeteringPointRepository meteringPointRepository() {
-    return new PostgreSqlMeteringPointRepository(entityManager);
   }
 }

@@ -1,7 +1,6 @@
 package com.elvaco.mvp.bootstrap;
 
 import com.elvaco.mvp.config.H2;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +20,10 @@ public class H2DatabaseProvisioningLoader implements CommandLineRunner {
   @Override
   public void run(String... args) {
     template.execute("CREATE ALIAS unit_at FOR \"com.elvaco.mvp.dialect.function"
-                     + ".h2.CompatibilityFunctions.unitAt\"");
+      + ".h2.CompatibilityFunctions.unitAt\"");
+    template.execute("CREATE ALIAS jsonb_contains FOR \"com.elvaco.mvp.dialect.function"
+      + ".h2.CompatibilityFunctions.jsonbContains\"");
+    template.execute("CREATE ALIAS jsonb_exists FOR \"com.elvaco.mvp.dialect.function"
+      + ".h2.CompatibilityFunctions.jsonbExists\"");
   }
 }

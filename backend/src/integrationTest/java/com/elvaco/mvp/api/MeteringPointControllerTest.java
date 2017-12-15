@@ -9,7 +9,6 @@ import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -2,9 +2,6 @@ package com.elvaco.mvp.config;
 
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
-import com.elvaco.mvp.repository.jpa.h2.H2MeteringPointRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,10 +22,5 @@ class H2Config {
   @Bean
   UserDetailsManager userDetailsService() {
     return new InMemoryUserDetailsManager();
-  }
-
-  @Bean
-  MeteringPointRepository meteringPointRepository() {
-    return new H2MeteringPointRepository(entityManager);
   }
 }
