@@ -1,7 +1,7 @@
 import {createSelector, OutputSelector} from 'reselect';
 import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../helpers/Maybe';
-import {useCases} from '../../../types/constants';
+import {UseCases} from '../../../types/Types';
 import {UiState} from '../uiReducer';
 import {IndicatorState} from './indicatorReducer';
 
@@ -17,4 +17,4 @@ const getSelectedIndicator = (useCase: string): SelectedIndicatorSelector =>
       .orElse(IndicatorType.districtHeating),
   );
 
-export const getSelectedIndicatorTypeForReport = getSelectedIndicator(useCases.report);
+export const getSelectedIndicatorTypeForReport = getSelectedIndicator(UseCases.report);

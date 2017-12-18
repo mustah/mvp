@@ -1,5 +1,5 @@
-import {SelectionTreeState} from '../selection-tree/selectionTreeModels';
-import {getOpenListItems} from '../selection-tree/selectionTreeSelectors';
+import {SelectionTreeState} from '../selectionTreeModels';
+import {getOpenListItems} from '../selectionTreeSelectors';
 
 describe('selectionTreeSelectors', () => {
 
@@ -7,24 +7,24 @@ describe('selectionTreeSelectors', () => {
     const selectionTree: SelectionTreeState = {
       openListItems: [],
     };
-    const openItems = getOpenListItems(selectionTree);
-    expect(openItems.size).toBe(0);
+
+    expect(getOpenListItems(selectionTree).size).toBe(0);
   });
 
   it('can keep track of opened items', () => {
     const selectionTree: SelectionTreeState = {
       openListItems: [1, 2, 3, 4],
     };
-    const openItems = getOpenListItems(selectionTree);
-    expect(openItems.size).toBe(4);
+
+    expect(getOpenListItems(selectionTree).size).toBe(4);
   });
 
   it('can handle duplicated selected items', () => {
     const selectionTree: SelectionTreeState = {
       openListItems: [1, 2, 4, 4, 4, 4],
     };
-    const openItems = getOpenListItems(selectionTree);
-    expect(openItems.size).toBe(3);
+
+    expect(getOpenListItems(selectionTree).size).toBe(3);
   });
 
 });

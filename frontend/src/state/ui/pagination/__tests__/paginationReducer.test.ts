@@ -9,12 +9,6 @@ describe('paginationReducer', () => {
 
   describe('pagination', () => {
 
-    it('returns previous state when action type is not matched', () => {
-      const state = pagination(initialState, changePaginationCollection(2));
-
-      expect(pagination(state, {type: 'unknown'})).toBe(state);
-    });
-
     it('changes pagination for collection', () => {
       expect(pagination(initialState, changePaginationCollection(2))).toEqual({
         ...initialState,

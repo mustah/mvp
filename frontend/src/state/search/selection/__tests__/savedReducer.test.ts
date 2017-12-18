@@ -1,4 +1,3 @@
-import {idGenerator} from '../../../../helpers/idGenerator';
 import {saved} from '../saveReducer';
 import {saveSelectionAction, updateSelectionAction} from '../selectionActions';
 import {SelectionState} from '../selectionModels';
@@ -57,13 +56,6 @@ describe('selectionReducer', () => {
       state = saved(state, updateSelectionAction({...mockPayload, name: 'test'}));
 
       expect(state).toEqual([{...mockPayload, name: 'test'}]);
-    });
-
-    it('returns same state reference when saved state with id does not exist', () => {
-      let state = saved([], saveSelectionAction(mockPayload));
-      state = saved(state, updateSelectionAction({...mockPayload, id: idGenerator.uuid(), name: 'test'}));
-
-      expect(state).toBe(state);
     });
   });
 

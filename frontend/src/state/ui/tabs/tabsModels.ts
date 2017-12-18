@@ -1,3 +1,5 @@
+import {UseCases} from '../../../types/Types';
+
 export const enum TabName {
   list = 'list',
   map = 'map',
@@ -19,7 +21,7 @@ export interface TabsState {
 
 export interface TabSelection {
   tab: TabName;
-  useCase: string;
+  useCase: UseCases.collection | UseCases.validation;
 }
 
 export interface TabsContainerStateToProps {

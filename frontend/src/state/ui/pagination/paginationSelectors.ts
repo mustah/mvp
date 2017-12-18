@@ -1,6 +1,5 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {useCases} from '../../../types/constants';
-import {uuid} from '../../../types/Types';
+import {UseCases, uuid} from '../../../types/Types';
 import {UiState} from '../uiReducer';
 import {Pagination, PaginationState} from './paginationModels';
 
@@ -32,6 +31,6 @@ export const getPaginationList: PaginationListSelector =
       return result.slice((page - 1) * limit, page * limit);
     });
 
-export const getCollectionPagination = getPaginationFor(useCases.collection);
-export const getValidationPagination = getPaginationFor(useCases.validation);
-export const getSelectionPagination = getPaginationFor(useCases.selection);
+export const getCollectionPagination = getPaginationFor(UseCases.collection);
+export const getValidationPagination = getPaginationFor(UseCases.validation);
+export const getSelectionPagination = getPaginationFor(UseCases.selection);

@@ -6,12 +6,6 @@ import {dashboard, DashboardState, initialState} from '../dashboardReducer';
 
 describe('dashboardReducer', () => {
 
-  it('returns input state when no action type is matched', () => {
-    const state: DashboardState = dashboard(initialState, {type: 'UNKNOWN', payload: {}});
-
-    expect(state).toBe(initialState);
-  });
-
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
       {

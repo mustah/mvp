@@ -58,6 +58,14 @@ export const enum Period {
   custom = 'custom',
 }
 
+export const enum UseCases {
+  dashboard = 'dashboard',
+  collection = 'collection',
+  validation = 'validation',
+  selection = 'selection',
+  report = 'report',
+}
+
 const status = {
   0: Status.ok,
   1: Status.info,
