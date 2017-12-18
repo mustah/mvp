@@ -15,6 +15,7 @@ export const selectEntryToggle = (id: uuid) =>
       dispatch(setSelectedEntries(Array.from(newSelectedListItems.add(id))));
   };
 
+// TODO: Don't dispatch if already in selected
 export const selectEntryAdd = (id: uuid) =>
   (dispatch, getState: () => RootState): void => {
     const {selectedListItems} = getState().report;
