@@ -4,7 +4,7 @@ import NavigationMoreVert from 'material-ui/svg-icons/navigation/more-vert';
 import * as React from 'react';
 import {Clickable} from '../../types/Types';
 
-const style = {
+const style: React.CSSProperties = {
   padding: 2,
   width: 30,
   height: 30,
