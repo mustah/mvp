@@ -11,6 +11,6 @@ export const routes = {
   selection: '/selection',
 };
 
-export const companySpecificLogin = {
+export const companySpecificLogo = {
   company1: 'company1.png',
 };

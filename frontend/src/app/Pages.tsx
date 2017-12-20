@@ -8,7 +8,7 @@ import {DashboardContainer} from '../usecases/dashboard/containers/DashboardCont
 import {ReportContainer} from '../usecases/report/containers/ReportContainer';
 import {SelectionContainer} from '../usecases/selection/containers/SelectionContainer';
 import {Validation} from '../usecases/validation/components/Validation';
-import {companySpecificLogin, routes} from './routes';
+import {companySpecificLogo, routes} from './routes';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
@@ -18,7 +18,7 @@ const ReportPage = userIsAuthenticated(ReportContainer);
 const SelectionPage = userIsAuthenticated(SelectionContainer);
 
 const renderLogin = ({match: {params: {company}}}: RouteComponentProps<{company: string}>) => (
-    companySpecificLogin[company] ? <Route component={LoginPage} /> :
+    companySpecificLogo[company] ? <Route component={LoginPage} /> :
       <Redirect to={routes.login}/>
 );
 
