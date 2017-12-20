@@ -20,7 +20,7 @@ const fromDbJson = {
       firstName: 'Johnny',
       lastName: 'Persbrandt',
       email: 'johhny@company1.se',
-      company: 'company1',
+      company: {id: 'company1', name: 'company1'},
     },
   ],
   todos: [

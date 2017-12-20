@@ -7,11 +7,11 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
+import {companyLogo} from '../../../app/routes';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
-import {LogoCompanySpecific} from '../../../components/logo/LogoCompanySpecfic';
 import {RootState} from '../../../reducers/rootReducer';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
@@ -43,7 +43,8 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth, match: {params: {company}}} = this.props;
-    const logo = company ? <LogoCompanySpecific company={company}/> : <Logo />;
+    const companyLogoPath = companyLogo[company];
+    const logo = companyLogoPath ? <Logo src={companyLogoPath}/> : <Logo src="elvaco_logo.png"/>;
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">

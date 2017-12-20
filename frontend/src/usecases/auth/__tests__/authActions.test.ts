@@ -18,7 +18,7 @@ describe('authActions', () => {
     firstName: 'clark',
     lastName: 'kent',
     email: 'ck@dailyplanet.net',
-    company: 'daily planet',
+    company: {id: 'daily planet', name: 'daily planet'},
   };
   let mockRestClient;
   let store;
@@ -36,7 +36,7 @@ describe('authActions', () => {
       const username = 'the.batman@dc.com';
       const password = 'test1234';
 
-      mockRestClient.onGet('/authenticate/' + username).reply(200, user);
+      mockRestClient.onGet(`/authenticate/${username}`).reply(200, user);
 
       token = makeToken(username, password);
 
@@ -79,7 +79,7 @@ describe('authActions', () => {
         path: '/api/authenticate',
       };
       const username = 'foo';
-      mockRestClient.onGet('/authenticate/' + username).reply(unauthorized, errorMessage);
+      mockRestClient.onGet(`/authenticate/${username}`).reply(unauthorized, errorMessage);
 
       await store.dispatch(login(username, '123123'));
 
@@ -97,7 +97,7 @@ describe('authActions', () => {
       };
 
       const username = 'foo';
-      mockRestClient.onGet('/authenticate/' + username).reply(internalServerError, errorMessage);
+      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
 
       await store.dispatch(login(username, '123123'));
 
@@ -115,7 +115,7 @@ describe('authActions', () => {
       };
 
       const username = 'foo';
-      mockRestClient.onGet('/authenticate/' + username).reply(internalServerError, errorMessage);
+      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
 
       await store.dispatch(login(username, '123123'));
     });

@@ -3,10 +3,9 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
-import {companySpecificLogo, routes} from '../../../../app/routes';
+import {companyLogo, routes} from '../../../../app/routes';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Logo} from '../../../../components/logo/Logo';
-import {LogoCompanySpecific} from '../../../../components/logo/LogoCompanySpecfic';
 import {RootState} from '../../../../reducers/rootReducer';
 import {ClassNamed, OnClick} from '../../../../types/Types';
 import {logout} from '../../../auth/authActions';
@@ -30,9 +29,9 @@ interface OwnProps {
 
 const SearchMenuWrapperComponent = (props: StateToProps & DispatchToProps) => {
   const {children, className, user, logout} = props;
-  const companyLogoPath = companySpecificLogo[user.company];
-  const logo = companyLogoPath ?  <LogoCompanySpecific company={user.company} className="small"/> :
-    <Logo className="small" />;
+  const companyLogoPath = companyLogo[user.company.id];
+  const logo = companyLogoPath ?  <Logo src={companyLogoPath} className="small"/> :
+    <Logo src="elvaco_logo.png" className="small" />;
   return (
     <Row className={classNames('SelectionMenuWrapper', className)}>
       <Row className="SelectionMenu">

@@ -1,11 +1,11 @@
-import {uuid} from '../../types/Types';
+import {IdNamed, uuid} from '../../types/Types';
 
 export interface User {
   id: uuid;
   firstName: string;
   lastName: string;
   email: string;
-  company: string;
+  company: IdNamed;
 }
 
 export interface Unauthorized {
