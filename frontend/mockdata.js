@@ -16,11 +16,11 @@ const fromDbJson = {
         company: 'elvaco',
       },
     {
-      id: 'johnny@eon.se',
+      id: 'johnny@company1.se',
       firstName: 'Johnny',
       lastName: 'Persbrandt',
-      email: 'johhny@eon.se',
-      company: 'eon',
+      email: 'johhny@company1.se',
+      company: 'company1',
     },
   ],
   todos: [

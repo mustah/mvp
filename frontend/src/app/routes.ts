@@ -10,3 +10,7 @@ export const routes = {
   validation: '/validation',
   selection: '/selection',
 };
+
+export const companySpecificLogin = {
+  company1: 'company1.png',
+};
