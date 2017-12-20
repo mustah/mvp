@@ -39,6 +39,7 @@ export const toFriendlyIso8601 = (startAndEnd: StartAndEnd): string => {
   return `${startDate} - ${endDate}`;
 };
 
+// We work with Period and Date, to not expose moment() to our application
 export const startAndEnd = (period: Period): StartAndEnd => {
   const now = new Date();
   switch (period) {
@@ -58,9 +59,10 @@ export const startAndEnd = (period: Period): StartAndEnd => {
         end: Maybe.just(now),
       };
     case Period.previousMonth:
+      const prevMonth = moment(now).subtract(1, 'month');
       return {
-        start: Maybe.just(moment(now).subtract(1, 'month').toDate()),
-        end: Maybe.just(now),
+        start: Maybe.just(prevMonth.startOf('month').toDate()),
+        end: Maybe.just(prevMonth.endOf('month').toDate()),
       };
     case Period.latest:
     default:

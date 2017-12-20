@@ -83,7 +83,7 @@ export class PeriodSelection extends React.Component<Props, State> {
       },
       {
         value: Period.previousMonth,
-        chosen: '1 okt - 31 okt',
+        chosen: toFriendlyIso8601(startAndEnd(Period.previousMonth)),
         alternative: translate('previous month'),
       },
       {
