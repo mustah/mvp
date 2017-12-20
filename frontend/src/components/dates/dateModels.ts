@@ -20,7 +20,6 @@ export const enum Period {
   previousMonth = 'previous_month',
   currentWeek = 'current_week',
   previous7Days = 'previous_7_days',
-  custom = 'custom',
 }
 
 interface StartAndEnd {
@@ -55,7 +54,7 @@ export const startAndEnd = (period: Period): StartAndEnd => {
       };
     case Period.previous7Days:
       return {
-        start: Maybe.just(moment(now).subtract(7, 'days').toDate()),
+        start: Maybe.just(moment(now).subtract(6, 'days').toDate()),
         end: Maybe.just(now),
       };
     case Period.previousMonth:
