@@ -1,35 +1,39 @@
-import configureStore from 'redux-mock-store';
+import configureStore, {MockStore} from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {SELECTION_TREE_TOGGLE_ENTRY, selectionTreeExpandToggle} from '../selectionTreeActions';
-import {SelectionTreeState} from '../selectionTreeModels';
-
-const configureMockStore = configureStore([thunk]);
+import {RootState} from '../../../../reducers/rootReducer';
+import {uuid} from '../../../../types/Types';
+import {UiState} from '../../uiReducer';
+import {SELECTION_TREE_TOGGLE_ENTRY, selectionTreeToggleId} from '../selectionTreeActions';
 
 describe('selectionTreeActions', () => {
-  it('makes sure selectionTreeExpandToggle adds id to openListItems if not already in there', () => {
-    const initialState: SelectionTreeState = {openListItems: [1, 2]};
-    const store = configureMockStore({ui: {selectionTree: {...initialState}}});
 
-    store.dispatch(selectionTreeExpandToggle(3));
+  let store: MockStore<Partial<RootState>>;
 
-    expect(store.getActions()).toEqual([
-      {
-        type: SELECTION_TREE_TOGGLE_ENTRY,
-        payload: [1, 2, 3],
-      },
-    ]);
+  it('opens selection tree with given id', () => {
+    store = makeStoreWithSelectedIdsFrom([]);
+
+    store.dispatch(selectionTreeToggleId(1));
+
+    expect(store.getActions()).toEqual([{
+      type: SELECTION_TREE_TOGGLE_ENTRY,
+      payload: [1],
+    }]);
   });
-  it('makes sure selectionTreeExpandToggle removes id to openListItems if already in there', () => {
-    const initialState: SelectionTreeState = {openListItems: [1, 2, 3]};
-    const store = configureMockStore({ui: {selectionTree: {...initialState}}});
 
-    store.dispatch(selectionTreeExpandToggle(3));
+  it('will remove when the selected item id is already selected', () => {
+    store = makeStoreWithSelectedIdsFrom([1, 2]);
 
-    expect(store.getActions()).toEqual([
-      {
-        type: SELECTION_TREE_TOGGLE_ENTRY,
-        payload: [1, 2],
-      },
-    ]);
+    store.dispatch(selectionTreeToggleId(1));
+
+    expect(store.getActions()).toEqual([{
+      type: SELECTION_TREE_TOGGLE_ENTRY,
+      payload: [2],
+    }]);
   });
+
+  const makeStoreWithSelectedIdsFrom = (openListItems: uuid[]): MockStore<Partial<RootState>> => {
+    const ui: Partial<UiState> = {selectionTree: {openListItems}};
+    return configureStore([thunk])({ui});
+  };
+
 });

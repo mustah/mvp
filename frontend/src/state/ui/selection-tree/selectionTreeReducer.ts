@@ -7,14 +7,14 @@ const initialState: SelectionTreeState = {
   openListItems: [],
 };
 
-type ActionTypes = Action<uuid[]> & EmptyAction<string>;
+type ActionTypes = Action<uuid[]> | EmptyAction<string>;
 
 export const selectionTree = (state: SelectionTreeState = initialState, action: ActionTypes): SelectionTreeState => {
   switch (action.type) {
     case SELECTION_TREE_TOGGLE_ENTRY:
       return {
         ...state,
-        openListItems: action.payload,
+        openListItems: (action as Action<uuid[]>).payload,
       };
     default:
       return state;

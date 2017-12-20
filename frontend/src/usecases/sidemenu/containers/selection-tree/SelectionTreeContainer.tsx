@@ -8,7 +8,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
 import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
-import {selectionTreeExpandToggle} from '../../../../state/ui/selection-tree/selectionTreeActions';
+import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {OnClickWithId, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
@@ -71,7 +71,7 @@ const mapStateToProps = ({report, domainModels: {meters}, ui: {selectionTree}}: 
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  toggleExpand: selectionTreeExpandToggle,
+  toggleExpand: selectionTreeToggleId,
   toggleSelect: selectEntryToggle,
 }, dispatch);
 
