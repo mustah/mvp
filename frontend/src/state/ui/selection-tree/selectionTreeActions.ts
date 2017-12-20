@@ -4,7 +4,7 @@ import {uuid} from '../../../types/Types';
 
 export const SELECTION_TREE_TOGGLE_ENTRY = 'SELECTION_TREE_TOGGLE_ENTRY';
 
-export const addSelectedIds = createPayloadAction<string, uuid[]>(SELECTION_TREE_TOGGLE_ENTRY);
+export const selectedIds = createPayloadAction<string, uuid[]>(SELECTION_TREE_TOGGLE_ENTRY);
 
 // TODO: Using this filter method to determine if an id already exist in list,
 // TODO: instead of converting list to Set as in reportActions.
@@ -16,6 +16,6 @@ export const selectionTreeToggleId = (id: uuid) =>
     const popIdFromList = filterOutId(openListItems, id);
     const idWasRemoved = openListItems.length > popIdFromList.length;
     idWasRemoved
-      ? dispatch(addSelectedIds(popIdFromList))
-      : dispatch(addSelectedIds([...openListItems, id]));
+      ? dispatch(selectedIds(popIdFromList))
+      : dispatch(selectedIds([...openListItems, id]));
   };
