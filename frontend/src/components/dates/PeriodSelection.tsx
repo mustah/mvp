@@ -138,13 +138,13 @@ export class PeriodSelection extends React.Component<Props, State> {
         onRequestClose={this.hideCustomPicker}
         open={true}
       >
-        <h2>Välj datum</h2>
-        <p>Mellan</p>
+        <h2 className="first-uppercase">{translate('pick a date')}</h2>
+        <p>{translate('between')}</p>
         <DatePicker
           autoOk={true}
           hintText={translate('starting date')}
         />
-        <p>och</p>
+        <p>{translate('and')}</p>
         <DatePicker
           autoOk={true}
           hintText={translate('end date')}
