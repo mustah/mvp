@@ -17,8 +17,7 @@ const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
 const SelectionPage = userIsAuthenticated(SelectionContainer);
 
-const renderLogin = ({match: {url, params: {company}}}: RouteComponentProps<{company: string}>) => (
-  url === routes.login ? <Route component={LoginPage} /> :
+const renderLogin = ({match: {params: {company}}}: RouteComponentProps<{company: string}>) => (
     companySpecificLogin[company] ? <Route component={LoginPage} /> :
       <Redirect to={routes.login}/>
 );
@@ -26,12 +25,13 @@ const renderLogin = ({match: {url, params: {company}}}: RouteComponentProps<{com
 export const Pages = () => (
   <Layout className="flex-1">
     <Switch>
+      <Route exact={true} path={routes.login} component={LoginPage} />
       <Route exact={true} path={routes.login + '/:company?'} render={renderLogin} />
       <Route exact={true} path={routes.home} component={DashboardPage}/>
       <Route exact={true} path={routes.dashboard} component={DashboardPage}/>
       <Route exact={true} path={routes.collection} component={CollectionPage}/>
       <Route exact={true} path={routes.validation} component={ValidationPage}/>
-      <Route exact={true} path={`${routes.report}/:id`} component={ReportPage}/>
+      <Route exact={true} path={routes.report + '/:id'} component={ReportPage}/>
       <Route exact={true} path={routes.report} component={ReportPage}/>
       <Route exact={true} path={routes.selection} component={SelectionPage}/>
       <Redirect to={routes.home}/>
