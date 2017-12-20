@@ -2,6 +2,7 @@ import Card from 'material-ui/Card/Card';
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
 import {colors, menuItemInnerDivStyle} from '../../../../app/themes';
+import {IconMore} from '../../../../components/icons/IconMore';
 import {Column} from '../../../../components/layouts/column/Column';
 import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
@@ -27,7 +28,7 @@ export const Widget = (props: Props) => {
     <Card className="Widget">
       <RowMiddle className="space-between">
         <Subtitle className="Widget-subtitle">{title}</Subtitle>
-        <PopoverMenu>
+        <PopoverMenu IconComponent={IconMore}>
           <MenuItem style={menuItemInnerDivStyle} className="first-uppercase">
             {translate('edit')}
           </MenuItem>
