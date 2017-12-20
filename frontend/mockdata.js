@@ -7,68 +7,25 @@ const moment = require('moment');
 const {v4: generateId} = require('uuid');
 
 const fromDbJson = {
-  authenticate: {
-    id: 8,
-    firstName: 'Eva',
-    lastName: 'Nilsson',
-    email: 'evanil@elvaco.se',
-    company: 'Bostäder AB',
-  },
+  authenticate: [
+      {
+        id: 'evanil@elvaco.se',
+        firstName: 'Eva',
+        lastName: 'Nilsson',
+        email: 'evanil@elvaco.se',
+        company: 'elvaco',
+      },
+    {
+      id: 'johnny@eon.se',
+      firstName: 'Johnny',
+      lastName: 'Persbrandt',
+      email: 'johhny@eon.se',
+      company: 'eon',
+    },
+  ],
   todos: [
     'translate unhandled and handled collections in the right place',
   ],
-  collections: {
-    unhandled: {
-      'total': 2983,
-      'city': {
-        'count': 7,
-        'entities':
-          [
-            {'id': 'Göteborg', 'count': 256},
-            {'id': 'Kungsbacka', 'count': 2000},
-            {'id': 'Mölndal', 'count': 33},
-            {'id': 'Stockholm', 'count': 44},
-            {'id': 'Alvesta', 'count': 55},
-            {'id': 'Höganäs', 'count': 345},
-            {'id': 'Borås', 'count': 250},
-          ],
-      },
-      productModel:
-        {
-          'count': 3,
-          'entities': [
-            {'id': 'CMe2100', 'count': 273},
-            {'id': 'CMi2100', 'count': 1576},
-            {'id': 'CMe3100', 'count': 1134},
-          ],
-        },
-    },
-    'handled': {
-      'total': 2627,
-      'city':
-        {
-          'count': 7,
-          'entities': [
-            {'id': 'Göteborg', 'count': 113},
-            {'id': 'Kungsbacka', 'count': 756},
-            {'id': 'Mölndal', 'count': 123},
-            {'id': 'Stockholm', 'count': 423},
-            {'id': 'Alvesta', 'count': 916},
-            {'id': 'Höganäs', 'count': 44},
-            {'id': 'Borås', 'count': 252},
-          ],
-        },
-      productModel:
-        {
-          'count': 3,
-          'entities': [
-            {'id': 'CMe2100', 'count': 573},
-            {'id': 'CMi2100', 'count': 176},
-            {'id': 'CMe3100', 'count': 1878},
-          ],
-        },
-    },
-  },
   dashboards: [
     {
       id: 3,
