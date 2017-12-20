@@ -5,7 +5,7 @@ import {RootState} from '../reducers/rootReducer';
 import {selectPeriod} from '../state/search/selection/selectionActions';
 import {OnSelectPeriod} from '../state/search/selection/selectionModels';
 import {getSelectedPeriod} from '../state/search/selection/selectionSelectors';
-import {Period} from '../types/Types';
+import {Period} from '../components/dates/dateModels';
 import {PeriodSelection} from '../components/dates/PeriodSelection';
 import '../components/summary/Summary.scss';
 

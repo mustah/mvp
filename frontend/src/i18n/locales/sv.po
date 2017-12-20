@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-12-05T10:01:34.315Z\n"
+"POT-Creation-Date: 2017-12-20 13:55+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid "export to Excel (.csv)"
 msgstr "exportera till Excel (.csv)"
@@ -19,9 +19,6 @@ msgstr "exportera till JSON"
 
 msgid "add to report"
 msgstr "lägg till i rapport"
-
-msgid "no reliable position"
-msgstr "ingen tillförlitlig position"
 
 msgid "close"
 msgstr "stäng"
@@ -44,8 +41,14 @@ msgstr "senaste 7 dagarna"
 msgid "pick a date"
 msgstr "välj datum"
 
+msgid "between"
+msgstr "mellan"
+
 msgid "starting date"
 msgstr "startdatum"
+
+msgid "and"
+msgstr "och"
 
 msgid "end date"
 msgstr "slutdatum"
@@ -82,12 +85,6 @@ msgstr "statusförändring"
 
 msgid "flags"
 msgstr "flaggor"
-
-msgid "previous"
-msgstr "föregående"
-
-msgid "next"
-msgstr "nästa"
 
 msgid "other"
 msgstr "övriga"
@@ -128,8 +125,8 @@ msgstr "visa bara ändringar"
 msgid "date"
 msgstr "datum"
 
-msgid "n/a"
-msgstr "ej tillämpbar"
+msgid "no reliable position"
+msgstr "ingen tillförlitlig position"
 
 msgid "alarm"
 msgstr "larm"
@@ -154,6 +151,9 @@ msgstr "anläggnings-ID"
 
 msgid "measure id"
 msgstr "mät-ID"
+
+msgid "n/a"
+msgstr "ej tillämpbar"
 
 msgid "latest value"
 msgstr "senaste"
@@ -182,53 +182,23 @@ msgstr "flaggad"
 msgid "unFlagged"
 msgstr "ej flaggad"
 
-msgid "no gateways"
-msgstr "inga gateways"
-
-msgid "showing all gateways"
-msgstr "visar alla gateways"
-
-msgid "no gateways that are ok"
-msgstr "inga gateways som är ok"
-
-msgid "showing all gateways that are ok"
-msgstr "visar alla gateways som är ok"
-
-msgid "no gateways that have warnings"
-msgstr "inga gateways som har varningar"
-
-msgid "showing all gateways that have warnings"
-msgstr "visar alla gateways som har varningar"
-
-msgid "no gateways that have faults"
-msgstr "inga gateways som har fel"
-
-msgid "showing all gateways that have faults"
-msgstr "visar alla gateways som har fel"
-
-msgid "none"
-msgstr "inga"
-
-msgid "warnings"
-msgstr "varningar"
-
-msgid "faults"
-msgstr "fel"
-
 msgid "cities"
 msgstr "städer"
 
 msgid "product models"
 msgstr "produktmodeller"
 
-msgid "filter by status"
-msgstr "filtrera på status"
-
 msgid "overview"
 msgstr "översikt"
 
 msgid "list"
 msgstr "lista"
+
+msgid "no gateways"
+msgstr "inga gateways"
+
+msgid "no meters"
+msgstr "inga mätare"
 
 msgid "edit"
 msgstr "redigera"
@@ -284,33 +254,6 @@ msgstr "urvalsöversikt"
 msgid "metering"
 msgstr "mätning"
 
-msgid "no meters"
-msgstr "inga mätare"
-
-msgid "showing all meters"
-msgstr "visar alla mätare"
-
-msgid "no meters that are ok"
-msgstr "inga mätare som är ok"
-
-msgid "showing all meters that are ok"
-msgstr "visar alla mätare som är ok"
-
-msgid "no meters that have warnings"
-msgstr "inga mätare som har varningar"
-
-msgid "showing all meters that have warnings"
-msgstr "visar alla mätare som har varningar"
-
-msgid "no meters that have faults"
-msgstr "inga mätare som har fel"
-
-msgid "showing all meters that have faults"
-msgstr "visar alla mätare som har fel"
-
-msgid "alarms"
-msgstr "larm"
-
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
@@ -330,3 +273,66 @@ msgstr "mätare"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+#~ msgid "previous"
+#~ msgstr "föregående"
+
+#~ msgid "next"
+#~ msgstr "nästa"
+
+#~ msgid "showing all gateways"
+#~ msgstr "visar alla gateways"
+
+#~ msgid "no gateways that are ok"
+#~ msgstr "inga gateways som är ok"
+
+#~ msgid "showing all gateways that are ok"
+#~ msgstr "visar alla gateways som är ok"
+
+#~ msgid "no gateways that have warnings"
+#~ msgstr "inga gateways som har varningar"
+
+#~ msgid "showing all gateways that have warnings"
+#~ msgstr "visar alla gateways som har varningar"
+
+#~ msgid "no gateways that have faults"
+#~ msgstr "inga gateways som har fel"
+
+#~ msgid "showing all gateways that have faults"
+#~ msgstr "visar alla gateways som har fel"
+
+#~ msgid "none"
+#~ msgstr "inga"
+
+#~ msgid "warnings"
+#~ msgstr "varningar"
+
+#~ msgid "faults"
+#~ msgstr "fel"
+
+#~ msgid "filter by status"
+#~ msgstr "filtrera på status"
+
+#~ msgid "showing all meters"
+#~ msgstr "visar alla mätare"
+
+#~ msgid "no meters that are ok"
+#~ msgstr "inga mätare som är ok"
+
+#~ msgid "showing all meters that are ok"
+#~ msgstr "visar alla mätare som är ok"
+
+#~ msgid "no meters that have warnings"
+#~ msgstr "inga mätare som har varningar"
+
+#~ msgid "showing all meters that have warnings"
+#~ msgstr "visar alla mätare som har varningar"
+
+#~ msgid "no meters that have faults"
+#~ msgstr "inga mätare som har fel"
+
+#~ msgid "showing all meters that have faults"
+#~ msgstr "visar alla mätare som har fel"
+
+#~ msgid "alarms"
+#~ msgstr "larm"

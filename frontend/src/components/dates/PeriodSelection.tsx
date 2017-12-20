@@ -6,16 +6,17 @@ import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
-import {Period} from '../../types/Types';
+import {Period} from './dateModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
 import './PeriodSelection.scss';
+import {startAndEnd, toFriendlyIso8601} from './dateModels';
 
 const height = 32;
 
 const style: React.CSSProperties = {
   height,
-  width: 158,
+  width: 210,
   fontSize: fontSizeNormal,
   border: `1px solid ${colors.borderColor}`,
   borderRadius: 3,
@@ -77,7 +78,7 @@ export class PeriodSelection extends React.Component<Props, State> {
       },
       {
         value: Period.currentMonth,
-        chosen: '1 nov - 22 nov',
+        chosen: toFriendlyIso8601(startAndEnd(Period.currentMonth)),
         alternative: translate('current month'),
       },
       {

@@ -1,5 +1,6 @@
 import {SelectedParameters} from '../state/search/selection/selectionModels';
-import {Period, uuid} from '../types/Types';
+import {uuid} from '../types/Types';
+import {Period} from '../components/dates/dateModels';
 
 interface ParameterNames {
   [key: string]: string;

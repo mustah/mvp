@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
-import {IdNamed, Period} from '../../../../types/Types';
+import {IdNamed} from '../../../../types/Types';
 import {DomainModelsState, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
@@ -36,6 +36,7 @@ import {
   getSelection,
   getSelectionSummary,
 } from '../selectionSelectors';
+import {Period} from '../../../../components/dates/dateModels';
 
 describe('selectionSelectors', () => {
 

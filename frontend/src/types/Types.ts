@@ -49,15 +49,6 @@ export const enum Status {
   unknown = 'unknown',
 }
 
-export const enum Period {
-  latest = 'latest',
-  currentMonth = 'current_month',
-  previousMonth = 'previous_month',
-  currentWeek = 'current_week',
-  previous7Days = 'previous_7_days',
-  custom = 'custom',
-}
-
 export const enum UseCases {
   dashboard = 'dashboard',
   collection = 'collection',
