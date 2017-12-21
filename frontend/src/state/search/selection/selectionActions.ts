@@ -45,20 +45,20 @@ const fetchMetersAndGateways = () =>
     dispatch(fetchGateways(getEncodedUriParametersForGateways(getState().searchParameters)));
   };
 
-export const closeSelectionPage = () => dispatch => {
+export const closeSelectionPage = () => (dispatch) => {
   dispatch(closeSelectionPageAction());
   dispatch(routerActions.goBack());
 };
 
 export const saveSelection = (selection: SelectionState) =>
-  dispatch => {
+  (dispatch) => {
     dispatch(saveSelectionAction(selection));
     dispatch(selectSavedSelectionAction(selection));
     dispatch(fetchMetersAndGateways());
   };
 
 export const updateSelection = (selection: SelectionState) =>
-  dispatch => dispatch(updateSelectionAction(selection));
+  (dispatch) => dispatch(updateSelectionAction(selection));
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: () => RootState) => {
@@ -74,7 +74,7 @@ export const selectSavedSelection = (selectedId: uuid) =>
   };
 
 export const resetSelection = () =>
-  dispatch => {
+  (dispatch) => {
     dispatch(resetSelectionAction());
     dispatch(fetchMetersAndGateways());
   };
@@ -94,13 +94,13 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
   };
 
 export const setSelection = (selectionParameter: SelectionParameter) =>
-  dispatch => {
+  (dispatch) => {
     dispatch(setSelectionAction(selectionParameter));
     dispatch(fetchMetersAndGateways());
   };
 
 export const selectPeriod = (period: Period) =>
-  dispatch => {
+  (dispatch) => {
     dispatch(selectPeriodAction(period));
     dispatch(fetchMetersAndGateways());
   };

@@ -41,7 +41,7 @@ export const Table = (props: TableProps) => {
       return <td key={`cell-${id}-${index}`}>{onRenderCell(item)}</td>;
     };
 
-    const cells: RenderCellCallback[] = columns.map(column => column.props.renderCell);
+    const cells: RenderCellCallback[] = columns.map((column) => column.props.renderCell);
 
     const renderRows = (id: uuid) => (
       <tr key={id}>

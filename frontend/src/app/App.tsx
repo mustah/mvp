@@ -71,7 +71,7 @@ const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootSt
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchGateways,
   fetchMeters,
 }, dispatch);

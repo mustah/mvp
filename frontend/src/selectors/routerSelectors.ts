@@ -6,10 +6,10 @@ const selectLocation = (state: RouterState): Location => state.location!;
 
 export const getPathname = createSelector<RouterState, Location, Pathname>(
   selectLocation,
-  items => items.pathname,
+  (items) => items.pathname,
 );
 
 export const isSelectionPage = createSelector<RouterState, string, boolean>(
   getPathname,
-  pathname => pathname.match(/\/selection$/) !== null,
+  (pathname) => pathname.match(/\/selection$/) !== null,
 );

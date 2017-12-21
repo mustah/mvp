@@ -79,7 +79,7 @@ const removeSelected = (state: SelectionState, {payload}: Action<SelectionParame
     isChanged: true,
     selected: {
       ...state.selected,
-      [parameter]: selectedIds.filter(selectedId => selectedId !== id),
+      [parameter]: selectedIds.filter((selectedId) => selectedId !== id),
     },
   };
 };

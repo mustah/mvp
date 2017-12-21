@@ -26,11 +26,9 @@
     ],
     "object-literal-sort-keys": false,
     "no-var-requires": false,
-    "no-trailing-whitespace": false,
+    "no-trailing-whitespace": true,
     "ordered-imports": false,
-    "arrow-parens": [
-      false
-    ],
+    "arrow-parens": true,
     "interface-name": [
       true,
       "never-prefix"
@@ -39,6 +37,7 @@
       true,
       "no-public"
     ],
+    "prefer-const": true,
     "quotemark": [
       true,
       "single",
