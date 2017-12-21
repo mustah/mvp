@@ -28,9 +28,7 @@
     "no-var-requires": false,
     "no-trailing-whitespace": true,
     "ordered-imports": false,
-    "arrow-parens": [
-      false
-    ],
+    "arrow-parens": true,
     "interface-name": [
       true,
       "never-prefix"

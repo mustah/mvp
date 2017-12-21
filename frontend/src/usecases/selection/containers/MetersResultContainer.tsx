@@ -55,7 +55,7 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps 
   };
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({
   changePage: changePaginationSelection,
   selectEntryAdd,
 }, dispatch);

@@ -6,5 +6,5 @@ const selectSideMenu = (state: UiState): SideMenuState => state.sideMenu;
 
 export const isSideMenuOpen = createSelector<UiState, SideMenuState, boolean>(
   selectSideMenu,
-  sideMenu => sideMenu.isOpen,
+  (sideMenu) => sideMenu.isOpen,
 );

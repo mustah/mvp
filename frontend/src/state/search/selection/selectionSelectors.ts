@@ -28,7 +28,7 @@ const getSelectedEntityIdsSelector = (entityType: string) =>
     (selectedParameters: SelectedParameters) => selectedParameters[entityType],
   );
 
-const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter(a => !subSet.includes(a));
+const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter((a) => !subSet.includes(a));
 
 const deselectedIdsSelector = (entityType: string) =>
   createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
@@ -41,7 +41,7 @@ const getDeselectedEntities = (entityType: string) =>
   createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map(id => entities[id]),
+    (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map((id) => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string) =>

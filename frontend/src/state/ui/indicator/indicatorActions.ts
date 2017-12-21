@@ -7,4 +7,4 @@ export const SELECT_INDICATOR_WIDGET = 'SELECT_INDICATOR_WIDGET';
 export const selectIndicatorWidget = createPayloadAction<string, SelectedIndicators>(SELECT_INDICATOR_WIDGET);
 
 export const selectReportIndicatorWidget =
-  (type: IndicatorType) => dispatch => dispatch(selectIndicatorWidget({report: type}));
+  (type: IndicatorType) => (dispatch) => dispatch(selectIndicatorWidget({report: type}));

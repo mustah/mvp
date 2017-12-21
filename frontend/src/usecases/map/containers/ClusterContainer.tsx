@@ -100,7 +100,7 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   return cssClass;
 };
 
-const mapDispatchToProps = dispatch => bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({
   openClusterDialog,
 }, dispatch);
 
