@@ -37,6 +37,7 @@
       true,
       "no-public"
     ],
+    "prefer-const": true,
     "quotemark": [
       true,
       "single",
