@@ -1,5 +1,4 @@
 import * as moment from 'moment';
-import * as R from 'ramda';
 import {Maybe} from '../../helpers/Maybe';
 
 const padZero = (aNumber: number): string => {
@@ -65,7 +64,8 @@ export const dateRange = (now: Date, period: Period): DateRange => {
   }
 };
 
-export const currentDateRange = R.curry(dateRange)(new Date());
+const now = new Date();
+export const currentDateRange = (period: Period) => dateRange(now, period);
 
 const formatYyMmDd = (date: Date): string => {
   return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
@@ -77,4 +77,5 @@ export const toFriendlyIso8601 = ({start, end}: DateRange): string => {
   return `${startDate} - ${endDate}`;
 };
 
-export const prettyInterval = R.compose(toFriendlyIso8601, currentDateRange);
+export const prettyRange = (period: Period): string =>
+  toFriendlyIso8601(currentDateRange(period));

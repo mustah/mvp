@@ -89,7 +89,6 @@
     "uglify-js": "^3.2.0"
   },
   "dependencies": {
-    "@types/ramda": "^0.25.8",
     "axios": "^0.17.1",
     "classnames": "^2.2.5",
     "es6-shim": "^0.35.3",
@@ -104,7 +103,6 @@
     "normalizr": "^3.2.4",
     "numeral": "^2.0.6",
     "prop-types": "^15.6.0",
-    "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-leaflet": "^1.7.1",
