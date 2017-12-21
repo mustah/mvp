@@ -38,6 +38,15 @@ export const toFriendlyIso8601 = (startAndEnd: StartAndEnd): string => {
   return `${startDate} - ${endDate}`;
 };
 
+export const toApiParameters = (startAndEnd: StartAndEnd): string[] => {
+  const parameters: string[] = [];
+  startAndEnd.start.map((date) =>
+    parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
+  startAndEnd.end.map((date) =>
+    parameters.push(`before=${encodeURIComponent(date.toISOString())}`));
+  return parameters;
+};
+
 // We work with Period and Date, to not expose moment() to our application
 export const startAndEnd = (period: Period): StartAndEnd => {
   const now = new Date();
