@@ -28,7 +28,11 @@ export const toApiParameters = (startAndEnd: DateRange): string[] => {
   return parameters;
 };
 
-// We work with Period and Date, to not expose moment() to our application
+/**
+ * Calculate absolute start- and end dates based on an input date and a relative time period.
+ *
+ * We work with Date and Period, to not expose moment() to our application.
+ */
 export const dateRange = (now: Date, period: Period): DateRange => {
   switch (period) {
     case Period.currentMonth:
