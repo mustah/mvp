@@ -7,18 +7,18 @@ import {Row} from '../../../../components/layouts/row/Row';
 import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
-import {OnClick} from '../../../../types/Types';
+import {uuid} from '../../../../types/Types';
 import {User} from '../../../auth/authModels';
 import './Profile.scss';
 
 interface Props {
   user: User;
-  logout: OnClick;
+  logout: (company: uuid) => void;
 }
 
 export const Profile = (props: Props) => {
   const {user, logout} = props;
-
+  const logoutClick = () => logout(user.company.code);
   return (
     <Column className="ProfileWrapper">
       <Row className="Profile">
@@ -26,7 +26,7 @@ export const Profile = (props: Props) => {
           <MenuItem
             style={menuItemInnerDivStyle}
             className="first-uppercase"
-            onClick={logout}
+            onClick={logoutClick}
           >
             {translate('logout')}
           </MenuItem>

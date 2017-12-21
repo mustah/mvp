@@ -8,19 +8,19 @@ const {v4: generateId} = require('uuid');
 
 const fromDbJson = {
   authenticate: [
-      {
-        id: 'evanil@elvaco.se',
-        firstName: 'Eva',
-        lastName: 'Nilsson',
-        email: 'evanil@elvaco.se',
-        company: 'elvaco',
-      },
     {
-      id: 'johnny@company1.se',
+      id: 'evanil@elvaco.se',
+      firstName: 'Eva',
+      lastName: 'Nilsson',
+      email: 'evanil@elvaco.se',
+      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+    },
+    {
+      id: 'johnny@wayne-industries.se',
       firstName: 'Johnny',
       lastName: 'Persbrandt',
-      email: 'johhny@company1.se',
-      company: {id: 'company1', name: 'company1'},
+      email: 'johnny@wayne-industries.se',
+      company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
     },
   ],
   todos: [

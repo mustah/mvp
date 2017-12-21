@@ -1,11 +1,15 @@
 import {IdNamed, uuid} from '../../types/Types';
 
+interface Company extends IdNamed {
+  code: uuid;
+}
+
 export interface User {
   id: uuid;
   firstName: string;
   lastName: string;
   email: string;
-  company: IdNamed;
+  company: Company;
 }
 
 export interface Unauthorized {

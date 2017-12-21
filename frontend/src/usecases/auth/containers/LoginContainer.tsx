@@ -7,7 +7,7 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {companyLogo} from '../../../app/routes';
+import {getLogoPath} from '../../../app/routes';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
@@ -43,13 +43,11 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth, match: {params: {company}}} = this.props;
-    const companyLogoPath = companyLogo[company];
-    const logo = companyLogoPath ? <Logo src={companyLogoPath}/> : <Logo src="elvaco_logo.png"/>;
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
           <RowCenter className="customerLogo">
-            {logo}
+            <Logo src={getLogoPath(company)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextField
