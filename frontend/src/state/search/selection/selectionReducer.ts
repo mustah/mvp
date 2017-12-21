@@ -1,5 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {Action, Period, uuid} from '../../../types/Types';
+import {Action, uuid} from '../../../types/Types';
 import {
   ADD_SELECTION,
   CLOSE_SELECTION_PAGE,
@@ -12,6 +12,7 @@ import {
   UPDATE_SELECTION,
 } from './selectionActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
+import {Period} from '../../../components/dates/dateModels';
 
 export const initialState: SelectionState = {
   id: -1,

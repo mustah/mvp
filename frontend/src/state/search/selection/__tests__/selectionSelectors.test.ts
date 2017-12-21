@@ -1,6 +1,6 @@
 import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
-import {IdNamed, Period} from '../../../../types/Types';
+import {IdNamed} from '../../../../types/Types';
 import {DomainModelsState, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
@@ -36,6 +36,7 @@ import {
   getSelection,
   getSelectionSummary,
 } from '../selectionSelectors';
+import {Period} from '../../../../components/dates/dateModels';
 
 describe('selectionSelectors', () => {
 
@@ -49,6 +50,10 @@ describe('selectionSelectors', () => {
 
   it('has entities', () => {
     expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
+  });
+
+  it('encode the initial, empty, selection', () => {
+    expect(initialEncodedParameters).toEqual('');
   });
 
   it('gets entities for type city', () => {
@@ -113,7 +118,7 @@ describe('selectionSelectors', () => {
 
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({selection: state, saved: []});
 
-      expect(encodedUriParametersForMeters).toEqual('city.id=sto&' + initialEncodedParameters);
+      expect(encodedUriParametersForMeters).toEqual('city.id=sto');
     });
 
     it('has two selected cities', () => {
@@ -123,7 +128,7 @@ describe('selectionSelectors', () => {
       const state: SelectionState = selection(prevState, addSelectionAction(payloadSto));
 
       expect(getEncodedUriParametersForMeters({selection: state, saved: []}))
-        .toEqual('city.id=got&city.id=sto&' + initialEncodedParameters);
+        .toEqual('city.id=got&city.id=sto');
     });
   });
 

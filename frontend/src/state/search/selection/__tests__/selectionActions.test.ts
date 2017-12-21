@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {makeUrl} from '../../../../helpers/urlFactory';
-import {IdNamed, Period} from '../../../../types/Types';
+import {IdNamed} from '../../../../types/Types';
 import {gatewayRequest, meterRequest} from '../../../domain-models/domainModelsActions';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
@@ -25,6 +25,7 @@ import {ParameterName, SelectionParameter, SelectionState} from '../selectionMod
 import {initialState, selection} from '../selectionReducer';
 import {getEncodedUriParametersForMeters} from '../selectionSelectors';
 import MockAdapter = require('axios-mock-adapter');
+import {Period} from '../../../../components/dates/dateModels';
 
 const configureMockStore = configureStore([thunk]);
 

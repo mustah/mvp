@@ -1,5 +1,6 @@
-import {ItemOrArray, IdNamed, Period, uuid} from '../../../types/Types';
+import {ItemOrArray, IdNamed, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
+import {Period} from '../../../components/dates/dateModels';
 
 export const enum ParameterName {
   cities = 'cities',

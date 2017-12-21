@@ -2,7 +2,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {Period, uuid} from '../../../types/Types';
+import {uuid} from '../../../types/Types';
 import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {
@@ -10,6 +10,7 @@ import {
   getEncodedUriParametersForMeters,
   getSelection,
 } from './selectionSelectors';
+import {Period} from '../../../components/dates/dateModels';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 

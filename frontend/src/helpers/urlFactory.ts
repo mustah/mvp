@@ -1,14 +1,23 @@
+import {Period} from '../components/dates/dateModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
-import {Period, uuid} from '../types/Types';
+import {uuid} from '../types/Types';
+import {currentDateRange, toApiParameters} from './dateHelpers';
 
 interface ParameterNames {
   [key: string]: string;
 }
 
+interface ParameterCallbacks {
+  [key: string]: ((parameter: string) => string[]);
+}
+
+const parameterCallbacks: ParameterCallbacks = {
+  period: (parameter: string) => toApiParameters(currentDateRange(parameter as Period)),
+};
+
 const baseParameterNames: ParameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
-  period: 'period',
 };
 
 const gatewayParameterNames: ParameterNames = {
@@ -30,29 +39,32 @@ const meterParameterNames: ParameterNames = {
 };
 
 export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, meterParameterNames);
+  return encodedUriParametersFrom(selectedIds, meterParameterNames, parameterCallbacks);
 };
 
 export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, gatewayParameterNames);
+  return encodedUriParametersFrom(selectedIds, gatewayParameterNames, parameterCallbacks);
 };
 
-const encodedUriParametersFrom = (selectedIds: SelectedParameters, parameterNames: ParameterNames): string => {
-  const parameters: string[] = [];
+const encodedUriParametersFrom =
+  (selectedIds: SelectedParameters, parameterNames: ParameterNames, parameterCallbacks: ParameterCallbacks): string => {
+    const parameters: string[] = [];
 
-  const addParameterWith = (name: string, value: uuid | Period) =>
-    parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
+    const addParameterWith = (name: string, value: uuid | Period) =>
+      parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
 
-  Object.keys(selectedIds).forEach((name: string) => {
-    const selection = selectedIds[name];
-    if (Array.isArray(selection)) {
-      selection.forEach((value: uuid) => addParameterWith(name, value));
-    } else {
-      addParameterWith(name, selection);
-    }
-  });
-  return parameters.length ? parameters.join('&') : '';
-};
+    Object.keys(selectedIds).forEach((parameter: string) => {
+      const selection = selectedIds[parameter];
+      if (parameterCallbacks[parameter]) {
+        parameterCallbacks[parameter](selection).forEach((param: string) => parameters.push(param));
+      } else if (Array.isArray(selection)) {
+        selection.forEach((value: uuid) => addParameterWith(parameter, value));
+      } else {
+        addParameterWith(parameter, selection);
+      }
+    });
+    return parameters.length ? parameters.join('&') : '';
+  };
 
 export const makeUrl = (endpoint: string, encodedUriParameters?: string): string => {
   if (encodedUriParameters && encodedUriParameters.length) {

@@ -1,21 +1,19 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
-import DatePicker from 'material-ui/DatePicker';
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
 import {translate} from '../../services/translationService';
 import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
-import {Period} from '../../types/Types';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
+import {Period} from './dateModels';
 import './PeriodSelection.scss';
+import {prettyRange} from '../../helpers/dateHelpers';
 
 const height = 32;
 
 const style: React.CSSProperties = {
   height,
-  width: 158,
+  width: 210,
   fontSize: fontSizeNormal,
   border: `1px solid ${colors.borderColor}`,
   borderRadius: 3,
@@ -53,19 +51,10 @@ interface Props {
   selectPeriod: OnSelectPeriod;
 }
 
-interface State {
-  timePickerVisible: boolean;
-}
-
-export class PeriodSelection extends React.Component<Props, State> {
-
-  state: State = {
-    timePickerVisible: false,
-  };
+export class PeriodSelection extends React.Component<Props> {
 
   render() {
     const {period, selectPeriod} = this.props;
-    const {timePickerVisible} = this.state;
 
     const onSelectPeriod = (event, index: number, period: Period) => selectPeriod(period);
 
@@ -77,22 +66,22 @@ export class PeriodSelection extends React.Component<Props, State> {
       },
       {
         value: Period.currentMonth,
-        chosen: '1 nov - 22 nov',
+        chosen: prettyRange(Period.currentMonth),
         alternative: translate('current month'),
       },
       {
         value: Period.previousMonth,
-        chosen: '1 okt - 31 okt',
+        chosen: prettyRange(Period.previousMonth),
         alternative: translate('previous month'),
       },
       {
         value: Period.currentWeek,
-        chosen: '20 nov - 22 nov',
+        chosen: prettyRange(Period.currentWeek),
         alternative: translate('current week'),
       },
       {
         value: Period.previous7Days,
-        chosen: '16 nov - 22 nov',
+        chosen: prettyRange(Period.previous7Days),
         alternative: translate('last 7 days'),
       },
     ];
@@ -108,55 +97,8 @@ export class PeriodSelection extends React.Component<Props, State> {
       />
     ));
 
-    timePeriodComponents.push(
-      (
-        <MenuItem
-          className="TimePeriod"
-          key={translate('pick a date')}
-          label={'1 okt - 31 okt'}
-          onClick={this.showCustomPicker}
-          primaryText={translate('pick a date')}
-          style={listItemStyle}
-          value={Period.custom}
-        />
-      ),
-    );
-
-    const actions = [
-      (
-        <FlatButton
-          key={translate('close')}
-          label={translate('close')}
-          onClick={this.hideCustomPicker}
-        />
-      ),
-    ];
-
-    const customPickerDialog = (
-      <Dialog
-        actions={actions}
-        onRequestClose={this.hideCustomPicker}
-        open={true}
-      >
-        <h2>Välj datum</h2>
-        <p>Mellan</p>
-        <DatePicker
-          autoOk={true}
-          hintText={translate('starting date')}
-        />
-        <p>och</p>
-        <DatePicker
-          autoOk={true}
-          hintText={translate('end date')}
-        />
-      </Dialog>
-    );
-
-    const customPicker = timePickerVisible && customPickerDialog;
-
     return (
       <Row className="PeriodSelection">
-        {customPicker}
         <DropDownMenu
           className="PeriodSelection-dropdown"
           maxHeight={300}
@@ -174,8 +116,4 @@ export class PeriodSelection extends React.Component<Props, State> {
       </Row>
     );
   }
-
-  hideCustomPicker = () => this.setState({timePickerVisible: false});
-
-  showCustomPicker = () => this.setState({timePickerVisible: true});
 }
