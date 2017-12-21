@@ -5,7 +5,7 @@ import {translate} from '../../services/translationService';
 import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
-import {Period, startAndEnd, toFriendlyIso8601} from './dateModels';
+import {Period, prettyInterval} from './dateModels';
 import './PeriodSelection.scss';
 
 const height = 32;
@@ -65,22 +65,22 @@ export class PeriodSelection extends React.Component<Props> {
       },
       {
         value: Period.currentMonth,
-        chosen: toFriendlyIso8601(startAndEnd(Period.currentMonth)),
+        chosen: prettyInterval(Period.currentMonth),
         alternative: translate('current month'),
       },
       {
         value: Period.previousMonth,
-        chosen: toFriendlyIso8601(startAndEnd(Period.previousMonth)),
+        chosen: prettyInterval(Period.previousMonth),
         alternative: translate('previous month'),
       },
       {
         value: Period.currentWeek,
-        chosen: toFriendlyIso8601(startAndEnd(Period.currentWeek)),
+        chosen: prettyInterval(Period.currentWeek),
         alternative: translate('current week'),
       },
       {
         value: Period.previous7Days,
-        chosen: toFriendlyIso8601(startAndEnd(Period.previous7Days)),
+        chosen: prettyInterval(Period.previous7Days),
         alternative: translate('last 7 days'),
       },
     ];

@@ -19,17 +19,6 @@ interface StartAndEnd {
   end: Maybe<Date>;
 }
 
-const formatYyMmDd = (date: Date): string => {
-  return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
-};
-
-export const toFriendlyIso8601 = (startAndEnd: StartAndEnd): string => {
-  const {start, end} = startAndEnd;
-  const startDate: string = start.map(formatYyMmDd).orElse('');
-  const endDate: string = end.map(formatYyMmDd).orElse('');
-  return `${startDate} - ${endDate}`;
-};
-
 export const toApiParameters = (startAndEnd: StartAndEnd): string[] => {
   const parameters: string[] = [];
   startAndEnd.start.map((date) =>
@@ -73,3 +62,16 @@ export const startAndEndFrom = (now: Date, period: Period): StartAndEnd => {
 };
 
 export const startAndEnd = R.curry(startAndEndFrom)(new Date());
+
+const formatYyMmDd = (date: Date): string => {
+  return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+};
+
+export const toFriendlyIso8601 = (startAndEnd: StartAndEnd): string => {
+  const {start, end} = startAndEnd;
+  const startDate: string = start.map(formatYyMmDd).orElse('');
+  const endDate: string = end.map(formatYyMmDd).orElse('');
+  return `${startDate} - ${endDate}`;
+};
+
+export const prettyInterval = R.compose(toFriendlyIso8601, startAndEnd);
