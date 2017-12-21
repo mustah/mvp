@@ -6,17 +6,16 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import {HashRouter} from 'react-router-dom';
 import {ConnectedRouter} from 'react-router-redux';
 import {Store} from 'redux';
 import {persistStore} from 'redux-persist';
+import {App} from './app/App';
+import {mvpTheme} from './app/themes';
 import {initLanguage} from './i18n/i18n';
 import {RootState} from './reducers/rootReducer';
 import {initRestClient} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
-import {App} from './app/App';
-import {mvpTheme} from './app/themes';
 
 export const history: History = createHashHistory();
 
@@ -34,11 +33,9 @@ onTranslationInitialized((options: InitOptions) => {
   ReactDOM.render(
     <Provider store={appStore}>
       <ConnectedRouter history={history}>
-        <HashRouter>
-          <MuiThemeProvider muiTheme={mvpTheme}>
-            <App/>
-          </MuiThemeProvider>
-        </HashRouter>
+        <MuiThemeProvider muiTheme={mvpTheme}>
+          <App/>
+        </MuiThemeProvider>
       </ConnectedRouter>
     </Provider>,
     document.getElementById('app'),

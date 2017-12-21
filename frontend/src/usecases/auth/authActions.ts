@@ -3,6 +3,7 @@ import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {makeToken} from '../../services/authService';
 import {makeRestClient} from '../../services/restClient';
+import {uuid} from '../../types/Types';
 import {Authorized, Unauthorized} from './authModels';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -24,7 +25,7 @@ export const login = (username: string, password: string) => {
     dispatch(loginRequest());
     try {
       const token = makeToken(username, password);
-      const {data: user} = await makeRestClient(token).get('/authenticate');
+      const {data: user} = await makeRestClient(token).get('/authenticate/' + username);
       dispatch(loginSuccess({token, user}));
     } catch (error) {
       const {response: {data}} = error;
@@ -33,10 +34,10 @@ export const login = (username: string, password: string) => {
   };
 };
 
-export const logout = () => {
+export const logout = (company: uuid) => {
   return async (dispatch) => {
     dispatch(logoutRequest());
     dispatch(logoutSuccess());
-    dispatch(routerActions.push(routes.home));
+    dispatch(routerActions.push(`${routes.login}/${company}`));
   };
 };

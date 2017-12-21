@@ -3,8 +3,8 @@ import {ClassNamed} from '../../types/Types';
 import './Logo.scss';
 import classNames = require('classnames');
 
-export const Logo = (props: ClassNamed) => {
+export const Logo = ({className, src}: ClassNamed & {src: string}) => {
   return (
-    <img src="elvaco_logo.png" className={classNames('Logo', props.className)}/>
+    <img src={src} className={classNames('Logo', className)}/>
   );
 };

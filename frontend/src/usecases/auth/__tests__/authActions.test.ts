@@ -18,7 +18,7 @@ describe('authActions', () => {
     firstName: 'clark',
     lastName: 'kent',
     email: 'ck@dailyplanet.net',
-    company: 'daily planet',
+    company: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
   };
   let mockRestClient;
   let store;
@@ -32,10 +32,12 @@ describe('authActions', () => {
   describe('authorized users', () => {
 
     const dispatchLogin = async () => {
-      mockRestClient.onGet('/authenticate').reply(200, user);
 
       const username = 'the.batman@dc.com';
       const password = 'test1234';
+
+      mockRestClient.onGet(`/authenticate/${username}`).reply(200, user);
+
       token = makeToken(username, password);
 
       return store.dispatch(login(username, password));
@@ -53,14 +55,14 @@ describe('authActions', () => {
     it('logs out logged in user', async () => {
       await dispatchLogin();
 
-      await store.dispatch(logout());
+      await store.dispatch(logout(user.company.code));
 
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token, user}),
         logoutRequest(),
         logoutSuccess(),
-        routerActions.push(routes.home),
+        routerActions.push(`${routes.login}/${user.company.code}`),
       ]);
     });
   });
@@ -76,9 +78,10 @@ describe('authActions', () => {
         message: 'User is not authorized',
         path: '/api/authenticate',
       };
-      mockRestClient.onGet('/authenticate').reply(unauthorized, errorMessage);
+      const username = 'foo';
+      mockRestClient.onGet(`/authenticate/${username}`).reply(unauthorized, errorMessage);
 
-      await store.dispatch(login('foo', '123123'));
+      await store.dispatch(login(username, '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
     });
@@ -93,9 +96,10 @@ describe('authActions', () => {
         path: '/api/authenticate',
       };
 
-      mockRestClient.onGet('/authenticate').reply(internalServerError, errorMessage);
+      const username = 'foo';
+      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
 
-      await store.dispatch(login('foo', '123123'));
+      await store.dispatch(login(username, '123123'));
 
       expect(store.getActions()).toEqual([loginRequest(), loginFailure(errorMessage)]);
     });
@@ -109,18 +113,20 @@ describe('authActions', () => {
         message: 'You are not allowed here',
         path: '/api/authenticate',
       };
-      mockRestClient.onGet('/authenticate').reply(internalServerError, errorMessage);
 
-      await store.dispatch(login('foo', '123123'));
+      const username = 'foo';
+      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
+
+      await store.dispatch(login(username, '123123'));
     });
 
     it('logs out user without any side effect', async () => {
-      await store.dispatch(logout());
+      await store.dispatch(logout(user.company.code));
 
       expect(store.getActions()).toEqual([
         logoutRequest(),
         logoutSuccess(),
-        routerActions.push(routes.home),
+        routerActions.push(`${routes.login}/${user.company.code}`),
       ]);
     });
   });

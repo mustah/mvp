@@ -4,8 +4,10 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
+import {getLogoPath} from '../../../app/routes';
 import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
@@ -33,20 +35,19 @@ interface LoginState {
   password: string;
 }
 
-type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps & RouteComponentProps<{company: string}>;
 
 class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   state: LoginState = {email: '', password: ''};
 
   render() {
-    const {auth} = this.props;
-
+    const {auth, match: {params: {company}}} = this.props;
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
           <RowCenter className="customerLogo">
-            <Logo/>
+            <Logo src={getLogoPath(company)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextField

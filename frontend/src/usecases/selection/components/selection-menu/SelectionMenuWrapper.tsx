@@ -3,23 +3,24 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
-import {routes} from '../../../../app/routes';
+import {getLogoPath, routes} from '../../../../app/routes';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Logo} from '../../../../components/logo/Logo';
 import {RootState} from '../../../../reducers/rootReducer';
-import {ClassNamed, OnClick} from '../../../../types/Types';
+import {ClassNamed, uuid} from '../../../../types/Types';
 import {logout} from '../../../auth/authActions';
-import {AuthState} from '../../../auth/authModels';
+import {User} from '../../../auth/authModels';
+import {getUser} from '../../../auth/authSelectors';
 import {Profile} from '../profile/Profile';
 import './SelectionMenuWrapper.scss';
 
 interface StateToProps extends ClassNamed {
-  auth: AuthState;
+  user: User;
   children?: React.ReactNode;
 }
 
 interface DispatchToProps {
-  logout: OnClick;
+  logout: (company: uuid) => void;
 }
 
 interface OwnProps {
@@ -27,8 +28,7 @@ interface OwnProps {
 }
 
 const SearchMenuWrapperComponent = (props: StateToProps & DispatchToProps) => {
-  const {children, className, auth, logout} = props;
-
+  const {children, className, user, logout} = props;
   return (
     <Row className={classNames('SelectionMenuWrapper', className)}>
       <Row className="SelectionMenu">
@@ -36,11 +36,11 @@ const SearchMenuWrapperComponent = (props: StateToProps & DispatchToProps) => {
       </Row>
       <RowCenter>
         <Link className="Logo" to={routes.home}>
-          <Logo className="small"/>
+          <Logo src={getLogoPath(user.company.code)} className="small"/>
         </Link>
       </RowCenter>
       <Row>
-        <Profile user={auth.user!} logout={logout}/>
+        <Profile user={user!} logout={logout}/>
       </Row>
     </Row>
   );
@@ -48,7 +48,7 @@ const SearchMenuWrapperComponent = (props: StateToProps & DispatchToProps) => {
 
 const mapStateToProps = ({auth}: RootState): StateToProps => {
   return {
-    auth,
+    user: getUser(auth),
   };
 };
 

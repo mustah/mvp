@@ -1,3 +1,5 @@
+import {uuid} from '../types/Types';
+
 export const routes = {
   collection: '/collection',
   dashboard: '/dashboard',
@@ -10,3 +12,9 @@ export const routes = {
   validation: '/validation',
   selection: '/selection',
 };
+
+const companyLogo = {
+  'wayne-industries': 'wayne-industries.png',
+};
+
+export const getLogoPath = (company: uuid): string => companyLogo[company] || 'elvaco_logo.png';
