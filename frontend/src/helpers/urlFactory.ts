@@ -11,7 +11,7 @@ interface ParameterCallbacks {
 }
 
 const parameterCallbacks: ParameterCallbacks = {
-  period: (parameter) => toApiParameters(currentDateRange(parameter as Period)),
+  period: (parameter: string) => toApiParameters(currentDateRange(parameter as Period)),
 };
 
 const baseParameterNames: ParameterNames = {
@@ -55,7 +55,7 @@ const encodedUriParametersFrom =
     Object.keys(selectedIds).forEach((parameter: string) => {
       const selection = selectedIds[parameter];
       if (parameterCallbacks[parameter]) {
-        parameterCallbacks[parameter](selection).forEach((param) => parameters.push(param));
+        parameterCallbacks[parameter](selection).forEach((param: string) => parameters.push(param));
       } else if (Array.isArray(selection)) {
         selection.forEach((value: uuid) => addParameterWith(parameter, value));
       } else {
