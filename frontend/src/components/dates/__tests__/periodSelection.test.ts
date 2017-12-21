@@ -41,42 +41,42 @@ describe('periodSelection', () => {
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
         const now = new Date(2013, 2, 4);
-        const period = dateRange(now, Period.previousMonth);
-        expect(period.start.get().getMonth()).toEqual(1);
+        const {start} = dateRange(now, Period.previousMonth);
+        expect(start.get().getMonth()).toEqual(1);
       });
 
       it('knows about previous 7 days', () => {
         const march14 = new Date(2013, 2, 14);
         const aWeekEarlier = new Date(2013, 2, 8);
-        const period = dateRange(march14, Period.previous7Days);
-        expect(period.start.get()).toEqual(aWeekEarlier);
+        const {start} = dateRange(march14, Period.previous7Days);
+        expect(start.get()).toEqual(aWeekEarlier);
       });
 
       it('knows about current week', () => {
         const friday10thNovember = new Date(2017, 10, 10);
-        const timePeriod = dateRange(friday10thNovember, Period.currentWeek);
+        const {start} = dateRange(friday10thNovember, Period.currentWeek);
 
         const monday = new Date(2017, 10, 6);
-        expect(timePeriod.start.get().valueOf()).toBeLessThanOrEqual(monday.valueOf());
+        expect(start.get().valueOf()).toBeLessThanOrEqual(monday.valueOf());
 
         const previousSunday = new Date(2017, 10, 5);
-        expect(timePeriod.start.get().valueOf()).toBeGreaterThanOrEqual(previousSunday.valueOf());
+        expect(start.get().valueOf()).toBeGreaterThanOrEqual(previousSunday.valueOf());
       });
 
       it('knows about current month', () => {
         const firstOfMonth = new Date(2013, 2, 13);
-        const timePeriod = dateRange(firstOfMonth, Period.currentMonth);
-        expect(timePeriod.start.get().getMonth()).toEqual(2);
-        expect(timePeriod.start.get().getDate()).toEqual(1);
+        const {start, end} = dateRange(firstOfMonth, Period.currentMonth);
+        expect(start.get().getMonth()).toEqual(2);
+        expect(start.get().getDate()).toEqual(1);
 
-        expect(timePeriod.end.get().getMonth()).toEqual(2);
-        expect(timePeriod.end.get().getDate()).toEqual(31);
+        expect(end.get().getMonth()).toEqual(2);
+        expect(end.get().getDate()).toEqual(31);
       });
 
       it('knows about latest', () => {
-        const timePeriod = dateRange(new Date(), Period.latest);
-        expect(timePeriod.start.isNothing()).toBe(true);
-        expect(timePeriod.end.isNothing()).toBe(true);
+        const {start, end} = dateRange(new Date(), Period.latest);
+        expect(start.isNothing()).toBe(true);
+        expect(end.isNothing()).toBe(true);
       });
     });
   });

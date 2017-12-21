@@ -19,11 +19,11 @@ interface DateRange {
   end: Maybe<Date>;
 }
 
-export const toApiParameters = (startAndEnd: DateRange): string[] => {
+export const toApiParameters = ({start, end}: DateRange): string[] => {
   const parameters: string[] = [];
-  startAndEnd.start.map((date) =>
+  start.map((date) =>
     parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
-  startAndEnd.end.map((date) =>
+  end.map((date) =>
     parameters.push(`before=${encodeURIComponent(date.toISOString())}`));
   return parameters;
 };
