@@ -37,7 +37,7 @@ export const login = (username: string, password: string) => {
 export const logout = (company: uuid) => {
   return async (dispatch) => {
     dispatch(logoutRequest());
-    await dispatch(logoutSuccess());
+    dispatch(logoutSuccess());
     dispatch(routerActions.push(`${routes.login}/${company}`));
   };
 };
