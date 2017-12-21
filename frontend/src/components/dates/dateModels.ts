@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import * as R from 'ramda';
 import {Maybe} from '../../helpers/Maybe';
 
 /*
@@ -48,8 +49,7 @@ export const toApiParameters = (startAndEnd: StartAndEnd): string[] => {
 };
 
 // We work with Period and Date, to not expose moment() to our application
-export const startAndEnd = (period: Period): StartAndEnd => {
-  const now = new Date();
+export const startAndEndFrom = (now: Date, period: Period): StartAndEnd => {
   switch (period) {
     case Period.currentMonth:
       return {
@@ -80,3 +80,5 @@ export const startAndEnd = (period: Period): StartAndEnd => {
       };
   }
 };
+
+export const startAndEnd = R.curry(startAndEndFrom)(new Date());
