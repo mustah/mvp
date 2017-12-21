@@ -52,6 +52,10 @@ describe('selectionSelectors', () => {
     expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
   });
 
+  it('encode the initial, empty, selection', () => {
+    expect(initialEncodedParameters).toEqual('');
+  });
+
   it('gets entities for type city', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
     const domainModels: DomainModelsState = {
@@ -114,7 +118,7 @@ describe('selectionSelectors', () => {
 
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({selection: state, saved: []});
 
-      expect(encodedUriParametersForMeters).toEqual('city.id=sto&' + initialEncodedParameters);
+      expect(encodedUriParametersForMeters).toEqual('city.id=sto');
     });
 
     it('has two selected cities', () => {
@@ -124,7 +128,7 @@ describe('selectionSelectors', () => {
       const state: SelectionState = selection(prevState, addSelectionAction(payloadSto));
 
       expect(getEncodedUriParametersForMeters({selection: state, saved: []}))
-        .toEqual('city.id=got&city.id=sto&' + initialEncodedParameters);
+        .toEqual('city.id=got&city.id=sto');
     });
   });
 
