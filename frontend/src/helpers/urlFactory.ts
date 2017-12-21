@@ -3,7 +3,7 @@ import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 
 interface ParameterNames {
-  [key: string]: string | ((parameter: string) => string[]);
+  [key: string]: string;
 }
 
 interface ParameterCallbacks {

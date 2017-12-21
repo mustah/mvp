@@ -2,15 +2,6 @@ import * as moment from 'moment';
 import * as R from 'ramda';
 import {Maybe} from '../../helpers/Maybe';
 
-/*
-type iso8601Instant = string;
-
-interface ApiFriendlyInterval {
-  after?: iso8601Instant;
-  before?: iso8601Instant;
-}
-*/
-
 const padZero = (aNumber: number): string => {
   return aNumber < 10 ? `0${aNumber}` : aNumber + '';
 };
