@@ -1,6 +1,7 @@
-import {Period, currentDateRange, toApiParameters} from '../components/dates/dateModels';
+import {Period} from '../components/dates/dateModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
+import {currentDateRange, toApiParameters} from './dateHelpers';
 
 interface ParameterNames {
   [key: string]: string;

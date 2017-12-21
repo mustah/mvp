@@ -1,5 +1,6 @@
-import {Maybe} from '../../../helpers/Maybe';
-import {dateRange, Period, toApiParameters, toFriendlyIso8601} from '../dateModels';
+import {Maybe} from '../Maybe';
+import {Period} from '../../components/dates/dateModels';
+import {dateRange, toApiParameters, toFriendlyIso8601} from '../dateHelpers';
 
 describe('periodSelection', () => {
   describe('relative time periods', () => {

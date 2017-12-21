@@ -5,8 +5,9 @@ import {translate} from '../../services/translationService';
 import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
-import {Period, prettyRange} from './dateModels';
+import {Period} from './dateModels';
 import './PeriodSelection.scss';
+import {prettyRange} from '../../helpers/dateHelpers';
 
 const height = 32;
 
