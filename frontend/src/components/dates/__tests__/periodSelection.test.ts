@@ -1,10 +1,10 @@
-import {Period, startAndEndFrom, toApiParameters, toFriendlyIso8601} from '../dateModels';
 import {Maybe} from '../../../helpers/Maybe';
+import {dateRange, Period, toApiParameters, toFriendlyIso8601} from '../dateModels';
 
 describe('periodSelection', () => {
   describe('relative time periods', () => {
     it('defaults to no limits if no start/end time is given', () => {
-      const timePeriod = startAndEndFrom(new Date(), Period.latest);
+      const timePeriod = dateRange(new Date(), Period.latest);
       expect(timePeriod.start).toEqual(Maybe.nothing());
       expect(timePeriod.end).toEqual(Maybe.nothing());
 
@@ -15,14 +15,13 @@ describe('periodSelection', () => {
 
   describe('user friendliness', () => {
     it('can be expressed in a friendly looking way', () => {
-      // we're using Date under the hood, which has zero indexed months
       const endOfNovember = new Date(2013, 10, 24);
-      const timePeriod = toFriendlyIso8601(startAndEndFrom(endOfNovember, Period.currentMonth));
+      const timePeriod = toFriendlyIso8601(dateRange(endOfNovember, Period.currentMonth));
       expect(timePeriod).toEqual('2013-11-01 - 2013-11-30');
     });
 
     it('can be consumed by the MVP REST API', () => {
-      const apiFriendlyOutput = toApiParameters(startAndEndFrom(new Date(2012, 3, 4), Period.currentMonth));
+      const apiFriendlyOutput = toApiParameters(dateRange(new Date(2012, 3, 4), Period.currentMonth));
       expect(apiFriendlyOutput.length).toEqual(2);
 
       // the API wants ISO-8601 "instant":
@@ -42,20 +41,20 @@ describe('periodSelection', () => {
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
         const now = new Date(2013, 2, 4);
-        const period = startAndEndFrom(now, Period.previousMonth);
+        const period = dateRange(now, Period.previousMonth);
         expect(period.start.get().getMonth()).toEqual(1);
       });
 
       it('knows about previous 7 days', () => {
         const march14 = new Date(2013, 2, 14);
         const aWeekEarlier = new Date(2013, 2, 8);
-        const period = startAndEndFrom(march14, Period.previous7Days);
+        const period = dateRange(march14, Period.previous7Days);
         expect(period.start.get()).toEqual(aWeekEarlier);
       });
 
       it('knows about current week', () => {
         const friday10thNovember = new Date(2017, 10, 10);
-        const timePeriod = startAndEndFrom(friday10thNovember, Period.currentWeek);
+        const timePeriod = dateRange(friday10thNovember, Period.currentWeek);
 
         const monday = new Date(2017, 10, 6);
         expect(timePeriod.start.get().valueOf()).toBeLessThanOrEqual(monday.valueOf());
@@ -66,7 +65,7 @@ describe('periodSelection', () => {
 
       it('knows about current month', () => {
         const firstOfMonth = new Date(2013, 2, 13);
-        const timePeriod = startAndEndFrom(firstOfMonth, Period.currentMonth);
+        const timePeriod = dateRange(firstOfMonth, Period.currentMonth);
         expect(timePeriod.start.get().getMonth()).toEqual(2);
         expect(timePeriod.start.get().getDate()).toEqual(1);
 
@@ -75,7 +74,7 @@ describe('periodSelection', () => {
       });
 
       it('knows about latest', () => {
-        const timePeriod = startAndEndFrom(new Date(), Period.latest);
+        const timePeriod = dateRange(new Date(), Period.latest);
         expect(timePeriod.start.isNothing()).toBe(true);
         expect(timePeriod.end.isNothing()).toBe(true);
       });

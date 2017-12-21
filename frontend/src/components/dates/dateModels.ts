@@ -14,12 +14,12 @@ export const enum Period {
   previous7Days = 'previous_7_days',
 }
 
-interface StartAndEnd {
+interface DateRange {
   start: Maybe<Date>;
   end: Maybe<Date>;
 }
 
-export const toApiParameters = (startAndEnd: StartAndEnd): string[] => {
+export const toApiParameters = (startAndEnd: DateRange): string[] => {
   const parameters: string[] = [];
   startAndEnd.start.map((date) =>
     parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
@@ -29,7 +29,7 @@ export const toApiParameters = (startAndEnd: StartAndEnd): string[] => {
 };
 
 // We work with Period and Date, to not expose moment() to our application
-export const startAndEndFrom = (now: Date, period: Period): StartAndEnd => {
+export const dateRange = (now: Date, period: Period): DateRange => {
   switch (period) {
     case Period.currentMonth:
       return {
@@ -61,17 +61,16 @@ export const startAndEndFrom = (now: Date, period: Period): StartAndEnd => {
   }
 };
 
-export const startAndEnd = R.curry(startAndEndFrom)(new Date());
+export const currentDateRange = R.curry(dateRange)(new Date());
 
 const formatYyMmDd = (date: Date): string => {
   return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
 };
 
-export const toFriendlyIso8601 = (startAndEnd: StartAndEnd): string => {
-  const {start, end} = startAndEnd;
+export const toFriendlyIso8601 = ({start, end}: DateRange): string => {
   const startDate: string = start.map(formatYyMmDd).orElse('');
   const endDate: string = end.map(formatYyMmDd).orElse('');
   return `${startDate} - ${endDate}`;
 };
 
-export const prettyInterval = R.compose(toFriendlyIso8601, startAndEnd);
+export const prettyInterval = R.compose(toFriendlyIso8601, currentDateRange);

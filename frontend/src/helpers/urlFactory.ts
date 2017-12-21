@@ -1,4 +1,4 @@
-import {Period, startAndEnd, toApiParameters} from '../components/dates/dateModels';
+import {Period, currentDateRange, toApiParameters} from '../components/dates/dateModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 
@@ -11,7 +11,7 @@ interface ParameterCallbacks {
 }
 
 const parameterCallbacks: ParameterCallbacks = {
-  period: (parameter) => toApiParameters(startAndEnd(parameter as Period)),
+  period: (parameter) => toApiParameters(currentDateRange(parameter as Period)),
 };
 
 const baseParameterNames: ParameterNames = {
