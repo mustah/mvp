@@ -1,8 +1,10 @@
 package com.elvaco.mvp.dialect.types;
 
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.Serializable;
+
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
 import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
@@ -54,7 +56,7 @@ public abstract class PropertyCollectionType implements UserType {
       return (Serializable) value;
     }
     throw new SerializationException(String.format("Cannot serialize '%s', %s is not Serializable"
-        + ".", value, value.getClass()), null);
+                                                   + ".", value, value.getClass()), null);
   }
 
   @Override

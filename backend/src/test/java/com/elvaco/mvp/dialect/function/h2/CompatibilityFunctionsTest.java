@@ -1,34 +1,34 @@
 package com.elvaco.mvp.dialect.function.h2;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
-public class CompatibilityFunctionsTest {
-  @Test
-  public void convertDegreeScale() throws Exception {
-    assertEquals("287.15 K", CompatibilityFunctions.unitAt("14 Celsius", "K"));
-  }
+import static org.assertj.core.api.Assertions.assertThat;
 
+public class CompatibilityFunctionsTest {
+
+  @Test
+  public void convertDegreeScale() {
+    assertThat(CompatibilityFunctions.unitAt("14 Celsius", "K")).isEqualTo("287.15 K");
+  }
 
   // Verify that the aliases that we've defined for PostgreSql also work here
   @Test
-  public void unitAliasForCelsius() throws Exception {
-    assertEquals("14 ℃", CompatibilityFunctions.unitAt("14 Celsius", "℃"));
+  public void unitAliasForCelsius() {
+    assertThat(CompatibilityFunctions.unitAt("14 Celsius", "℃")).isEqualTo("14 ℃");
   }
 
   @Test
-  public void unitAliasForKelvin() throws Exception {
-    assertEquals("287.15 K", CompatibilityFunctions.unitAt("287.15 Kelvin", "K"));
+  public void unitAliasForKelvin() {
+    assertThat(CompatibilityFunctions.unitAt("287.15 Kelvin", "K")).isEqualTo("287.15 K");
   }
 
   @Test
-  public void unitAliasForCubicMeters() throws Exception {
-    assertEquals("43 ㎥", CompatibilityFunctions.unitAt("43 m^3", "㎥"));
+  public void unitAliasForCubicMeters() {
+    assertThat(CompatibilityFunctions.unitAt("43 m^3", "㎥")).isEqualTo("43 ㎥");
   }
 
   @Test
-  public void unitAliasForCubicMetersNoCaret() throws Exception {
-    assertEquals("43 ㎥", CompatibilityFunctions.unitAt("43 m3", "㎥"));
+  public void unitAliasForCubicMetersNoCaret() {
+    assertThat(CompatibilityFunctions.unitAt("43 m3", "㎥")).isEqualTo("43 ㎥");
   }
 }

@@ -1,6 +1,8 @@
 package com.elvaco.mvp.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
@@ -8,15 +10,15 @@ import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.repository.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class MeteringPointControllerTest extends IntegrationTest {
@@ -28,8 +30,8 @@ public class MeteringPointControllerTest extends IntegrationTest {
   public void setUp() {
     MeteringPointEntity mp = new MeteringPointEntity();
     mp.propertyCollection = new PropertyCollection()
-        .put("user", new UserPropertyDto("abc123", "Some project"))
-        .putArray("numbers", Arrays.asList(1, 2, 3, 17));
+      .put("user", new UserPropertyDto("abc123", "Some project"))
+      .putArray("numbers", Arrays.asList(1, 2, 3, 17));
     repository.save(mp);
     restClient().loginWith("evanil@elvaco.se", "eva123");
   }
@@ -44,11 +46,11 @@ public class MeteringPointControllerTest extends IntegrationTest {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
     ResponseEntity<List> response = restClient()
-        .post("/mps/property-collections", request, List.class);
+      .post("/mps/property-collections", request, List.class);
 
     Map<String, Object> result = (Map<String, Object>) response
-        .getBody()
-        .get(0);
+      .getBody()
+      .get(0);
 
     assertThat(result).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -59,7 +61,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("xyz"));
 
     ResponseEntity<List> response = restClient()
-        .post("/mps/property-collections", request, List.class);
+      .post("/mps/property-collections", request, List.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEmpty();
@@ -68,7 +70,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @Test
   public void findById() {
     ResponseEntity<MeteringPointEntity> response = restClient()
-        .get("/mps/2", MeteringPointEntity.class);
+      .get("/mps/2", MeteringPointEntity.class);
 
     MeteringPointEntity meteringPoint = response.getBody();
 
@@ -79,7 +81,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @Test
   public void findAll() {
     ResponseEntity<List> response = restClient()
-        .get("/mps", List.class);
+      .get("/mps", List.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotEmpty();

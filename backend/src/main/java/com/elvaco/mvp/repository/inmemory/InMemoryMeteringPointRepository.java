@@ -1,19 +1,21 @@
 package com.elvaco.mvp.repository.inmemory;
 
-import static java.util.stream.Collectors.toList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointBaseRepository;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
-import javax.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import static java.util.stream.Collectors.toList;
 
 @InMemory
 @Repository
@@ -26,23 +28,23 @@ public class InMemoryMeteringPointRepository extends MeteringPointBaseRepository
 
   @Override
   public List<MeteringPointEntity> containsInPropertyCollection(PropertyCollectionDto
-                                                                    requestModel) {
+                                                                  requestModel) {
     return findAllWithPropertyCollections()
-        .filter(containsJson(requestModel))
-        .collect(toList());
+      .filter(containsJson(requestModel))
+      .collect(toList());
   }
 
   @Override
   public List<MeteringPointEntity> existsInPropertyCollection(String fieldName) {
     return findAllWithPropertyCollections()
-        .filter(hasAtTopLevel(fieldName))
-        .collect(toList());
+      .filter(hasAtTopLevel(fieldName))
+      .collect(toList());
   }
 
   private Stream<MeteringPointEntity> findAllWithPropertyCollections() {
     return findAll()
-        .stream()
-        .filter(this::hasPropertyCollection);
+      .stream()
+      .filter(this::hasPropertyCollection);
   }
 
   private Predicate<MeteringPointEntity> hasAtTopLevel(String fieldName) {

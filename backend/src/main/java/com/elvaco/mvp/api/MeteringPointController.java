@@ -1,9 +1,11 @@
 package com.elvaco.mvp.api;
 
+import java.util.List;
+
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointRepository;
-import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,9 +35,9 @@ public class MeteringPointController {
   }
 
   @RequestMapping(value = "/mps/property-collections", method = RequestMethod.POST)
-  public List<MeteringPointEntity> containsInPropertyCollections(@RequestBody
-                                                                     PropertyCollectionDto
-                                                                     requestModel) {
+  public List<MeteringPointEntity> containsInPropertyCollections(
+    @RequestBody PropertyCollectionDto requestModel
+  ) {
     return repository.containsInPropertyCollection(requestModel);
   }
 }

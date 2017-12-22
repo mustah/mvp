@@ -2,13 +2,16 @@ package com.elvaco.mvp.testdata;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 public class RestResponsePage<T> extends PageImpl<T> {
+
   private static final long serialVersionUID = 7024191353049604570L;
+
   private int number;
   private int size;
   private int totalPages;
@@ -130,8 +133,9 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return super.hashCode();
   }
 
-  public Page<T> pageImpl() {
-    return new PageImpl<T>(getContent(), new PageRequest(getNumber(),
-        getSize(), getSort()), getTotalElements());
+  public Page<T> newPage() {
+    return new PageImpl<>(getContent(),
+                          new PageRequest(getNumber(), getSize(), getSort()),
+                          getTotalElements());
   }
 }

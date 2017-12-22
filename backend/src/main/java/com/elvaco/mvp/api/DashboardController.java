@@ -1,15 +1,17 @@
 package com.elvaco.mvp.api;
 
-import static java.util.Arrays.asList;
+import java.util.List;
 
 import com.elvaco.mvp.dto.ColoredBoxDto;
 import com.elvaco.mvp.dto.DashboardDto;
 import com.elvaco.mvp.dto.SystemOverviewDto;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 import com.elvaco.mvp.repository.DashboardRepository;
-import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static java.util.Arrays.asList;
 
 @RestApi
 public class DashboardController {

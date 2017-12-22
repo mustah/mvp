@@ -1,20 +1,23 @@
 package com.elvaco.mvp.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
 
 import com.elvaco.mvp.testdata.IntegrationTest;
-import java.util.List;
+
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CollectionControllerTest extends IntegrationTest {
 
   @Test
   public void findAllCollections() {
-    List collections = restClient()
-        .loginWith("user", "password")
-        .get("/collections", List.class)
-        .getBody();
+    int numCollections = restClient()
+      .loginWith("user", "password")
+      .get("/collections", List.class)
+      .getBody()
+      .size();
 
-    assertThat(collections.size()).isGreaterThanOrEqualTo(3);
+    assertThat(numCollections).isGreaterThanOrEqualTo(3);
   }
 }
