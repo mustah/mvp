@@ -1,11 +1,13 @@
 package com.elvaco.mvp.dialect.types.postgresql;
 
-import com.elvaco.mvp.dialect.types.MeasurementUnitType;
-import com.elvaco.mvp.entity.measurement.MeasurementUnit;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import com.elvaco.mvp.dialect.types.MeasurementUnitType;
+import com.elvaco.mvp.entity.measurement.MeasurementUnit;
+
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.postgresql.util.PGobject;
@@ -18,7 +20,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
 
   @Override
   public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object
-      owner) throws HibernateException, SQLException {
+    owner) throws HibernateException, SQLException {
     PGobject value = (PGobject) rs.getObject(names[0]);
     if (value == null || value.getValue() == null) {
       return null;
@@ -28,7 +30,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
 
   @Override
   public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor
-      session) throws HibernateException, SQLException {
+    session) throws HibernateException, SQLException {
     if (value == null || value.getClass() != MeasurementUnit.class) {
       st.setNull(index, Types.OTHER);
       return;

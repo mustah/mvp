@@ -1,10 +1,7 @@
 package com.elvaco.mvp.entity.meter;
 
-import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -16,10 +13,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
 public class PhysicalMeterEntity {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
@@ -35,16 +38,11 @@ public class PhysicalMeterEntity {
   @JsonBackReference
   public MeteringPointEntity meteringPoint;
 
-  public PhysicalMeterEntity() {
-  }
+  public PhysicalMeterEntity() {}
 
   public PhysicalMeterEntity(Long organisation, String identity, String medium) {
     this.organisationId = organisation;
     this.identity = identity;
     this.medium = medium;
-  }
-
-  public void setMeteringPoint(MeteringPointEntity meteringPoint) {
-    this.meteringPoint = meteringPoint;
   }
 }

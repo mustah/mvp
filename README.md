@@ -49,7 +49,7 @@ advantage of Spring devtools, interactive debuggers and such.
 
 This uses the same [docker-compose.yml] file, but maps port 5432 (the default
 PostgreSQL port) to port 5432 on the host instead of dynamically mapping it.
-This allows us to preconfigure the datbase connection for the application
+This allows us to preconfigure the database connection for the application
 without having to first figure out what port to connect to.
 
 The database is started by running

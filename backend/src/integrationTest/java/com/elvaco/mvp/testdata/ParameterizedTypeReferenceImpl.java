@@ -4,11 +4,12 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-public class ParameterizedTypeReferenceImpl implements ParameterizedType {
-  private final Type[] types;
-  private ParameterizedType delegate;
+class ParameterizedTypeReferenceImpl implements ParameterizedType {
 
-  public ParameterizedTypeReferenceImpl(ParameterizedType delegate, Type[] types) {
+  private final Type[] types;
+  private final ParameterizedType delegate;
+
+  ParameterizedTypeReferenceImpl(ParameterizedType delegate, Type[] types) {
     this.delegate = delegate;
     this.types = Arrays.copyOf(types, types.length);
   }
@@ -27,6 +28,4 @@ public class ParameterizedTypeReferenceImpl implements ParameterizedType {
   public Type getOwnerType() {
     return delegate.getOwnerType();
   }
-
-
 }

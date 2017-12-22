@@ -3,6 +3,7 @@ package com.elvaco.mvp.api;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.MeasurementRepository;
+
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,12 @@ public class MeasurementController {
     return modelMapper.map(repository.findOne(id), MeasurementDto.class);
   }
 
-  @RequestMapping("")
+  @RequestMapping()
   public Page<MeasurementDto> measurements(
-      @RequestParam(value = "scale", required = false) String scale,
-      @RequestParam MultiValueMap<String, String> requestParams,
-      Pageable pageable) {
+    @RequestParam(value = "scale", required = false) String scale,
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
     Predicate filter = predicateMapper.map(requestParams);
     Page<MeasurementEntity> page;
     if (scale != null) {
@@ -47,6 +49,4 @@ public class MeasurementController {
     }
     return page.map(source -> modelMapper.map(source, MeasurementDto.class));
   }
-
-
 }

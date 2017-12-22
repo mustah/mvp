@@ -1,12 +1,12 @@
 package com.elvaco.mvp.api;
 
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 /**
  * A mapper of property filters to QueryDsl predicates.
@@ -35,8 +35,9 @@ abstract class FilterToPredicateMapper {
    * constructed, since {@link com.querydsl.core.FilteredClause} explicitly ignores null arguments.
    *
    * @param filter The filter to map
-   * @return A QueryDsl Predicate representation of that filter, or null if no predicate
-   *     could be constructed
+   *
+   * @return A QueryDsl Predicate representation of that filter, or null if no predicate could be
+   *   constructed.
    */
   BooleanExpression map(Map<String, List<String>> filter) {
     if (filter == null) {
@@ -47,14 +48,13 @@ abstract class FilterToPredicateMapper {
     for (Map.Entry<String, List<String>> propertyFilter : filter.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
 
-      Map<String, Function<String, BooleanExpression>> filterableProperties =
-          getPropertyFilters();
+      Map<String, Function<String, BooleanExpression>> filterableProperties = getPropertyFilters();
       if (filterableProperties == null) {
         filterableProperties = new HashMap<>();
       }
 
       Function<String, BooleanExpression> lambda =
-          filterableProperties.get(propertyFilter.getKey());
+        filterableProperties.get(propertyFilter.getKey());
       if (lambda == null) {
         continue;
       }

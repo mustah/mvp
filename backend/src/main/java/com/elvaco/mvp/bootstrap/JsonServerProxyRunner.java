@@ -1,6 +1,7 @@
 package com.elvaco.mvp.bootstrap;
 
 import java.io.IOException;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,7 +37,7 @@ public class JsonServerProxyRunner implements CommandLineRunner {
   }
 
   private String getPropertyOrResourcePath(String propertyName, String resourcePath)
-      throws IOException {
+    throws IOException {
     String property = System.getProperty(propertyName);
     if (property != null) {
       return property;
@@ -55,8 +56,8 @@ public class JsonServerProxyRunner implements CommandLineRunner {
   private String getNodePath() throws IOException {
 
     return System.getProperty(
-        "json-server-proxy.nodejs.path",
-        "node" // fallback to looking on $PATH if property is not set
+      "json-server-proxy.nodejs.path",
+      "node" // fallback to looking on $PATH if property is not set
     );
   }
 

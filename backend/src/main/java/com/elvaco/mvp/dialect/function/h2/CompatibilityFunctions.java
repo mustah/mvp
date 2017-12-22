@@ -1,10 +1,12 @@
 package com.elvaco.mvp.dialect.function.h2;
 
-import com.elvaco.mvp.entity.measurement.MeasurementUnit;
 import java.util.HashMap;
 import java.util.Map;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+
+import com.elvaco.mvp.entity.measurement.MeasurementUnit;
+
 import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;
@@ -30,8 +32,9 @@ public class CompatibilityFunctions {
     } catch (IllegalArgumentException iex) {
       MeasurementUnit munit = new MeasurementUnit(valueAndUnit);
       if (customTypes.containsKey(munit.getUnit())) {
-        sourceQuantity = Quantities.getQuantity(munit.getValue(),
-            customTypes.get(munit.getUnit())
+        sourceQuantity = Quantities.getQuantity(
+          munit.getValue(),
+          customTypes.get(munit.getUnit())
         );
       } else {
         throw iex;
@@ -39,8 +42,9 @@ public class CompatibilityFunctions {
     }
     Quantity resultQuantity = sourceQuantity.to(targetUnit);
 
-    return new MeasurementUnit(resultQuantity.getUnit().toString(),
-        resultQuantity.getValue().doubleValue()).toString();
+    return new MeasurementUnit(
+      resultQuantity.getUnit().toString(),
+      resultQuantity.getValue().doubleValue()
+    ).toString();
   }
-
 }
