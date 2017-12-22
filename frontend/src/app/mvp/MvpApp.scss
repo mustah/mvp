@@ -1,0 +1,21 @@
+@import "../variables";
+
+.MvpApp {
+  .PageContent {
+    padding: $lg-space + $main-menu-height $lg-space $lg-space $lg-space;
+  }
+
+  .SideMenuContainer {
+    width: $main-menu-width;
+
+    &.isSideMenuOpen {
+      width: $opened-side-menu-width;
+    }
+  }
+
+  .Section {
+    margin: $lg-space 0;
+  }
+
+  @import "../material-design";
+}
