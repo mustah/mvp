@@ -2,11 +2,11 @@ package com.elvaco.mvp.dialect.function.h2;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.measure.Quantity;
 import javax.measure.Unit;
 
 import com.elvaco.mvp.entity.measurement.MeasurementUnit;
-
 import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;

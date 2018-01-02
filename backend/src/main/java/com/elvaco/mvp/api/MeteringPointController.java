@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-@RestApi
 @Slf4j
+@RestApi("/api/mps")
 public class MeteringPointController {
 
   private final MeteringPointRepository repository;
@@ -24,17 +24,17 @@ public class MeteringPointController {
     this.repository = repository;
   }
 
-  @RequestMapping("/mps/{id}")
+  @RequestMapping("{id}")
   public MeteringPointEntity meteringPoint(@PathVariable Long id) {
     return repository.findOne(id);
   }
 
-  @RequestMapping("/mps")
+  @RequestMapping
   public List<MeteringPointEntity> meteringPoints() {
     return repository.findAll();
   }
 
-  @RequestMapping(value = "/mps/property-collections", method = RequestMethod.POST)
+  @RequestMapping(value = "/property-collections", method = RequestMethod.POST)
   public List<MeteringPointEntity> containsInPropertyCollections(
     @RequestBody PropertyCollectionDto requestModel
   ) {

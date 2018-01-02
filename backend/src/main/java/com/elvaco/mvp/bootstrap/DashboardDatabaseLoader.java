@@ -22,7 +22,7 @@ public class DashboardDatabaseLoader implements CommandLineRunner {
   }
 
   @Override
-  public void run(String... args) throws Exception {
+  public void run(String... args) {
     Stream.of(
       new DashboardEntity("java-backend", "john"),
       new DashboardEntity("java-collection", "doh"),

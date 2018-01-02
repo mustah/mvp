@@ -8,7 +8,7 @@ import com.elvaco.mvp.repository.ValidationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/validations")
 public class ValidationController {
 
   private final ValidationRepository repository;
@@ -18,7 +18,7 @@ public class ValidationController {
     this.repository = repository;
   }
 
-  @RequestMapping("/validations")
+  @RequestMapping
   public List<ValidationEntity> validations() {
     return repository.findAll();
   }

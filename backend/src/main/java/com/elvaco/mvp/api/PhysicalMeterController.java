@@ -24,9 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static java.util.Collections.singletonList;
 
-@RestApi
+@RestApi("/api/physical-meters")
 @ExposesResourceFor(PhysicalMeterEntity.class)
-@RequestMapping("/api/physical-meters")
 public class PhysicalMeterController {
 
   private final PhysicalMeterRepository repository;
@@ -34,9 +33,11 @@ public class PhysicalMeterController {
   private final ModelMapper modelMapper;
 
   @Autowired
-  public PhysicalMeterController(PhysicalMeterRepository repository,
-                                 MeasurementRepository measurementRepository,
-                                 ModelMapper modelMapper) {
+  public PhysicalMeterController(
+    PhysicalMeterRepository repository,
+    MeasurementRepository measurementRepository,
+    ModelMapper modelMapper
+  ) {
     this.repository = repository;
     this.measurementRepository = measurementRepository;
     this.modelMapper = modelMapper;
@@ -70,16 +71,20 @@ public class PhysicalMeterController {
     return repository.findAll(pageable);
   }
 
-  private Page<MeasurementDto> filterMeasurementDtos(Map<String, List<String>> filter,
-                                                     Pageable pageable) {
+  private Page<MeasurementDto> filterMeasurementDtos(
+    Map<String, List<String>> filter,
+    Pageable pageable
+  ) {
     Predicate predicate = new MeasurementFilterToPredicateMapper().map(filter);
     return measurementRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeasurementDto.class));
   }
 
-  private Map<String, List<String>> combineParams(Map<String, String> pathVars,
-                                                  Map<String, List<String>> requestParams) {
+  private Map<String, List<String>> combineParams(
+    Map<String, String> pathVars,
+    Map<String, List<String>> requestParams
+  ) {
     Map<String, List<String>> filter = new HashMap<>();
     filter.putAll(requestParams);
     filter.putAll(pathVars

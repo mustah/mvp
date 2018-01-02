@@ -2,6 +2,52 @@ import com.avast.gradle.dockercompose.ComposeExtension
 import com.avast.gradle.dockercompose.tasks.ComposeDown
 import com.avast.gradle.dockercompose.tasks.ComposeUp
 
+def getVersion = { ->
+  def stdout = new ByteArrayOutputStream()
+  exec {
+    commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
+    standardOutput = stdout
+  }
+  return stdout.toString().trim()
+}
+
+allprojects {
+  version = getVersion()
+
+  repositories {
+    mavenCentral()
+    jcenter()
+  }
+}
+
+subprojects { subproject ->
+
+  plugins.withType(JavaPlugin) {
+    version = '0.0.1'
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    plugins.apply('idea')
+    plugins.apply('eclipse')
+    plugins.apply('checkstyle')
+    plugins.apply('findbugs')
+
+    checkstyle {
+      ignoreFailures = false
+      configFile = file("$rootDir/backend/config/checkstyle/checkstyle.xml")
+      toolVersion = '8.5'
+    }
+
+    tasks.withType(FindBugs) {
+      excludeFilter = file("$rootDir/backend/config/findbugs/excludeFilter.xml")
+      reports {
+        xml.enabled false
+      }
+    }
+  }
+}
+
 buildscript {
   repositories {
     jcenter()
@@ -14,19 +60,6 @@ buildscript {
 
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
-
-def getVersion = { ->
-  def stdout = new ByteArrayOutputStream()
-    exec {
-      commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
-      standardOutput = stdout
-    }
-  return stdout.toString().trim()
-}
-
-allprojects {
-  version = getVersion()
-}
 
 task runFinalJar(type: JavaExec) {
   group = 'application'
@@ -84,17 +117,16 @@ composeUp {
   description = 'Execute application with docker-compose against PostgreSQL'
   doLast {
     def applInfo = dockerCompose.servicesInfos.application.'application_1'
-    println('The application is now running! Point your browser to: http://' +  applInfo.host + ':' + applInfo.ports[80])
+    println('The application is now running! Point your browser to: http://' + applInfo.host + ':' + applInfo.ports[80])
   }
 }
 
-jsonSchema { 
+jsonSchema {
   schemaFolder = 'docs/schema/'
 }
 
 task check {
   dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
-
 }
 
 task dotVersion {

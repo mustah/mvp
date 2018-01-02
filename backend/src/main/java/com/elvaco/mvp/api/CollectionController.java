@@ -8,7 +8,7 @@ import com.elvaco.mvp.repository.CollectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/collections")
 public class CollectionController {
 
   private final CollectionRepository collectionRepository;
@@ -18,7 +18,7 @@ public class CollectionController {
     this.collectionRepository = collectionRepository;
   }
 
-  @RequestMapping("/collections")
+  @RequestMapping
   public List<CollectionEntity> collections() {
     return collectionRepository.findAll();
   }

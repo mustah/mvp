@@ -13,6 +13,7 @@ import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
 
 public abstract class MeasurementUnitType implements UserType {
+
   @Override
   public abstract int[] sqlTypes();
 
@@ -35,15 +36,18 @@ public abstract class MeasurementUnitType implements UserType {
   }
 
   @Override
-  public abstract Object nullSafeGet(ResultSet rs,
-                                     String[] names,
-                                     SessionImplementor session,
-                                     Object owner) throws HibernateException, SQLException;
+  public abstract Object nullSafeGet(
+    ResultSet rs,
+    String[] names,
+    SessionImplementor session,
+    Object owner
+  ) throws HibernateException, SQLException;
 
   @Override
-  public abstract void nullSafeSet(PreparedStatement st, Object value, int index,
-                                   SessionImplementor session) throws HibernateException,
-                                                                      SQLException;
+  public abstract void nullSafeSet(
+    PreparedStatement st, Object value, int index,
+    SessionImplementor session
+  ) throws HibernateException, SQLException;
 
   @Override
   public Object deepCopy(Object value) throws HibernateException {

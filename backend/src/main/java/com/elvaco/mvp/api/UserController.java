@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/users")
 public class UserController {
 
   private final UserRepository userRepository;
@@ -19,12 +19,12 @@ public class UserController {
     this.userRepository = userRepository;
   }
 
-  @RequestMapping("/users/{id}")
+  @RequestMapping("{id}")
   public UserEntity userById(@PathVariable Long id) {
     return userRepository.findOne(id);
   }
 
-  @RequestMapping("/users")
+  @RequestMapping
   public Collection<UserEntity> allUsers() {
     return userRepository.findAll();
   }

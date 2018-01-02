@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/authenticate")
 public class AuthController {
 
   private final UserRepository userRepository;
@@ -22,7 +22,7 @@ public class AuthController {
     this.modelMapper = modelMapper;
   }
 
-  @RequestMapping("/authenticate")
+  @RequestMapping
   public UserDto authenticate() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String email = authentication.getName();

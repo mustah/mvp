@@ -29,6 +29,21 @@ frontend/src/i18n/locales/*.mo
 
 ### IntelliJ IDEA ###
 # User-specific stuff:
+.idea/codeStyles/
+.idea/inspectionProfiles/
+.idea/libraries/
+.idea/modules/
+.idea/sonarlint/
+.idea/compiler.xml
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/uiDesigner.xml
+.idea/checkstyle-idea.xml
+.idea/encodings.xml
+.idea/workspace.xml
+
 backend/.idea/libraries/
 backend/.idea/dictionaries
 backend/.idea/inspectionProfiles/

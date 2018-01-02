@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+  compile project(':backend:configuration')
+
+  compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+  compile 'org.springframework.boot:spring-boot-starter-jdbc'
+  compile 'org.springframework.boot:spring-boot-devtools'
+  compile 'org.springframework.boot:spring-boot-starter-hateoas'
+
+  compile 'org.modelmapper:modelmapper:1.1.0'
+  compile 'org.postgresql:postgresql'
+  compile 'tec.uom:uom-se:1.0.8'
+  compile 'com.querydsl:querydsl-root:4.1.4'
+  compile 'com.querydsl:querydsl-apt:4.1.4:jpa'
+  compile 'com.querydsl:querydsl-jpa:4.1.4'
+
+  compileOnly 'org.projectlombok:lombok:1.16.18'
+
+  testCompile 'junit:junit'
+  testCompile 'org.assertj:assertj-core:3.8.0'
+}

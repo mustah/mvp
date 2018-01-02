@@ -39,11 +39,13 @@ public class MeasurementEntity {
 
   public MeasurementEntity() {}
 
-  public MeasurementEntity(Long id,
-                           Date created,
-                           String quantity,
-                           MeasurementUnit unit,
-                           PhysicalMeterEntity physicalMeter) {
+  public MeasurementEntity(
+    Long id,
+    Date created,
+    String quantity,
+    MeasurementUnit unit,
+    PhysicalMeterEntity physicalMeter
+  ) {
     this.id = id;
     this.created = new Date(created.getTime());
     this.quantity = quantity;
@@ -51,11 +53,13 @@ public class MeasurementEntity {
     this.physicalMeter = physicalMeter;
   }
 
-  public MeasurementEntity(Date created,
-                           String quantity,
-                           double value,
-                           String unit,
-                           PhysicalMeterEntity physicalMeter) {
+  public MeasurementEntity(
+    Date created,
+    String quantity,
+    double value,
+    String unit,
+    PhysicalMeterEntity physicalMeter
+  ) {
     this(null, created, quantity, new MeasurementUnit(unit, value), physicalMeter);
   }
 }

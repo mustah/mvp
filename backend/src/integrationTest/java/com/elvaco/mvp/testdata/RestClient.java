@@ -42,7 +42,7 @@ public final class RestClient {
         @Override
         public Type getType() {
           return new ParameterizedTypeReferenceImpl(
-            (ParameterizedType) super.getType(), new Type[] {pagedClass});
+            (ParameterizedType) super.getType(), new Type[]{pagedClass});
         }
       };
     return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);

@@ -8,7 +8,7 @@ import com.elvaco.mvp.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/reports")
 public class ReportController {
 
   private final ReportRepository repository;
@@ -18,7 +18,7 @@ public class ReportController {
     this.repository = repository;
   }
 
-  @RequestMapping("/reports")
+  @RequestMapping
   public List<ReportEntity> allReports() {
     return repository.findAll();
   }

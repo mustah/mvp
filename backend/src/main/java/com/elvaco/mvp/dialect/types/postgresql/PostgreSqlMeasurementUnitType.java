@@ -13,14 +13,19 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.postgresql.util.PGobject;
 
 public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
+
   @Override
   public int[] sqlTypes() {
     return new int[] {Types.OTHER};
   }
 
   @Override
-  public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object
-    owner) throws HibernateException, SQLException {
+  public Object nullSafeGet(
+    ResultSet rs,
+    String[] names,
+    SessionImplementor session,
+    Object owner
+  ) throws HibernateException, SQLException {
     PGobject value = (PGobject) rs.getObject(names[0]);
     if (value == null || value.getValue() == null) {
       return null;
@@ -29,8 +34,12 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor
-    session) throws HibernateException, SQLException {
+  public void nullSafeSet(
+    PreparedStatement st,
+    Object value,
+    int index,
+    SessionImplementor session
+  ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != MeasurementUnit.class) {
       st.setNull(index, Types.OTHER);
       return;
