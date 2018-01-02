@@ -5,11 +5,12 @@ import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
+import {AppSwitchDropdown} from '../../../components/actions-dropdown/AppSwitchDropdown';
 import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconReport} from '../../../components/icons/IconReport';
 import {IconValidation} from '../../../components/icons/IconValidation';
-import {Column} from '../../../components/layouts/column/Column';
+import {Column, ColumnBottom} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
@@ -82,6 +83,9 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
 
         </Column>
       </Column>
+      <ColumnBottom className="app-switch-container">
+        <AppSwitchDropdown/>
+      </ColumnBottom>
     </Column>
   );
 };
