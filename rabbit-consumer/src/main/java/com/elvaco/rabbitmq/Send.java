@@ -21,6 +21,7 @@ import org.apache.commons.cli.ParseException;
 public final class Send {
 
   private static final String QUEUE_NAME = "meter-messages";
+  private static final Random RANDOM = new Random();
 
   private Send() {}
 
@@ -74,9 +75,9 @@ public final class Send {
       MeterMessage meterMessage = messageProducer.next();
       Gson gson = new Gson();
       String message = gson.toJson(meterMessage);
-      channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+      channel.basicPublish("", QUEUE_NAME, null, message.getBytes("UTF-8"));
       System.out.println(" [x] Sent '" + message + "'");
-      Thread.sleep(new Random().nextInt(throttleBound));
+      Thread.sleep(RANDOM.nextInt(throttleBound));
     }
   }
 }
