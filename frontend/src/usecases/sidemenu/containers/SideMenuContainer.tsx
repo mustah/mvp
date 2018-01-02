@@ -2,6 +2,8 @@ import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
+import {routes} from '../../../app/routes';
 import {drawerWidth} from '../../../app/themes';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -30,6 +32,7 @@ const SideMenuContainerComponent = (props: StateToProps) => {
         className="AppTitle"
         title={translate('metering')}
         showMenuIconButton={false}
+        iconElementRight={<Link to={routes.admin}> <div>{translate('admin')}</div></Link>}
       />
       <SavedSelectionsContainer/>
 
