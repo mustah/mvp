@@ -1,9 +1,11 @@
 @import "../../../app/variables";
 
 .LoginContainer {
-  flex: 1;
+  background: url(../../../assets/images/login_bg.jpg) bottom left no-repeat;
+  height: 100%;
+  width: 100%;
+  position: fixed;
   align-items: center;
-  margin-bottom: 15%;
 
   .customerLogo {
     margin: 20px 0;
@@ -11,6 +13,7 @@
 
   .LoginPaper {
     padding: 24px !important;
+    margin-bottom: 15%;
 
     .TextField {
       margin-bottom: 20px;

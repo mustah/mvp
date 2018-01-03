@@ -1,7 +1,5 @@
-msgid ""
-msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-03 14:32+0100\n"
+"POT-Creation-Date: 2018-01-03T15:42:54.771Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +7,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.5\n"
+
+msgid "metering"
+msgstr "metering"
+
+msgid "admin"
+msgstr "admin"
 
 msgid "export to Excel (.csv)"
 msgstr "export to Excel (.csv)"
@@ -221,9 +225,6 @@ msgstr "graph"
 msgid "table"
 msgstr "table"
 
-msgid "logout"
-msgstr "logout"
-
 msgid "save"
 msgstr "save"
 
@@ -251,8 +252,8 @@ msgstr "saved selections"
 msgid "selection overview"
 msgstr "selection overview"
 
-msgid "metering"
-msgstr "metering"
+msgid "logout"
+msgstr "logout"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
@@ -273,81 +274,3 @@ msgstr "meters"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
-
-#~ msgid "pick a date"
-#~ msgstr "pick a date"
-
-#~ msgid "between"
-#~ msgstr "between"
-
-#~ msgid "starting date"
-#~ msgstr "starting date"
-
-#~ msgid "and"
-#~ msgstr "and"
-
-#~ msgid "end date"
-#~ msgstr "end date"
-
-#~ msgid "previous"
-#~ msgstr "previous"
-
-#~ msgid "next"
-#~ msgstr "next"
-
-#~ msgid "showing all gateways"
-#~ msgstr "showing all gateways"
-
-#~ msgid "no gateways that are ok"
-#~ msgstr "no gateways that are OK"
-
-#~ msgid "showing all gateways that are ok"
-#~ msgstr "showing all gateways that are OK"
-
-#~ msgid "no gateways that have warnings"
-#~ msgstr "no gateways that have warnings"
-
-#~ msgid "showing all gateways that have warnings"
-#~ msgstr "showing all gateways that have warnings"
-
-#~ msgid "no gateways that have faults"
-#~ msgstr "no gateways that have faults"
-
-#~ msgid "showing all gateways that have faults"
-#~ msgstr "showing all gateways that have faults"
-
-#~ msgid "none"
-#~ msgstr "none"
-
-#~ msgid "warnings"
-#~ msgstr "warnings"
-
-#~ msgid "faults"
-#~ msgstr "faults"
-
-#~ msgid "filter by status"
-#~ msgstr "filter by status"
-
-#~ msgid "showing all meters"
-#~ msgstr "showing all meters"
-
-#~ msgid "no meters that are ok"
-#~ msgstr "no meters that are ok"
-
-#~ msgid "showing all meters that are ok"
-#~ msgstr "showing all meters that are ok"
-
-#~ msgid "no meters that have warnings"
-#~ msgstr "no meters that have warnings"
-
-#~ msgid "showing all meters that have warnings"
-#~ msgstr "showing all meters that have warnings"
-
-#~ msgid "no meters that have faults"
-#~ msgstr "no meters that have faults"
-
-#~ msgid "showing all meters that have faults"
-#~ msgstr "showing all meters that have faults"
-
-#~ msgid "alarms"
-#~ msgstr "alarms"

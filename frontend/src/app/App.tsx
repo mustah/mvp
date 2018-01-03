@@ -1,81 +1,34 @@
-import * as classNames from 'classnames';
 import * as React from 'react';
-import {connect} from 'react-redux';
-import {withRouter} from 'react-router';
-import {bindActionCreators} from 'redux';
-import {RootState} from '../reducers/rootReducer';
-import {fetchGateways, fetchMeters} from '../state/domain-models/domainModelsActions';
-import {getEncodedUriParametersForMeters} from '../state/search/selection/selectionSelectors';
-import {isSideMenuOpen} from '../state/ui/uiSelectors';
-import {Layout} from '../components/layouts/layout/Layout';
-import {Row} from '../components/layouts/row/Row';
-import {MainMenuContainer} from '../usecases/main-menu/containers/MainMenuContainer';
-import {SideMenuContainer} from '../usecases/sidemenu/containers/SideMenuContainer';
+import {Redirect, Route, Switch, withRouter} from 'react-router';
+import {userIsAuthenticated, userIsNotAuthenticated} from '../services/authService';
+import {LoginContainer} from '../usecases/auth/containers/LoginContainer';
+import {AdminAppContainer} from './admin/AdminApp';
 import './App.scss';
-import {Pages} from './Pages';
-
-interface StateToProps {
-  isAuthenticated: boolean;
-  isSideMenuOpen: boolean;
-  encodedUriParametersForMeters: string;
-  encodedUriParametersForGateways: string;
-}
-
-interface DispatchToProps {
-  fetchGateways: (encodedUriParameters: string) => void;
-  fetchMeters: (encodedUriParameters: string) => void;
-}
+import {MvpAppContainer} from './mvp/MvpApp';
+import {routes} from './routes';
 
 /**
  * The Application root component should extend React.Component in order
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-class AppComponent extends React.Component<StateToProps & DispatchToProps> {
 
-  componentDidMount() {
-    const {fetchGateways, fetchMeters, encodedUriParametersForMeters, encodedUriParametersForGateways} = this.props;
-    fetchGateways(encodedUriParametersForMeters);
-    fetchMeters(encodedUriParametersForGateways);
-  }
+const LoginPage = userIsNotAuthenticated(LoginContainer);
+const MvpPage = userIsAuthenticated(MvpAppContainer);
+const AdminPage = userIsAuthenticated(AdminAppContainer);
+
+class AppComponent extends React.Component {
 
   render() {
-    const {isAuthenticated, isSideMenuOpen} = this.props;
-
-    const classes: string[] = ['App'];
-    if (!isAuthenticated) {
-      classes.push('FullPageLogin');
-    }
-    const outerClasses = classNames(classes);
-
-    return (
-      <Row className={outerClasses}>
-        <MainMenuContainer/>
-
-        <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})} hide={!isAuthenticated}>
-          <SideMenuContainer/>
-        </Layout>
-
-        <Pages/>
-      </Row>
-    );
+     return (
+       <Switch>
+         <Route exact={true} path={`${routes.login}/:company?`} component={LoginPage} />
+         <Route path={routes.admin} component={AdminPage} />
+         <Route path={routes.home} component={MvpPage}/>
+         <Redirect to={routes.home}/>
+       </Switch>
+     );
   }
 }
 
-const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootState): StateToProps => {
-  return {
-    isAuthenticated,
-    isSideMenuOpen: isSideMenuOpen(ui),
-    encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
-    encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
-  };
-};
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  fetchGateways,
-  fetchMeters,
-}, dispatch);
-
-const AppContainer = connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(AppComponent);
-
-export const App = withRouter(AppContainer);
+export const App = withRouter(AppComponent);

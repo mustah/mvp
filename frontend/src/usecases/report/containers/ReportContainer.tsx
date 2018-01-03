@@ -11,7 +11,7 @@ import {
 } from '../../../components/indicators/SelectableIndicatorWidgets';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageContainer} from '../../../containers/PageContainer';
+import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
@@ -30,7 +30,7 @@ type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouter
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 
 const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) => (
-  <PageContainer>
+  <MvpPageContainer>
     <Row className="space-between">
       <MainTitle>{translate('report')}</MainTitle>
       <Row>
@@ -48,7 +48,7 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
     <Paper style={contentStyle}>
       <GraphContainer/>
     </Paper>
-  </PageContainer>
+  </MvpPageContainer>
 );
 
 const mapStateToProps = ({ui}: RootState): SelectedIndicatorWidgetProps => ({

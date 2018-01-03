@@ -3,7 +3,7 @@ import * as React from 'react';
 import {paperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageContainer} from '../../../containers/PageContainer';
+import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
@@ -11,7 +11,7 @@ import CollectionTabsContainer from '../containers/CollectionTabsContainer';
 
 export const Collection = () => {
   return (
-    <PageContainer>
+    <MvpPageContainer>
       <Row className="space-between">
         <MainTitle subtitle={translate('gateway')}>
           {translate('collection')}
@@ -25,6 +25,6 @@ export const Collection = () => {
       <Paper style={paperStyle}>
         <CollectionTabsContainer/>
       </Paper>
-    </PageContainer>
+    </MvpPageContainer>
   );
 };

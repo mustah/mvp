@@ -13,3 +13,6 @@ export const Column = ({className, onClick, children}: LayoutProps) => {
 
 export const ColumnCenter = (props: LayoutProps) =>
   <Column {...props} className={classNames(props.className, 'Column-center')}/>;
+
+export const ColumnBottom = (props: LayoutProps) =>
+  <Column {...props} className={classNames(props.className, 'Column-bottom')}/>;

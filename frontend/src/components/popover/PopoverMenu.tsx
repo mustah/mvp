@@ -11,6 +11,8 @@ interface Props {
   IconComponent: React.StatelessComponent<Clickable>;
   onRequestClose?: OnClick;
   className?: string;
+  anchorOrigin?: origin;
+  targetOrigin?: origin;
 }
 
 interface State {
@@ -18,20 +20,22 @@ interface State {
   anchorElement?: React.ReactInstance;
 }
 
-const anchorOrigin: origin = {horizontal: 'right', vertical: 'bottom'};
-const targetOrigin: origin = {horizontal: 'right', vertical: 'top'};
-
 export class PopoverMenu extends React.Component<Props, State> {
+
+  static defaultProps: Partial<Props> = {
+    anchorOrigin: {horizontal: 'right', vertical: 'bottom'},
+    targetOrigin: {horizontal: 'right', vertical: 'top'},
+  };
 
   state: State = {isOpen: false};
 
   render() {
     const {isOpen, anchorElement} = this.state;
-    const {IconComponent, className} = this.props;
+    const {IconComponent, className, anchorOrigin, targetOrigin} = this.props;
 
     return (
       <Row className={classNames('PopoverMenu', className)}>
-        <IconComponent onClick={this.onOpenMenu} />
+        <IconComponent onClick={this.onOpenMenu}/>
         <Popover
           open={isOpen}
           anchorEl={anchorElement}
