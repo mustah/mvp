@@ -1,9 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
 import {RootState} from '../../reducers/rootReducer';
+import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
+import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {MainMenuContainer} from '../../usecases/main-menu/containers/MainMenuContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
@@ -14,27 +17,53 @@ import './MvpApp.scss';
 interface StateToProps {
   isAuthenticated: boolean;
   isSideMenuOpen: boolean;
+  encodedUriParametersForMeters: string;
+  encodedUriParametersForGateways: string;
 }
 
-type Props = StateToProps & InjectedAuthRouterProps;
+interface DispatchToProps {
+  fetchGateways: (encodedUriParameters: string) => void;
+  fetchMeters: (encodedUriParameters: string) => void;
+}
 
-const MvpApp = ({isAuthenticated, isSideMenuOpen}: Props) => {
-  return (
-    <Row className="MvpApp">
-      <MainMenuContainer/>
+type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-      <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})} hide={!isAuthenticated}>
-        <SideMenuContainer/>
-      </Layout>
+class MvpApp extends React.Component<Props> {
 
-      <MvpPages/>
-    </Row>
-  );
-};
+  componentDidMount() {
+    const {fetchGateways, fetchMeters, encodedUriParametersForMeters, encodedUriParametersForGateways} = this.props;
+    fetchGateways(encodedUriParametersForMeters);
+    fetchMeters(encodedUriParametersForGateways);
+  }
 
-const mapStateToProps = ({auth: {isAuthenticated}, ui}: RootState) => ({
+  render() {
+    const {isAuthenticated, isSideMenuOpen} = this.props;
+
+    return (
+      <Row className="MvpApp">
+        <MainMenuContainer/>
+
+        <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})} hide={!isAuthenticated}>
+          <SideMenuContainer/>
+        </Layout>
+
+        <MvpPages/>
+      </Row>
+    );
+  }
+}
+
+const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootState) => ({
   isAuthenticated,
   isSideMenuOpen: isSideMenuOpen(ui),
+  encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
+  encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
 });
 
-export const MvpAppContainer = connect<StateToProps, {}, Props>(mapStateToProps)(MvpApp);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  fetchGateways,
+  fetchMeters,
+}, dispatch);
+
+export const MvpAppContainer =
+  connect<StateToProps, DispatchToProps, Props>(mapStateToProps, mapDispatchToProps)(MvpApp);
