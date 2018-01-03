@@ -7,13 +7,13 @@ import {TopMenuWrapperContainer} from '../usecases/topmenu/containers/TopMenuWra
 interface Props {
   isSideMenuOpen: boolean;
   children?: React.ReactNode;
-  renderTopMenuSearch: JSX.Element;
+  renderTopMenuSearch?: JSX.Element;
 }
 
-export const PageComponent = ({children, isSideMenuOpen, renderTopMenuSearch}: Props) => {
+export const PageComponent = ({children, isSideMenuOpen, renderTopMenuSearch = null}: Props) => {
 
   return (
-    <Layout>
+    <Layout className="flex-1">
       <TopMenuWrapperContainer className={classNames({isSideMenuOpen})}>
         {renderTopMenuSearch}
       </TopMenuWrapperContainer>

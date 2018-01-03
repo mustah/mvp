@@ -15,7 +15,6 @@ import * as classNames from 'classnames';
 import './MvpApp.scss';
 
 interface StateToProps {
-  isAuthenticated: boolean;
   isSideMenuOpen: boolean;
   encodedUriParametersForMeters: string;
   encodedUriParametersForGateways: string;
@@ -37,13 +36,13 @@ class MvpApp extends React.Component<Props> {
   }
 
   render() {
-    const {isAuthenticated, isSideMenuOpen} = this.props;
+    const {isSideMenuOpen} = this.props;
 
     return (
       <Row className="MvpApp">
         <MainMenuContainer/>
 
-        <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})} hide={!isAuthenticated}>
+        <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
           <SideMenuContainer/>
         </Layout>
 
@@ -53,8 +52,7 @@ class MvpApp extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({auth: {isAuthenticated}, ui, searchParameters}: RootState) => ({
-  isAuthenticated,
+const mapStateToProps = ({ui, searchParameters}: RootState) => ({
   isSideMenuOpen: isSideMenuOpen(ui),
   encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
   encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),

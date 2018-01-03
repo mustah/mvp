@@ -1,13 +1,21 @@
 import * as React from 'react';
 import {Redirect, Route, Switch} from 'react-router';
-import {Layout} from '../../components/layouts/layout/Layout';
+import {Row} from '../../components/layouts/row/Row';
+import {MainTitle} from '../../components/texts/Titles';
+import {PageComponent} from '../../containers/PageComponent';
 import {routes} from '../routes';
 
+const AdminStartPage = () => (
+  <PageComponent isSideMenuOpen={false}>
+    <Row>
+      <MainTitle>ADMIN PAGE</MainTitle>
+    </Row>
+  </PageComponent>
+);
+
 export const AdminPages = () => (
-  <Layout className="flex-1">
-    <Switch>
-      <Route exact={true} path={routes.admin} component={() => <div>Hej</div>} />
-      <Redirect to={routes.admin}/>
-    </Switch>
-  </Layout>
+  <Switch>
+    <Route exact={true} path={routes.admin} component={AdminStartPage}/>
+    <Redirect to={routes.admin}/>
+  </Switch>
 );

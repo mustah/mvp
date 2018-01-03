@@ -21,3 +21,7 @@ body {
   color: $black;
   text-decoration: none;
 }
+
+.PageContent {
+  padding: $lg-space + $main-menu-height $lg-space $lg-space $lg-space;
+}
