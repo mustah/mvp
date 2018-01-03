@@ -1,4 +1,4 @@
-package com.elvaco.mvp.api;
+package com.elvaco.mvp.mappers;
 
 import java.time.Instant;
 import java.util.Date;
@@ -7,12 +7,13 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.elvaco.mvp.entity.measurement.QMeasurementEntity;
+import com.elvaco.mvp.mappers.FilterToPredicateMapper;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.lang.Long.parseLong;
 
-class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper {
+public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper {
 
   private static final QMeasurementEntity Q = QMeasurementEntity.measurementEntity;
 
@@ -39,7 +40,7 @@ class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper {
   }
 
   @Override
-  Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+  public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
     return FILTERABLE_PROPERTIES;
   }
 }

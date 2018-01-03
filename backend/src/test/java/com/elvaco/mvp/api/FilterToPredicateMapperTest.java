@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
 
+import com.elvaco.mvp.mappers.FilterToPredicateMapper;
+
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -24,7 +26,7 @@ public class FilterToPredicateMapperTest {
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
       @NotNull
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         return null;
       }
     };
@@ -37,7 +39,7 @@ public class FilterToPredicateMapperTest {
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
       @NotNull
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.FALSE);
         return map;
@@ -54,7 +56,7 @@ public class FilterToPredicateMapperTest {
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
       @NotNull
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("bar", (String v) -> Expressions.FALSE);
         return map;
@@ -72,7 +74,7 @@ public class FilterToPredicateMapperTest {
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
       @NotNull
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
@@ -99,7 +101,7 @@ public class FilterToPredicateMapperTest {
 
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
@@ -131,7 +133,7 @@ public class FilterToPredicateMapperTest {
 
     FilterToPredicateMapper test = new FilterToPredicateMapper() {
       @Override
-      Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,

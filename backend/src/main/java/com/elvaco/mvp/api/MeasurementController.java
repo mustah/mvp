@@ -2,6 +2,7 @@ package com.elvaco.mvp.api;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.repository.MeasurementRepository;
 
 import com.querydsl.core.types.Predicate;
@@ -22,16 +23,19 @@ public class MeasurementController {
   private final MeasurementFilterToPredicateMapper predicateMapper;
 
   @Autowired
-  MeasurementController(MeasurementRepository repository, ModelMapper modelMapper,
-                        MeasurementFilterToPredicateMapper measurementFilterToPredicateMapper) {
+  MeasurementController(
+    MeasurementRepository repository,
+    ModelMapper modelMapper,
+    MeasurementFilterToPredicateMapper predicateMapper
+  ) {
     this.repository = repository;
     this.modelMapper = modelMapper;
-    this.predicateMapper = measurementFilterToPredicateMapper;
+    this.predicateMapper = predicateMapper;
   }
 
   @RequestMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
-    return modelMapper.map(repository.findOne(id), MeasurementDto.class);
+    return toDto(repository.findOne(id));
   }
 
   @RequestMapping()
@@ -40,13 +44,17 @@ public class MeasurementController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Predicate filter = predicateMapper.map(requestParams);
+    Predicate predicate = predicateMapper.map(requestParams);
     Page<MeasurementEntity> page;
     if (scale != null) {
-      page = repository.findAllScaled(scale, filter, pageable);
+      page = repository.findAllScaled(scale, predicate, pageable);
     } else {
-      page = repository.findAll(filter, pageable);
+      page = repository.findAll(predicate, pageable);
     }
-    return page.map(source -> modelMapper.map(source, MeasurementDto.class));
+    return page.map(this::toDto);
+  }
+
+  private MeasurementDto toDto(MeasurementEntity entity) {
+    return modelMapper.map(entity, MeasurementDto.class);
   }
 }

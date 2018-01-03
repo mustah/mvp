@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.repository.MeasurementRepository;
 import com.elvaco.mvp.repository.PhysicalMeterRepository;
 
@@ -31,16 +32,19 @@ public class PhysicalMeterController {
   private final PhysicalMeterRepository repository;
   private final MeasurementRepository measurementRepository;
   private final ModelMapper modelMapper;
+  private final MeasurementFilterToPredicateMapper predicateMapper;
 
   @Autowired
   public PhysicalMeterController(
     PhysicalMeterRepository repository,
     MeasurementRepository measurementRepository,
-    ModelMapper modelMapper
+    ModelMapper modelMapper,
+    MeasurementFilterToPredicateMapper predicateMapper
   ) {
     this.repository = repository;
     this.measurementRepository = measurementRepository;
     this.modelMapper = modelMapper;
+    this.predicateMapper = predicateMapper;
   }
 
   @RequestMapping("{id}")
@@ -75,7 +79,7 @@ public class PhysicalMeterController {
     Map<String, List<String>> filter,
     Pageable pageable
   ) {
-    Predicate predicate = new MeasurementFilterToPredicateMapper().map(filter);
+    Predicate predicate = predicateMapper.map(filter);
     return measurementRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeasurementDto.class));
@@ -87,11 +91,12 @@ public class PhysicalMeterController {
   ) {
     Map<String, List<String>> filter = new HashMap<>();
     filter.putAll(requestParams);
-    filter.putAll(pathVars
-                    .entrySet()
-                    .stream()
-                    .map(e -> new SimpleEntry<>(e.getKey(), singletonList(e.getValue()))
-                    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+    filter.putAll(
+      pathVars
+        .entrySet()
+        .stream()
+        .map(e -> new SimpleEntry<>(e.getKey(), singletonList(e.getValue())))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
     );
     return filter;
   }
