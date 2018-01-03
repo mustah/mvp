@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.ToString;
 
-import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
-import static com.elvaco.mvp.utils.Json.toJsonNode;
+import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.util.Json.toJsonNode;
 
 @ToString
 public class PropertyCollection {

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.utils;
+package com.elvaco.mvp.util;
 
 import java.io.IOException;
 

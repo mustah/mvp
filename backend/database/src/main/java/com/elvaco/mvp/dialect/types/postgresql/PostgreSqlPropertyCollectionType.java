@@ -15,7 +15,7 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.SerializationException;
 import org.postgresql.util.PGobject;
 
-import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
 
 public class PostgreSqlPropertyCollectionType extends PropertyCollectionType {
 

@@ -7,7 +7,7 @@ import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.MeteringPointBaseRepository;
 
-import static com.elvaco.mvp.utils.Json.toJson;
+import static com.elvaco.mvp.util.Json.toJson;
 
 public class PostgreSqlMeteringPointRepository extends MeteringPointBaseRepository {
 

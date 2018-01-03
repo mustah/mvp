@@ -16,7 +16,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.SerializationException;
 
-import static com.elvaco.mvp.utils.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
 
 public class H2PropertyCollectionType extends PropertyCollectionType {
 

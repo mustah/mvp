@@ -70,7 +70,6 @@ compileJava {
 }
 
 dependencies {
-  compile project('common')
   compile project('core')
   compile project('configuration')
   compile project('database')

@@ -2,7 +2,6 @@ apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 dependencies {
-  compile project(':backend:common')
   compile project(':backend:core')
 
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
