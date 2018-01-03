@@ -1,6 +1,7 @@
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MetersState} from './meter/meterModels';
+import {UserState} from './user/userModels';
 
 export interface Location {
   address: Address;
@@ -12,6 +13,7 @@ export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
   gateways = '/gateways',
+  users = '/users',
 }
 
 export interface GeoPosition {
@@ -25,7 +27,7 @@ export interface Address extends IdNamed {
 }
 
 export interface DomainModel<T> {
-  [key: string]: T;
+  [id: string]: T;
 }
 
 export interface Normalized<T> {
@@ -53,4 +55,5 @@ export interface DomainModelsState {
   gatewayStatuses: SelectionEntityState;
   gateways: GatewaysState;
   meters: MetersState;
+  users: UserState;
 }

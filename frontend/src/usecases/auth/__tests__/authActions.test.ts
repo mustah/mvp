@@ -5,8 +5,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
 import {makeToken} from '../../../services/authService';
+import {Role, User} from '../../../state/domain-models/user/userModels';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
-import {Unauthorized, User} from '../authModels';
+import {Unauthorized} from '../authModels';
 
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
@@ -15,10 +16,10 @@ describe('authActions', () => {
 
   const user: User = {
     id: 1,
-    firstName: 'clark',
-    lastName: 'kent',
+    name: 'clark',
     email: 'ck@dailyplanet.net',
     company: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
+    roles: [Role.USER],
   };
   let mockRestClient;
   let store;

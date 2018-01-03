@@ -11,6 +11,7 @@ export const routes = {
   report: '/report',
   validation: '/validation',
   selection: '/selection',
+  administration: '/admin',
 };
 
 const companyLogo = {

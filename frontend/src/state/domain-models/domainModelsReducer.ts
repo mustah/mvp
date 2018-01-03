@@ -6,6 +6,7 @@ import {DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEnti
 import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
+import {User} from './user/userModels';
 
 export const initialDomain = <T>(): NormalizedState<T> => ({
   result: [],
@@ -63,6 +64,7 @@ export const meterStatuses = reducerFor<SelectionEntity>(ParameterName.meterStat
 export const gatewayStatuses = reducerFor<SelectionEntity>(ParameterName.gatewayStatuses, EndPoints.selections);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 export const meters = reducerFor<Meter>('meters', EndPoints.meters);
+export const users = reducerFor<User>('users', EndPoints.users);
 
 export const domainModels = combineReducers<DomainModelsState>({
   addresses,
@@ -74,4 +76,5 @@ export const domainModels = combineReducers<DomainModelsState>({
   gatewayStatuses,
   gateways,
   meters,
+  users,
 });

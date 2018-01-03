@@ -28,7 +28,6 @@ interface DispatchToProps {
 type Props = StateToProps & InjectedAuthRouterProps & DispatchToProps;
 
 class SelectionContainerComponent extends React.Component<Props> {
-
   componentDidMount() {
     this.props.fetchSelections();
   }

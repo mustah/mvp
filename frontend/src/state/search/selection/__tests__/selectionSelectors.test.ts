@@ -1,5 +1,6 @@
 import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
+import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {DomainModelsState, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
 import {selectionsRequest} from '../../../domain-models/domainModelsActions';
@@ -13,13 +14,13 @@ import {
   manufacturers,
   meters,
   meterStatuses,
-  productModels,
+  productModels, users,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
-import {selectPeriodAction, addSelectionAction} from '../selectionActions';
+import {addSelectionAction, selectPeriodAction} from '../selectionActions';
 import {
   LookupState,
   ParameterName,
@@ -36,7 +37,7 @@ import {
   getSelection,
   getSelectionSummary,
 } from '../selectionSelectors';
-import {Period} from '../../../../components/dates/dateModels';
+import {User} from '../../../domain-models/user/userModels';
 
 describe('selectionSelectors', () => {
 
@@ -61,6 +62,7 @@ describe('selectionSelectors', () => {
     const domainModels: DomainModelsState = {
       meters: meters(initialDomain<Meter>(), {type: 'none'}),
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      users: users(initialDomain<User>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
@@ -91,6 +93,7 @@ describe('selectionSelectors', () => {
     const domainModels: DomainModelsState = {
       meters: meters(initialDomain<Meter>(), {type: 'none'}),
       gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+      users: users(initialDomain<User>(), {type: 'none'}),
       alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
       productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
@@ -154,6 +157,7 @@ describe('selectionSelectors', () => {
       const domainModels: DomainModelsState = {
         meters: meters(initialDomain<Meter>(), {type: 'none'}),
         gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+        users: users(initialDomain<User>(), {type: 'none'}),
         alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
         productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),

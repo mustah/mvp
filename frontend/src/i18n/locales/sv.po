@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-12-20 13:55+0100\n"
+"POT-Creation-Date: 2018-01-03 14:33+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -37,21 +37,6 @@ msgstr "denna vecka"
 
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
-
-msgid "pick a date"
-msgstr "välj datum"
-
-msgid "between"
-msgstr "mellan"
-
-msgid "starting date"
-msgstr "startdatum"
-
-msgid "and"
-msgstr "och"
-
-msgid "end date"
-msgstr "slutdatum"
 
 msgid "all"
 msgstr "allt"
@@ -182,6 +167,21 @@ msgstr "flaggad"
 msgid "unFlagged"
 msgstr "ej flaggad"
 
+msgid "administration"
+msgstr "administration"
+
+msgid "name"
+msgstr "namn"
+
+msgid "email"
+msgstr "e-post"
+
+msgid "company"
+msgstr "företag"
+
+msgid "roles"
+msgstr "roller"
+
 msgid "cities"
 msgstr "städer"
 
@@ -273,6 +273,21 @@ msgstr "mätare"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+#~ msgid "pick a date"
+#~ msgstr "välj datum"
+
+#~ msgid "between"
+#~ msgstr "mellan"
+
+#~ msgid "starting date"
+#~ msgstr "startdatum"
+
+#~ msgid "and"
+#~ msgstr "och"
+
+#~ msgid "end date"
+#~ msgstr "slutdatum"
 
 #~ msgid "previous"
 #~ msgstr "föregående"

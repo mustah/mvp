@@ -1,16 +1,4 @@
-import {IdNamed, uuid} from '../../types/Types';
-
-interface Company extends IdNamed {
-  code: uuid;
-}
-
-export interface User {
-  id: uuid;
-  firstName: string;
-  lastName: string;
-  email: string;
-  company: Company;
-}
+import {User} from '../../state/domain-models/user/userModels';
 
 export interface Unauthorized {
   timestamp: number;

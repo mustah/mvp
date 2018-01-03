@@ -1,13 +1,15 @@
 import {normalize, Schema} from 'normalizr';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../services/restClient';
 import {makeUrl} from '../../helpers/urlFactory';
+import {restClient} from '../../services/restClient';
 import {ErrorResponse, IdNamed} from '../../types/Types';
 import {EndPoints, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
 import {meterSchema} from './meter/meterSchema';
+import {User} from './user/userModels';
+import {userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
 export const DOMAIN_MODELS_SUCCESS = 'DOMAIN_MODELS_SUCCESS';
@@ -46,3 +48,6 @@ export const fetchGateways = fetchDomainModel<Gateway>(EndPoints.gateways, gatew
 
 export const meterRequest = domainModelRequest<Gateway>(EndPoints.meters);
 export const fetchMeters = fetchDomainModel<Gateway>(EndPoints.meters, meterRequest, meterSchema);
+
+export const userRequest = domainModelRequest<User>(EndPoints.users);
+export const fetchUsers = fetchDomainModel<User>(EndPoints.users, userRequest, userSchema);
