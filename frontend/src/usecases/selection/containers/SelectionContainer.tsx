@@ -7,7 +7,7 @@ import {paperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageContainer} from '../../../containers/PageContainer';
+import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
@@ -35,7 +35,7 @@ class SelectionContainerComponent extends React.Component<Props> {
   render() {
     const {isFetching, title} = this.props;
     return (
-      <PageContainer>
+      <MvpPageContainer>
         <Row className="space-between">
           <MainTitle>{title}</MainTitle>
           <Row>
@@ -49,7 +49,7 @@ class SelectionContainerComponent extends React.Component<Props> {
             <SelectionContentContainer/>
           </Paper>
         </Loader>
-      </PageContainer>
+      </MvpPageContainer>
     );
   }
 }

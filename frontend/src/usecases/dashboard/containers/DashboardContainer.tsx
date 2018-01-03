@@ -6,7 +6,7 @@ import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageContainer} from '../../../containers/PageContainer';
+import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
@@ -41,7 +41,7 @@ class DashboardContainerComponent extends React.Component<Props> {
   render() {
     const {isFetching, dashboard, meters} = this.props;
     return (
-      <PageContainer>
+      <MvpPageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
           <Row>
@@ -56,7 +56,7 @@ class DashboardContainerComponent extends React.Component<Props> {
             <MapWidgetsContainer markers={meters}/>
           </Column>
         </Loader>
-      </PageContainer>
+      </MvpPageContainer>
     );
   }
 }
