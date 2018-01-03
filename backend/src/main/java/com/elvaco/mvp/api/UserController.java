@@ -1,9 +1,10 @@
 package com.elvaco.mvp.api;
 
-import java.util.Collection;
+import java.util.List;
 
-import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserJpaRepository;
+import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.exception.UserNotFound;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,20 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestApi("/api/users")
 public class UserController {
 
-  private final UserJpaRepository userRepository;
+  private final UserUseCases userUseCases;
 
   @Autowired
-  UserController(UserJpaRepository userRepository) {
-    this.userRepository = userRepository;
+  UserController(UserUseCases userUseCases) {
+    this.userUseCases = userUseCases;
   }
 
   @RequestMapping("{id}")
-  public UserEntity userById(@PathVariable Long id) {
-    return userRepository.findOne(id);
+  public UserDto userById(@PathVariable Long id) {
+    return userUseCases.findById(id)
+      .orElseThrow(() -> new UserNotFound(String.valueOf(id)));
   }
 
   @RequestMapping
-  public Collection<UserEntity> allUsers() {
-    return userRepository.findAll();
+  public List<UserDto> allUsers() {
+    return userUseCases.findAll();
   }
 }

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.access;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.dto.UserDto;
@@ -8,6 +9,8 @@ import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.UserJpaRepository;
 
 import org.modelmapper.ModelMapper;
+
+import static java.util.stream.Collectors.toList;
 
 public class UserRepository implements Users {
 
@@ -23,6 +26,20 @@ public class UserRepository implements Users {
   public Optional<UserDto> findByEmail(String email) {
     return userJpaRepository.findByEmail(email)
       .map(this::toDto);
+  }
+
+  @Override
+  public Optional<UserDto> findById(Long id) {
+    return Optional.ofNullable(userJpaRepository.findOne(id))
+      .map(this::toDto);
+  }
+
+  @Override
+  public List<UserDto> findAll() {
+    return userJpaRepository.findAll()
+      .stream()
+      .map(this::toDto)
+      .collect(toList());
   }
 
   private UserDto toDto(UserEntity userEntity) {
