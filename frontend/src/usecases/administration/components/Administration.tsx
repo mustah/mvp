@@ -3,13 +3,13 @@ import * as React from 'react';
 import {paperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
-import {PageContainer} from '../../../containers/PageContainer';
+import {PageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
 import {AdministrationUserContainer} from '../containers/AdministrationUserContainer';
 
 export const Administration = () => {
   return (
-    <PageContainer>
+    <PageComponent isSideMenuOpen={false}>
       <Row className="space-between">
         <MainTitle>
           {translate('administration')}
@@ -19,6 +19,6 @@ export const Administration = () => {
       <Paper style={paperStyle}>
         <AdministrationUserContainer/>
       </Paper>
-    </PageContainer>
+    </PageComponent>
   );
 };
