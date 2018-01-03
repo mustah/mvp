@@ -6,6 +6,7 @@ import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Before;

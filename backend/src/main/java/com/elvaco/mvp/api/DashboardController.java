@@ -6,7 +6,7 @@ import com.elvaco.mvp.dto.ColoredBoxDto;
 import com.elvaco.mvp.dto.DashboardDto;
 import com.elvaco.mvp.dto.SystemOverviewDto;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
-import com.elvaco.mvp.repository.DashboardRepository;
+import com.elvaco.mvp.repository.jpa.DashboardRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

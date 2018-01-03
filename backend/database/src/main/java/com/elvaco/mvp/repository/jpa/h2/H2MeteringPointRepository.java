@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository.inmemory;
+package com.elvaco.mvp.repository.jpa.h2;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -8,15 +8,15 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointBaseRepository;
+import com.elvaco.mvp.repository.jpa.MeteringPointBaseRepository;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static java.util.stream.Collectors.toList;
 
-public class InMemoryMeteringPointRepository extends MeteringPointBaseRepository {
+public class H2MeteringPointRepository extends MeteringPointBaseRepository {
 
-  public InMemoryMeteringPointRepository(EntityManager entityManager) {
+  public H2MeteringPointRepository(EntityManager entityManager) {
     super(entityManager);
   }
 

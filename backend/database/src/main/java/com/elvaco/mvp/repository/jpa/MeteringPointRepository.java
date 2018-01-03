@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository;
+package com.elvaco.mvp.repository.jpa;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package com.elvaco.mvp.api;
 import java.util.List;
 
 import com.elvaco.mvp.entity.collection.CollectionEntity;
-import com.elvaco.mvp.repository.CollectionRepository;
+import com.elvaco.mvp.repository.jpa.CollectionRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

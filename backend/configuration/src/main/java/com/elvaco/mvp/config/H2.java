@@ -9,6 +9,6 @@ import org.springframework.context.annotation.Profile;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Profile("in-memory")
-public @interface InMemory {
+@Profile("h2")
+public @interface H2 {
 }

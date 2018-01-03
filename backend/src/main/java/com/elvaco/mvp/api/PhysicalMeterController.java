@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.mappers.MeasurementFilterToPredicateMapper;
-import com.elvaco.mvp.repository.MeasurementRepository;
-import com.elvaco.mvp.repository.PhysicalMeterRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;

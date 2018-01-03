@@ -1,11 +1,11 @@
-package com.elvaco.mvp.repository.postgresql;
+package com.elvaco.mvp.repository.jpa.postgresql;
 
 import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.MeteringPointBaseRepository;
+import com.elvaco.mvp.repository.jpa.MeteringPointBaseRepository;
 
 import static com.elvaco.mvp.utils.Json.toJson;
 

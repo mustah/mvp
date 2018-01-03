@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository;
+package com.elvaco.mvp.repository.jpa;
 
 import javax.persistence.EntityManager;
 

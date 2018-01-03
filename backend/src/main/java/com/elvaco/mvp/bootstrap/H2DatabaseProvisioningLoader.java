@@ -1,24 +1,26 @@
 package com.elvaco.mvp.bootstrap;
 
-import com.elvaco.mvp.config.InMemory;
+import com.elvaco.mvp.config.H2;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+@H2
 @Component
-@InMemory
-public class InMemoryDatabaseProvisioningLoader implements CommandLineRunner {
-  private JdbcTemplate template;
+public class H2DatabaseProvisioningLoader implements CommandLineRunner {
+
+  private final JdbcTemplate template;
 
   @Autowired
-  public InMemoryDatabaseProvisioningLoader(JdbcTemplate template) {
+  public H2DatabaseProvisioningLoader(JdbcTemplate template) {
     this.template = template;
   }
 
   @Override
-  public void run(String... args) throws Exception {
+  public void run(String... args) {
     template.execute("CREATE ALIAS unit_at FOR \"com.elvaco.mvp.dialect.function"
-        + ".h2.CompatibilityFunctions.unitAt\"");
+                     + ".h2.CompatibilityFunctions.unitAt\"");
   }
 }

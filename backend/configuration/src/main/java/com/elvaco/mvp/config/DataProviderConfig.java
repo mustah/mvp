@@ -1,8 +1,8 @@
 package com.elvaco.mvp.config;
 
-import com.elvaco.mvp.access.UserRepository;
 import com.elvaco.mvp.core.usecase.Users;
-import com.elvaco.mvp.repository.UserJpaRepository;
+import com.elvaco.mvp.repository.access.UserRepository;
+import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

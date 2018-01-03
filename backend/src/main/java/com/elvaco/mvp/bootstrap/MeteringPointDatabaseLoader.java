@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

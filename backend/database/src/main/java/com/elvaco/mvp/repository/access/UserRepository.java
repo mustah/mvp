@@ -1,4 +1,4 @@
-package com.elvaco.mvp.access;
+package com.elvaco.mvp.repository.access;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,7 +6,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserJpaRepository;
+import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import org.modelmapper.ModelMapper;
 

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository;
+package com.elvaco.mvp.repository.jpa;
 
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
