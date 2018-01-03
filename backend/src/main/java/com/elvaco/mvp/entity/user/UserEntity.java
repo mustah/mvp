@@ -20,8 +20,7 @@ public class UserEntity {
   @Id
   @GeneratedValue
   public Long id;
-  public String firstName;
-  public String lastName;
+  public String name;
   public String email;
   /**
    * Company associated with this user.
@@ -31,9 +30,8 @@ public class UserEntity {
   public UserEntity() {
   }
 
-  public UserEntity(String firstName, String lastName, String email, String company) {
-    this.firstName = firstName;
-    this.lastName = lastName;
+  public UserEntity(String name, String email, String company) {
+    this.name = name;
     this.email = email;
     this.company = company;
   }

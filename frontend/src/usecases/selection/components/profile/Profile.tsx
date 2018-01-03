@@ -8,7 +8,7 @@ import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
-import {User} from '../../../auth/authModels';
+import {User} from '../../../../state/domain-models/user/userModels';
 import './Profile.scss';
 
 interface Props {
@@ -33,7 +33,7 @@ export const Profile = (props: Props) => {
         </PopoverMenu>
       </Row>
       <Row className="Row-center">
-        <Xsmall className="Bold">{user.firstName}</Xsmall>
+        <Xsmall className="Bold">{user.name}</Xsmall>
       </Row>
     </Column>
   );

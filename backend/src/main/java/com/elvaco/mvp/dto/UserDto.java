@@ -6,8 +6,7 @@ import lombok.ToString;
 public class UserDto {
 
   public Long id;
-  public String firstName;
-  public String lastName;
+  public String name;
   public String email;
   public String company;
 }

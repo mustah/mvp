@@ -10,21 +10,40 @@ const fromDbJson = {
   authenticate: [
     {
       id: 'evanil@elvaco.se',
-      firstName: 'Eva',
-      lastName: 'Nilsson',
+      name: 'Eva Nilsson',
       email: 'evanil@elvaco.se',
       company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+      roles: ['USER', 'ADMIN'],
     },
     {
       id: 'johnny@wayne-industries.se',
-      firstName: 'Johnny',
-      lastName: 'Persbrandt',
+      name: 'Johnny Persbrandt',
       email: 'johnny@wayne-industries.se',
       company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
+      roles: ['USER'],
+    },
+    {
+      id: 'mickey@wayne-industries.se',
+      name: 'Mickey Mouse',
+      email: 'mickey@wayne-industries.se',
+      company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
+      roles: ['USER', 'ADMIN'],
     },
   ],
-  todos: [
-    'translate unhandled and handled collections in the right place',
+  users: [
+    {
+      id: 'andnil@elvaco.se',
+      name: 'Anders Nilsson',
+      email: 'andnil@elvaco.se',
+      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+      roles: ['USER'],
+    },{
+      id: 'laslar@elvaco.se',
+      name: 'Lasse Larson',
+      email: 'laslar@elvaco.se',
+      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+      roles: ['USER'],
+    }
   ],
   dashboards: [
     {
@@ -49,6 +68,8 @@ const fromDbJson = {
     name: 'typicode',
   },
 };
+
+fromDbJson.users = [...fromDbJson.users, ...fromDbJson.authenticate];
 
 const statusChangelog = [
   {

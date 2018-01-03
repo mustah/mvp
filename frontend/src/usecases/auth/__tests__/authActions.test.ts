@@ -15,10 +15,10 @@ describe('authActions', () => {
 
   const user: User = {
     id: 1,
-    firstName: 'clark',
-    lastName: 'kent',
+    name: 'clark',
     email: 'ck@dailyplanet.net',
     company: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
+    roles: [Role.USER],
   };
   let mockRestClient;
   let store;
