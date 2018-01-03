@@ -45,9 +45,11 @@ public class MeasurementRepository extends QueryDslJpaRepository<MeasurementEnti
     );
   }
 
-  private MeasurementRepository(JpaEntityInformation<MeasurementEntity, Long> entityInformation,
-                                EntityManager entityManager,
-                                EntityPathResolver resolver) {
+  private MeasurementRepository(
+    JpaEntityInformation<MeasurementEntity, Long> entityInformation,
+    EntityManager entityManager,
+    EntityPathResolver resolver
+  ) {
     super(entityInformation, entityManager);
     this.entityManager = entityManager;
     this.path = resolver.createPath(entityInformation.getJavaType());
@@ -55,9 +57,11 @@ public class MeasurementRepository extends QueryDslJpaRepository<MeasurementEnti
     this.querydsl = new Querydsl(entityManager, builder);
   }
 
-  public Page<MeasurementEntity> findAllScaled(String scale,
-                                               Predicate predicate,
-                                               Pageable pageable) {
+  public Page<MeasurementEntity> findAllScaled(
+    String scale,
+    Predicate predicate,
+    Pageable pageable
+  ) {
     JPQLQuery<MeasurementEntity> query = new JPAQuery<>(entityManager);
     QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
     query.select(

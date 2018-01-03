@@ -2,7 +2,7 @@ package com.elvaco.mvp.api;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 
 import com.querydsl.core.types.Predicate;
@@ -20,13 +20,13 @@ public class MeasurementController {
 
   private final MeasurementRepository repository;
   private final ModelMapper modelMapper;
-  private final MeasurementFilterToPredicateMapper predicateMapper;
+  private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
   MeasurementController(
     MeasurementRepository repository,
     ModelMapper modelMapper,
-    MeasurementFilterToPredicateMapper predicateMapper
+    FilterToPredicateMapper predicateMapper
   ) {
     this.repository = repository;
     this.modelMapper = modelMapper;

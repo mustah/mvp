@@ -1,4 +1,4 @@
-package com.elvaco.mvp.mappers;
+package com.elvaco.mvp.repository.jpa.mappers;
 
 import java.util.ArrayList;
 import java.util.HashMap;

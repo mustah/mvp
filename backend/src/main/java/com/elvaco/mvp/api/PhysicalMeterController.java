@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 
@@ -32,14 +32,14 @@ public class PhysicalMeterController {
   private final PhysicalMeterRepository repository;
   private final MeasurementRepository measurementRepository;
   private final ModelMapper modelMapper;
-  private final MeasurementFilterToPredicateMapper predicateMapper;
+  private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
   public PhysicalMeterController(
     PhysicalMeterRepository repository,
     MeasurementRepository measurementRepository,
     ModelMapper modelMapper,
-    MeasurementFilterToPredicateMapper predicateMapper
+    FilterToPredicateMapper predicateMapper
   ) {
     this.repository = repository;
     this.measurementRepository = measurementRepository;

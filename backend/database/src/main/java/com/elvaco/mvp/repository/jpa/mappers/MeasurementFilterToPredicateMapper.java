@@ -1,4 +1,4 @@
-package com.elvaco.mvp.mappers;
+package com.elvaco.mvp.repository.jpa.mappers;
 
 import java.time.Instant;
 import java.util.Date;
@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.elvaco.mvp.entity.measurement.QMeasurementEntity;
-import com.elvaco.mvp.mappers.FilterToPredicateMapper;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 
