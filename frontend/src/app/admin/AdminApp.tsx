@@ -21,7 +21,7 @@ const AdminApp = () => {
   return (
     <Row className="AdminApp">
       <Column className="Admin-side-container">
-        <ColumnBottom className="app-switch-container">
+        <ColumnBottom className="App-switch-wrapper">
           <AppSwitchDropdown />
         </ColumnBottom>
       </Column>

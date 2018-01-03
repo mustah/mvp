@@ -22,16 +22,16 @@ export const AppSwitchDropdown = () => {
       targetOrigin={targetOrigin}
       className="popover clickable"
     >
-      <MenuItem className="first-uppercase">
-        <Link to={routes.home} className="link">
+      <Link to={routes.home} className="link">
+        <MenuItem className="first-uppercase">
           {translate('metering')}
-        </Link>
-      </MenuItem>
-      <MenuItem className="first-uppercase">
-        <Link to={routes.admin} className="link">
+        </MenuItem>
+      </Link>
+      <Link to={routes.admin} className="link">
+        <MenuItem className="first-uppercase">
           {translate('admin')}
-        </Link>
-      </MenuItem>
+        </MenuItem>
+      </Link>
     </PopoverMenu>
   );
 };
