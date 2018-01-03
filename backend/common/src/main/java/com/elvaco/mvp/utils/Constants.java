@@ -1,4 +1,4 @@
-package com.elvaco.mvp.constants;
+package com.elvaco.mvp.utils;
 
 public final class Constants {
 

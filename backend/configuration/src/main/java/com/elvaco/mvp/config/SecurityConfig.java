@@ -33,16 +33,16 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        .antMatchers(HttpMethod.OPTIONS, API).permitAll()
-        .antMatchers(H2_CONSOLE).permitAll();
+      .antMatchers(HttpMethod.OPTIONS, API).permitAll()
+      .antMatchers(H2_CONSOLE).permitAll();
     http.csrf().disable();
     http.headers().frameOptions().disable();
 
     http
-        .authorizeRequests().antMatchers(API).fullyAuthenticated()
-        .and()
-        .httpBasic()
-        .and()
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+      .authorizeRequests().antMatchers(API).fullyAuthenticated()
+      .and()
+      .httpBasic()
+      .and()
+      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
   }
 }

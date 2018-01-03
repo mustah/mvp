@@ -11,7 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static com.elvaco.mvp.constants.Constants.AUTHORIZATION;
+import static com.elvaco.mvp.utils.Constants.AUTHORIZATION;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {
@@ -42,7 +42,9 @@ public final class RestClient {
         @Override
         public Type getType() {
           return new ParameterizedTypeReferenceImpl(
-            (ParameterizedType) super.getType(), new Type[]{pagedClass});
+            (ParameterizedType) super.getType(),
+            new Type[] {pagedClass}
+          );
         }
       };
     return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
