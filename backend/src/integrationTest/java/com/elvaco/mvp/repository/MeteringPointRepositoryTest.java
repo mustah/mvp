@@ -31,8 +31,9 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
   @Test
   public void isNotContainedInPropertyCollection() {
     UserPropertyDto user = new UserPropertyDto("12cccx123");
+    PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(new PropertyCollectionDto(user))).isEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test

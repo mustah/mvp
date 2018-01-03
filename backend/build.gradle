@@ -77,9 +77,6 @@ dependencies {
 
   compile('org.springframework.boot:spring-boot-starter-actuator')
   compile('org.springframework.boot:spring-boot-starter-hateoas')
-  compile('org.springframework.security:spring-security-acl')
-
-  compileOnly('org.projectlombok:lombok:1.16.18')
 
   runtime('org.liquibase:liquibase-core')
   runtime('com.h2database:h2')

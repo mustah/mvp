@@ -1,7 +1,7 @@
 package com.elvaco.mvp.api;
 
-import com.elvaco.mvp.dto.ErrorMessageDto;
 import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.dto.ErrorMessageDto;
 import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.UserJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
