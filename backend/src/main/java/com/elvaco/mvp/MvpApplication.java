@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 import static java.util.Collections.singletonList;
 
 @EnableWebSecurity
+@ComponentScan(basePackages = "com.elvaco.mvp")
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class MvpApplication extends WebMvcConfigurerAdapter {
 

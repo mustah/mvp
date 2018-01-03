@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeteringPointControllerTest extends IntegrationTest {
 
   @Autowired
-  MeteringPointRepository repository;
+  MeteringPointRepository meteringPointRepository;
 
   @Before
   public void setUp() {
@@ -32,7 +32,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
     mp.propertyCollection = new PropertyCollection()
       .put("user", new UserPropertyDto("abc123", "Some project"))
       .putArray("numbers", Arrays.asList(1, 2, 3, 17));
-    repository.save(mp);
+    meteringPointRepository.save(mp);
     restClient().loginWith("evanil@elvaco.se", "eva123");
   }
 

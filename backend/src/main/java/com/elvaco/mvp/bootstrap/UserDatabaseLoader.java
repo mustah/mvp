@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
+import com.elvaco.mvp.repository.UserJpaRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,10 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {
 
-  private final UserRepository repository;
+  private final UserJpaRepository repository;
 
   @Autowired
-  public UserDatabaseLoader(UserRepository repository) {
+  public UserDatabaseLoader(UserJpaRepository repository) {
     this.repository = repository;
   }
 

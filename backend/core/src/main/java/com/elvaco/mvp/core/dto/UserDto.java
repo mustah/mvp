@@ -1,4 +1,4 @@
-package com.elvaco.mvp.dto;
+package com.elvaco.mvp.core.dto;
 
 import lombok.ToString;
 

@@ -3,21 +3,14 @@ package com.elvaco.mvp.repository.postgresql;
 import java.util.List;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.config.PostgreSql;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointBaseRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import static com.elvaco.mvp.utils.Json.toJson;
 
-@PostgreSql
-@Repository
 public class PostgreSqlMeteringPointRepository extends MeteringPointBaseRepository {
 
-  @Autowired
   public PostgreSqlMeteringPointRepository(EntityManager entityManager) {
     super(entityManager);
   }

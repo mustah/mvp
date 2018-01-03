@@ -3,7 +3,7 @@ package com.elvaco.mvp.api;
 import java.util.Collection;
 
 import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
+import com.elvaco.mvp.repository.UserJpaRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RestApi("/api/users")
 public class UserController {
 
-  private final UserRepository userRepository;
+  private final UserJpaRepository userRepository;
 
   @Autowired
-  UserController(UserRepository userRepository) {
+  UserController(UserJpaRepository userRepository) {
     this.userRepository = userRepository;
   }
 

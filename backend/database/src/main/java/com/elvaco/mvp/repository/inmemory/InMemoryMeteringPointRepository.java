@@ -5,30 +5,25 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.config.InMemory;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.MeteringPointBaseRepository;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import static java.util.stream.Collectors.toList;
 
-@InMemory
-@Repository
 public class InMemoryMeteringPointRepository extends MeteringPointBaseRepository {
 
-  @Autowired
   public InMemoryMeteringPointRepository(EntityManager entityManager) {
     super(entityManager);
   }
 
   @Override
-  public List<MeteringPointEntity> containsInPropertyCollection(PropertyCollectionDto
-                                                                  requestModel) {
+  public List<MeteringPointEntity> containsInPropertyCollection(
+    PropertyCollectionDto requestModel
+  ) {
     return findAllWithPropertyCollections()
       .filter(containsJson(requestModel))
       .collect(toList());

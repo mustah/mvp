@@ -1,9 +1,9 @@
 package com.elvaco.mvp.api;
 
 import com.elvaco.mvp.dto.ErrorMessageDto;
-import com.elvaco.mvp.dto.UserDto;
+import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
+import com.elvaco.mvp.repository.UserJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AuthControllerTest extends IntegrationTest {
 
   @Autowired
-  private UserRepository userRepository;
+  private UserJpaRepository userRepository;
 
   @After
   public void tearDown() {

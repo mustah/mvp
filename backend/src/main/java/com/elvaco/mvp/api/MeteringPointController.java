@@ -17,27 +17,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RestApi("/api/mps")
 public class MeteringPointController {
 
-  private final MeteringPointRepository repository;
+  private final MeteringPointRepository meteringPointRepository;
 
   @Autowired
-  MeteringPointController(MeteringPointRepository repository) {
-    this.repository = repository;
+  MeteringPointController(MeteringPointRepository meteringPointRepository) {
+    this.meteringPointRepository = meteringPointRepository;
   }
 
   @RequestMapping("{id}")
   public MeteringPointEntity meteringPoint(@PathVariable Long id) {
-    return repository.findOne(id);
+    return meteringPointRepository.findOne(id);
   }
 
   @RequestMapping
   public List<MeteringPointEntity> meteringPoints() {
-    return repository.findAll();
+    return meteringPointRepository.findAll();
   }
 
   @RequestMapping(value = "/property-collections", method = RequestMethod.POST)
   public List<MeteringPointEntity> containsInPropertyCollections(
     @RequestBody PropertyCollectionDto requestModel
   ) {
-    return repository.containsInPropertyCollection(requestModel);
+    return meteringPointRepository.containsInPropertyCollection(requestModel);
   }
 }

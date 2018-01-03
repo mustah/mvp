@@ -71,14 +71,13 @@ compileJava {
 
 dependencies {
   compile project('common')
+  compile project('core')
   compile project('configuration')
   compile project('database')
 
   compile('org.springframework.boot:spring-boot-starter-actuator')
-  compile('org.springframework.boot:spring-boot-starter-security')
   compile('org.springframework.boot:spring-boot-starter-hateoas')
   compile('org.springframework.security:spring-security-acl')
-  compile('org.modelmapper:modelmapper:1.1.0')
 
   compileOnly('org.projectlombok:lombok:1.16.18')
 

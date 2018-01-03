@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeteringPointRepositoryTest extends IntegrationTest {
 
   @Autowired
-  private MeteringPointRepository repository;
+  private MeteringPointRepository meteringPointRepository;
 
   @Before
   public void setUp() {
@@ -25,21 +25,21 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     mp.propertyCollection = new PropertyCollection()
       .put("user", new UserPropertyDto("abc123", "Under construction"))
       .putArray("numbers", Arrays.asList(1, 2, 3, 17));
-    repository.save(mp);
+    meteringPointRepository.save(mp);
   }
 
   @Test
   public void isNotContainedInPropertyCollection() {
     UserPropertyDto user = new UserPropertyDto("12cccx123");
 
-    assertThat(repository.containsInPropertyCollection(new PropertyCollectionDto(user))).isEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(new PropertyCollectionDto(user))).isEmpty();
   }
 
   @Test
   public void containsInPropertyCollection() {
     PropertyCollectionDto requestModel = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
-    assertThat(repository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -48,7 +48,7 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     user.project = "Under construction";
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(repository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -56,7 +56,7 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "Under construction");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(repository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -64,16 +64,16 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "building does not exist yet");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(repository.containsInPropertyCollection(requestModel)).isEmpty();
+    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test
   public void fieldNameExistsAtTopLevelJson() {
-    assertThat(repository.existsInPropertyCollection("user")).isNotEmpty();
+    assertThat(meteringPointRepository.existsInPropertyCollection("user")).isNotEmpty();
   }
 
   @Test
   public void fieldNameDoesNotExistAtTopLevelJson() {
-    assertThat(repository.existsInPropertyCollection("top")).isEmpty();
+    assertThat(meteringPointRepository.existsInPropertyCollection("top")).isEmpty();
   }
 }
