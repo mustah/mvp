@@ -1,13 +1,5 @@
 @import "../variables";
 
 .MvpApp {
-  .SideMenuContainer {
-    width: $main-menu-width;
-
-    &.isSideMenuOpen {
-      width: $opened-side-menu-width;
-    }
-  }
-
   @import "../material-design";
 }

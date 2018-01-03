@@ -2,7 +2,6 @@ import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
 import {AppSwitchDropdown} from '../../../components/actions-dropdown/AppSwitchDropdown';
@@ -14,30 +13,14 @@ import {Column, ColumnBottom} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
-import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {OnClick} from '../../../types/Types';
-import {AuthState} from '../../auth/authModels';
-import {toggleShowHideSideMenu} from '../../sidemenu/sideMenuActions';
-import {MainMenuToggleIcon} from '../components/menuitems/MainMenuToggleIcon';
 import {MenuItem} from '../components/menuitems/MenuItem';
 import './MainMenuContainer.scss';
 
 interface StateToProps {
   pathname: string;
-  auth: AuthState;
-  isSideMenuOpen: boolean;
 }
 
-interface DispatchToProps {
-  toggleShowHideSideMenu: OnClick;
-}
-
-const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
-  const {pathname, auth, isSideMenuOpen} = props;
-
-  if (!auth.isAuthenticated) {
-    return null;
-  }
+const MainMenuContainerComponent = ({pathname}: StateToProps) => {
 
   return (
     <Column className="MainMenuContainer">
@@ -79,8 +62,6 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
             />
           </Link>
 
-          <MainMenuToggleIcon onClick={props.toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
-
         </Column>
       </Column>
       <ColumnBottom className="flex-1">
@@ -90,17 +71,11 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({auth, routing, ui}: RootState): StateToProps => {
+const mapStateToProps = ({routing}: RootState): StateToProps => {
   return {
     pathname: getPathname(routing),
-    auth,
-    isSideMenuOpen: isSideMenuOpen(ui),
   };
 };
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  toggleShowHideSideMenu,
-}, dispatch);
-
 export const MainMenuContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MainMenuContainerComponent);
+  connect<StateToProps>(mapStateToProps)(MainMenuContainerComponent);

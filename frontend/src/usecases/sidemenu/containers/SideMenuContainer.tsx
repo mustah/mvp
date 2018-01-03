@@ -1,23 +1,23 @@
-import AppBar from 'material-ui/AppBar';
 import Drawer from 'material-ui/Drawer';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {drawerWidth} from '../../../app/themes';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
 import {isSideMenuOpen} from '../../../state/ui/uiSelectors';
-import {SavedSelectionsContainer} from '../components/savedSelections/SavedSelections';
-import {SelectionTreeContainer} from './selection-tree/SelectionTreeContainer';
+import {Children} from '../../../types/Types';
 import './SideMenuContainer.scss';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
 }
 
-const SideMenuContainerComponent = (props: StateToProps) => {
-  const {isSideMenuOpen} = props;
+interface OwnProps {
+  children?: Children;
+}
 
-  const containerStyle: React.CSSProperties = {left: isSideMenuOpen ? drawerWidth : 0};
+const SideMenuContainerComponent = ({isSideMenuOpen, children}: StateToProps & OwnProps) => {
+
+  const containerStyle: React.CSSProperties = {left: drawerWidth};
 
   return (
     <Drawer
@@ -26,14 +26,7 @@ const SideMenuContainerComponent = (props: StateToProps) => {
       docked={true}
       containerStyle={containerStyle}
     >
-      <AppBar
-        className="AppTitle"
-        title={translate('metering')}
-        showMenuIconButton={false}
-      />
-      <SavedSelectionsContainer/>
-
-      <SelectionTreeContainer topLevel={'cities'}/>
+      {children}
     </Drawer>
   );
 };
@@ -45,4 +38,4 @@ const mapStateToProps = ({ui}: RootState): StateToProps => {
 };
 
 export const SideMenuContainer =
-  connect<StateToProps>(mapStateToProps)(SideMenuContainerComponent);
+  connect<StateToProps, {}, OwnProps>(mapStateToProps)(SideMenuContainerComponent);
