@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-@RestApi
 @Slf4j
+@RestApi
 @Profile("json-server-proxy")
 public class JsonServerProxyController {
   private static final int JSON_SERVER_PORT = 3000;
@@ -29,3 +29,4 @@ public class JsonServerProxyController {
     return new ModelAndView("redirect:" + proxyUri);
   }
 }
+

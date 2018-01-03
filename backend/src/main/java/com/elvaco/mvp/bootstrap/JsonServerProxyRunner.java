@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
  * is implemented (hopefully!).
  * For development use only!
  */
+@Slf4j
 @Component
 @Profile("json-server-proxy")
-@Slf4j
 public class JsonServerProxyRunner implements CommandLineRunner {
 
   private final ResourceLoader resourceLoader;

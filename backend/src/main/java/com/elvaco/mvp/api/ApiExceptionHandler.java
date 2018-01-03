@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
-@ControllerAdvice
 @Slf4j
+@ControllerAdvice
 public class ApiExceptionHandler {
 
   /**
