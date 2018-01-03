@@ -11,9 +11,11 @@ import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;
 
-public class CompatibilityFunctions {
+public final class CompatibilityFunctions {
 
   private static Map<String, Unit> customTypes = new HashMap<>();
+
+  private CompatibilityFunctions() {}
 
   static {
     SimpleUnitFormat.getInstance().alias(Units.CELSIUS, "Celsius");

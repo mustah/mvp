@@ -21,8 +21,9 @@ public class H2MeasurementUnitType extends MeasurementUnitType {
   public Object nullSafeGet(
     ResultSet rs,
     String[] names,
-    SessionImplementor session, Object
-      owner) throws HibernateException, SQLException {
+    SessionImplementor session,
+    Object owner
+  ) throws HibernateException, SQLException {
     String value = rs.getString(names[0]);
     if (value == null) {
       return null;
@@ -31,8 +32,10 @@ public class H2MeasurementUnitType extends MeasurementUnitType {
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor
-    session) throws HibernateException, SQLException {
+  public void nullSafeSet(
+    PreparedStatement st, Object value, int index, SessionImplementor
+    session
+  ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != MeasurementUnit.class) {
       st.setNull(index, Types.OTHER);
       return;

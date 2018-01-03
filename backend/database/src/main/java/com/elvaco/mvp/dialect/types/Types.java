@@ -1,6 +1,7 @@
 package com.elvaco.mvp.dialect.types;
 
 public enum Types {
+
   PropertyCollection("property-collection"),
   MeasurementUnit("measurement-unit");
 
@@ -14,5 +15,4 @@ public enum Types {
   public String toString() {
     return name;
   }
-
 }
