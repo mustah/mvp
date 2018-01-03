@@ -31,7 +31,7 @@ export const Table = (props: TableProps) => {
     return React.cloneElement(header, headerProps);
   });
 
-  const rows = () => {
+  const rows = (() => {
     if (!result.length) {
       return null;
     }
@@ -49,7 +49,7 @@ export const Table = (props: TableProps) => {
       </tr>);
 
     return result.map(renderRows);
-  };
+  })();
 
   return (
     <table className={classNames('Table')} cellPadding={0} cellSpacing={0}>
@@ -59,7 +59,7 @@ export const Table = (props: TableProps) => {
       </tr>
       </thead>
       <tbody>
-      {rows()}
+      {rows}
       </tbody>
     </table>
   );
