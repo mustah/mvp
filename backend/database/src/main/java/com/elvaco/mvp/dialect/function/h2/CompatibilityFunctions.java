@@ -13,7 +13,7 @@ import tec.uom.se.unit.Units;
 
 public final class CompatibilityFunctions {
 
-  private static Map<String, Unit> customTypes = new HashMap<>();
+  private static final Map<String, Unit<?>> CUSTOM_TYPES = new HashMap<>();
 
   private CompatibilityFunctions() {}
 
@@ -22,27 +22,27 @@ public final class CompatibilityFunctions {
     SimpleUnitFormat.getInstance().alias(Units.KELVIN, "Kelvin");
     /* Necessary hack, because UOM's unit parser doesn't approve of
     this unit format.*/
-    customTypes.put("m3", Units.CUBIC_METRE);
+    CUSTOM_TYPES.put("m3", Units.CUBIC_METRE);
   }
 
   public static String unitAt(String valueAndUnit, String target) {
     Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
 
-    Quantity sourceQuantity;
+    Quantity<?> sourceQuantity;
     try {
-      sourceQuantity = Quantities.getQuantity(valueAndUnit.toString());
+      sourceQuantity = Quantities.getQuantity(valueAndUnit);
     } catch (IllegalArgumentException iex) {
-      MeasurementUnit munit = new MeasurementUnit(valueAndUnit);
-      if (customTypes.containsKey(munit.getUnit())) {
+      MeasurementUnit measurementUnit = new MeasurementUnit(valueAndUnit);
+      if (CUSTOM_TYPES.containsKey(measurementUnit.getUnit())) {
         sourceQuantity = Quantities.getQuantity(
-          munit.getValue(),
-          customTypes.get(munit.getUnit())
+          measurementUnit.getValue(),
+          CUSTOM_TYPES.get(measurementUnit.getUnit())
         );
       } else {
         throw iex;
       }
     }
-    Quantity resultQuantity = sourceQuantity.to(targetUnit);
+    Quantity<?> resultQuantity = sourceQuantity.to(targetUnit);
 
     return new MeasurementUnit(
       resultQuantity.getUnit().toString(),

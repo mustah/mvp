@@ -11,7 +11,6 @@ public class CompatibilityFunctionsTest {
     assertThat(CompatibilityFunctions.unitAt("14 Celsius", "K")).isEqualTo("287.15 K");
   }
 
-  // Verify that the aliases that we've defined for PostgreSql also work here
   @Test
   public void unitAliasForCelsius() {
     assertThat(CompatibilityFunctions.unitAt("14 Celsius", "℃")).isEqualTo("14 ℃");
