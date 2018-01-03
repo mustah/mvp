@@ -1,10 +1,10 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-import com.elvaco.mvp.exception.UserNotFound;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +20,10 @@ public class UserController {
     this.userUseCases = userUseCases;
   }
 
+  @Nullable
   @RequestMapping("{id}")
   public UserDto userById(@PathVariable Long id) {
-    return userUseCases.findById(id)
-      .orElseThrow(() -> new UserNotFound(String.valueOf(id)));
+    return userUseCases.findById(id).orElse(null);
   }
 
   @RequestMapping

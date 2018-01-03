@@ -2,12 +2,13 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.dto.UnauthorizedDto;
-import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,9 +26,9 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findUserById() {
-    UserEntity user = restClient()
+    UserDto user = restClient()
       .loginWith("user", "password")
-      .get("/users/1", UserEntity.class)
+      .get("/users/1", UserDto.class)
       .getBody();
 
     assertThat(user.id).isEqualTo(1);
@@ -35,12 +36,12 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void unableToFindNoneExistingUser() {
-    UserEntity user = restClient()
+    ResponseEntity<UnauthorizedDto> response = restClient()
       .loginWith("user", "password")
-      .get("/users/-999", UserEntity.class)
-      .getBody();
+      .get("/users/-999", UnauthorizedDto.class);
 
-    assertThat(user).isNull();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNull();
   }
 
   @Test
