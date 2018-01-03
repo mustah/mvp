@@ -83,7 +83,7 @@ const MainMenuContainerComponent = (props: StateToProps & DispatchToProps) => {
 
         </Column>
       </Column>
-      <ColumnBottom className="App-switch-wrapper">
+      <ColumnBottom className="flex-1">
         <AppSwitchDropdown/>
       </ColumnBottom>
     </Column>
