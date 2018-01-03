@@ -83,6 +83,7 @@ describe('selectionReducer', () => {
             5,
           ],
           alarms: [],
+          users: [],
           cities: [
             'got',
             'sto',

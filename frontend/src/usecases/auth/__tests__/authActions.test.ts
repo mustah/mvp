@@ -5,8 +5,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
 import {makeToken} from '../../../services/authService';
+import {Role, User} from '../../../state/domain-models/user/userModels';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
-import {Unauthorized, User} from '../authModels';
+import {Unauthorized} from '../authModels';
 
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);

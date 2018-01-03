@@ -1,5 +1,6 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
+import {Period} from '../../../components/dates/dateModels';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {uuid} from '../../../types/Types';
@@ -10,7 +11,6 @@ import {
   getEncodedUriParametersForMeters,
   getSelection,
 } from './selectionSelectors';
-import {Period} from '../../../components/dates/dateModels';
 
 export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 

@@ -9,6 +9,7 @@ import {ReportContainer} from '../usecases/report/containers/ReportContainer';
 import {SelectionContainer} from '../usecases/selection/containers/SelectionContainer';
 import {Validation} from '../usecases/validation/components/Validation';
 import {routes} from './routes';
+import {Administration} from '../usecases/administration/components/Administration';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const DashboardPage = userIsAuthenticated(DashboardContainer);
@@ -16,6 +17,9 @@ const CollectionPage = userIsAuthenticated(Collection);
 const ValidationPage = userIsAuthenticated(Validation);
 const ReportPage = userIsAuthenticated(ReportContainer);
 const SelectionPage = userIsAuthenticated(SelectionContainer);
+
+/* TODO Authorization */
+const AdministrationPage = userIsAuthenticated(Administration);
 
 export const Pages = () => (
   <Layout className="flex-1">
@@ -28,6 +32,7 @@ export const Pages = () => (
       <Route exact={true} path={`${routes.report}/:id`} component={ReportPage}/>
       <Route exact={true} path={routes.report} component={ReportPage}/>
       <Route exact={true} path={routes.selection} component={SelectionPage}/>
+      <Route exact={true} path={routes.administration} component={AdministrationPage}/>
       <Redirect to={routes.home}/>
     </Switch>
   </Layout>

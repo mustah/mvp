@@ -51,6 +51,7 @@ const selections = {
   productModels: [],
   meterStatuses: [],
   gatewayStatuses: [],
+  users: [],
 };
 
 const meters = [

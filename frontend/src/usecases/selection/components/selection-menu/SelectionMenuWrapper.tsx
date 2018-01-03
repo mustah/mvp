@@ -9,7 +9,7 @@ import {Logo} from '../../../../components/logo/Logo';
 import {RootState} from '../../../../reducers/rootReducer';
 import {ClassNamed, uuid} from '../../../../types/Types';
 import {logout} from '../../../auth/authActions';
-import {User} from '../../../auth/authModels';
+import {User} from '../../../../state/domain-models/user/userModels';
 import {getUser} from '../../../auth/authSelectors';
 import {Profile} from '../profile/Profile';
 import './SelectionMenuWrapper.scss';

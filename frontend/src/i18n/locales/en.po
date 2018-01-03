@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-12-20 13:55+0100\n"
+"POT-Creation-Date: 2018-01-03 14:32+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -37,21 +37,6 @@ msgstr "current week"
 
 msgid "last 7 days"
 msgstr "last 7 days"
-
-msgid "pick a date"
-msgstr "pick a date"
-
-msgid "between"
-msgstr "between"
-
-msgid "starting date"
-msgstr "starting date"
-
-msgid "and"
-msgstr "and"
-
-msgid "end date"
-msgstr "end date"
 
 msgid "all"
 msgstr "all"
@@ -182,6 +167,21 @@ msgstr "flagged"
 msgid "unFlagged"
 msgstr "no flag"
 
+msgid "administration"
+msgstr "administration"
+
+msgid "name"
+msgstr "name"
+
+msgid "email"
+msgstr "email"
+
+msgid "company"
+msgstr "company"
+
+msgid "roles"
+msgstr "roles"
+
 msgid "cities"
 msgstr "cities"
 
@@ -273,6 +273,21 @@ msgstr "meters"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
+
+#~ msgid "pick a date"
+#~ msgstr "pick a date"
+
+#~ msgid "between"
+#~ msgstr "between"
+
+#~ msgid "starting date"
+#~ msgstr "starting date"
+
+#~ msgid "and"
+#~ msgstr "and"
+
+#~ msgid "end date"
+#~ msgstr "end date"
 
 #~ msgid "previous"
 #~ msgstr "previous"
