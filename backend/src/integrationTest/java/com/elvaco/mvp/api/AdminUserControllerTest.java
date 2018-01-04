@@ -56,9 +56,11 @@ public class AdminUserControllerTest extends IntegrationTest {
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
     expected.path = "/api" + path;
-    expected.timestamp = response.getBody().timestamp;
 
-    assertThat(response.getBody()).isEqualTo(expected);
+    UnauthorizedDto error = response.getBody();
+    expected.timestamp = error.timestamp;
+
+    assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
@@ -70,16 +72,16 @@ public class AdminUserControllerTest extends IntegrationTest {
       .loginWith("admin", "wrong-password")
       .get(path, UnauthorizedDto.class);
 
-    UnauthorizedDto errorMessage = response.getBody();
-
     UnauthorizedDto expected = new UnauthorizedDto();
     expected.message = "Bad credentials";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
     expected.path = "/api" + path;
-    expected.timestamp = errorMessage.timestamp;
 
-    assertThat(errorMessage).isEqualTo(expected);
+    UnauthorizedDto error = response.getBody();
+    expected.timestamp = error.timestamp;
+
+    assertThat(error).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 

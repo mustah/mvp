@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * Proxies requests to unfinished/non-existent endpoints (for some value of unfinished) to an
  * instance of json-server where that endpoint is implemented.
- *
+ * <p>
  * For development use only!
  */
 @Slf4j
