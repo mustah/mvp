@@ -2,14 +2,4 @@
 
 .AdminApp {
   @import "../material-design";
-
-  .Admin-side-container {
-    top: 0;
-    left: 0;
-    position: fixed;
-    background-color: $dark-blue;
-    z-index: $main-menu-z-index;
-    width: $main-menu-width;
-    height: 100%;
-  }
 }

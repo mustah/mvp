@@ -255,6 +255,9 @@ msgstr "selection overview"
 msgid "logout"
 msgstr "logout"
 
+msgid "users"
+msgstr "users"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
