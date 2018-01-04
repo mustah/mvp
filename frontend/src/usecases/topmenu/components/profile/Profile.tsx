@@ -1,5 +1,7 @@
 import MenuItem from 'material-ui/MenuItem';
 import * as React from 'react';
+import {Link} from 'react-router-dom';
+import {routes} from '../../../../app/routes';
 import {menuItemInnerDivStyle} from '../../../../app/themes';
 import {IconAvatar} from '../../../../components/icons/IconAvatar';
 import {Column} from '../../../../components/layouts/column/Column';
@@ -23,6 +25,14 @@ export const Profile = (props: Props) => {
     <Column className="ProfileWrapper">
       <Row className="Profile">
         <PopoverMenu IconComponent={IconAvatar}>
+          <Link to={routes.userProfile} className="link">
+            <MenuItem
+              style={menuItemInnerDivStyle}
+              className="first-uppercase"
+            >
+              {translate('profile')}
+            </MenuItem>
+          </Link>
           <MenuItem
             style={menuItemInnerDivStyle}
             className="first-uppercase"
