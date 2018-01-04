@@ -255,6 +255,9 @@ msgstr "urvalsöversikt"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "users"
+msgstr "användare"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
