@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -50,6 +51,8 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const renderEmail = ({email}: User) => email;
     const renderCompany = ({company: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
+    const renderActionDropdown = ({id}: User) =>
+      <UserActionsDropdown id={id} />;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
@@ -73,6 +76,10 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
           <TableColumn
             header={<TableHead>{translate('roles')}</TableHead>}
             renderCell={renderRoles}
+          />
+          <TableColumn
+            header={<TableHead />}
+            renderCell={renderActionDropdown}
           />
         </Table>
         <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={usersCount}/>

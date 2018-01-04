@@ -258,6 +258,12 @@ msgstr "logout"
 msgid "users"
 msgstr "users"
 
+msgid "edit user"
+msgstr "edit user"
+
+msgid "delete user"
+msgstr "delete user"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
