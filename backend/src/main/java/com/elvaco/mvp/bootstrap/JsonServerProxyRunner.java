@@ -11,9 +11,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 /**
- * Proxies requests to unfinished/non-existent endpoints
- * (for some value of unfinished) to an instance of json-server where that endpoint
- * is implemented (hopefully!).
+ * Proxies requests to unfinished/non-existent endpoints (for some value of unfinished) to an
+ * instance of json-server where that endpoint is implemented.
+ *
  * For development use only!
  */
 @Slf4j
