@@ -6,14 +6,14 @@ import com.elvaco.mvp.dto.ColoredBoxDto;
 import com.elvaco.mvp.dto.DashboardDto;
 import com.elvaco.mvp.dto.SystemOverviewDto;
 import com.elvaco.mvp.entity.dashboard.DashboardEntity;
-import com.elvaco.mvp.repository.DashboardRepository;
+import com.elvaco.mvp.repository.jpa.DashboardRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import static java.util.Arrays.asList;
 
-@RestApi
+@RestApi("/api/dashboards")
 public class DashboardController {
 
   private final DashboardRepository dashboardRepository;
@@ -23,12 +23,12 @@ public class DashboardController {
     this.dashboardRepository = dashboardRepository;
   }
 
-  @RequestMapping("/dashboards")
+  @RequestMapping
   public List<DashboardEntity> dashboards() {
     return dashboardRepository.findAll();
   }
 
-  @RequestMapping("/dashboards/current")
+  @RequestMapping("/current")
   public DashboardDto myDashboard() {
     ColoredBoxDto warning = new ColoredBoxDto();
     warning.type = "collection";

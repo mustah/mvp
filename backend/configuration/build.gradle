@@ -1,0 +1,10 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+  compile project(':backend:core')
+  compile project(':backend:database')
+
+  compile 'org.springframework:spring-context'
+  compile 'org.springframework.boot:spring-boot-starter-security'
+}

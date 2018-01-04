@@ -3,12 +3,12 @@ package com.elvaco.mvp.api;
 import java.util.List;
 
 import com.elvaco.mvp.entity.validation.ValidationEntity;
-import com.elvaco.mvp.repository.ValidationRepository;
+import com.elvaco.mvp.repository.jpa.ValidationRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/validations")
 public class ValidationController {
 
   private final ValidationRepository repository;
@@ -18,7 +18,7 @@ public class ValidationController {
     this.repository = repository;
   }
 
-  @RequestMapping("/validations")
+  @RequestMapping
   public List<ValidationEntity> validations() {
     return repository.findAll();
   }

@@ -1,6 +1,5 @@
 package com.elvaco.mvp.api;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +7,7 @@ import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.elvaco.mvp.repository.MeteringPointRepository;
+import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
@@ -18,21 +17,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class MeteringPointControllerTest extends IntegrationTest {
 
   @Autowired
-  MeteringPointRepository repository;
+  MeteringPointRepository meteringPointRepository;
 
   @Before
   public void setUp() {
     MeteringPointEntity mp = new MeteringPointEntity();
     mp.propertyCollection = new PropertyCollection()
       .put("user", new UserPropertyDto("abc123", "Some project"))
-      .putArray("numbers", Arrays.asList(1, 2, 3, 17));
-    repository.save(mp);
+      .putArray("numbers", asList(1, 2, 3, 17));
+    meteringPointRepository.save(mp);
     restClient().loginWith("evanil@elvaco.se", "eva123");
   }
 

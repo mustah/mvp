@@ -28,15 +28,13 @@ public class DirectoryMeterMessageProducer implements Iterator<MeterMessage> {
 
   @Override
   public MeterMessage next() {
-    Path p = directoryIterator.next();
-    Gson gson = new Gson();
-    byte[] contents;
     try {
-      contents = Files.readAllBytes(p);
-    } catch (IOException e) {
+      Path path = directoryIterator.next();
+      byte[] contents = Files.readAllBytes(path);
+      return new Gson().fromJson(new String(contents, "UTF-8"), MeterMessage.class);
+    } catch (Exception e) {
       e.printStackTrace();
       return null;
     }
-    return gson.fromJson(new String(contents), MeterMessage.class);
   }
 }

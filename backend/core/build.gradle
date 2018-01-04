@@ -1,0 +1,9 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+dependencies {
+  compileOnly 'org.projectlombok:lombok:1.16.18'
+
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.assertj:assertj-core:3.8.0'
+}

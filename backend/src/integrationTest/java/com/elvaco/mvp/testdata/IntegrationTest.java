@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 // contamination of unrelated tests
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class IntegrationTest {
+
   @LocalServerPort
   private int serverPort;
 

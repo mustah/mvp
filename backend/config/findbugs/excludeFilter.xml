@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
-	<Match>
-		<Bug code="UrF,UuF" />
-	</Match>
+  <Match>
+    <Class name="~com.elvaco.mvp.*Dto"/>
+    <Bug code="UrF,UuF,UwF"/>
+  </Match>
+
+  <Match>
+    <Bug code="Dm"/>
+  </Match>
 </FindBugsFilter>

@@ -1,22 +1,17 @@
 package com.elvaco.mvp.api;
 
+import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.dto.ErrorMessageDto;
-import com.elvaco.mvp.dto.UserDto;
-import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 
 import org.junit.After;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
-
-  @Autowired
-  private UserRepository userRepository;
 
   @After
   public void tearDown() {
@@ -27,15 +22,12 @@ public class AuthControllerTest extends IntegrationTest {
   public void authenticate() {
     String email = "evanil@elvaco.se";
 
-    UserDto user = restClient()
+    ResponseEntity<UserDto> response = restClient()
       .loginWith(email, "eva123")
-      .get("/authenticate", UserDto.class)
-      .getBody();
+      .get("/authenticate", UserDto.class);
 
-    UserEntity expected = userRepository.findByEmail(email).get();
-    assertThat(user.id).isEqualTo(expected.id);
-    assertThat(user.email).isEqualTo(expected.email);
-    assertThat(user.company).isEqualTo(expected.company);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().email).isEqualTo("evanil@elvaco.se");
   }
 
   @Test

@@ -8,8 +8,9 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.MeasurementRepository;
-import com.elvaco.mvp.repository.PhysicalMeterRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
+import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
@@ -24,22 +25,26 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static java.util.Collections.singletonList;
 
-@RestApi
+@RestApi("/api/physical-meters")
 @ExposesResourceFor(PhysicalMeterEntity.class)
-@RequestMapping("/api/physical-meters")
 public class PhysicalMeterController {
 
   private final PhysicalMeterRepository repository;
   private final MeasurementRepository measurementRepository;
   private final ModelMapper modelMapper;
+  private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
-  public PhysicalMeterController(PhysicalMeterRepository repository,
-                                 MeasurementRepository measurementRepository,
-                                 ModelMapper modelMapper) {
+  public PhysicalMeterController(
+    PhysicalMeterRepository repository,
+    MeasurementRepository measurementRepository,
+    ModelMapper modelMapper,
+    FilterToPredicateMapper predicateMapper
+  ) {
     this.repository = repository;
     this.measurementRepository = measurementRepository;
     this.modelMapper = modelMapper;
+    this.predicateMapper = predicateMapper;
   }
 
   @RequestMapping("{id}")
@@ -70,23 +75,28 @@ public class PhysicalMeterController {
     return repository.findAll(pageable);
   }
 
-  private Page<MeasurementDto> filterMeasurementDtos(Map<String, List<String>> filter,
-                                                     Pageable pageable) {
-    Predicate predicate = new MeasurementFilterToPredicateMapper().map(filter);
+  private Page<MeasurementDto> filterMeasurementDtos(
+    Map<String, List<String>> filter,
+    Pageable pageable
+  ) {
+    Predicate predicate = predicateMapper.map(filter);
     return measurementRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeasurementDto.class));
   }
 
-  private Map<String, List<String>> combineParams(Map<String, String> pathVars,
-                                                  Map<String, List<String>> requestParams) {
+  private Map<String, List<String>> combineParams(
+    Map<String, String> pathVars,
+    Map<String, List<String>> requestParams
+  ) {
     Map<String, List<String>> filter = new HashMap<>();
     filter.putAll(requestParams);
-    filter.putAll(pathVars
-                    .entrySet()
-                    .stream()
-                    .map(e -> new SimpleEntry<>(e.getKey(), singletonList(e.getValue()))
-                    ).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+    filter.putAll(
+      pathVars
+        .entrySet()
+        .stream()
+        .map(e -> new SimpleEntry<>(e.getKey(), singletonList(e.getValue())))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
     );
     return filter;
   }

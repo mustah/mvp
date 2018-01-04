@@ -1,31 +1,33 @@
 package com.elvaco.mvp.api;
 
-import java.util.Collection;
+import java.util.List;
+import javax.annotation.Nullable;
 
-import com.elvaco.mvp.entity.user.UserEntity;
-import com.elvaco.mvp.repository.UserRepository;
+import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.usecase.UserUseCases;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi
+@RestApi("/api/users")
 public class UserController {
 
-  private final UserRepository userRepository;
+  private final UserUseCases userUseCases;
 
   @Autowired
-  UserController(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  UserController(UserUseCases userUseCases) {
+    this.userUseCases = userUseCases;
   }
 
-  @RequestMapping("/users/{id}")
-  public UserEntity userById(@PathVariable Long id) {
-    return userRepository.findOne(id);
+  @Nullable
+  @RequestMapping("{id}")
+  public UserDto userById(@PathVariable Long id) {
+    return userUseCases.findById(id).orElse(null);
   }
 
-  @RequestMapping("/users")
-  public Collection<UserEntity> allUsers() {
-    return userRepository.findAll();
+  @RequestMapping
+  public List<UserDto> allUsers() {
+    return userUseCases.findAll();
   }
 }

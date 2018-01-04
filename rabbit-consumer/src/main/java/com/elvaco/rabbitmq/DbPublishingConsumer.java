@@ -27,20 +27,20 @@ import com.rabbitmq.client.Envelope;
 
 public class DbPublishingConsumer extends DefaultConsumer {
 
-  public static final String SQL_UNIQUE_VIOLATION_ERROR = "23505";
+  private static final String SQL_UNIQUE_VIOLATION_ERROR = "23505";
 
+  private final Runnable timerTask;
   private final int batchSz;
+  private final ScheduledExecutorService executorService;
 
-  private static ScheduledFuture<?> timerFuture;
-  private static Runnable timerTask;
-  private static ScheduledExecutorService ses;
+  private ScheduledFuture<?> timerFuture;
   private Connection connection;
 
   DbPublishingConsumer(Channel channel, int batchSz) {
     super(channel);
-    ses = Executors.newSingleThreadScheduledExecutor();
+    this.executorService = Executors.newSingleThreadScheduledExecutor();
     this.batchSz = batchSz;
-    timerTask = () -> {
+    this.timerTask = () -> {
       try {
         MeterMessageFlushResult result = flushQueue();
         handleFlushResult(result);
@@ -56,11 +56,11 @@ public class DbPublishingConsumer extends DefaultConsumer {
     }
   }
 
-  class TaggedMessage {
+  private static class TaggedMessage {
     private final long tag;
     private final MeterMessage message;
 
-    public TaggedMessage(long tag, MeterMessage message) {
+    TaggedMessage(long tag, MeterMessage message) {
       this.tag = tag;
       this.message = message;
     }
@@ -71,44 +71,44 @@ public class DbPublishingConsumer extends DefaultConsumer {
     }
   }
 
-  class MeterMessageFlushResult {
+  private static class MeterMessageFlushResult {
 
     private final List<TaggedMessage> successful;
     private final List<TaggedMessage> failed;
 
-    public MeterMessageFlushResult() {
+    MeterMessageFlushResult() {
       successful = new ArrayList<>();
       failed = new ArrayList<>();
     }
 
-    public void addSuccessful(Collection<TaggedMessage> messages) {
+    void addSuccessful(Collection<TaggedMessage> messages) {
       successful.addAll(messages);
     }
 
-    public void addSuccessful(TaggedMessage message) {
+    void addSuccessful(TaggedMessage message) {
       successful.add(message);
     }
 
-    public void addFailed(TaggedMessage message) {
+    void addFailed(TaggedMessage message) {
       failed.add(message);
     }
 
-    public boolean allSuccessful() {
+    boolean allSuccessful() {
       return failed.isEmpty();
     }
 
-    public long getHighestTag() {
+    long getHighestTag() {
       TaggedMessage max = Collections.max(successful, (o1, o2) -> Long.compare(o1.tag, o2.tag));
       return max.tag;
     }
 
-    public int size() {
+    int size() {
       return successful.size() + failed.size();
     }
   }
 
-  private static void scheduleTimer() {
-    timerFuture = ses.scheduleAtFixedRate(timerTask, 10, 10, TimeUnit.SECONDS);
+  private void scheduleTimer() {
+    timerFuture = executorService.scheduleAtFixedRate(timerTask, 10, 10, TimeUnit.SECONDS);
   }
 
   private void resetTimer() {
