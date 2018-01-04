@@ -51,16 +51,14 @@ public class AdminUserControllerTest extends IntegrationTest {
     ResponseEntity<UnauthorizedDto> response = restClient()
       .get(path, UnauthorizedDto.class);
 
-    UnauthorizedDto errorMessage = response.getBody();
-
     UnauthorizedDto expected = new UnauthorizedDto();
     expected.message = "Full authentication is required to access this resource";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
     expected.path = "/api" + path;
-    expected.timestamp = errorMessage.timestamp;
+    expected.timestamp = response.getBody().timestamp;
 
-    assertThat(errorMessage).isEqualTo(expected);
+    assertThat(response.getBody()).isEqualTo(expected);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
