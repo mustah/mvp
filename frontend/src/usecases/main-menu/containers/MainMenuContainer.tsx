@@ -4,17 +4,16 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
 import {colors, iconStyle} from '../../../app/themes';
-import {AppSwitchDropdown} from '../../../components/actions-dropdown/AppSwitchDropdown';
 import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconReport} from '../../../components/icons/IconReport';
 import {IconValidation} from '../../../components/icons/IconValidation';
-import {Column, ColumnBottom} from '../../../components/layouts/column/Column';
+import {Column} from '../../../components/layouts/column/Column';
 import {RootState} from '../../../reducers/rootReducer';
 import {getPathname} from '../../../selectors/routerSelectors';
 import {translate} from '../../../services/translationService';
+import {MainMenuWrapper} from '../components/main-menu-wrapper/MainMenuWrapper';
 import {MenuItem} from '../components/menuitems/MenuItem';
-import './MainMenuContainer.scss';
 
 interface StateToProps {
   pathname: string;
@@ -23,8 +22,7 @@ interface StateToProps {
 const MainMenuContainerComponent = ({pathname}: StateToProps) => {
 
   return (
-    <Column className="MainMenuContainer">
-      <Column className="MenuItems space-between">
+    <MainMenuWrapper>
         <Column>
           <Link to={routes.selection} className="link">
             <MenuItem
@@ -63,11 +61,7 @@ const MainMenuContainerComponent = ({pathname}: StateToProps) => {
           </Link>
 
         </Column>
-      </Column>
-      <ColumnBottom className="flex-1">
-        <AppSwitchDropdown/>
-      </ColumnBottom>
-    </Column>
+    </MainMenuWrapper>
   );
 };
 
