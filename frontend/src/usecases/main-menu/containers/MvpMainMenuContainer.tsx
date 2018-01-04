@@ -19,7 +19,7 @@ interface StateToProps {
   pathname: string;
 }
 
-const MainMenuContainerComponent = ({pathname}: StateToProps) => {
+const MvpMainMenu = ({pathname}: StateToProps) => {
 
   return (
     <MainMenuWrapper>
@@ -71,5 +71,5 @@ const mapStateToProps = ({routing}: RootState): StateToProps => {
   };
 };
 
-export const MainMenuContainer =
-  connect<StateToProps>(mapStateToProps)(MainMenuContainerComponent);
+export const MvpMainMenuContainer =
+  connect<StateToProps>(mapStateToProps)(MvpMainMenu);

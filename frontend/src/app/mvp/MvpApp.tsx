@@ -12,7 +12,7 @@ import {getEncodedUriParametersForMeters} from '../../state/search/selection/sel
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
-import {MainMenuContainer} from '../../usecases/main-menu/containers/MainMenuContainer';
+import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/components/savedSelections/SavedSelections';
 import {SelectionTreeContainer} from '../../usecases/sidemenu/containers/selection-tree/SelectionTreeContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
@@ -48,7 +48,7 @@ class MvpApp extends React.Component<Props> {
 
     return (
       <Row className="MvpApp">
-        <MainMenuContainer/>
+        <MvpMainMenuContainer/>
 
         <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
           <SideMenuContainer>
