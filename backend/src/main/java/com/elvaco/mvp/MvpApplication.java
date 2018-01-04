@@ -93,6 +93,7 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
   public void addCorsMappings(CorsRegistry registry) {
     registry
       .addMapping("/**")
+      .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
       .maxAge(3600);
   }
 
