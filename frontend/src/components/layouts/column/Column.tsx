@@ -3,9 +3,9 @@ import * as React from 'react';
 import {LayoutProps} from '../layout/Layout';
 import './Column.scss';
 
-export const Column = ({className, onClick, children}: LayoutProps) => {
+export const Column = ({className, children, ...props}: LayoutProps) => {
   return (
-    <div className={classNames('Column', className)} onClick={onClick}>
+    <div className={classNames('Column', className)} {...props}>
       {children}
     </div>
   );

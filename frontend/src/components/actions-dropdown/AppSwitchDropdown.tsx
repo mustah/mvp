@@ -1,17 +1,32 @@
 import MenuItem from 'material-ui/MenuItem';
+import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
 import * as React from 'react';
+import {Route, Switch} from 'react-router';
 import {Link} from 'react-router-dom';
 import {routes} from '../../app/routes';
 import {colors} from '../../app/themes';
 import {translate} from '../../services/translationService';
+import {RowCenter} from '../layouts/row/Row';
 import {PopoverMenu} from '../popover/PopoverMenu';
+import {Xsmall} from '../texts/Texts';
 import origin = __MaterialUI.propTypes.origin;
-import NavigationMenu from 'material-ui/svg-icons/navigation/menu';
-import 'AppSwitchDropdown.scss';
 
 export const AppSwitchDropdown = () => {
 
-  const MenuIcon = ({onClick}) => <NavigationMenu color={colors.white} onClick={onClick}/>;
+  const renderAdmin = () => translate('admin');
+  const renderMetering = () => translate('metering');
+
+  const MenuIcon = ({onClick}) => (
+    <RowCenter onClick={onClick} className="MenuItem clickable">
+      <NavigationMenu color={colors.white}/>
+      <Xsmall className="Bold first-uppercase">
+        <Switch>
+          <Route path={routes.admin} render={renderAdmin}/>
+          <Route path={routes.home} render={renderMetering}/>
+        </Switch>
+      </Xsmall>
+    </RowCenter>
+  );
   const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
   const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
 
@@ -20,7 +35,6 @@ export const AppSwitchDropdown = () => {
       IconComponent={MenuIcon}
       anchorOrigin={anchorOrigin}
       targetOrigin={targetOrigin}
-      className="popover clickable"
     >
       <Link to={routes.home} className="link">
         <MenuItem className="first-uppercase">
