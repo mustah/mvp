@@ -1,5 +1,10 @@
 package com.elvaco.mvp.dto;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@ToString
+@EqualsAndHashCode
 public class UnauthorizedDto {
 
   public Long timestamp;

@@ -23,6 +23,14 @@ public class UserRepository implements Users {
   }
 
   @Override
+  public List<UserDto> findAll() {
+    return userJpaRepository.findAll()
+      .stream()
+      .map(this::toDto)
+      .collect(toList());
+  }
+
+  @Override
   public Optional<UserDto> findByEmail(String email) {
     return userJpaRepository.findByEmail(email)
       .map(this::toDto);
@@ -35,14 +43,20 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public List<UserDto> findAll() {
-    return userJpaRepository.findAll()
-      .stream()
-      .map(this::toDto)
-      .collect(toList());
+  public UserDto save(UserDto user) {
+    return toDto(userJpaRepository.save(toEntity(user)));
   }
 
-  private UserDto toDto(UserEntity userEntity) {
-    return modelMapper.map(userEntity, UserDto.class);
+  @Override
+  public void deleteById(Long id) {
+    userJpaRepository.delete(id);
+  }
+
+  private UserDto toDto(UserEntity user) {
+    return modelMapper.map(user, UserDto.class);
+  }
+
+  private UserEntity toEntity(UserDto user) {
+    return modelMapper.map(user, UserEntity.class);
   }
 }

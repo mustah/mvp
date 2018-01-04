@@ -20,7 +20,7 @@ public final class RestClient {
   private final String baseUrl;
 
   RestClient(int serverPort) {
-    baseUrl = "http://localhost:" + serverPort + "/api";
+    this.baseUrl = "http://localhost:" + serverPort + "/api";
     this.template = new TestRestTemplate(new RestTemplate());
   }
 
@@ -34,6 +34,14 @@ public final class RestClient {
 
   public <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
     return template.postForEntity(apiUrlOf(url), request, responseType);
+  }
+
+  public void put(String url, Object request) {
+    template.put(apiUrlOf(url), request);
+  }
+
+  public void delete(String url) {
+    template.delete(apiUrlOf(url));
   }
 
   public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
