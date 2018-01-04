@@ -136,19 +136,12 @@ settings and the JDBC URL should be `jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1`.
 ## Proxying non-existent REST API endpoints to json-server
 
 It is possible to have the backend proxy requests to non-existent endpoints to
-a `json-server` instance. This functionality is enabled by activating the
-`json-server-proxy` Spring profile.
+a `json-server` instance. This functionality is enabled by `@EnableZuulProxy` in `MvpApplication`.
 
-By default, if the `json-server-proxy` profile is active, a new `json-server`
-will be started on boot. The exact behaviour of this depends on the values of
-provided properties, documented below.
+All the endpoints listed in `application.yml` are routing the requests to `json-server`. 
 
-|Property|Description|Note|
-|--------|-----------|----|
-|json-server-proxy.db|Path to db.json|If not supplied, the proxy will look for `db.json` on the classpath instead|
-|json-server-proxy.path|Path to json-server node module|If not supplied, the proxy will look for `json-server` on the classpath instead|
-|json-server-proxy.proxy-only|If true, don't start `json-server`, only proxy requests||
-|json-server-proxy.nodejs.path|Path to `nodejs` executable|If not supplied, the proxy will look for `node` on `$PATH`|
+So when a developer has implemented an api endpoint in Java then the endpoint listed in  `application.yml`
+can be removed. Also the data from `json-server` should be removed too.
 
 ## Addendum
 
