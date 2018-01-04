@@ -12,11 +12,14 @@ import org.springframework.web.servlet.ModelAndView;
 @RestApi
 @Profile("json-server-proxy")
 public class JsonServerProxyController {
+
   private static final int JSON_SERVER_PORT = 3000;
 
   @RequestMapping("**")
-  public ModelAndView proxy(HttpServletRequest httpServletRequest,
-                            HttpServletResponse httpServletResponse) {
+  public ModelAndView proxy(
+    HttpServletRequest httpServletRequest,
+    HttpServletResponse httpServletResponse
+  ) {
     String requestedUri = httpServletRequest.getRequestURI();
     String proxyUri = String.format(
       "http://%s:%d/%s",

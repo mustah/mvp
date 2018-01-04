@@ -28,6 +28,15 @@ public class JsonServerProxyRunner implements CommandLineRunner {
     this.resourceLoader = resourceLoader;
   }
 
+  @Override
+  public void run(String... args) throws Exception {
+    if (shouldStartJsonServer()) {
+      new ProcessBuilder(getNodePath(), getJsonServerPath(), getDbJsonPath())
+        .inheritIO()
+        .start();
+    }
+  }
+
   private String getResourceFilename(String resourcePath) throws IOException {
     Resource resource = resourceLoader.getResource(resourcePath);
     if (resource == null) {
@@ -53,8 +62,7 @@ public class JsonServerProxyRunner implements CommandLineRunner {
     return getPropertyOrResourcePath("json-server-proxy.db", "classpath:db.json");
   }
 
-  private String getNodePath() throws IOException {
-
+  private String getNodePath() {
     return System.getProperty(
       "json-server-proxy.nodejs.path",
       "node" // fallback to looking on $PATH if property is not set
@@ -63,15 +71,5 @@ public class JsonServerProxyRunner implements CommandLineRunner {
 
   private boolean shouldStartJsonServer() {
     return !Boolean.parseBoolean(System.getProperty("json-server-proxy.proxy-only"));
-  }
-
-  @Override
-  public void run(String... args) throws Exception {
-    if (!shouldStartJsonServer()) {
-      return;
-    }
-    ProcessBuilder pb = new ProcessBuilder(getNodePath(), getJsonServerPath(), getDbJsonPath());
-    pb.inheritIO();
-    pb.start();
   }
 }
