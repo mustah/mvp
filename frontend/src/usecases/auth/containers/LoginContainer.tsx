@@ -35,19 +35,23 @@ interface LoginState {
   password: string;
 }
 
-type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps & RouteComponentProps<{company: string}>;
+type Props =
+  & StateToProps
+  & DispatchToProps
+  & InjectedAuthRouterProps
+  & RouteComponentProps<{organisation: string}>;
 
 class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   state: LoginState = {email: '', password: ''};
 
   render() {
-    const {auth, match: {params: {company}}} = this.props;
+    const {auth: {error}, match: {params: {organisation}}} = this.props;
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
           <RowCenter className="customerLogo">
-            <Logo src={getLogoPath(company)}/>
+            <Logo src={getLogoPath(organisation)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
             <TextField
@@ -79,7 +83,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
               onClick={this.onSubmit}
               style={loginButtonStyle}
             />
-            {auth.error && <div className="error-message">{auth.error.error}: {auth.error.message}</div>}
+            {error && <div className="error-message">{error.error}: {error.message}</div>}
           </form>
         </Paper>
       </ColumnCenter>

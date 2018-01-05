@@ -10,6 +10,6 @@ public class UserDto {
   public Long id;
   public String name;
   public String email;
-  public OrganisationDto company;
+  public OrganisationDto organisation;
   public List<String> roles;
 }

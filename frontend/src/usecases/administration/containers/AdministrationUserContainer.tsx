@@ -49,7 +49,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
 
     const renderName = ({name}: User) => name;
     const renderEmail = ({email}: User) => email;
-    const renderCompany = ({company: {name}}: User) => name;
+    const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
       <UserActionsDropdown id={id} />;
@@ -70,8 +70,8 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
             renderCell={renderEmail}
           />
           <TableColumn
-            header={<TableHead>{translate('company')}</TableHead>}
-            renderCell={renderCompany}
+            header={<TableHead>{translate('organisation')}</TableHead>}
+            renderCell={renderOrganisation}
           />
           <TableColumn
             header={<TableHead>{translate('roles')}</TableHead>}

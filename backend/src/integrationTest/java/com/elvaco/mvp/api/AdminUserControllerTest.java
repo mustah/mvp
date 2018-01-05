@@ -136,7 +136,7 @@ public class AdminUserControllerTest extends IntegrationTest {
     UserDto user = new UserDto();
     user.name = "Ninja Code";
     user.email = email;
-    user.company = new OrganisationDto(1L, "Elvaco", "elvaco");
+    user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
     user.roles = asList(Roles.USER, Roles.ADMIN);
     return user;
   }

@@ -20,7 +20,7 @@ interface StateToProps extends ClassNamed {
 }
 
 interface DispatchToProps {
-  logout: (company: uuid) => void;
+  logout: (organisationId: uuid) => void;
 }
 
 interface OwnProps {
@@ -36,7 +36,7 @@ const TopMenuWrapper = (props: StateToProps & DispatchToProps) => {
       </Row>
       <RowCenter>
         <Link className="Logo" to={routes.home}>
-          <Logo src={getLogoPath(user.company.code)} className="small"/>
+          <Logo src={getLogoPath(user.organisation.code)} className="small"/>
         </Link>
       </RowCenter>
       <Row>

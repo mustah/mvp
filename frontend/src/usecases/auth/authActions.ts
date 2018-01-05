@@ -35,10 +35,10 @@ export const login = (username: string, password: string) => {
   };
 };
 
-export const logout = (company: uuid) => {
+export const logout = (organisationId: uuid) => {
   return async (dispatch) => {
     dispatch(logoutRequest());
     dispatch(logoutSuccess());
-    dispatch(routerActions.push(`${routes.login}/${company}`));
+    dispatch(routerActions.push(`${routes.login}/${organisationId}`));
   };
 };

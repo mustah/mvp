@@ -19,7 +19,7 @@ describe('authActions', () => {
     id: 1,
     name: 'clark',
     email: 'ck@dailyplanet.net',
-    company: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
+    organisation: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
     roles: [Role.USER],
   };
   let mockRestClient;
@@ -57,14 +57,14 @@ describe('authActions', () => {
     it('logs out logged in user', async () => {
       await dispatchLogin();
 
-      await store.dispatch(logout(user.company.code));
+      await store.dispatch(logout(user.organisation.code));
 
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token, user}),
         logoutRequest(),
         logoutSuccess(),
-        routerActions.push(`${routes.login}/${user.company.code}`),
+        routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
   });
@@ -123,12 +123,12 @@ describe('authActions', () => {
     });
 
     it('logs out user without any side effect', async () => {
-      await store.dispatch(logout(user.company.code));
+      await store.dispatch(logout(user.organisation.code));
 
       expect(store.getActions()).toEqual([
         logoutRequest(),
         logoutSuccess(),
-        routerActions.push(`${routes.login}/${user.company.code}`),
+        routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
   });
