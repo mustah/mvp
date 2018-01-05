@@ -1,0 +1,19 @@
+@import '../../../../app/variables';
+
+.EditProfileContainer {
+
+  input {
+    width: 200px;
+    margin-bottom: $sm-space;
+  }
+
+  .ProfileSave {
+    width: 60px;
+    text-transform: capitalize;
+    outline: none;
+    &:hover {
+      color: $white;
+      background-color: $blue;
+    }
+  }
+}
