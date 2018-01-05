@@ -3,6 +3,7 @@ import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {makeToken} from '../../services/authService';
 import {makeRestClient} from '../../services/restClient';
+import {EndPoints} from '../../state/domain-models/domainModels';
 import {uuid} from '../../types/Types';
 import {Authorized, Unauthorized} from './authModels';
 
@@ -25,7 +26,7 @@ export const login = (username: string, password: string) => {
     dispatch(loginRequest());
     try {
       const token = makeToken(username, password);
-      const {data: user} = await makeRestClient(token).get('/authenticate/' + username);
+      const {data: user} = await makeRestClient(token).get(EndPoints.authenticate);
       dispatch(loginSuccess({token, user}));
     } catch (error) {
       const {response: {data}} = error;

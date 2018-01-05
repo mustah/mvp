@@ -74,14 +74,16 @@ dependencies {
   compile project('configuration')
   compile project('database')
 
-  compile('org.springframework.boot:spring-boot-starter-actuator')
-  compile('org.springframework.boot:spring-boot-starter-hateoas')
+  compile 'org.springframework.boot:spring-boot-starter-actuator'
+  compile 'org.springframework.boot:spring-boot-starter-hateoas'
+  compile 'org.springframework.cloud:spring-cloud-starter-zuul:1.4.0.RELEASE'
 
-  runtime('org.liquibase:liquibase-core')
-  runtime('com.h2database:h2')
 
-  testCompile('org.springframework.boot:spring-boot-starter-test')
-  testCompile('org.assertj:assertj-core:3.8.0')
+  runtime 'org.liquibase:liquibase-core'
+  runtime 'com.h2database:h2'
+
+  testCompile 'org.springframework.boot:spring-boot-starter-test'
+  testCompile 'org.assertj:assertj-core:3.8.0'
 }
 
 jar {

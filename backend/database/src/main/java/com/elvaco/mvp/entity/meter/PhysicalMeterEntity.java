@@ -26,7 +26,7 @@ public class PhysicalMeterEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
-  public Long organisationId; /*TODO: Materialize as an organisation entity */
+  public Long organisationId;
   public String identity;
   public String medium;
 

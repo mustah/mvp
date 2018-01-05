@@ -26,12 +26,12 @@ class PostgreSqlConfig {
    * ACL implementation of user management in the DB.
    */
   @Bean
-  public UserDetailsService userDetailsService() {
+  UserDetailsService userDetailsService() {
     return new H2Config(entityManager).userDetailsService();
   }
 
   @Bean
-  public MeteringPointRepository meteringPointRepository() {
+  MeteringPointRepository meteringPointRepository() {
     return new PostgreSqlMeteringPointRepository(entityManager);
   }
 }

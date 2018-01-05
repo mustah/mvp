@@ -1,0 +1,39 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: MVP
+  datasource:
+    url: jdbc:postgresql://postgresql:5432/mvp
+    username: mvp
+    password: mvp
+  jpa:
+    properties:
+      hibernate.dialect: com.elvaco.mvp.dialect.MvpPostgreSqlDialect
+      hibernate.show_sql: true
+      hibernate.use_sql_comments: true
+      hibernate.format_sql: true
+      hibernate.type: trace
+
+zuul:
+  routes:
+    gateways:
+      path: /api/gateways/**
+      url: http://localhost:4000/api/gateways/
+    meters:
+      path: /api/meters/**
+      url: http://localhost:4000/api/meters/
+    selections:
+      path: /api/selections/**
+      url: http://localhost:4000/api/selections/
+    dashboards:
+      path: /api/dashboards/**
+      url: http://localhost:4000/api/dashboards/
+    measurements:
+      path: /api/measurements/**
+      url: http://localhost:4000/api/measurements/
+
+liquibase:
+  enabled: true
+  change-log: classpath:/db/changelog/db.changelog.json

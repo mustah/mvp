@@ -1,12 +1,10 @@
-package com.elvaco.mvp.api;
+package com.elvaco.mvp.repository.jpa.mappers;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.validation.constraints.NotNull;
-
-import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;

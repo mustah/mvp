@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: MVP integration
+  profiles:
+    active: h2
+  h2:
+    console:
+      enabled: true
+  jpa:
+    properties:
+      hibernate.dialect: com.elvaco.mvp.dialect.MvpH2Dialect
+
+liquibase:
+  enabled: false

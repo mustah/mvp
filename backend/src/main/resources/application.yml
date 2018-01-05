@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: MVP
+  profiles:
+    active: h2
+  h2:
+    console:
+      enabled: true
+  jpa:
+    properties:
+      hibernate.dialect: com.elvaco.mvp.dialect.MvpH2Dialect
+
+zuul:
+  routes:
+    gateways:
+      path: /api/gateways/**
+      url: http://localhost:4000/api/gateways/
+    meters:
+      path: /api/meters/**
+      url: http://localhost:4000/api/meters/
+    selections:
+      path: /api/selections/**
+      url: http://localhost:4000/api/selections/
+    dashboards:
+      path: /api/dashboards/**
+      url: http://localhost:4000/api/dashboards/
+    measurements:
+      path: /api/measurements/**
+      url: http://localhost:4000/api/measurements/
+
+liquibase:
+  enabled: false

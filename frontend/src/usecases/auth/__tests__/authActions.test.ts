@@ -5,6 +5,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
 import {makeToken} from '../../../services/authService';
+import {EndPoints} from '../../../state/domain-models/domainModels';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
 import {Unauthorized} from '../authModels';
@@ -37,7 +38,7 @@ describe('authActions', () => {
       const username = 'the.batman@dc.com';
       const password = 'test1234';
 
-      mockRestClient.onGet(`/authenticate/${username}`).reply(200, user);
+      mockRestClient.onGet(EndPoints.authenticate).reply(200, user);
 
       token = makeToken(username, password);
 
@@ -80,7 +81,7 @@ describe('authActions', () => {
         path: '/api/authenticate',
       };
       const username = 'foo';
-      mockRestClient.onGet(`/authenticate/${username}`).reply(unauthorized, errorMessage);
+      mockRestClient.onGet(EndPoints.authenticate).reply(unauthorized, errorMessage);
 
       await store.dispatch(login(username, '123123'));
 
@@ -98,7 +99,7 @@ describe('authActions', () => {
       };
 
       const username = 'foo';
-      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
+      mockRestClient.onGet(EndPoints.authenticate).reply(internalServerError, errorMessage);
 
       await store.dispatch(login(username, '123123'));
 
@@ -116,7 +117,7 @@ describe('authActions', () => {
       };
 
       const username = 'foo';
-      mockRestClient.onGet(`/authenticate/${username}`).reply(internalServerError, errorMessage);
+      mockRestClient.onGet(EndPoints.authenticate).reply(internalServerError, errorMessage);
 
       await store.dispatch(login(username, '123123'));
     });

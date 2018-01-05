@@ -7,44 +7,6 @@ const moment = require('moment');
 const {v4: generateId} = require('uuid');
 
 const fromDbJson = {
-  authenticate: [
-    {
-      id: 'evanil@elvaco.se',
-      name: 'Eva Nilsson',
-      email: 'evanil@elvaco.se',
-      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
-      roles: ['USER', 'ADMIN'],
-    },
-    {
-      id: 'johnny@wayne-industries.se',
-      name: 'Johnny Persbrandt',
-      email: 'johnny@wayne-industries.se',
-      company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
-      roles: ['USER'],
-    },
-    {
-      id: 'mickey@wayne-industries.se',
-      name: 'Mickey Mouse',
-      email: 'mickey@wayne-industries.se',
-      company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
-      roles: ['USER', 'ADMIN'],
-    },
-  ],
-  users: [
-    {
-      id: 'andnil@elvaco.se',
-      name: 'Anders Nilsson',
-      email: 'andnil@elvaco.se',
-      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
-      roles: ['USER'],
-    },{
-      id: 'laslar@elvaco.se',
-      name: 'Lasse Larson',
-      email: 'laslar@elvaco.se',
-      company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
-      roles: ['USER'],
-    }
-  ],
   dashboards: [
     {
       id: 3,
@@ -64,12 +26,7 @@ const fromDbJson = {
       ],
     },
   ],
-  profile: {
-    name: 'typicode',
-  },
 };
-
-fromDbJson.users = [...fromDbJson.users, ...fromDbJson.authenticate];
 
 const statusChangelog = [
   {

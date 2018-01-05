@@ -22,7 +22,7 @@ class DataProviderConfig {
   }
 
   @Bean
-  public Users users() {
+  Users users() {
     return new UserRepository(userJpaRepository, modelMapper);
   }
 }

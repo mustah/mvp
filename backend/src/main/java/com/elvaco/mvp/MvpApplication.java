@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.resource.ResourceResolverChain;
 
 import static java.util.Collections.singletonList;
 
+@EnableZuulProxy
 @EnableWebSecurity
 @ComponentScan(basePackages = "com.elvaco.mvp")
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
@@ -93,6 +95,7 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
   public void addCorsMappings(CorsRegistry registry) {
     registry
       .addMapping("/**")
+      .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD")
       .maxAge(3600);
   }
 

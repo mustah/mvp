@@ -3,6 +3,7 @@ package com.elvaco.mvp.repository.access;
 import java.util.List;
 import java.util.Optional;
 
+import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -10,6 +11,7 @@ import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import org.modelmapper.ModelMapper;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 public class UserRepository implements Users {
@@ -20,6 +22,14 @@ public class UserRepository implements Users {
   public UserRepository(UserJpaRepository userJpaRepository, ModelMapper modelMapper) {
     this.userJpaRepository = userJpaRepository;
     this.modelMapper = modelMapper;
+  }
+
+  @Override
+  public List<UserDto> findAll() {
+    return userJpaRepository.findAll()
+      .stream()
+      .map(this::toDto)
+      .collect(toList());
   }
 
   @Override
@@ -35,14 +45,22 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public List<UserDto> findAll() {
-    return userJpaRepository.findAll()
-      .stream()
-      .map(this::toDto)
-      .collect(toList());
+  public UserDto save(UserDto user) {
+    return toDto(userJpaRepository.save(toEntity(user)));
   }
 
-  private UserDto toDto(UserEntity userEntity) {
-    return modelMapper.map(userEntity, UserDto.class);
+  @Override
+  public void deleteById(Long id) {
+    userJpaRepository.delete(id);
+  }
+
+  private UserDto toDto(UserEntity user) {
+    UserDto userDto = modelMapper.map(user, UserDto.class);
+    userDto.roles = singletonList(Roles.USER);
+    return userDto;
+  }
+
+  private UserEntity toEntity(UserDto user) {
+    return modelMapper.map(user, UserEntity.class);
   }
 }

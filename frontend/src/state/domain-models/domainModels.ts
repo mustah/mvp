@@ -14,6 +14,7 @@ export const enum EndPoints {
   meters = '/meters',
   gateways = '/gateways',
   users = '/users',
+  authenticate = '/authenticate',
 }
 
 export interface GeoPosition {
