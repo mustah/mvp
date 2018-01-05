@@ -2,16 +2,14 @@ package com.elvaco.mvp.config;
 
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 import com.elvaco.mvp.repository.jpa.h2.H2MeteringPointRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 
 @H2
 @Configuration
@@ -25,33 +23,12 @@ class H2Config {
   }
 
   @Bean
-  public UserDetailsService userDetailsService() {
-    InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-    manager.createUser(User.withUsername("user")
-                         .password("password")
-                         .roles(Roles.USER)
-                         .build());
-    manager.createUser(User.withUsername("evanil@elvaco.se")
-                         .password("eva123")
-                         .roles(Roles.USER)
-                         .build());
-    manager.createUser(User.withUsername("hansjo@elvaco.se")
-                         .password("hanna123")
-                         .roles(Roles.USER, Roles.ADMIN)
-                         .build());
-    manager.createUser(User.withUsername("emitir@elvaco.se")
-                         .password("emil123")
-                         .roles(Roles.USER, Roles.ADMIN)
-                         .build());
-    manager.createUser(User.withUsername("a")
-                         .password("a")
-                         .roles(Roles.USER, Roles.ADMIN)
-                         .build());
-    return manager;
+  UserDetailsManager userDetailsService() {
+    return new InMemoryUserDetailsManager();
   }
 
   @Bean
-  public MeteringPointRepository meteringPointRepository() {
+  MeteringPointRepository meteringPointRepository() {
     return new H2MeteringPointRepository(entityManager);
   }
 }
