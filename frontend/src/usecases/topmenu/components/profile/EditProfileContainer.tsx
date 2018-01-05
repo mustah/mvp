@@ -33,8 +33,8 @@ const EditProfile = ({user}: Props) => {
             <Bold className="first-uppercase">{translate('name')}:</Bold>
             <input type="text" defaultValue={user.name} name="name"/>
 
-            <Bold className="first-uppercase">{translate('company')}:</Bold>
-            <input type="text" defaultValue={user.company.name} name="name"/>
+            <Bold className="first-uppercase">{translate('organisation')}:</Bold>
+            <input type="text" defaultValue={user.organisation.name} name="name"/>
 
             <Bold className="first-uppercase">{translate('email')}:</Bold>
             <input type="text" defaultValue={user.email} name="name"/>
