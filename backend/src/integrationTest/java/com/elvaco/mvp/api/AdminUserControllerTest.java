@@ -2,6 +2,7 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.core.dto.OrganisationDto;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.Users;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AdminUserControllerTest extends IntegrationTest {
@@ -135,6 +137,7 @@ public class AdminUserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.company = new OrganisationDto(1L, "Elvaco", "elvaco");
+    user.roles = asList(Roles.USER, Roles.ADMIN);
     return user;
   }
 

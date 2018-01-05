@@ -3,6 +3,7 @@ package com.elvaco.mvp.repository.access;
 import java.util.List;
 import java.util.Optional;
 
+import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -10,6 +11,7 @@ import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import org.modelmapper.ModelMapper;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 public class UserRepository implements Users {
@@ -53,7 +55,9 @@ public class UserRepository implements Users {
   }
 
   private UserDto toDto(UserEntity user) {
-    return modelMapper.map(user, UserDto.class);
+    UserDto userDto = modelMapper.map(user, UserDto.class);
+    userDto.roles = singletonList(Roles.USER);
+    return userDto;
   }
 
   private UserEntity toEntity(UserDto user) {
