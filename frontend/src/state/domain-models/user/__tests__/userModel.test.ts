@@ -4,13 +4,14 @@ import {filterUsersByUser, Role, User} from '../userModels';
 import {userSchema} from '../userSchema';
 
 describe('userModel', () => {
+
   describe('filterUsersByUser', () => {
     const regularUsers: User[] = [
       {
         id: 'johnny@wayne-industries.se',
         name: 'Johnny Persbrandt',
         email: 'johnny@wayne-industries.se',
-        company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
+        organisation: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
         roles: [Role.USER],
       },
     ];
@@ -20,14 +21,14 @@ describe('userModel', () => {
         id: 'svante@wayne-industries.se',
         name: 'Svante Sturesson',
         email: 'svante@wayne-industries.se',
-        company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
+        organisation: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
         roles: [Role.USER, Role.ADMIN],
       },
       {
         id: 'bengan@wayne-industries.se',
         name: 'Bagare Bength',
         email: 'bengan@wayne-industries.se',
-        company: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
+        organisation: {id: 'wayne-industries', name: 'wayne-industries', code: 'wayne-industries'},
         roles: [Role.USER, Role.ADMIN],
       },
     ];
@@ -37,7 +38,7 @@ describe('userModel', () => {
         id: 'andnil@elvaco.se',
         name: 'Anders Nilsson',
         email: 'andnil@elvaco.se',
-        company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+        organisation: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
         roles: [Role.USER],
       },
     ];
@@ -46,7 +47,7 @@ describe('userModel', () => {
         id: 'evanil@elvaco.se',
         name: 'Eva Nilsson',
         email: 'evanil@elvaco.se',
-        company: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
+        organisation: {id: 'elvaco', name: 'elvaco', code: 'elvaco'},
         roles: [Role.USER, Role.ADMIN],
       },
     ];
@@ -70,7 +71,7 @@ describe('userModel', () => {
       expect(usersVisibleByUser(elvacoUser)).toEqual(allUsers);
     });
 
-    it('allows admin users to see both users and other admins from the same company', () => {
+    it('allows admin users to see both users and other admins from the same organisation', () => {
       const regularAdmin: User = usersFromDifferentLayers['svante@wayne-industries.se'];
       const filteredUsers = usersVisibleByUser(regularAdmin);
       expect(filteredUsers).toEqual(regularAdmins.length + regularUsers.length);

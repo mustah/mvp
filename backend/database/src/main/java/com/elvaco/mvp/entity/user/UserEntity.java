@@ -30,13 +30,13 @@ public class UserEntity implements Serializable {
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
   @JoinColumn(name = "organisationId")
-  public OrganisationEntity company;
+  public OrganisationEntity organisation;
 
   public UserEntity() {}
 
-  public UserEntity(String name, String email, OrganisationEntity company) {
+  public UserEntity(String name, String email, OrganisationEntity organisation) {
     this.name = name;
     this.email = email;
-    this.company = company;
+    this.organisation = organisation;
   }
 }

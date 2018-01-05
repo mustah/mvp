@@ -180,8 +180,8 @@ msgstr "name"
 msgid "email"
 msgstr "email"
 
-msgid "company"
-msgstr "company"
+msgid "organisation"
+msgstr "organisation"
 
 msgid "roles"
 msgstr "roles"

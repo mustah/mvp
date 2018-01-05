@@ -14,8 +14,9 @@ export const routes = {
   admin: '/admin',
 };
 
-const companyLogo = {
+const organisationLogo = {
   'wayne-industries': 'wayne-industries.png',
 };
 
-export const getLogoPath = (company: uuid): string => companyLogo[company] || 'elvaco_logo.png';
+export const getLogoPath = (organisationId: uuid): string =>
+  organisationLogo[organisationId] || 'elvaco_logo.png';

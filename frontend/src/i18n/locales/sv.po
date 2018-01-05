@@ -180,8 +180,8 @@ msgstr "namn"
 msgid "email"
 msgstr "e-post"
 
-msgid "company"
-msgstr "företag"
+msgid "organisation"
+msgstr "organisation"
 
 msgid "roles"
 msgstr "roller"
