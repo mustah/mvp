@@ -13,6 +13,10 @@ public class UserUseCases {
     this.users = users;
   }
 
+  public List<UserDto> findAll() {
+    return users.findAll();
+  }
+
   public Optional<UserDto> findByEmail(String email) {
     return users.findByEmail(email);
   }
@@ -21,7 +25,11 @@ public class UserUseCases {
     return users.findById(id);
   }
 
-  public List<UserDto> findAll() {
-    return users.findAll();
+  public UserDto save(UserDto user) {
+    return users.save(user);
+  }
+
+  public void deleteById(Long id) {
+    users.deleteById(id);
   }
 }

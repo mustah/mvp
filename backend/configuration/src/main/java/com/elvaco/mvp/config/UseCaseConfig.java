@@ -1,6 +1,5 @@
 package com.elvaco.mvp.config;
 
-import com.elvaco.mvp.core.usecase.AdminUserUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.core.usecase.Users;
 
@@ -21,10 +20,5 @@ class UseCaseConfig {
   @Bean
   UserUseCases userUseCases() {
     return new UserUseCases(users);
-  }
-
-  @Bean
-  AdminUserUseCases adminUserUseCases() {
-    return new AdminUserUseCases(users);
   }
 }
