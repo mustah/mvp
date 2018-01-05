@@ -258,6 +258,9 @@ msgstr "logout"
 msgid "users"
 msgstr "users"
 
+msgid "profile"
+msgstr "profile"
+
 msgid "edit user"
 msgstr "edit user"
 
