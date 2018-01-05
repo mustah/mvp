@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: MVP integration
   profiles:
     active: h2
   h2:
