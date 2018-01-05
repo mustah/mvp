@@ -1,7 +1,6 @@
 server:
   port: 80
 
-
 spring:
   datasource:
     url: jdbc:postgresql://postgresql:5432/mvp
@@ -14,7 +13,6 @@ spring:
       hibernate.use_sql_comments: true
       hibernate.format_sql: true
       hibernate.type: trace
-
 
 zuul:
   routes:
@@ -33,7 +31,6 @@ zuul:
     measurements:
       path: /api/measurements/**
       url: http://localhost:4000/api/measurements/
-
 
 liquibase:
   enabled: true

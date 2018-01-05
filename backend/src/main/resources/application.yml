@@ -1,7 +1,6 @@
 server:
   port: 8080
 
-
 spring:
   profiles:
     active: h2
@@ -11,7 +10,6 @@ spring:
   jpa:
     properties:
       hibernate.dialect: com.elvaco.mvp.dialect.MvpH2Dialect
-
 
 zuul:
   routes:
@@ -30,7 +28,6 @@ zuul:
     measurements:
       path: /api/measurements/**
       url: http://localhost:4000/api/measurements/
-
 
 liquibase:
   enabled: false

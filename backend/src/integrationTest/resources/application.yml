@@ -7,3 +7,6 @@ spring:
   jpa:
     properties:
       hibernate.dialect: com.elvaco.mvp.dialect.MvpH2Dialect
+
+liquibase:
+  enabled: false

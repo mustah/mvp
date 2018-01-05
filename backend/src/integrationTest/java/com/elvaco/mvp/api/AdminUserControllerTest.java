@@ -2,6 +2,7 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.dto.OrganisationDto;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.UnauthorizedDto;
@@ -133,7 +134,7 @@ public class AdminUserControllerTest extends IntegrationTest {
     UserDto user = new UserDto();
     user.name = "Ninja Code";
     user.email = email;
-    user.company = "elvaco";
+    user.company = new OrganisationDto(1L, "Elvaco", "elvaco");
     return user;
   }
 

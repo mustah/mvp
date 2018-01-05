@@ -4,12 +4,9 @@ import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -19,24 +16,20 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "user")
-public class UserEntity implements Serializable{
+@Table(name = "organisation")
+public class OrganisationEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
   public String name;
-  public String email;
+  public String code;
 
-  @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  @JoinColumn(name = "organisationId")
-  public OrganisationEntity company;
+  public OrganisationEntity() {}
 
-  public UserEntity() {}
-
-  public UserEntity(String name, String email, OrganisationEntity company) {
+  public OrganisationEntity(Long id, String name, String code) {
+    this.id = id;
     this.name = name;
-    this.email = email;
-    this.company = company;
+    this.code = code;
   }
 }

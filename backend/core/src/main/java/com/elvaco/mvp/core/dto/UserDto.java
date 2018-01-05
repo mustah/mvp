@@ -8,5 +8,5 @@ public class UserDto {
   public Long id;
   public String name;
   public String email;
-  public String company;
+  public OrganisationDto company;
 }
