@@ -7,8 +7,12 @@ import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestApi("/api/users")
 public class UserController {
@@ -20,14 +24,29 @@ public class UserController {
     this.userUseCases = userUseCases;
   }
 
+  @GetMapping
+  public List<UserDto> allUsers() {
+    return userUseCases.findAll();
+  }
+
   @Nullable
-  @RequestMapping("{id}")
+  @GetMapping("{id}")
   public UserDto userById(@PathVariable Long id) {
     return userUseCases.findById(id).orElse(null);
   }
 
-  @RequestMapping
-  public List<UserDto> allUsers() {
-    return userUseCases.findAll();
+  @PostMapping
+  public UserDto createUser(@RequestBody UserDto user) {
+    return userUseCases.save(user);
+  }
+
+  @PutMapping
+  public UserDto updateUser(@RequestBody UserDto user) {
+    return userUseCases.save(user);
+  }
+
+  @DeleteMapping("{id}")
+  public void deleteUser(@PathVariable Long id) {
+    userUseCases.deleteById(id);
   }
 }
