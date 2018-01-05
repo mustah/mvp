@@ -258,6 +258,12 @@ msgstr "logga ut"
 msgid "users"
 msgstr "användare"
 
+msgid "edit user"
+msgstr "redigera användare"
+
+msgid "delete user"
+msgstr "ta bort användare"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
