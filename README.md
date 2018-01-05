@@ -143,6 +143,8 @@ All the endpoints listed in `application.yml` are routing the requests to `json-
 So when a developer has implemented an api endpoint in Java then the endpoint listed in  `application.yml`
 can be removed. Also the data from `json-server` should be removed too.
 
+> **IMPORTANT**: `json-server` must be started before java application in order for zuul to find these resources.
+
 ## Addendum
 
 ### Installing Docker
