@@ -18,8 +18,12 @@ type Props = StateToProps;
 
 const EditProfile = ({user}: Props) => {
 
-  const onSubmit = () => console.log('Submitting');
+  const onSubmit = (event) => {
+    event.preventDefault();
+    // TODO: Create submit request to backend.
+  };
 
+  // TODO: Add validation for fields.
   return (
     <MvpPageContainer>
       <Row className="space-between">
@@ -35,6 +39,12 @@ const EditProfile = ({user}: Props) => {
 
             <Bold className="first-uppercase">{translate('organisation')}:</Bold>
             <input type="text" defaultValue={user.organisation.name} name="name"/>
+
+            <Bold className="first-uppercase">{translate('current password')}:</Bold>
+            <input type="text" defaultValue={'****'} name="currentPassword"/>
+
+            <Bold className="first-uppercase">{translate('new password')}:</Bold>
+            <input type="text" defaultValue={'****'} name="newPassword"/>
 
             <Bold className="first-uppercase">{translate('email')}:</Bold>
             <input type="text" defaultValue={user.email} name="name"/>

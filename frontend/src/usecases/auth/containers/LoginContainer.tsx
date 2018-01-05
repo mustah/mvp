@@ -13,6 +13,7 @@ import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
@@ -47,6 +48,12 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth: {error}, match: {params: {organisation}}} = this.props;
+
+    const emailFloatingLabel = <div className="first-uppercase">{translate('email')}</div>;
+    const emailHint = <div className="first-uppercase">{translate('your email address')}</div>;
+    const passwordFloatingLabel = <div className="first-uppercase">{translate('password')}</div>;
+    const passwordHint = <div className="first-uppercase">{translate('your password')}</div>;
+
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
@@ -56,10 +63,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
           <form onSubmit={this.onSubmit}>
             <TextField
               className="TextField"
-              floatingLabelText="Email"
+              floatingLabelText={emailFloatingLabel}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText="Din email-adress"
+              hintText={emailHint}
               id="email"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -67,10 +74,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <TextField
               className="TextField"
-              floatingLabelText="Lösenord"
+              floatingLabelText={passwordFloatingLabel}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText="Ditt lösenord"
+              hintText={passwordHint}
               id="password"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -79,7 +86,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <FlatButton
               fullWidth={true}
-              label="Logga in"
+              label={translate('login')}
               onClick={this.onSubmit}
               style={loginButtonStyle}
             />

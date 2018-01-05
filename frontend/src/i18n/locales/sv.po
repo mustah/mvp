@@ -267,6 +267,24 @@ msgstr "redigera användare"
 msgid "delete user"
 msgstr "ta bort användare"
 
+msgid "your email address"
+msgstr "din e-post"
+
+msgid "password"
+msgstr "lösenord"
+
+msgid "your password"
+msgstr "ditt lösenord"
+
+msgid "login"
+msgstr "logga in"
+
+msgid "current password"
+msgstr "nuvarande lösenord"
+
+msgid "new password"
+msgstr "nytt lösenord"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
