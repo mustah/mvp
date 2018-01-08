@@ -19,7 +19,7 @@
 .TextField {
   margin-bottom: 20px;
 
-  label {
+  label, label + div {
     &:first-letter {
       text-transform: uppercase;
     }
