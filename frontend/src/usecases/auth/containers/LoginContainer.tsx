@@ -8,19 +8,15 @@ import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getLogoPath} from '../../../app/routes';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
+import {translate} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
-
-const loginButtonStyle = {
-  backgroundColor: colors.blue,
-  color: '#fff',
-};
 
 interface StateToProps {
   auth: AuthState;
@@ -47,6 +43,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth: {error}, match: {params: {organisation}}} = this.props;
+
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
@@ -56,10 +53,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
           <form onSubmit={this.onSubmit}>
             <TextField
               className="TextField"
-              floatingLabelText="Email"
+              floatingLabelText={translate('email')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText="Din email-adress"
+              hintText={translate('your email address')}
               id="email"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -67,10 +64,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <TextField
               className="TextField"
-              floatingLabelText="Lösenord"
+              floatingLabelText={translate('password')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText="Ditt lösenord"
+              hintText={translate('your password')}
               id="password"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -79,9 +76,9 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <FlatButton
               fullWidth={true}
-              label="Logga in"
+              label={translate('login')}
               onClick={this.onSubmit}
-              style={loginButtonStyle}
+              style={buttonStyle}
             />
             {error && <div className="error-message">{error.error}: {error.message}</div>}
           </form>

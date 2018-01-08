@@ -124,3 +124,8 @@ export const checkboxLabel: React.CSSProperties = {
   margin: 4,
   marginTop: 8,
 };
+
+export const buttonStyle: React.CSSProperties = {
+  backgroundColor: colors.blue,
+  color: colors.white,
+};

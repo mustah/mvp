@@ -4,6 +4,7 @@ import {Collection} from '../../usecases/collection/components/Collection';
 import {DashboardContainer} from '../../usecases/dashboard/containers/DashboardContainer';
 import {ReportContainer} from '../../usecases/report/containers/ReportContainer';
 import {SelectionContainer} from '../../usecases/selection/containers/SelectionContainer';
+import {EditProfileContainer} from '../../usecases/topmenu/components/profile/EditProfileContainer';
 import {Validation} from '../../usecases/validation/components/Validation';
 import {routes} from '../routes';
 
@@ -15,6 +16,7 @@ export const MvpPages = () => (
     <Route exact={true} path={routes.validation} component={Validation}/>
     <Route exact={true} path={`${routes.report}/:id?`} component={ReportContainer}/>
     <Route exact={true} path={routes.selection} component={SelectionContainer}/>
+    <Route exact={true} path={routes.userProfile} component={EditProfileContainer}/>
     <Redirect to={routes.home}/>
   </Switch>
 );
