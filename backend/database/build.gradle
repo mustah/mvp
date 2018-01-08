@@ -13,7 +13,7 @@ dependencies {
   compile 'com.querydsl:querydsl-root:4.1.4'
   compile 'com.querydsl:querydsl-apt:4.1.4:jpa'
   compile 'com.querydsl:querydsl-jpa:4.1.4'
-  compile('org.modelmapper:modelmapper:1.1.0')
+  compile 'org.modelmapper:modelmapper:1.1.0'
 
   compileOnly 'org.projectlombok:lombok:1.16.18'
 

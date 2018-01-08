@@ -64,7 +64,6 @@ compileJava {
   options.compilerArgs << "-s"
   options.compilerArgs << "$buildDir/generated"
   doFirst {
-    // make sure that directory exists
     file(new File(buildDir, "/generated")).mkdirs()
   }
 }
@@ -77,7 +76,6 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-actuator'
   compile 'org.springframework.boot:spring-boot-starter-hateoas'
   compile 'org.springframework.cloud:spring-cloud-starter-zuul:1.4.0.RELEASE'
-
 
   runtime 'org.liquibase:liquibase-core'
   runtime 'com.h2database:h2'
