@@ -60,7 +60,6 @@ const EditProfile = ({user}: Props) => {
               <TextField
                 className="TextField"
                 type="password"
-                defaultValue={'****'}
                 name="currentPassword"
                 hintText={translate('current password')}
                 floatingLabelText={translate('current password')}
@@ -69,7 +68,6 @@ const EditProfile = ({user}: Props) => {
               <TextField
                 className="TextField"
                 type="password"
-                defaultValue={'****'}
                 name="newPassword"
                 hintText={translate('new password')}
                 floatingLabelText={translate('new password')}
