@@ -8,7 +8,7 @@ import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getLogoPath} from '../../../app/routes';
-import {colors, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
@@ -17,11 +17,6 @@ import {translate} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
-
-const loginButtonStyle: React.CSSProperties = {
-  backgroundColor: colors.blue,
-  color: colors.white,
-};
 
 interface StateToProps {
   auth: AuthState;
@@ -83,7 +78,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
               fullWidth={true}
               label={translate('login')}
               onClick={this.onSubmit}
-              style={loginButtonStyle}
+              style={buttonStyle}
             />
             {error && <div className="error-message">{error.error}: {error.message}</div>}
           </form>

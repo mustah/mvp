@@ -1,10 +1,10 @@
 import 'EditProfileContainer.scss';
+import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {paperStyle} from '../../../../app/themes';
+import {buttonStyle, paperStyle} from '../../../../app/themes';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MainTitle} from '../../../../components/texts/Titles';
@@ -91,10 +91,11 @@ const EditProfile = ({user}: Props) => {
                 floatingLabelText={translate('roles')}
                 disabled={true}
               />
-              <RaisedButton
+              <FlatButton
                 className="ProfileSave"
                 type="submit"
                 label={translate('save')}
+                style={buttonStyle}
               />
             </Column>
           </form>
