@@ -1,14 +1,9 @@
 @import '../../../../app/variables';
 
 .EditProfileContainer {
+  padding-left: 15px;
 
   .ProfileSave {
     width: 60px;
-    text-transform: capitalize;
-    outline: none;
-    &:hover {
-      color: $white;
-      background-color: $blue;
-    }
   }
 }

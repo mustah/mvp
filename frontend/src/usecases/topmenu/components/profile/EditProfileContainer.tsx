@@ -1,7 +1,10 @@
 import 'EditProfileContainer.scss';
+import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {paperStyle} from '../../../../app/themes';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MainTitle} from '../../../../components/texts/Titles';
@@ -31,67 +34,74 @@ const EditProfile = ({user}: Props) => {
           {translate('profile')}
         </MainTitle>
       </Row>
-      <Column className="EditProfileContainer">
-        <form onSubmit={onSubmit}>
-          <Column>
-            <TextField
-              className="TextField"
-              type="text"
-              defaultValue={user.name}
-              name="name"
-              hintText={translate('name')}
-              floatingLabelText={translate('name')}
-            />
+      <Paper style={paperStyle}>
+        <Column className="EditProfileContainer">
+          <form onSubmit={onSubmit}>
+            <Column>
+              <TextField
+                className="TextField"
+                type="text"
+                defaultValue={user.name}
+                name="name"
+                hintText={translate('name')}
+                floatingLabelText={translate('name')}
+              />
 
-            <TextField
-              className="TextField"
-              type="text"
-              defaultValue={user.organisation.name}
-              name="name"
-              hintText={translate('organisation')}
-              floatingLabelText={translate('organisation')}
-            />
+              <TextField
+                className="TextField"
+                type="text"
+                defaultValue={user.organisation.name}
+                name="name"
+                hintText={translate('organisation')}
+                floatingLabelText={translate('organisation')}
+                disabled={true}
+              />
 
-            <TextField
-              className="TextField"
-              type="password"
-              defaultValue={'****'}
-              name="currentPassword"
-              hintText={translate('current password')}
-              floatingLabelText={translate('current password')}
-            />
+              <TextField
+                className="TextField"
+                type="password"
+                defaultValue={'****'}
+                name="currentPassword"
+                hintText={translate('current password')}
+                floatingLabelText={translate('current password')}
+              />
 
-            <TextField
-              className="TextField"
-              type="password"
-              defaultValue={'****'}
-              name="newPassword"
-              hintText={translate('new password')}
-              floatingLabelText={translate('new password')}
-            />
+              <TextField
+                className="TextField"
+                type="password"
+                defaultValue={'****'}
+                name="newPassword"
+                hintText={translate('new password')}
+                floatingLabelText={translate('new password')}
+              />
 
-            <TextField
-              className="TextField"
-              type="text"
-              defaultValue={user.email}
-              name="name"
-              hintText={translate('email')}
-              floatingLabelText={translate('email')}
-            />
+              <TextField
+                className="TextField"
+                type="text"
+                defaultValue={user.email}
+                name="name"
+                hintText={translate('email')}
+                floatingLabelText={translate('email')}
+              />
 
-            <TextField
-              className="TextField"
-              type="text"
-              defaultValue={user.roles.toString()}
-              name="name"
-              disabled={true}
-              hintText={translate('roles')}
-              floatingLabelText={translate('roles')}
-            />
-            <input type="submit" className="ProfileSave clickable" value={translate('save')}/>
-          </Column>
-        </form>
-      </Column>
+              <TextField
+                className="TextField"
+                type="text"
+                defaultValue={user.roles.toString()}
+                name="name"
+                hintText={translate('roles')}
+                floatingLabelText={translate('roles')}
+                disabled={true}
+              />
+              <RaisedButton
+                className="ProfileSave"
+                type="submit"
+                label={translate('save')}
+              />
+            </Column>
+          </form>
+        </Column>
+      </Paper>
     </MvpPageContainer>
   );
 };
