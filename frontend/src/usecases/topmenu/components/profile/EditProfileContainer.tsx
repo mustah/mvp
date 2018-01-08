@@ -1,14 +1,14 @@
+import 'EditProfileContainer.scss';
+import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
-import {Bold} from '../../../../components/texts/Texts';
 import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {User} from '../../../../state/domain-models/user/userModels';
-import 'EditProfileContainer.scss';
 
 interface StateToProps {
   user: User;
@@ -34,23 +34,60 @@ const EditProfile = ({user}: Props) => {
       <Column className="EditProfileContainer">
         <form onSubmit={onSubmit}>
           <Column>
-            <Bold className="first-uppercase">{translate('name')}:</Bold>
-            <input type="text" defaultValue={user.name} name="name"/>
+            <TextField
+              className="TextField"
+              type="text"
+              defaultValue={user.name}
+              name="name"
+              hintText={translate('name')}
+              floatingLabelText={translate('name')}
+            />
 
-            <Bold className="first-uppercase">{translate('organisation')}:</Bold>
-            <input type="text" defaultValue={user.organisation.name} name="name"/>
+            <TextField
+              className="TextField"
+              type="text"
+              defaultValue={user.organisation.name}
+              name="name"
+              hintText={translate('organisation')}
+              floatingLabelText={translate('organisation')}
+            />
 
-            <Bold className="first-uppercase">{translate('current password')}:</Bold>
-            <input type="text" defaultValue={'****'} name="currentPassword"/>
+            <TextField
+              className="TextField"
+              type="password"
+              defaultValue={'****'}
+              name="currentPassword"
+              hintText={translate('current password')}
+              floatingLabelText={translate('current password')}
+            />
 
-            <Bold className="first-uppercase">{translate('new password')}:</Bold>
-            <input type="text" defaultValue={'****'} name="newPassword"/>
+            <TextField
+              className="TextField"
+              type="password"
+              defaultValue={'****'}
+              name="newPassword"
+              hintText={translate('new password')}
+              floatingLabelText={translate('new password')}
+            />
 
-            <Bold className="first-uppercase">{translate('email')}:</Bold>
-            <input type="text" defaultValue={user.email} name="name"/>
+            <TextField
+              className="TextField"
+              type="text"
+              defaultValue={user.email}
+              name="name"
+              hintText={translate('email')}
+              floatingLabelText={translate('email')}
+            />
 
-            <Bold className="first-uppercase">{translate('roles')}:</Bold>
-            <input type="text" defaultValue={user.roles} name="name" disabled={true}/>
+            <TextField
+              className="TextField"
+              type="text"
+              defaultValue={user.roles.toString()}
+              name="name"
+              disabled={true}
+              hintText={translate('roles')}
+              floatingLabelText={translate('roles')}
+            />
             <input type="submit" className="ProfileSave clickable" value={translate('save')}/>
           </Column>
         </form>

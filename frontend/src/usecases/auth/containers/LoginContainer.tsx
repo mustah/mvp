@@ -18,9 +18,9 @@ import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
 
-const loginButtonStyle = {
+const loginButtonStyle: React.CSSProperties = {
   backgroundColor: colors.blue,
-  color: '#fff',
+  color: colors.white,
 };
 
 interface StateToProps {
@@ -49,11 +49,6 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
   render() {
     const {auth: {error}, match: {params: {organisation}}} = this.props;
 
-    const emailFloatingLabel = <div className="first-uppercase">{translate('email')}</div>;
-    const emailHint = <div className="first-uppercase">{translate('your email address')}</div>;
-    const passwordFloatingLabel = <div className="first-uppercase">{translate('password')}</div>;
-    const passwordHint = <div className="first-uppercase">{translate('your password')}</div>;
-
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
@@ -63,10 +58,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
           <form onSubmit={this.onSubmit}>
             <TextField
               className="TextField"
-              floatingLabelText={emailFloatingLabel}
+              floatingLabelText={translate('email')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText={emailHint}
+              hintText={translate('your email address')}
               id="email"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -74,10 +69,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <TextField
               className="TextField"
-              floatingLabelText={passwordFloatingLabel}
+              floatingLabelText={translate('password')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText={passwordHint}
+              hintText={translate('your password')}
               id="password"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
