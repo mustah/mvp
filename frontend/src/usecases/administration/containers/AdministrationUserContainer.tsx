@@ -1,10 +1,15 @@
+import Divider from 'material-ui/Divider';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {routes} from '../../../app/routes';
+import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
+import {ActionsDropdown, MenuItems} from '../../../components/actions-dropdown/ActionsDropdown';
 import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -52,11 +57,22 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown id={id} />;
+      <UserActionsDropdown id={id}/>;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
     const paginatedList = Object.keys(usersToRender);
+
+    const noop = () => 0;
+
+    const addUser = () => history.push(`${routes.adminUsersAdd}`);
+
+    const menuItems: MenuItems = [
+      <ActionMenuItem name={translate('add user')} onClick={addUser} key="add user"/>,
+      <Divider key="a divider"/>,
+      <ActionMenuItem name={translate('export to Excel (.csv)')} onClick={noop} key="export to excel"/>,
+      <ActionMenuItem name={translate('export to JSON')} onClick={noop} key="export to json"/>,
+    ];
 
     return (
       <div>
@@ -78,7 +94,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
             renderCell={renderRoles}
           />
           <TableColumn
-            header={<TableHead />}
+            header={<TableHead><ActionsDropdown menuItems={menuItems}/></TableHead>}
             renderCell={renderActionDropdown}
           />
         </Table>
