@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {LayoutProps} from '../layout/Layout';
+import {Row} from '../row/Row';
 import './Wrapper.scss';
 
-// TODO: Remove this component when Validation and CollectionTabsContainer are refactored.
 export const WrapperIndent = (props: LayoutProps) =>
-  <div {...props} className={classNames(props.className, 'Wrapper-indent')}/>;
+  <Row {...props} className={classNames(props.className, 'Wrapper-indent')}/>;

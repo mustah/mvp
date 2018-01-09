@@ -1,6 +1,5 @@
 import * as React from 'react';
-import 'ValidationOverview.scss';
-import {Row} from '../../../components/layouts/row/Row';
+import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
@@ -79,9 +78,9 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
       },
     ];
     return (
-      <Row className="ValidationOverview">
+      <WrapperIndent>
         {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
-      </Row>
+      </WrapperIndent>
     );
   }
 };

@@ -1,12 +1,11 @@
 import * as React from 'react';
-import {Row} from '../../../components/layouts/row/Row';
+import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
 import {ItemOrArray} from '../../../types/Types';
-import './CollectionOverview.scss';
 
 interface CollectionOverviewProps {
   gatewayDataSummary: Maybe<GatewayDataSummary>;
@@ -63,9 +62,9 @@ export const CollectionOverview = ({gatewayDataSummary, setSelection}: Collectio
       },
     ];
     return (
-      <Row className="CollectionOverview">
+      <WrapperIndent>
         {pieCharts.map((pieChart: PieChartSelectorProps, index) => <PieChartSelector key={index} {...pieChart}/>)}
-      </Row>
+      </WrapperIndent>
     );
   }
 };
