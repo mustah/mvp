@@ -22,7 +22,7 @@ task start(type: YarnTask) {
   args = ['start']
 }
 
-task test(type: YarnTask) {
+task yarn_test(type: YarnTask) {
   args = ['test']
 }
 
@@ -49,7 +49,7 @@ task assembleMockup(type: Tar) {
 }
 
 clean.dependsOn(cleanMockup)
-check.dependsOn(test)
+check.dependsOn([yarn_install, yarn_test])
 bundle.dependsOn(yarn_install)
 assembleMockup.dependsOn(cleanMockup)
 assembleMockup.dependsOn(bundle)

@@ -5,9 +5,3 @@
 %elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp
 %elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp
 %elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp/elvaco-mvp.service /etc/systemd/system
-
-%elvaco_mvp ALL=NOPASSWD: /bin/systemctl enable elvaco-mvp-mockup
-%elvaco_mvp ALL=NOPASSWD: /bin/systemctl stop elvaco-mvp-mockup
-%elvaco_mvp ALL=NOPASSWD: /bin/systemctl start elvaco-mvp-mockup
-%elvaco_mvp ALL=NOPASSWD: /bin/systemctl restart elvaco-mvp-mockup
-%elvaco_mvp ALL=NOPASSWD: /bin/mv /opt/elvaco/mvp-mockup/dist/elvaco-mvp-mockup.service /etc/systemd/system
