@@ -10,7 +10,6 @@ import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.userdetails.User;
@@ -130,7 +129,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
         "Eva Nilsson",
         "evanil@elvaco.se",
         "eva123",
-        wayneIndustries,
+        elvaco,
         asList(user, superAdmin)
       ),
       new UserEntity(
@@ -140,7 +139,13 @@ public class UserDatabaseLoader implements CommandLineRunner {
         elvaco,
         singletonList(superAdmin)
       ),
-      new UserEntity("Developer", "user", "password", elvaco, singletonList(superAdmin))
+      new UserEntity(
+        "Developer",
+        "user@domain.tld",
+        "complicated_password",
+        elvaco,
+        singletonList(superAdmin)
+      )
     );
 
     repository.save(users);
@@ -154,9 +159,9 @@ public class UserDatabaseLoader implements CommandLineRunner {
     return User.withUsername(user.email)
       .password(user.password)
       .roles(user.roles.stream()
-               .map(r -> r.role)
-               .collect(toList())
-               .toArray(new String[user.roles.size()]))
+        .map(r -> r.role)
+        .collect(toList())
+        .toArray(new String[user.roles.size()]))
       .build();
   }
 }

@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Email;
 
 @EqualsAndHashCode
 @Entity
@@ -29,6 +30,7 @@ public class UserEntity implements Serializable {
 
   public String name;
 
+  @Email
   public String email;
 
   public String password;

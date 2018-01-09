@@ -142,6 +142,6 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   private RestClient apiService() {
-    return restClient().loginWith("user", "password");
+    return restClient().loginWith("user@domain.tld", "complicated_password");
   }
 }
