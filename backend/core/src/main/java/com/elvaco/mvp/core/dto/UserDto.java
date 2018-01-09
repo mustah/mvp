@@ -2,8 +2,10 @@ package com.elvaco.mvp.core.dto;
 
 import java.util.List;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@EqualsAndHashCode
 @ToString
 public class UserDto {
 
