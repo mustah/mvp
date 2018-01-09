@@ -17,6 +17,7 @@ import {translate} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
+import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 
 interface StateToProps {
   auth: AuthState;
@@ -80,7 +81,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
               onClick={this.onSubmit}
               style={buttonStyle}
             />
-            {error && <div className="error-message">{error.error}: {error.message}</div>}
+            {<ErrorMessage {...error}/>}
           </form>
         </Paper>
       </ColumnCenter>
