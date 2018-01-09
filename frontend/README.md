@@ -41,7 +41,7 @@ $ yarn dist-server
 We use [json-server](https://github.com/typicode/json-server) to fake our API.
 
 **Note** the JSON server runs in the foreground, which means that you should leave it up and running in a terminal
-as long as you need it, or run it in the background by suffixing the JSON server call with `&` (i.e. `... --port 8080 &`).
+as long as you need it, or run it in the background by suffixing the JSON server call with `&` (i.e. `... --port 4000 &`).
 
 ```bash
 $ yarn json-server
