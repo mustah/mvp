@@ -1,5 +1,4 @@
 apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
 
 dependencies {
   compileOnly 'org.projectlombok:lombok:1.16.18'
