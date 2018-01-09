@@ -7,6 +7,7 @@ import com.elvaco.mvp.dto.ErrorMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,8 +37,12 @@ public class ApiExceptionHandler {
   }
 
   private HttpStatus resolveHttpStatus(Exception exception) {
-    return Optional.ofNullable(findMergedAnnotation(exception.getClass(), ResponseStatus.class))
-      .map(ResponseStatus::value)
-      .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+    if (exception instanceof AccessDeniedException) {
+      return HttpStatus.FORBIDDEN;
+    } else {
+      return Optional.ofNullable(findMergedAnnotation(exception.getClass(), ResponseStatus.class))
+        .map(ResponseStatus::value)
+        .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
