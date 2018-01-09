@@ -41,14 +41,7 @@ Make sure that a port (any port) that is neither 8080 nor 443 is open, so that w
 
 #### Steps to take when/if we EOL the mockup phase
 
-- On the staging server
-  - `systemctl stop elvaco-mvp-mockup.service`
-  - `rm -r /opt/elvaco/mvp-mockup`
-  - `rm /etc/systemd/system/elvaco-mvp-mockup.service`
-  - `rm /usr/bin/node`
 - In the code
-  - Remove `deploy_mockup` in *deploy/deploy_to_staging.sh*
-  - Remove the sudoers rules related to the mockup
   - Remove the mockup related targets in *frontend/build.gradle*
 - Communication
   - Email johanness.magnusson@unibase.se and tell him to close the port that was used for the JSON server.
