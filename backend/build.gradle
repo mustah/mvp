@@ -51,23 +51,6 @@ distributions {
 // by default, we get both a tar and a zip; but we are satisfied with only a tar
 distZip.enabled = false
 
-idea {
-  module {
-    outputDir = file("$buildDir/classes/main")
-    testOutputDir = file("$buildDir/classes/test")
-    generatedSourceDirs += file("$buildDir/generated/")
-    sourceDirs += file("$buildDir/generated/")
-  }
-}
-
-compileJava {
-  options.compilerArgs << "-s"
-  options.compilerArgs << "$buildDir/generated"
-  doFirst {
-    file(new File(buildDir, "/generated")).mkdirs()
-  }
-}
-
 dependencies {
   compile project('core')
   compile project('configuration')
