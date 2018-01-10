@@ -4,7 +4,7 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {Row} from '../../../components/layouts/row/Row';
-import {firstUpperTranslated} from '../../../helpers/formatters';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {ErrorResponse} from '../../../types/Types';
 import {AdministrationState} from '../administrationModels';

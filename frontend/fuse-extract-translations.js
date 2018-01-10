@@ -10,7 +10,7 @@ const utf8 = 'utf-8';
 const options = {
   lngs: [defaultLanguage],
   func: {
-    list: ['translate'],
+    list: ['translate', 'firstUpperTranslated'],
   },
 };
 
