@@ -132,6 +132,56 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(users.findById(user.id).isPresent()).isFalse();
   }
 
+  @Test
+  public void onlySuperAdminCanCreateNewUser() {
+    UserDto user = userWithEmail("simple@user.com");
+
+    ResponseEntity<UnauthorizedDto> response = restClient()
+      .loginWith("marsve@elvaco.se", "maria123")
+      .post("/users", user, UnauthorizedDto.class);
+
+    assertForbidden(response);
+  }
+
+  @Test
+  public void onlySuperAdminCanDeleteUser() {
+    restClient()
+      .loginWith("marsve@elvaco.se", "maria123")
+      .delete("/users/1");
+
+    assertThat(users.findById(1L).isPresent()).isTrue();
+  }
+
+  @Test
+  public void onlySuperAdminAndAdminCanUpdateUser() {
+    String email = "another@user.com";
+    UserDto user = userWithEmail(email);
+
+    restClient()
+      .loginWith("marsve@elvaco.se", "maria123")
+      .put("/users", user);
+
+    assertThat(users.findByEmail(email).isPresent()).isFalse();
+  }
+
+  @Test
+  public void onlySuperAdminAndAdminCanSeeAllUsers() {
+    ResponseEntity<UnauthorizedDto> response = restClient()
+      .loginWith("marsve@elvaco.se", "maria123")
+      .get("/users", UnauthorizedDto.class);
+
+    assertForbidden(response);
+  }
+
+  private void assertForbidden(ResponseEntity<UnauthorizedDto> response) {
+    UnauthorizedDto expected = new UnauthorizedDto();
+    expected.message = "Access is denied";
+    expected.status = HttpStatus.FORBIDDEN.value();
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(response.getBody()).isEqualTo(expected);
+  }
+
   private UserDto userWithEmail(String email) {
     UserDto user = new UserDto();
     user.name = "Ninja Code";
