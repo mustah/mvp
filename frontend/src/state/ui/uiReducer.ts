@@ -1,25 +1,29 @@
 import {combineReducers} from 'redux';
 import {sideMenu, SideMenuState} from '../../usecases/sidemenu/sideMenuReducer';
-import {TabsState} from './tabs/tabsModels';
-import {tabs} from './tabs/tabsReducer';
 import {indicator, IndicatorState} from './indicator/indicatorReducer';
+import {MessageState} from './message/messageModels';
+import {message} from './message/messageReducer';
 import {PaginationState} from './pagination/paginationModels';
 import {pagination} from './pagination/paginationReducer';
-import {selectionTree} from './selection-tree/selectionTreeReducer';
 import {SelectionTreeState} from './selection-tree/selectionTreeModels';
+import {selectionTree} from './selection-tree/selectionTreeReducer';
+import {TabsState} from './tabs/tabsModels';
+import {tabs} from './tabs/tabsReducer';
 
 export interface UiState {
-  tabs: TabsState;
   indicator: IndicatorState;
-  sideMenu: SideMenuState;
+  message: MessageState;
   pagination: PaginationState;
   selectionTree: SelectionTreeState;
+  sideMenu: SideMenuState;
+  tabs: TabsState;
 }
 
 export const ui = combineReducers<UiState>({
-  tabs,
   indicator,
-  sideMenu,
+  message,
   pagination,
   selectionTree,
+  sideMenu,
+  tabs,
 });

@@ -6,12 +6,9 @@ import * as React from 'react';
 import {Row} from '../../../components/layouts/row/Row';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
-import {ErrorResponse} from '../../../types/Types';
 import {AdministrationState} from '../administrationModels';
-import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 
 interface UserFormProps {
-  error?: ErrorResponse;
   onSubmit: (event: any) => void;
   organisations: Organisation[];
   roles: Role[];
@@ -32,7 +29,7 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
 
   render() {
-    const {onSubmit, organisations, roles, error} = this.props;
+    const {onSubmit, organisations, roles} = this.props;
 
     const nameLabel = firstUpperTranslated('name');
     const emailLabel = firstUpperTranslated('email');
@@ -87,7 +84,6 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
             {rolesAsItems}
           </SelectField>
         </Row>
-        {<Row><ErrorMessage {...error}/></Row>}
         <Row>
           <RaisedButton
             label={firstUpperTranslated('save')}

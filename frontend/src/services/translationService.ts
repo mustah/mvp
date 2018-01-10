@@ -17,4 +17,5 @@ const firstUpper = (original: string): string => {
   return original[0].toUpperCase() + original.substr(1);
 };
 
-export const firstUpperTranslated = (original: string): string => firstUpper(translate(original));
+export const firstUpperTranslated = (key: string, options?: TranslationOptions): string =>
+  firstUpper(translate(key, options));

@@ -19,6 +19,10 @@ describe('indicatorSelector', () => {
     selectionTree: {
       openListItems: [],
     },
+    message: {
+      isOpen: false,
+      message: '',
+    },
   };
 
   it('can select the chosen indicators for the report view', () => {

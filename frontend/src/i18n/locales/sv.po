@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-10 17:57+0100\n"
+"POT-Creation-Date: 2018-01-10 18:26+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -178,6 +178,18 @@ msgstr "flaggad"
 
 msgid "unFlagged"
 msgstr "ej flaggad"
+
+msgid "failed to create user: {{reason}})"
+msgstr "misslyckades med att skapa användare: {{reason}})"
+
+msgid "failed to delete the user: {{reason}})"
+msgstr "misslyckades med att ta bort användare: {{reason}})"
+
+msgid "successfully created the user {{name}} ({{email}})"
+msgstr "skapade användaren {{name}} ({{email}})"
+
+msgid "successfully deleted the user {{name}} ({{email}})"
+msgstr "användaren {{name}} ({{email}}) togs bort"
 
 msgid "administration"
 msgstr "administration"
