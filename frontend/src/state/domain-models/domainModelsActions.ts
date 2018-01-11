@@ -94,11 +94,15 @@ const createDomainModel =
           dispatch(request(domainModel));
           const {data: domainModelData} = await restClient.post(makeUrl(endPoint), domainModel);
           dispatch(success(domainModelData));
-          afterSuccess && dispatch(afterSuccess(domainModelData));
+          if (afterSuccess) {
+            dispatch(afterSuccess(domainModelData));
+          }
         } catch (error) {
           const {response: {data: {message}}} = error;
           dispatch(failure(message));
-          afterFailure && dispatch(afterFailure(message));
+          if (afterFailure) {
+            dispatch(afterFailure(message));
+          }
         }
       };
 
@@ -113,11 +117,15 @@ const deleteDomainModel =
           const {data: domainModel} =
             await restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(modelId.toString())}`));
           dispatch(success(domainModel));
-          afterSuccess && dispatch(afterSuccess(domainModel));
+          if (afterSuccess) {
+            dispatch(afterSuccess(domainModel));
+          }
         } catch (error) {
           const {response: {data}} = error;
           dispatch(failure(data));
-          afterFailure && dispatch(afterFailure(data));
+          if (afterFailure) {
+            dispatch(afterFailure(data));
+          }
         }
       };
 
@@ -138,7 +146,7 @@ export const addUser = createDomainModel<User>(EndPoints.users, userPostRequest,
   afterSuccess: (domainModel: User) =>
     showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...domainModel})),
   afterFailure: (error: ErrorResponse) =>
-    showMessage(firstUpperTranslated('failed to create user: {{error}})', {error})),
+    showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
 });
 
 const userDeleteRequest = domainModelDeleteRequest(EndPoints.users);
@@ -149,6 +157,6 @@ export const deleteUser = deleteDomainModel(
     afterSuccess: (domainModel: User) =>
       showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...domainModel})),
     afterFailure: (error: ErrorResponse) =>
-      showMessage(firstUpperTranslated('failed to delete the user: {{error}})', {error})),
-  }
+      showMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})),
+  },
 );

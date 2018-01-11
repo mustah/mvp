@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-10 18:26+0100\n"
+"POT-Creation-Date: 2018-01-11 13:09+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -179,17 +179,17 @@ msgstr "flaggad"
 msgid "unFlagged"
 msgstr "ej flaggad"
 
-msgid "failed to create user: {{reason}})"
-msgstr "misslyckades med att skapa användare: {{reason}})"
-
-msgid "failed to delete the user: {{reason}})"
-msgstr "misslyckades med att ta bort användare: {{reason}})"
-
 msgid "successfully created the user {{name}} ({{email}})"
 msgstr "skapade användaren {{name}} ({{email}})"
 
+msgid "failed to create user: {{error}}"
+msgstr "misslyckades med att skapa användare: {{error}}"
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "användaren {{name}} ({{email}}) togs bort"
+
+msgid "failed to delete the user: {{error}}"
+msgstr "misslyckades med att ta bort användare: {{error}}"
 
 msgid "administration"
 msgstr "administration"
@@ -324,3 +324,15 @@ msgstr "mätare"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+#~ msgid "failed to create user: {{error}})"
+#~ msgstr "misslyckades med att skapa en användare: {{error}})"
+
+#~ msgid "failed to delete the user: {{error}})"
+#~ msgstr "misslyckades med att ta bort en användare: {{error}})"
+
+#~ msgid "failed to create user: {{reason}})"
+#~ msgstr "misslyckades med att skapa användare: {{reason}})"
+
+#~ msgid "failed to delete the user: {{reason}})"
+#~ msgstr "misslyckades med att ta bort användare: {{reason}})"
