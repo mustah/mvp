@@ -57,6 +57,8 @@ build:
         - sleep 1
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
+    dependencies:
+      - build
 
 deploy_protected:
   <<: *review_app
