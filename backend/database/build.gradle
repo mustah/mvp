@@ -20,3 +20,20 @@ dependencies {
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.8.0'
 }
+
+idea {
+  module {
+    outputDir = file("$buildDir/classes/main")
+    testOutputDir = file("$buildDir/classes/test")
+    generatedSourceDirs += file("$buildDir/generated/")
+    sourceDirs += file("$buildDir/generated/")
+  }
+}
+
+compileJava {
+  options.compilerArgs << "-s"
+  options.compilerArgs << "$buildDir/generated"
+  doFirst {
+    file(new File(buildDir, "/generated")).mkdirs()
+  }
+}

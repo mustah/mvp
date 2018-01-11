@@ -3,7 +3,7 @@ package com.elvaco.mvp.dialect;
 import com.elvaco.mvp.dialect.types.Types;
 import com.elvaco.mvp.dialect.types.postgresql.PostgreSqlMeasurementUnitType;
 import com.elvaco.mvp.dialect.types.postgresql.PostgreSqlPropertyCollectionType;
-
+import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
@@ -30,7 +30,8 @@ public class MvpPostgreSqlDialect extends PostgreSQL94Dialect {
     super.contributeTypes(typeContributions, serviceRegistry);
     typeContributions.contributeType(
       new PostgreSqlPropertyCollectionType(),
-      Types.PropertyCollection.toString()
+      Types.PropertyCollection.toString(),
+      PropertyCollection.class.getCanonicalName()
     );
     typeContributions.contributeType(
       new PostgreSqlMeasurementUnitType(),
