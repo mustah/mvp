@@ -1,7 +1,7 @@
 import {IdNamed, uuid} from '../../../types/Types';
 import {DomainModel, NormalizedState} from '../domainModels';
 
-interface Organisation extends IdNamed {
+export interface Organisation extends IdNamed {
   code: uuid;
   name: string;
 }

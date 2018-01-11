@@ -13,6 +13,8 @@ export const routes = {
   selection: '/selection',
   userProfile: '/user-profile',
   admin: '/admin',
+  adminUsers: '/admin/users',
+  adminUsersAdd: '/admin/users/add',
 };
 
 const organisationLogo = {

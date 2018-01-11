@@ -9,3 +9,12 @@ export const onTranslationInitialized = (callback: (options: InitOptions) => voi
 
 export const changeTranslationLanguage = (language: string, callback?: Callback) =>
   i18n.changeLanguage(language, callback);
+
+const firstUpper = (original: string): string => {
+  if (original.length === 0) {
+    return original;
+  }
+  return original[0].toUpperCase() + original.substr(1);
+};
+
+export const firstUpperTranslated = (original: string): string => firstUpper(translate(original));
