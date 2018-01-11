@@ -125,7 +125,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    UserDto user = users.save(userWithEmail("n@b.com"));
+    UserDto user = users.save(userWithEmail("noo@b.com"));
 
     apiService().delete("/users/" + user.id);
 
