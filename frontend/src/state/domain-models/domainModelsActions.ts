@@ -141,6 +141,7 @@ export const fetchMeters = fetchDomainModel<Gateway>(EndPoints.meters, meterRequ
 export const userRequest = domainModelGetRequest<User>(EndPoints.users);
 export const fetchUsers = fetchDomainModel<User>(EndPoints.users, userRequest, userSchema);
 
+// TODO we might want to pass afterSuccess and afterFailure to the action from the application's containers
 const userPostRequest = domainModelPostRequest<User>(EndPoints.users);
 export const addUser = createDomainModel<User>(EndPoints.users, userPostRequest, {
   afterSuccess: (domainModel: User) =>
