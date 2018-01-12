@@ -5,9 +5,9 @@ import {ParameterName} from '../search/selection/selectionModels';
 import {DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
 import {
   DOMAIN_MODELS_DELETE_SUCCESS,
-  DOMAIN_MODELS_FAILURE,
-  DOMAIN_MODELS_REQUEST,
-  DOMAIN_MODELS_SUCCESS,
+  DOMAIN_MODELS_GET_FAILURE,
+  DOMAIN_MODELS_GET_REQUEST,
+  DOMAIN_MODELS_GET_SUCCESS,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -58,14 +58,14 @@ type ActionTypes<T> =
 const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
-      case DOMAIN_MODELS_REQUEST.concat(endPoint):
+      case DOMAIN_MODELS_GET_REQUEST.concat(endPoint):
         return {
           ...state,
           isFetching: true,
         };
-      case DOMAIN_MODELS_SUCCESS.concat(endPoint):
+      case DOMAIN_MODELS_GET_SUCCESS.concat(endPoint):
         return addDomainModelFor<T>(entity, state, action as Action<Normalized<T>>);
-      case DOMAIN_MODELS_FAILURE.concat(endPoint):
+      case DOMAIN_MODELS_GET_FAILURE.concat(endPoint):
         return {
           ...state,
           isFetching: false,
