@@ -13,14 +13,14 @@ import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {fetchUsers} from '../../../state/domain-models/domainModelsActions';
+import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities, getUsersTotal} from '../../../state/domain-models/user/userSelectors';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
-import {uuid} from '../../../types/Types';
+import {OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {
   currentUser: User;
@@ -32,8 +32,9 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  paginationChangePage: OnChangePage;
+  deleteUser: OnClickWithId;
   fetchUsers: (encodedUriParameters: string) => void;
+  paginationChangePage: OnChangePage;
 }
 
 class UserAdministration extends React.Component<StateToProps & DispatchToProps> {
@@ -46,6 +47,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
   render() {
     const {
       currentUser,
+      deleteUser,
       users,
       pagination,
       paginationChangePage,
@@ -57,7 +59,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown id={id}/>;
+      <UserActionsDropdown deleteUser={deleteUser} id={id}/>;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
@@ -118,6 +120,7 @@ const mapStateToProps = ({ui, domainModels: {users}, auth}: RootState): StateToP
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   paginationChangePage: changePaginationValidation,
+  deleteUser,
   fetchUsers,
 }, dispatch);
 

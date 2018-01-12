@@ -3,7 +3,12 @@ import {combineReducers} from 'redux';
 import {Action, ErrorResponse, uuid} from '../../types/Types';
 import {ParameterName} from '../search/selection/selectionModels';
 import {DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
-import {DOMAIN_MODELS_FAILURE, DOMAIN_MODELS_REQUEST, DOMAIN_MODELS_SUCCESS} from './domainModelsActions';
+import {
+  DOMAIN_MODELS_DELETE_SUCCESS,
+  DOMAIN_MODELS_FAILURE,
+  DOMAIN_MODELS_REQUEST,
+  DOMAIN_MODELS_SUCCESS,
+} from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
 import {User} from './user/userModels';
@@ -24,6 +29,22 @@ const addDomainModelFor =
       ...state,
       isFetching: false,
       entities,
+      result,
+      total: result.length,
+    };
+  };
+
+const removeDomainModelFor =
+  <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
+    // TODO do we need to introduce a domain model interface with id: uuid in order to avoid "as any" below?
+    const payload = action.payload as any;
+    const result: uuid[] = state.result.filter((id) => id !== payload.id);
+    const entities = {...state.entities};
+    delete entities[payload.id];
+    return {
+      ...state,
+      entities,
+      isFetching: false,
       result,
       total: result.length,
     };
@@ -50,6 +71,8 @@ const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
           isFetching: false,
           error: {...(action as Action<ErrorResponse>).payload},
         };
+      case DOMAIN_MODELS_DELETE_SUCCESS.concat(endPoint):
+        return removeDomainModelFor<T>(entity, state, action as Action<T>);
       default:
         return state;
     }

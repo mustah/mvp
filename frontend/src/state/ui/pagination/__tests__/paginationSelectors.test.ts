@@ -33,6 +33,10 @@ describe('paginationSelectors', () => {
           limit: 8,
         },
       },
+      message: {
+        isOpen: false,
+        message: '',
+      },
     };
 
     expect(getCollectionPagination(fakedCollectionState)).toEqual({limit: 4, page: 3});

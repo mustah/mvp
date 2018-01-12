@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -31,6 +32,7 @@ public class UserEntity implements Serializable {
   public String name;
 
   @Email
+  @Column(unique = true)
   public String email;
 
   public String password;
@@ -47,7 +49,8 @@ public class UserEntity implements Serializable {
   )
   public Collection<RoleEntity> roles;
 
-  public UserEntity() {}
+  public UserEntity() {
+  }
 
   public UserEntity(
     String name,

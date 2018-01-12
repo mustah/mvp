@@ -13,7 +13,6 @@ import {language} from '../usecases/main-menu/languageReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
-import {administration} from '../usecases/administration/administrationReducer';
 
 export interface RootState {
   administration: AdministrationState;
@@ -29,7 +28,6 @@ export interface RootState {
 }
 
 export const rootReducer = combineReducers<RootState>({
-  administration,
   auth,
   domainModels,
   dashboard,

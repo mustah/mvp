@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-
+import com.elvaco.mvp.exception.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,7 +51,9 @@ public class UserController {
 
   @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN')")
   @DeleteMapping("{id}")
-  public void deleteUser(@PathVariable Long id) {
+  public UserDto deleteUser(@PathVariable Long id) {
+    UserDto user = userUseCases.findById(id).orElseThrow(() -> new UserNotFound(id));
     userUseCases.deleteById(id);
+    return user;
   }
 }

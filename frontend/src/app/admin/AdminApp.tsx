@@ -16,6 +16,7 @@ import {AdminMainMenuContainer} from '../../usecases/main-menu/containers/AdminM
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import {AdminPages} from './AdminPages';
+import {MessageContainer} from '../../containers/message/MessageContainer';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
@@ -43,6 +44,7 @@ const AdminApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
       </Layout>
       <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
       <AdminPages/>
+      <MessageContainer/>
     </Row>
   );
 };

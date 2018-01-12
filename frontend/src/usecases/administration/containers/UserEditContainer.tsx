@@ -7,17 +7,15 @@ import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
-import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {addUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role} from '../../../state/domain-models/user/userModels';
-import {ErrorResponse, OnClick} from '../../../types/Types';
+import {OnClick} from '../../../types/Types';
 import {UserEditForm} from './UserEditForm';
 
 interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
-  error?: ErrorResponse;
 }
 
 interface DispatchToProps {
@@ -25,7 +23,7 @@ interface DispatchToProps {
 }
 
 const UserEditContainerComponent = (props: DispatchToProps & StateToProps) => {
-  const {addUser, organisations, roles, error} = props;
+  const {addUser, organisations, roles} = props;
   return (
     <PageComponent isSideMenuOpen={false}>
       <Row className="space-between">
@@ -40,7 +38,6 @@ const UserEditContainerComponent = (props: DispatchToProps & StateToProps) => {
             organisations={organisations}
             onSubmit={addUser}
             roles={roles}
-            error={error}
           />
         </WrapperIndent>
       </Paper>
@@ -49,7 +46,7 @@ const UserEditContainerComponent = (props: DispatchToProps & StateToProps) => {
 };
 
 // TODO get organisations and roles from backend
-const mapStateToProps = ({administration: {error}}: RootState): StateToProps => ({
+const mapStateToProps = (): StateToProps => ({
   organisations: [
     {id: 1, code: 'elvaco', name: 'Elvaco'},
     {id: 2, code: 'wayne-industries', name: 'Wayne Industries'},
@@ -58,7 +55,6 @@ const mapStateToProps = ({administration: {error}}: RootState): StateToProps => 
     Role.ADMIN,
     Role.USER,
   ],
-  error,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
