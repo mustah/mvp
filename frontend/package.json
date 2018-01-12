@@ -71,7 +71,7 @@
     "bottleneck": "^1.16.0",
     "csvjson": "^5.0.0",
     "fuse-box": "^2.4.0",
-    "fuse-box-typechecker": "^2.6.3",
+    "fuse-box-typechecker": "^2.7.0",
     "graceful-fs": "^4.1.11",
     "i18next-conv": "^6.0.0",
     "i18next-scanner": "^2.2.1",

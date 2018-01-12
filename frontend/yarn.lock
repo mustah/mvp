@@ -1857,9 +1857,9 @@ function-bind@^1.0.2, function-bind@^1.1.0, function-bind@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
 
-fuse-box-typechecker@^2.6.3:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/fuse-box-typechecker/-/fuse-box-typechecker-2.6.3.tgz#db8668cf74ccfc850623e9f5141bece03971d95e"
+fuse-box-typechecker@^2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/fuse-box-typechecker/-/fuse-box-typechecker-2.7.0.tgz#0dfea8c688007e018d63c57c62f2ebb74a7ad829"
   dependencies:
     "@types/node" "^8.0.47"
     "@types/watch" "^1.0.0"
