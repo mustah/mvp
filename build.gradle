@@ -32,6 +32,15 @@ subprojects { subproject ->
     plugins.apply('checkstyle')
     plugins.apply('findbugs')
 
+    idea {
+      module {
+        outputDir = file("$buildDir/classes/main")
+        testOutputDir = file("$buildDir/classes/test")
+        generatedSourceDirs += file("$buildDir/generated/")
+        sourceDirs += file("$buildDir/generated/")
+      }
+    }
+
     checkstyle {
       ignoreFailures = false
       configFile = file("$rootDir/backend/config/checkstyle/checkstyle.xml")

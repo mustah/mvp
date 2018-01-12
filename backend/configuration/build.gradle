@@ -1,10 +1,69 @@
 apply plugin: 'java'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'application'
+apply plugin: 'io.spring.dependency-management'
+applicationName = 'mvp'
 
+dependencyManagement {
+  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
+}
+
+mainClassName = "com.elvaco.mvp.MvpApplication"
 dependencies {
   compile project(':backend:core')
   compile project(':backend:database')
+  compile project(':backend:web')
 
+  compile 'org.springframework.boot:spring-boot-devtools'
+  compile 'org.springframework.cloud:spring-cloud-starter-zuul:1.4.0.RELEASE'
   compile 'org.springframework.security:spring-security-web'
   compile 'org.springframework.security:spring-security-config'
+
+  runtime 'org.liquibase:liquibase-core'
+  runtime 'com.h2database:h2'
+
+  testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
+
+
+sourceSets {
+  integrationTest {
+    java {
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+      srcDir file('src/integrationTest/java')
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
+  testClassesDir = sourceSets.integrationTest.output.classesDir
+  classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+check.dependsOn integrationTest
+
+distributions {
+  main {
+    baseName = 'mvp'
+    contents {
+      exclude '**/spring-boot-devtools*.jar'
+    }
+  }
+}
+
+// by default, we get both a tar and a zip; but we are satisfied with only a tar
+distZip.enabled = false
+
+jar {
+  baseName = 'mvp'
+  from('../../frontend/dist') {
+    into 'static'
+  }
+}
+jar.dependsOn(':frontend:assemble')

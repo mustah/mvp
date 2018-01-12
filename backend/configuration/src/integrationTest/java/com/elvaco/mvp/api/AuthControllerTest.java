@@ -3,7 +3,6 @@ package com.elvaco.mvp.api;
 import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.dto.ErrorMessageDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
