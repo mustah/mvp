@@ -26,7 +26,7 @@ build:
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
-            - backend/build/distributions/
+            - backend/configuration/build/distributions/
             - docs/drawio/mvp_components.png
             - frontend/template.pot
             - frontend/mockup
