@@ -1,7 +1,6 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.dto.UserDto;

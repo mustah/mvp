@@ -2,7 +2,6 @@ package com.elvaco.mvp.entity.user;
 
 import java.io.Serializable;
 import java.util.Collection;
-import javax.jdo.annotations.Unique;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
