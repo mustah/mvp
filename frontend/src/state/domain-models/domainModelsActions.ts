@@ -13,21 +13,13 @@ import {meterSchema} from './meter/meterSchema';
 import {User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
-export const DOMAIN_MODELS_GET_REQUEST = 'DOMAIN_MODELS_GET_REQUEST';
+export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
+export const DOMAIN_MODELS_FAILURE = 'DOMAIN_MODELS_FAILURE';
+
 export const DOMAIN_MODELS_GET_SUCCESS = 'DOMAIN_MODELS_GET_SUCCESS';
-export const DOMAIN_MODELS_GET_FAILURE = 'DOMAIN_MODELS_GET_FAILURE';
-
-export const DOMAIN_MODELS_POST_REQUEST = 'DOMAIN_MODELS_POST_REQUEST';
 export const DOMAIN_MODELS_POST_SUCCESS = 'DOMAIN_MODELS_POST_SUCCESS';
-export const DOMAIN_MODELS_POST_FAILURE = 'DOMAIN_MODELS_POST_FAILURE';
-
-export const DOMAIN_MODELS_PUT_REQUEST = 'DOMAIN_MODELS_PUT_REQUEST';
 export const DOMAIN_MODELS_PUT_SUCCESS = 'DOMAIN_MODELS_PUT_SUCCESS';
-export const DOMAIN_MODELS_PUT_FAILURE = 'DOMAIN_MODELS_PUT_FAILURE';
-
-export const DOMAIN_MODELS_DELETE_REQUEST = 'DOMAIN_MODELS_DELETE_REQUEST';
 export const DOMAIN_MODELS_DELETE_SUCCESS = 'DOMAIN_MODELS_DELETE_SUCCESS';
-export const DOMAIN_MODELS_DELETE_FAILURE = 'DOMAIN_MODELS_DELETE_FAILURE';
 
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
@@ -47,109 +39,93 @@ enum RestRequestTypes {
   DELETE = 'DELETE',
 }
 
-const domainModelRequestHandle = <T>(endPoint: EndPoints, requestType: RestRequestTypes): RestRequestHandle<T> => ({
-  request: createEmptyAction<string>(`DOMAIN_MODELS_${requestType}_REQUEST`.concat(endPoint)),
+const requestHandle = <T>(endPoint: EndPoints, requestType: RestRequestTypes): RestRequestHandle<T> => ({
+  request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST.concat(endPoint)),
   success: createPayloadAction<string, T>(`DOMAIN_MODELS_${requestType}_SUCCESS`.concat(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse>(`DOMAIN_MODELS_${requestType}_FAILURE`.concat(endPoint)),
+  failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE.concat(endPoint)),
 });
 
-const domainModelGetRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<Normalized<T>> =>
-  domainModelRequestHandle<Normalized<T>>(endPoint, RestRequestTypes.GET);
+const getRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<Normalized<T>> =>
+  requestHandle<Normalized<T>>(endPoint, RestRequestTypes.GET);
 
-const domainModelPostRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<T> =>
-  domainModelRequestHandle(endPoint, RestRequestTypes.POST);
+interface Signature<P, T> extends RestRequestHandle<T>, RestCallbacks<T> {
+  requestFunc: (props: P) => any;
+  formatData?: (data: any) => T;
+  requestData: P;
+}
 
-const domainModelPutRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<T> =>
-  domainModelRequestHandle(endPoint, RestRequestTypes.PUT);
+const asyncRequest = <P, T>({
+                      request, success, failure, afterSuccess, afterFailure,
+                      requestFunc, requestData, formatData = (id) => id,
+                    }: Signature<P, T>) =>
+  async (dispatch) => {
+    try {
+      dispatch(request());
+      const {data: domainModelData} = await requestFunc(requestData);
+      dispatch(success(formatData(domainModelData)));
+      if (afterSuccess) {
+        dispatch(afterSuccess(domainModelData));
+      }
+    } catch (error) {
+      const {response: {data}} = error;
+      dispatch(failure(data));
+      if (afterFailure) {
+        dispatch(afterFailure(data.message));
+      }
+    }
+  };
 
-const domainModelDeleteRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<T> =>
-  domainModelRequestHandle(endPoint, RestRequestTypes.DELETE);
+const restGET = <T>(endPoint: EndPoints, schema: Schema) => {
+  type RequestSignature = string;
+  const requestGet = requestHandle<Normalized<T>>(endPoint, RestRequestTypes.GET);
+  const formatData = (data) => normalize(data, schema);
+  const requestFunc = (requestData: RequestSignature) => restClient.get(makeUrl(endPoint, requestData));
 
-const fetchDomainModel =
-  <T>(endPoint: EndPoints, {request, success, failure}: RestRequestHandle<Normalized<T>>, schema: Schema) =>
-    (encodedUriParameters?: string) =>
-      async (dispatch) => {
-        try {
-          dispatch(request());
-          const {data: domainModelData} = await restClient.get(makeUrl(endPoint, encodedUriParameters));
-          dispatch(success(normalize(domainModelData, schema)));
-        } catch (error) {
-          const {response: {data}} = error;
-          dispatch(failure(data));
-        }
-      };
+  return (requestData: RequestSignature) => asyncRequest<RequestSignature, Normalized<T>>({
+    ...requestGet,
+    formatData,
+    requestFunc,
+    requestData,
+  });
+};
 
-// TODO adapt to all models (bundle them in an enum or such)
-const postDomainModel =
-  <T>(endPoint: EndPoints,
-      {request, success, failure}: RestRequestHandle<T>,
-      {afterSuccess, afterFailure}: RestCallbacks<T>) =>
-    (domainModel: T) =>
-      async (dispatch) => {
-        try {
-          dispatch(request());
-          const {data: domainModelData} = await restClient.post(makeUrl(endPoint), domainModel);
-          dispatch(success(domainModelData));
-          if (afterSuccess) {
-            dispatch(afterSuccess(domainModelData));
-          }
-        } catch (error) {
-          const {response: {data: {message}}} = error;
-          dispatch(failure(message));
-          if (afterFailure) {
-            dispatch(afterFailure(message));
-          }
-        }
-      };
+const restPOST = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+  type RequestSignature = T;
+  const requestPost = requestHandle<T>(endPoint, RestRequestTypes.POST);
+  const requestFunc = (requestData: RequestSignature) => restClient.post(makeUrl(endPoint), requestData);
 
-const deleteDomainModel =
-  <T>(endPoint: EndPoints,
-      {request, success, failure}: RestRequestHandle<T>,
-      {afterSuccess, afterFailure}: RestCallbacks<T>) =>
-    (modelId: uuid) =>
-      async (dispatch) => {
-        try {
-          dispatch(request());
-          const {data: domainModel} =
-            await restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(modelId.toString())}`));
-          dispatch(success(domainModel));
-          if (afterSuccess) {
-            dispatch(afterSuccess(domainModel));
-          }
-        } catch (error) {
-          const {response: {data}} = error;
-          dispatch(failure(data));
-          if (afterFailure) {
-            dispatch(afterFailure(data));
-          }
-        }
-      };
+  return (requestData: T) => asyncRequest<T, T>({...requestPost, requestFunc, requestData, ...restCallbacks});
+};
 
-export const selectionsRequest = domainModelGetRequestHandle<IdNamed>(EndPoints.selections);
-export const fetchSelections = fetchDomainModel<IdNamed>(EndPoints.selections, selectionsRequest, selectionsSchema);
+const restDELETE = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+  type RequestSignature = uuid;
+  const requestDelete = requestHandle<T>(endPoint, RestRequestTypes.DELETE);
+  const requestFunc = (requestData: RequestSignature) =>
+    restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
 
-export const gatewayRequest = domainModelGetRequestHandle<Gateway>(EndPoints.gateways);
-export const fetchGateways = fetchDomainModel<Gateway>(EndPoints.gateways, gatewayRequest, gatewaySchema);
+  return (requestData: uuid) => asyncRequest<uuid, T>({...requestDelete, requestFunc, requestData, ...restCallbacks});
+};
 
-export const meterRequest = domainModelGetRequestHandle<Gateway>(EndPoints.meters);
-export const fetchMeters = fetchDomainModel<Gateway>(EndPoints.meters, meterRequest, meterSchema);
+export const selectionsRequest = getRequestHandle<IdNamed>(EndPoints.selections);
+export const fetchSelections = restGET<IdNamed>(EndPoints.selections, selectionsSchema);
 
-export const userRequest = domainModelGetRequestHandle<User>(EndPoints.users);
-export const fetchUsers = fetchDomainModel<User>(EndPoints.users, userRequest, userSchema);
+export const gatewayRequest = getRequestHandle<Gateway>(EndPoints.gateways);
+export const fetchGateways = restGET<Gateway>(EndPoints.gateways, gatewaySchema);
 
-// TODO we might want to pass afterSuccess and afterFailure to the action from the application's containers
-const userPostRequest = domainModelPostRequestHandle<User>(EndPoints.users);
-export const addUser = postDomainModel<User>(EndPoints.users, userPostRequest, {
+export const meterRequest = getRequestHandle<Gateway>(EndPoints.meters);
+export const fetchMeters = restGET<Gateway>(EndPoints.meters, meterSchema);
+
+export const fetchUsers = restGET<User>(EndPoints.users, userSchema);
+
+export const addUser = restPOST<User>(EndPoints.users, {
   afterSuccess: (domainModel: User) =>
     showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...domainModel})),
   afterFailure: (error: ErrorResponse) =>
     showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
 });
 
-const userDeleteRequest = domainModelDeleteRequestHandle(EndPoints.users);
-export const deleteUser = deleteDomainModel(
+export const deleteUser = restDELETE<User>(
   EndPoints.users,
-  userDeleteRequest,
   {
     afterSuccess: (domainModel: User) =>
       showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...domainModel})),
