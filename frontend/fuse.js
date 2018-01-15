@@ -125,7 +125,6 @@ const distTasks = [
   'clean',
   'config',
   'run-type-checker',
-  'tests',
   'build-mock-database',
   'copy:assets',
 ];
