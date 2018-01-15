@@ -1,11 +1,14 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
+import {IdNamed} from '../../../types/Types';
+import {requestHandle, RestRequestTypes} from '../domainModelsActions';
 import {addresses, cities, initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
-import {selectionsRequest} from '../domainModelsActions';
-import {SelectionEntity} from '../domainModels';
+import {EndPoints, Normalized, SelectionEntity} from '../domainModels';
 
 describe('domainModelsReducer', () => {
+
+  const selectionsRequest = requestHandle<Normalized<IdNamed>>(EndPoints.selections, RestRequestTypes.GET);
 
   describe('addresses', () => {
 

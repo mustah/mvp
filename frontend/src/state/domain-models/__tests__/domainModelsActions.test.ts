@@ -4,7 +4,9 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../__tests__/testDataFactory';
 import {makeRestClient} from '../../../services/restClient';
-import {fetchSelections, selectionsRequest} from '../domainModelsActions';
+import {IdNamed} from '../../../types/Types';
+import {EndPoints, Normalized} from '../domainModels';
+import {fetchSelections, requestHandle, RestRequestTypes} from '../domainModelsActions';
 import {selectionsSchema} from '../domainModelsSchemas';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -14,6 +16,7 @@ describe('domainModelsActions', () => {
 
   let mockRestClient;
   let store;
+  const selectionsRequest = requestHandle<Normalized<IdNamed>>(EndPoints.selections, RestRequestTypes.GET);
 
   beforeEach(() => {
     store = configureMockStore({});

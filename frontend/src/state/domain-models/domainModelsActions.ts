@@ -32,29 +32,26 @@ interface RestCallbacks<T> {
   afterFailure?: (error: ErrorResponse) => void;
 }
 
-enum RestRequestTypes {
+export enum RestRequestTypes {
   GET = 'GET',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
 
-const requestHandle = <T>(endPoint: EndPoints, requestType: RestRequestTypes): RestRequestHandle<T> => ({
+export const requestHandle = <T>(endPoint: EndPoints, requestType: RestRequestTypes): RestRequestHandle<T> => ({
   request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST.concat(endPoint)),
   success: createPayloadAction<string, T>(`DOMAIN_MODELS_${requestType}_SUCCESS`.concat(endPoint)),
   failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE.concat(endPoint)),
 });
 
-const getRequestHandle = <T>(endPoint: EndPoints): RestRequestHandle<Normalized<T>> =>
-  requestHandle<Normalized<T>>(endPoint, RestRequestTypes.GET);
-
 interface Signature<P, T> extends RestRequestHandle<T>, RestCallbacks<T> {
-  requestFunc: (props: P) => any;
+  requestFunc: (props?: P) => any;
   formatData?: (data: any) => T;
-  requestData: P;
+  requestData?: P;
 }
 
-const asyncRequest = <P, T>({
+export const asyncRequest = <P, T>({
                       request, success, failure, afterSuccess, afterFailure,
                       requestFunc, requestData, formatData = (id) => id,
                     }: Signature<P, T>) =>
@@ -81,7 +78,7 @@ const restGET = <T>(endPoint: EndPoints, schema: Schema) => {
   const formatData = (data) => normalize(data, schema);
   const requestFunc = (requestData: RequestSignature) => restClient.get(makeUrl(endPoint, requestData));
 
-  return (requestData: RequestSignature) => asyncRequest<RequestSignature, Normalized<T>>({
+  return (requestData?: RequestSignature) => asyncRequest<RequestSignature, Normalized<T>>({
     ...requestGet,
     formatData,
     requestFunc,
@@ -106,15 +103,9 @@ const restDELETE = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => 
   return (requestData: uuid) => asyncRequest<uuid, T>({...requestDelete, requestFunc, requestData, ...restCallbacks});
 };
 
-export const selectionsRequest = getRequestHandle<IdNamed>(EndPoints.selections);
 export const fetchSelections = restGET<IdNamed>(EndPoints.selections, selectionsSchema);
-
-export const gatewayRequest = getRequestHandle<Gateway>(EndPoints.gateways);
 export const fetchGateways = restGET<Gateway>(EndPoints.gateways, gatewaySchema);
-
-export const meterRequest = getRequestHandle<Gateway>(EndPoints.meters);
 export const fetchMeters = restGET<Gateway>(EndPoints.meters, meterSchema);
-
 export const fetchUsers = restGET<User>(EndPoints.users, userSchema);
 
 export const addUser = restPOST<User>(EndPoints.users, {
