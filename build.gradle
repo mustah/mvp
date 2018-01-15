@@ -73,14 +73,6 @@ buildscript {
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
 
-task runFinalJar(type: JavaExec) {
-  group = 'application'
-  description = 'Run final jar artifact'
-  def finalJar = 'backend/configuration/build/libs/mvp-' + version + '.jar'
-  classpath = files(finalJar)
-  main = 'org.springframework.boot.loader.JarLauncher'
-}
-
 task composeDownAndRemovePostgres(type: ComposeDown) {
   description = 'Bring down and remove a running PostgreSQL container'
   extension = new ComposeExtension(project, null, composeDownAndRemovePostgres)
@@ -148,5 +140,4 @@ task dotVersion {
 }
 
 task assemble(dependsOn: ':check')
-runFinalJar.dependsOn(':backend:assemble')
 composeUp.dependsOn(':backend:configuration:assemble')

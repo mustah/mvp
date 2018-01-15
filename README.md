@@ -93,32 +93,6 @@ server.
 When launched in this mode, the GUI is available at `http://localhost:4444`, and
 the backend/API is available at `http://localhost:8080`
 
-### full-stack with H2
-If you are not directly interested in database modeling, schema design or
-similar, running a full-blown PostgreSQL server is probably overkill. Running
-in full-stack mode with H2 might be a convenient compromise. This mode differs
-from the 'backend+frontend' mode in that it runs the final bundled jar
-directly, which means that it makes use of the internal Tomcat server to serve
-the frontend. As a consequence, hot reloading is not possible in this mode for
-either backend or frontend, meaning that to view your changes, you will have to
-build the entire project and create a jar "from scratch" (ignoring whatever
-incremental build functionality Gradle provides us with).
-
-This mode is started by running:
-```
-./gradlew runFinalJar
-```
-
-> Note: This mode is probably not suitable for "regular" development work, but
-> should rather be used either as a final check-off, or when changes has been
-> made to the structure and/or infrastructure of the software.
-
-> Note: As an alternative to running the application natively, one could also
-> use the [Dockerfile] here, to build and run the application in a Docker
-> container. This could be convenient if one needs several instances (of
-> different versions perhaps) running simultaneously without having to worry
-> about port conflicts etc,.
-
 ## Using H2’s web console
 
 We are using Spring Boot’s developer tools, and by adding the configuration
