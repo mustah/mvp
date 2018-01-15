@@ -19,7 +19,7 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
 
   state = {
     organisation: {id: ''},
-    roles: [],
+    roles: [Role.USER],
   };
 
   changeOrganisation = (event, index, value) => this.setState({organisation: {id: value}});
