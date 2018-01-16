@@ -18,7 +18,6 @@ public class UserMapper {
 
   UserDto toDto(UserEntity userEntity) {
     UserDto userDto = modelMapper.map(userEntity, UserDto.class);
-    userDto.password = null;
     userDto.roles = userEntity.roles
       .stream()
       .map(r -> r.role)
