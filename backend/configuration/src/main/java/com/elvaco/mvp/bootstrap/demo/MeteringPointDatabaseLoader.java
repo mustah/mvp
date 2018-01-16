@@ -2,6 +2,7 @@ package com.elvaco.mvp.bootstrap;
 
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.config.DemoData;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
@@ -15,6 +16,7 @@ import static java.util.Arrays.asList;
 
 @Component
 @Order(1)
+@DemoData
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   private final MeteringPointRepository meteringPointRepository;
