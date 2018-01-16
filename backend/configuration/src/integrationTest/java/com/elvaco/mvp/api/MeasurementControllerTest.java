@@ -6,7 +6,9 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
@@ -25,10 +27,17 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterRepository meterRepository;
 
+  @Autowired
+  private OrganisationRepository organisationRepository;
+
   @Before
   public void setUp() {
+    OrganisationEntity organisationEntity = new OrganisationEntity("The organisation",
+      "organisation-code");
+    organisationRepository.save(organisationEntity);
+
     PhysicalMeterEntity physicalMeterEntity =
-      new PhysicalMeterEntity(0L /*fixme: this should be an organisation entity*/,
+      new PhysicalMeterEntity(organisationEntity,
         "test-butter-meter-1",
         "Butter"
       );
