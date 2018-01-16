@@ -98,9 +98,8 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void createUser() {
+  public void createNewUser() {
     UserDto user = userWithEmail("n@b.com");
-    assertThat(user.getPassword()).isNotNull();
 
     ResponseEntity<UserDto> response = apiService()
       .post("/users", user, UserDto.class);
@@ -108,7 +107,6 @@ public class UserControllerTest extends IntegrationTest {
     UserDto savedUser = response.getBody();
     assertThat(savedUser.id).isPositive();
     assertThat(savedUser.name).isEqualTo(user.name);
-    assertThat(savedUser.getPassword()).isNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
@@ -190,7 +188,6 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
     user.roles = asList(Roles.USER, Roles.ADMIN);
-    user.setPassword("this is super secret");
     return user;
   }
 
