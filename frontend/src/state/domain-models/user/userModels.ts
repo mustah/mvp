@@ -11,6 +11,7 @@ export interface User {
   name: string;
   email: string;
   organisation: Organisation;
+  password?: string;
   roles: Role[];
 }
 

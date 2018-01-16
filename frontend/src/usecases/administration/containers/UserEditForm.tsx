@@ -19,7 +19,7 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
 
   state = {
     organisation: {id: ''},
-    roles: [],
+    roles: [Role.USER],
   };
 
   changeOrganisation = (event, index, value) => this.setState({organisation: {id: value}});
@@ -33,6 +33,7 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
 
     const nameLabel = firstUpperTranslated('name');
     const emailLabel = firstUpperTranslated('email');
+    const passwordLabel = firstUpperTranslated('password');
     const organisationLabel = firstUpperTranslated('organisation');
     const rolesLabel = firstUpperTranslated('user roles');
 
@@ -58,6 +59,14 @@ class UserEdit extends React.Component<UserFormProps & AdministrationState> {
             floatingLabelText={emailLabel}
             hintText={emailLabel}
             id="email"
+            onChange={this.onChange}
+          />
+        </Row>
+        <Row>
+          <TextField
+            floatingLabelText={passwordLabel}
+            hintText={passwordLabel}
+            id="password"
             onChange={this.onChange}
           />
         </Row>
