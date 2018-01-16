@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 
@@ -29,18 +30,21 @@ public class UserDatabaseLoader implements CommandLineRunner {
   private final RoleRepository roleRepository;
   private final OrganisationRepository organisationRepository;
   private final UserDetailsManager userDetailsService;
+  private final PasswordEncoder passwordEncoder;
 
   @Autowired
   public UserDatabaseLoader(
     UserJpaRepository repository,
     RoleRepository roleRepository,
     OrganisationRepository organisationRepository,
-    UserDetailsManager userDetailsService
+    UserDetailsManager userDetailsService,
+    PasswordEncoder passwordEncoder
   ) {
     this.repository = repository;
     this.roleRepository = roleRepository;
     this.organisationRepository = organisationRepository;
     this.userDetailsService = userDetailsService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -148,9 +152,9 @@ public class UserDatabaseLoader implements CommandLineRunner {
       )
     );
 
-    repository.save(users);
-
     users.stream()
+      .peek(u -> u.password = passwordEncoder.encode(u.password))
+      .peek(repository::save)
       .map(this::toUserDetails)
       .forEach(userDetailsService::createUser);
   }
@@ -159,9 +163,9 @@ public class UserDatabaseLoader implements CommandLineRunner {
     return User.withUsername(user.email)
       .password(user.password)
       .roles(user.roles.stream()
-        .map(r -> r.role)
-        .collect(toList())
-        .toArray(new String[user.roles.size()]))
+               .map(r -> r.role)
+               .collect(toList())
+               .toArray(new String[user.roles.size()]))
       .build();
   }
 }

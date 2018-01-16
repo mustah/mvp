@@ -17,8 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.validator.constraints.Email;
 
+@ToString
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
@@ -29,16 +31,18 @@ public class UserEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
+  @Column(nullable = false)
   public String name;
 
   @Email
-  @Column(unique = true)
+  @Column(unique = true, nullable = false)
   public String email;
 
+  @Column(nullable = false)
   public String password;
 
   @ManyToOne(optional = false, fetch = FetchType.EAGER)
-  @JoinColumn(name = "organisationId")
+  @JoinColumn(name = "organisationId", nullable = false)
   public OrganisationEntity organisation;
 
   @ManyToMany(fetch = FetchType.EAGER)
@@ -49,8 +53,7 @@ public class UserEntity implements Serializable {
   )
   public Collection<RoleEntity> roles;
 
-  public UserEntity() {
-  }
+  public UserEntity() {}
 
   public UserEntity(
     String name,

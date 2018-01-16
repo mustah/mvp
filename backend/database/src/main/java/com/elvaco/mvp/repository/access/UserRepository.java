@@ -3,8 +3,10 @@ package com.elvaco.mvp.repository.access;
 import java.util.List;
 import java.util.Optional;
 
-import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.domainmodels.Password;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import static java.util.stream.Collectors.toList;
@@ -20,28 +22,34 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public List<UserDto> findAll() {
+  public List<User> findAll() {
     return userJpaRepository.findAll()
       .stream()
-      .map(userMapper::toDto)
+      .map(userMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
-  public Optional<UserDto> findByEmail(String email) {
+  public Optional<User> findByEmail(String email) {
     return userJpaRepository.findByEmail(email)
-      .map(userMapper::toDto);
+      .map(userMapper::toDomainModel);
   }
 
   @Override
-  public Optional<UserDto> findById(Long id) {
+  public Optional<User> findById(Long id) {
     return Optional.ofNullable(userJpaRepository.findOne(id))
-      .map(userMapper::toDto);
+      .map(userMapper::toDomainModel);
   }
 
   @Override
-  public UserDto save(UserDto user) {
-    return userMapper.toDto(userJpaRepository.save(userMapper.toEntity(user)));
+  public Optional<Password> findPasswordByUserId(Long userId) {
+    return userJpaRepository.findPasswordById(userId);
+  }
+
+  @Override
+  public User save(User user) {
+    UserEntity userEntity = userJpaRepository.save(userMapper.toEntity(user));
+    return userMapper.toDomainModel(userEntity);
   }
 
   @Override

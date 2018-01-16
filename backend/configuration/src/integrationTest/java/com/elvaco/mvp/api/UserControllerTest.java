@@ -1,21 +1,28 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.Roles;
-import com.elvaco.mvp.core.dto.OrganisationDto;
-import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.dto.OrganisationDto;
 import com.elvaco.mvp.dto.UnauthorizedDto;
+import com.elvaco.mvp.dto.UserDto;
+import com.elvaco.mvp.dto.UserWithPasswordDto;
+import com.elvaco.mvp.mapper.UserMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.Roles.ADMIN;
+import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +30,9 @@ public class UserControllerTest extends IntegrationTest {
 
   @Autowired
   private Users users;
+
+  @Autowired
+  private UserMapper userMapper;
 
   @After
   public void tearDown() {
@@ -99,33 +109,34 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void createNewUser() {
-    UserDto user = userWithEmail("n@b.com");
+    UserWithPasswordDto user = createUserDto("n@b.com", "someNewPassword");
 
     ResponseEntity<UserDto> response = apiService()
       .post("/users", user, UserDto.class);
 
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     UserDto savedUser = response.getBody();
     assertThat(savedUser.id).isPositive();
     assertThat(savedUser.name).isEqualTo(user.name);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   public void updateSavedUserName() {
-    UserDto user = users.save(userWithEmail("anderson@neo.com"));
+    User user = users.findByEmail("evanil@elvaco.se").get();
 
-    user.name = "Mr. Anderson";
+    UserDto userDto = userMapper.toDto(user);
+    userDto.name = "Eva Andersson";
 
-    apiService().put("/users", user);
+    apiService().put("/users", userDto);
 
-    UserDto updatedUser = users.findById(user.id).get();
+    User updatedUser = users.findById(user.id).get();
 
-    assertThat(updatedUser.name).isEqualTo("Mr. Anderson");
+    assertThat(updatedUser.name).isEqualTo("Eva Andersson");
   }
 
   @Test
   public void deleteUserWithId() {
-    UserDto user = users.save(userWithEmail("noo@b.com"));
+    User user = users.save(createUser("noo@b.com", "test123"));
 
     apiService().delete("/users/" + user.id);
 
@@ -134,7 +145,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void onlySuperAdminCanCreateNewUser() {
-    UserDto user = userWithEmail("simple@user.com");
+    UserWithPasswordDto user = createUserDto("simple@user.com", "test123");
 
     ResponseEntity<UnauthorizedDto> response = restClient()
       .loginWith("marsve@elvaco.se", "maria123")
@@ -145,17 +156,20 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void onlySuperAdminCanDeleteUser() {
-    restClient()
-      .loginWith("marsve@elvaco.se", "maria123")
-      .delete("/users/1");
+    String email = "annjoh@elvaco.se";
+    User user = users.findByEmail(email).get();
 
-    assertThat(users.findById(1L).isPresent()).isTrue();
+    restClient()
+      .loginWith(email, "anna123")
+      .delete("/users/" + user.id);
+
+    assertThat(users.findById(user.id).isPresent()).isTrue();
   }
 
   @Test
   public void onlySuperAdminAndAdminCanUpdateUser() {
     String email = "another@user.com";
-    UserDto user = userWithEmail(email);
+    UserDto user = createUserDto(email);
 
     restClient()
       .loginWith("marsve@elvaco.se", "maria123")
@@ -182,13 +196,28 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(expected);
   }
 
-  private UserDto userWithEmail(String email) {
-    UserDto user = new UserDto();
+  private UserDto createUserDto(String email) {
+    return createUserDto(email, null);
+  }
+
+  private UserWithPasswordDto createUserDto(String email, @Nullable String password) {
+    UserWithPasswordDto user = new UserWithPasswordDto();
     user.name = "Ninja Code";
     user.email = email;
+    user.password = password;
     user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
     user.roles = asList(Roles.USER, Roles.ADMIN);
     return user;
+  }
+
+  private User createUser(String email, String password) {
+    return new User(
+      "john doh",
+      email,
+      password,
+      new Organisation(1L, "Elvaco", "elvaco"),
+      asList(new Role(ADMIN), new Role(USER))
+    );
   }
 
   private RestClient apiService() {

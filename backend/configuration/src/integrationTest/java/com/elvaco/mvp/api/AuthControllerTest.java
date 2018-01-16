@@ -1,7 +1,7 @@
 package com.elvaco.mvp.api;
 
-import com.elvaco.mvp.core.dto.UserDto;
 import com.elvaco.mvp.dto.ErrorMessageDto;
+import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Test;
@@ -20,13 +20,15 @@ public class AuthControllerTest extends IntegrationTest {
   @Test
   public void authenticate() {
     String email = "evanil@elvaco.se";
+    String rawPassword = "eva123";
 
     ResponseEntity<UserDto> response = restClient()
-      .loginWith(email, "eva123")
+      .loginWith(email, rawPassword)
       .get("/authenticate", UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().email).isEqualTo("evanil@elvaco.se");
+
+    assertThat(response.getBody().email).isEqualTo(email);
   }
 
   @Test

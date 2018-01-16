@@ -3,17 +3,20 @@ package com.elvaco.mvp.core.usecase;
 import java.util.List;
 import java.util.Optional;
 
-import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.domainmodels.Password;
+import com.elvaco.mvp.core.domainmodels.User;
 
 public interface Users {
 
-  List<UserDto> findAll();
+  List<User> findAll();
 
-  Optional<UserDto> findByEmail(String email);
+  Optional<User> findByEmail(String email);
 
-  Optional<UserDto> findById(Long id);
+  Optional<User> findById(Long id);
 
-  UserDto save(UserDto user);
+  Optional<Password> findPasswordByUserId(Long userId);
+
+  User save(User user);
 
   void deleteById(Long id);
 }
