@@ -6,7 +6,7 @@ import {
   DomainModelsState, EndPoints, Normalized, NormalizedState,
   SelectionEntity,
 } from '../../../domain-models/domainModels';
-import {requestHandle, RestRequestTypes} from '../../../domain-models/domainModelsActions';
+import {requestMethod, HttpMethod} from '../../../domain-models/domainModelsActions';
 import {
   addresses, alarms, cities, gateways, gatewayStatuses, initialDomain, manufacturers, meters, meterStatuses,
   productModels, users,
@@ -29,7 +29,7 @@ import {
 
 describe('selectionSelectors', () => {
 
-  const selectionsRequest = requestHandle<Normalized<IdNamed>>(EndPoints.selections, RestRequestTypes.GET);
+  const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialSearchParametersState);
 

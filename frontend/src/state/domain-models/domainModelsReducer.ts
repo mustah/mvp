@@ -36,8 +36,8 @@ const setEntities =
 const addEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload as any;
-    const result = [...state.result, payload.id];
-    const entities = {...state.entities};
+    const result: uuid[] = [...state.result, payload.id];
+    const entities: any = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -51,8 +51,8 @@ const addEntity =
 const modifyEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload as any;
-    const result = [...state.result, payload.id];
-    const entities = {...state.entities};
+    const result: uuid[] = [...state.result, payload.id];
+    const entities: any = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -84,6 +84,7 @@ type ActionTypes<T> =
   | Action<Normalized<T>>
   | Action<ErrorResponse>;
 
+// TODO: Add tests for PUT, POST, DELETE
 const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {

@@ -32,29 +32,36 @@ interface RestCallbacks<T> {
   afterFailure?: (error: ErrorResponse) => void;
 }
 
-export enum RestRequestTypes {
+export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
 
-export const requestHandle = <T>(endPoint: EndPoints, requestType: RestRequestTypes): RestRequestHandle<T> => ({
+export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
   request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST.concat(endPoint)),
   success: createPayloadAction<string, T>(`DOMAIN_MODELS_${requestType}_SUCCESS`.concat(endPoint)),
   failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE.concat(endPoint)),
 });
 
-interface Signature<P, T> extends RestRequestHandle<T>, RestCallbacks<T> {
-  requestFunc: (props?: P) => any;
-  formatData?: (data: any) => T;
-  requestData?: P;
+interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<DAT> {
+  requestFunc: (requestData?: REQ) => any;
+  formatData?: (data: any) => DAT;
+  requestData?: REQ;
 }
 
-export const asyncRequest = <P, T>({
-                      request, success, failure, afterSuccess, afterFailure,
-                      requestFunc, requestData, formatData = (id) => id,
-                    }: Signature<P, T>) =>
+// TODO: Add tests for this function?
+const asyncRequest = <REQ, DAT>({
+                                     request,
+                                     success,
+                                     failure,
+                                     afterSuccess,
+                                     afterFailure,
+                                     requestFunc,
+                                     requestData,
+                                     formatData = (id) => id,
+                                   }: AsyncRequest<REQ, DAT>) =>
   async (dispatch) => {
     try {
       dispatch(request());
@@ -67,18 +74,18 @@ export const asyncRequest = <P, T>({
       const {response: {data}} = error;
       dispatch(failure(data));
       if (afterFailure) {
+        // TODO: Could this be a source of failure if there is no message field in "data"?
         dispatch(afterFailure(data.message));
       }
     }
   };
 
-const restGET = <T>(endPoint: EndPoints, schema: Schema) => {
-  type RequestSignature = string;
-  const requestGet = requestHandle<Normalized<T>>(endPoint, RestRequestTypes.GET);
+const restGet = <T>(endPoint: EndPoints, schema: Schema) => {
+  const requestGet = requestMethod<Normalized<T>>(endPoint, HttpMethod.GET);
   const formatData = (data) => normalize(data, schema);
-  const requestFunc = (requestData: RequestSignature) => restClient.get(makeUrl(endPoint, requestData));
+  const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
-  return (requestData?: RequestSignature) => asyncRequest<RequestSignature, Normalized<T>>({
+  return (requestData?: string) => asyncRequest<string, Normalized<T>>({
     ...requestGet,
     formatData,
     requestFunc,
@@ -86,36 +93,34 @@ const restGET = <T>(endPoint: EndPoints, schema: Schema) => {
   });
 };
 
-const restPOST = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
-  type RequestSignature = T;
-  const requestPost = requestHandle<T>(endPoint, RestRequestTypes.POST);
-  const requestFunc = (requestData: RequestSignature) => restClient.post(makeUrl(endPoint), requestData);
+const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+  const requestPost = requestMethod<T>(endPoint, HttpMethod.POST);
+  const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);
 
   return (requestData: T) => asyncRequest<T, T>({...requestPost, requestFunc, requestData, ...restCallbacks});
 };
 
-const restDELETE = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
-  type RequestSignature = uuid;
-  const requestDelete = requestHandle<T>(endPoint, RestRequestTypes.DELETE);
-  const requestFunc = (requestData: RequestSignature) =>
+const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+  const requestDelete = requestMethod<T>(endPoint, HttpMethod.DELETE);
+  const requestFunc = (requestData: uuid) =>
     restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
 
   return (requestData: uuid) => asyncRequest<uuid, T>({...requestDelete, requestFunc, requestData, ...restCallbacks});
 };
 
-export const fetchSelections = restGET<IdNamed>(EndPoints.selections, selectionsSchema);
-export const fetchGateways = restGET<Gateway>(EndPoints.gateways, gatewaySchema);
-export const fetchMeters = restGET<Gateway>(EndPoints.meters, meterSchema);
-export const fetchUsers = restGET<User>(EndPoints.users, userSchema);
+export const fetchSelections = restGet<IdNamed>(EndPoints.selections, selectionsSchema);
+export const fetchGateways = restGet<Gateway>(EndPoints.gateways, gatewaySchema);
+export const fetchMeters = restGet<Gateway>(EndPoints.meters, meterSchema);
+export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
 
-export const addUser = restPOST<User>(EndPoints.users, {
+export const addUser = restPost<User>(EndPoints.users, {
   afterSuccess: (domainModel: User) =>
     showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...domainModel})),
   afterFailure: (error: ErrorResponse) =>
     showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
 });
 
-export const deleteUser = restDELETE<User>(
+export const deleteUser = restDelete<User>(
   EndPoints.users,
   {
     afterSuccess: (domainModel: User) =>

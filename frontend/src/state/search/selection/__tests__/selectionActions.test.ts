@@ -8,7 +8,7 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {IdNamed} from '../../../../types/Types';
 import {EndPoints, Normalized} from '../../../domain-models/domainModels';
-import {requestHandle, RestRequestTypes} from '../../../domain-models/domainModelsActions';
+import {requestMethod, HttpMethod} from '../../../domain-models/domainModelsActions';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
@@ -26,8 +26,8 @@ const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const meterRequest = requestHandle<Normalized<Meter>>(EndPoints.meters, RestRequestTypes.GET);
-  const gatewayRequest = requestHandle<Normalized<Gateway>>(EndPoints.gateways, RestRequestTypes.GET);
+  const meterRequest = requestMethod<Normalized<Meter>>(EndPoints.meters, HttpMethod.GET);
+  const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
 
   const gothenburg: IdNamed = {...testData.selections.cities[0]};
   const stockholm: IdNamed = {...testData.selections.cities[1]};
@@ -213,8 +213,8 @@ describe('selectionActions', () => {
 
   const onFakeFetchMetersAndGateways = (searchParameters: SearchParameterState) => {
     const encodedUriParameters = getEncodedUriParametersForMeters(searchParameters);
-    mockRestClient.onGet(makeUrl('/meters', encodedUriParameters)).reply(200, testData.meters);
-    mockRestClient.onGet(makeUrl('/gateways', encodedUriParameters)).reply(200, testData.gateways);
+    mockRestClient.onGet(makeUrl(EndPoints.meters, encodedUriParameters)).reply(200, testData.meters);
+    mockRestClient.onGet(makeUrl(EndPoints.gateways, encodedUriParameters)).reply(200, testData.gateways);
   };
 
 });
