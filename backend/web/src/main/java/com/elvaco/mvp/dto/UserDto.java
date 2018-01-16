@@ -12,7 +12,6 @@ public class UserDto {
   public Long id;
   public String name;
   public String email;
-  public String password;
   public OrganisationDto organisation;
   public List<String> roles;
 }
