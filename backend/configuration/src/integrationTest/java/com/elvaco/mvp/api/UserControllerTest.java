@@ -1,7 +1,6 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -197,15 +196,20 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   private UserDto createUserDto(String email) {
-    return createUserDto(email, null);
-  }
-
-  private UserWithPasswordDto createUserDto(String email, @Nullable String password) {
-    UserWithPasswordDto user = new UserWithPasswordDto();
+    UserDto user = new UserDto();
     user.name = "Ninja Code";
     user.email = email;
-    user.password = password;
     user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
+    user.roles = asList(Roles.USER, Roles.ADMIN, Roles.SUPER_ADMIN);
+    return user;
+  }
+
+  private UserWithPasswordDto createUserDto(String email, String password) {
+    UserWithPasswordDto user = new UserWithPasswordDto();
+    user.name = "Bruce Wayne";
+    user.email = email;
+    user.password = password;
+    user.organisation = new OrganisationDto(2L, "Wayne Industries", "wayne-industries");
     user.roles = asList(Roles.USER, Roles.ADMIN);
     return user;
   }
