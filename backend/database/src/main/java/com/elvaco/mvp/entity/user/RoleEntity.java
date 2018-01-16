@@ -32,8 +32,10 @@ public class RoleEntity implements Serializable {
 
   @Override
   public String toString() {
-    return "RoleEntity{" +
-           "role='" + role + '\'' +
-           '}';
+    return "RoleEntity{"
+           + "role='"
+           + role
+           + '\''
+           + '}';
   }
 }

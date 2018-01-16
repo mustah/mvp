@@ -4,8 +4,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.dto.UserWithPasswordDto;
 import com.elvaco.mvp.exception.UserNotFound;
 import com.elvaco.mvp.mapper.UserMapper;
