@@ -5,7 +5,7 @@ import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {showMessage} from '../ui/message/messageActions';
-import {EndPoints, Normalized} from './domainModels';
+import {EndPoints, HttpMethod, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
@@ -32,13 +32,6 @@ interface RestCallbacks<T> {
   afterFailure?: (error: ErrorResponse) => void;
 }
 
-export enum HttpMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-}
-
 export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
   request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST.concat(endPoint)),
   success: createPayloadAction<string, T>(`DOMAIN_MODELS_${requestType}_SUCCESS`.concat(endPoint)),
@@ -53,15 +46,15 @@ interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<D
 
 // TODO: Add tests for this function?
 const asyncRequest = <REQ, DAT>({
-                                     request,
-                                     success,
-                                     failure,
-                                     afterSuccess,
-                                     afterFailure,
-                                     requestFunc,
-                                     requestData,
-                                     formatData = (id) => id,
-                                   }: AsyncRequest<REQ, DAT>) =>
+                                  request,
+                                  success,
+                                  failure,
+                                  afterSuccess,
+                                  afterFailure,
+                                  requestFunc,
+                                  requestData,
+                                  formatData = (id) => id,
+                                }: AsyncRequest<REQ, DAT>) =>
   async (dispatch) => {
     try {
       dispatch(request());
@@ -100,6 +93,13 @@ const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   return (requestData: T) => asyncRequest<T, T>({...requestPost, requestFunc, requestData, ...restCallbacks});
 };
 
+const restPut = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+  const requestPut = requestMethod<T>(endPoint, HttpMethod.PUT);
+  const requestFunc = (requestData: T) => restClient.put(makeUrl(endPoint), requestData);
+
+  return (requestData: T) => asyncRequest<T, T>({...requestPut, requestFunc, requestData, ...restCallbacks});
+};
+
 const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   const requestDelete = requestMethod<T>(endPoint, HttpMethod.DELETE);
   const requestFunc = (requestData: uuid) =>
@@ -114,17 +114,22 @@ export const fetchMeters = restGet<Gateway>(EndPoints.meters, meterSchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
 
 export const addUser = restPost<User>(EndPoints.users, {
-  afterSuccess: (domainModel: User) =>
-    showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...domainModel})),
+  afterSuccess: (user: User) =>
+    showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})),
   afterFailure: (error: ErrorResponse) =>
     showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
 });
 
-export const deleteUser = restDelete<User>(
-  EndPoints.users,
-  {
-    afterSuccess: (domainModel: User) =>
-      showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...domainModel})),
+export const modifyUser = restPut<User>(EndPoints.users, {
+  afterSuccess: (user: User) =>
+    showMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})),
+  afterFailure: (error: ErrorResponse) =>
+    showMessage(firstUpperTranslated('failed to update user: {{error}}', {error})),
+});
+
+export const deleteUser = restDelete<User>(EndPoints.users, {
+    afterSuccess: (user: User) =>
+      showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})),
     afterFailure: (error: ErrorResponse) =>
       showMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})),
   },

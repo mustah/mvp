@@ -3,10 +3,10 @@ import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {
-  DomainModelsState, EndPoints, Normalized, NormalizedState,
+  DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState,
   SelectionEntity,
 } from '../../../domain-models/domainModels';
-import {requestMethod, HttpMethod} from '../../../domain-models/domainModelsActions';
+import {requestMethod} from '../../../domain-models/domainModelsActions';
 import {
   addresses, alarms, cities, gateways, gatewayStatuses, initialDomain, manufacturers, meters, meterStatuses,
   productModels, users,

@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
-import {EndPoints, Normalized, SelectionEntity} from '../domainModels';
-import {HttpMethod, requestMethod} from '../domainModelsActions';
+import {EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
+import {requestMethod} from '../domainModelsActions';
 import {addresses, cities, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Role, User, UserState} from '../user/userModels';
