@@ -22,6 +22,10 @@ allprojects {
 
 subprojects { subproject ->
 
+  tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+  }
+
   plugins.withType(JavaPlugin) {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
