@@ -1,10 +1,11 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
-import {requestMethod, HttpMethod} from '../domainModelsActions';
-import {addresses, cities, initialDomain} from '../domainModelsReducer';
-import {selectionsSchema} from '../domainModelsSchemas';
 import {EndPoints, Normalized, SelectionEntity} from '../domainModels';
+import {HttpMethod, requestMethod} from '../domainModelsActions';
+import {addresses, cities, initialDomain, users} from '../domainModelsReducer';
+import {selectionsSchema} from '../domainModelsSchemas';
+import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
 
@@ -85,4 +86,60 @@ describe('domainModelsReducer', () => {
     });
   });
 
+  describe('users', () => {
+
+    const initialState: UserState = initialDomain<User>();
+
+    const usersPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
+    const usersDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
+    const user: User = {
+      id: 3,
+      name: 'Eva',
+      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      roles: [Role.USER],
+      email: 'eva@elvaco.se',
+    };
+
+    const populatedState: UserState = {
+      result: [3],
+      entities: {3: user},
+      isFetching: false,
+      total: 1,
+    };
+
+    it('has initial state', () => {
+      expect(users(initialState, {type: 'unknown'})).toEqual({...initialState});
+    });
+
+    it('requests users', () => {
+      expect(users(initialState, usersPostRequest.request())).toEqual({...initialState, isFetching: true});
+      expect(users(initialState, usersDeleteRequest.request())).toEqual({...initialState, isFetching: true});
+    });
+
+    it('adds new user to state', () => {
+      expect(users(initialState, usersPostRequest.success(user))).toEqual({
+        result: [3],
+        entities: {3: user},
+        isFetching: false,
+        total: 1,
+      });
+    });
+
+    it('deletes a user from state', () => {
+      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual(initialState);
+    });
+
+    it('has error when fetching has failed', () => {
+      const payload = {message: 'failed'};
+
+      expect(users(initialState, usersPostRequest.failure(payload))).toEqual({
+        ...initialState,
+        error: payload,
+      });
+      expect(users(initialState, usersDeleteRequest.failure(payload))).toEqual({
+        ...initialState,
+        error: payload,
+      });
+    });
+  });
 });
