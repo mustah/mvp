@@ -19,7 +19,7 @@ STAGING_KEYSTORE_ALIAS_BASE64=$5
 : ${SERVICE_FILE:="/opt/elvaco/mvp/elvaco-mvp.service"}
 : ${PROPERTIES_FILENAME:="application-staging.properties"}
 
-LOCAL_TAR=backend/build/distributions/mvp-$GIT_VERSION.tar
+LOCAL_TAR=backend/configuration/build/distributions/mvp-$GIT_VERSION.tar
 
 function p {
   echo "deploy: $1"

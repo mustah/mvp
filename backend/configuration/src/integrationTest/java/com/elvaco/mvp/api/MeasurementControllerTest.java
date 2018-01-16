@@ -10,7 +10,6 @@ import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void setUp() {
     PhysicalMeterEntity physicalMeterEntity =
       new PhysicalMeterEntity(0L /*fixme: this should be an organisation entity*/,
-                              "test-butter-meter-1",
-                              "Butter"
+        "test-butter-meter-1",
+        "Butter"
       );
     meterRepository.save(physicalMeterEntity);
     Stream.of(

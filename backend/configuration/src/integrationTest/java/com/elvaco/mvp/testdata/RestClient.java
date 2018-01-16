@@ -11,7 +11,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static com.elvaco.mvp.testdata.Constants.AUTHORIZATION;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {
@@ -68,14 +67,14 @@ public final class RestClient {
   public RestClient logout() {
     template.getRestTemplate().setInterceptors(
       singletonList((request, body, execution) -> {
-        request.getHeaders().remove(AUTHORIZATION);
+        request.getHeaders().remove(Constants.AUTHORIZATION);
         return execution.execute(request, body);
       }));
     return this;
   }
 
   private RestClient authorization(String token) {
-    return addHeader(AUTHORIZATION, "Basic " + token);
+    return addHeader(Constants.AUTHORIZATION, "Basic " + token);
   }
 
   private RestClient addHeader(String headerName, String value) {

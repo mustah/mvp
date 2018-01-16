@@ -22,6 +22,10 @@ allprojects {
 
 subprojects { subproject ->
 
+  tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+  }
+
   plugins.withType(JavaPlugin) {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -31,6 +35,15 @@ subprojects { subproject ->
     plugins.apply('eclipse')
     plugins.apply('checkstyle')
     plugins.apply('findbugs')
+
+    idea {
+      module {
+        outputDir = file("$buildDir/classes/main")
+        testOutputDir = file("$buildDir/classes/test")
+        generatedSourceDirs += file("$buildDir/generated/")
+        sourceDirs += file("$buildDir/generated/")
+      }
+    }
 
     checkstyle {
       ignoreFailures = false
@@ -59,14 +72,6 @@ buildscript {
 
 apply plugin: 'docker-compose'
 apply plugin: 'json-validator'
-
-task runFinalJar(type: JavaExec) {
-  group = 'application'
-  description = 'Run final jar artifact'
-  def finalJar = 'backend/build/libs/mvp-' + version + '.jar'
-  classpath = files(finalJar)
-  main = 'org.springframework.boot.loader.JarLauncher'
-}
 
 task composeDownAndRemovePostgres(type: ComposeDown) {
   description = 'Bring down and remove a running PostgreSQL container'
@@ -135,5 +140,4 @@ task dotVersion {
 }
 
 task assemble(dependsOn: ':check')
-runFinalJar.dependsOn(':backend:assemble')
-composeUp.dependsOn(':backend:assemble')
+composeUp.dependsOn(':backend:configuration:assemble')
