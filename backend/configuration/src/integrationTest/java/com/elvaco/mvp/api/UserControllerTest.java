@@ -135,7 +135,13 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    User user = users.save(createUser("noo@b.com", "test123"));
+    User user = users.save(new User(
+      "john doh",
+      "noo@b.com",
+      "test123",
+      new Organisation(1L, "Elvaco", "elvaco"),
+      asList(new Role(ADMIN), new Role(USER))
+    ));
 
     apiService().delete("/users/" + user.id);
 
@@ -186,6 +192,27 @@ public class UserControllerTest extends IntegrationTest {
     assertForbidden(response);
   }
 
+  @Test
+  public void newlyCreatedUserShouldBeAbleToLogin() {
+    String email = "newest@member.com";
+    String password = "testing";
+    UserWithPasswordDto user = createUserDto(email, password);
+
+    HttpStatus statusCode = apiService()
+      .post("/users", user, UserDto.class)
+      .getStatusCode();
+
+    assertThat(statusCode).isEqualTo(HttpStatus.OK);
+
+    statusCode = restClient()
+      .logout()
+      .loginWith(email, password)
+      .get("/users", List.class)
+      .getStatusCode();
+
+    assertThat(statusCode).isEqualTo(HttpStatus.OK);
+  }
+
   private void assertForbidden(ResponseEntity<UnauthorizedDto> response) {
     UnauthorizedDto expected = new UnauthorizedDto();
     expected.message = "Access is denied";
@@ -212,16 +239,6 @@ public class UserControllerTest extends IntegrationTest {
     user.organisation = new OrganisationDto(2L, "Wayne Industries", "wayne-industries");
     user.roles = asList(Roles.USER, Roles.ADMIN);
     return user;
-  }
-
-  private User createUser(String email, String password) {
-    return new User(
-      "john doh",
-      email,
-      password,
-      new Organisation(1L, "Elvaco", "elvaco"),
-      asList(new Role(ADMIN), new Role(USER))
-    );
   }
 
   private RestClient apiService() {
