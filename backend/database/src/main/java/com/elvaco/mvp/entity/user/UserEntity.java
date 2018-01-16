@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.Email;
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "user")
+@Table(name = "mvp_user")
 public class UserEntity implements Serializable {
 
   @Id

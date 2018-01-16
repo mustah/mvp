@@ -11,10 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -26,7 +28,9 @@ public class PhysicalMeterEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
-  public Long organisationId;
+
+  @OneToOne
+  public OrganisationEntity organisation;
   public String identity;
   public String medium;
 
@@ -40,8 +44,8 @@ public class PhysicalMeterEntity {
 
   public PhysicalMeterEntity() {}
 
-  public PhysicalMeterEntity(Long organisation, String identity, String medium) {
-    this.organisationId = organisation;
+  public PhysicalMeterEntity(OrganisationEntity organisation, String identity, String medium) {
+    this.organisation = organisation;
     this.identity = identity;
     this.medium = medium;
   }

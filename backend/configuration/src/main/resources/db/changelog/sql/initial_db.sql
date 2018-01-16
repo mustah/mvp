@@ -1,43 +1,61 @@
-create extension if not exists "uuid-ossp";
-create extension if not exists "unit";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "unit";
 -- unit aliases, do we really need these? Could we change the units at the source (Metering) instead?
-insert into unit_units values ('Celsius', '1 K'::unit, 273.15, 'K');
-insert into unit_units values ('Kelvin', '1 K'::unit, default, 'K');
-insert into unit_units values ('m3', 'm^3'::unit, default, 'm');
+INSERT INTO unit_units VALUES ('Celsius', '1 K' :: UNIT, 273.15, 'K');
+INSERT INTO unit_units VALUES ('Kelvin', '1 K' :: UNIT, default, 'K');
+INSERT INTO unit_units VALUES ('m3', 'm^3' :: UNIT, default, 'm');
 
-create table if not exists meter_definition (
-	id bigserial primary key
+CREATE TABLE IF NOT EXISTS meter_definition (
+  id BIGSERIAL PRIMARY KEY
 );
 
-create table if not exists organisation (
-	id bigserial primary key,
-	name varchar(255)
+CREATE TABLE IF NOT EXISTS organisation (
+  id   BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255),
+  code VARCHAR(255)
 );
 
-create table if not exists metering_point (
-	id bigserial primary key,
-	property_collection jsonb
-	-- meter_definition_id bigserial references meter_definition
+CREATE TABLE IF NOT EXISTS mvp_user (
+  id              BIGSERIAL PRIMARY KEY,
+  name            TEXT NOT NULL,
+  email           TEXT NOT NULL UNIQUE,
+  password        TEXT NOT NULL,
+  organisation_id BIGSERIAL REFERENCES organisation
 );
 
-create table if not exists physical_meter (
-	id bigserial primary key,
-	organisation_id bigserial references organisation,
-	identity varchar(255),
-	medium varchar(255),
-	metering_point_id bigserial references metering_point,
-	unique (organisation_id, identity)
+CREATE TABLE IF NOT EXISTS role (
+  role VARCHAR(255) PRIMARY KEY
+);
+
+CREATE TABLE IF NOT EXISTS users_roles (
+  user_id BIGSERIAL REFERENCES mvp_user,
+  role_id VARCHAR(255) REFERENCES role
+);
+
+CREATE TABLE IF NOT EXISTS metering_point (
+  id                  BIGSERIAL PRIMARY KEY,
+  property_collection JSONB
+  -- meter_definition_id bigserial references meter_definition
+);
+
+CREATE TABLE IF NOT EXISTS physical_meter (
+  id                BIGSERIAL PRIMARY KEY,
+  organisation_id   BIGSERIAL REFERENCES organisation,
+  identity          VARCHAR(255),
+  medium            VARCHAR(255),
+  metering_point_id BIGSERIAL REFERENCES metering_point,
+  UNIQUE (organisation_id, identity)
 );
 
 -- TODO: add gateway
 
-create table if not exists measurement (
-	id bigserial primary key,
-	physical_meter_id bigserial not null references physical_meter (id) on update cascade on delete cascade,
-	created timestamp without time zone not null default now(),
-	quantity varchar(255) not null,
-	value unit not null, -- if this is a proper measurement, the value will be here
-	unique (physical_meter_id, created, quantity, value)
+CREATE TABLE IF NOT EXISTS measurement (
+  id                BIGSERIAL PRIMARY KEY,
+  physical_meter_id BIGSERIAL                   NOT NULL REFERENCES physical_meter (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  created           TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+  quantity          VARCHAR(255)                NOT NULL,
+  value             UNIT                        NOT NULL, -- if this is a proper measurement, the value will be here
+  UNIQUE (physical_meter_id, created, quantity, value)
 );
 
 /*create or replace function get_measurements_for_logical_meter(_logical_meter_id logical_meter.uuid%type, _from measurement.created%type, _to measurement.created%type) returns setof measurement as $$
@@ -46,36 +64,48 @@ begin
 end
 $$ language plpgsql;*/
 
-create or replace function add_measurement(organisation_name organisation.name%type,
-	_identity physical_meter.identity%type,
-	_medium physical_meter.medium%type,
-	measurement_quantity measurement.quantity%type,
-	measurement_unit varchar(255),
-	measurement_created measurement.created%type,
-	measurement_value double precision) returns physical_meter.id%type as $$
-declare
-	physical_meter_id physical_meter.id%type;
-	organisation_id organisation.id%type;
-begin
+CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.name%TYPE,
+                                           _identity            physical_meter.identity%TYPE,
+                                           _medium              physical_meter.medium%TYPE,
+                                           measurement_quantity measurement.quantity%TYPE,
+                                           measurement_unit     VARCHAR(255),
+                                           measurement_created  measurement.created%TYPE,
+                                           measurement_value    DOUBLE PRECISION)
+  RETURNS physical_meter.id%TYPE AS $$
+DECLARE
+  physical_meter_id physical_meter.id%TYPE;
+  organisation_id   organisation.id%TYPE;
+BEGIN
 
-	select id from organisation where name = organisation_name into organisation_id;
-		if organisation_id is null then
-			insert into organisation values(default, organisation_name) returning id into organisation_id;
-		end if;
+  SELECT id
+  FROM organisation
+  WHERE name = organisation_name
+  INTO organisation_id;
+  IF organisation_id IS NULL
+  THEN
+    INSERT INTO organisation VALUES (default, organisation_name)
+    RETURNING id
+      INTO organisation_id;
+  END IF;
 
-	select physical_meter.id
-	from organisation, physical_meter
-				where
-					physical_meter.organisation_id = organisation_id
-					and physical_meter.identity = _identity
-					and physical_meter.medium = _medium
-					into physical_meter_id;
+  SELECT physical_meter.id
+  FROM organisation, physical_meter
+  WHERE
+    physical_meter.organisation_id = organisation_id
+    AND physical_meter.identity = _identity
+    AND physical_meter.medium = _medium
+  INTO physical_meter_id;
 
-	if physical_meter_id is null then
-		-- New physical meter!
-		insert into physical_meter values(default, organisation_id, _identity, _medium) returning id into physical_meter_id;
-	end if;
-	insert into measurement values(default, physical_meter_id, measurement_created,  measurement_quantity, (measurement_value || measurement_unit)::unit);
-	return physical_meter_id;
-end;
-$$ language plpgsql;
+  IF physical_meter_id IS NULL
+  THEN
+    -- New physical meter!
+    INSERT INTO physical_meter VALUES (default, organisation_id, _identity, _medium)
+    RETURNING id
+      INTO physical_meter_id;
+  END IF;
+  INSERT INTO measurement VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
+                                  (measurement_value || measurement_unit) :: UNIT);
+  RETURN physical_meter_id;
+END;
+$$
+LANGUAGE plpgsql;
