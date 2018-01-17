@@ -66,8 +66,12 @@ public class UserController {
 
   @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN')")
   @DeleteMapping("{id}")
-  public void deleteUser(@PathVariable Long id) {
+  public UserDto deleteUser(@PathVariable Long id) {
+    UserDto user = userUseCases.findById(id)
+      .map(userMapper::toDto)
+      .orElseThrow(() -> new UserNotFound(id));
     // TODO[!must!] delete should actually not remove the entity, just mark it as deleted.
     userUseCases.deleteById(id);
+    return user;
   }
 }
