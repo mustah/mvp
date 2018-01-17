@@ -11,9 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
-@ToString
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
@@ -30,5 +28,14 @@ public class RoleEntity implements Serializable {
 
   public RoleEntity(String role) {
     this.role = role;
+  }
+
+  @Override
+  public String toString() {
+    return "RoleEntity{"
+           + "role='"
+           + role
+           + '\''
+           + '}';
   }
 }

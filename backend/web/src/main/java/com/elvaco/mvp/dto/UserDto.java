@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.dto;
+package com.elvaco.mvp.dto;
 
 import java.util.List;
 
@@ -12,7 +12,6 @@ public class UserDto {
   public Long id;
   public String name;
   public String email;
-  public String password;
   public OrganisationDto organisation;
   public List<String> roles;
 }

@@ -1,17 +1,22 @@
 package com.elvaco.mvp.repository.access;
 
-import com.elvaco.mvp.core.Roles;
-import com.elvaco.mvp.core.dto.OrganisationDto;
-import com.elvaco.mvp.core.dto.UserDto;
+import java.util.List;
+
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.PasswordEncoder;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.entity.user.UserEntity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
+import static com.elvaco.mvp.core.Roles.ADMIN;
+import static com.elvaco.mvp.core.Roles.SUPER_ADMIN;
+import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserMapperTest {
 
   private UserMapper userMapper;
+  private PasswordEncoder passwordEncoder;
 
   @Before
   public void setUp() {
@@ -27,57 +33,75 @@ public class UserMapperTest {
       .getConfiguration()
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
-    userMapper = new UserMapper(modelMapper);
+    passwordEncoder = rawPassword -> "::" + rawPassword + "::";
+    userMapper = new UserMapper(modelMapper, passwordEncoder);
   }
 
   @Test
   public void userEntityMustHaveRoles() {
     UserEntity userEntity = new UserEntity();
-    userEntity.roles = singletonList(new RoleEntity(Roles.USER));
+    userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
+    userEntity.roles = singletonList(new RoleEntity(USER));
 
-    UserDto userDto = userMapper.toDto(userEntity);
+    List<Role> roles = userMapper.toDomainModel(userEntity).roles;
 
-    assertThat(userDto.roles).containsExactly(Roles.USER);
+    assertThat(roles).containsExactly(new Role(USER));
   }
 
   @Test
   public void mapsUserEntityWithMoreThanOneRole() {
-    UserEntity userEntity = new UserEntity();
-    userEntity.id = 1L;
-    userEntity.name = "John Doh";
-    userEntity.password = "letmein";
-    userEntity.email = "a@b.com";
-    userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
-    userEntity.roles = asList(new RoleEntity(Roles.USER), new RoleEntity(Roles.SUPER_ADMIN));
+    User user = userMapper.toDomainModel(createUserEntity());
 
-    UserDto userDto = userMapper.toDto(userEntity);
+    assertThat(user.id).isEqualTo(1);
+    assertThat(user.roles).containsExactly(new Role(USER), new Role(SUPER_ADMIN));
+  }
 
-    assertThat(userDto.id).isEqualTo(1);
-    assertThat(userDto.roles).containsExactly(Roles.USER, Roles.SUPER_ADMIN);
+  @Test
+  public void mappingUserDtoToEntityShouldHaveEncodedPassword() {
+    UserEntity userEntity = userMapper.toEntity(createUser());
+
+    assertThat(userEntity.password).isEqualTo("::letmein::");
   }
 
   @Test
   public void mapUserDtoToEntity() {
-    UserDto userDto = new UserDto();
-    userDto.id = 1L;
-    userDto.email = "a@b.com";
-    userDto.name = "john doh";
-    userDto.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
-    userDto.roles = asList(Roles.ADMIN, Roles.USER);
+    User user = createUser();
 
-    UserEntity userEntity = userMapper.toEntity(userDto);
+    UserEntity userEntity = userMapper.toEntity(user);
 
     assertThat(userEntity).isEqualTo(new UserEntity(
-      userDto.id,
-      userDto.name,
-      userDto.email,
-      null,
+      user.id,
+      user.name,
+      user.email,
+      "::letmein::",
       new OrganisationEntity(
-        userDto.organisation.id,
-        userDto.organisation.name,
-        userDto.organisation.code
+        user.organisation.id,
+        user.organisation.name,
+        user.organisation.code
       ),
-      asList(new RoleEntity(Roles.ADMIN), new RoleEntity(Roles.USER))
+      asList(new RoleEntity(ADMIN), new RoleEntity(USER))
     ));
+  }
+
+  private User createUser() {
+    return new User(
+      1L,
+      "john doh",
+      "a@b.com",
+      "letmein",
+      new Organisation(1L, "Elvaco", "elvaco"),
+      asList(new Role(ADMIN), new Role(USER))
+    );
+  }
+
+  private UserEntity createUserEntity() {
+    UserEntity userEntity = new UserEntity();
+    userEntity.id = 1L;
+    userEntity.name = "John Doh";
+    userEntity.password = passwordEncoder.encode("letmein");
+    userEntity.email = "a@b.com";
+    userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
+    userEntity.roles = asList(new RoleEntity(USER), new RoleEntity(SUPER_ADMIN));
+    return userEntity;
   }
 }

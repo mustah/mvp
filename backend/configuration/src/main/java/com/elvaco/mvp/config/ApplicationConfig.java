@@ -4,26 +4,23 @@ import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
-
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.core.AbstractEntityLinks;
 
 @Configuration
-public class ApplicationConfig {
+class ApplicationConfig {
 
   @Bean
-  public FilterToPredicateMapper predicateMapper() {
+  FilterToPredicateMapper predicateMapper() {
     return new MeasurementFilterToPredicateMapper();
   }
 
   @Bean
-  @Autowired
-  public ModelMapper modelMapper(AbstractEntityLinks entityLinks) {
+  ModelMapper modelMapper(AbstractEntityLinks entityLinks) {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper.addConverter(measurementConverter(entityLinks));
     modelMapper

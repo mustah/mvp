@@ -3,7 +3,7 @@ package com.elvaco.mvp.core.usecase;
 import java.util.List;
 import java.util.Optional;
 
-import com.elvaco.mvp.core.dto.UserDto;
+import com.elvaco.mvp.core.domainmodels.User;
 
 public class UserUseCases {
 
@@ -13,20 +13,26 @@ public class UserUseCases {
     this.users = users;
   }
 
-  public List<UserDto> findAll() {
+  public List<User> findAll() {
     return users.findAll();
   }
 
-  public Optional<UserDto> findByEmail(String email) {
+  public Optional<User> findByEmail(String email) {
     return users.findByEmail(email);
   }
 
-  public Optional<UserDto> findById(Long id) {
+  public Optional<User> findById(Long id) {
     return users.findById(id);
   }
 
-  public UserDto save(UserDto user) {
+  public User create(User user) {
     return users.save(user);
+  }
+
+  public Optional<User> update(User user) {
+    return users.findPasswordByUserId(user.id)
+      .map(user::withPassword)
+      .map(users::save);
   }
 
   public void deleteById(Long id) {
