@@ -3,7 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import 'UserEditForm.scss';
+import './UserEditForm.scss';
 import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
 import {Column} from '../../../components/layouts/column/Column';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -26,7 +26,6 @@ interface State {
   organisation: Organisation;
   roles: Role[];
   password: string;
-  repeatPassword: string;
 }
 
 export class UserEditForm extends React.Component<UserFormProps, State> {
@@ -34,7 +33,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   constructor(props: UserFormProps) {
     super(props);
     if (props.user) {
-      this.state = {...props.user, password: '', repeatPassword: ''};
+      this.state = {...props.user, password: ''};
     } else {
       this.state = {
         name: '',
@@ -42,7 +41,6 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         organisation: {id: '', code: '', name: ''},
         roles: [Role.USER],
         password: '',
-        repeatPassword: '',
       };
     }
   }
@@ -51,11 +49,10 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   changeRoles = (event, index, value) => this.setState({roles: value});
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
   onChangePassword = (event) => this.setState({password: event.target.value});
-  onChangeRepeatPassword = (event) => this.setState({repeatPassword: event.target.value});
 
   render() {
     const {onSubmit, organisations, possibleRoles, isEditSelf} = this.props;
-    const {name, email, organisation, roles, password, repeatPassword} = this.state;
+    const {name, email, organisation, roles, password} = this.state;
 
     const nameLabel = firstUpperTranslated('name');
     const emailLabel = firstUpperTranslated('email');
@@ -63,10 +60,10 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const rolesLabel = firstUpperTranslated('user roles');
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
-    const repeatPasswordLabel = isEditSelf ?
-      firstUpperTranslated('repeat new password') : firstUpperTranslated('repeat password');
-
-    const wrappedSubmit = () => onSubmit(this.state);
+    const wrappedSubmit = (event) => {
+      event.preventDefault();
+      onSubmit(this.state);
+    };
 
     const organisationsAsItems = organisations.map((org, index) =>
       <MenuItem key={index} value={org.id} primaryText={org.name}/>);
@@ -133,18 +130,6 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             name="password"
             value={password}
             onChange={this.onChangePassword}
-          />
-
-          <TextField
-            className="TextField"
-            floatingLabelText={repeatPasswordLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
-            hintText={repeatPasswordLabel}
-            underlineFocusStyle={underlineFocusStyle}
-            type="password"
-            name="repeatPassword"
-            value={repeatPassword}
-            onChange={this.onChangeRepeatPassword}
           />
           <FlatButton
             className="SaveButton"

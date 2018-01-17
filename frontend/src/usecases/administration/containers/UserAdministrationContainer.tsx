@@ -1,6 +1,7 @@
 import Divider from 'material-ui/Divider';
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
@@ -9,7 +10,6 @@ import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActi
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
-import {history} from '../../../index';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -65,15 +65,13 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const usersToRender = filterUsersByUser(users, currentUser);
     const paginatedList = Object.keys(usersToRender);
 
-    const noop = () => 0;
-
-    const addUser = () => history.push(`${routes.adminUsersAdd}`);
-
-    const menuItems: MenuItems = [
-      <ActionMenuItem name={translate('add user')} onClick={addUser} key="add user"/>,
+    const menuItems: MenuItems = [(
+      <Link to={routes.adminUsersAdd} className="link" key="add user">
+        <ActionMenuItem name={translate('add user')} />
+      </Link>),
       <Divider key="a divider"/>,
-      <ActionMenuItem name={translate('export to Excel (.csv)')} onClick={noop} key="export to excel"/>,
-      <ActionMenuItem name={translate('export to JSON')} onClick={noop} key="export to json"/>,
+      <ActionMenuItem name={translate('export to Excel (.csv)')} key="export to excel"/>,
+      <ActionMenuItem name={translate('export to JSON')} key="export to json"/>,
     ];
 
     return (
@@ -124,5 +122,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUsers,
 }, dispatch);
 
-export const AdministrationUserContainer =
+export const UserAdministrationContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(UserAdministration);

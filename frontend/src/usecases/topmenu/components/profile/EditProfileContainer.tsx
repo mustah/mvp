@@ -11,7 +11,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {modifyProfile} from '../../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../../state/domain-models/user/userModels';
-import {UserEditForm} from '../../../administration/containers/UserEditForm';
+import {UserEditForm} from '../../../forms/components/UserEditForm';
 
 interface StateToProps {
   user: User;

@@ -5,7 +5,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
-import {AdministrationUserContainer} from '../containers/AdministrationUserContainer';
+import {UserAdministrationContainer} from '../containers/UserAdministrationContainer';
 
 export const Administration = () => {
   return (
@@ -17,7 +17,7 @@ export const Administration = () => {
       </Row>
 
       <Paper style={paperStyle}>
-        <AdministrationUserContainer/>
+        <UserAdministrationContainer/>
       </Paper>
     </PageComponent>
   );
