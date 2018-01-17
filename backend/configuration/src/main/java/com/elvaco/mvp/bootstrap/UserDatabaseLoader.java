@@ -3,147 +3,148 @@ package com.elvaco.mvp.bootstrap;
 import java.util.List;
 
 import com.elvaco.mvp.config.H2;
-import com.elvaco.mvp.core.Roles;
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
-import com.elvaco.mvp.entity.user.UserEntity;
+import com.elvaco.mvp.mapper.UserDetailsMapper;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
-import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.core.Roles.ADMIN;
+import static com.elvaco.mvp.core.Roles.SUPER_ADMIN;
+import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
 
 @H2
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {
 
-  private final UserJpaRepository repository;
   private final RoleRepository roleRepository;
   private final OrganisationRepository organisationRepository;
   private final UserDetailsManager userDetailsService;
-  private final PasswordEncoder passwordEncoder;
+  private final UserUseCases userUseCases;
 
   @Autowired
   public UserDatabaseLoader(
-    UserJpaRepository repository,
     RoleRepository roleRepository,
     OrganisationRepository organisationRepository,
     UserDetailsManager userDetailsService,
-    PasswordEncoder passwordEncoder
+    UserUseCases userUseCases
   ) {
-    this.repository = repository;
     this.roleRepository = roleRepository;
     this.organisationRepository = organisationRepository;
     this.userDetailsService = userDetailsService;
-    this.passwordEncoder = passwordEncoder;
+    this.userUseCases = userUseCases;
   }
 
   @Override
   public void run(String... args) {
-    OrganisationEntity elvaco = new OrganisationEntity(
-      1L,
-      "Elvaco",
-      "elvaco"
-    );
-    OrganisationEntity wayneIndustries = new OrganisationEntity(
-      2L,
-      "Wayne Industries",
-      "wayne-industries"
-    );
-
-    organisationRepository.save(asList(elvaco, wayneIndustries));
-
-    RoleEntity user = new RoleEntity(Roles.USER);
-    RoleEntity admin = new RoleEntity(Roles.ADMIN);
-    RoleEntity superAdmin = new RoleEntity(Roles.SUPER_ADMIN);
-
-    roleRepository.save(asList(
-      user,
-      admin,
-      superAdmin
+    organisationRepository.save(asList(
+      new OrganisationEntity(
+        1L,
+        "Elvaco",
+        "elvaco"
+      ),
+      new OrganisationEntity(
+        2L,
+        "Wayne Industries",
+        "wayne-industries"
+      )
     ));
 
-    List<UserEntity> users = asList(
-      new UserEntity(
+    roleRepository.save(asList(
+      new RoleEntity(USER),
+      new RoleEntity(ADMIN),
+      new RoleEntity(SUPER_ADMIN)
+    ));
+
+    Organisation elvaco = new Organisation(1L, "Elvaco", "elvaco");
+    Organisation wayneIndustries = new Organisation(2L, "Wayne Industries", "wayne-industries");
+
+    Role user = new Role(USER);
+    Role admin = new Role(ADMIN);
+    Role superAdmin = new Role(SUPER_ADMIN);
+
+    List<User> users = asList(
+      new User(
         "Peter Eriksson",
         "peteri@elvaco.se",
         "peter123",
         elvaco,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Emil Tirén",
         "emitir@elvaco.se",
         "emil123",
         elvaco,
         asList(user, admin, superAdmin)
       ),
-      new UserEntity(
+      new User(
         "Hanna Sjöstedt",
         "hansjo@elvaco.se",
         "hanna123",
         elvaco,
         asList(user, admin)
       ),
-      new UserEntity(
+      new User(
         "User Fake",
         "user@elvaco.se",
         "user123",
         wayneIndustries,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Elvis Cohan",
         "elvis.cohan@elvis.com",
         "elvis123",
         wayneIndustries,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Anna Johansson",
         "annjoh@elvaco.se",
         "anna123",
         wayneIndustries,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Maria Svensson",
         "marsve@elvaco.se",
         "maria123",
         wayneIndustries,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Erik Karlsson",
         "erikar@elvaco.se",
         "erik123",
         wayneIndustries,
         singletonList(user)
       ),
-      new UserEntity(
+      new User(
         "Eva Nilsson",
         "evanil@elvaco.se",
         "eva123",
         elvaco,
         asList(user, superAdmin)
       ),
-      new UserEntity(
+      new User(
         "Super Admin",
         "superadmin@elvaco.se",
         "admin123",
         elvaco,
         singletonList(superAdmin)
       ),
-      new UserEntity(
+      new User(
         "Developer",
         "user@domain.tld",
         "complicated_password",
@@ -153,19 +154,9 @@ public class UserDatabaseLoader implements CommandLineRunner {
     );
 
     users.stream()
-      .peek(u -> u.password = passwordEncoder.encode(u.password))
-      .peek(repository::save)
-      .map(this::toUserDetails)
+      .map(u -> u.withPassword(() -> u.password))
+      .map(userUseCases::create)
+      .map(UserDetailsMapper::toUserDetails)
       .forEach(userDetailsService::createUser);
-  }
-
-  private UserDetails toUserDetails(UserEntity user) {
-    return User.withUsername(user.email)
-      .password(user.password)
-      .roles(user.roles.stream()
-               .map(r -> r.role)
-               .collect(toList())
-               .toArray(new String[user.roles.size()]))
-      .build();
   }
 }
