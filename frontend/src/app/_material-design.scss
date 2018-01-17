@@ -16,12 +16,6 @@
   max-width: 1000px !important;
 }
 
-.TextField {
+.TextField, .SelectField {
   margin-bottom: 20px;
-
-  label, label + div {
-    &:first-letter {
-      text-transform: uppercase;
-    }
-  }
 }

@@ -185,6 +185,12 @@ msgstr "skapade användaren {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "misslyckades med att skapa användare: {{error}}"
 
+msgid "successfully updated user {{name}} ({{email}})"
+msgstr "uppdaterade användare {{name}} ({{email}}"
+
+msgid "failed to update user: {{error}}"
+msgstr "misslyckades med att uppdatera användare: {{error}}"
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "användaren {{name}} ({{email}}) togs bort"
 
@@ -301,6 +307,9 @@ msgstr "nuvarande lösenord"
 
 msgid "new password"
 msgstr "nytt lösenord"
+
+msgid "repeat new password"
+msgstr "upprepa nytt lösenord"
 
 msgid "logout"
 msgstr "logga ut"

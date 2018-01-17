@@ -13,7 +13,7 @@ import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
@@ -54,10 +54,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
           <form onSubmit={this.onSubmit}>
             <TextField
               className="TextField"
-              floatingLabelText={translate('email')}
+              floatingLabelText={firstUpperTranslated('email')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText={translate('your email address')}
+              hintText={firstUpperTranslated('your email address')}
               id="email"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
@@ -65,10 +65,10 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             />
             <TextField
               className="TextField"
-              floatingLabelText={translate('password')}
+              floatingLabelText={firstUpperTranslated('password')}
               floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
-              hintText={translate('your password')}
+              hintText={firstUpperTranslated('your password')}
               id="password"
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}

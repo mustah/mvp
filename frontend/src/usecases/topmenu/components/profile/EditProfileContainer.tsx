@@ -10,7 +10,7 @@ import {Row} from '../../../../components/layouts/row/Row';
 import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {translate} from '../../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {User} from '../../../../state/domain-models/user/userModels';
 
 interface StateToProps {
@@ -43,8 +43,8 @@ const EditProfile = ({user}: Props) => {
                 type="text"
                 defaultValue={user.name}
                 name="name"
-                hintText={translate('name')}
-                floatingLabelText={translate('name')}
+                hintText={firstUpperTranslated('name')}
+                floatingLabelText={firstUpperTranslated('name')}
               />
 
               <TextField
@@ -52,25 +52,25 @@ const EditProfile = ({user}: Props) => {
                 type="text"
                 defaultValue={user.organisation.name}
                 name="name"
-                hintText={translate('organisation')}
-                floatingLabelText={translate('organisation')}
+                hintText={firstUpperTranslated('organisation')}
+                floatingLabelText={firstUpperTranslated('organisation')}
                 disabled={true}
               />
 
               <TextField
                 className="TextField"
                 type="password"
-                name="currentPassword"
-                hintText={translate('current password')}
-                floatingLabelText={translate('current password')}
+                name="newPassword"
+                hintText={firstUpperTranslated('new password')}
+                floatingLabelText={firstUpperTranslated('new password')}
               />
 
               <TextField
                 className="TextField"
                 type="password"
-                name="newPassword"
-                hintText={translate('new password')}
-                floatingLabelText={translate('new password')}
+                name="repeatPassword"
+                hintText={firstUpperTranslated('repeat new password')}
+                floatingLabelText={firstUpperTranslated('repeat new password')}
               />
 
               <TextField
@@ -78,8 +78,8 @@ const EditProfile = ({user}: Props) => {
                 type="text"
                 defaultValue={user.email}
                 name="name"
-                hintText={translate('email')}
-                floatingLabelText={translate('email')}
+                hintText={firstUpperTranslated('email')}
+                floatingLabelText={firstUpperTranslated('email')}
               />
 
               <TextField
@@ -87,8 +87,8 @@ const EditProfile = ({user}: Props) => {
                 type="text"
                 defaultValue={user.roles.toString()}
                 name="name"
-                hintText={translate('roles')}
-                floatingLabelText={translate('roles')}
+                hintText={firstUpperTranslated('roles')}
+                floatingLabelText={firstUpperTranslated('roles')}
                 disabled={true}
               />
               <FlatButton

@@ -182,6 +182,12 @@ msgstr "no flag"
 msgid "successfully created the user {{name}} ({{email}})"
 msgstr "successfully created the user {{name}} ({{email}})"
 
+msgid "successfully updated user {{name}} ({{email}})"
+msgstr "successfully updated user {{name}} ({{email}})"
+
+msgid "failed to update user: {{error}}"
+msgstr "failed to update user: {{error}}"
+
 msgid "failed to create user: {{error}}"
 msgstr "failed to create user: {{error}}"
 
@@ -301,6 +307,9 @@ msgstr "current password"
 
 msgid "new password"
 msgstr "new password"
+
+msgid "repeat new password"
+msgstr "repeat new password"
 
 msgid "logout"
 msgstr "logout"
