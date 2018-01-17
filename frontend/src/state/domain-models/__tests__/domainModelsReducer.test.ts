@@ -91,6 +91,7 @@ describe('domainModelsReducer', () => {
     const initialState: UserState = initialDomain<User>();
 
     const usersPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
+    const usersPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
     const usersDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
     const user: User = {
       id: 3,
@@ -122,6 +123,15 @@ describe('domainModelsReducer', () => {
         entities: {3: user},
         isFetching: false,
         total: 1,
+      });
+    });
+
+    it('modifies a current user in the state', () => {
+      const newName = 'Eva Nilsson';
+
+      expect(users(populatedState, usersPutRequest.success({...user, name: newName}))).toEqual({
+        ...populatedState,
+        entities: {3: {...user, name: newName}},
       });
     });
 

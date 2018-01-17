@@ -51,15 +51,12 @@ const addEntity =
 const modifyEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload as any;
-    const result: uuid[] = [...state.result, payload.id];
     const entities: any = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
       isFetching: false,
       entities,
-      result,
-      total: result.length,
     };
   };
 
