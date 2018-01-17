@@ -2,7 +2,6 @@ package com.elvaco.mvp.bootstrap.demo;
 
 import java.util.List;
 
-import com.elvaco.mvp.config.DemoData;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -24,7 +23,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 @Component
-@DemoData
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final RoleRepository roleRepository;
