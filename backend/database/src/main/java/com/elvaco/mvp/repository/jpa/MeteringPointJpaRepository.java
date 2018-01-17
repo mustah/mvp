@@ -13,23 +13,38 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.data.jpa.repository.support.JpaEntityInformation;
+import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
+import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MeteringPointRepository extends
-  SimpleJpaRepository<MeteringPointEntity, Long> {
+public class MeteringPointJpaRepository extends
+    QueryDslJpaRepository<MeteringPointEntity, Long> {
 
   private final EntityManager entityManager;
 
   @Autowired
-  public MeteringPointRepository(EntityManager entityManager) {
-    super(MeteringPointEntity.class, entityManager);
+  MeteringPointJpaRepository(EntityManager entityManager) {
+    this(
+        new JpaMetamodelEntityInformation<>(
+            MeteringPointEntity.class,
+            entityManager.getMetamodel()),
+        entityManager
+    );
+  }
+
+  private MeteringPointJpaRepository(
+      JpaEntityInformation<MeteringPointEntity, Long> entityInformation,
+      EntityManager entityManager
+  ) {
+    super(entityInformation, entityManager);
     this.entityManager = entityManager;
   }
 
-  public List<MeteringPointEntity> containsInPropertyCollection(PropertyCollectionDto
-                                                                  requestModel) {
+  public List<MeteringPointEntity> containsInPropertyCollection(
+      PropertyCollectionDto requestModel
+  ) {
     JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
     QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
     PropertyCollection propertyCollection = new PropertyCollection();
@@ -42,9 +57,9 @@ public class MeteringPointRepository extends
     }
 
     Predicate predicate = Expressions
-      .booleanTemplate("jsonb_contains({0}, {1})",
-        queryMeteringPoint.propertyCollection,
-        propertyCollection).eq(true);
+        .booleanTemplate("jsonb_contains({0}, {1})",
+            queryMeteringPoint.propertyCollection,
+            propertyCollection).eq(true);
     query.from(queryMeteringPoint).where(predicate);
     return query.fetch();
   }
@@ -60,10 +75,9 @@ public class MeteringPointRepository extends
     JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
     QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
     Predicate predicate = Expressions
-      .booleanTemplate("jsonb_exists({0}, {1})",
-        queryMeteringPoint.propertyCollection, fieldName).eq(true);
+        .booleanTemplate("jsonb_exists({0}, {1})",
+            queryMeteringPoint.propertyCollection, fieldName).eq(true);
     query.from(queryMeteringPoint).where(predicate);
     return query.fetch();
   }
 }
-

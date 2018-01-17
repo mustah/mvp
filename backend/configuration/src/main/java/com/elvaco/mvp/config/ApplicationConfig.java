@@ -1,8 +1,13 @@
 package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.dto.IdNamedDto;
+import com.elvaco.mvp.core.dto.MapMarkerDto;
+import com.elvaco.mvp.core.dto.MapMarkerType;
+import com.elvaco.mvp.core.dto.MeteringPointDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
+import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.security.JpaUserDetailsService;
@@ -40,11 +45,32 @@ class ApplicationConfig {
   ModelMapper modelMapper(AbstractEntityLinks entityLinks) {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper.addConverter(measurementConverter(entityLinks));
+    modelMapper.addConverter(meteringPointConverter(entityLinks));
+    modelMapper.addConverter(mapMarkerConverter(entityLinks));
     modelMapper
       .getConfiguration()
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
     return modelMapper;
+  }
+
+  private AbstractConverter<MeteringPointEntity, MapMarkerDto> mapMarkerConverter(
+    AbstractEntityLinks entityLinks
+  ) {
+    return new AbstractConverter<MeteringPointEntity, MapMarkerDto>() {
+      @Override
+      protected MapMarkerDto convert(MeteringPointEntity source) {
+        IdNamedDto status = new IdNamedDto();
+        status.id = 1L;
+        status.name = "ok";
+
+        MapMarkerDto dto = new MapMarkerDto();
+        dto.id = source.id;
+        dto.status = status;
+        dto.mapMarkerType = MapMarkerType.Meter;
+        return dto;
+      }
+    };
   }
 
   private AbstractConverter<Measurement, MeasurementDto> measurementConverter(
@@ -63,6 +89,20 @@ class ApplicationConfig {
           source.physicalMeter.getClass(),
           source.physicalMeter.id
         );
+        return dto;
+      }
+    };
+  }
+
+  private AbstractConverter<MeteringPointEntity, MeteringPointDto> meteringPointConverter(
+    AbstractEntityLinks entityLinks
+  ) {
+    return new AbstractConverter<MeteringPointEntity, MeteringPointDto>() {
+      @Override
+      protected MeteringPointDto convert(MeteringPointEntity source) {
+        MeteringPointDto dto = new MeteringPointDto();
+        dto.id = source.id;
+        dto.medium = source.medium;
         return dto;
       }
     };
