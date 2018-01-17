@@ -7,6 +7,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
+import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {addUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role} from '../../../state/domain-models/user/userModels';
@@ -37,7 +38,8 @@ const UserEditContainerComponent = (props: DispatchToProps & StateToProps) => {
           <UserEditForm
             organisations={organisations}
             onSubmit={addUser}
-            roles={roles}
+            possibleRoles={roles}
+            isEditSelf={false}
           />
         </WrapperIndent>
       </Paper>

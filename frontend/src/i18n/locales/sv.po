@@ -191,6 +191,13 @@ msgstr "uppdaterade användare {{name}} ({{email}}"
 msgid "failed to update user: {{error}}"
 msgstr "misslyckades med att uppdatera användare: {{error}}"
 
+msgid "successfully updated profile"
+msgstr "uppdaterade profil"
+
+msgid "failed to update profile: {{error}}"
+msgstr "misslyckades uppdatera profil: {{error}}"
+
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "användaren {{name}} ({{email}}) togs bort"
 
@@ -229,6 +236,9 @@ msgstr "lösenord"
 
 msgid "your password"
 msgstr "ditt lösenord"
+
+msgid "repeat password"
+msgstr "upprepa lösenord"
 
 msgid "login"
 msgstr "logga in"

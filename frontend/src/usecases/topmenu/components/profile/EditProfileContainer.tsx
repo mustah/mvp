@@ -1,30 +1,31 @@
-import 'EditProfileContainer.scss';
-import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
-import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {buttonStyle, paperStyle} from '../../../../app/themes';
+import {bindActionCreators} from 'redux';
+import {paperStyle} from '../../../../app/themes';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {User} from '../../../../state/domain-models/user/userModels';
+import {translate} from '../../../../services/translationService';
+import {modifyProfile} from '../../../../state/domain-models/domainModelsActions';
+import {Organisation, Role, User} from '../../../../state/domain-models/user/userModels';
+import {UserEditForm} from '../../../administration/containers/UserEditForm';
 
 interface StateToProps {
   user: User;
+  organisations: Organisation[];
+  roles: Role[];
 }
 
-type Props = StateToProps;
+interface DispatchToProps {
+  modifyProfile: (user: User) => void;
+}
 
-const EditProfile = ({user}: Props) => {
+type Props = StateToProps & DispatchToProps;
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-    // TODO: Create submit request to backend.
-  };
+const EditProfile = ({user, organisations, roles, modifyProfile}: Props) => {
 
   // TODO: Add validation for fields.
   return (
@@ -36,77 +37,34 @@ const EditProfile = ({user}: Props) => {
       </Row>
       <Paper style={paperStyle}>
         <Column className="EditProfileContainer">
-          <form onSubmit={onSubmit}>
-            <Column>
-              <TextField
-                className="TextField"
-                type="text"
-                defaultValue={user.name}
-                name="name"
-                hintText={firstUpperTranslated('name')}
-                floatingLabelText={firstUpperTranslated('name')}
-              />
-
-              <TextField
-                className="TextField"
-                type="text"
-                defaultValue={user.organisation.name}
-                name="name"
-                hintText={firstUpperTranslated('organisation')}
-                floatingLabelText={firstUpperTranslated('organisation')}
-                disabled={true}
-              />
-
-              <TextField
-                className="TextField"
-                type="password"
-                name="newPassword"
-                hintText={firstUpperTranslated('new password')}
-                floatingLabelText={firstUpperTranslated('new password')}
-              />
-
-              <TextField
-                className="TextField"
-                type="password"
-                name="repeatPassword"
-                hintText={firstUpperTranslated('repeat new password')}
-                floatingLabelText={firstUpperTranslated('repeat new password')}
-              />
-
-              <TextField
-                className="TextField"
-                type="text"
-                defaultValue={user.email}
-                name="name"
-                hintText={firstUpperTranslated('email')}
-                floatingLabelText={firstUpperTranslated('email')}
-              />
-
-              <TextField
-                className="TextField"
-                type="text"
-                defaultValue={user.roles.toString()}
-                name="name"
-                hintText={firstUpperTranslated('roles')}
-                floatingLabelText={firstUpperTranslated('roles')}
-                disabled={true}
-              />
-              <FlatButton
-                className="ProfileSave"
-                type="submit"
-                label={translate('save')}
-                style={buttonStyle}
-              />
-            </Column>
-          </form>
+          <UserEditForm
+            onSubmit={modifyProfile}
+            organisations={organisations}
+            possibleRoles={roles}
+            isEditSelf={true}
+            user={user}
+          />
         </Column>
       </Paper>
     </MvpPageContainer>
   );
 };
 
-const mapStateToProps = ({auth: {user}}: RootState): StateToProps => (
-  {user: user!} // TODO: Perhaps use a selector instead of using the "!" null protection.
-);
+const mapStateToProps = ({auth: {user}}: RootState): StateToProps => ({
+  user: user!,
+  organisations: [
+    {id: 1, code: 'elvaco', name: 'Elvaco'},
+    {id: 2, code: 'wayne-industries', name: 'Wayne Industries'},
+  ],
+  roles: [
+    Role.ADMIN,
+    Role.USER,
+  ],
+}); // TODO: Perhaps use a selector instead of using the "!" null protection for user.
 
-export const EditProfileContainer = connect<StateToProps>(mapStateToProps)(EditProfile);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  modifyProfile,
+}, dispatch);
+
+export const EditProfileContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(EditProfile);

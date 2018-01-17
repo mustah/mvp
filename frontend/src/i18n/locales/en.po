@@ -188,6 +188,12 @@ msgstr "successfully updated user {{name}} ({{email}})"
 msgid "failed to update user: {{error}}"
 msgstr "failed to update user: {{error}}"
 
+msgid "successfully updated profile"
+msgstr "successfully updated profile"
+
+msgid "failed to update profile: {{error}}
+msgstr "failed to update profile: {{error}}
+
 msgid "failed to create user: {{error}}"
 msgstr "failed to create user: {{error}}"
 
@@ -229,6 +235,9 @@ msgstr "password"
 
 msgid "your password"
 msgstr "your password"
+
+msgid "repeat password"
+msgstr "repeat password"
 
 msgid "login"
 msgstr "login"

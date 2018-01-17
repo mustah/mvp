@@ -120,11 +120,19 @@ export const addUser = restPost<User>(EndPoints.users, {
     showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
 });
 
+// TODO: Add tests
 export const modifyUser = restPut<User>(EndPoints.users, {
   afterSuccess: (user: User) =>
     showMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})),
   afterFailure: (error: ErrorResponse) =>
     showMessage(firstUpperTranslated('failed to update user: {{error}}', {error})),
+});
+
+export const modifyProfile = restPut<User>(EndPoints.users, {
+  afterSuccess: (user: User) =>
+    showMessage(firstUpperTranslated('successfully updated profile', {...user})),
+  afterFailure: (error: ErrorResponse) =>
+    showMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})),
 });
 
 export const deleteUser = restDelete<User>(EndPoints.users, {
