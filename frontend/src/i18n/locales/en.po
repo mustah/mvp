@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-18 11:56+0100\n"
+"POT-Creation-Date: 2018-01-18 14:00+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -274,6 +274,9 @@ msgstr "save as"
 
 msgid "reset selection"
 msgstr "reset selection"
+
+msgid "give the selection a name"
+msgstr "give the selection a name"
 
 msgid "meter status"
 msgstr "meter status"

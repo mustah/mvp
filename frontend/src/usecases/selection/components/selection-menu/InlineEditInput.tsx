@@ -4,7 +4,7 @@ import {floatingLabelFocusStyle, underlineFocusStyle} from '../../../../app/them
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
-import {translate} from '../../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
 import {IdNamed, OnClick, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
@@ -42,6 +42,33 @@ export class InlineEditInput extends React.Component<Props, State> {
     };
   }
 
+  renderActionButtons = (): React.ReactNode => {
+    const {id} = this.state;
+    return (
+      <Row>
+        {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
+        <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
+      </Row>
+    );
+  }
+  renderResetButton = (): React.ReactNode => {
+    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>;
+  }
+  onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
+  onSave = (): void => {
+    const {updateSelection, selection} = this.props;
+    const {name} = this.state;
+    this.setState({isChanged: false});
+    updateSelection({...selection, name});
+  }
+  onSaveAs = (): void => {
+    const {saveSelection, selection} = this.props;
+    const {name} = this.state;
+    const id = idGenerator.uuid();
+    this.setState({id, isChanged: false});
+    saveSelection({...selection, name, id});
+  }
+
   render() {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
@@ -52,7 +79,7 @@ export class InlineEditInput extends React.Component<Props, State> {
         <TextField
           style={textFieldStyle}
           floatingLabelFocusStyle={floatingLabelFocusStyle}
-          hintText="Namnge ditt urval"
+          hintText={firstUpperTranslated('give the selection a name')}
           underlineFocusStyle={underlineFocusStyle}
           value={name}
           onChange={this.onChange}
@@ -62,37 +89,6 @@ export class InlineEditInput extends React.Component<Props, State> {
         {shouldRenderResetButton && this.renderResetButton()}
       </RowBottom>
     );
-  }
-
-  renderActionButtons = (): React.ReactNode => {
-    const {id} = this.state;
-    return (
-      <Row>
-        {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
-        <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
-      </Row>
-    );
-  }
-
-  renderResetButton = (): React.ReactNode => {
-    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>;
-  }
-
-  onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
-
-  onSave = (): void => {
-    const {updateSelection, selection} = this.props;
-    const {name} = this.state;
-    this.setState({isChanged: false});
-    updateSelection({...selection, name});
-  }
-
-  onSaveAs = (): void => {
-    const {saveSelection, selection} = this.props;
-    const {name} = this.state;
-    const id = idGenerator.uuid();
-    this.setState({id, isChanged: false});
-    saveSelection({...selection, name, id});
   }
 
 }
