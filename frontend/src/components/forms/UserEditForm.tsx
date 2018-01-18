@@ -4,11 +4,11 @@ import SelectField from 'material-ui/SelectField';
 import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import './UserEditForm.scss';
-import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
-import {Column} from '../../../components/layouts/column/Column';
-import {firstUpperTranslated} from '../../../services/translationService';
-import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
-import {uuid} from '../../../types/Types';
+import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
+import {Column} from '../layouts/column/Column';
+import {firstUpperTranslated} from '../../services/translationService';
+import {Organisation, Role, User} from '../../state/domain-models/user/userModels';
+import {uuid} from '../../types/Types';
 import SelectFieldProps = __MaterialUI.SelectFieldProps;
 
 interface UserFormProps {
@@ -45,7 +45,8 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     }
   }
 
-  changeOrganisation = (event, index, value) => this.setState({organisation: {id: value}});
+  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
+  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
   changeRoles = (event, index, value) => this.setState({roles: value});
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
   onChangePassword = (event) => this.setState({password: event.target.value});

@@ -15,7 +15,7 @@ import {modifyUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
 import {OnClick, uuid} from '../../../types/Types';
-import {UserEditForm} from '../../forms/components/UserEditForm';
+import {UserEditForm} from '../../../components/forms/UserEditForm';
 
 interface StateToProps {
   organisations: Organisation[];

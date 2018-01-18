@@ -11,7 +11,7 @@ import {translate} from '../../../services/translationService';
 import {addUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role} from '../../../state/domain-models/user/userModels';
 import {OnClick} from '../../../types/Types';
-import {UserEditForm} from '../../forms/components/UserEditForm';
+import {UserEditForm} from '../../../components/forms/UserEditForm';
 
 interface StateToProps {
   organisations: Organisation[];
