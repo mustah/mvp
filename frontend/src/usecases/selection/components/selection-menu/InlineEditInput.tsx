@@ -37,7 +37,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {selection: {name, id}, isChanged} = props;
     this.state = {
       isChanged,
-      name: isInitialSelection(id) ? '' : name, // TODO[!must!] translate texts outside of React components
+      name: isInitialSelection(id) ? '' : name,
       id,
     };
   }
