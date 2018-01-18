@@ -38,14 +38,18 @@ describe('domainModelsActions', () => {
 
   describe('fetch domainModels from /selections', () => {
 
-    const fetchFakeDomainModels = async () => {
+    const getSelectionWithResponseOk = async () => {
       mockRestClient.onGet(EndPoints.selections).reply(200, testData.selections);
+      return store.dispatch(fetchSelections());
+    };
 
+    const getSelectionWithBadRequest = async (response) => {
+      mockRestClient.onGet(EndPoints.selections).reply(401, response);
       return store.dispatch(fetchSelections());
     };
 
     it('normalizes data', async () => {
-      await fetchFakeDomainModels();
+      await getSelectionWithResponseOk();
 
       expect(store.getActions()).toEqual([
         selectionsRequest.request(),
@@ -56,9 +60,7 @@ describe('domainModelsActions', () => {
     it('throws exception when no data exists', async () => {
       const response = {message: 'failed'};
 
-      mockRestClient.onGet(EndPoints.selections).reply(401, response);
-
-      await store.dispatch(fetchSelections());
+      await getSelectionWithBadRequest(response);
 
       expect(store.getActions()).toEqual([
         selectionsRequest.request(),
@@ -77,17 +79,17 @@ describe('domainModelsActions', () => {
     };
     const returnedUser: Partial<User> = {...newUser, id: 1};
     const errorResponse = {message: 'An error'};
-    const fakePostUser = async (user: Partial<User>, success: boolean) => {
-      if (success) {
-        mockRestClient.onPost(EndPoints.users, user).reply(200, returnedUser);
-      } else {
-        mockRestClient.onPost(EndPoints.users, user).reply(401, errorResponse);
-      }
+    const postUserWithResponseOk = async (user: Partial<User>) => {
+      mockRestClient.onPost(EndPoints.users, user).reply(200, returnedUser);
+      return store.dispatch(addUser(user as User));
+    };
+    const postUserWithBadRequest = async (user: Partial<User>) => {
+      mockRestClient.onPost(EndPoints.users, user).reply(401, errorResponse);
       return store.dispatch(addUser(user as User));
     };
 
     it('sends a post request to backend and get a user with an id back', async () => {
-      await fakePostUser(newUser, true);
+      await postUserWithResponseOk(newUser);
 
       expect(store.getActions()).toEqual([
         userPostRequest.request(),
@@ -96,7 +98,7 @@ describe('domainModelsActions', () => {
       ]);
     });
     it('send a post request to backend and get an error back', async () => {
-      await fakePostUser(newUser, false);
+      await postUserWithBadRequest(newUser);
 
       expect(store.getActions()).toEqual([
         userPostRequest.request(),
@@ -116,17 +118,17 @@ describe('domainModelsActions', () => {
     };
 
     const errorResponse = {message: 'An error'};
-    const fakePutUser = (updatedUser: User, success: boolean) => {
-      if (success) {
-        mockRestClient.onPut(EndPoints.users, updatedUser).reply(200, updatedUser);
-      } else {
-        mockRestClient.onPut(EndPoints.users, updatedUser).reply(401, errorResponse);
-      }
+    const putUserWithResponseOk = async (updatedUser: User) => {
+      mockRestClient.onPut(EndPoints.users, updatedUser).reply(200, updatedUser);
+      return store.dispatch(modifyUser(updatedUser));
+    };
+    const putUserWithBadRequest = async (updatedUser: User) => {
+      mockRestClient.onPut(EndPoints.users, updatedUser).reply(401, errorResponse);
       return store.dispatch(modifyUser(updatedUser));
     };
 
     it('sends a put request to backend and get the user back', async () => {
-      await fakePutUser(updatedUser, true);
+      await putUserWithResponseOk(updatedUser);
 
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
@@ -135,7 +137,7 @@ describe('domainModelsActions', () => {
       ]);
     });
     it('sends a put request to backend and an error back', async () => {
-      await fakePutUser(updatedUser, false);
+      await putUserWithBadRequest(updatedUser);
 
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
@@ -155,17 +157,17 @@ describe('domainModelsActions', () => {
     };
 
     const errorResponse = {message: 'An error'};
-    const fakePutUser = (updatedUser: User, success: boolean) => {
-      if (success) {
-        mockRestClient.onPut(EndPoints.users, updatedUser).reply(200, updatedUser);
-      } else {
-        mockRestClient.onPut(EndPoints.users, updatedUser).reply(401, errorResponse);
-      }
+    const putUserWithResponseOk = async (updatedUser: User) => {
+      mockRestClient.onPut(EndPoints.users, updatedUser).reply(200, updatedUser);
+      return store.dispatch(modifyProfile(updatedUser));
+    };
+    const putUserWithBadRequest = async (updatedUser: User) => {
+      mockRestClient.onPut(EndPoints.users, updatedUser).reply(401, errorResponse);
       return store.dispatch(modifyProfile(updatedUser));
     };
 
     it('sends a put request to backend and get the user back', async () => {
-      await fakePutUser(updatedUser, true);
+      await putUserWithResponseOk(updatedUser);
 
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
@@ -175,7 +177,7 @@ describe('domainModelsActions', () => {
       ]);
     });
     it('sends a put request to backend and an error back', async () => {
-      await fakePutUser(updatedUser, false);
+      await putUserWithBadRequest(updatedUser);
 
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
@@ -186,12 +188,12 @@ describe('domainModelsActions', () => {
   });
 
   describe('delete user', () => {
-    const fakeDeleteUser = async (user: User, success: boolean) => {
-      if (success) {
-        mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(200, user);
-      } else {
-        mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(401, errorResponse);
-      }
+    const deleteUserWithResponseOk = async (user: User) => {
+      mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(200, user);
+      return store.dispatch(deleteUser(user.id));
+    };
+    const deleteUserWithBadRequest = async (user: User) => {
+      mockRestClient.onDelete(`${EndPoints.users}/${user.id}`).reply(401, errorResponse);
       return store.dispatch(deleteUser(user.id));
     };
 
@@ -204,8 +206,8 @@ describe('domainModelsActions', () => {
     };
     const errorResponse = {message: 'An error'};
 
-    it('sends a delete request to backend and get the user back', async () => {
-      await fakeDeleteUser(user, true);
+    it('sends a success delete request to backend and get the user back', async () => {
+      await deleteUserWithResponseOk(user);
 
       expect(store.getActions()).toEqual([
         userDeleteRequest.request(),
@@ -214,8 +216,8 @@ describe('domainModelsActions', () => {
       ]);
     });
 
-    it('sends a delete request to backend and get an error back', async () => {
-      await fakeDeleteUser(user, false);
+    it('sends an unsuccessful delete request to backend and get an error back', async () => {
+      await deleteUserWithBadRequest(user);
 
       expect(store.getActions()).toEqual([
         userDeleteRequest.request(),

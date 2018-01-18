@@ -146,10 +146,6 @@ describe('domainModelsReducer', () => {
         ...initialState,
         error: payload,
       });
-      expect(users(initialState, usersDeleteRequest.failure(payload))).toEqual({
-        ...initialState,
-        error: payload,
-      });
     });
   });
 });
