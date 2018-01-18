@@ -1,23 +1,22 @@
 import * as classNames from 'classnames';
 import {Paper} from 'material-ui';
-import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getLogoPath} from '../../../app/routes';
-import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../../app/themes';
+import {ButtonLogin} from '../../../components/buttons/ButtonLogin';
+import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
+import {TextFieldInput} from '../../../components/inputs/InputText';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {login} from '../authActions';
 import {AuthState} from '../authModels';
 import './LoginContainer.scss';
-import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
 
 interface StateToProps {
   auth: AuthState;
@@ -44,7 +43,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
 
   render() {
     const {auth: {error}, match: {params: {organisation}}} = this.props;
-
+    const {email, password} = this.state;
     return (
       <ColumnCenter className={classNames('LoginContainer')}>
         <Paper zDepth={5} className="LoginPaper">
@@ -52,34 +51,29 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             <Logo src={getLogoPath(organisation)}/>
           </RowCenter>
           <form onSubmit={this.onSubmit}>
-            <TextField
-              className="TextField"
+            <TextFieldInput
+              id="email"
               floatingLabelText={firstUpperTranslated('email')}
-              floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
               hintText={firstUpperTranslated('your email address')}
-              id="email"
+              value={email}
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
-              underlineFocusStyle={underlineFocusStyle}
             />
-            <TextField
+            <TextFieldInput
+              id="password"
               className="TextField"
               floatingLabelText={firstUpperTranslated('password')}
-              floatingLabelFocusStyle={floatingLabelFocusStyle}
               fullWidth={true}
               hintText={firstUpperTranslated('your password')}
-              id="password"
+              value={password}
               onChange={this.onChange}
               onKeyPress={this.onKeyPress}
               type="password"
-              underlineFocusStyle={underlineFocusStyle}
             />
-            <FlatButton
+            <ButtonLogin
               fullWidth={true}
-              label={translate('login')}
-              onClick={this.onSubmit}
-              style={buttonStyle}
+              type="submit"
             />
             {<ErrorMessage {...error}/>}
           </form>

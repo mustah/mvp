@@ -9,7 +9,9 @@ interface TextFieldInputProps extends ClassNamed {
   floatingLabelText: string;
   hintText: string;
   value: string;
-  onChange: (...arg) => void;
+  onChange: (...args) => void;
+  onKeyPress?: (...args) => void;
+  fullWidth?: boolean;
   type?: 'password';
   disabled?: boolean;
 }
