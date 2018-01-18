@@ -1,6 +1,8 @@
 import {normalize, Schema} from 'normalizr';
+import {Dispatch} from 'react-redux';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
+import {RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
@@ -28,8 +30,8 @@ interface RestRequestHandle<T> {
 }
 
 interface RestCallbacks<T> {
-  afterSuccess?: (domainModel: T) => void;
-  afterFailure?: (error: ErrorResponse) => void;
+  afterSuccess?: (domainModel: T, dispatch: Dispatch<RootState>) => void;
+  afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
 export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
@@ -61,14 +63,14 @@ const asyncRequest = <REQ, DAT>({
       const {data: domainModelData} = await requestFunc(requestData);
       dispatch(success(formatData(domainModelData)));
       if (afterSuccess) {
-        dispatch(afterSuccess(domainModelData));
+        afterSuccess(domainModelData, dispatch);
       }
     } catch (error) {
       const {response: {data}} = error;
       dispatch(failure(data));
       if (afterFailure) {
         // TODO: Could this be a source of failure if there is no message field in "data"?
-        dispatch(afterFailure(data.message));
+        afterFailure(data.message, dispatch);
       }
     }
   };
@@ -114,31 +116,38 @@ export const fetchMeters = restGet<Gateway>(EndPoints.meters, meterSchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
 
 export const addUser = restPost<User>(EndPoints.users, {
-  afterSuccess: (user: User) =>
-    showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})),
-  afterFailure: (error: ErrorResponse) =>
-    showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})),
+  afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
+  },
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
+  },
 });
 
-// TODO: Add tests
 export const modifyUser = restPut<User>(EndPoints.users, {
-  afterSuccess: (user: User) =>
-    showMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})),
-  afterFailure: (error: ErrorResponse) =>
-    showMessage(firstUpperTranslated('failed to update user: {{error}}', {error})),
+  afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
+  },
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('failed to update user: {{error}}', {error})));
+  },
 });
 
 export const modifyProfile = restPut<User>(EndPoints.users, {
-  afterSuccess: (user: User) =>
-    showMessage(firstUpperTranslated('successfully updated profile', {...user})),
-  afterFailure: (error: ErrorResponse) =>
-    showMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})),
+  afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('successfully updated profile', {...user})));
+  },
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));
+  },
 });
 
 export const deleteUser = restDelete<User>(EndPoints.users, {
-    afterSuccess: (user: User) =>
-      showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})),
-    afterFailure: (error: ErrorResponse) =>
-      showMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})),
+    afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
+      dispatch(showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})));
+    },
+    afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+      dispatch(showMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})));
+    },
   },
 );
