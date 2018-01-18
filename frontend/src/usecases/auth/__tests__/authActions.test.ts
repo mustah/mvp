@@ -9,8 +9,13 @@ import {EndPoints} from '../../../state/domain-models/domainModels';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {
   AUTH_SET_USER_INFO,
-  authSetUser, login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest,
-  logoutSuccess,
+  authSetUser,
+  login,
+  loginFailure,
+  loginRequest,
+  loginSuccess,
+  logout,
+  logoutUser,
 } from '../authActions';
 import {Unauthorized} from '../authModels';
 
@@ -66,8 +71,7 @@ describe('authActions', () => {
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token, user}),
-        logoutRequest(),
-        logoutSuccess(),
+        logoutUser(),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
@@ -130,8 +134,7 @@ describe('authActions', () => {
       await store.dispatch(logout(user.organisation.code));
 
       expect(store.getActions()).toEqual([
-        logoutRequest(),
-        logoutSuccess(),
+        logoutUser(),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });

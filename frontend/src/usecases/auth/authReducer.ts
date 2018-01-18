@@ -2,8 +2,8 @@ import {EmptyAction} from 'react-redux-typescript';
 import {User} from '../../state/domain-models/user/userModels';
 import {Action} from '../../types/Types';
 import {
-  AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST,
-  LOGOUT_SUCCESS,
+  AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS,
+  LOGOUT_USER,
 } from './authActions';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
@@ -49,12 +49,7 @@ export const auth = (state: AuthState = initialAuthState, action: ActionTypes): 
       return loginSuccess(state, action as Action<Authorized>);
     case LOGIN_FAILURE:
       return loginFailure(state, action as Action<Unauthorized>);
-    case LOGOUT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-      };
-    case LOGOUT_SUCCESS:
+    case LOGOUT_USER:
       return {
         ...state,
         isLoading: false,

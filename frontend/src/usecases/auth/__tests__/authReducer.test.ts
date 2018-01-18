@@ -1,6 +1,6 @@
 import {makeToken} from '../../../services/authService';
 import {Role, User} from '../../../state/domain-models/user/userModels';
-import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutRequest, logoutSuccess} from '../authActions';
+import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser} from '../authActions';
 import {Authorized, AuthState, Unauthorized} from '../authModels';
 import {auth} from '../authReducer';
 
@@ -57,15 +57,8 @@ describe('authReducer', () => {
     });
   });
 
-  it('set a request to logout a user', () => {
-    expect(auth(loggedInState, logoutRequest())).toEqual({
-      ...loggedInState,
-      isLoading: true,
-    });
-  });
-
   it('successfully logs out a user', () => {
-    expect(auth({...loggedInState, isLoading: true}, logoutSuccess())).toEqual({
+    expect(auth({...loggedInState, isLoading: true}, logoutUser())).toEqual({
       ...initialState,
       isLoading: false,
     });
