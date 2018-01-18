@@ -1,15 +1,12 @@
-import FlatButton from 'material-ui/FlatButton';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
-import TextField from 'material-ui/TextField';
 import * as React from 'react';
-import './UserEditForm.scss';
-import {buttonStyle, floatingLabelFocusStyle, underlineFocusStyle} from '../../app/themes';
-import {Column} from '../layouts/column/Column';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation, Role, User} from '../../state/domain-models/user/userModels';
-import {uuid} from '../../types/Types';
-import SelectFieldProps = __MaterialUI.SelectFieldProps;
+import {IdNamed, uuid} from '../../types/Types';
+import {ButtonSave} from '../buttons/ButtonSave';
+import {SelectFieldInput} from '../inputs/InputSelectable';
+import {TextFieldInput} from '../inputs/InputText';
+import {Column} from '../layouts/column/Column';
+import './UserEditForm.scss';
 
 interface UserFormProps {
   onSubmit: (event: any) => void;
@@ -49,7 +46,6 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
   changeRoles = (event, index, value) => this.setState({roles: value});
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
-  onChangePassword = (event) => this.setState({password: event.target.value});
 
   render() {
     const {onSubmit, organisations, possibleRoles, isEditSelf} = this.props;
@@ -61,95 +57,65 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const rolesLabel = firstUpperTranslated('user roles');
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
+
     const wrappedSubmit = (event) => {
       event.preventDefault();
       onSubmit(this.state);
     };
 
-    const organisationsAsItems = organisations.map((org, index) =>
-      <MenuItem key={index} value={org.id} primaryText={org.name}/>);
-    const rolesAsItems = possibleRoles.map((role, index) =>
-      <MenuItem key={index} value={role} primaryText={role.toString()}/>);
+    const organisationOptions: IdNamed[] = organisations.map(({id, name}: Organisation) => ({id, name}));
+    const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
 
     return (
       <form onSubmit={wrappedSubmit}>
         <Column className="EditUserContainer">
-          <TextField
-            className="TextField"
+          <TextFieldInput
             floatingLabelText={nameLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
             hintText={nameLabel}
-            underlineFocusStyle={underlineFocusStyle}
             id="name"
             value={name}
             onChange={this.onChange}
           />
-          <TextField
-            className="TextField"
+          <TextFieldInput
             floatingLabelText={emailLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
             hintText={emailLabel}
-            underlineFocusStyle={underlineFocusStyle}
             id="email"
             value={email}
             onChange={this.onChange}
           />
-          <WrappedSelectField
-            className="SelectField"
+          <SelectFieldInput
+            options={organisationOptions}
             floatingLabelText={organisationLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
             hintText={organisationLabel}
-            underlineFocusStyle={underlineFocusStyle}
             id="organisation"
             onChange={this.changeOrganisation}
             value={organisation.id}
             disabled={isEditSelf}
-          >
-            {organisationsAsItems}
-          </WrappedSelectField>
-          <WrappedSelectField
-            className="SelectField"
+          />
+          <SelectFieldInput
+            options={roleOptions}
             floatingLabelText={rolesLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
             hintText={rolesLabel}
-            underlineFocusStyle={underlineFocusStyle}
             id="roles"
             multiple={true}
             onChange={this.changeRoles}
             value={roles}
             disabled={isEditSelf}
-          >
-            {rolesAsItems}
-          </WrappedSelectField>
-          <TextField
-            className="TextField"
-            floatingLabelText={newPasswordLabel}
-            floatingLabelFocusStyle={floatingLabelFocusStyle}
-            hintText={newPasswordLabel}
-            underlineFocusStyle={underlineFocusStyle}
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.onChangePassword}
           />
-          <FlatButton
+          <TextFieldInput
+            id="password"
+            floatingLabelText={newPasswordLabel}
+            hintText={newPasswordLabel}
+            type="password"
+            value={password}
+            onChange={this.onChange}
+          />
+          <ButtonSave
             className="SaveButton"
             type="submit"
-            label={firstUpperTranslated('save')}
-            style={buttonStyle}
           />
         </Column>
       </form>
     );
   }
 }
-
-/*
-TODO: WrappedSelectField is used as a workaround until @types/material-ui/SelectField is
-supporting floatingLabelFocusStyle.
-*/
-interface WrappedSelectFieldProps extends SelectFieldProps {
-  floatingLabelFocusStyle?: React.CSSProperties;
-}
-
-const WrappedSelectField = (props: WrappedSelectFieldProps) => <SelectField {...props} />;
