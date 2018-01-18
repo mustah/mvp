@@ -1,6 +1,7 @@
 package com.elvaco.mvp.bootstrap.demo;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,9 +72,12 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
       physicalMeterRepository.save(physicalMeterEntity);
 
       // Measurements
+      final int measurementCount = 24 * 4; // One day, 15-minute delivery interval
+      Instant firstDeliveryInstant = Instant.now().minus(24, ChronoUnit.HOURS);
       List<MeasurementEntity> measurementEntities = new ArrayList<>();
-      for (int j = 0; j < 96; ++j) {
-        MeasurementEntity measurementEntity = new MeasurementEntity(Date.from(Instant.now()),
+      for (int j = 0; j < measurementCount; ++j) {
+        MeasurementEntity measurementEntity = new MeasurementEntity(
+          Date.from(firstDeliveryInstant.plus(15 * j, ChronoUnit.MINUTES)),
           "Power",
           random.nextDouble(),
           "mW",
