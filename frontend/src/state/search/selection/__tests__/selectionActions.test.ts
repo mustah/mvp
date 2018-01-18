@@ -3,33 +3,31 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
-import {makeRestClient} from '../../../../services/restClient';
+import {Period} from '../../../../components/dates/dateModels';
 import {makeUrl} from '../../../../helpers/urlFactory';
+import {makeRestClient} from '../../../../services/restClient';
 import {IdNamed} from '../../../../types/Types';
-import {gatewayRequest, meterRequest} from '../../../domain-models/domainModelsActions';
+import {EndPoints, HttpMethod, Normalized} from '../../../domain-models/domainModels';
+import {requestMethod} from '../../../domain-models/domainModelsActions';
+import {Gateway} from '../../../domain-models/gateway/gatewayModels';
+import {Meter} from '../../../domain-models/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
-  addSelectionAction,
-  closeSelectionPage,
-  closeSelectionPageAction,
-  deselectSelection,
-  selectPeriod,
-  selectPeriodAction,
-  selectSavedSelection,
-  selectSavedSelectionAction,
-  setSelection,
-  setSelectionAction,
+  addSelectionAction, closeSelectionPage, closeSelectionPageAction, deselectSelection, selectPeriod,
+  selectPeriodAction, selectSavedSelection, selectSavedSelectionAction, setSelection, setSelectionAction,
   toggleSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {getEncodedUriParametersForMeters} from '../selectionSelectors';
 import MockAdapter = require('axios-mock-adapter');
-import {Period} from '../../../../components/dates/dateModels';
 
 const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
+
+  const meterRequest = requestMethod<Normalized<Meter>>(EndPoints.meters, HttpMethod.GET);
+  const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
 
   const gothenburg: IdNamed = {...testData.selections.cities[0]};
   const stockholm: IdNamed = {...testData.selections.cities[1]};
@@ -215,8 +213,8 @@ describe('selectionActions', () => {
 
   const onFakeFetchMetersAndGateways = (searchParameters: SearchParameterState) => {
     const encodedUriParameters = getEncodedUriParametersForMeters(searchParameters);
-    mockRestClient.onGet(makeUrl('/meters', encodedUriParameters)).reply(200, testData.meters);
-    mockRestClient.onGet(makeUrl('/gateways', encodedUriParameters)).reply(200, testData.gateways);
+    mockRestClient.onGet(makeUrl(EndPoints.meters, encodedUriParameters)).reply(200, testData.meters);
+    mockRestClient.onGet(makeUrl(EndPoints.gateways, encodedUriParameters)).reply(200, testData.gateways);
   };
 
 });
