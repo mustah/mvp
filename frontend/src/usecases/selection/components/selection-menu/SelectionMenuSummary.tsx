@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {translate} from '../../../../services/translationService';
-import {SelectionState} from '../../../../state/search/selection/selectionModels';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Bold, Normal} from '../../../../components/texts/Texts';
+import {firstUpperTranslated, translate} from '../../../../services/translationService';
+import {SelectionState} from '../../../../state/search/selection/selectionModels';
 
 interface Props {
   selection: SelectionState;
@@ -14,7 +14,7 @@ export const SelectionMenuSummary = (props: Props) => {
 
   return (
     <RowCenter className="SelectionMenuSummary">
-      <Normal>{translate('selection')}: </Normal>
+      <Normal>{firstUpperTranslated('selection')}: </Normal>
       <Row>
         <Bold className="Italic">{selectionName}</Bold>
       </Row>
