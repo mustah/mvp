@@ -6,6 +6,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
+import {authSetUser} from '../../usecases/auth/authActions';
 import {showMessage} from '../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
@@ -136,6 +137,7 @@ export const modifyUser = restPut<User>(EndPoints.users, {
 export const modifyProfile = restPut<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(showMessage(firstUpperTranslated('successfully updated profile', {...user})));
+    dispatch(authSetUser(user));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));

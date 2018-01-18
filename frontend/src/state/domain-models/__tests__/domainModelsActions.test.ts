@@ -6,6 +6,7 @@ import {testData} from '../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../i18n/i18n';
 import {makeRestClient} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
+import {authSetUser} from '../../../usecases/auth/authActions';
 import {showMessage} from '../../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {addUser, deleteUser, fetchSelections, modifyProfile, modifyUser, requestMethod} from '../domainModelsActions';
@@ -170,6 +171,7 @@ describe('domainModelsActions', () => {
         userPutRequest.request(),
         userPutRequest.success(updatedUser),
         showMessage(`Successfully updated profile`),
+        authSetUser(updatedUser),
       ]);
     });
     it('sends a put request to backend and an error back', async () => {
