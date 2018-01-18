@@ -75,7 +75,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   }
 
   renderResetButton = (): React.ReactNode => {
-    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset')}</ButtonLink>;
+    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>;
   }
 
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});

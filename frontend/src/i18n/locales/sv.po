@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-11 13:09+0100\n"
+"POT-Creation-Date: 2018-01-18 11:56+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -209,6 +209,9 @@ msgstr "organisation"
 msgid "roles"
 msgstr "roller"
 
+msgid "password"
+msgstr "lösenord"
+
 msgid "user roles"
 msgstr "användarroller"
 
@@ -217,9 +220,6 @@ msgstr "spara"
 
 msgid "your email address"
 msgstr "din e-post"
-
-msgid "password"
-msgstr "lösenord"
 
 msgid "your password"
 msgstr "ditt lösenord"
@@ -272,8 +272,8 @@ msgstr "tabell"
 msgid "save as"
 msgstr "spara som"
 
-msgid "reset"
-msgstr "återställ"
+msgid "reset selection"
+msgstr "rensa urval"
 
 msgid "meter status"
 msgstr "mätarstatus"
@@ -324,6 +324,9 @@ msgstr "mätare"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+#~ msgid "reset"
+#~ msgstr "återställ"
 
 #~ msgid "failed to create user: {{error}})"
 #~ msgstr "misslyckades med att skapa en användare: {{error}})"

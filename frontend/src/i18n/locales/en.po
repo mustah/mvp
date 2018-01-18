@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-11 13:09+0100\n"
+"POT-Creation-Date: 2018-01-18 11:56+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -209,6 +209,9 @@ msgstr "organisation"
 msgid "roles"
 msgstr "roles"
 
+msgid "password"
+msgstr "password"
+
 msgid "user roles"
 msgstr "user roles"
 
@@ -217,9 +220,6 @@ msgstr "save"
 
 msgid "your email address"
 msgstr "your email address"
-
-msgid "password"
-msgstr "password"
 
 msgid "your password"
 msgstr "your password"
@@ -272,8 +272,8 @@ msgstr "table"
 msgid "save as"
 msgstr "save as"
 
-msgid "reset"
-msgstr "reset"
+msgid "reset selection"
+msgstr "reset selection"
 
 msgid "meter status"
 msgstr "meter status"
@@ -324,6 +324,9 @@ msgstr "meters"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
+
+#~ msgid "reset"
+#~ msgstr "reset"
 
 #~ msgid "failed to create user: {{reason}})"
 #~ msgstr "failed to create user: {{reason}})"
