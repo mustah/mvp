@@ -11,7 +11,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.ToString;
 import org.hibernate.annotations.Type;

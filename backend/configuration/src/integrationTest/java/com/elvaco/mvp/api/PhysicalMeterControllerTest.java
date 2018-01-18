@@ -7,7 +7,9 @@ import java.util.List;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestResponsePage;
@@ -27,9 +29,15 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterRepository physicalMeterRepository;
 
+  @Autowired
+  private OrganisationRepository organisationRepository;
+
   @Before
   public void setUp() {
-    PhysicalMeterEntity forceMeter = new PhysicalMeterEntity(1L, "force-meter", "Jedi aptitude");
+    OrganisationEntity organisationEntity = new OrganisationEntity("The Jedi Order", "jedi-order");
+    organisationRepository.save(organisationEntity);
+    PhysicalMeterEntity forceMeter = new PhysicalMeterEntity(organisationEntity, "force-meter",
+      "Jedi aptitude");
     physicalMeterRepository.save(forceMeter);
     measurementRepository.save(
       asList(

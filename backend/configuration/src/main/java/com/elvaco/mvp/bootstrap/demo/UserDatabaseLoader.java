@@ -1,8 +1,7 @@
-package com.elvaco.mvp.bootstrap;
+package com.elvaco.mvp.bootstrap.demo;
 
 import java.util.List;
 
-import com.elvaco.mvp.config.H2;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -23,7 +22,6 @@ import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
-@H2
 @Component
 public class UserDatabaseLoader implements CommandLineRunner {
 
@@ -49,14 +47,14 @@ public class UserDatabaseLoader implements CommandLineRunner {
   public void run(String... args) {
     organisationRepository.save(asList(
       new OrganisationEntity(
-        1L,
-        "Elvaco",
-        "elvaco"
+      1L,
+      "Elvaco",
+      "elvaco"
       ),
       new OrganisationEntity(
-        2L,
-        "Wayne Industries",
-        "wayne-industries"
+      2L,
+      "Wayne Industries",
+      "wayne-industries"
       )
     ));
 
