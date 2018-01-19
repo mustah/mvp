@@ -6,6 +6,7 @@ import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {RootState} from '../../../reducers/rootReducer';
@@ -21,6 +22,7 @@ interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
   users: DomainModel<User>;
+  isFetching: boolean;
 }
 
 interface DispatchToProps {
@@ -33,6 +35,8 @@ type OwnProps = RouteComponentProps<{userId: uuid}>;
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 class UserEdit extends React.Component<Props, {userExistInState: boolean}> {
+  state = {userExistInState: false};
+
   componentWillMount() {
     const {users, match: {params: {userId}}} = this.props;
     this.setState({userExistInState: !!users[userId]});
@@ -46,7 +50,8 @@ class UserEdit extends React.Component<Props, {userExistInState: boolean}> {
   }
 
   render() {
-    const {modifyUser, organisations, roles, users, match: {params: {userId}}} = this.props;
+    const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching} = this.props;
+
     return (
       <PageComponent isSideMenuOpen={false}>
         <Row className="space-between">
@@ -56,15 +61,17 @@ class UserEdit extends React.Component<Props, {userExistInState: boolean}> {
         </Row>
 
         <Paper style={paperStyle}>
-          <WrapperIndent>
-            <UserEditForm
-              organisations={organisations}
-              onSubmit={modifyUser}
-              possibleRoles={roles}
-              isEditSelf={false}
-              user={users[userId]}
-            />
-          </WrapperIndent>
+          <Loader isFetching={isFetching}>
+            <WrapperIndent>
+              <UserEditForm
+                organisations={organisations}
+                onSubmit={modifyUser}
+                possibleRoles={roles}
+                isEditSelf={false}
+                user={users[userId]}
+              />
+            </WrapperIndent>
+          </Loader>
         </Paper>
       </PageComponent>
     );
@@ -82,6 +89,7 @@ const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
     Role.USER,
   ],
   users: getUserEntities(users),
+  isFetching: users.isFetching,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
