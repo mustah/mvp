@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-17T13:45:08.423Z\n"
+"POT-Creation-Date: 2018-01-18 13:59+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -221,11 +221,17 @@ msgstr "organisation"
 msgid "roles"
 msgstr "roller"
 
-msgid "your email address"
-msgstr "din e-post"
-
 msgid "password"
 msgstr "lösenord"
+
+msgid "user roles"
+msgstr "användarroller"
+
+msgid "save"
+msgstr "spara"
+
+msgid "your email address"
+msgstr "din e-post"
 
 msgid "your password"
 msgstr "ditt lösenord"
@@ -287,8 +293,11 @@ msgstr "tabell"
 msgid "save as"
 msgstr "spara som"
 
-msgid "reset"
-msgstr "återställ"
+msgid "reset selection"
+msgstr "rensa urval"
+
+msgid "give the selection a name"
+msgstr "namnge ditt urval"
 
 msgid "meter status"
 msgstr "mätarstatus"
