@@ -9,7 +9,10 @@ import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showMessage} from '../../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized} from '../domainModels';
-import {addUser, deleteUser, fetchSelections, modifyProfile, modifyUser, requestMethod} from '../domainModelsActions';
+import {
+  addUser, deleteUser, fetchSelections, fetchUser, modifyProfile, modifyUser,
+  requestMethod,
+} from '../domainModelsActions';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
@@ -25,6 +28,7 @@ describe('domainModelsActions', () => {
   const userPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
   const userPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
   const userDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
+  const userEntityRequest = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
 
   beforeEach(() => {
     store = configureMockStore({});
@@ -223,6 +227,44 @@ describe('domainModelsActions', () => {
         userDeleteRequest.request(),
         userDeleteRequest.failure(errorResponse),
         showMessage(`Failed to delete the user: ${errorResponse.message}`),
+      ]);
+    });
+  });
+
+  describe('fetch a single user', () => {
+    const user: User = {
+      id: 3,
+      name: 'Eva',
+      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      roles: [Role.USER],
+      email: 'eva@elvaco.se',
+    };
+    const errorResponse = {message: 'An error'};
+
+    const getUserEntityWithResponseOk = async (user: User) => {
+      mockRestClient.onGet(`${EndPoints.users}/${user.id}`).reply(200, user);
+      return store.dispatch(fetchUser(user.id));
+    };
+    const getUserEntityWithBadRequest = async (user: User) => {
+      mockRestClient.onGet(`${EndPoints.users}/${user.id}`).reply(401, errorResponse);
+      return store.dispatch(fetchUser(user.id));
+    };
+
+    it('sends a successful get request to backend', async () => {
+      await getUserEntityWithResponseOk(user);
+
+      expect(store.getActions()).toEqual([
+        userEntityRequest.request(),
+        userEntityRequest.success(user),
+      ]);
+    });
+
+    it('sends an unsuccessful request to backend', async () => {
+      await getUserEntityWithBadRequest(user);
+
+      expect(store.getActions()).toEqual([
+        userEntityRequest.request(),
+        userEntityRequest.failure(errorResponse),
       ]);
     });
   });
