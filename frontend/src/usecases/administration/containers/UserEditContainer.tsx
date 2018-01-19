@@ -34,23 +34,20 @@ type OwnProps = RouteComponentProps<{userId: uuid}>;
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-class UserEdit extends React.Component<Props, {userExistInState: boolean}> {
-  state = {userExistInState: false};
-
-  componentWillMount() {
-    const {users, match: {params: {userId}}} = this.props;
-    this.setState({userExistInState: !!users[userId]});
-  }
+class UserEdit extends React.Component<Props, {}> {
 
   componentDidMount() {
-    const {match: {params: {userId}}, fetchUser} = this.props;
-    if (!this.state.userExistInState) {
+    const {users, match: {params: {userId}}, fetchUser} = this.props;
+    if (!users[userId]) {
       fetchUser(userId);
     }
   }
 
   render() {
     const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching} = this.props;
+    if (!users[userId] && !isFetching) {
+      return null;
+    }
 
     return (
       <PageComponent isSideMenuOpen={false}>
