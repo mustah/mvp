@@ -2,12 +2,12 @@ import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, uuid} from '../../types/Types';
 import {ParameterName} from '../search/selection/selectionModels';
-import {DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
+import {DomainModel, DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
 import {
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
   DOMAIN_MODELS_REQUEST,
-  DOMAIN_MODELS_GET_SUCCESS, DOMAIN_MODELS_POST_SUCCESS, DOMAIN_MODELS_PUT_SUCCESS,
+  DOMAIN_MODELS_GET_SUCCESS, DOMAIN_MODELS_POST_SUCCESS, DOMAIN_MODELS_PUT_SUCCESS, DOMAIN_MODELS_GET_ENTITY_SUCCESS,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -37,7 +37,7 @@ const addEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload as any;
     const result: uuid[] = [...state.result, payload.id];
-    const entities: any = {...state.entities};
+    const entities: DomainModel<T> = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -51,7 +51,7 @@ const addEntity =
 const modifyEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload as any;
-    const entities: any = {...state.entities};
+    const entities: DomainModel<T> = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -65,7 +65,7 @@ const removeEntity =
     // TODO do we need to introduce a domain model interface with id: uuid in order to avoid "as any" below?
     const payload = action.payload as any;
     const result: uuid[] = state.result.filter((id) => id !== payload.id);
-    const entities = {...state.entities};
+    const entities: DomainModel<T> = {...state.entities};
     delete entities[payload.id];
     return {
       ...state,
@@ -81,7 +81,6 @@ type ActionTypes<T> =
   | Action<Normalized<T>>
   | Action<ErrorResponse>;
 
-// TODO: Add tests for PUT, POST, DELETE
 const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
@@ -92,6 +91,9 @@ const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
         };
       case DOMAIN_MODELS_GET_SUCCESS.concat(endPoint):
         return setEntities<T>(entity, state, action as Action<Normalized<T>>);
+      // TODO: Add tests
+      case DOMAIN_MODELS_GET_ENTITY_SUCCESS.concat(endPoint):
+        return addEntity<T>(entity, state, action as Action<T>);
       case DOMAIN_MODELS_POST_SUCCESS.concat(endPoint):
         return addEntity<T>(entity, state, action as Action<T>);
       case DOMAIN_MODELS_PUT_SUCCESS.concat(endPoint):

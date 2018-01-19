@@ -6,12 +6,13 @@ import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
+import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {modifyUser} from '../../../state/domain-models/domainModelsActions';
+import {fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
 import {OnClick, uuid} from '../../../types/Types';
@@ -21,9 +22,11 @@ interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
   users: DomainModel<User>;
+  isFetching: boolean;
 }
 
 interface DispatchToProps {
+  fetchUser: (id: uuid) => void;
   modifyUser: OnClick;
 }
 
@@ -31,30 +34,46 @@ type OwnProps = RouteComponentProps<{userId: uuid}>;
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-const UserEdit = (props: Props) => {
-  const {modifyUser, organisations, roles, users, match: {params: {userId}}} = props;
-  return (
-    <PageComponent isSideMenuOpen={false}>
-      <Row className="space-between">
-        <MainTitle>
-          {translate('add user')}
-        </MainTitle>
-      </Row>
+class UserEdit extends React.Component<Props, {}> {
 
-      <Paper style={paperStyle}>
-        <WrapperIndent>
-          <UserEditForm
-            organisations={organisations}
-            onSubmit={modifyUser}
-            possibleRoles={roles}
-            isEditSelf={false}
-            user={users[userId]}
-          />
-        </WrapperIndent>
-      </Paper>
-    </PageComponent>
-  );
-};
+  componentDidMount() {
+    const {users, match: {params: {userId}}, fetchUser} = this.props;
+    if (!users[userId]) {
+      fetchUser(userId);
+    }
+  }
+
+  render() {
+    const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching} = this.props;
+    if (!users[userId] && !isFetching) {
+      return null;
+    }
+
+    return (
+      <PageComponent isSideMenuOpen={false}>
+        <Row className="space-between">
+          <MainTitle>
+            {translate('add user')}
+          </MainTitle>
+        </Row>
+
+        <Paper style={paperStyle}>
+          <Loader isFetching={isFetching}>
+            <WrapperIndent>
+              <UserEditForm
+                organisations={organisations}
+                onSubmit={modifyUser}
+                possibleRoles={roles}
+                isEditSelf={false}
+                user={users[userId]}
+              />
+            </WrapperIndent>
+          </Loader>
+        </Paper>
+      </PageComponent>
+    );
+  }
+}
 
 // TODO get organisations and roles from backend
 const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
@@ -67,9 +86,11 @@ const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
     Role.USER,
   ],
   users: getUserEntities(users),
+  isFetching: users.isFetching,
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  fetchUser,
   modifyUser,
 }, dispatch);
 

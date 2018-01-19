@@ -19,10 +19,11 @@ import {userSchema} from './user/userSchema';
 export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
 export const DOMAIN_MODELS_FAILURE = 'DOMAIN_MODELS_FAILURE';
 
-export const DOMAIN_MODELS_GET_SUCCESS = 'DOMAIN_MODELS_GET_SUCCESS';
-export const DOMAIN_MODELS_POST_SUCCESS = 'DOMAIN_MODELS_POST_SUCCESS';
-export const DOMAIN_MODELS_PUT_SUCCESS = 'DOMAIN_MODELS_PUT_SUCCESS';
-export const DOMAIN_MODELS_DELETE_SUCCESS = 'DOMAIN_MODELS_DELETE_SUCCESS';
+export const DOMAIN_MODELS_GET_SUCCESS = `DOMAIN_MODELS_${HttpMethod.GET}_SUCCESS`;
+export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = `DOMAIN_MODELS_${HttpMethod.GET_ENTITY}_SUCCESS`;
+export const DOMAIN_MODELS_POST_SUCCESS = `DOMAIN_MODELS_${HttpMethod.POST}_SUCCESS`;
+export const DOMAIN_MODELS_PUT_SUCCESS = `DOMAIN_MODELS_${HttpMethod.PUT}_SUCCESS`;
+export const DOMAIN_MODELS_DELETE_SUCCESS = `DOMAIN_MODELS_${HttpMethod.DELETE}_SUCCESS`;
 
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
@@ -89,6 +90,14 @@ const restGet = <T>(endPoint: EndPoints, schema: Schema) => {
   });
 };
 
+const restGetEntity = <T>(endPoint: EndPoints) => {
+  const requestGet = requestMethod<T>(endPoint, HttpMethod.GET_ENTITY);
+  const requestFunc = (requestData: uuid) =>
+    restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
+
+  return (requestData: uuid) => asyncRequest<uuid, T>({...requestGet, requestFunc, requestData});
+};
+
 const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   const requestPost = requestMethod<T>(endPoint, HttpMethod.POST);
   const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);
@@ -115,6 +124,9 @@ export const fetchSelections = restGet<IdNamed>(EndPoints.selections, selections
 export const fetchGateways = restGet<Gateway>(EndPoints.gateways, gatewaySchema);
 export const fetchMeters = restGet<Gateway>(EndPoints.meters, meterSchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
+
+// TODO: Add tests
+export const fetchUser = restGetEntity<User>(EndPoints.users);
 
 export const addUser = restPost<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {

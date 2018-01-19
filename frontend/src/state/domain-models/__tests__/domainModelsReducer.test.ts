@@ -93,6 +93,7 @@ describe('domainModelsReducer', () => {
     const usersPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
     const usersPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
     const usersDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
+    const usersGetUserEntity = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
     const user: User = {
       id: 3,
       name: 'Eva',
@@ -145,6 +146,15 @@ describe('domainModelsReducer', () => {
       expect(users(initialState, usersPostRequest.failure(payload))).toEqual({
         ...initialState,
         error: payload,
+      });
+    });
+
+    it('adds a user to state', () => {
+      expect(users(initialState, usersGetUserEntity.success(user))).toEqual({
+        result: [3],
+        entities: {3: user},
+        isFetching: false,
+        total: 1,
       });
     });
   });

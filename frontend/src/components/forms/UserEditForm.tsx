@@ -47,6 +47,12 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   changeRoles = (event, index, value) => this.setState({roles: value});
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
 
+  componentWillReceiveProps({user}: UserFormProps) {
+    if (user) {
+      this.setState({...user, password: ''});
+    }
+  }
+
   render() {
     const {onSubmit, organisations, possibleRoles, isEditSelf} = this.props;
     const {name, email, organisation, roles, password} = this.state;

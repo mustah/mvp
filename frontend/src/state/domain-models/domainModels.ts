@@ -61,6 +61,7 @@ export interface DomainModelsState {
 
 export enum HttpMethod {
   GET = 'GET',
+  GET_ENTITY = 'GET_ENTITY',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
