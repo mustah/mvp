@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 2.0.5\n"
 
 msgid "admin"
 msgstr "admin"
@@ -185,6 +185,18 @@ msgstr "skapade användaren {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "misslyckades med att skapa användare: {{error}}"
 
+msgid "successfully updated user {{name}} ({{email}})"
+msgstr "uppdaterade användare {{name}} ({{email}}"
+
+msgid "failed to update user: {{error}}"
+msgstr "misslyckades med att uppdatera användare: {{error}}"
+
+msgid "successfully updated profile"
+msgstr "uppdaterade profil"
+
+msgid "failed to update profile: {{error}}"
+msgstr "misslyckades uppdatera profil: {{error}}"
+
 msgid "successfully deleted the user {{name}} ({{email}})"
 msgstr "användaren {{name}} ({{email}}) togs bort"
 
@@ -254,6 +266,15 @@ msgstr "ta bort"
 msgid "dashboard"
 msgstr "dashboard"
 
+msgid "user roles"
+msgstr "användarroller"
+
+msgid "new password"
+msgstr "nytt lösenord"
+
+msgid "save"
+msgstr "spara"
+
 msgid "users"
 msgstr "användare"
 
@@ -299,12 +320,6 @@ msgstr "urvalsöversikt"
 msgid "profile"
 msgstr "profil"
 
-msgid "current password"
-msgstr "nuvarande lösenord"
-
-msgid "new password"
-msgstr "nytt lösenord"
-
 msgid "logout"
 msgstr "logga ut"
 
@@ -328,17 +343,3 @@ msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
 
-#~ msgid "reset"
-#~ msgstr "återställ"
-
-#~ msgid "failed to create user: {{error}})"
-#~ msgstr "misslyckades med att skapa en användare: {{error}})"
-
-#~ msgid "failed to delete the user: {{error}})"
-#~ msgstr "misslyckades med att ta bort en användare: {{error}})"
-
-#~ msgid "failed to create user: {{reason}})"
-#~ msgstr "misslyckades med att skapa användare: {{reason}})"
-
-#~ msgid "failed to delete the user: {{reason}})"
-#~ msgstr "misslyckades med att ta bort användare: {{reason}})"

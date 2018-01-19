@@ -1,4 +1,6 @@
 import * as React from 'react';
+import {Link} from 'react-router-dom';
+import {routes} from '../../app/routes';
 import {translate} from '../../services/translationService';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {ActionMenuItem} from './ActionMenuItem';
@@ -10,12 +12,13 @@ interface Props {
 }
 
 export const UserActionsDropdown = ({id, deleteUser}: Props) => {
-  const noop = () => null;
 
   const proxiedDelete = () => deleteUser(id);
 
-  const menuItems: MenuItems = [
-    <ActionMenuItem name={translate('edit user')} onClick={noop} key={`0-${id}`}/>,
+  const menuItems: MenuItems = [(
+    <Link to={`${routes.adminUsersModify}/${id}`} className="link" key={`0-${id}`}>
+      <ActionMenuItem name={translate('edit user')}/>
+    </Link>),
     <ActionMenuItem name={translate('delete user')} onClick={proxiedDelete} key={`1-${id}`}/>,
   ];
 

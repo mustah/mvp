@@ -7,7 +7,7 @@ import {
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
   DOMAIN_MODELS_REQUEST,
-  DOMAIN_MODELS_SUCCESS,
+  DOMAIN_MODELS_GET_SUCCESS, DOMAIN_MODELS_POST_SUCCESS, DOMAIN_MODELS_PUT_SUCCESS,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Meter} from './meter/meterModels';
@@ -20,9 +20,8 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
   total: 0,
 });
 
-const addDomainModelFor =
-  <T>(entity: string, state: NormalizedState<T>, action: Action<Normalized<T>>): NormalizedState<T> => {
-    const {payload} = action;
+const setEntities =
+  <T>(entity: string, state: NormalizedState<T>, {payload}: Action<Normalized<T>>): NormalizedState<T> => {
     const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
     const entities: any = payload.entities[entity];
     return {
@@ -34,7 +33,34 @@ const addDomainModelFor =
     };
   };
 
-const removeDomainModelFor =
+const addEntity =
+  <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
+    const payload = action.payload as any;
+    const result: uuid[] = [...state.result, payload.id];
+    const entities: any = {...state.entities};
+    entities[payload.id] = payload;
+    return {
+      ...state,
+      isFetching: false,
+      entities,
+      result,
+      total: result.length,
+    };
+  };
+
+const modifyEntity =
+  <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
+    const payload = action.payload as any;
+    const entities: any = {...state.entities};
+    entities[payload.id] = payload;
+    return {
+      ...state,
+      isFetching: false,
+      entities,
+    };
+  };
+
+const removeEntity =
   <T>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     // TODO do we need to introduce a domain model interface with id: uuid in order to avoid "as any" below?
     const payload = action.payload as any;
@@ -55,6 +81,7 @@ type ActionTypes<T> =
   | Action<Normalized<T>>
   | Action<ErrorResponse>;
 
+// TODO: Add tests for PUT, POST, DELETE
 const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
@@ -63,16 +90,20 @@ const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
           ...state,
           isFetching: true,
         };
-      case DOMAIN_MODELS_SUCCESS.concat(endPoint):
-        return addDomainModelFor<T>(entity, state, action as Action<Normalized<T>>);
+      case DOMAIN_MODELS_GET_SUCCESS.concat(endPoint):
+        return setEntities<T>(entity, state, action as Action<Normalized<T>>);
+      case DOMAIN_MODELS_POST_SUCCESS.concat(endPoint):
+        return addEntity<T>(entity, state, action as Action<T>);
+      case DOMAIN_MODELS_PUT_SUCCESS.concat(endPoint):
+        return modifyEntity<T>(entity, state, action as Action<T>);
+      case DOMAIN_MODELS_DELETE_SUCCESS.concat(endPoint):
+        return removeEntity<T>(entity, state, action as Action<T>);
       case DOMAIN_MODELS_FAILURE.concat(endPoint):
         return {
           ...state,
           isFetching: false,
           error: {...(action as Action<ErrorResponse>).payload},
         };
-      case DOMAIN_MODELS_DELETE_SUCCESS.concat(endPoint):
-        return removeDomainModelFor<T>(entity, state, action as Action<T>);
       default:
         return state;
     }

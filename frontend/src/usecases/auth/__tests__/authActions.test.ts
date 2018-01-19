@@ -7,7 +7,16 @@ import {routes} from '../../../app/routes';
 import {makeToken} from '../../../services/authService';
 import {EndPoints} from '../../../state/domain-models/domainModels';
 import {Role, User} from '../../../state/domain-models/user/userModels';
-import {login, loginFailure, loginRequest, loginSuccess, logout, logoutRequest, logoutSuccess} from '../authActions';
+import {
+  AUTH_SET_USER_INFO,
+  authSetUser,
+  login,
+  loginFailure,
+  loginRequest,
+  loginSuccess,
+  logout,
+  logoutUser,
+} from '../authActions';
 import {Unauthorized} from '../authModels';
 
 const middlewares = [thunk];
@@ -62,8 +71,7 @@ describe('authActions', () => {
       expect(store.getActions()).toEqual([
         loginRequest(),
         loginSuccess({token, user}),
-        logoutRequest(),
-        logoutSuccess(),
+        logoutUser(),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
@@ -126,11 +134,21 @@ describe('authActions', () => {
       await store.dispatch(logout(user.organisation.code));
 
       expect(store.getActions()).toEqual([
-        logoutRequest(),
-        logoutSuccess(),
+        logoutUser(),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
   });
 
+  describe('set user info', () => {
+    const newName = 'eva nilsson';
+    const modifiedUser = {...user, name: newName};
+    it('sets the user info to the provided user', async () => {
+      await store.dispatch(authSetUser(modifiedUser));
+
+      expect(store.getActions()).toEqual([
+        {type: AUTH_SET_USER_INFO, payload: modifiedUser},
+      ]);
+    });
+  });
 });

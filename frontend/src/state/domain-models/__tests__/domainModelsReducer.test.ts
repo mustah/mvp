@@ -1,11 +1,15 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
-import {addresses, cities, initialDomain} from '../domainModelsReducer';
+import {IdNamed} from '../../../types/Types';
+import {EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
+import {requestMethod} from '../domainModelsActions';
+import {addresses, cities, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
-import {selectionsRequest} from '../domainModelsActions';
-import {SelectionEntity} from '../domainModels';
+import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
+
+  const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
 
   describe('addresses', () => {
 
@@ -82,4 +86,66 @@ describe('domainModelsReducer', () => {
     });
   });
 
+  describe('users', () => {
+
+    const initialState: UserState = initialDomain<User>();
+
+    const usersPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
+    const usersPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
+    const usersDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
+    const user: User = {
+      id: 3,
+      name: 'Eva',
+      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      roles: [Role.USER],
+      email: 'eva@elvaco.se',
+    };
+
+    const populatedState: UserState = {
+      result: [3],
+      entities: {3: user},
+      isFetching: false,
+      total: 1,
+    };
+
+    it('has initial state', () => {
+      expect(users(initialState, {type: 'unknown'})).toEqual({...initialState});
+    });
+
+    it('requests users', () => {
+      expect(users(initialState, usersPostRequest.request())).toEqual({...initialState, isFetching: true});
+      expect(users(initialState, usersDeleteRequest.request())).toEqual({...initialState, isFetching: true});
+    });
+
+    it('adds new user to state', () => {
+      expect(users(initialState, usersPostRequest.success(user))).toEqual({
+        result: [3],
+        entities: {3: user},
+        isFetching: false,
+        total: 1,
+      });
+    });
+
+    it('modifies a current user in the state', () => {
+      const newName = 'Eva Nilsson';
+
+      expect(users(populatedState, usersPutRequest.success({...user, name: newName}))).toEqual({
+        ...populatedState,
+        entities: {3: {...user, name: newName}},
+      });
+    });
+
+    it('deletes a user from state', () => {
+      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual(initialState);
+    });
+
+    it('has error when fetching has failed', () => {
+      const payload = {message: 'failed'};
+
+      expect(users(initialState, usersPostRequest.failure(payload))).toEqual({
+        ...initialState,
+        error: payload,
+      });
+    });
+  });
 });

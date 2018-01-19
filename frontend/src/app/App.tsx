@@ -9,6 +9,7 @@ import {routes} from './routes';
 
 const LoginPage = userIsNotAuthenticated(LoginContainer);
 const MvpPage = userIsAuthenticated(MvpAppContainer);
+// TODO: Create function adminIsAuthenticated (or move this check to AdminPages?)
 const AdminPage = userIsAuthenticated(AdminAppContainer);
 
 /**

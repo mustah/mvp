@@ -4,7 +4,6 @@ import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
-import {AdministrationState} from '../usecases/administration/administrationModels';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
@@ -15,7 +14,6 @@ import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
 
 export interface RootState {
-  administration: AdministrationState;
   auth: AuthState;
   domainModels: DomainModelsState;
   dashboard: DashboardState;

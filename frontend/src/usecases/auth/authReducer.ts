@@ -1,17 +1,42 @@
 import {EmptyAction} from 'react-redux-typescript';
+import {User} from '../../state/domain-models/user/userModels';
 import {Action} from '../../types/Types';
-import {LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_REQUEST, LOGOUT_SUCCESS} from './authActions';
+import {
+  AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS,
+  LOGOUT_USER,
+} from './authActions';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
 const initialAuthState: AuthState = {isAuthenticated: false};
 
 type ActionTypes =
-  & Action<Authorized>
-  & Action<Unauthorized>
-  & EmptyAction<string>;
+  | Action<Authorized>
+  | Action<Unauthorized>
+  | Action<User>
+  | EmptyAction<string>;
+
+const loginSuccess = (state: AuthState, {payload}: Action<Authorized>): AuthState => ({
+  ...state,
+  isLoading: false,
+  isAuthenticated: true,
+  user: {...payload.user},
+  token: payload.token,
+  error: undefined,
+});
+
+const loginFailure = (state: AuthState, {payload}: Action<Unauthorized>): AuthState => ({
+  ...state,
+  isLoading: false,
+  isAuthenticated: false,
+  error: payload,
+});
+
+const setUserInfo = (state: AuthState, {payload}: Action<User>): AuthState => ({
+  ...state,
+  user: payload,
+});
 
 export const auth = (state: AuthState = initialAuthState, action: ActionTypes): AuthState => {
-  const {payload} = action;
 
   switch (action.type) {
     case LOGIN_REQUEST:
@@ -21,27 +46,10 @@ export const auth = (state: AuthState = initialAuthState, action: ActionTypes): 
         isAuthenticated: false,
       };
     case LOGIN_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        isAuthenticated: true,
-        user: {...payload.user},
-        token: payload.token,
-        error: undefined,
-      };
+      return loginSuccess(state, action as Action<Authorized>);
     case LOGIN_FAILURE:
-      return {
-        ...state,
-        isLoading: false,
-        isAuthenticated: false,
-        error: {...(action as Action<Unauthorized>).payload},
-      };
-    case LOGOUT_REQUEST:
-      return {
-        ...state,
-        isLoading: true,
-      };
-    case LOGOUT_SUCCESS:
+      return loginFailure(state, action as Action<Unauthorized>);
+    case LOGOUT_USER:
       return {
         ...state,
         isLoading: false,
@@ -49,6 +57,8 @@ export const auth = (state: AuthState = initialAuthState, action: ActionTypes): 
         token: undefined,
         user: undefined,
       };
+    case AUTH_SET_USER_INFO:
+      return setUserInfo(state, action as Action<User>);
     default:
       return state;
   }

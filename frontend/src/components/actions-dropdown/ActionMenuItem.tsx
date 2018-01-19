@@ -5,7 +5,7 @@ import {OnClick} from '../../types/Types';
 
 interface Props {
   name: string;
-  onClick: OnClick;
+  onClick?: OnClick;
 }
 
 export const ActionMenuItem = ({name, onClick}: Props) => {

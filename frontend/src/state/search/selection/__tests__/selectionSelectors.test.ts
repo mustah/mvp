@@ -2,45 +2,34 @@ import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
-import {DomainModelsState, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
-import {selectionsRequest} from '../../../domain-models/domainModelsActions';
 import {
-  addresses,
-  alarms,
-  cities,
-  gateways,
-  gatewayStatuses,
-  initialDomain,
-  manufacturers,
-  meters,
-  meterStatuses,
+  DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState,
+  SelectionEntity,
+} from '../../../domain-models/domainModels';
+import {requestMethod} from '../../../domain-models/domainModelsActions';
+import {
+  addresses, alarms, cities, gateways, gatewayStatuses, initialDomain, manufacturers, meters, meterStatuses,
   productModels, users,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
+import {User} from '../../../domain-models/user/userModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {addSelectionAction, selectPeriodAction} from '../selectionActions';
 import {
-  LookupState,
-  ParameterName,
-  SelectionListItem,
-  SelectionParameter,
-  SelectionState,
+  LookupState, ParameterName, SelectionListItem, SelectionParameter, SelectionState,
   SelectionSummary,
 } from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {
-  getCities,
-  getEncodedUriParametersForMeters,
-  getSelectedPeriod,
-  getSelection,
+  getCities, getEncodedUriParametersForMeters, getSelectedPeriod, getSelection,
   getSelectionSummary,
 } from '../selectionSelectors';
-import {User} from '../../../domain-models/user/userModels';
 
 describe('selectionSelectors', () => {
 
+  const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
   const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialSearchParametersState);
 

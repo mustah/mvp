@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
+import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
@@ -64,6 +65,7 @@ class MvpApp extends React.Component<Props> {
         <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
 
         <MvpPages/>
+        <MessageContainer/>
       </Row>
     );
   }
