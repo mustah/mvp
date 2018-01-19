@@ -7,6 +7,7 @@ import {routes} from '../../../app/routes';
 import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
 import {ActionsDropdown, MenuItems} from '../../../components/actions-dropdown/ActionsDropdown';
 import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
+import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
@@ -26,6 +27,7 @@ interface StateToProps {
   currentUser: User;
   usersCount: number;
   users: DomainModel<User>;
+  isFetching: boolean;
   paginatedList: uuid[];
   pagination: Pagination;
   encodedUriParametersForUsers: string;
@@ -49,6 +51,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
       currentUser,
       deleteUser,
       users,
+      isFetching,
       pagination,
       paginationChangePage,
       usersCount,
@@ -67,7 +70,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
 
     const menuItems: MenuItems = [(
       <Link to={routes.adminUsersAdd} className="link" key="add user">
-        <ActionMenuItem name={translate('add user')} />
+        <ActionMenuItem name={translate('add user')}/>
       </Link>),
       <Divider key="a divider"/>,
       <ActionMenuItem name={translate('export to Excel (.csv)')} key="export to excel"/>,
@@ -75,31 +78,33 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     ];
 
     return (
-      <div>
-        <Table result={paginatedList} entities={usersToRender}>
-          <TableColumn
-            header={<TableHead className="first">{translate('name')}</TableHead>}
-            renderCell={renderName}
-          />
-          <TableColumn
-            header={<TableHead>{translate('email')}</TableHead>}
-            renderCell={renderEmail}
-          />
-          <TableColumn
-            header={<TableHead>{translate('organisation')}</TableHead>}
-            renderCell={renderOrganisation}
-          />
-          <TableColumn
-            header={<TableHead>{translate('roles')}</TableHead>}
-            renderCell={renderRoles}
-          />
-          <TableColumn
-            header={<TableHead><ActionsDropdown menuItems={menuItems}/></TableHead>}
-            renderCell={renderActionDropdown}
-          />
-        </Table>
-        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={usersCount}/>
-      </div>
+      <Loader isFetching={isFetching}>
+        <div>
+          <Table result={paginatedList} entities={usersToRender}>
+            <TableColumn
+              header={<TableHead className="first">{translate('name')}</TableHead>}
+              renderCell={renderName}
+            />
+            <TableColumn
+              header={<TableHead>{translate('email')}</TableHead>}
+              renderCell={renderEmail}
+            />
+            <TableColumn
+              header={<TableHead>{translate('organisation')}</TableHead>}
+              renderCell={renderOrganisation}
+            />
+            <TableColumn
+              header={<TableHead>{translate('roles')}</TableHead>}
+              renderCell={renderRoles}
+            />
+            <TableColumn
+              header={<TableHead><ActionsDropdown menuItems={menuItems}/></TableHead>}
+              renderCell={renderActionDropdown}
+            />
+          </Table>
+          <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={usersCount}/>
+        </div>
+      </Loader>
     );
   }
 }
@@ -113,6 +118,7 @@ const mapStateToProps = ({ui, domainModels: {users}, auth}: RootState): StateToP
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(users)}),
     pagination,
     encodedUriParametersForUsers: '',
+    isFetching: users.isFetching,
   };
 };
 
