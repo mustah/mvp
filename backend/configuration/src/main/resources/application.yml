@@ -27,9 +27,6 @@ zuul:
     dashboards:
       path: /api/dashboards/**
       url: http://localhost:4000/api/dashboards/
-    measurements:
-      path: /api/measurements/**
-      url: http://localhost:4000/api/measurements/
 
 liquibase:
   enabled: false
