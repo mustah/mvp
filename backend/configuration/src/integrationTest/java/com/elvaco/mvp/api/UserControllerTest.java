@@ -2,7 +2,6 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
-import com.elvaco.mvp.core.Roles;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.Roles.ADMIN;
-import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -140,7 +137,7 @@ public class UserControllerTest extends IntegrationTest {
       "noo@b.com",
       "test123",
       new Organisation(1L, "Elvaco", "elvaco"),
-      asList(new Role(ADMIN), new Role(USER))
+      asList(Role.admin(), Role.user())
     ));
 
     apiService().delete("/users/" + user.id);
@@ -227,7 +224,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
-    user.roles = asList(Roles.USER, Roles.ADMIN, Roles.SUPER_ADMIN);
+    user.roles = asList(Role.USER, Role.ADMIN, Role.SUPER_ADMIN);
     return user;
   }
 
@@ -237,7 +234,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = password;
     user.organisation = new OrganisationDto(2L, "Wayne Industries", "wayne-industries");
-    user.roles = asList(Roles.USER, Roles.ADMIN);
+    user.roles = asList(Role.USER, Role.ADMIN);
     return user;
   }
 
