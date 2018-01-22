@@ -1,4 +1,10 @@
-import {FORMAT_DATE_DAY_MONTH, FORMAT_NUMBER_DEFAULT, formatDate, formatNumber} from '../formatters';
+import {
+  FORMAT_DATE_DAY_MONTH,
+  FORMAT_DATE_FULL_MINUTE,
+  FORMAT_NUMBER_DEFAULT,
+  formatDate,
+  formatNumber
+} from '../formatters';
 
 describe('Formatters', () => {
   describe('Format numbers', () => {
@@ -30,6 +36,11 @@ describe('Formatters', () => {
       const date = new Date('21 march 2017');
 
       expect(formatDate(date, 'DD/MM/YYYY')).toEqual('21/03/2017');
+    });
+    test('UNIX timestamp in millisecond precision, to formatted date string', () => {
+      const date = new Date('21 march 2017');
+
+      expect(formatDate(date, FORMAT_DATE_FULL_MINUTE)).toEqual('17-03-21 12:00');
     });
   });
 
