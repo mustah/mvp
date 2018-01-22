@@ -296,8 +296,8 @@ msgstr "spara som"
 msgid "reset selection"
 msgstr "rensa urval"
 
-msgid "reset to"
-msgstr "återställ till"
+msgid "reset"
+msgstr "återställ"
 
 msgid "give the selection a name"
 msgstr "namnge ditt urval"

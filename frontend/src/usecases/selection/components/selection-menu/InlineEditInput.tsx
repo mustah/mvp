@@ -56,9 +56,9 @@ export class InlineEditInput extends React.Component<Props, State> {
     <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>
 
   renderSelectionResetButton = (): React.ReactNode => {
-    const {id, name} = this.props.selection;
+    const {id} = this.props.selection;
     const reset = () => this.props.selectSavedSelection(id);
-    return <ButtonLink onClick={reset}>{`${translate('reset to')} ${name}`}</ButtonLink>;
+    return <ButtonLink onClick={reset}>{translate('reset')}</ButtonLink>;
   }
 
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
@@ -80,7 +80,7 @@ export class InlineEditInput extends React.Component<Props, State> {
 
   render() {
     const {isChanged, name, id} = this.state;
-    const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
+    const shouldRenderActionButtons = name && (isChanged || this.props.isChanged || isInitialSelection(id));
     const shouldRenderResetButton = this.props.isChanged && isInitialSelection(id) ||
       !isInitialSelection(id) && !this.props.isChanged;
     const shouldRenderResetSelectionButton = !isInitialSelection(id) && this.props.isChanged;

@@ -22,7 +22,7 @@ export const SelectionMenuSummary = (props: Props) => {
     const resetToSelection = () => selectSavedSelection(id);
     return isInitialSelection(id) ?
       <ButtonLink onClick={resetSelection}>{translate('reset selection')}</ButtonLink> :
-      <ButtonLink onClick={resetToSelection}>{`${translate('reset to')} ${name}`}</ButtonLink>;
+      <ButtonLink onClick={resetToSelection}>{translate('reset')}</ButtonLink>;
   };
 
   return (
