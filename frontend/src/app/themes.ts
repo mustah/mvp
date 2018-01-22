@@ -82,6 +82,12 @@ export const listItemStyle: React.CSSProperties = {
   textStyle: {textOverflow: 'ellipsis', width: 150,   whiteSpace: 'nowrap', overflow: 'hidden'},
 };
 
+export const listItemStyleSelected: React.CSSProperties = {
+  ...listItemStyle,
+  fontWeight: 'bold',
+  fontStyle: 'italic',
+};
+
 export const menuItemInnerDivStyle: React.CSSProperties = {
   ...listItemStyle,
   lineHeight: '32px',

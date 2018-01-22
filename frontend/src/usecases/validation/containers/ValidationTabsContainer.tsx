@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {Loader} from '../../../components/loading/Loader';
 import {MeterList} from '../../../components/meters/MeterList';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -43,6 +44,7 @@ interface StateToProps extends TabsContainerStateToProps {
   paginatedList: uuid[];
   pagination: Pagination;
   selectedMarker: Maybe<Meter>;
+  isFetching: boolean;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -66,6 +68,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
     setSelection,
     selectedMarker,
     closeClusterDialog,
+    isFetching,
   } = props;
 
   const dialog = selectedMarker.isJust() && (
@@ -87,19 +90,29 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
+        <Loader isFetching={isFetching}>
+          <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
+        </Loader>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
-        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
+        <Loader isFetching={isFetching}>
+          <div>
+            <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
+            <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
+          </div>
+        </Loader>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Content hasContent={hasMeters} noContentText={translate('no meters')}>
-          <Map>
-          <ClusterContainer markers={meters}/>
-          </Map>
-        </Content>
-        {dialog}
+        <Loader isFetching={isFetching}>
+          <div>
+            <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+              <Map>
+                <ClusterContainer markers={meters}/>
+              </Map>
+            </Content>
+            {dialog}
+          </div>
+        </Loader>
       </TabContent>
     </Tabs>
   );
@@ -115,6 +128,7 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
     pagination,
     selectedMarker: getSelectedMeterMarker(map),
+    isFetching: meters.isFetching,
   };
 };
 

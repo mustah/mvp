@@ -1,18 +1,19 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
+import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   closeSelectionPage,
   resetSelection,
   saveSelection,
+  selectSavedSelection,
   updateSelection,
 } from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
-import {OnClick} from '../../../types/Types';
-import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
-import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
+import {OnClick, OnClickWithId} from '../../../types/Types';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
 interface StateToProps {
@@ -24,10 +25,11 @@ interface DispatchToProps {
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;
+  selectSavedSelection: OnClickWithId;
 }
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
-  const {closeSelectionPage, selection, saveSelection, updateSelection, resetSelection} = props;
+  const {closeSelectionPage, selection, saveSelection, updateSelection, resetSelection, selectSavedSelection} = props;
   const key = `${selection.id}-${selection.isChanged}`;
   return (
     <RowCenter>
@@ -40,6 +42,7 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
           saveSelection={saveSelection}
           updateSelection={updateSelection}
           resetSelection={resetSelection}
+          selectSavedSelection={selectSavedSelection}
         />
       </RowMiddle>
     </RowCenter>
@@ -57,6 +60,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   saveSelection,
   updateSelection,
   resetSelection,
+  selectSavedSelection,
 }, dispatch);
 
 export const SelectionMenuContainer =

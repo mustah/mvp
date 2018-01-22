@@ -6,7 +6,7 @@ import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
-import {IdNamed, OnClick, uuid} from '../../../../types/Types';
+import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
 
 interface Props {
@@ -15,6 +15,7 @@ interface Props {
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;
+  selectSavedSelection: OnClickWithId;
 }
 
 interface State extends IdNamed {
@@ -51,16 +52,25 @@ export class InlineEditInput extends React.Component<Props, State> {
       </Row>
     );
   }
-  renderResetButton = (): React.ReactNode => {
-    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>;
+
+  renderResetButton = (): React.ReactNode =>
+    <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>
+
+  renderSelectionResetButton = (): React.ReactNode => {
+    const {id} = this.props.selection;
+    const reset = () => this.props.selectSavedSelection(id);
+    return <ButtonLink onClick={reset}>{translate('discard changes')}</ButtonLink>;
   }
+
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
+
   onSave = (): void => {
     const {updateSelection, selection} = this.props;
     const {name} = this.state;
     this.setState({isChanged: false});
     updateSelection({...selection, name});
   }
+
   onSaveAs = (): void => {
     const {saveSelection, selection} = this.props;
     const {name} = this.state;
@@ -71,8 +81,10 @@ export class InlineEditInput extends React.Component<Props, State> {
 
   render() {
     const {isChanged, name, id} = this.state;
-    const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
-    const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
+    const shouldRenderActionButtons = name && (isChanged || this.props.isChanged || isInitialSelection(id));
+    const shouldRenderResetButton = this.props.isChanged && isInitialSelection(id) ||
+      isSavedSelection(id) && !this.props.isChanged;
+    const shouldRenderResetSelectionButton = isSavedSelection(id) && this.props.isChanged;
 
     return (
       <RowBottom className="InlineEditInput">
@@ -87,6 +99,7 @@ export class InlineEditInput extends React.Component<Props, State> {
         />
         {shouldRenderActionButtons && this.renderActionButtons()}
         {shouldRenderResetButton && this.renderResetButton()}
+        {shouldRenderResetSelectionButton && this.renderSelectionResetButton()}
       </RowBottom>
     );
   }

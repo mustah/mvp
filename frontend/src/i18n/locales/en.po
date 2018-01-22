@@ -296,6 +296,9 @@ msgstr "save as"
 msgid "reset selection"
 msgstr "reset selection"
 
+msgid "discard changes"
+msgstr "discard changes"
+
 msgid "give the selection a name"
 msgstr "give the selection a name"
 

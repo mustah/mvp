@@ -1,10 +1,13 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {RootState} from '../reducers/rootReducer';
 import {isSelectionPage} from '../selectors/routerSelectors';
+import {resetSelection, selectSavedSelection} from '../state/search/selection/selectionActions';
 import {SelectionState} from '../state/search/selection/selectionModels';
 import {getSelection} from '../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../state/ui/uiSelectors';
+import {OnClick, OnClickWithId} from '../types/Types';
 import {SelectionMenuSummary} from '../usecases/selection/components/selection-menu/SelectionMenuSummary';
 import {SelectionMenuContainer} from '../usecases/selection/containers/SelectionMenuContainer';
 import {PageComponent} from './PageComponent';
@@ -16,17 +19,32 @@ interface StateToProps {
   selection: SelectionState;
 }
 
-const PageContainerComponent = (props: StateToProps) => {
+interface DispatchToProps {
+  selectSavedSelection: OnClickWithId;
+  resetSelection: OnClick;
+}
+
+type Props = StateToProps & DispatchToProps;
+
+const MvpPageComponent = (props: Props) => {
   const {
     children,
     selection,
     isSelectionPage,
     isSideMenuOpen,
+    selectSavedSelection,
+    resetSelection,
   } = props;
 
   const renderSelectionSearch = isSelectionPage
     ? <SelectionMenuContainer/>
-    : <SelectionMenuSummary selection={selection}/>;
+    : (
+      <SelectionMenuSummary
+        selection={selection}
+        selectSavedSelection={selectSavedSelection}
+        resetSelection={resetSelection}
+      />
+    );
 
   return (
     <PageComponent isSideMenuOpen={isSideMenuOpen} renderTopMenuSearch={renderSelectionSearch}>
@@ -43,5 +61,11 @@ const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToPro
   };
 };
 
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+  resetSelection,
+  selectSavedSelection,
+}, dispatch);
+
+// TODO: Should MvpPageContainer really be a container? For optimization reasons.
 export const MvpPageContainer =
-  connect<StateToProps>(mapStateToProps)(PageContainerComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MvpPageComponent);
