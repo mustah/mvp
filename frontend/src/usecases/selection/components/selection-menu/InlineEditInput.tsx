@@ -29,6 +29,7 @@ const textFieldStyle: React.CSSProperties = {
 };
 
 const isInitialSelection = (id: uuid) => id === -1;
+const isSavedSelection = (id: uuid) => id !== -1;
 
 export class InlineEditInput extends React.Component<Props, State> {
 
@@ -46,7 +47,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {id} = this.state;
     return (
       <Row>
-        {!isInitialSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
+        {isSavedSelection(id) && <ButtonLink onClick={this.onSave}>{translate('save')}</ButtonLink>}
         <ButtonLink onClick={this.onSaveAs}>{translate('save as')}</ButtonLink>
       </Row>
     );
@@ -58,7 +59,7 @@ export class InlineEditInput extends React.Component<Props, State> {
   renderSelectionResetButton = (): React.ReactNode => {
     const {id} = this.props.selection;
     const reset = () => this.props.selectSavedSelection(id);
-    return <ButtonLink onClick={reset}>{translate('reset')}</ButtonLink>;
+    return <ButtonLink onClick={reset}>{translate('discard changes')}</ButtonLink>;
   }
 
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
@@ -82,8 +83,8 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = name && (isChanged || this.props.isChanged || isInitialSelection(id));
     const shouldRenderResetButton = this.props.isChanged && isInitialSelection(id) ||
-      !isInitialSelection(id) && !this.props.isChanged;
-    const shouldRenderResetSelectionButton = !isInitialSelection(id) && this.props.isChanged;
+      isSavedSelection(id) && !this.props.isChanged;
+    const shouldRenderResetSelectionButton = isSavedSelection(id) && this.props.isChanged;
 
     return (
       <RowBottom className="InlineEditInput">

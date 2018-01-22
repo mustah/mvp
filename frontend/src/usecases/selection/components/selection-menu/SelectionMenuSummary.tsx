@@ -14,7 +14,7 @@ interface Props {
 
 export const SelectionMenuSummary = (props: Props) => {
   const {selection: {id, name, isChanged}, resetSelection, selectSavedSelection} = props;
-  const selectionName = name === 'all' ? translate('all') : name;
+  const selectionName = id === -1 ? firstUpperTranslated('all') : name;
 
   const isInitialSelection = (id: uuid) => id === -1;
 
@@ -22,7 +22,7 @@ export const SelectionMenuSummary = (props: Props) => {
     const resetToSelection = () => selectSavedSelection(id);
     return isInitialSelection(id) ?
       <ButtonLink onClick={resetSelection}>{translate('reset selection')}</ButtonLink> :
-      <ButtonLink onClick={resetToSelection}>{translate('reset')}</ButtonLink>;
+      <ButtonLink onClick={resetToSelection}>{translate('discard changes')}</ButtonLink>;
   };
 
   return (
