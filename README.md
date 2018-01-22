@@ -8,7 +8,7 @@ subsequently test.
 Some of them requires Docker, see the bottom of this file for instructions on
 that.
 
-### full-stack application and PostgreSQL in docker (docker-compose)
+### Full-stack application and PostgreSQL in docker (docker-compose)
 This is the recommended way to verify your changes using a local setup as
 similar to production as possible (disregarding actual production data, of
 course). This execution mode is supported by
@@ -42,7 +42,21 @@ host systems.
 > Note: Currently, all data volumes (including the PostgreSQL data volume) is
 > destroyed when you run the `composeDown` task.
 
-### only PostgreSQL in docker
+### Only PostgreSQL in docker with docker-compose on localhost
+It's very easy to just start postgresql docker container and pull it down when finished, with the 
+command:
+
+`docker-compose up postgresql && docker-compose down -v`
+
+And just start the MvpApplication.java with postgresql profile in your idea. Here are the program
+arguments for the configuration in your idea:
+
+`--server.port=8080 --spring.datasource.url=jdbc:postgresql://localhost:5432/mvp`
+
+and active profile, set to `postgresql`.
+ 
+
+### Only PostgreSQL in docker with gradle task
 As a convenience, there is also a gradle task that only starts the Postgres
 service. This allows you to use our primary database, while also taking
 advantage of Spring devtools, interactive debuggers and such.
@@ -64,7 +78,7 @@ and stopped by running
 ./gradlew composeDownAndRemovePostgres
 ```
 
-### backend only
+### Backend only
 If the changes you're working on are isolated to the backend, and do not rely
 on any database changes, this is probably the mode you're looking for. It is
 most conveniently executed through your IDE of choice(MvpApplication is the
@@ -75,11 +89,11 @@ changes (i.e, when you rebuild your code), without having to do a full cold
 restart. This should allow you to trim your build-deploy-test cycle
 significantly.
 
-### frontend only
+### Frontend only
 For frontend-heavy work, you can make use of the infrastructure documented in
 [frontend/README] to achive a rapid build-deploy-test cycle.
 
-### backend + frontend
+### Backend + frontend
 Of course, most user-facing features will require both backend and frontend
 work. By virtue of isolating the frontend from the backend we are able to
 combine them to run both simultaneously. This works by letting the frontend run

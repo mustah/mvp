@@ -3,16 +3,13 @@ package com.elvaco.mvp.api;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.dto.UserWithPasswordDto;
 import com.elvaco.mvp.exception.UserNotFound;
-import com.elvaco.mvp.mapper.UserDetailsMapper;
 import com.elvaco.mvp.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,17 +24,11 @@ public class UserController {
 
   private final UserUseCases userUseCases;
   private final UserMapper userMapper;
-  private final UserDetailsManager userDetailsService;
 
   @Autowired
-  UserController(
-    UserUseCases userUseCases,
-    UserMapper userMapper,
-    UserDetailsManager userDetailsService
-  ) {
+  UserController(UserUseCases userUseCases, UserMapper userMapper) {
     this.userUseCases = userUseCases;
     this.userMapper = userMapper;
-    this.userDetailsService = userDetailsService;
   }
 
   @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_ADMIN')")
@@ -60,9 +51,7 @@ public class UserController {
   @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN')")
   @PostMapping
   public UserDto createUser(@RequestBody UserWithPasswordDto user) {
-    User newUser = userUseCases.create(userMapper.toDomainModel(user));
-    userDetailsService.createUser(UserDetailsMapper.toUserDetails(newUser));
-    return userMapper.toDto(newUser);
+    return userMapper.toDto(userUseCases.create(userMapper.toDomainModel(user)));
   }
 
   @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_ADMIN')")

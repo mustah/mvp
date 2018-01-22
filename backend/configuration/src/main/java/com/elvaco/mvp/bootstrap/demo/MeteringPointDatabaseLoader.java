@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import com.elvaco.mvp.config.DemoData;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
@@ -20,12 +19,13 @@ import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import static java.util.Arrays.asList;
 
+@Profile("demo")
 @Component
-@DemoData
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   private final MeteringPointRepository meteringPointRepository;
@@ -34,15 +34,16 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
   private final OrganisationRepository organisationRepository;
 
   @Autowired
-  public MeteringPointDatabaseLoader(MeteringPointRepository meteringPointRepository,
-                                     MeasurementRepository measurementRepository,
-                                     PhysicalMeterRepository physicalMeterRepository,
-                                     OrganisationRepository organisationRepository) {
+  public MeteringPointDatabaseLoader(
+    MeteringPointRepository meteringPointRepository,
+    MeasurementRepository measurementRepository,
+    PhysicalMeterRepository physicalMeterRepository,
+    OrganisationRepository organisationRepository
+  ) {
     this.meteringPointRepository = meteringPointRepository;
     this.measurementRepository = measurementRepository;
     this.physicalMeterRepository = physicalMeterRepository;
     this.organisationRepository = organisationRepository;
-
   }
 
   @Override
@@ -67,7 +68,8 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
       PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
         organisationEntity,
         meterIdentity,
-        "Electricity");
+        "Electricity"
+      );
       physicalMeterEntity.meteringPoint = meteringPointEntity;
       physicalMeterRepository.save(physicalMeterEntity);
 
@@ -81,7 +83,8 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
           "Power",
           random.nextDouble(),
           "mW",
-          physicalMeterEntity);
+          physicalMeterEntity
+        );
         measurementEntities.add(measurementEntity);
       }
       measurementRepository.save(measurementEntities);

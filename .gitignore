@@ -44,6 +44,8 @@ frontend/src/i18n/locales/*.mo
 .idea/encodings.xml
 .idea/workspace.xml
 .idea/sqldialects.xml
+.idea/dataSources
+.idea/dataSources.local.xml
 
 backend/.idea/runConfigurations/
 backend/.idea/libraries/

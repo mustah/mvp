@@ -1,18 +1,35 @@
 package com.elvaco.mvp.config;
 
+import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.security.JpaUserDetailsService;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.hateoas.core.AbstractEntityLinks;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 class ApplicationConfig {
+
+  private final UserUseCases userUseCases;
+
+  @Autowired
+  ApplicationConfig(@Lazy UserUseCases userUseCases) {
+    this.userUseCases = userUseCases;
+  }
+
+  @Bean
+  UserDetailsService userDetailsService() {
+    return new JpaUserDetailsService(userUseCases);
+  }
 
   @Bean
   FilterToPredicateMapper predicateMapper() {
