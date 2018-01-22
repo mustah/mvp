@@ -4,12 +4,12 @@ import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Bold, Normal} from '../../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {SelectionState} from '../../../../state/search/selection/selectionModels';
-import {OnClick, uuid} from '../../../../types/Types';
+import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 
 interface Props {
   selection: SelectionState;
   resetSelection: OnClick;
-  selectSavedSelection: (id: uuid) => void;
+  selectSavedSelection: OnClickWithId;
 }
 
 export const SelectionMenuSummary = (props: Props) => {

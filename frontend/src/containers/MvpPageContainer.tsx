@@ -7,7 +7,7 @@ import {resetSelection, selectSavedSelection} from '../state/search/selection/se
 import {SelectionState} from '../state/search/selection/selectionModels';
 import {getSelection} from '../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../state/ui/uiSelectors';
-import {OnClick, uuid} from '../types/Types';
+import {OnClick, OnClickWithId} from '../types/Types';
 import {SelectionMenuSummary} from '../usecases/selection/components/selection-menu/SelectionMenuSummary';
 import {SelectionMenuContainer} from '../usecases/selection/containers/SelectionMenuContainer';
 import {PageComponent} from './PageComponent';
@@ -20,7 +20,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  selectSavedSelection: (id: uuid) => void;
+  selectSavedSelection: OnClickWithId;
   resetSelection: OnClick;
 }
 

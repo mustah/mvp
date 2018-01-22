@@ -83,8 +83,7 @@ export const listItemStyle: React.CSSProperties = {
 };
 
 export const listItemStyleSelected: React.CSSProperties = {
-  fontSize: fontSizeNormal,
-  textStyle: {textOverflow: 'ellipsis', width: 150,   whiteSpace: 'nowrap', overflow: 'hidden'},
+  ...listItemStyle,
   fontWeight: 'bold',
   fontStyle: 'italic',
 };

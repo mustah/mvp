@@ -6,7 +6,7 @@ import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
 import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
-import {IdNamed, OnClick, uuid} from '../../../../types/Types';
+import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;
-  selectSavedSelection: (id: uuid) => void;
+  selectSavedSelection: OnClickWithId;
 }
 
 interface State extends IdNamed {

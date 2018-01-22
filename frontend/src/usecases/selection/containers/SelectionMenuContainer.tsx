@@ -1,18 +1,19 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
+import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
 import {RootState} from '../../../reducers/rootReducer';
 import {
   closeSelectionPage,
   resetSelection,
-  saveSelection, selectSavedSelection,
+  saveSelection,
+  selectSavedSelection,
   updateSelection,
 } from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
-import {OnClick, uuid} from '../../../types/Types';
-import {IconNavigationBack} from '../../../components/icons/IconNavigationBack';
-import {RowCenter, RowMiddle} from '../../../components/layouts/row/Row';
+import {OnClick, OnClickWithId} from '../../../types/Types';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
 interface StateToProps {
@@ -24,7 +25,7 @@ interface DispatchToProps {
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;
-  selectSavedSelection: (id: uuid) => void;
+  selectSavedSelection: OnClickWithId;
 }
 
 export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
