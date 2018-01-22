@@ -1,12 +1,12 @@
 package com.elvaco.mvp.bootstrap;
 
-import com.elvaco.mvp.config.H2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-@H2
+@Profile("h2")
 @Component
 public class H2DatabaseProvisioningLoader implements CommandLineRunner {
 

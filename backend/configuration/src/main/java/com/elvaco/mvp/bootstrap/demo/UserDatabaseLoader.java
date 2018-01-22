@@ -8,12 +8,10 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
-import com.elvaco.mvp.mapper.UserDetailsMapper;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 
 import static com.elvaco.mvp.core.Roles.ADMIN;
@@ -27,19 +25,16 @@ public class UserDatabaseLoader implements CommandLineRunner {
 
   private final RoleRepository roleRepository;
   private final OrganisationRepository organisationRepository;
-  private final UserDetailsManager userDetailsService;
   private final UserUseCases userUseCases;
 
   @Autowired
   public UserDatabaseLoader(
     RoleRepository roleRepository,
     OrganisationRepository organisationRepository,
-    UserDetailsManager userDetailsService,
     UserUseCases userUseCases
   ) {
     this.roleRepository = roleRepository;
     this.organisationRepository = organisationRepository;
-    this.userDetailsService = userDetailsService;
     this.userUseCases = userUseCases;
   }
 
@@ -153,8 +148,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
 
     users.stream()
       .map(u -> u.withPassword(() -> u.password))
-      .map(userUseCases::create)
-      .map(UserDetailsMapper::toUserDetails)
-      .forEach(userDetailsService::createUser);
+      .forEach(userUseCases::create);
   }
 }
