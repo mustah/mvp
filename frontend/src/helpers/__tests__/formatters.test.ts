@@ -3,7 +3,7 @@ import {
   FORMAT_DATE_FULL_MINUTE,
   FORMAT_NUMBER_DEFAULT,
   formatDate,
-  formatNumber
+  formatNumber,
 } from '../formatters';
 
 describe('Formatters', () => {

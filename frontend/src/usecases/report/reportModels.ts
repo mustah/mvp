@@ -5,6 +5,24 @@ export interface ReportState {
   selectedListItems: uuid[];
 }
 
+interface Axes {
+  left?: string;
+  right?: string;
+}
+
+export interface LineProps {
+  stroke: string;
+  key: string;
+  name: string;
+  dataKey: string;
+}
+
+export interface GraphContents {
+  axes: Axes;
+  lines: LineProps[];
+  data: object[];
+}
+
 export interface Indicator {
   type: IndicatorType;
   title: string;

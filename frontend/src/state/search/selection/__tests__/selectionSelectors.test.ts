@@ -3,27 +3,50 @@ import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {
-  DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState,
+  DomainModelsState,
+  EndPoints,
+  HttpMethod,
+  Normalized,
+  NormalizedState,
   SelectionEntity,
 } from '../../../domain-models/domainModels';
 import {requestMethod} from '../../../domain-models/domainModelsActions';
 import {
-  addresses, alarms, cities, gateways, gatewayStatuses, initialDomain, manufacturers, meters, meterStatuses,
-  productModels, users,
+  addresses,
+  alarms,
+  cities,
+  gateways,
+  gatewayStatuses,
+  initialDomain,
+  initialPaginatedDomain,
+  manufacturers,
+  measurements,
+  meters,
+  meterStatuses,
+  productModels,
+  users,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
+import {Measurement} from '../../../domain-models/measurement/measurementModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {addSelectionAction, selectPeriodAction} from '../selectionActions';
 import {
-  LookupState, ParameterName, SelectionListItem, SelectionParameter, SelectionState,
+  LookupState,
+  ParameterName,
+  SelectionListItem,
+  SelectionParameter,
+  SelectionState,
   SelectionSummary,
 } from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {
-  getCities, getEncodedUriParametersForMeters, getSelectedPeriod, getSelection,
+  getCities,
+  getEncodedUriParametersForMeters,
+  getSelectedPeriod,
+  getSelection,
   getSelectionSummary,
 } from '../selectionSelectors';
 
@@ -34,6 +57,21 @@ describe('selectionSelectors', () => {
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialSearchParametersState);
 
   const initialDomainModelState = initialDomain<SelectionEntity>();
+  const initialMeasurementState = initialPaginatedDomain<Measurement>();
+
+  const domainModels = (domainModelPayload): DomainModelsState => ({
+    addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
+    manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    measurements: measurements(initialMeasurementState, selectionsRequest.success(domainModelPayload)),
+    meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    meters: meters(initialDomain<Meter>(), {type: 'none'}),
+    productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    users: users(initialDomain<User>(), {type: 'none'}),
+  });
 
   const gothenburg: IdNamed = {...testData.selections.cities[0]};
   const stockholm: IdNamed = {...testData.selections.cities[1]};
@@ -48,24 +86,12 @@ describe('selectionSelectors', () => {
 
   it('gets entities for type city', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
-    const domainModels: DomainModelsState = {
-      meters: meters(initialDomain<Meter>(), {type: 'none'}),
-      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
-      users: users(initialDomain<User>(), {type: 'none'}),
-      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    };
 
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
       selection: selection(initialState, addSelectionAction(payload)),
-      domainModels,
+      domainModels: domainModels(domainModelPayload),
     };
 
     const stockholmSelected: SelectionListItem[] = [
@@ -79,24 +105,14 @@ describe('selectionSelectors', () => {
 
   it('get entities for undefined entity type', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
-    const domainModels: DomainModelsState = {
-      meters: meters(initialDomain<Meter>(), {type: 'none'}),
-      gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
-      users: users(initialDomain<User>(), {type: 'none'}),
-      alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      cities: cities(initialDomainModelState, {type: 'unknown'}),
-    };
 
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
+    const notCity: DomainModelsState = domainModels(domainModelPayload);
+    notCity.cities = cities(initialDomainModelState, {type: 'unknown'});
 
     const state: LookupState = {
       selection: selection(initialState, addSelectionAction(payload)),
-      domainModels,
+      domainModels: notCity,
     };
 
     expect(getCities(state)).toEqual([]);
@@ -143,22 +159,10 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       const domainModelPayload = normalize(testData.selections, selectionsSchema);
-      const domainModels: DomainModelsState = {
-        meters: meters(initialDomain<Meter>(), {type: 'none'}),
-        gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
-        users: users(initialDomain<User>(), {type: 'none'}),
-        alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-        cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-      };
 
       const state: LookupState = {
         selection: selection(initialState, addSelectionAction(payload)),
-        domainModels,
+        domainModels: domainModels(domainModelPayload),
       };
 
       const stockholmSelected: SelectionListItem[] = [

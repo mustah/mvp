@@ -3,14 +3,14 @@ import {DomainModelsState, SelectionEntity} from '../../domain-models/domainMode
 import {Period} from '../../../components/dates/dateModels';
 
 export const enum ParameterName {
-  cities = 'cities',
   addresses = 'addresses',
-  meterStatuses = 'meterStatuses',
-  gatewayStatuses = 'gatewayStatuses',
   alarms = 'alarms',
+  cities = 'cities',
+  gatewayStatuses = 'gatewayStatuses',
   manufacturers = 'manufacturers',
-  productModels = 'productModels',
+  meterStatuses = 'meterStatuses',
   period = 'period',
+  productModels = 'productModels',
 }
 
 export type FilterParam = uuid | boolean;
