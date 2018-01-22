@@ -20,6 +20,7 @@ export type UserState = NormalizedState<User>;
 export const enum Role {
   ADMIN = 'ADMIN',
   USER = 'USER',
+  SUPER_ADMIN = 'SUPER_ADMIN',
 }
 
 export const filterUsersByUser = (users: DomainModel<User>, currentUser: User): DomainModel<User> => {
