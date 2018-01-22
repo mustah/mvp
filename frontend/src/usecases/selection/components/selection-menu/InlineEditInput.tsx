@@ -15,6 +15,7 @@ interface Props {
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;
+  selectSavedSelection: (id: uuid) => void;
 }
 
 interface State extends IdNamed {
@@ -51,16 +52,25 @@ export class InlineEditInput extends React.Component<Props, State> {
       </Row>
     );
   }
-  renderResetButton = (): React.ReactNode => {
-    return <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>;
+
+  renderResetButton = (): React.ReactNode =>
+    <ButtonLink onClick={this.props.resetSelection}>{translate('reset selection')}</ButtonLink>
+
+  renderSelectionResetButton = (): React.ReactNode => {
+    const {id, name} = this.props.selection;
+    const reset = () => this.props.selectSavedSelection(id);
+    return <ButtonLink onClick={reset}>{`${translate('reset to')} ${name}`}</ButtonLink>;
   }
+
   onChange = (event: any): void => this.setState({name: event.target.value, isChanged: true});
+
   onSave = (): void => {
     const {updateSelection, selection} = this.props;
     const {name} = this.state;
     this.setState({isChanged: false});
     updateSelection({...selection, name});
   }
+
   onSaveAs = (): void => {
     const {saveSelection, selection} = this.props;
     const {name} = this.state;
@@ -73,6 +83,7 @@ export class InlineEditInput extends React.Component<Props, State> {
     const {isChanged, name, id} = this.state;
     const shouldRenderActionButtons = isChanged || this.props.isChanged || isInitialSelection(id);
     const shouldRenderResetButton = !shouldRenderActionButtons && isSavedSelection(id);
+    const shouldRenderResetSelectionButton = !isInitialSelection(id) && this.props.isChanged;
 
     return (
       <RowBottom className="InlineEditInput">
@@ -87,6 +98,7 @@ export class InlineEditInput extends React.Component<Props, State> {
         />
         {shouldRenderActionButtons && this.renderActionButtons()}
         {shouldRenderResetButton && this.renderResetButton()}
+        {shouldRenderResetSelectionButton && this.renderSelectionResetButton()}
       </RowBottom>
     );
   }

@@ -15,7 +15,7 @@ interface OwnProps {
   children?: Children;
 }
 
-const SideMenuContainerComponent = ({isSideMenuOpen, children}: StateToProps & OwnProps) => {
+const SideMenu = ({isSideMenuOpen, children}: StateToProps & OwnProps) => {
 
   const containerStyle: React.CSSProperties = {left: drawerWidth};
 
@@ -38,4 +38,4 @@ const mapStateToProps = ({ui}: RootState): StateToProps => {
 };
 
 export const SideMenuContainer =
-  connect<StateToProps, {}, OwnProps>(mapStateToProps)(SideMenuContainerComponent);
+  connect<StateToProps, {}, OwnProps>(mapStateToProps)(SideMenu);
