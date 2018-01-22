@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {Dialog} from '../../../components/dialog/Dialog';
+import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -47,6 +48,7 @@ interface StateToProps extends TabsContainerStateToProps {
   paginatedList: uuid[];
   pagination: Pagination;
   selectedMaker: Maybe<Gateway>;
+  isFetching: boolean;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -70,6 +72,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     selectEntryAdd,
     selectedMaker,
     closeClusterDialog,
+    isFetching,
   } = props;
 
   const hasGateways: boolean = isMarkersWithinThreshold(gateways);
@@ -91,19 +94,29 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
+        <Loader isFetching={isFetching}>
+          <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
+        </Loader>
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-        <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
+        <Loader isFetching={isFetching}>
+          <div>
+            <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
+            <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
+          </div>
+        </Loader>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
-          <Map>
-            <ClusterContainer markers={gateways}/>
-          </Map>
-        </Content>
-        {dialog}
+        <Loader isFetching={isFetching}>
+          <div>
+            <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
+              <Map>
+                <ClusterContainer markers={gateways}/>
+              </Map>
+            </Content>
+            {dialog}
+          </div>
+        </Loader>
       </TabContent>
     </Tabs>
   );
@@ -119,6 +132,7 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
     paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
     pagination,
     selectedMaker: getSelectedGatewayMarker(map),
+    isFetching: gateways.isFetching,
   };
 };
 
