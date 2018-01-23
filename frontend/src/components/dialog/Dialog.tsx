@@ -1,7 +1,7 @@
 import {Dialog as MaterialDialog} from 'material-ui';
 import * as React from 'react';
 import {Children, OnClick} from '../../types/Types';
-import {ButtonClose} from '../buttons/ButtonClose';
+import {ButtonClose} from '../buttons/DialogButtons';
 
 interface Props {
   children: Children;

@@ -8,18 +8,18 @@ import {ActionsDropdown, MenuItems} from './ActionsDropdown';
 
 interface Props {
   id: uuid;
-  deleteUser: OnClickWithId;
+  openDeleteAlert: OnClickWithId;
 }
 
-export const UserActionsDropdown = ({id, deleteUser}: Props) => {
+export const UserActionsDropdown = ({id, openDeleteAlert}: Props) => {
 
-  const proxiedDelete = () => deleteUser(id);
+  const openAlert = () => openDeleteAlert(id);
 
   const menuItems: MenuItems = [(
     <Link to={`${routes.adminUsersModify}/${id}`} className="link" key={`0-${id}`}>
       <ActionMenuItem name={translate('edit user')}/>
     </Link>),
-    <ActionMenuItem name={translate('delete user')} onClick={proxiedDelete} key={`1-${id}`}/>,
+    <ActionMenuItem name={translate('delete user')} onClick={openAlert} key={`1-${id}`}/>,
   ];
 
   return (<ActionsDropdown menuItems={menuItems}/>);

@@ -35,6 +35,15 @@ msgstr "delete user"
 msgid "close"
 msgstr "close"
 
+msgid "confirm"
+msgstr "confirm"
+
+msgid "cancel"
+msgstr "cancel"
+
+msgid "are you sure you want to delete this user"
+msgstr "are you sure you want to delete this user"
+
 msgid "latest"
 msgstr "latest"
 

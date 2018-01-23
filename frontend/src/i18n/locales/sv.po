@@ -35,6 +35,15 @@ msgstr "ta bort användare"
 msgid "close"
 msgstr "stäng"
 
+msgid "confirm"
+msgstr "bekräfta"
+
+msgid "cancel"
+msgstr "avbryt"
+
+msgid "are you sure you want to delete this user"
+msgstr "är du säker på att du vill ta bort den här användaren"
+
 msgid "latest"
 msgstr "senaste"
 

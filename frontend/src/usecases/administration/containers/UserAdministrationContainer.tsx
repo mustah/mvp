@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
 import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
+import {DeleteUserAlert} from '../../../components/dialog/DeleteUserDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
@@ -37,17 +38,32 @@ interface DispatchToProps {
   paginationChangePage: OnChangePage;
 }
 
-class UserAdministration extends React.Component<StateToProps & DispatchToProps> {
+interface State {
+  isDeleteDialogOpen: boolean;
+  userToDelete?: uuid;
+}
+
+class UserAdministration extends React.Component<StateToProps & DispatchToProps, State> {
+
+  state: State = {isDeleteDialogOpen: false};
+
   componentDidMount() {
     const {fetchUsers, encodedUriParametersForUsers} = this.props;
 
     fetchUsers(encodedUriParametersForUsers);
   }
 
+  openDialog = (id: uuid) => {
+    this.setState({isDeleteDialogOpen: true, userToDelete: id});
+  }
+
+  closeDialog = () => this.setState({isDeleteDialogOpen: false});
+
+  deleteSelectedUser = () => this.props.deleteUser(this.state.userToDelete!);
+
   render() {
     const {
       currentUser,
-      deleteUser,
       users,
       isFetching,
       pagination,
@@ -60,7 +76,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown deleteUser={deleteUser} id={id}/>;
+      <UserActionsDropdown openDeleteAlert={this.openDialog} id={id}/>;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
@@ -69,7 +85,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     return (
       <Loader isFetching={isFetching}>
         <Column>
-          <UserLinkButton to={routes.adminUsersAdd} text={`+ ${firstUpperTranslated('add user')}`} />
+          <UserLinkButton to={routes.adminUsersAdd} text={`+ ${firstUpperTranslated('add user')}`}/>
           <Table result={paginatedList} entities={usersToRender}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
@@ -93,6 +109,11 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
             />
           </Table>
           <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={usersCount}/>
+          <DeleteUserAlert
+            isOpen={this.state.isDeleteDialogOpen}
+            close={this.closeDialog}
+            confirm={this.deleteSelectedUser}
+          />
         </Column>
       </Loader>
     );
