@@ -8,41 +8,14 @@ subsequently test.
 Some of them requires Docker, see the bottom of this file for instructions on
 that.
 
-### Full-stack application and PostgreSQL in docker (docker-compose)
-This is the recommended way to verify your changes using a local setup as
-similar to production as possible (disregarding actual production data, of
-course). This execution mode is supported by
+### Only PostgreSQL in docker with docker-compose on localhost
+This execution mode is supported by
 [docker-compose](https://docs.docker.com/compose/), which is a tool for running
 multi-container Docker applications.
 
 The [docker-compose.yml] file controls the setup of the containers (one for
 running our application, and one for running a PostgreSQL instance).
 
-The application container is started with the "postgresql" Spring profile (see
-[backend/src/main/resources/application-postgresql.properties]), which makes sure
-that the database is connected to at the correct URL, with the correct
-credentials.
-
-This mode is started by running
-
-```
-./gradlew composeUp
-```
-
-and stopped by running
-
-```
-./gradlew composeDown
-```
-
-When launched in this mode, the address on which the web server is available is
-printed when everything is up and running. This URL may vary between runs and
-host systems.
-
-> Note: Currently, all data volumes (including the PostgreSQL data volume) is
-> destroyed when you run the `composeDown` task.
-
-### Only PostgreSQL in docker with docker-compose on localhost
 It's very easy to just start postgresql docker container and pull it down when finished, with the 
 command:
 
@@ -55,29 +28,6 @@ arguments for the configuration in your idea:
 
 and active profile, set to `postgresql`.
  
-
-### Only PostgreSQL in docker with gradle task
-As a convenience, there is also a gradle task that only starts the Postgres
-service. This allows you to use our primary database, while also taking
-advantage of Spring devtools, interactive debuggers and such.
-
-This uses the same [docker-compose.yml] file, but maps port 5432 (the default
-PostgreSQL port) to port 5432 on the host instead of dynamically mapping it.
-This allows us to preconfigure the database connection for the application
-without having to first figure out what port to connect to.
-
-The database is started by running
-
-```
-./gradlew composePostgres
-```
-
-and stopped by running
-
-```
-./gradlew composeDownAndRemovePostgres
-```
-
 ### Backend only
 If the changes you're working on are isolated to the backend, and do not rely
 on any database changes, this is probably the mode you're looking for. It is
