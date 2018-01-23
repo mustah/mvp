@@ -14,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import static com.elvaco.mvp.core.Roles.ADMIN;
-import static com.elvaco.mvp.core.Roles.SUPER_ADMIN;
-import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
@@ -54,17 +51,17 @@ public class UserDatabaseLoader implements CommandLineRunner {
     ));
 
     roleRepository.save(asList(
-      new RoleEntity(USER),
-      new RoleEntity(ADMIN),
-      new RoleEntity(SUPER_ADMIN)
+      RoleEntity.user(),
+      RoleEntity.admin(),
+      RoleEntity.superAdmin()
     ));
 
     Organisation elvaco = new Organisation(1L, "Elvaco", "elvaco");
     Organisation wayneIndustries = new Organisation(2L, "Wayne Industries", "wayne-industries");
 
-    Role user = new Role(USER);
-    Role admin = new Role(ADMIN);
-    Role superAdmin = new Role(SUPER_ADMIN);
+    Role user = Role.user();
+    Role admin = Role.admin();
+    Role superAdmin = Role.superAdmin();
 
     List<User> users = asList(
       new User(

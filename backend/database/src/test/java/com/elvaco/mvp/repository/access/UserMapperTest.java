@@ -14,9 +14,6 @@ import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
-import static com.elvaco.mvp.core.Roles.ADMIN;
-import static com.elvaco.mvp.core.Roles.SUPER_ADMIN;
-import static com.elvaco.mvp.core.Roles.USER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,11 +38,11 @@ public class UserMapperTest {
   public void userEntityMustHaveRoles() {
     UserEntity userEntity = new UserEntity();
     userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
-    userEntity.roles = singletonList(new RoleEntity(USER));
+    userEntity.roles = singletonList(RoleEntity.user());
 
     List<Role> roles = userMapper.toDomainModel(userEntity).roles;
 
-    assertThat(roles).containsExactly(new Role(USER));
+    assertThat(roles).containsExactly(Role.user());
   }
 
   @Test
@@ -53,7 +50,7 @@ public class UserMapperTest {
     User user = userMapper.toDomainModel(createUserEntity());
 
     assertThat(user.id).isEqualTo(1);
-    assertThat(user.roles).containsExactly(new Role(USER), new Role(SUPER_ADMIN));
+    assertThat(user.roles).containsExactly(Role.user(), Role.superAdmin());
   }
 
   @Test
@@ -79,7 +76,7 @@ public class UserMapperTest {
         user.organisation.name,
         user.organisation.code
       ),
-      asList(new RoleEntity(ADMIN), new RoleEntity(USER))
+      asList(RoleEntity.admin(), RoleEntity.user())
     ));
   }
 
@@ -90,7 +87,7 @@ public class UserMapperTest {
       "a@b.com",
       "letmein",
       new Organisation(1L, "Elvaco", "elvaco"),
-      asList(new Role(ADMIN), new Role(USER))
+      asList(Role.admin(), Role.user())
     );
   }
 
@@ -101,7 +98,7 @@ public class UserMapperTest {
     userEntity.password = passwordEncoder.encode("letmein");
     userEntity.email = "a@b.com";
     userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
-    userEntity.roles = asList(new RoleEntity(USER), new RoleEntity(SUPER_ADMIN));
+    userEntity.roles = asList(RoleEntity.user(), RoleEntity.superAdmin());
     return userEntity;
   }
 }
