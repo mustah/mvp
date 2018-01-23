@@ -13,27 +13,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserDetailsMapperTest {
 
   private static final Organisation ELVACO = new Organisation(1L, "Elvaco", "elvaco");
   private static final Organisation WAYNE_INDUSTRIES = new Organisation(2L, "Wayne", "Wayne Inc");
 
-  @Test(expected = NullPointerException.class)
-  public void throwsWhenUsernameIsNull() {
-    User user = new User(
-      2L,
-      "some name",
-      null,
-      "password",
-      new Organisation(1L, "t", "b"),
-      Collections.emptyList()
-    );
-
-    new MvpUserDetails(user);
-  }
-
-  @Test(expected = NullPointerException.class)
+  @Test
   public void throwsWhenPasswordIsNull() {
     User user = new User(
       2L,
@@ -44,7 +31,9 @@ public class UserDetailsMapperTest {
       Collections.emptyList()
     );
 
-    new MvpUserDetails(user);
+    assertThatThrownBy(() -> new MvpUserDetails(user))
+      .isInstanceOf(NullPointerException.class)
+      .hasMessage("User must have a password.");
   }
 
   @Test

@@ -21,8 +21,7 @@ public class MvpUserDetails implements UserDetails {
   private final transient User user;
 
   public MvpUserDetails(User user) {
-    Objects.requireNonNull(user.email);
-    Objects.requireNonNull(user.password);
+    Objects.requireNonNull(user.password, "User must have a password.");
     this.authorities = user.roles.stream()
       .map(r -> r.role)
       .map(role -> new SimpleGrantedAuthority(SPRING_ROLE_PREFIX + role))
