@@ -2,7 +2,6 @@ package com.elvaco.mvp.security;
 
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.exception.UserNotFound;
-import com.elvaco.mvp.mapper.UserDetailsMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,7 +17,7 @@ public class JpaUserDetailsService implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userUseCases.findByEmail(username)
-      .map(UserDetailsMapper::toUserDetails)
+      .map(MvpUserDetails::new)
       .orElseThrow(() -> new UserNotFound(username));
   }
 }
