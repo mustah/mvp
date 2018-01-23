@@ -16,17 +16,17 @@ spring:
 zuul:
   routes:
     gateways:
-      path: /api/gateways/**
-      url: http://localhost:4000/api/gateways/
+      path: /v1/api/gateways/**
+      url: http://localhost:4000/v1/api/gateways/
     meters:
-      path: /api/meters/**
-      url: http://localhost:4000/api/meters/
+      path: /v1/api/meters/**
+      url: http://localhost:4000/v1/api/meters/
     selections:
-      path: /api/selections/**
-      url: http://localhost:4000/api/selections/
+      path: /v1/api/selections/**
+      url: http://localhost:4000/v1/api/selections/
     dashboards:
-      path: /api/dashboards/**
-      url: http://localhost:4000/api/dashboards/
+      path: /v1/api/dashboards/**
+      url: http://localhost:4000/v1/api/dashboards/
 
 liquibase:
   enabled: false

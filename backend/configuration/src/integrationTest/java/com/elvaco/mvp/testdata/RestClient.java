@@ -11,6 +11,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import static com.elvaco.mvp.util.Constants.API_V1;
+import static com.elvaco.mvp.util.Constants.AUTHORIZATION;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {
@@ -19,8 +21,12 @@ public final class RestClient {
   private final String baseUrl;
 
   RestClient(int serverPort) {
-    this.baseUrl = "http://localhost:" + serverPort + "/api";
+    this.baseUrl = "http://localhost:" + serverPort + API_V1;
     this.template = new TestRestTemplate(new RestTemplate());
+  }
+
+  public static String apiPathOf(String url) {
+    return API_V1 + url;
   }
 
   public String getBaseUrl() {
@@ -67,14 +73,14 @@ public final class RestClient {
   public RestClient logout() {
     template.getRestTemplate().setInterceptors(
       singletonList((request, body, execution) -> {
-        request.getHeaders().remove(Constants.AUTHORIZATION);
+        request.getHeaders().remove(AUTHORIZATION);
         return execution.execute(request, body);
       }));
     return this;
   }
 
   private RestClient authorization(String token) {
-    return addHeader(Constants.AUTHORIZATION, "Basic " + token);
+    return addHeader(AUTHORIZATION, "Basic " + token);
   }
 
   private RestClient addHeader(String headerName, String value) {

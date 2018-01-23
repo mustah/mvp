@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,7 +65,7 @@ public class UserControllerTest extends IntegrationTest {
     expected.message = "Full authentication is required to access this resource";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
-    expected.path = "/api" + path;
+    expected.path = apiPathOf(path);
 
     UnauthorizedDto error = response.getBody();
     expected.timestamp = error.timestamp;
@@ -85,7 +86,7 @@ public class UserControllerTest extends IntegrationTest {
     expected.message = "Bad credentials";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
-    expected.path = "/api" + path;
+    expected.path = apiPathOf(path);
 
     UnauthorizedDto error = response.getBody();
     expected.timestamp = error.timestamp;

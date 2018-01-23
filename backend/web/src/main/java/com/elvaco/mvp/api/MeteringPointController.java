@@ -5,16 +5,13 @@ import java.util.List;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-@Slf4j
-@RestApi("/api/mps")
+@RestApi("/v1/api/mps")
 public class MeteringPointController {
 
   private final MeteringPointRepository meteringPointRepository;
@@ -24,17 +21,17 @@ public class MeteringPointController {
     this.meteringPointRepository = meteringPointRepository;
   }
 
-  @RequestMapping("{id}")
+  @GetMapping("{id}")
   public MeteringPointEntity meteringPoint(@PathVariable Long id) {
     return meteringPointRepository.findOne(id);
   }
 
-  @RequestMapping
+  @GetMapping
   public List<MeteringPointEntity> meteringPoints() {
     return meteringPointRepository.findAll();
   }
 
-  @RequestMapping(value = "/property-collections", method = RequestMethod.POST)
+  @PostMapping(value = "/property-collections")
   public List<MeteringPointEntity> containsInPropertyCollections(
     @RequestBody PropertyCollectionDto requestModel
   ) {

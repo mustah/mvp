@@ -12,7 +12,7 @@ describe('measurementHelpers', () => {
         quantity: 'Power',
         physicalMeter: {
           rel: 'self',
-          href: 'http://localhost:8080/api/physical-meters/10',
+          href: 'http://localhost:8080/v1/api/physical-meters/10',
         },
       };
       expect(labelOfMeasurement(entity)).toEqual('10');

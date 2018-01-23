@@ -11,7 +11,6 @@ import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
-
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static java.util.Collections.singletonList;
 
-@RestApi("/api/physical-meters")
+@RestApi("/v1/api/physical-meters")
 @ExposesResourceFor(PhysicalMeterEntity.class)
 public class PhysicalMeterController {
 
@@ -47,12 +46,12 @@ public class PhysicalMeterController {
     this.predicateMapper = predicateMapper;
   }
 
-  @RequestMapping("{id}")
+  @GetMapping("{id}")
   public PhysicalMeterEntity physicalMeter(@PathVariable("id") Long id) {
     return repository.findOne(id);
   }
 
-  @RequestMapping("{meterId}/measurements/{quantity}")
+  @GetMapping("{meterId}/measurements/{quantity}")
   public Page<MeasurementDto> measurementsByQuantityForPhysicalMeter(
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
@@ -61,7 +60,7 @@ public class PhysicalMeterController {
     return filterMeasurementDtos(combineParams(pathVars, requestParams), pageable);
   }
 
-  @RequestMapping("{meterId}/measurements")
+  @GetMapping("{meterId}/measurements")
   public Page<MeasurementDto> measurementsForPhysicalMeter(
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
@@ -70,7 +69,7 @@ public class PhysicalMeterController {
     return filterMeasurementDtos(combineParams(pathVars, requestParams), pageable);
   }
 
-  @RequestMapping
+  @GetMapping
   public Page<PhysicalMeterEntity> physicalMeters(Pageable pageable) {
     return repository.findAll(pageable);
   }

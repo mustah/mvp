@@ -4,18 +4,17 @@ import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
-
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestApi("/api/measurements")
+@RestApi("/v1/api/measurements")
 public class MeasurementController {
 
   private final MeasurementRepository repository;
@@ -33,12 +32,12 @@ public class MeasurementController {
     this.predicateMapper = predicateMapper;
   }
 
-  @RequestMapping("{id}")
+  @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
     return toDto(repository.findOne(id));
   }
 
-  @RequestMapping()
+  @GetMapping
   public Page<MeasurementDto> measurements(
     @RequestParam(value = "scale", required = false) String scale,
     @RequestParam MultiValueMap<String, String> requestParams,
