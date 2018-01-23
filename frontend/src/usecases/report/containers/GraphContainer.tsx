@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
+import {Period} from '../../../components/dates/dateModels';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -9,18 +10,21 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {Bold} from '../../../components/texts/Texts';
+import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
 import {MeasurementState} from '../../../state/domain-models/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {Callback, Children} from '../../../types/Types';
+import {Children, uuid} from '../../../types/Types';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
 interface StateToProps {
   measurements: MeasurementState;
+  period: Period;
+  selectedListItems: uuid[];
 }
 
 interface OwnProps {
@@ -28,7 +32,7 @@ interface OwnProps {
 }
 
 interface DispatchToProps {
-  fetchMeasurements: Callback;
+  fetchMeasurements: (encodedUriParameters: string) => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -66,8 +70,25 @@ class GraphComponent extends React.Component<Props> {
 
   onChangeTab = () => void(0);
 
+  fetchMeasurementDataByMeters = (meterIds: uuid[]): void => {
+    // TODO when proper ids are used in the left hand side selection tree, you can use:
+    // this.props.selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&');
+    const parameters: string[] = meterIds.map((id: uuid) => `meterId=${id.toString()}`);
+    toApiParameters(currentDateRange(this.props.period)).forEach((parameter: string) =>
+      parameters.push(parameter));
+    parameters.push('size=500');
+    // TODO Spring uses 20 as a default size, we
+    this.props.fetchMeasurements(parameters.join('&'));
+  }
+
   componentDidMount() {
-    this.props.fetchMeasurements();
+    this.fetchMeasurementDataByMeters([1, 2, 3]);
+  }
+
+  componentWillReceiveProps(nextProps: Props) {
+    if (JSON.stringify(this.props.selectedListItems) !== JSON.stringify(nextProps.selectedListItems)) {
+      this.fetchMeasurementDataByMeters([1, 2, 3]);
+    }
   }
 
   render() {
@@ -115,9 +136,17 @@ class GraphComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({domainModels: {measurements}}: RootState): StateToProps => ({
-  measurements,
-});
+const mapStateToProps =
+  ({
+     domainModels: {measurements},
+     report: {selectedListItems},
+     searchParameters: {selection: {selected: {period}}},
+   }: RootState): StateToProps =>
+    ({
+      measurements,
+      selectedListItems,
+      period,
+    });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMeasurements,

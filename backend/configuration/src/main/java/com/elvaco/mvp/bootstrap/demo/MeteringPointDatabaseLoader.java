@@ -54,7 +54,12 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
     organisationEntity.name = "Elvaco AB";
     organisationRepository.save(organisationEntity);
 
-    for (int i = 0; i < 10; ++i) {
+    int meters = 10;
+    int daysPerMeter = 30;
+    int measurementCount = daysPerMeter * 24 * 4; // One day, 15-minute delivery interval
+    Instant firstDeliveryInstant = Instant.now().minus(daysPerMeter, ChronoUnit.DAYS);
+
+    for (int i = 0; i < meters; ++i) {
       String meterIdentity = "DEMO-METER-" + i;
 
       // Metering points
@@ -74,8 +79,6 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
       physicalMeterRepository.save(physicalMeterEntity);
 
       // Measurements
-      final int measurementCount = 24 * 4; // One day, 15-minute delivery interval
-      Instant firstDeliveryInstant = Instant.now().minus(24, ChronoUnit.HOURS);
       List<MeasurementEntity> measurementEntities = new ArrayList<>();
       for (int j = 0; j < measurementCount; ++j) {
         MeasurementEntity measurementEntity = new MeasurementEntity(

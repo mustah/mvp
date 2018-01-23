@@ -1,7 +1,9 @@
 import {Period} from '../components/dates/dateModels';
+import {EndPoints, PaginationMetadata} from '../state/domain-models/domainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
+import {Maybe} from './Maybe';
 
 interface ParameterNames {
   [key: string]: string;
@@ -73,3 +75,27 @@ export const makeUrl = (endpoint: string, encodedUriParameters?: string): string
     return endpoint;
   }
 };
+
+const navigatePageinatedEndpoint =
+  (direction: 'next' | 'previous', endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> => {
+    if ((currentPage.last && direction === 'next') || (currentPage.first && direction === 'previous')) {
+      return Maybe.nothing();
+    }
+
+    const parameters: string[] = [];
+    if (Array.isArray(currentPage.sort)) {
+      currentPage.sort.forEach((current) =>
+        parameters.push(`sort=${encodeURIComponent(current.property)},${current.direction}`));
+    }
+
+    const nextPage = direction === 'next' ? currentPage.number + 1 : currentPage.number - 1;
+    parameters.push(`number=${nextPage}`);
+
+    return Maybe.just(makeUrl(endpoint, parameters.join('&')));
+  };
+
+export const urlForNextPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
+  navigatePageinatedEndpoint('next', endpoint, currentPage);
+
+export const urlForPreviousPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
+  navigatePageinatedEndpoint('previous', endpoint, currentPage);

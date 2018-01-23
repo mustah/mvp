@@ -1,3 +1,4 @@
+import {Period} from '../../../../components/dates/dateModels';
 import {saved} from '../saveReducer';
 import {saveSelectionAction, updateSelectionAction} from '../selectionActions';
 import {SelectionState} from '../selectionModels';
@@ -11,6 +12,7 @@ describe('selectionReducer', () => {
     selected: {
       cities: [1, 2],
       addresses: [1, 2, 3],
+      period: Period.latest,
     },
   };
 
@@ -22,6 +24,7 @@ describe('selectionReducer', () => {
       isChanged: false,
       selected: {
         cities: [1, 2],
+        period: Period.latest,
       },
     };
 
