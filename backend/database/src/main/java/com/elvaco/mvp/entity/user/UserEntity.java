@@ -56,16 +56,6 @@ public class UserEntity implements Serializable {
   public UserEntity() {}
 
   public UserEntity(
-    String name,
-    String email,
-    String password,
-    OrganisationEntity organisation,
-    Collection<RoleEntity> roles
-  ) {
-    this(null, name, email, password, organisation, roles);
-  }
-
-  public UserEntity(
     Long id,
     String name,
     String email,
