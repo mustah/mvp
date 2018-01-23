@@ -53,8 +53,7 @@ interface SortingOptions {
   descending: boolean;
 }
 
-export interface PaginatedResult {
-  content: uuid[];
+export interface PaginationMetadata {
   first: boolean;
   last: boolean;
   number: number;
@@ -63,6 +62,10 @@ export interface PaginatedResult {
   sort: SortingOptions[] | null;
   totalElements: number;
   totalPages: number;
+}
+
+export interface PaginatedResult extends PaginationMetadata {
+  content: uuid[];
 }
 
 export interface NormalizedPaginated<T> {

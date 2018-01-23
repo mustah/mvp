@@ -1,10 +1,15 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/testDataFactory';
+import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {
-  addSelectionAction, closeSelectionPageAction, deselectSelection, resetSelectionAction,
-  selectSavedSelectionAction, setSelectionAction,
+  addSelectionAction,
+  closeSelectionPageAction,
+  deselectSelection,
+  resetSelectionAction,
+  selectSavedSelectionAction,
+  setSelectionAction,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
@@ -18,6 +23,7 @@ describe('selectionReducer', () => {
     selected: {
       cities: ['got', 'sto'],
       addresses: [1, 2, 3],
+      period: Period.latest,
     },
   };
 
@@ -235,7 +241,7 @@ describe('selectionReducer', () => {
         id: 5,
         name: 'something else',
         isChanged: true,
-        selected: {cities: ['sto'], addresses: [1, 2, 3]},
+        selected: {cities: ['sto'], addresses: [1, 2, 3], period: Period.latest},
       });
     });
   });

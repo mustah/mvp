@@ -1,4 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
+import {Period} from '../../../components/dates/dateModels';
 import {Action, uuid} from '../../../types/Types';
 import {
   ADD_SELECTION,
@@ -12,7 +13,6 @@ import {
   UPDATE_SELECTION,
 } from './selectionActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
-import {Period} from '../../../components/dates/dateModels';
 
 export const initialState: SelectionState = {
   id: -1,
@@ -36,7 +36,7 @@ interface SelectionActionModel {
 }
 
 const addSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
-  const selectedIds: Set<FilterParam> =  new Set<FilterParam>(state.selected[parameter] as FilterParam[]);
+  const selectedIds = new Set<FilterParam>(state.selected[parameter] as FilterParam[]);
   Array.isArray(id) ? id.forEach((filterParam) => selectedIds.add(filterParam)) : selectedIds.add(id);
   return {
     ...state,
@@ -73,7 +73,7 @@ const updatePeriod = (state: SelectionState, {payload}: Action<Period>): Selecti
 
 const removeSelected = (state: SelectionState, {payload}: Action<SelectionParameter>): SelectionState => {
   const {parameter, id} = payload;
-  const selectedIds: uuid[] = state.selected[parameter]! as uuid[];
+  const selectedIds = state.selected[parameter]! as uuid[];
   return {
     ...state,
     isChanged: true,

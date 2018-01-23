@@ -1,5 +1,5 @@
 import {Period} from '../components/dates/dateModels';
-import {EndPoints, PaginationMetadata, SortingOptions} from '../state/domain-models/domainModels';
+import {EndPoints, PaginationMetadata} from '../state/domain-models/domainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
@@ -84,7 +84,7 @@ const navigatePageinatedEndpoint =
 
     const parameters: string[] = [];
     if (Array.isArray(currentPage.sort)) {
-      currentPage.sort.forEach((current: SortingOptions) =>
+      currentPage.sort.forEach((current) =>
         parameters.push(`sort=${encodeURIComponent(current.property)},${current.direction}`));
     }
 
