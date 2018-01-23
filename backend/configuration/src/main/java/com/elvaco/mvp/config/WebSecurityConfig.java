@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,10 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.util.Constants.API_V1;
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
-class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Configuration
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String API = API_V1 + "/**";
   private static final String H2_CONSOLE = "/h2-console/**";
@@ -28,7 +26,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserDetailsService userDetailsService;
 
   @Autowired
-  SecurityConfig(UserDetailsService userDetailsService) {
+  WebSecurityConfig(UserDetailsService userDetailsService) {
     this.userDetailsService = userDetailsService;
   }
 
@@ -54,7 +52,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+  protected void configure(AuthenticationManagerBuilder auth) {
     auth.authenticationProvider(authProvider());
   }
 

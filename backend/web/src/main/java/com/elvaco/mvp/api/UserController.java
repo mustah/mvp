@@ -9,6 +9,7 @@ import com.elvaco.mvp.dto.UserWithPasswordDto;
 import com.elvaco.mvp.exception.UserNotFound;
 import com.elvaco.mvp.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,8 +32,8 @@ public class UserController {
     this.userMapper = userMapper;
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_ADMIN')")
   @GetMapping
+  @PostFilter("hasPermission(filterObject, 'read')")
   public List<UserDto> allUsers() {
     return userUseCases.findAll()
       .stream()
@@ -42,19 +43,20 @@ public class UserController {
 
   @Nullable
   @GetMapping("{id}")
+  @PreAuthorize("hasPermission(#id, 'com.elvaco.mvp.dto.UserDto', 'read')")
   public UserDto userById(@PathVariable Long id) {
     return userUseCases.findById(id)
       .map(userMapper::toDto)
       .orElse(null);
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN')")
+  @PreAuthorize("hasPermission(#user, 'create')")
   @PostMapping
   public UserDto createUser(@RequestBody UserWithPasswordDto user) {
     return userMapper.toDto(userUseCases.create(userMapper.toDomainModel(user)));
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN', 'ROLE_ADMIN')")
+  @PreAuthorize("hasPermission(#user, 'update')")
   @PutMapping
   public UserDto updateUser(@RequestBody UserDto user) {
     return userUseCases.update(userMapper.toDomainModel(user))
@@ -62,7 +64,7 @@ public class UserController {
       .orElseThrow(() -> new UserNotFound(user.id));
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN')")
+  @PreAuthorize("hasPermission(#id, 'com.elvaco.mvp.dto.UserDto', 'delete')")
   @DeleteMapping("{id}")
   public UserDto deleteUser(@PathVariable Long id) {
     UserDto user = userUseCases.findById(id)
