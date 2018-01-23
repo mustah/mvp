@@ -14,10 +14,11 @@ import static java.util.stream.Collectors.toList;
 
 public class MvpUserDetails implements UserDetails {
 
+  private static final long serialVersionUID = 1234L;
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
 
   private final List<GrantedAuthority> authorities;
-  private final User user;
+  private final transient User user;
 
   public MvpUserDetails(User user) {
     Objects.requireNonNull(user.email);
