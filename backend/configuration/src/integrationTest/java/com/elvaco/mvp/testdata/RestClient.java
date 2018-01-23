@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import static com.elvaco.mvp.util.Constants.AUTHORIZATION;
-import static com.elvaco.mvp.util.Constants.V1_API;
+import static com.elvaco.mvp.util.Constants.API_V1;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {
@@ -21,8 +21,12 @@ public final class RestClient {
   private final String baseUrl;
 
   RestClient(int serverPort) {
-    this.baseUrl = "http://localhost:" + serverPort + V1_API;
+    this.baseUrl = "http://localhost:" + serverPort + API_V1;
     this.template = new TestRestTemplate(new RestTemplate());
+  }
+
+  public static String apiPathOf(String url) {
+    return API_V1 + url;
   }
 
   public String getBaseUrl() {
