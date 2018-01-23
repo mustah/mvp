@@ -10,6 +10,8 @@ import org.springframework.core.annotation.AliasFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.elvaco.mvp.util.Constants.V1_API;
+
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -17,5 +19,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 @interface RestApi {
   @AliasFor(attribute = "path", annotation = RequestMapping.class)
-  String value() default "/v1/api";
+  String value() default V1_API;
 }

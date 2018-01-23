@@ -15,12 +15,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.elvaco.mvp.util.Constants.V1_API;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String API = "/v1/api/**";
+  private static final String API = V1_API + "/**";
   private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;
