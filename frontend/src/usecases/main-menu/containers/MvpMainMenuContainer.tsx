@@ -1,9 +1,7 @@
-import ContentFilterList from 'material-ui/svg-icons/content/filter-list';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../app/routes';
-import {colors, iconStyle} from '../../../app/themes';
 import {IconCollection} from '../../../components/icons/IconCollection';
 import {IconDashboard} from '../../../components/icons/IconDashboard';
 import {IconReport} from '../../../components/icons/IconReport';
@@ -24,13 +22,6 @@ const MvpMainMenu = ({pathname}: StateToProps) => {
   return (
     <MainMenuWrapper>
         <Column>
-          <Link to={routes.selection} className="link">
-            <MenuItem
-              name={translate('selection')}
-              isSelected={routes.selection === pathname}
-              icon={<ContentFilterList style={iconStyle} color={colors.white} className="MenuItem-icon"/>}
-            />
-          </Link>
           <Link to={routes.dashboard} className="link">
             <MenuItem
               name={translate('dashboard')}
