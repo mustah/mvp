@@ -27,7 +27,7 @@ export interface Selectable {
 }
 
 export interface Clickable {
-  onClick: OnClick;
+  onClick?: OnClick;
 }
 
 export interface IdNamed {
