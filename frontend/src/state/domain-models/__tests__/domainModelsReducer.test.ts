@@ -174,7 +174,7 @@ describe('domainModelsReducer', () => {
       unit: 'mW',
       physicalMeter: {
         rel: 'self',
-        href: 'http://localhost:8080/api/physical-meters/1',
+        href: 'http://localhost:8080/v1/api/physical-meters/1',
       },
     };
 
@@ -189,7 +189,7 @@ describe('domainModelsReducer', () => {
               created: 1516261161693,
               physicalMeter: {
                 rel: 'self',
-                href: 'http://localhost:8080/api/physical-meters/1',
+                href: 'http://localhost:8080/v1/api/physical-meters/1',
               },
             },
           },

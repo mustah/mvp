@@ -19,7 +19,8 @@ public final class RestClient {
   private final String baseUrl;
 
   RestClient(int serverPort) {
-    this.baseUrl = "http://localhost:" + serverPort + "/api";
+    this.baseUrl = "http://localhost:" + serverPort + "" +
+                   "/v1/api";
     this.template = new TestRestTemplate(new RestTemplate());
   }
 

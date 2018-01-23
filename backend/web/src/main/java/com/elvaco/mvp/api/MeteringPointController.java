@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Slf4j
-@RestApi("/api/mps")
+@RestApi("/v1/api/mps")
 public class MeteringPointController {
 
   private final MeteringPointRepository meteringPointRepository;

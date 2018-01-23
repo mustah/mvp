@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static java.util.Collections.singletonList;
 
-@RestApi("/api/physical-meters")
+@RestApi("/v1/api/physical-meters")
 @ExposesResourceFor(PhysicalMeterEntity.class)
 public class PhysicalMeterController {
 

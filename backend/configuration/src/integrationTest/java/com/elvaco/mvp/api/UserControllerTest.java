@@ -64,7 +64,7 @@ public class UserControllerTest extends IntegrationTest {
     expected.message = "Full authentication is required to access this resource";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
-    expected.path = "/api" + path;
+    expected.path = "/v1/api/" + path;
 
     UnauthorizedDto error = response.getBody();
     expected.timestamp = error.timestamp;
@@ -85,7 +85,7 @@ public class UserControllerTest extends IntegrationTest {
     expected.message = "Bad credentials";
     expected.status = HttpStatus.UNAUTHORIZED.value();
     expected.error = "Unauthorized";
-    expected.path = "/api" + path;
+    expected.path = "/v1/api" + path;
 
     UnauthorizedDto error = response.getBody();
     expected.timestamp = error.timestamp;

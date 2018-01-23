@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-  private static final String API = "/api/**";
+  private static final String API = "/v1/api/**";
   private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;

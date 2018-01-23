@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestApi("/api/authenticate")
+@RestApi("/v1/api/authenticate")
 public class AuthController {
 
   private final UserUseCases userUseCases;

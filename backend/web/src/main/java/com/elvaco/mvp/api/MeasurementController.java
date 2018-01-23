@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestApi("/api/measurements")
+@RestApi("/v1/api/measurements")
 public class MeasurementController {
 
   private final MeasurementRepository repository;

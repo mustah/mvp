@@ -32,7 +32,7 @@ describe('reportHelpers', () => {
             created: 1516521585107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
           10: {
@@ -43,7 +43,7 @@ describe('reportHelpers', () => {
             created: 1516529685107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
         };
@@ -63,7 +63,7 @@ describe('reportHelpers', () => {
             created: 1516521585107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
           10: {
@@ -74,7 +74,7 @@ describe('reportHelpers', () => {
             created: 1516529685107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
         };
@@ -95,7 +95,7 @@ describe('reportHelpers', () => {
             created: 1516521585107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
           10: {
@@ -106,7 +106,7 @@ describe('reportHelpers', () => {
             created: 1516529685107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
           11: {
@@ -117,7 +117,7 @@ describe('reportHelpers', () => {
             created: 1516529685107,
             physicalMeter: {
               rel: 'self',
-              href: 'http://localhost:8080/api/physical-meters/1',
+              href: 'http://localhost:8080/v1/api/physical-meters/1',
             },
           },
         };
