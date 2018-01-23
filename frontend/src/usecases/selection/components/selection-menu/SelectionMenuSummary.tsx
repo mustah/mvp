@@ -1,5 +1,8 @@
 import * as React from 'react';
+import {Link} from 'react-router-dom';
+import {routes} from '../../../../app/routes';
 import {ButtonLink} from '../../../../components/buttons/ButtonLink';
+import {IconSelection} from '../../../../components/icons/IconSelection';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Bold, Normal} from '../../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
@@ -27,6 +30,9 @@ export const SelectionMenuSummary = (props: Props) => {
 
   return (
     <RowCenter className="SelectionMenuSummary">
+      <Link to={routes.selection} className="link SelectionIcon-padding">
+        <IconSelection />
+      </Link>
       <Normal>{firstUpperTranslated('selection')}: </Normal>
       <Row>
         <Bold className="Italic">{selectionName}</Bold>
