@@ -5,7 +5,6 @@ import {MessageState} from './messageModels';
 const initialState: MessageState = {
   isOpen: false,
   message: '',
-  messageType: 'success',
 };
 
 export const message = (state: MessageState = initialState, action: Action<any>): MessageState => {

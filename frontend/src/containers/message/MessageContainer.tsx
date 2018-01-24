@@ -17,7 +17,7 @@ const messageStyles: {[key: string]: React.CSSProperties} = {
   success: {backgroundColor: 'green'},
 };
 
-const MessageComponent = ({message = '', isOpen, hideMessage, messageType}: StateToProps & DispatchToProps) => (
+const MessageComponent = ({message = '', isOpen, hideMessage, messageType = ''}: StateToProps & DispatchToProps) => (
   <Snackbar
     autoHideDuration={4000}
     message={message}
