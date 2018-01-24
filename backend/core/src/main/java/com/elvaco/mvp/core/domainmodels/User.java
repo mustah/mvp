@@ -15,6 +15,8 @@ public class User {
   public final String password;
   public final Organisation organisation;
   public final List<Role> roles;
+  public final boolean isAdmin;
+  public final boolean isSuperAdmin;
 
   public User(
     @Nullable Long id,
@@ -30,6 +32,8 @@ public class User {
     this.password = password;
     this.organisation = organisation;
     this.roles = unmodifiableList(roles);
+    this.isSuperAdmin = roles.contains(Role.superAdmin());
+    this.isAdmin = roles.contains(Role.admin());
   }
 
   public User(Long id, String name, String email, Organisation organisation, List<Role> roles) {
