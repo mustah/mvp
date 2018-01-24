@@ -110,7 +110,7 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<UserDto> response = asSuperAdmin()
       .post("/users", user, UserDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     UserDto savedUser = response.getBody();
     assertThat(savedUser.id).isPositive();
     assertThat(savedUser.name).isEqualTo(user.name);
@@ -191,7 +191,7 @@ public class UserControllerTest extends IntegrationTest {
       .post("/users", user, UserDto.class)
       .getStatusCode();
 
-    assertThat(statusCode).isEqualTo(HttpStatus.OK);
+    assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
 
     statusCode = restClient()
       .logout()
@@ -208,8 +208,7 @@ public class UserControllerTest extends IntegrationTest {
 
     ResponseEntity<UserDto> response = asSuperAdmin().post("/users", user, UserDto.class);
 
-    // TODO replace OK with CREATED
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     UserDto savedUser = response.getBody();
     assertThat(savedUser.id).isPositive();
@@ -223,8 +222,7 @@ public class UserControllerTest extends IntegrationTest {
 
     ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
 
-    // TODO replace OK with CREATED
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     UserDto savedUser = response.getBody();
     assertThat(savedUser.id).isPositive();

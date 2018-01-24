@@ -8,6 +8,8 @@ import com.elvaco.mvp.dto.UserWithPasswordDto;
 import com.elvaco.mvp.exception.UserNotFound;
 import com.elvaco.mvp.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,8 +52,9 @@ public class UserController {
 
   @PreAuthorize("hasPermission(#user, 'create')")
   @PostMapping
-  public UserDto createUser(@RequestBody UserWithPasswordDto user) {
-    return userMapper.toDto(userUseCases.create(userMapper.toDomainModel(user)));
+  public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(userUseCases.create(
+      userMapper.toDomainModel(user))));
   }
 
   @PreAuthorize("hasPermission(#user, 'update')")
