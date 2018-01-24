@@ -24,6 +24,9 @@ public class OrganisationPermissionEvaluatorTest {
   private static UserMapper userMapper;
   private Organisation elvaco = new Organisation(1L, "Elvaco AB", "elvaco");
   private Organisation other = new Organisation(2L, "Other, Inc.", "other");
+
+  private User superAdmin = new User("Super Admin", "root@superus.er", "password", elvaco, Arrays
+    .asList(Role.superAdmin()));
   private User elvacoAdmin = new User("Elvaco Administrator", "admin@elvaco.se", "password",
     elvaco, Arrays.asList(Role.admin()));
   private User elvacoUser = new User("Elvaco User", "user@elvaco.se", "password", elvaco, Arrays
@@ -49,9 +52,15 @@ public class OrganisationPermissionEvaluatorTest {
 
   @Before
   public void setUp() {
-    MockedUsers users = new MockedUsers(Arrays.asList(elvacoAdmin, elvacoUser, secondElvacoUser,
+    MockedUsers users = new MockedUsers(Arrays.asList(superAdmin, elvacoAdmin, elvacoUser,
+      secondElvacoUser,
       otherAdmin, otherUser));
     ope = new OrganisationPermissionEvaluator(users, userMapper);
+  }
+
+  @Test
+  public void lastSuperAdminCannotBeDeleted() {
+    assertFalse(ope.evaluateUserDtoPermissions(superAdmin, userMapper.toDto(superAdmin), DELETE));
   }
 
   @Test

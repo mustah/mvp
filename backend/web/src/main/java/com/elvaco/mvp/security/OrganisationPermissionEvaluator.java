@@ -55,10 +55,6 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
 
     Permission permission = Permission.fromString((String) permissionObj);
     User principalUser = optionalUser.get();
-    if (isSuperAdmin(principalUser)) {
-      log.debug("Principal user is SUPER ADMIN - ALLOW!");
-      return true;
-    }
 
     if (targetDomainObject instanceof UserDto) {
       return evaluateUserDtoPermissions(principalUser, (UserDto) targetDomainObject, permission);
@@ -91,6 +87,10 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
   boolean evaluateUserDtoPermissions(User principal, UserDto targetDomainObject, Permission
     permission) {
     if (isSuperAdmin(principal)) {
+      // Disallow deleting last superAdmin
+      if (permission.equals(Permission.DELETE) && users.findByRole(Role.superAdmin()).size() == 1) {
+        return false;
+      }
       return true;
     }
 

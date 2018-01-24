@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Password;
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 
 public interface Users {
@@ -19,4 +20,6 @@ public interface Users {
   User save(User user);
 
   void deleteById(Long id);
+
+  List<User> findByRole(Role role);
 }
