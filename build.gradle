@@ -129,6 +129,10 @@ jsonSchema {
   schemaFolder = 'docs/schema/'
 }
 
+task checkstyle {
+  dependsOn subprojects.collect {it.tasks.withType(Checkstyle)}
+}
+
 task check {
   dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
 }
