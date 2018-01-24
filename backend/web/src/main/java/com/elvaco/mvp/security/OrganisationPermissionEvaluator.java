@@ -5,14 +5,12 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Role;
-import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Slf4j
 public class OrganisationPermissionEvaluator implements PermissionEvaluator {
@@ -22,18 +20,6 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
   public OrganisationPermissionEvaluator(Users users, UserMapper userMapper) {
     this.users = users;
     this.userMapper = userMapper;
-  }
-
-  private static boolean isAdmin(User user) {
-    return user.roles.contains(Role.admin());
-  }
-
-  private static boolean isUser(User user) {
-    return user.roles.contains(Role.user());
-  }
-
-  private static boolean isSuperAdmin(User user) {
-    return user.roles.contains(Role.superAdmin());
   }
 
   @Override
@@ -46,18 +32,12 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
       return false;
     }
 
-    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    Optional<User> optionalUser = users.findByEmail(userDetails.getUsername());
-    if (!optionalUser.isPresent()) {
-      log.warn("Principal user does not exist - DENY!");
-      return false;
-    }
-
+    MvpUserDetails principalUserDetails = (MvpUserDetails) authentication.getPrincipal();
     Permission permission = Permission.fromString((String) permissionObj);
-    User principalUser = optionalUser.get();
 
     if (targetDomainObject instanceof UserDto) {
-      return evaluateUserDtoPermissions(principalUser, (UserDto) targetDomainObject, permission);
+      return evaluateUserDtoPermissions(principalUserDetails, (UserDto) targetDomainObject,
+        permission);
     }
     log.warn("Unknown domain object target type '%s' - DENY!", targetDomainObject.getClass()
       .toString());
@@ -70,7 +50,7 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
     try {
       Class targetClass = Class.forName(targetType);
       if (UserDto.class.isAssignableFrom(targetClass) && targetId instanceof Long) {
-        Optional<UserDto> userDto = users.findById((Long) targetId).map(u -> userMapper.toDto(u));
+        Optional<UserDto> userDto = users.findById((Long) targetId).map(userMapper::toDto);
         // If the target object exists, check permissions; otherwise allow access to non-existent
         // object
         return userDto.map(userDto1 -> hasPermission(authentication, userDto1, permission))
@@ -84,39 +64,35 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
     }
   }
 
-  boolean evaluateUserDtoPermissions(User principal, UserDto targetDomainObject, Permission
+  boolean evaluateUserDtoPermissions(MvpUserDetails principal, UserDto targetDomainObject,
+                                     Permission
     permission) {
-    if (isSuperAdmin(principal)) {
+    if (principal.isSuperAdmin()) {
       // Disallow deleting last superAdmin
-      if (permission.equals(Permission.DELETE) && users.findByRole(Role.superAdmin()).size() == 1) {
-        return false;
-      }
-      return true;
+      return !permission.equals(Permission.DELETE)
+        || users.findByRole(Role.superAdmin()).size() != 1;
     }
 
-    if (!principal.organisation.id.equals(targetDomainObject.organisation.id)) {
+    if (!principal.isWithinOrganisation(userMapper.organisationOf(targetDomainObject
+      .organisation))) {
       return false;
     }
 
-    if (isAdmin(principal)) {
+    if (principal.isAdmin()) {
       // admins can do anything on users of the same organisation
       return true;
     }
 
-    if (isUser(principal)) {
-      switch (permission) {
-        case READ:
-          return true;
-        case UPDATE:
-          return principal.email.equalsIgnoreCase(targetDomainObject.email);
-        case DELETE:
-        case CREATE:
-          return false;
-        default:
-          return false;
-      }
+    switch (permission) {
+      case READ:
+        return true;
+      case UPDATE:
+        return principal.getUsername().equalsIgnoreCase(targetDomainObject.email);
+      case DELETE:
+      case CREATE:
+      default:
+        return false;
     }
-    return false;
   }
 
   public enum Permission {

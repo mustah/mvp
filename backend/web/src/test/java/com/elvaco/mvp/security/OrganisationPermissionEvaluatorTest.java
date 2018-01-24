@@ -60,178 +60,208 @@ public class OrganisationPermissionEvaluatorTest {
 
   @Test
   public void lastSuperAdminCannotBeDeleted() {
-    assertFalse(ope.evaluateUserDtoPermissions(superAdmin, userMapper.toDto(superAdmin), DELETE));
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(superAdmin),
+      userMapper.toDto(superAdmin),
+      DELETE));
   }
 
   @Test
   public void adminCanReadUserInSameOrganisation() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(elvacoUser),
       READ));
   }
 
   @Test
   public void adminCanCreateUserInSameOrganisation() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(elvacoUser),
       CREATE));
   }
 
   @Test
   public void adminCanUpdateUserInSameOrganisation() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(elvacoUser),
       UPDATE));
   }
 
   @Test
   public void adminCanDeleteUserInSameOrganisation() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(elvacoUser),
       DELETE));
 
   }
 
   @Test
   public void regularUserCanReadUsersInSameOrganisation() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(secondElvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(secondElvacoUser),
       READ));
 
   }
 
   @Test
   public void regularUserCannotCreateUserInSameOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(secondElvacoUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(secondElvacoUser),
       CREATE));
   }
 
   @Test
   public void regularUserCannotUpdateUserInSameOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(secondElvacoUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(secondElvacoUser),
       UPDATE));
   }
 
   @Test
   public void regularUserCannotDeleteUserInSameOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(secondElvacoUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(secondElvacoUser),
       DELETE));
   }
 
 
   @Test
   public void adminCannotCreateUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherUser),
       CREATE));
   }
 
   @Test
   public void adminCannotReadUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherUser),
       READ));
   }
 
   @Test
   public void adminCannotUpdateUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherUser),
       UPDATE));
   }
 
   @Test
   public void adminCannotDeleteUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherUser),
       DELETE));
   }
 
   @Test
   public void adminCannotCreateAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherAdmin),
       CREATE));
   }
 
 
   @Test
   public void adminCannotReadAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherAdmin),
       READ));
   }
 
   @Test
   public void adminCannotUpdateAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherAdmin),
       UPDATE));
   }
 
   @Test
   public void adminCannotDeleteAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoAdmin, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoAdmin),
+      userMapper.toDto(otherAdmin),
       DELETE));
   }
 
   @Test
   public void regularUserCannotCreateUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherUser),
       CREATE));
   }
 
   @Test
   public void regularUserCannotReadUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherUser),
       READ));
   }
 
   @Test
   public void regularUserCannotUpdateUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherUser),
       UPDATE));
   }
 
   @Test
   public void regularUserCannotDeleteUserInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherUser),
       DELETE));
   }
 
   @Test
   public void regularUserCannotCreateAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherAdmin),
       CREATE));
   }
 
   @Test
   public void regularUserCannotReadAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherAdmin),
       READ));
   }
 
   @Test
   public void regularUserCannotUpdateAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherAdmin),
       UPDATE));
   }
 
   @Test
   public void regularUserCannotDeleteAdminInOtherOrganisation() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(otherAdmin),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(otherAdmin),
       DELETE));
   }
 
   @Test
   public void userCannotCreateSelf() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(elvacoUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(elvacoUser),
       CREATE));
   }
 
   @Test
   public void userCanReadSelf() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(elvacoUser),
       READ));
   }
 
   @Test
   public void userCanUpdateSelf() {
-    assertTrue(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(elvacoUser),
+    assertTrue(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(elvacoUser),
       UPDATE));
   }
 
   @Test
   public void userCannotDeleteSelf() {
-    assertFalse(ope.evaluateUserDtoPermissions(elvacoUser, userMapper.toDto(elvacoUser),
+    assertFalse(ope.evaluateUserDtoPermissions(new MvpUserDetails(elvacoUser),
+      userMapper.toDto(elvacoUser),
       DELETE));
   }
 }
