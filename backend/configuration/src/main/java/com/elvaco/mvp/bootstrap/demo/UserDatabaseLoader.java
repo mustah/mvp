@@ -72,6 +72,13 @@ public class UserDatabaseLoader implements CommandLineRunner {
         singletonList(user)
       ),
       new User(
+        "Stefan Stefanson",
+        "steste@elvaco.se",
+        "stefan123",
+        elvaco,
+        singletonList(user)
+      ),
+      new User(
         "Emil Tirén",
         "emitir@elvaco.se",
         "emil123",
@@ -87,35 +94,35 @@ public class UserDatabaseLoader implements CommandLineRunner {
       ),
       new User(
         "User Fake",
-        "user@elvaco.se",
+        "user@wayne.se",
         "user123",
         wayneIndustries,
         singletonList(user)
       ),
       new User(
         "Elvis Cohan",
-        "elvis.cohan@elvis.com",
+        "elvis.cohan@wayne.com",
         "elvis123",
         wayneIndustries,
         singletonList(user)
       ),
       new User(
         "Anna Johansson",
-        "annjoh@elvaco.se",
+        "annjoh@wayne.se",
         "anna123",
         wayneIndustries,
         singletonList(user)
       ),
       new User(
         "Maria Svensson",
-        "marsve@elvaco.se",
+        "marsve@wayne.se",
         "maria123",
         wayneIndustries,
         singletonList(user)
       ),
       new User(
         "Erik Karlsson",
-        "erikar@elvaco.se",
+        "erikar@wayne.se",
         "erik123",
         wayneIndustries,
         singletonList(user)

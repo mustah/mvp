@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,6 +46,14 @@ public final class RestClient {
     template.put(apiUrlOf(url), request);
   }
 
+  public <T> ResponseEntity<T> delete(String url, Class<T> responseType) {
+    return template.exchange(baseUrl + url,
+      HttpMethod.DELETE,
+      null,
+      responseType
+    );
+  }
+
   public void delete(String url) {
     template.delete(apiUrlOf(url));
   }
@@ -60,6 +69,20 @@ public final class RestClient {
           );
         }
       };
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
+  }
+
+
+  public <T> ResponseEntity<List<T>> getList(String url, Class<T> listedClass) {
+    ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
+      @Override
+      public Type getType() {
+        return new ParameterizedTypeReferenceImpl(
+          (ParameterizedType) super.getType(),
+          new Type[] {listedClass}
+        );
+      }
+    };
     return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
   }
 
