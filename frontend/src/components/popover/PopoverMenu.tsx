@@ -2,12 +2,12 @@ import * as classNames from 'classnames';
 import Menu from 'material-ui/Menu';
 import Popover from 'material-ui/Popover/Popover';
 import * as React from 'react';
-import {Children, Clickable, OnClick} from '../../types/Types';
+import {Clickable, OnClick, RenderFunction} from '../../types/Types';
 import {Row} from '../layouts/row/Row';
 import origin = __MaterialUI.propTypes.origin;
 
 interface Props {
-  children?: Children;
+  renderPopoverContent: RenderFunction;
   IconComponent: React.StatelessComponent<Clickable>;
   onRequestClose?: OnClick;
   className?: string;
@@ -31,7 +31,7 @@ export class PopoverMenu extends React.Component<Props, State> {
 
   render() {
     const {isOpen, anchorElement} = this.state;
-    const {IconComponent, className, anchorOrigin, targetOrigin} = this.props;
+    const {IconComponent, className, anchorOrigin, targetOrigin, renderPopoverContent} = this.props;
 
     return (
       <Row className={classNames('PopoverMenu', className)}>
@@ -44,7 +44,7 @@ export class PopoverMenu extends React.Component<Props, State> {
           onRequestClose={this.close}
         >
           <Menu>
-            {this.props.children}
+            {renderPopoverContent(this.close)}
           </Menu>
         </Popover>
       </Row>

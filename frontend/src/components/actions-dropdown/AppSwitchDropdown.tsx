@@ -6,6 +6,7 @@ import {Link} from 'react-router-dom';
 import {routes} from '../../app/routes';
 import {colors} from '../../app/themes';
 import {translate} from '../../services/translationService';
+import {RenderFunction} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PopoverMenu} from '../popover/PopoverMenu';
 import {Xsmall} from '../texts/Texts';
@@ -27,6 +28,20 @@ export const AppSwitchDropdown = () => {
       </Xsmall>
     </RowCenter>
   );
+
+  const renderPopoverContent: RenderFunction = () => ([(
+      <Link to={routes.home} className="link" key="mvp">
+        <MenuItem className="first-uppercase">
+          {translate('metering')}
+        </MenuItem>
+      </Link>), (
+      < Link to={routes.admin} className="link" key="admin">
+        <MenuItem className="first-uppercase">
+          {translate('admin')}
+        </MenuItem>
+      </Link>)]
+  );
+
   const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
   const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
 
@@ -35,17 +50,7 @@ export const AppSwitchDropdown = () => {
       IconComponent={MenuIcon}
       anchorOrigin={anchorOrigin}
       targetOrigin={targetOrigin}
-    >
-      <Link to={routes.home} className="link">
-        <MenuItem className="first-uppercase">
-          {translate('metering')}
-        </MenuItem>
-      </Link>
-      <Link to={routes.admin} className="link">
-        <MenuItem className="first-uppercase">
-          {translate('admin')}
-        </MenuItem>
-      </Link>
-    </PopoverMenu>
+      renderPopoverContent={renderPopoverContent}
+    />
   );
 };
