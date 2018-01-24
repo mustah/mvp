@@ -3,8 +3,10 @@ package com.elvaco.mvp.security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Password;
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
 
@@ -43,5 +45,10 @@ class MockedUsers implements Users {
   @Override
   public void deleteById(Long id) {
     throw new UnsupportedOperationException("Not implemented");
+  }
+
+  @Override
+  public List<User> findByRole(Role role) {
+    return users.stream().filter(u -> u.roles.contains(role)).collect(Collectors.toList());
   }
 }

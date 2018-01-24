@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Password;
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -55,5 +56,11 @@ public class UserRepository implements Users {
   @Override
   public void deleteById(Long id) {
     userJpaRepository.delete(id);
+  }
+
+  @Override
+  public List<User> findByRole(Role role) {
+    return userJpaRepository.findByRoles_Role(role.role).stream().map(userMapper::toDomainModel)
+      .collect(toList());
   }
 }
