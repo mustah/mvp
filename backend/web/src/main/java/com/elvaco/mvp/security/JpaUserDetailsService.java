@@ -1,7 +1,6 @@
 package com.elvaco.mvp.security;
 
 import com.elvaco.mvp.core.usecase.UserUseCases;
-import com.elvaco.mvp.exception.UserNotFound;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +17,6 @@ public class JpaUserDetailsService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return userUseCases.findByEmail(username)
       .map(MvpUserDetails::new)
-      .orElseThrow(() -> new UserNotFound(username));
+      .orElseThrow(() -> new UsernameNotFoundException("Bad credentials"));
   }
 }
