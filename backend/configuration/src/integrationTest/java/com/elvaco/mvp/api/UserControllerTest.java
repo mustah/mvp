@@ -50,8 +50,7 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<UserDto> response = asSuperAdmin()
       .get("/users/-999", UserDto.class);
 
-    assertThat(response.getBody()).isNull();
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test

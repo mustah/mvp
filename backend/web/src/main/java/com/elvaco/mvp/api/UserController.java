@@ -1,7 +1,6 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.UserDto;
@@ -41,13 +40,12 @@ public class UserController {
       .collect(toList());
   }
 
-  @Nullable
   @GetMapping("{id}")
   @PreAuthorize("hasPermission(#id, 'com.elvaco.mvp.dto.UserDto', 'read')")
   public UserDto userById(@PathVariable Long id) {
     return userUseCases.findById(id)
       .map(userMapper::toDto)
-      .orElse(null);
+      .orElseThrow(() -> new UserNotFound(id));
   }
 
   @PreAuthorize("hasPermission(#user, 'create')")
