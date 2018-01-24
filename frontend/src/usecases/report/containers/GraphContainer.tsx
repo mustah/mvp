@@ -1,6 +1,15 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -13,8 +22,10 @@ import {Bold} from '../../../components/texts/Texts';
 import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
-import {MeasurementState} from '../../../state/domain-models/measurement/measurementModels';
+import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
+import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
@@ -22,7 +33,7 @@ import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
 interface StateToProps {
-  measurements: MeasurementState;
+  measurements: DomainModel<Measurement>;
   period: Period;
   selectedListItems: uuid[];
 }
@@ -74,10 +85,13 @@ class GraphComponent extends React.Component<Props> {
     // TODO when proper ids are used in the left hand side selection tree, you can use:
     // this.props.selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&');
     const parameters: string[] = meterIds.map((id: uuid) => `meterId=${id.toString()}`);
+
     toApiParameters(currentDateRange(this.props.period)).forEach((parameter: string) =>
       parameters.push(parameter));
+
+    // TODO Spring uses 20 as a default page size, we need to think about how we request graph data
     parameters.push('size=500');
-    // TODO Spring uses 20 as a default size, we
+
     this.props.fetchMeasurements(parameters.join('&'));
   }
 
@@ -93,14 +107,15 @@ class GraphComponent extends React.Component<Props> {
 
   render() {
     const {measurements} = this.props;
-    const graphContents = mapNormalizedPaginatedResultToGraphData(measurements.entities);
+    const graphContents = mapNormalizedPaginatedResultToGraphData(measurements);
     const {data} = graphContents;
     const lines = renderGraphContents(graphContents);
 
     const selectedTab: TabName = TabName.graph;
 
-    // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>, it breaks
-    // Setting width of ResponsiveContainer to 100% will case the menu to overlap when toggled
+    // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
+    // it breaks. Setting width of ResponsiveContainer to 100% will case the menu to overlap when
+    // toggled
     return (
       <div style={style}>
         <Tabs>
@@ -143,7 +158,7 @@ const mapStateToProps =
      searchParameters: {selection: {selected: {period}}},
    }: RootState): StateToProps =>
     ({
-      measurements,
+      measurements: getMeasurements(measurements),
       selectedListItems,
       period,
     });
