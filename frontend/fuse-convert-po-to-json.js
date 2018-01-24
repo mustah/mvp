@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const converter = require('i18next-conv');
+const mkdirp = require('mkdirp');
 const {Sparky} = require('fuse-box');
 
 const utf8 = 'utf-8';
 const extractLangFromFileName = (file) => file.name.split('.', 1);
 
-const convertPoToJson = async ({base}) => {
+const convertPoToJson = async ({base, templateFile, outputDir}) => {
 
   return Sparky.src('i18n/locales/*.po', {base})
     .completed(async (files) => {
-      const templatePot = fs.readFileSync('./src/i18n/locales/template.pot', utf8);
+      const templatePot = fs.readFileSync(templateFile, utf8);
       const templatePotJson = JSON.parse(await converter.gettextToI18next('en', templatePot, {quiet: true}));
       files.map(async (file) => {
         const language = extractLangFromFileName(file);
@@ -37,7 +38,8 @@ const convertPoToJson = async ({base}) => {
           }
         });
 
-        fs.writeFileSync(base + '/i18n/locales/' + language + '.json', data, utf8);
+        mkdirp.sync(outputDir);
+        fs.writeFileSync(`${outputDir}/${language}.json`, data, utf8);
       });
     })
     .exec();

@@ -21,6 +21,7 @@ const {runCLI} = require('jest');
 
 const indexFile = 'index.tsx';
 const distDir = 'dist';
+const buildDir = 'build';
 const homeDir = 'src';
 const fuseboxCacheDir = '.fusebox/cache';
 
@@ -91,11 +92,17 @@ Sparky.task('config', ['convert-po-to-json'], () => {
 
 Sparky.task('remove-fusebox-cache', () => Sparky.src(fuseboxCacheDir).clean(fuseboxCacheDir));
 
-Sparky.task('extract-translations', () => createPotFile({base: homeDir}));
+Sparky.task('extract-translations', () => createPotFile({base: homeDir, outputDir: buildDir}));
 
-Sparky.task('convert-po-to-json', ['extract-translations'], () => convertPoToJson({base: homeDir}));
+Sparky.task('convert-po-to-json', ['extract-translations'], () =>
+  convertPoToJson({
+    base: homeDir,
+    templateFile: `${buildDir}/template.pot`,
+    outputDir: `${distDir}/i18n/locales/`,
+  }));
 
-Sparky.task('build-mock-database', ['config'], () => buildMockDatabase({dist: distDir, doGeocoding: false}));
+Sparky.task('build-mock-database', ['config'], () =>
+  buildMockDatabase({dist: distDir, doGeocoding: false}));
 
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
 
