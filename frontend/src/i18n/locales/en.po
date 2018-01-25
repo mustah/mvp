@@ -212,9 +212,6 @@ msgstr "successfully deleted the user {{name}} ({{email}})"
 msgid "failed to delete the user: {{error}}"
 msgstr "failed to delete the user: {{error}}"
 
-msgid "administration"
-msgstr "administration"
-
 msgid "add user"
 msgstr "add user"
 

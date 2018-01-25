@@ -1,7 +1,10 @@
+@import '../../../app/variables';
+
 .UserLinkButton {
   align-self: flex-start;
 
-  .Link-margin {
-    margin: 10px 10px;
+  .Button {
+    margin: 0 0 $space $space !important;
+    color: $blue !important;
   }
 }

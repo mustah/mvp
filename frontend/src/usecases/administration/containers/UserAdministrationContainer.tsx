@@ -85,7 +85,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps,
     return (
       <Loader isFetching={isFetching}>
         <Column>
-          <UserLinkButton to={routes.adminUsersAdd} text={`+ ${firstUpperTranslated('add user')}`}/>
+          <UserLinkButton to={routes.adminUsersAdd} text={firstUpperTranslated('add user')}/>
           <Table result={paginatedList} entities={usersToRender}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
