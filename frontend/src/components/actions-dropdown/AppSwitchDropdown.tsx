@@ -19,6 +19,9 @@ interface StateToProps {
   isAdmin: boolean;
 }
 
+const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
+const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
+
 const AppSwitchDropdown = ({isAdmin}: StateToProps) => {
 
   const renderAdmin = () => translate('admin');
@@ -29,31 +32,32 @@ const AppSwitchDropdown = ({isAdmin}: StateToProps) => {
       <NavigationMenu color={colors.white}/>
       <Xsmall className="Bold first-uppercase">
         <Switch>
-          <Route path={routes.admin} render={renderAdmin}/>}
+          <Route path={routes.admin} render={renderAdmin}/>
           <Route path={routes.home} render={renderMetering}/>
         </Switch>
       </Xsmall>
     </RowCenter>
   );
 
-  const adminOption = isAdmin ? (
+  const adminMenuItem = isAdmin ? (
     <Link to={routes.admin} className="link" key="admin">
       <MenuItem className="first-uppercase">
         {translate('admin')}
       </MenuItem>
     </Link>) : null;
 
-  const renderPopoverContent: RenderFunction = () => ([(
-      <Link to={routes.home} className="link" key="mvp">
-        <MenuItem className="first-uppercase">
-          {translate('metering')}
-        </MenuItem>
-      </Link>),
-    adminOption]
-  );
+  const meteringMenuItem = (
+    <Link to={routes.home} className="link" key="mvp">
+      <MenuItem className="first-uppercase">
+        {translate('metering')}
+      </MenuItem>
+    </Link>);
 
-  const anchorOrigin: origin = {horizontal: 'right', vertical: 'top'};
-  const targetOrigin: origin = {horizontal: 'middle', vertical: 'bottom'};
+  const renderPopoverContent: RenderFunction = () => ([
+      meteringMenuItem,
+      adminMenuItem,
+    ]
+  );
 
   return (
     <PopoverMenu

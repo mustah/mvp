@@ -2,20 +2,20 @@ import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../app/routes';
 import {translate} from '../../services/translationService';
-import {OnClickWithId, RenderFunction, uuid} from '../../types/Types';
+import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../types/Types';
 import {ActionMenuItem} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 
 interface Props {
   id: uuid;
-  openDeleteAlert: OnClickWithId;
+  confirmDelete: OnClickWithId;
 }
 
-export const UserActionsDropdown = ({id, openDeleteAlert}: Props) => {
+export const UserActionsDropdown = ({id, confirmDelete}: Props) => {
 
-  const openAlert = () => openDeleteAlert(id);
+  const openAlert = () => confirmDelete(id);
 
-  const renderPopoverContent: RenderFunction = (onClick) => {
+  const renderPopoverContent: RenderFunction = (onClick: OnClick) => {
     const onClickDelete = () => {
       onClick();
       openAlert();

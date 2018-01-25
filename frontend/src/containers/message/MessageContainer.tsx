@@ -2,6 +2,7 @@ import Snackbar from 'material-ui/Snackbar';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {colors} from '../../app/themes';
 import {RootState} from '../../reducers/rootReducer';
 import {hideMessage} from '../../state/ui/message/messageActions';
 import {MessageState} from '../../state/ui/message/messageModels';
@@ -13,8 +14,8 @@ interface DispatchToProps {
 }
 
 const messageStyles: {[key: string]: React.CSSProperties} = {
-  fail: {backgroundColor: 'red'},
-  success: {backgroundColor: 'green'},
+  fail: {backgroundColor: colors.red},
+  success: {backgroundColor: colors.darkGreen},
 };
 
 const MessageComponent = ({message = '', isOpen, hideMessage, messageType = ''}: StateToProps & DispatchToProps) => (

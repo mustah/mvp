@@ -76,7 +76,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps,
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown openDeleteAlert={this.openDialog} id={id}/>;
+      <UserActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
