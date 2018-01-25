@@ -8,7 +8,7 @@ import {TabUnderline} from './TabUnderliner';
 
 export const TabSettings = () => {
 
-  const renderPopoverContent: RenderFunction = (onClick: OnClick) => [
+  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => [
     {name: translate('export to Excel (.csv)'), onClick},
     {name: translate('export to JSON'), onClick},
   ].map(ActionMenuItem);

@@ -10,7 +10,7 @@ import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
 import {User} from '../../../../state/domain-models/user/userModels';
-import {Clickable, RenderFunction, uuid} from '../../../../types/Types';
+import {Clickable, OnClick, RenderFunction, uuid} from '../../../../types/Types';
 import './Profile.scss';
 
 interface Props {
@@ -22,7 +22,7 @@ export const Profile = (props: Props) => {
   const {user, logout} = props;
   const logoutClick = () => logout(user.organisation.code);
   const Icon = iconComponent({name: user.name});
-  const renderPopoverContent: RenderFunction = () => ([(
+  const renderPopoverContent: RenderFunction<OnClick> = () => ([(
       <Link to={routes.userProfile} className="link" key="goToProfile">
         <MenuItem
           style={menuItemInnerDivStyle}

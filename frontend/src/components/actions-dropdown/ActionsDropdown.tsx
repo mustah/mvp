@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {RenderFunction} from '../../types/Types';
+import {OnClick, RenderFunction} from '../../types/Types';
 import {IconMore} from '../icons/IconMore';
 import {PopoverMenu} from '../popover/PopoverMenu';
 
 interface Props {
-  renderPopoverContent: RenderFunction;
+  renderPopoverContent: RenderFunction<OnClick>;
   className?: string;
 }
 

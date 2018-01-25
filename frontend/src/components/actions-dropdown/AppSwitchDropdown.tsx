@@ -9,7 +9,7 @@ import {colors} from '../../app/themes';
 import {RootState} from '../../reducers/rootReducer';
 import {isAdminSelector} from '../../services/authService';
 import {translate} from '../../services/translationService';
-import {RenderFunction} from '../../types/Types';
+import {OnClick, RenderFunction} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PopoverMenu} from '../popover/PopoverMenu';
 import {Xsmall} from '../texts/Texts';
@@ -53,7 +53,7 @@ const AppSwitchDropdown = ({isAdmin}: StateToProps) => {
       </MenuItem>
     </Link>);
 
-  const renderPopoverContent: RenderFunction = () => ([
+  const renderPopoverContent: RenderFunction<OnClick> = () => ([
       meteringMenuItem,
       adminMenuItem,
     ]

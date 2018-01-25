@@ -15,7 +15,7 @@ export const UserActionsDropdown = ({id, confirmDelete}: Props) => {
 
   const openAlert = () => confirmDelete(id);
 
-  const renderPopoverContent: RenderFunction = (onClick: OnClick) => {
+  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onClickDelete = () => {
       onClick();
       openAlert();

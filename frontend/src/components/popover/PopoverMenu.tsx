@@ -7,7 +7,7 @@ import {Row} from '../layouts/row/Row';
 import origin = __MaterialUI.propTypes.origin;
 
 interface Props {
-  renderPopoverContent: RenderFunction;
+  renderPopoverContent: RenderFunction<OnClick>;
   IconComponent: React.StatelessComponent<Clickable>;
   onRequestClose?: OnClick;
   className?: string;

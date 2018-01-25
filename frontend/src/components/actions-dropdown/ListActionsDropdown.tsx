@@ -14,7 +14,7 @@ interface Props {
 
 export const ListActionsDropdown = ({item: {id}, selectEntryAdd}: Props) => {
 
-  const renderPopoverContent: RenderFunction = (onClick: OnClick) => {
+  const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onAddToReport = () => {
       onClick();
       history.push(`${routes.report}/${id}`);
