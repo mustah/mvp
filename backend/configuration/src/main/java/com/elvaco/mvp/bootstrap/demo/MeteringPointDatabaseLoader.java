@@ -67,6 +67,7 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
     int meters = 10;
     int daysPerMeter = 30;
+    int reportIntervalInMinutes = 15;
     int measurementCount = daysPerMeter * 24 * 4; // One day, 15-minute delivery interval
     Instant firstDeliveryInstant = Instant.now().minus(daysPerMeter, ChronoUnit.DAYS);
 
@@ -93,7 +94,7 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
       List<MeasurementEntity> measurementEntities = new ArrayList<>();
       for (int j = 0; j < measurementCount; ++j) {
         MeasurementEntity measurementEntity = new MeasurementEntity(
-          Date.from(firstDeliveryInstant.plus(15 * j, ChronoUnit.MINUTES)),
+          Date.from(firstDeliveryInstant.plus(reportIntervalInMinutes * j, ChronoUnit.MINUTES)),
           "Power",
           random.nextDouble(),
           "mW",
