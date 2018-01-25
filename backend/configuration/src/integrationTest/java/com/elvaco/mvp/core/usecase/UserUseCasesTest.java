@@ -25,6 +25,7 @@ public class UserUseCasesTest extends IntegrationTest {
 
     User user = userUseCases.create(newUser(rawPassword, "noo@b.com"));
 
+    assertThat(user.password).isNotEqualTo(rawPassword);
     assertThat(passwordEncoder.matches(rawPassword, user.password)).isTrue();
   }
 
