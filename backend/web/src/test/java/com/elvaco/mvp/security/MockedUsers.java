@@ -38,7 +38,12 @@ class MockedUsers implements Users {
   }
 
   @Override
-  public User save(User user) {
+  public User create(User user) {
+    throw new UnsupportedOperationException("Not implemented");
+  }
+
+  @Override
+  public User update(User user) {
     throw new UnsupportedOperationException("Not implemented");
   }
 

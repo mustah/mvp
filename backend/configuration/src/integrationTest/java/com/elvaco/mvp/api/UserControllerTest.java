@@ -132,7 +132,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    User user = users.save(new User(
+    User user = users.create(new User(
       "john doh",
       "noo@b.com",
       "test123",
@@ -177,7 +177,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
     ResponseEntity<List<UserDto>> response = asUser().getList("/users", UserDto.class);
-    response.getBody().stream().forEach(u -> assertThat(u.organisation.code)
+    response.getBody().forEach(u -> assertThat(u.organisation.code)
       .isEqualTo("elvaco"));
   }
 

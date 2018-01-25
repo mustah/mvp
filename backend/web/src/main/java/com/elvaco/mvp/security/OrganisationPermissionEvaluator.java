@@ -2,8 +2,8 @@ package com.elvaco.mvp.security;
 
 import java.io.Serializable;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.UserDto;
@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 
 @Slf4j
 public class OrganisationPermissionEvaluator implements PermissionEvaluator {
+
   private final Users users;
   private final UserMapper userMapper;
 
@@ -23,64 +24,68 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
   }
 
   @Override
-  public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object
-    permissionObj) {
-
-    if (authentication == null || targetDomainObject == null || permissionObj == null
-      || !(permissionObj instanceof String)) {
+  public boolean hasPermission(
+    Authentication authentication,
+    Object targetDomainObject,
+    Object permissionObj
+  ) {
+    if (authentication == null
+        || targetDomainObject == null
+        || permissionObj == null
+        || !(permissionObj instanceof String)) {
       log.warn("Missing or invalid parameters to hasPermission() - defaulting to DENY!");
       return false;
     }
 
-    MvpUserDetails principalUserDetails = (MvpUserDetails) authentication.getPrincipal();
-    Permission permission = Permission.fromString((String) permissionObj);
-
     if (targetDomainObject instanceof UserDto) {
-      return evaluateUserDtoPermissions(principalUserDetails, (UserDto) targetDomainObject,
-        permission);
+      return evaluateUserDtoPermissions(
+        (MvpUserDetails) authentication.getPrincipal(),
+        (UserDto) targetDomainObject,
+        Permission.fromString((String) permissionObj)
+      );
     }
-    log.warn("Unknown domain object target type '%s' - DENY!", targetDomainObject.getClass()
-      .toString());
+    log.warn("Unknown domain object target type '{}' - DENY!", targetDomainObject.getClass());
     return false;
   }
 
   @Override
-  public boolean hasPermission(Authentication authentication, Serializable targetId, String
-    targetType, Object permission) {
+  public boolean hasPermission(
+    Authentication authentication,
+    Serializable targetId,
+    String targetType,
+    Object permission
+  ) {
     try {
-      Class targetClass = Class.forName(targetType);
+      Class<?> targetClass = Class.forName(targetType);
       if (UserDto.class.isAssignableFrom(targetClass) && targetId instanceof Long) {
-        Optional<UserDto> userDto = users.findById((Long) targetId).map(userMapper::toDto);
-        // If the target object exists, check permissions; otherwise allow access to non-existent
-        // object
-        return userDto.map(userDto1 -> hasPermission(authentication, userDto1, permission))
+        return users.findById((Long) targetId)
+          .map(userMapper::toDto)
+          .map(u -> hasPermission(authentication, u, permission))
           .orElse(true);
       }
-      log.warn("Unhandled domain object target class '%s' - DENY!", targetClass.toString());
-      return false;
+      log.warn("Unhandled domain object target class '{}' - DENY!", targetClass);
     } catch (ClassNotFoundException e) {
-      log.warn("Unknown domain object target class '%s' - DENY!", targetType);
-      return false;
+      log.warn("Unknown domain object target class '{}' - DENY!", targetType);
     }
+    return false;
   }
 
-  boolean evaluateUserDtoPermissions(MvpUserDetails principal, UserDto targetDomainObject,
-                                     Permission
-    permission) {
+  boolean evaluateUserDtoPermissions(
+    MvpUserDetails principal,
+    UserDto targetDomainObject,
+    Permission permission
+  ) {
     if (principal.isSuperAdmin()) {
-      // Disallow deleting last superAdmin
-      return !permission.equals(Permission.DELETE)
-        || users.findByRole(Role.superAdmin()).size() != 1;
+      return cannotRemoveLastSuperAdminUser(permission);
     }
 
-    if (!principal.isWithinOrganisation(userMapper.organisationOf(targetDomainObject
-      .organisation))) {
+    Organisation organisation = userMapper.organisationOf(targetDomainObject.organisation);
+    if (!principal.isWithinOrganisation(organisation)) {
       return false;
     }
 
     if (principal.isAdmin()) {
-      // admins can do anything on users of the same organisation
-      return true;
+      return true; // admins can do anything on users of the same organisation
     }
 
     switch (permission) {
@@ -95,11 +100,16 @@ public class OrganisationPermissionEvaluator implements PermissionEvaluator {
     }
   }
 
+  private boolean cannotRemoveLastSuperAdminUser(Permission permission) {
+    return !permission.equals(Permission.DELETE) || users.findByRole(Role.superAdmin()).size() != 1;
+  }
+
   public enum Permission {
     CREATE("create"),
     READ("read"),
     UPDATE("update"),
     DELETE("delete");
+
     private final String name;
 
     Permission(String name) {

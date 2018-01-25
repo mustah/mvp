@@ -17,7 +17,9 @@ public interface Users {
 
   Optional<Password> findPasswordByUserId(Long userId);
 
-  User save(User user);
+  User create(User user);
+
+  User update(User user);
 
   void deleteById(Long id);
 
