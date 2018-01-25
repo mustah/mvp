@@ -6,7 +6,6 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.PasswordEncoder;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -17,11 +16,9 @@ import static java.util.stream.Collectors.toList;
 public class UserMapper {
 
   private final ModelMapper modelMapper;
-  private final PasswordEncoder passwordEncoder;
 
-  public UserMapper(ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+  public UserMapper(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
-    this.passwordEncoder = passwordEncoder;
   }
 
   User toDomainModel(UserEntity userEntity) {
@@ -37,7 +34,6 @@ public class UserMapper {
 
   UserEntity toEntity(User user) {
     UserEntity userEntity = modelMapper.map(user, UserEntity.class);
-    userEntity.password = passwordEncoder.encode(user.password);
     userEntity.roles = user.roles
       .stream()
       .map(r -> new RoleEntity(r.role))

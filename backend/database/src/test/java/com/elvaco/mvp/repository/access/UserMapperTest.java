@@ -5,7 +5,6 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.PasswordEncoder;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.entity.user.UserEntity;
@@ -21,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserMapperTest {
 
   private UserMapper userMapper;
-  private PasswordEncoder passwordEncoder;
 
   @Before
   public void setUp() {
@@ -30,8 +28,7 @@ public class UserMapperTest {
       .getConfiguration()
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
-    passwordEncoder = rawPassword -> "::" + rawPassword + "::";
-    userMapper = new UserMapper(modelMapper, passwordEncoder);
+    userMapper = new UserMapper(modelMapper);
   }
 
   @Test
@@ -54,10 +51,10 @@ public class UserMapperTest {
   }
 
   @Test
-  public void mappingUserDtoToEntityShouldHaveEncodedPassword() {
+  public void mappingUserDtoToEntityShouldHavePassword() {
     UserEntity userEntity = userMapper.toEntity(createUser());
 
-    assertThat(userEntity.password).isEqualTo("::letmein::");
+    assertThat(userEntity.password).isEqualTo("letmein");
   }
 
   @Test
@@ -70,7 +67,7 @@ public class UserMapperTest {
       user.id,
       user.name,
       user.email,
-      "::letmein::",
+      "letmein",
       new OrganisationEntity(
         user.organisation.id,
         user.organisation.name,
@@ -95,7 +92,7 @@ public class UserMapperTest {
     UserEntity userEntity = new UserEntity();
     userEntity.id = 1L;
     userEntity.name = "John Doh";
-    userEntity.password = passwordEncoder.encode("letmein");
+    userEntity.password = "letmein";
     userEntity.email = "a@b.com";
     userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
     userEntity.roles = asList(RoleEntity.user(), RoleEntity.superAdmin());

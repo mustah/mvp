@@ -26,13 +26,13 @@ public class UserUseCases {
   }
 
   public User create(User user) {
-    return users.save(user);
+    return users.create(user);
   }
 
   public Optional<User> update(User user) {
     return users.findPasswordByUserId(user.id)
       .map(user::withPassword)
-      .map(users::save);
+      .map(users::update);
   }
 
   public void deleteById(Long id) {

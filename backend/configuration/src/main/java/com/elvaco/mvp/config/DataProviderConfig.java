@@ -32,7 +32,8 @@ class DataProviderConfig {
   Users users() {
     return new UserRepository(
       userJpaRepository,
-      new UserMapper(modelMapper, passwordEncoder::encode)
+      new UserMapper(modelMapper),
+      passwordEncoder::encode
     );
   }
 }

@@ -2,6 +2,7 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.dto.UserWithPasswordDto;
@@ -53,8 +54,9 @@ public class UserController {
   @PreAuthorize("hasPermission(#user, 'create')")
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.toDto(userUseCases.create(
-      userMapper.toDomainModel(user))));
+    User createdUser = userUseCases.create(userMapper.toDomainModel(user));
+    UserDto responseModel = userMapper.toDto(createdUser);
+    return ResponseEntity.status(HttpStatus.CREATED).body(responseModel);
   }
 
   @PreAuthorize("hasPermission(#user, 'update')")

@@ -6,8 +6,8 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.PasswordEncoder;
 import com.elvaco.mvp.core.usecase.Users;
-import com.elvaco.mvp.entity.user.UserEntity;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import static java.util.stream.Collectors.toList;
@@ -16,10 +16,16 @@ public class UserRepository implements Users {
 
   private final UserJpaRepository userJpaRepository;
   private final UserMapper userMapper;
+  private final PasswordEncoder passwordEncoder;
 
-  public UserRepository(UserJpaRepository userJpaRepository, UserMapper userMapper) {
+  public UserRepository(
+    UserJpaRepository userJpaRepository,
+    UserMapper userMapper,
+    PasswordEncoder passwordEncoder
+  ) {
     this.userJpaRepository = userJpaRepository;
     this.userMapper = userMapper;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -48,9 +54,14 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public User save(User user) {
-    UserEntity userEntity = userJpaRepository.save(userMapper.toEntity(user));
-    return userMapper.toDomainModel(userEntity);
+  public User create(User user) {
+    User userWithPassword = user.withPassword(() -> passwordEncoder.encode(user.password));
+    return userMapper.toDomainModel(userJpaRepository.save(userMapper.toEntity(userWithPassword)));
+  }
+
+  @Override
+  public User update(User user) {
+    return userMapper.toDomainModel(userJpaRepository.save(userMapper.toEntity(user)));
   }
 
   @Override
