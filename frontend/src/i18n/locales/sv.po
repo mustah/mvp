@@ -35,6 +35,15 @@ msgstr "ta bort användare"
 msgid "close"
 msgstr "stäng"
 
+msgid "confirm"
+msgstr "bekräfta"
+
+msgid "cancel"
+msgstr "avbryt"
+
+msgid "are you sure you want to delete this user"
+msgstr "är du säker på att du vill ta bort den här användaren"
+
 msgid "latest"
 msgstr "senaste"
 
@@ -202,9 +211,6 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
-
-msgid "administration"
-msgstr "administration"
 
 msgid "add user"
 msgstr "lägg till användare"

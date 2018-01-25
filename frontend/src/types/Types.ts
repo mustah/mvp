@@ -6,6 +6,7 @@ export type uuid = string | number;
 export type OnClick = (...args) => void;
 export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
+export type RenderFunction<T> = (props: T) => Children;
 
 export type Predicate<T> = (value: T) => boolean;
 

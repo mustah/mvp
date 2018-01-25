@@ -7,7 +7,7 @@ import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
 import {authSetUser} from '../../usecases/auth/authActions';
-import {showMessage} from '../ui/message/messageActions';
+import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized, NormalizedPaginated} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
@@ -158,38 +158,40 @@ export const fetchUser = restGetEntity<User>(EndPoints.users);
 
 export const addUser = restPost<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
+    dispatch(showSuccessMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
   },
 });
 
 export const modifyUser = restPut<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
+    dispatch(showSuccessMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('failed to update user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error})));
   },
 });
 
 export const modifyProfile = restPut<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('successfully updated profile', {...user})));
+    dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
     dispatch(authSetUser(user));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));
   },
 });
 
 export const deleteUser = restDelete<User>(EndPoints.users, {
     afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-      dispatch(showMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})));
+      dispatch(
+        showSuccessMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})),
+      );
     },
     afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-      dispatch(showMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})));
+      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})));
     },
   },
 );

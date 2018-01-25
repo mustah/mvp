@@ -8,7 +8,7 @@ import {RowMiddle} from '../../../../components/layouts/row/Row';
 import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Subtitle} from '../../../../components/texts/Titles';
 import {translate} from '../../../../services/translationService';
-import {Children} from '../../../../types/Types';
+import {Children, OnClick} from '../../../../types/Types';
 import './Widget.scss';
 
 interface Props {
@@ -24,18 +24,20 @@ const deleteStyle: React.CSSProperties = {
 export const Widget = (props: Props) => {
   const {title, children} = props;
 
+  const renderPopoverContent = (onClick: OnClick) => [(
+    <MenuItem style={menuItemInnerDivStyle} className="first-uppercase" onClick={onClick} key="edit">
+      {translate('edit')}
+    </MenuItem>), (
+    <MenuItem style={deleteStyle} className="first-uppercase" onClick={onClick} key="delete">
+      {translate('delete')}
+    </MenuItem>),
+  ];
+
   return (
     <Card className="Widget">
       <RowMiddle className="space-between">
         <Subtitle className="Widget-subtitle">{title}</Subtitle>
-        <PopoverMenu IconComponent={IconMore}>
-          <MenuItem style={menuItemInnerDivStyle} className="first-uppercase">
-            {translate('edit')}
-          </MenuItem>
-          <MenuItem style={deleteStyle} className="first-uppercase">
-            {translate('delete')}
-          </MenuItem>
-        </PopoverMenu>
+        <PopoverMenu IconComponent={IconMore} renderPopoverContent={renderPopoverContent} />
       </RowMiddle>
       <Column className="Content">
         {children}

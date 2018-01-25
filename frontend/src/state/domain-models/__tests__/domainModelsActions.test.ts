@@ -7,7 +7,7 @@ import {initLanguage} from '../../../i18n/i18n';
 import {makeRestClient} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
-import {showMessage} from '../../ui/message/messageActions';
+import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
   addUser, deleteUser, fetchSelections, fetchUser, modifyProfile, modifyUser,
@@ -98,7 +98,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPostRequest.request(),
         userPostRequest.success(returnedUser as User),
-        showMessage(`Successfully created the user ${returnedUser.name} (${returnedUser.email})`),
+        showSuccessMessage(`Successfully created the user ${returnedUser.name} (${returnedUser.email})`),
       ]);
     });
     it('send a post request to backend and get an error back', async () => {
@@ -107,7 +107,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPostRequest.request(),
         userPostRequest.failure({...errorResponse}),
-        showMessage(`Failed to create user: ${errorResponse.message}`),
+        showFailMessage(`Failed to create user: ${errorResponse.message}`),
       ]);
     });
   });
@@ -137,7 +137,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
         userPutRequest.success(updatedUser),
-        showMessage(`Successfully updated user ${updatedUser.name} (${updatedUser.email})`),
+        showSuccessMessage(`Successfully updated user ${updatedUser.name} (${updatedUser.email})`),
       ]);
     });
     it('sends a put request to backend and an error back', async () => {
@@ -146,7 +146,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
         userPutRequest.failure(errorResponse),
-        showMessage(`Failed to update user: ${errorResponse.message}`),
+        showFailMessage(`Failed to update user: ${errorResponse.message}`),
       ]);
     });
   });
@@ -176,7 +176,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
         userPutRequest.success(updatedUser),
-        showMessage(`Successfully updated profile`),
+        showSuccessMessage(`Successfully updated profile`),
         authSetUser(updatedUser),
       ]);
     });
@@ -186,7 +186,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userPutRequest.request(),
         userPutRequest.failure(errorResponse),
-        showMessage(`Failed to update profile: ${errorResponse.message}`),
+        showFailMessage(`Failed to update profile: ${errorResponse.message}`),
       ]);
     });
   });
@@ -216,7 +216,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userDeleteRequest.request(),
         userDeleteRequest.success(user),
-        showMessage(`Successfully deleted the user ${user.name} (${user.email})`),
+        showSuccessMessage(`Successfully deleted the user ${user.name} (${user.email})`),
       ]);
     });
 
@@ -226,7 +226,7 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userDeleteRequest.request(),
         userDeleteRequest.failure(errorResponse),
-        showMessage(`Failed to delete the user: ${errorResponse.message}`),
+        showFailMessage(`Failed to delete the user: ${errorResponse.message}`),
       ]);
     });
   });

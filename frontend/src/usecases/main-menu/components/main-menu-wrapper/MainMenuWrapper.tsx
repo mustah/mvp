@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {AppSwitchDropdown} from '../../../../components/actions-dropdown/AppSwitchDropdown';
+import {AppSwitchDropdownContainer} from '../../../../components/actions-dropdown/AppSwitchDropdown';
 import {Column, ColumnBottom} from '../../../../components/layouts/column/Column';
 import {Children} from '../../../../types/Types';
 import './MainMenuWrapper.scss';
@@ -16,7 +16,7 @@ export const MainMenuWrapper = ({children}: Props) => {
         {children}
       </Column>
       <ColumnBottom className="flex-1">
-        <AppSwitchDropdown/>
+        <AppSwitchDropdownContainer/>
       </ColumnBottom>
     </Column>
   );

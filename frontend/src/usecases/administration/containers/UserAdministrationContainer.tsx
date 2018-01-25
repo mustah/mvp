@@ -1,18 +1,16 @@
-import Divider from 'material-ui/Divider';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {Link} from 'react-router-dom';
 import {bindActionCreators} from 'redux';
 import {routes} from '../../../app/routes';
-import {ActionMenuItem} from '../../../components/actions-dropdown/ActionMenuItem';
-import {ActionsDropdown, MenuItems} from '../../../components/actions-dropdown/ActionsDropdown';
 import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
+import {DeleteUserAlert} from '../../../components/dialog/DeleteUserDialog';
+import {Column} from '../../../components/layouts/column/Column';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
@@ -22,6 +20,7 @@ import {changePaginationValidation} from '../../../state/ui/pagination/paginatio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';
+import {UserLinkButton} from '../components/UserLinkButton';
 
 interface StateToProps {
   currentUser: User;
@@ -39,17 +38,32 @@ interface DispatchToProps {
   paginationChangePage: OnChangePage;
 }
 
-class UserAdministration extends React.Component<StateToProps & DispatchToProps> {
+interface State {
+  isDeleteDialogOpen: boolean;
+  userToDelete?: uuid;
+}
+
+class UserAdministration extends React.Component<StateToProps & DispatchToProps, State> {
+
+  state: State = {isDeleteDialogOpen: false};
+
   componentDidMount() {
     const {fetchUsers, encodedUriParametersForUsers} = this.props;
 
     fetchUsers(encodedUriParametersForUsers);
   }
 
+  openDialog = (id: uuid) => {
+    this.setState({isDeleteDialogOpen: true, userToDelete: id});
+  }
+
+  closeDialog = () => this.setState({isDeleteDialogOpen: false});
+
+  deleteSelectedUser = () => this.props.deleteUser(this.state.userToDelete!);
+
   render() {
     const {
       currentUser,
-      deleteUser,
       users,
       isFetching,
       pagination,
@@ -62,24 +76,16 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
     const renderOrganisation = ({organisation: {name}}: User) => name;
     const renderRoles = ({roles}: User) => roles.join(', ');
     const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown deleteUser={deleteUser} id={id}/>;
+      <UserActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
     // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
     const usersToRender = filterUsersByUser(users, currentUser);
     const paginatedList = Object.keys(usersToRender);
 
-    const menuItems: MenuItems = [(
-      <Link to={routes.adminUsersAdd} className="link" key="add user">
-        <ActionMenuItem name={translate('add user')}/>
-      </Link>),
-      <Divider key="a divider"/>,
-      <ActionMenuItem name={translate('export to Excel (.csv)')} key="export to excel"/>,
-      <ActionMenuItem name={translate('export to JSON')} key="export to json"/>,
-    ];
-
     return (
       <Loader isFetching={isFetching}>
-        <div>
+        <Column>
+          <UserLinkButton to={routes.adminUsersAdd} text={firstUpperTranslated('add user')}/>
           <Table result={paginatedList} entities={usersToRender}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
@@ -98,12 +104,17 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps>
               renderCell={renderRoles}
             />
             <TableColumn
-              header={<TableHead><ActionsDropdown menuItems={menuItems}/></TableHead>}
+              header={<TableHead className="actionDropdown">{' '}</TableHead>}
               renderCell={renderActionDropdown}
             />
           </Table>
           <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={usersCount}/>
-        </div>
+          <DeleteUserAlert
+            isOpen={this.state.isDeleteDialogOpen}
+            close={this.closeDialog}
+            confirm={this.deleteSelectedUser}
+          />
+        </Column>
       </Loader>
     );
   }

@@ -12,7 +12,7 @@ export const Administration = () => {
     <PageComponent isSideMenuOpen={false}>
       <Row className="space-between">
         <MainTitle>
-          {translate('administration')}
+          {translate('users')}
         </MainTitle>
       </Row>
 

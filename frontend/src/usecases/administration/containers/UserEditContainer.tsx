@@ -53,7 +53,7 @@ class UserEdit extends React.Component<Props, {}> {
       <PageComponent isSideMenuOpen={false}>
         <Row className="space-between">
           <MainTitle>
-            {translate('add user')}
+            {translate('edit user')}
           </MainTitle>
         </Row>
 
