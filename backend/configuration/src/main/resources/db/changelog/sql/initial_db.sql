@@ -58,11 +58,11 @@ CREATE TABLE IF NOT EXISTS measurement (
   UNIQUE (physical_meter_id, created, quantity, value)
 );
 
-/*create or replace function get_measurements_for_logical_meter(_logical_meter_id logical_meter.uuid%type, _from measurement.created%type, _to measurement.created%type) returns setof measurement as $$
-begin
-	return select * from physical_meter, measurement where physical_meter.logical_meter_id = _logical_meter_id and measurement.created >= _from and measurement.created <= _to;
-end
-$$ language plpgsql;*/
+CREATE TABLE IF NOT EXISTS mvp_setting (
+  id    BIGSERIAL PRIMARY KEY,
+  name  TEXT NOT NULL UNIQUE,
+  value TEXT NOT NULL
+);
 
 CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.name%TYPE,
                                            _identity            physical_meter.identity%TYPE,

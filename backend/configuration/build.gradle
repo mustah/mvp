@@ -20,6 +20,8 @@ dependencies {
   compile 'org.springframework.security:spring-security-web'
   compile 'org.springframework.security:spring-security-config'
 
+  compileOnly 'org.projectlombok:lombok:1.16.18'
+
   runtime 'org.liquibase:liquibase-core'
   runtime 'com.h2database:h2'
 

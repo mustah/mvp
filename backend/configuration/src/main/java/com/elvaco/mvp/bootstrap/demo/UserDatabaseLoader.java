@@ -5,11 +5,13 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -18,25 +20,33 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 @Component
+@Slf4j
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final RoleRepository roleRepository;
   private final OrganisationRepository organisationRepository;
   private final UserUseCases userUseCases;
+  private final SettingUseCases settingUseCases;
 
   @Autowired
   public UserDatabaseLoader(
     RoleRepository roleRepository,
     OrganisationRepository organisationRepository,
-    UserUseCases userUseCases
+    UserUseCases userUseCases,
+    SettingUseCases settingUseCases
   ) {
     this.roleRepository = roleRepository;
     this.organisationRepository = organisationRepository;
     this.userUseCases = userUseCases;
+    this.settingUseCases = settingUseCases;
   }
 
   @Override
   public void run(String... args) {
+    if (settingUseCases.isDemoUsersLoaded()) {
+      log.info("Demo users seems to already be loaded - skipping demo user loading!");
+      return;
+    }
     organisationRepository.save(asList(
       new OrganisationEntity(
       1L,
@@ -153,5 +163,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
     users.stream()
       .map(u -> u.withPassword(() -> u.password))
       .forEach(userUseCases::create);
+
+    settingUseCases.setDemoUsersLoaded();
   }
 }

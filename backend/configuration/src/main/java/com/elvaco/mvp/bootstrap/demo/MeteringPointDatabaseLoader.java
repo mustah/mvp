@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
@@ -17,6 +18,7 @@ import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -26,28 +28,37 @@ import static java.util.Arrays.asList;
 
 @Profile("demo")
 @Component
+@Slf4j
 public class MeteringPointDatabaseLoader implements CommandLineRunner {
 
   private final MeteringPointRepository meteringPointRepository;
   private final MeasurementRepository measurementRepository;
   private final PhysicalMeterRepository physicalMeterRepository;
   private final OrganisationRepository organisationRepository;
+  private final SettingUseCases settingUseCases;
 
   @Autowired
   public MeteringPointDatabaseLoader(
     MeteringPointRepository meteringPointRepository,
     MeasurementRepository measurementRepository,
     PhysicalMeterRepository physicalMeterRepository,
-    OrganisationRepository organisationRepository
+    OrganisationRepository organisationRepository,
+    SettingUseCases settingUseCases
   ) {
     this.meteringPointRepository = meteringPointRepository;
     this.measurementRepository = measurementRepository;
     this.physicalMeterRepository = physicalMeterRepository;
     this.organisationRepository = organisationRepository;
+    this.settingUseCases = settingUseCases;
   }
 
   @Override
   public void run(String... args) {
+    if (settingUseCases.isDemoDataLoaded()) {
+      log.info("Demo data seems to already be loaded - skipping demo data loading!");
+      return;
+    }
+
     Random random = new Random();
     OrganisationEntity organisationEntity = new OrganisationEntity();
     organisationEntity.code = "elvaco";
@@ -92,5 +103,6 @@ public class MeteringPointDatabaseLoader implements CommandLineRunner {
       }
       measurementRepository.save(measurementEntities);
     }
+    settingUseCases.setDemoDataLoaded();
   }
 }
