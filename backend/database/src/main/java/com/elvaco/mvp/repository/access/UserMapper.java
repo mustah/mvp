@@ -13,7 +13,7 @@ import org.modelmapper.ModelMapper;
 
 import static java.util.stream.Collectors.toList;
 
-public class UserMapper {
+public class UserMapper implements DomainEntityMapper<User, UserEntity> {
 
   private final ModelMapper modelMapper;
 
@@ -21,7 +21,8 @@ public class UserMapper {
     this.modelMapper = modelMapper;
   }
 
-  User toDomainModel(UserEntity userEntity) {
+  @Override
+  public User toDomainModel(UserEntity userEntity) {
     return new User(
       userEntity.id,
       userEntity.name,
@@ -32,7 +33,8 @@ public class UserMapper {
     );
   }
 
-  UserEntity toEntity(User user) {
+  @Override
+  public UserEntity toEntity(User user) {
     UserEntity userEntity = modelMapper.map(user, UserEntity.class);
     userEntity.roles = user.roles
       .stream()
