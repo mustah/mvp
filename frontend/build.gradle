@@ -23,6 +23,8 @@ task start(type: YarnTask) {
 }
 
 task yarn_test(type: YarnTask) {
+  inputs.dir(new File('src'))
+  outputs.upToDateWhen { true }
   args = ['test']
 }
 
