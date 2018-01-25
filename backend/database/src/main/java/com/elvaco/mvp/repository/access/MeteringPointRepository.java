@@ -25,4 +25,16 @@ public class MeteringPointRepository implements MeteringPoints {
         .map(meteringPointMapper::toDomainModel)
         .collect(Collectors.toList());
   }
+
+  @Override
+  public void save(MeteringPoint meteringPoint) {
+    meteringPointJpaRepository.save(
+      meteringPointMapper.toEntity(meteringPoint)
+    );
+  }
+
+  @Override
+  public void deleteAll() {
+    meteringPointJpaRepository.deleteAll();
+  }
 }

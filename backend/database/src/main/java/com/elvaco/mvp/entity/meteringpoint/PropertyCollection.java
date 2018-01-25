@@ -9,6 +9,7 @@ import lombok.ToString;
 
 import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.util.Json.toJsonNode;
+import static com.elvaco.mvp.util.Json.toObject;
 
 @ToString
 public class PropertyCollection {
@@ -46,5 +47,9 @@ public class PropertyCollection {
 
   public JsonNode get(String fieldName) {
     return json.get(fieldName);
+  }
+
+  public <T> T asObject(String fieldName, Class<T> valueType) {
+    return toObject(json.get(fieldName).toString(), valueType);
   }
 }

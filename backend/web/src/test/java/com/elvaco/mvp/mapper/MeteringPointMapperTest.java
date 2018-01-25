@@ -35,7 +35,14 @@ public class MeteringPointMapperTest {
     double confidence = 1.1;
 
 
-    MeteringPoint meteringPoint = new MeteringPoint(id, status, latitude, longitude, confidence);
+    MeteringPoint meteringPoint = new MeteringPoint(
+      id,
+      status,
+      latitude,
+      longitude,
+      confidence,
+      null
+    );
 
     final MapMarkerDto mapMarkerDtoActual = meteringPointMapper.toMapMarkerDto(meteringPoint);
 

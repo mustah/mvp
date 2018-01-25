@@ -32,4 +32,14 @@ public final class Json {
       return null;
     }
   }
+
+  public static <T> T toObject(String s, Class<T> valueType) {
+    try {
+      return OBJECT_MAPPER.readValue(s, valueType);
+    } catch (IOException e) {
+      log.warn("Unable to deserialize string {} to object of type: {}", s, valueType, e);
+      return null;
+    }
+
+  }
 }

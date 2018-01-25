@@ -44,7 +44,14 @@ public class MeteringPointMapperTest {
     MeteringPoint meteringPoint = meteringPointMapper.toDomainModel(meteringPointEntity);
 
     assertThat(meteringPoint).isEqualTo(
-      new MeteringPoint(id, status, latitude, longitude, confidence)
+      new MeteringPoint(
+        id,
+        status,
+        latitude,
+        longitude,
+        confidence,
+        new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
+      )
     );
   }
 
@@ -58,6 +65,15 @@ public class MeteringPointMapperTest {
 
     MeteringPoint meteringPoint = meteringPointMapper.toDomainModel(meteringPointEntity);
 
-    assertThat(meteringPoint).isEqualTo(new MeteringPoint(id, status));
+    assertThat(meteringPoint).isEqualTo(
+      new MeteringPoint(
+        id,
+        status,
+        null,
+        null,
+        null,
+        new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
+      )
+    );
   }
 }

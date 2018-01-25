@@ -6,4 +6,8 @@ import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 
 public interface MeteringPoints {
   List<MeteringPoint> findAll();
+
+  void save(MeteringPoint meteringPoint);
+
+  void deleteAll();
 }

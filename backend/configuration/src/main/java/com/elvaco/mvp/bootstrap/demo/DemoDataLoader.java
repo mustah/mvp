@@ -83,9 +83,9 @@ public class DemoDataLoader implements CommandLineRunner {
 
       MeteringPointEntity meteringPointEntity = mockMeteringPoint(meterIdentity, gatewayEntities);
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
-          organisationEntity,
-          meterIdentity,
-          meteringPointEntity);
+        organisationEntity,
+        meterIdentity,
+        meteringPointEntity);
 
       mockMeasurementData(
         random,
@@ -110,21 +110,23 @@ public class DemoDataLoader implements CommandLineRunner {
   }
 
   private void mockMeasurementData(
-      Random random,
-      PhysicalMeterEntity physicalMeterEntity,
-      int measurementCount,
-      Instant firstDeliveryInstant,
-      int reportIntervalInMinutes
+    Random random,
+    PhysicalMeterEntity physicalMeterEntity,
+    int measurementCount,
+    Instant firstDeliveryInstant,
+    int reportIntervalInMinutes
   ) {
 
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
     for (int j = 0; j < measurementCount; ++j) {
       MeasurementEntity measurementEntity = new MeasurementEntity(
-          Date.from(firstDeliveryInstant.plus(reportIntervalInMinutes * j, ChronoUnit.MINUTES)),
-          "Power",
-          random.nextDouble(),
-          "mW",
-          physicalMeterEntity
+        Date.from(
+          firstDeliveryInstant.plus((long) reportIntervalInMinutes * j, ChronoUnit.MINUTES)
+        ),
+        "Power",
+        random.nextDouble(),
+        "mW",
+        physicalMeterEntity
       );
       measurementEntities.add(measurementEntity);
     }
@@ -132,31 +134,31 @@ public class DemoDataLoader implements CommandLineRunner {
   }
 
   private PhysicalMeterEntity mockPhysicalMeter(
-      OrganisationEntity organisationEntity,
-      String meterIdentity,
-      MeteringPointEntity meteringPointEntity
+    OrganisationEntity organisationEntity,
+    String meterIdentity,
+    MeteringPointEntity meteringPointEntity
   ) {
     // Physical meters
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
-        organisationEntity,
-        meterIdentity,
-        "Electricity");
+      organisationEntity,
+      meterIdentity,
+      "Electricity");
     physicalMeterEntity.meteringPoint = meteringPointEntity;
     physicalMeterRepository.save(physicalMeterEntity);
     return physicalMeterEntity;
   }
 
   private MeteringPointEntity mockMeteringPoint(
-      String meterIdentity,
-      List<GatewayEntity> gatewayEntities
+    String meterIdentity,
+    List<GatewayEntity> gatewayEntities
   ) {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
     meteringPointEntity.propertyCollection = new PropertyCollection()
-        .put("user", new UserPropertyDto(meterIdentity, "Demo project"))
-        .putArray("numbers", asList(1, 2, 3, 17))
-        .put("latitude", 1.1)
-        .put("longitude", 1.1)
-        .put("confidence", 1.1);
+      .put("user", new UserPropertyDto(meterIdentity, "Demo project"))
+      .putArray("numbers", asList(1, 2, 3, 17))
+      .put("latitude", 1.1)
+      .put("longitude", 1.1)
+      .put("confidence", 1.1);
 
     meteringPointEntity.status = "Ok";
     meteringPointEntity.medium = "Water";

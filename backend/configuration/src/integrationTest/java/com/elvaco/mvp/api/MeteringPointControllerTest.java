@@ -3,12 +3,14 @@ package com.elvaco.mvp.api;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.domainmodels.PropertyCollection;
+import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.dto.MeteringPointDto;
+import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestClient;
 import org.junit.After;
@@ -19,14 +21,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class MeteringPointControllerTest extends IntegrationTest {
 
   @Autowired
-  MeteringPointJpaRepository meteringPointJpaRepository;
+  MeteringPoints meteringPointRepository;
 
   @Before
   public void setUp() {
@@ -38,23 +39,21 @@ public class MeteringPointControllerTest extends IntegrationTest {
   }
 
   private void mockMeteringPoint() {
-    MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
+    MeteringPoint meteringPoint = new MeteringPoint(
+      1L,
+      "ok",
+      1.1,
+      1.1,
+      1.1,
+      new PropertyCollection(new UserProperty("abc123", "Some project"))
+    );
 
-    meteringPointEntity.propertyCollection = new PropertyCollection()
-        .put("user", new UserPropertyDto("abc123", "Some project"))
-        .putArray("numbers", asList(1, 2, 3, 17))
-        .put("latitude", 1.1)
-        .put("longitude", 1.1)
-        .put("confidence", 1.1);
-
-    meteringPointEntity.medium = "Water";
-
-    meteringPointJpaRepository.save(meteringPointEntity);
+    meteringPointRepository.save(meteringPoint);
   }
 
   @After
   public void tearDown() {
-    meteringPointJpaRepository.deleteAll();
+    meteringPointRepository.deleteAll();
     restClient().logout();
   }
 
@@ -63,11 +62,11 @@ public class MeteringPointControllerTest extends IntegrationTest {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
     ResponseEntity<List> response = restClient()
-        .post("/meters/property-collections", request, List.class);
+      .post("/meters/property-collections", request, List.class);
 
     Map<String, Object> result = (Map<String, Object>) response
-        .getBody()
-        .get(0);
+      .getBody()
+      .get(0);
 
     assertThat(result).isNotNull();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -78,7 +77,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("xyz"));
 
     ResponseEntity<List> response = restClient()
-        .post("/meters/property-collections", request, List.class);
+      .post("/meters/property-collections", request, List.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEmpty();
@@ -86,10 +85,10 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Test
   public void findById() {
-    List<MeteringPointEntity> meteringPoints = meteringPointJpaRepository.findAll();
+    List<MeteringPoint> meteringPoints = meteringPointRepository.findAll();
 
     ResponseEntity<MeteringPointEntity> response = restClient()
-        .get("/meters/" + meteringPoints.get(0).id, MeteringPointEntity.class);
+      .get("/meters/" + meteringPoints.get(0).id, MeteringPointEntity.class);
 
     MeteringPointEntity meteringPoint = response.getBody();
 
@@ -100,9 +99,9 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @Test
   public void findAll() {
     Page<MeteringPointDto> response = restClient()
-        .getPage("/meters", MeteringPointDto.class)
-        .getBody()
-        .newPage();
+      .getPage("/meters", MeteringPointDto.class)
+      .getBody()
+      .newPage();
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(20);
@@ -110,9 +109,9 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
 
     response = restClient()
-        .getPage("/meters?page=2", MeteringPointDto.class)
-        .getBody()
-        .newPage();
+      .getPage("/meters?page=2", MeteringPointDto.class)
+      .getBody()
+      .newPage();
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
@@ -122,7 +121,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @Test
   public void findAllMapDataForMeteringPoints() {
     ResponseEntity<List> response = restClient()
-        .get("/meters/map-data", List.class);
+      .get("/meters/map-data", List.class);
 
     assertThat(response.getBody().size()).isEqualTo(55);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
