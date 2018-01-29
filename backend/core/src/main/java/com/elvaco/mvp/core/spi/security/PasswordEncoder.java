@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.security;
+package com.elvaco.mvp.core.spi.security;
 
 public interface PasswordEncoder {
 
