@@ -1,8 +1,8 @@
 package com.elvaco.mvp.config;
 
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
-import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.security.JpaUserDetailsService;
@@ -47,18 +47,18 @@ class ApplicationConfig {
     return modelMapper;
   }
 
-  private AbstractConverter<MeasurementEntity, MeasurementDto> measurementConverter(
+  private AbstractConverter<Measurement, MeasurementDto> measurementConverter(
     AbstractEntityLinks entityLinks
   ) {
-    return new AbstractConverter<MeasurementEntity, MeasurementDto>() {
+    return new AbstractConverter<Measurement, MeasurementDto>() {
       @Override
-      protected MeasurementDto convert(MeasurementEntity source) {
+      protected MeasurementDto convert(Measurement source) {
         MeasurementDto dto = new MeasurementDto();
         dto.created = source.created;
         dto.quantity = source.quantity;
         dto.id = source.id;
-        dto.unit = source.value.getUnit();
-        dto.value = source.value.getValue();
+        dto.unit = source.unit;
+        dto.value = source.value;
         dto.physicalMeter = entityLinks.linkToSingleResource(
           source.physicalMeter.getClass(),
           source.physicalMeter.id
