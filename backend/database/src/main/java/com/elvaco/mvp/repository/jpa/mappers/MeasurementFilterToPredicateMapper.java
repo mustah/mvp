@@ -18,6 +18,15 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
   private static final Map<String, Function<String, BooleanExpression>>
     FILTERABLE_PROPERTIES = new HashMap<>();
 
+  private static Date toDate(String before) {
+    return Date.from(Instant.parse(before));
+  }
+
+  @Override
+  public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+    return FILTERABLE_PROPERTIES;
+  }
+
   static {
     FILTERABLE_PROPERTIES.put(
       "meterId", (String meterId) -> Q.physicalMeter.id.eq(parseLong(meterId))
@@ -30,14 +39,10 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
     FILTERABLE_PROPERTIES.put("after", (String after) -> Q.created.after(toDate(after)));
 
     FILTERABLE_PROPERTIES.put("quantity", Q.quantity::eq);
-  }
 
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
-  }
-
-  @Override
-  public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-    return FILTERABLE_PROPERTIES;
+    FILTERABLE_PROPERTIES.put(
+      "organisation",
+      (String orgId) -> Q.physicalMeter.organisation.id.eq(parseLong(orgId))
+    );
   }
 }

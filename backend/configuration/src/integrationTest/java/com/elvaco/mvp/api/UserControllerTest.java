@@ -12,7 +12,6 @@ import com.elvaco.mvp.dto.UserDto;
 import com.elvaco.mvp.dto.UserWithPasswordDto;
 import com.elvaco.mvp.mapper.UserMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.RestClient;
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,7 +150,11 @@ public class UserControllerTest extends IntegrationTest {
   public void regularUserCannotCreateUser() {
     UserWithPasswordDto user = createUserDto("simple@user.com", "test123");
 
-    ResponseEntity<UnauthorizedDto> response = asUser().post("/users", user, UnauthorizedDto.class);
+    ResponseEntity<UnauthorizedDto> response = asElvacoUser().post(
+      "/users",
+      user,
+      UnauthorizedDto.class
+    );
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
@@ -160,7 +163,7 @@ public class UserControllerTest extends IntegrationTest {
     String email = "steste@elvaco.se";
     User user = users.findByEmail(email).get();
 
-    asUser().delete("/users/" + user.id);
+    asElvacoUser().delete("/users/" + user.id);
     assertThat(users.findById(user.id).isPresent()).isTrue();
   }
 
@@ -169,14 +172,14 @@ public class UserControllerTest extends IntegrationTest {
     String email = "another@user.com";
     UserDto user = createUserDto(email);
 
-    asUser().put("/users", user);
+    asElvacoUser().put("/users", user);
 
     assertThat(users.findByEmail(email).isPresent()).isFalse();
   }
 
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
-    ResponseEntity<List<UserDto>> response = asUser().getList("/users", UserDto.class);
+    ResponseEntity<List<UserDto>> response = asElvacoUser().getList("/users", UserDto.class);
     response.getBody().forEach(u -> assertThat(u.organisation.code)
       .isEqualTo("elvaco"));
   }
@@ -232,7 +235,8 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void adminCannotCreateUserOfDifferentOrganisation() {
     UserDto user = createUserDto("50@blessings.hm", new OrganisationDto(50L, "Phone hom",
-      "phone-hom"));
+                                                                        "phone-hom"
+    ));
 
     ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
 
@@ -244,7 +248,8 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCannotSeeUsersOfDifferentOrganisation() {
     UserDto batman = asSuperAdmin()
       .post("/users", createUserDto("b@tm.an", new OrganisationDto(2L, "Wayne Industries",
-        "wayne-industries")), UserDto.class)
+                                                                   "wayne-industries"
+      )), UserDto.class)
       .getBody();
 
     UserDto colleague = asSuperAdmin()
@@ -286,15 +291,4 @@ public class UserControllerTest extends IntegrationTest {
     return user;
   }
 
-  private RestClient asUser() {
-    return restClient().loginWith("peteri@elvaco.se", "peter123");
-  }
-
-  private RestClient asAdminOfElvaco() {
-    return restClient().loginWith("hansjo@elvaco.se", "hanna123");
-  }
-
-  private RestClient asSuperAdmin() {
-    return restClient().loginWith("user@domain.tld", "complicated_password");
-  }
 }

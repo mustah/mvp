@@ -25,4 +25,16 @@ public abstract class IntegrationTest {
     }
     return restClient;
   }
+
+  protected RestClient asElvacoUser() {
+    return restClient().loginWith("peteri@elvaco.se", "peter123");
+  }
+
+  protected RestClient asAdminOfElvaco() {
+    return restClient().loginWith("hansjo@elvaco.se", "hanna123");
+  }
+
+  protected RestClient asSuperAdmin() {
+    return restClient().loginWith("user@domain.tld", "complicated_password");
+  }
 }
