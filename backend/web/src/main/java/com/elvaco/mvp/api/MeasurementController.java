@@ -1,13 +1,17 @@
 package com.elvaco.mvp.api;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
-import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
-import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
-import com.querydsl.core.types.Predicate;
+import com.elvaco.mvp.spring.PageableAdapter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,43 +21,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestApi("/v1/api/measurements")
 public class MeasurementController {
 
-  private final MeasurementRepository repository;
+  private final MeasurementUseCases measurementUseCases;
   private final ModelMapper modelMapper;
-  private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
   MeasurementController(
-    MeasurementRepository repository,
-    ModelMapper modelMapper,
-    FilterToPredicateMapper predicateMapper
+    MeasurementUseCases measurementUseCases,
+    ModelMapper modelMapper
   ) {
-    this.repository = repository;
+    this.measurementUseCases = measurementUseCases;
     this.modelMapper = modelMapper;
-    this.predicateMapper = predicateMapper;
   }
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
-    return toDto(repository.findOne(id));
+    return toDto(measurementUseCases.findById(id));
   }
 
   @GetMapping
-  public Page<MeasurementDto> measurements(
+  public org.springframework.data.domain.Page<MeasurementDto> measurements(
     @RequestParam(value = "scale", required = false) String scale,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Predicate predicate = predicateMapper.map(requestParams);
-    Page<MeasurementEntity> page;
+    //Predicate predicate = predicateMapper.map(requestParams);
+    Map<String, List<String>> filterParams = new HashMap<>(requestParams);
+    PageableAdapter pageableAdapter = new PageableAdapter(pageable);
+    Page<Measurement> page;
     if (scale != null) {
-      page = repository.findAllScaled(scale, predicate, pageable);
+      page = measurementUseCases.findAllScaled(scale,
+        filterParams,
+        pageableAdapter);
+
     } else {
-      page = repository.findAll(predicate, pageable);
+      page = measurementUseCases.findAll(filterParams, pageableAdapter);
     }
-    return page.map(this::toDto);
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+      .map(this::toDto);
   }
 
-  private MeasurementDto toDto(MeasurementEntity entity) {
+  private MeasurementDto toDto(Measurement entity) {
     return modelMapper.map(entity, MeasurementDto.class);
   }
 }

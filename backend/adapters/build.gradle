@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+  imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+}
+
+dependencies {
+  compile project(':backend:core')
+
+  compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+  testCompile 'org.assertj:assertj-core:3.8.0'
+}

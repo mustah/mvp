@@ -1,5 +1,7 @@
 package com.elvaco.mvp.config;
 
+import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.Measurements;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.Settings;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -13,11 +15,13 @@ class UseCaseConfig {
 
   private final Users users;
   private final Settings settings;
+  private final Measurements measurements;
 
   @Autowired
-  UseCaseConfig(Users users, Settings settings) {
+  UseCaseConfig(Users users, Settings settings, Measurements measurements) {
     this.users = users;
     this.settings = settings;
+    this.measurements = measurements;
   }
 
   @Bean
@@ -28,5 +32,10 @@ class UseCaseConfig {
   @Bean
   UserUseCases userUseCases() {
     return new UserUseCases(users);
+  }
+
+  @Bean
+  MeasurementUseCases measurementUseCases() {
+    return new MeasurementUseCases(measurements);
   }
 }

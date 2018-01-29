@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.querydsl.core.types.Predicate;
@@ -25,18 +26,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static java.util.Collections.singletonList;
 
 @RestApi("/v1/api/physical-meters")
-@ExposesResourceFor(PhysicalMeterEntity.class)
+@ExposesResourceFor(PhysicalMeter.class)
 public class PhysicalMeterController {
 
   private final PhysicalMeterRepository repository;
-  private final MeasurementRepository measurementRepository;
+  private final MeasurementJpaRepository measurementRepository;
   private final ModelMapper modelMapper;
   private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
   public PhysicalMeterController(
     PhysicalMeterRepository repository,
-    MeasurementRepository measurementRepository,
+    MeasurementJpaRepository measurementRepository,
     ModelMapper modelMapper,
     FilterToPredicateMapper predicateMapper
   ) {
