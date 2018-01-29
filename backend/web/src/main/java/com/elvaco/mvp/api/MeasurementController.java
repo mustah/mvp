@@ -39,13 +39,10 @@ public class MeasurementController {
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
-    MvpUserDetails principal = getPrincipal();
     Measurement measurement = measurementUseCases.findById(id);
-    if (principal.isSuperAdmin() || principal.isWithinOrganisation(measurement.physicalMeter
-                                                                     .organisation)) {
+    if (measurement != null) {
       return toDto(measurement);
     }
-
     throw new MeasurementNotFound(id);
   }
 
@@ -58,12 +55,6 @@ public class MeasurementController {
     Map<String, List<String>> filterParams = new HashMap<>(requestParams);
     PageableAdapter pageableAdapter = new PageableAdapter(pageable);
     Page<Measurement> page;
-
-    MvpUserDetails principal = getPrincipal();
-    if (!principal.isSuperAdmin()) {
-      Long organisationId = principal.getOrganisationId();
-      filterParams.put("organisation", Collections.singletonList(organisationId.toString()));
-    }
 
     if (scale != null) {
       page = measurementUseCases.findAllScaled(
@@ -81,11 +72,5 @@ public class MeasurementController {
 
   private MeasurementDto toDto(Measurement entity) {
     return modelMapper.map(entity, MeasurementDto.class);
-  }
-
-  private MvpUserDetails getPrincipal() {
-    return (MvpUserDetails) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal();
   }
 }

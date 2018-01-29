@@ -6,13 +6,14 @@ import java.util.Objects;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.MvpPrincipal;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static java.util.stream.Collectors.toList;
 
-public class MvpUserDetails implements UserDetails {
+public class MvpUserDetails implements UserDetails, MvpPrincipal {
 
   private static final long serialVersionUID = 1234L;
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
@@ -29,18 +30,22 @@ public class MvpUserDetails implements UserDetails {
     this.user = user;
   }
 
+  @Override
   public boolean isSuperAdmin() {
     return user.isSuperAdmin;
   }
 
+  @Override
   public boolean isAdmin() {
     return user.isAdmin;
   }
 
+  @Override
   public boolean isWithinOrganisation(Organisation organisation) {
     return user.organisation.id.equals(organisation.id);
   }
 
+  @Override
   public Long getOrganisationId() {
     return user.organisation.id;
   }

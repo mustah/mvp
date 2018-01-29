@@ -1,5 +1,6 @@
 package com.elvaco.mvp.config;
 
+import com.elvaco.mvp.core.security.MvpPrincipal;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.Measurements;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
@@ -49,7 +50,7 @@ class UseCaseConfig {
   }
 
   @Bean
-  MeasurementUseCases measurementUseCases() {
-    return new MeasurementUseCases(measurements);
+  MeasurementUseCases measurementUseCases(MvpPrincipal principal) {
+    return new MeasurementUseCases(principal, measurements);
   }
 }
