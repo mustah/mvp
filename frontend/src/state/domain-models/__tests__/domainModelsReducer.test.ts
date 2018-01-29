@@ -1,12 +1,10 @@
 import {normalize} from 'normalizr';
-import {createPayloadAction} from 'react-redux-typescript';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
 import {EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
-import {DOMAIN_MODELS_PAGINATED_GET_SUCCESS, requestMethod, requestMethodPaginated} from '../domainModelsActions';
-import {addresses, cities, initialDomain, initialPaginatedDomain, measurements, users} from '../domainModelsReducer';
+import {requestMethod} from '../domainModelsActions';
+import {addresses, cities, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
-import {Measurement, MeasurementState} from '../measurement/measurementModels';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -161,97 +159,4 @@ describe('domainModelsReducer', () => {
     });
   });
 
-  describe('measurements, paginated', () => {
-
-    const initialState: MeasurementState = initialPaginatedDomain<Measurement>();
-
-    const measurementsGetRequest = requestMethodPaginated<Measurement>(EndPoints.measurements, HttpMethod.GET);
-    const measurement: Measurement = {
-      id: 1,
-      created: 1516261161693,
-      value: 0.20985380429184763,
-      quantity: 'Power',
-      unit: 'mW',
-      physicalMeter: {
-        rel: 'self',
-        href: 'http://localhost:8080/v1/api/physical-meters/1',
-      },
-    };
-
-    const successPayload = {
-        entities: {
-          measurements: {
-            1: {
-              id: 1,
-              quantity: 'Power',
-              value: 0.20985380429184763,
-              unit: 'mW',
-              created: 1516261161693,
-              physicalMeter: {
-                rel: 'self',
-                href: 'http://localhost:8080/v1/api/physical-meters/1',
-              },
-            },
-          },
-        },
-        result: {
-          content: [
-            1,
-          ],
-          totalPages: 1,
-          totalElements: 1,
-          last: true,
-          first: true,
-          numberOfElements: 1,
-          sort: null,
-          size: 20,
-          number: 0,
-        },
-    };
-
-    const successAction = createPayloadAction(
-      DOMAIN_MODELS_PAGINATED_GET_SUCCESS.concat(EndPoints.measurements),
-    )(successPayload);
-
-    it('has initial state', () => {
-      expect(measurements(initialState, {type: 'unknown'})).toEqual({...initialState});
-    });
-
-    it('requests measurements', () => {
-      const isFetching = {...initialState, isFetching: true};
-      const stateAfterRequestInitiation = measurements(initialState, measurementsGetRequest.request());
-      expect(stateAfterRequestInitiation).toEqual(isFetching);
-    });
-
-    it('adds new measurement to state', () => {
-      const stateAfterSuccess = measurements(initialState, successAction);
-      expect(stateAfterSuccess).toEqual({
-        result: {
-          content: [1],
-          first: true,
-          last: true,
-          number: 0,
-          numberOfElements: 1,
-          size: 20,
-          sort: null,
-          totalElements: 1,
-          totalPages: 1,
-        },
-        entities: {1: measurement},
-        isFetching: false,
-      });
-    });
-
-    it('has error when fetching has failed', () => {
-      const payload = {message: 'failed'};
-
-      const stateAfterFailure = measurements(initialState, measurementsGetRequest.failure(payload));
-
-      const failedState = {
-        ...initialState,
-        error: payload,
-      };
-      expect(stateAfterFailure).toEqual(failedState);
-    });
-  });
 });

@@ -23,9 +23,9 @@ import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
+import {fetchMeasurements} from '../../../state/domain-models/paginatedDomainModelsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
@@ -43,7 +43,7 @@ interface OwnProps {
 }
 
 interface DispatchToProps {
-  fetchMeasurements: (encodedUriParameters: string) => void;
+  fetchMeasurements: (component: uuid, encodedUriParameters: string) => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -163,7 +163,7 @@ const mapStateToProps =
       period,
     });
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchMeasurements,
 }, dispatch);
 

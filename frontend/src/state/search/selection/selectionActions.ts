@@ -4,7 +4,8 @@ import {Period} from '../../../components/dates/dateModels';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {uuid} from '../../../types/Types';
-import {fetchGateways, fetchMeters} from '../../domain-models/domainModelsActions';
+import {fetchGateways} from '../../domain-models/domainModelsActions';
+import {fetchMeters} from '../../domain-models/paginatedDomainModelsActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {
   getEncodedUriParametersForGateways,

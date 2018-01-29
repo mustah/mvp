@@ -1,5 +1,5 @@
 import {uuid} from '../../../types/Types';
-import {NormalizedPaginatedState} from '../domainModels';
+import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
 interface PhysicalMeter {
   rel: string;

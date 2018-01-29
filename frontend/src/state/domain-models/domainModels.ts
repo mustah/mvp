@@ -35,47 +35,15 @@ export interface DomainModel<T> {
 
 export interface Normalized<T> {
   result: uuid[];
-  entities: DomainModel<T>;
+  entities: {[key: string]: DomainModel<T>};
 }
 
-export interface NormalizedState<T> extends Normalized<T> {
+export interface NormalizedState<T> {
+  result: uuid[];
+  entities: DomainModel<T>;
   isFetching: boolean;
   total: number;
   error?: ErrorResponse;
-}
-
-interface SortingOptions {
-  direction: 'ASC' | 'DESC';
-  property: string;
-  ignoreCase: boolean;
-  nullHandling: string;
-  ascending: boolean;
-  descending: boolean;
-}
-
-export interface PaginationMetadata {
-  first: boolean;
-  last: boolean;
-  number: number;
-  numberOfElements: number;
-  size: number;
-  sort: SortingOptions[] | null;
-  totalElements: number;
-  totalPages: number;
-}
-
-export interface PaginatedResult extends PaginationMetadata {
-  content: uuid[];
-}
-
-export interface NormalizedPaginated<T> {
-  entities: DomainModel<T>;
-  result: PaginatedResult;
-}
-
-export interface NormalizedPaginatedState<T> extends NormalizedPaginated<T> {
-  error?: ErrorResponse;
-  isFetching: boolean;
 }
 
 export type SelectionEntity = IdNamed | Address;

@@ -14,7 +14,6 @@ import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
 import {Measurement} from './measurement/measurementModels';
 import {measurementSchema} from './measurement/measurementSchema';
-import {meterSchema} from './meter/meterSchema';
 import {User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
@@ -26,10 +25,6 @@ export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = `DOMAIN_MODELS_${HttpMethod.GET_
 export const DOMAIN_MODELS_POST_SUCCESS = `DOMAIN_MODELS_${HttpMethod.POST}_SUCCESS`;
 export const DOMAIN_MODELS_PUT_SUCCESS = `DOMAIN_MODELS_${HttpMethod.PUT}_SUCCESS`;
 export const DOMAIN_MODELS_DELETE_SUCCESS = `DOMAIN_MODELS_${HttpMethod.DELETE}_SUCCESS`;
-
-export const DOMAIN_MODELS_PAGINATED_REQUEST = 'DOMAIN_MODELS_REQUEST';
-export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = 'DOMAIN_MODELS_PAGINATED_GET_SUCCESS';
-export const DOMAIN_MODELS_PAGINATED_FAILURE = 'DOMAIN_MODELS_PAGINATED_FAILURE';
 
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
@@ -48,12 +43,6 @@ export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): 
   failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE.concat(endPoint)),
 });
 
-export const requestMethodPaginated = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
-  request: createEmptyAction<string>(DOMAIN_MODELS_PAGINATED_REQUEST.concat(endPoint)),
-  success: createPayloadAction<string, T>(`DOMAIN_MODELS_PAGINATED_${requestType}_SUCCESS`.concat(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_PAGINATED_FAILURE.concat(endPoint)),
-});
-
 interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<DAT> {
   requestFunc: (requestData?: REQ) => any;
   formatData?: (data: any) => DAT;
@@ -61,7 +50,7 @@ interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<D
 }
 
 // TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same try-catch?
-const asyncRequest = <REQ, DAT>({
+export const asyncRequest = <REQ, DAT>({
                                   request,
                                   success,
                                   failure,
@@ -110,19 +99,6 @@ const restGetEntity = <T>(endPoint: EndPoints) => {
   return (requestData: uuid) => asyncRequest<uuid, T>({...requestGet, requestFunc, requestData});
 };
 
-const restPaginatedGet = <T>(endPoint: EndPoints, schema: Schema) => {
-  const requestGet = requestMethodPaginated<NormalizedPaginated<T>>(endPoint, HttpMethod.GET);
-  const formatData = (data) => normalize(data, schema);
-  const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
-
-  return (requestData?: string) => asyncRequest<string, NormalizedPaginated<T>>({
-    ...requestGet,
-    formatData,
-    requestFunc,
-    requestData,
-  });
-};
-
 const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   const requestPost = requestMethod<T>(endPoint, HttpMethod.POST);
   const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);
@@ -147,11 +123,7 @@ const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => 
 
 export const fetchSelections = restGet<IdNamed>(EndPoints.selections, selectionsSchema);
 export const fetchGateways = restGet<Gateway>(EndPoints.gateways, gatewaySchema);
-export const fetchMeters = restGet<Gateway>(EndPoints.meters, meterSchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
-
-// TODO support pagination, i.e. "fetch page 2 of this query"
-export const fetchMeasurements = restPaginatedGet<Measurement>(EndPoints.measurements, measurementSchema);
 
 // TODO: Add tests
 export const fetchUser = restGetEntity<User>(EndPoints.users);

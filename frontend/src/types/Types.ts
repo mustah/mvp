@@ -36,6 +36,10 @@ export interface IdNamed {
   readonly name: string;
 }
 
+export interface HasId {
+  id: uuid;
+}
+
 export interface ErrorResponse {
   type?: string | number;
   data?: any;

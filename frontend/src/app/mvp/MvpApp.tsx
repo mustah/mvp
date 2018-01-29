@@ -8,10 +8,11 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {fetchGateways, fetchMeters} from '../../state/domain-models/domainModelsActions';
+import {fetchGateways} from '../../state/domain-models/domainModelsActions';
+import {fetchMeters} from '../../state/domain-models/paginatedDomainModelsActions';
 import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {OnClick} from '../../types/Types';
+import {OnClick, uuid} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -30,7 +31,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchGateways: (encodedUriParameters: string) => void;
-  fetchMeters: (encodedUriParameters: string) => void;
+  fetchMeters: (component: uuid, encodedUriParameters: string) => void;
   toggleShowHideSideMenu: OnClick;
 }
 
@@ -40,8 +41,8 @@ class MvpApp extends React.Component<Props> {
 
   componentDidMount() {
     const {fetchGateways, fetchMeters, encodedUriParametersForMeters, encodedUriParametersForGateways} = this.props;
-    fetchGateways(encodedUriParametersForMeters);
-    fetchMeters(encodedUriParametersForGateways);
+    fetchGateways(encodedUriParametersForGateways);
+    fetchMeters(encodedUriParametersForMeters);
   }
 
   render() {
@@ -77,7 +78,7 @@ const mapStateToProps = ({ui, searchParameters}: RootState) => ({
   encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
 });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchGateways,
   fetchMeters,
   toggleShowHideSideMenu,
