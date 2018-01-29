@@ -61,7 +61,8 @@ export const MeterList = (props: Normalized<Meter> & Props) => {
         renderCell={renderStatusCell}
       />
       <TableColumn
-        header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+        header={<TableHead sortable={true}
+                           currentSort="desc">{translate('status change')}</TableHead>}
         renderCell={renderStatusChanged}
       />
       <TableColumn

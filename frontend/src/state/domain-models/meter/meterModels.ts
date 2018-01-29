@@ -1,7 +1,8 @@
-import {IdNamed, uuid} from '../../../types/Types';
-import {ObjectsById, Location, NormalizedState, SelectionEntity} from '../domainModels';
-import {Flag} from '../flag/flagModels';
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {IdNamed, uuid} from '../../../types/Types';
+import {Location, ObjectsById, SelectionEntity} from '../domainModels';
+import {Flag} from '../flag/flagModels';
+import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
 export interface MeterStatusChangelog {
   id: uuid;
@@ -30,7 +31,7 @@ export interface Meter extends Location {
   gatewayProductModel: string;
 }
 
-export type MetersState = NormalizedState<Meter>;
+export type MetersState = NormalizedPaginatedState<Meter>;
 
 export interface SelectionTreeItem {
   id: uuid;

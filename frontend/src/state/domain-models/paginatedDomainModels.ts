@@ -28,12 +28,12 @@ export interface NormalizedPaginated<T extends HasId> {
   result: PaginationMetadata;
 }
 
-export interface NormalizedPaginatedState<T extends HasId> {
+export interface NormalizedPaginatedState<T extends HasId = HasId> {
   entities: ObjectsById<T>;
-  result: {[objectUser: string]: PaginatedResult};
-  error?: ErrorResponse;
+  result: {[componentId: string]: PaginatedResult};
 }
 
 interface PaginatedResult extends PaginationMetadata {
   isFetching: boolean;
+  error?: ErrorResponse;
 }

@@ -12,7 +12,8 @@ import {meterSchema} from './meter/meterSchema';
 import {NormalizedPaginated} from './paginatedDomainModels';
 
 export const DOMAIN_MODELS_PAGINATED_REQUEST = 'DOMAIN_MODELS_PAGINATED_REQUEST';
-export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS`;
+export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endpoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS${endpoint}`;
 
 export const DOMAIN_MODELS_PAGINATED_FAILURE = 'DOMAIN_MODELS_PAGINATED_FAILURE';
 

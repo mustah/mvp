@@ -5,12 +5,15 @@ import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {RootState} from '../../../reducers/rootReducer';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {getPaginatedResultDomainModels} from '../../../state/domain-models/paginatedDomainModelsSelectors';
 import {changePaginationSelection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginationList, getSelectionPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {
+  getPaginationList,
+  getSelectionPagination
+} from '../../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {SearchResultList} from '../components/SelectionResultList';
@@ -50,7 +53,7 @@ const mapStateToProps = ({ui, domainModels: {meters}}: RootState): StateToProps 
     isFetching: meters.isFetching,
     numOfEntities: getMetersTotal(meters),
     meters: getMeterEntities(meters),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
+    paginatedList: getPaginationList({pagination, result: getPaginatedResultDomainModels(meters)}),
     pagination,
   };
 };

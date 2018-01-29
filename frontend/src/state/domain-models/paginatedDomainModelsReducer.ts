@@ -3,7 +3,11 @@ import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from './domainModels';
 import {Measurement} from './measurement/measurementModels';
 import {Meter} from './meter/meterModels';
-import {NormalizedPaginated, NormalizedPaginatedState, PaginationMetadata} from './paginatedDomainModels';
+import {
+  NormalizedPaginated,
+  NormalizedPaginatedState,
+  PaginationMetadata
+} from './paginatedDomainModels';
 import {
   DOMAIN_MODELS_PAGINATED_FAILURE,
   DOMAIN_MODELS_PAGINATED_GET_SUCCESS,
@@ -36,7 +40,7 @@ type ActionTypes<T extends HasId> =
   | Action<NormalizedPaginated<T>>
   | Action<ErrorResponse>;
 
-const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
+export const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
    action: ActionTypes<T>): NormalizedPaginatedState<T> => {
     switch (action.type) {
@@ -44,7 +48,7 @@ const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
         return {
           ...state,
         };
-      case DOMAIN_MODELS_PAGINATED_GET_SUCCESS.concat(endPoint):
+      case DOMAIN_MODELS_PAGINATED_GET_SUCCESS(endPoint):
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
       case DOMAIN_MODELS_PAGINATED_FAILURE.concat(endPoint):
         return {

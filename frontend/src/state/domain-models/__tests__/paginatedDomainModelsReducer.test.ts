@@ -1,146 +1,48 @@
-import {normalize} from 'normalizr';
+import {HasId} from '../../../types/Types';
 import {EndPoints, HttpMethod} from '../domainModels';
-import {Measurement, MeasurementState} from '../measurement/measurementModels';
-import {measurementSchema} from '../measurement/measurementSchema';
+import {Meter} from '../meter/meterModels';
 import {NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
 import {requestMethodPaginated} from '../paginatedDomainModelsActions';
-import {initialPaginatedDomain, paginatedMeasurements} from '../paginatedDomainModelsReducer';
+import {initialPaginatedDomain, paginatedMeters} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
+  const getRequest = requestMethodPaginated<Meter>(EndPoints.meters, HttpMethod.GET);
 
-  describe('measurements, paginated', () => {
+  it('appends entities', () => {
+    const oldState: NormalizedPaginatedState = initialPaginatedDomain<Meter>();
+    expect(Object.keys(oldState.result)).toHaveLength(0);
 
-    const initialState: MeasurementState = initialPaginatedDomain<Measurement>();
-
-    const measurementsGetRequest =
-      requestMethodPaginated<NormalizedPaginated<Measurement>>(EndPoints.measurements, HttpMethod.GET);
-    const measurement1: Measurement = {
-      id: 1,
-      quantity: 'Power',
-      value: 0.06368699009387613,
-      unit: 'mW',
-      created: 1514637786120,
-      physicalMeter: {
-        rel: 'self',
-        href: 'http://localhost:8080/v1/api/physical-meters/1',
+    const newStateExpected: NormalizedPaginatedState = {
+      ...state,
+      entities,
+      result: {
+        [objId]: {...result, isFetching: false},
       },
     };
-    const measurement2: Measurement = {
-      id: 2,
-      quantity: 'Power',
-      value: 0.24113868538294558,
-      unit: 'mW',
-      created: 1514638686120,
-      physicalMeter: {
-        rel: 'self',
-        href: 'http://localhost:8080/v1/api/physical-meters/1',
-      },
-    };
-    const measurement = {
-      content: [
-        measurement1,
-        measurement2,
-      ],
-      totalPages: 1440,
-      totalElements: 28800,
-      last: false,
-      size: 20,
-      number: 0,
-      first: true,
-      numberOfElements: 20,
-      sort: null,
-    };
-    const componentId = 'list1';
-    const successPayload: NormalizedPaginated<Measurement> = {
-      componentId,
-      ...normalize(measurement, measurementSchema),
-    };
 
-    it('has correctly normalized state', () => {
-      expect(successPayload).toEqual({
-        componentId,
+    const payload: NormalizedPaginated<HasId> = {
+        componentId: '234',
+        result: {
+          content: [1],
+          first: true,
+          last: true,
+          number: 1,
+          numberOfElements: 1,
+          size: 1,
+          sort: null,
+          totalElements: 1,
+          totalPages: 1,
+        },
         entities: {
-          measurements: {
+          meters: {
             1: {
               id: 1,
-              quantity: 'Power',
-              value: 0.06368699009387613,
-              unit: 'mW',
-              created: 1514637786120,
-              physicalMeter: {
-                rel: 'self',
-                href: 'http://localhost:8080/v1/api/physical-meters/1',
-              },
-            },
-            2: {
-              id: 2,
-              quantity: 'Power',
-              value: 0.24113868538294558,
-              unit: 'mW',
-              created: 1514638686120,
-              physicalMeter: {
-                rel: 'self',
-                href: 'http://localhost:8080/v1/api/physical-meters/1',
-              },
-            },
-          },
+            }
+          }
         },
-        result: {
-          content: [1, 2],
-          totalPages: 1440,
-          totalElements: 28800,
-          last: false,
-          size: 20,
-          number: 0,
-          first: true,
-          numberOfElements: 20,
-          sort: null,
-        },
-      });
-    });
-
-    it('has initial state', () => {
-      expect(paginatedMeasurements(initialState, {type: 'unknown'})).toEqual({...initialState});
-    });
-
-    it('requests measurements', () => {
-      const isFetching = {...initialState};
-      const stateAfterRequestInitiation = paginatedMeasurements(initialState, measurementsGetRequest.request());
-      expect(stateAfterRequestInitiation).toEqual(isFetching);
-    });
-
-    it('adds new measurement to state', () => {
-      const stateAfterSuccess = paginatedMeasurements(initialState, measurementsGetRequest.success(successPayload));
-      const expected: NormalizedPaginatedState<Measurement> = {
-        entities: {1: measurement1, 2: measurement2},
-        result: {
-          [componentId]: {
-            content: [1, 2],
-            totalPages: 1440,
-            totalElements: 28800,
-            last: false,
-            size: 20,
-            number: 0,
-            first: true,
-            numberOfElements: 20,
-            sort: null,
-            isFetching: false,
-          },
-        },
-      };
-      expect(stateAfterSuccess).toEqual(expected);
-    });
-
-    it('has error when fetching has failed', () => {
-      const payload = {message: 'failed'};
-
-      const stateAfterFailure = paginatedMeasurements(initialState, measurementsGetRequest.failure(payload));
-
-      const failedState = {
-        ...initialState,
-        error: payload,
-      };
-      expect(stateAfterFailure).toEqual(failedState);
-    });
+      }
+    ;
+    const newState = paginatedMeters(oldState, getRequest.success(payload));
+    expect(newState).toEqual(newStateExpected);
   });
 });

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Content} from '../../../components/content/Content';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
 import {MeterList} from '../../../components/meters/MeterList';
@@ -16,26 +17,36 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
-import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
+import {
+  getMeterDataSummary,
+  getMeterEntities,
+  getMetersTotal
+} from '../../../state/domain-models/meter/meterSelectors';
+import {getPaginatedResultDomainModels} from '../../../state/domain-models/paginatedDomainModelsSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {
+  getPaginationList,
+  getValidationPagination
+} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedMeterMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {ValidationOverview} from '../components/ValidationOverview';
-import {Content} from '../../../components/content/Content';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
 interface StateToProps extends TabsContainerStateToProps {
   metersCount: number;
@@ -98,7 +109,8 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <Loader isFetching={isFetching}>
           <div>
             <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
-            <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
+            <PaginationControl pagination={pagination} changePage={paginationChangePage}
+                               numOfEntities={metersCount}/>
           </div>
         </Loader>
       </TabContent>
@@ -125,7 +137,10 @@ const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToP
     meterDataSummary: getMeterDataSummary(meters),
     metersCount: getMetersTotal(meters),
     meters: getMeterEntities(meters),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
+    paginatedList: getPaginationList({
+      pagination,
+      result: getPaginatedResultDomainModels(meters, 'ValidationTabsContainer')
+    }),
     pagination,
     selectedMarker: getSelectedMeterMarker(map),
     isFetching: meters.isFetching,
