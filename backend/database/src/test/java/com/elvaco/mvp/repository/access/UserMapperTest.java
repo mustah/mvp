@@ -2,17 +2,23 @@ package com.elvaco.mvp.repository.access;
 
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
-import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.entity.user.UserEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.entity.user.RoleEntity.admin;
+import static com.elvaco.mvp.entity.user.RoleEntity.superAdmin;
+import static com.elvaco.mvp.entity.user.RoleEntity.user;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +40,12 @@ public class UserMapperTest {
   @Test
   public void userEntityMustHaveRoles() {
     UserEntity userEntity = new UserEntity();
-    userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
-    userEntity.roles = singletonList(RoleEntity.user());
+    userEntity.organisation = ELVACO_ENTITY;
+    userEntity.roles = singletonList(user());
 
     List<Role> roles = userMapper.toDomainModel(userEntity).roles;
 
-    assertThat(roles).containsExactly(Role.user());
+    assertThat(roles).containsExactly(USER);
   }
 
   @Test
@@ -47,7 +53,7 @@ public class UserMapperTest {
     User user = userMapper.toDomainModel(createUserEntity());
 
     assertThat(user.id).isEqualTo(1);
-    assertThat(user.roles).containsExactly(Role.user(), Role.superAdmin());
+    assertThat(user.roles).containsExactly(USER, SUPER_ADMIN);
   }
 
   @Test
@@ -73,7 +79,7 @@ public class UserMapperTest {
         user.organisation.name,
         user.organisation.code
       ),
-      asList(RoleEntity.admin(), RoleEntity.user())
+      asList(admin(), user())
     ));
   }
 
@@ -83,8 +89,8 @@ public class UserMapperTest {
       "john doh",
       "a@b.com",
       "letmein",
-      new Organisation(1L, "Elvaco", "elvaco"),
-      asList(Role.admin(), Role.user())
+      ELVACO,
+      asList(ADMIN, USER)
     );
   }
 
@@ -94,8 +100,8 @@ public class UserMapperTest {
     userEntity.name = "John Doh";
     userEntity.password = "letmein";
     userEntity.email = "a@b.com";
-    userEntity.organisation = new OrganisationEntity(1L, "Elvaco", "elvaco");
-    userEntity.roles = asList(RoleEntity.user(), RoleEntity.superAdmin());
+    userEntity.organisation = ELVACO_ENTITY;
+    userEntity.roles = asList(user(), superAdmin());
     return userEntity;
   }
 }

@@ -1,24 +1,23 @@
 package com.elvaco.mvp.mapper;
 
-import java.util.Collections;
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.security.MvpUserDetails;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class UserDetailsMapperTest {
-
-  private static final Organisation ELVACO = new Organisation(1L, "Elvaco", "elvaco");
-  private static final Organisation WAYNE_INDUSTRIES = new Organisation(2L, "Wayne", "Wayne Inc");
 
   @Test
   public void throwsWhenPasswordIsNull() {
@@ -27,8 +26,8 @@ public class UserDetailsMapperTest {
       "some name",
       "email@a.com",
       null,
-      new Organisation(1L, "t", "b"),
-      Collections.emptyList()
+      ELVACO,
+      emptyList()
     );
 
     assertThatThrownBy(() -> new MvpUserDetails(user))
@@ -48,7 +47,7 @@ public class UserDetailsMapperTest {
       .stream()
       .map(GrantedAuthority::getAuthority);
 
-    assertThat(roles).containsExactly("ROLE_" + Role.ADMIN, "ROLE_" + Role.USER);
+    assertThat(roles).containsExactly("ROLE_" + ADMIN.role, "ROLE_" + USER.role);
   }
 
   @Test
@@ -78,7 +77,7 @@ public class UserDetailsMapperTest {
       "a@b.com",
       "letmein",
       ELVACO,
-      asList(Role.admin(), Role.user())
+      asList(ADMIN, USER)
     ));
   }
 }

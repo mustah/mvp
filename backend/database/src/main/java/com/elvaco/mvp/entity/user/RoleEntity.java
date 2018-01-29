@@ -35,15 +35,15 @@ public class RoleEntity implements Serializable {
   }
 
   public static RoleEntity user() {
-    return new RoleEntity(USER);
+    return new RoleEntity(USER.role);
   }
 
   public static RoleEntity admin() {
-    return new RoleEntity(ADMIN);
+    return new RoleEntity(ADMIN.role);
   }
 
   public static RoleEntity superAdmin() {
-    return new RoleEntity(SUPER_ADMIN);
+    return new RoleEntity(SUPER_ADMIN.role);
   }
 
   @Override

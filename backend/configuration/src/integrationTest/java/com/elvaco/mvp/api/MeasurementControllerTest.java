@@ -30,22 +30,23 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Autowired
   ModelMapper modelMapper;
+
   @Autowired
   private MeasurementRepository measurementRepository;
+
   @Autowired
   private PhysicalMeterRepository meterRepository;
+
   @Autowired
   private UserUseCases userUseCases;
 
-  private User elvacoUser;
-  private User wayneIndustriesUser;
   private Map<String, MeasurementEntity> measurementQuantities;
 
   @Before
   public void setUp() {
-    elvacoUser = userUseCases.findByEmail("peteri@elvaco.se").get();
-    wayneIndustriesUser = userUseCases.findByEmail("user@wayne.se").get();
     UserMapper userMapper = new UserMapper(modelMapper, new OrganisationMapper());
+    User elvacoUser = userUseCases.findByEmail("peteri@elvaco.se").get();
+    User wayneIndustriesUser = userUseCases.findByEmail("user@wayne.se").get();
 
     PhysicalMeterEntity butterMeter =
       new PhysicalMeterEntity(
@@ -112,7 +113,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(measurement.id).isEqualTo(butterTemperatureId);
     assertThat(measurement.quantity).isEqualTo("Butter temperature");
-    assertThat(measurement.value).isEqualTo(12.44);
   }
 
   @Test
@@ -186,5 +186,4 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeasurementEntity measurementOf(String measurementQuantity) {
     return measurementQuantities.get(measurementQuantity);
   }
-
 }

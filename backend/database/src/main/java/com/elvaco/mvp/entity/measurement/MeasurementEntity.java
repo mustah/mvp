@@ -3,6 +3,7 @@ package com.elvaco.mvp.entity.measurement;
 import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,7 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Type;
 
@@ -27,7 +27,10 @@ public class MeasurementEntity {
   public Long id;
 
   @Temporal(value = TemporalType.TIMESTAMP)
+  @Column(nullable = false)
   public Date created;
+
+  @Column(nullable = false)
   public String quantity;
 
   @ManyToOne
@@ -35,6 +38,7 @@ public class MeasurementEntity {
   public PhysicalMeterEntity physicalMeter;
 
   @Type(type = "measurement-unit")
+  @Column(nullable = false)
   public MeasurementUnit value;
 
   public MeasurementEntity() {}

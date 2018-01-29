@@ -107,7 +107,6 @@ public class MeteringPointControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(20);
     assertThat(response.getTotalPages()).isEqualTo(3);
 
-
     response = restClient()
       .getPage("/meters?page=2", MeteringPointDto.class)
       .getBody()

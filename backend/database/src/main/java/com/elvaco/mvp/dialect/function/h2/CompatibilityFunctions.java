@@ -32,12 +32,9 @@ public final class CompatibilityFunctions {
     CUSTOM_TYPES.put("m3", Units.CUBIC_METRE);
   }
 
-  private CompatibilityFunctions() {
-  }
+  private CompatibilityFunctions() {}
 
-  public static String unitAt(String valueAndUnit, String target) {
-    Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
-
+  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     Quantity<?> sourceQuantity;
     try {
       sourceQuantity = Quantities.getQuantity(valueAndUnit);
@@ -52,36 +49,45 @@ public final class CompatibilityFunctions {
         throw iex;
       }
     }
+    Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
     Quantity<?> resultQuantity = sourceQuantity.to(targetUnit);
 
     return new MeasurementUnit(
       resultQuantity.getUnit().toString(),
       resultQuantity.getValue().doubleValue()
-    ).toString();
+    );
   }
 
+  @SuppressWarnings("WeakerAccess") // It's used in h2 provisioning loader
+  public static String unitAt(String valueAndUnit, String target) {
+    return toMeasurementUnit(valueAndUnit, target).toString();
+  }
+
+  @SuppressWarnings("WeakerAccess") // It's used in h2 provisioning loader
   public static Boolean jsonbContains(String lhs, String rhs) {
     try {
       JsonNode lhsJson = OBJECT_MAPPER.readTree(lhs);
       JsonNode rhsJson = OBJECT_MAPPER.readTree(rhs);
       return jsonNodeContains(lhsJson, rhsJson);
     } catch (IOException ex) {
-      log.error(
-        String.format("Failed to convert string to json: left: %s right: %s", lhs, rhs),
-        ex);
+      logJsonError(lhs, rhs, ex);
       return false;
     }
   }
 
+  @SuppressWarnings("WeakerAccess") // It's used in h2 provisioning loader
   public static Boolean jsonbExists(String lhs, String rhs) {
     try {
       JsonNode lhsJson = OBJECT_MAPPER.readTree(lhs);
       return jsonNodeExists(lhsJson, rhs);
     } catch (IOException ex) {
-      log.error(
-        String.format("Failed to convert string to json: left: %s right: %s", lhs, rhs), ex);
+      logJsonError(lhs, rhs, ex);
       return false;
     }
+  }
+
+  private static void logJsonError(String lhs, String rhs, IOException ex) {
+    log.error(String.format("Failed to convert string to json: left: %s right: %s", lhs, rhs), ex);
   }
 
   private static boolean jsonNodeExists(JsonNode left, String key) {
@@ -92,16 +98,12 @@ public final class CompatibilityFunctions {
     } else if (left.isObject()) {
       return jsonNodeExistsFieldInObject((ObjectNode) left, key);
     }
-
-    throw new UnsupportedOperationException(
-      "left type: " + left.getNodeType().toString()
-    );
+    throw new UnsupportedOperationException("left type: " + left.getNodeType().toString());
   }
 
   private static boolean jsonNodeExistsFieldInObject(ObjectNode left, String key) {
     return left.has(key);
   }
-
 
   private static boolean jsonNodeExistsFieldInArray(ArrayNode array, String key) {
     for (JsonNode x : array) {
@@ -118,7 +120,7 @@ public final class CompatibilityFunctions {
       boolean foundContainer = false;
       for (JsonNode containingElement : container) {
         if (containingElement.equals(el)
-          || (el.isContainerNode() && jsonNodeContains(containingElement, el))) {
+            || (el.isContainerNode() && jsonNodeContains(containingElement, el))) {
           foundContainer = true;
           break;
         }
@@ -136,15 +138,12 @@ public final class CompatibilityFunctions {
     } else if (lhs.isArray()) {
       return jsonContainerContains(lhs, rhs);
     } else if (lhs.isObject()) {
-      if (!rhs.isObject()) {
-        return false;
-      }
-      return jsonContainerContains(lhs, rhs);
+      return rhs.isObject() && jsonContainerContains(lhs, rhs);
     }
 
     throw new UnsupportedOperationException(
       "left type: " + lhs.getNodeType().toString()
-        + ", right type:" + rhs.getNodeType().toString()
+      + ", right type:" + rhs.getNodeType().toString()
     );
   }
 }

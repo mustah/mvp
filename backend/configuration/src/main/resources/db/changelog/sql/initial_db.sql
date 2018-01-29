@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   organisation_id   BIGSERIAL REFERENCES organisation,
   identity          VARCHAR(255),
   medium            VARCHAR(255),
-  metering_point_id BIGSERIAL REFERENCES metering_point,
+  metering_point_id BIGINT REFERENCES metering_point,
   UNIQUE (organisation_id, identity)
 );
 
