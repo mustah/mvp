@@ -2,7 +2,7 @@ import {normalize} from 'normalizr';
 import {EndPoints, HttpMethod} from '../domainModels';
 import {Measurement, MeasurementState} from '../measurement/measurementModels';
 import {measurementSchema} from '../measurement/measurementSchema';
-import {NormalizedPaginated} from '../paginatedDomainModels';
+import {NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
 import {requestMethodPaginated} from '../paginatedDomainModelsActions';
 import {initialPaginatedDomain, paginatedMeasurements} from '../paginatedDomainModelsReducer';
 
@@ -14,31 +14,32 @@ describe('paginatedDomainModelsReducer', () => {
 
     const measurementsGetRequest =
       requestMethodPaginated<NormalizedPaginated<Measurement>>(EndPoints.measurements, HttpMethod.GET);
-
+    const measurement1: Measurement = {
+      id: 1,
+      quantity: 'Power',
+      value: 0.06368699009387613,
+      unit: 'mW',
+      created: 1514637786120,
+      physicalMeter: {
+        rel: 'self',
+        href: 'http://localhost:8080/v1/api/physical-meters/1',
+      },
+    };
+    const measurement2: Measurement = {
+      id: 2,
+      quantity: 'Power',
+      value: 0.24113868538294558,
+      unit: 'mW',
+      created: 1514638686120,
+      physicalMeter: {
+        rel: 'self',
+        href: 'http://localhost:8080/v1/api/physical-meters/1',
+      },
+    };
     const measurement = {
       content: [
-        {
-          id: 1,
-          quantity: 'Power',
-          value: 0.06368699009387613,
-          unit: 'mW',
-          created: 1514637786120,
-          physicalMeter: {
-            rel: 'self',
-            href: 'http://localhost:8080/v1/api/physical-meters/1',
-          },
-        },
-        {
-          id: 2,
-          quantity: 'Power',
-          value: 0.24113868538294558,
-          unit: 'mW',
-          created: 1514638686120,
-          physicalMeter: {
-            rel: 'self',
-            href: 'http://localhost:8080/v1/api/physical-meters/1',
-          },
-        },
+        measurement1,
+        measurement2,
       ],
       totalPages: 1440,
       totalElements: 28800,
@@ -49,11 +50,15 @@ describe('paginatedDomainModelsReducer', () => {
       numberOfElements: 20,
       sort: null,
     };
-
-    const successPayload: NormalizedPaginated<Measurement> = normalize(measurement, measurementSchema);
+    const componentId = 'list1';
+    const successPayload: NormalizedPaginated<Measurement> = {
+      componentId,
+      ...normalize(measurement, measurementSchema),
+    };
 
     it('has correctly normalized state', () => {
       expect(successPayload).toEqual({
+        componentId,
         entities: {
           measurements: {
             1: {
@@ -99,28 +104,31 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('requests measurements', () => {
-      const isFetching = {...initialState, isFetching: true};
+      const isFetching = {...initialState};
       const stateAfterRequestInitiation = paginatedMeasurements(initialState, measurementsGetRequest.request());
       expect(stateAfterRequestInitiation).toEqual(isFetching);
     });
 
     it('adds new measurement to state', () => {
       const stateAfterSuccess = paginatedMeasurements(initialState, measurementsGetRequest.success(successPayload));
-      expect(stateAfterSuccess).toEqual({
+      const expected: NormalizedPaginatedState<Measurement> = {
+        entities: {1: measurement1, 2: measurement2},
         result: {
-          content: [1],
-          first: true,
-          last: true,
-          number: 0,
-          numberOfElements: 1,
-          size: 20,
-          sort: null,
-          totalElements: 1,
-          totalPages: 1,
+          [componentId]: {
+            content: [1, 2],
+            totalPages: 1440,
+            totalElements: 28800,
+            last: false,
+            size: 20,
+            number: 0,
+            first: true,
+            numberOfElements: 20,
+            sort: null,
+            isFetching: false,
+          },
         },
-        entities: {1: measurement},
-        isFetching: false,
-      });
+      };
+      expect(stateAfterSuccess).toEqual(expected);
     });
 
     it('has error when fetching has failed', () => {

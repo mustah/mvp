@@ -2,7 +2,7 @@ import {normalize, Schema} from 'normalizr';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {restClient} from '../../services/restClient';
-import {ErrorResponse, uuid} from '../../types/Types';
+import {ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, HttpMethod} from './domainModels';
 import {asyncRequest} from './domainModelsActions';
 import {Measurement} from './measurement/measurementModels';
@@ -28,14 +28,13 @@ export const requestMethodPaginated = <T>(endPoint: EndPoints, requestType: Http
   failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_PAGINATED_FAILURE.concat(endPoint)),
 });
 
-const restPaginatedGet = <T>(endPoint: EndPoints, schema: Schema) => {
+const restPaginatedGet = <T extends HasId>(endPoint: EndPoints, schema: Schema) => {
   const requestGet = requestMethodPaginated<NormalizedPaginated<T>>(endPoint, HttpMethod.GET);
-  const formatData = (data) => normalize(data, schema);
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
-  return (component: uuid, requestData?: string) => asyncRequest<string, NormalizedPaginated<T>>({
+  return (componentId: uuid, requestData?: string) => asyncRequest<string, NormalizedPaginated<T>>({
     ...requestGet,
-    formatData,
+    formatData: (data) => ({...normalize(data, schema), componentId}),
     requestFunc,
     requestData,
   });

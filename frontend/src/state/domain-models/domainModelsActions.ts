@@ -5,15 +5,13 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {authSetUser} from '../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
-import {EndPoints, HttpMethod, Normalized, NormalizedPaginated} from './domainModels';
+import {EndPoints, HttpMethod, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
-import {Measurement} from './measurement/measurementModels';
-import {measurementSchema} from './measurement/measurementSchema';
 import {User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
@@ -78,7 +76,7 @@ export const asyncRequest = <REQ, DAT>({
     }
   };
 
-const restGet = <T>(endPoint: EndPoints, schema: Schema) => {
+const restGet = <T extends HasId>(endPoint: EndPoints, schema: Schema) => {
   const requestGet = requestMethod<Normalized<T>>(endPoint, HttpMethod.GET);
   const formatData = (data) => normalize(data, schema);
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));

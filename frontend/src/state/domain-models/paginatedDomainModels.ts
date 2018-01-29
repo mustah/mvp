@@ -1,4 +1,4 @@
-import {ErrorResponse, uuid} from '../../types/Types';
+import {ErrorResponse, HasId, uuid} from '../../types/Types';
 import {ObjectsById} from './domainModels';
 
 interface SortingOptions {
@@ -22,17 +22,18 @@ export interface PaginationMetadata {
   totalPages: number;
 }
 
-export interface NormalizedPaginated<T> {
-  entities: {[key: string]: ObjectsById<T>};
+export interface NormalizedPaginated<T extends HasId> {
+  componentId: uuid;
+  entities: {[entityType: string]: ObjectsById<T>};
   result: PaginationMetadata;
 }
 
-export interface NormalizedPaginatedState<T> {
+export interface NormalizedPaginatedState<T extends HasId> {
   entities: ObjectsById<T>;
-  result: ObjectsById<PaginatedResult>;
+  result: {[objectUser: string]: PaginatedResult};
+  error?: ErrorResponse;
 }
 
 interface PaginatedResult extends PaginationMetadata {
   isFetching: boolean;
-  error?: ErrorResponse;
 }

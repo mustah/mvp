@@ -1,4 +1,4 @@
-import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MeasurementState} from './measurement/measurementModels';
 import {MetersState} from './meter/meterModels';
@@ -29,16 +29,16 @@ export interface Address extends IdNamed {
   cityId: uuid;
 }
 
-export interface ObjectsById<T> {
+export interface ObjectsById<T extends HasId> {
   [id: string]: T;
 }
 
-export interface Normalized<T> {
+export interface Normalized<T extends HasId> {
   result: uuid[];
-  entities: {[key: string]: ObjectsById<T>};
+  entities: {[entityType: string]: ObjectsById<T>};
 }
 
-export interface NormalizedState<T> {
+export interface NormalizedState<T extends HasId> {
   result: uuid[];
   entities: ObjectsById<T>;
   isFetching: boolean;

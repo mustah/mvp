@@ -1,7 +1,10 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
-import {Action, ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
-import {ObjectsById, DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
+import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
+import {
+  DomainModelsState, EndPoints, Normalized, NormalizedState, ObjectsById,
+  SelectionEntity,
+} from './domainModels';
 import {
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
@@ -15,25 +18,26 @@ import {Gateway} from './gateway/gatewayModels';
 import {paginatedMeasurements, paginatedMeters} from './paginatedDomainModelsReducer';
 import {User} from './user/userModels';
 
-export const initialDomain = <T>(): NormalizedState<T> => ({
+export const initialDomain = <T extends HasId>(): NormalizedState<T> => ({
   result: [],
   entities: {},
   isFetching: false,
   total: 0,
 });
 
-const setEntities =
-  <T>(entity: string, state: NormalizedState<T>, {payload}: Action<Normalized<T>>): NormalizedState<T> => {
-    const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
-    const entities: ObjectsById<T> = payload.entities[entity];
-    return {
-      ...state,
-      isFetching: false,
-      entities,
-      result,
-      total: result.length,
-    };
+const setEntities = <T extends HasId>(entity: string,
+                                      state: NormalizedState<T>,
+                                      {payload}: Action<Normalized<T>>): NormalizedState<T> => {
+  const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
+  const entities: ObjectsById<T> = payload.entities[entity];
+  return {
+    ...state,
+    isFetching: false,
+    entities,
+    result,
+    total: result.length,
   };
+};
 
 const addEntity =
   <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
@@ -78,13 +82,13 @@ const removeEntity =
     };
   };
 
-type ActionTypes<T> =
+type ActionTypes<T extends HasId> =
   | EmptyAction<string>
   | Action<Normalized<T>>
   | Action<ErrorResponse>;
 
 // TODO: Add tests for PUT, POST, DELETE
-const reducerFor = <T>(entity: string, endPoint: EndPoints) =>
+const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
       case DOMAIN_MODELS_REQUEST.concat(endPoint):
