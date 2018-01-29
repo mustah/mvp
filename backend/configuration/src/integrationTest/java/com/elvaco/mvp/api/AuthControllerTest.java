@@ -20,15 +20,12 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void authenticate() {
-    String email = DEVELOPER_USER.email;
-    String rawPassword = DEVELOPER_USER.password;
-
     ResponseEntity<UserDto> response = restClient()
-      .loginWith(email, rawPassword)
+      .loginWith(DEVELOPER_USER.email, DEVELOPER_USER.password)
       .get("/authenticate", UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().email).isEqualTo(email);
+    assertThat(response.getBody().email).isEqualTo(DEVELOPER_USER.email);
   }
 
   @Test

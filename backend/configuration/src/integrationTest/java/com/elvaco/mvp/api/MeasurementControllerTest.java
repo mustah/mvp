@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
+import static com.elvaco.mvp.fixture.DomainModels.DEVELOPER_USER;
+import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementControllerTest extends IntegrationTest {
@@ -158,6 +160,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(statusCode).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
+  private RestClient apiService() {
+    return restClient().loginWith(DEVELOPER_USER.email, DEVELOPER_USER.password);
+  }
   @Test
   public void superAdminCanAccessAnyMeasurementDirectly() {
     HttpStatus statusCode = asSuperAdmin()

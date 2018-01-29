@@ -2,8 +2,8 @@ package com.elvaco.mvp.entity.measurement;
 
 public class MeasurementUnit {
 
-  private double value;
   private String unit;
+  private double value;
 
   public MeasurementUnit() {}
 

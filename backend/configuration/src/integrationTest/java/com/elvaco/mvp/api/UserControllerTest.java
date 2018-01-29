@@ -20,6 +20,9 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_ADMIN_USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_USER;
 import static com.elvaco.mvp.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
@@ -295,5 +298,4 @@ public class UserControllerTest extends IntegrationTest {
     user.roles = singletonList(USER.role);
     return user;
   }
-
 }
