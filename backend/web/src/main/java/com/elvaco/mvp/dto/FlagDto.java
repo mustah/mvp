@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.dto;
+package com.elvaco.mvp.dto;
 
 public class FlagDto {
   public String title;

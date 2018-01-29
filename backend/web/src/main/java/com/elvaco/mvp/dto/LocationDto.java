@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.dto;
+package com.elvaco.mvp.dto;
 
 public class LocationDto {
   public AddressDto address;

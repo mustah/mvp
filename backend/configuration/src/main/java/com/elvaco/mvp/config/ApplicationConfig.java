@@ -1,12 +1,12 @@
 package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.dto.IdNamedDto;
-import com.elvaco.mvp.core.dto.MapMarkerDto;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.core.dto.MeteringPointDto;
 import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.dto.IdNamedDto;
+import com.elvaco.mvp.dto.MapMarkerDto;
 import com.elvaco.mvp.dto.MeasurementDto;
+import com.elvaco.mvp.dto.MeteringPointDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;

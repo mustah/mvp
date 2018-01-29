@@ -1,5 +1,6 @@
-package com.elvaco.mvp.core.dto;
+package com.elvaco.mvp.dto;
 
+import com.elvaco.mvp.core.dto.MapMarkerType;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 

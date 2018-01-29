@@ -1,9 +1,9 @@
 package com.elvaco.mvp.mapper;
 
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
-import com.elvaco.mvp.core.dto.IdNamedDto;
-import com.elvaco.mvp.core.dto.MapMarkerDto;
 import com.elvaco.mvp.core.dto.MapMarkerType;
+import com.elvaco.mvp.dto.IdNamedDto;
+import com.elvaco.mvp.dto.MapMarkerDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

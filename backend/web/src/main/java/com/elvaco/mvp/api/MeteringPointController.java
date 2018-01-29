@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.elvaco.mvp.core.dto.MapMarkerDto;
-import com.elvaco.mvp.core.dto.MeteringPointDto;
 import com.elvaco.mvp.core.usecase.MeteringPointsUseCases;
+import com.elvaco.mvp.dto.MapMarkerDto;
+import com.elvaco.mvp.dto.MeteringPointDto;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.mapper.MeteringPointMapper;
