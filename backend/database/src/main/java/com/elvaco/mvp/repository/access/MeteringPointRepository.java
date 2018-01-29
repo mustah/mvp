@@ -12,8 +12,9 @@ public class MeteringPointRepository implements MeteringPoints {
   private final MeteringPointMapper meteringPointMapper;
 
   public MeteringPointRepository(
-      MeteringPointJpaRepository meteringPointJpaRepository,
-      MeteringPointMapper meteringPointMapper) {
+    MeteringPointJpaRepository meteringPointJpaRepository,
+    MeteringPointMapper meteringPointMapper
+  ) {
     this.meteringPointJpaRepository = meteringPointJpaRepository;
     this.meteringPointMapper = meteringPointMapper;
   }
@@ -21,9 +22,9 @@ public class MeteringPointRepository implements MeteringPoints {
   @Override
   public List<MeteringPoint> findAll() {
     return meteringPointJpaRepository.findAll()
-        .stream()
-        .map(meteringPointMapper::toDomainModel)
-        .collect(Collectors.toList());
+      .stream()
+      .map(meteringPointMapper::toDomainModel)
+      .collect(Collectors.toList());
   }
 
   @Override

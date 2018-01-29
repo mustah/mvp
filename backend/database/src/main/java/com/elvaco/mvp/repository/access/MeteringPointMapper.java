@@ -5,14 +5,8 @@ import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import org.modelmapper.ModelMapper;
 
 public class MeteringPointMapper {
-  private final ModelMapper modelMapper;
-
-  public MeteringPointMapper(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
-  }
 
   MeteringPoint toDomainModel(MeteringPointEntity meteringPointEntity) {
     PropertyCollection props = meteringPointEntity.propertyCollection;
@@ -51,8 +45,6 @@ public class MeteringPointMapper {
   }
 
   private UserPropertyDto userPropertyToDto(UserProperty userProperty) {
-    return new UserPropertyDto(
-      userProperty.externalId,
-      userProperty.project);
+    return new UserPropertyDto(userProperty.externalId, userProperty.project);
   }
 }

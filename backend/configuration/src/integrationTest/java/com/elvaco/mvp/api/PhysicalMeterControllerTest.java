@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.dialect.function.h2.CompatibilityFunctions.toMeasurementUnit;
-import static com.elvaco.mvp.fixture.DomainModels.DEVELOPER_USER;
 import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;

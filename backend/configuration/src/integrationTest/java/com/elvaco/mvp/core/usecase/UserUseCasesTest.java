@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 

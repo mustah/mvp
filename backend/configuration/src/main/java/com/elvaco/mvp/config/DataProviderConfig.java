@@ -74,7 +74,7 @@ class DataProviderConfig {
   MeteringPoints meteringPoints() {
     return new MeteringPointRepository(
       meteringPointJpaRepository,
-      new MeteringPointMapper(modelMapper)
+      new MeteringPointMapper()
     );
   }
 

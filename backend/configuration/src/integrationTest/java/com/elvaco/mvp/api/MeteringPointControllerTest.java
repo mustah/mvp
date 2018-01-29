@@ -12,7 +12,6 @@ import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.RestClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,24 +30,17 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    for (int x = 0; x < 55; x++) {
-      mockMeteringPoint();
+    for (int i = 0; i < 55; i++) {
+      MeteringPoint meteringPoint = new MeteringPoint(
+        1L,
+        "ok",
+        1.1,
+        1.1,
+        1.1,
+        new PropertyCollection(new UserProperty("abc123", "Some project"))
+      );
+      meteringPointRepository.save(meteringPoint);
     }
-
-    restClient().loginWith("evanil@elvaco.se", "eva123");
-  }
-
-  private void mockMeteringPoint() {
-    MeteringPoint meteringPoint = new MeteringPoint(
-      1L,
-      "ok",
-      1.1,
-      1.1,
-      1.1,
-      new PropertyCollection(new UserProperty("abc123", "Some project"))
-    );
-
-    meteringPointRepository.save(meteringPoint);
   }
 
   @After
@@ -61,7 +53,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   public void findMatchesPropertyCollection() {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
-    ResponseEntity<List> response = restClient()
+    ResponseEntity<List> response = asElvacoUser()
       .post("/meters/property-collections", request, List.class);
 
     Map<String, Object> result = (Map<String, Object>) response
@@ -76,7 +68,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   public void cannotFindMatchingPropertyCollection() {
     PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("xyz"));
 
-    ResponseEntity<List> response = restClient()
+    ResponseEntity<List> response = asElvacoUser()
       .post("/meters/property-collections", request, List.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -87,7 +79,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   public void findById() {
     List<MeteringPoint> meteringPoints = meteringPointRepository.findAll();
 
-    ResponseEntity<MeteringPointEntity> response = restClient()
+    ResponseEntity<MeteringPointEntity> response = asElvacoUser()
       .get("/meters/" + meteringPoints.get(0).id, MeteringPointEntity.class);
 
     MeteringPointEntity meteringPoint = response.getBody();
@@ -98,7 +90,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Test
   public void findAll() {
-    Page<MeteringPointDto> response = restClient()
+    Page<MeteringPointDto> response = asElvacoUser()
       .getPage("/meters", MeteringPointDto.class)
       .getBody()
       .newPage();
@@ -107,7 +99,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(20);
     assertThat(response.getTotalPages()).isEqualTo(3);
 
-    response = restClient()
+    response = asElvacoUser()
       .getPage("/meters?page=2", MeteringPointDto.class)
       .getBody()
       .newPage();
@@ -119,14 +111,10 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMapDataForMeteringPoints() {
-    ResponseEntity<List> response = restClient()
+    ResponseEntity<List> response = asElvacoUser()
       .get("/meters/map-data", List.class);
 
     assertThat(response.getBody().size()).isEqualTo(55);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
-  private RestClient apiService() {
-    return restClient().loginWith("evanil@elvaco.se", "eva123");
   }
 }
