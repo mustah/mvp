@@ -2,12 +2,14 @@ package com.elvaco.mvp.entity.meteringpoint;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.ToString;
 
 import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
 import static com.elvaco.mvp.util.Json.toJsonNode;
+import static com.elvaco.mvp.util.Json.toObject;
 
 @ToString
 public class PropertyCollection {
@@ -41,5 +43,13 @@ public class PropertyCollection {
 
   public String asJsonString() {
     return json.toString();
+  }
+
+  public JsonNode get(String fieldName) {
+    return json.get(fieldName);
+  }
+
+  public <T> T asObject(String fieldName, Class<T> valueType) {
+    return toObject(json.get(fieldName).toString(), valueType);
   }
 }

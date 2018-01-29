@@ -6,7 +6,7 @@ import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.elvaco.mvp.repository.jpa.MeteringPointRepository;
+import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringPointRepositoryTest extends IntegrationTest {
+public class MeteringPointJpaRepositoryTest extends IntegrationTest {
 
   @Autowired
-  private MeteringPointRepository meteringPointRepository;
+  private MeteringPointJpaRepository meteringPointJpaRepository;
 
   @Before
   public void setUp() {
@@ -25,7 +25,7 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     mp.propertyCollection = new PropertyCollection()
       .put("user", new UserPropertyDto("abc123", "Under construction"))
       .putArray("numbers", Arrays.asList(1, 2, 3, 17));
-    meteringPointRepository.save(mp);
+    meteringPointJpaRepository.save(mp);
   }
 
   @Test
@@ -33,14 +33,14 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("12cccx123");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isEmpty();
+    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test
   public void containsInPropertyCollection() {
     PropertyCollectionDto requestModel = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -49,7 +49,7 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     user.project = "Under construction";
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -57,7 +57,7 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "Under construction");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -65,16 +65,16 @@ public class MeteringPointRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "building does not exist yet");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointRepository.containsInPropertyCollection(requestModel)).isEmpty();
+    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test
   public void fieldNameExistsAtTopLevelJson() {
-    assertThat(meteringPointRepository.existsInPropertyCollection("user")).isNotEmpty();
+    assertThat(meteringPointJpaRepository.existsInPropertyCollection("user")).isNotEmpty();
   }
 
   @Test
   public void fieldNameDoesNotExistAtTopLevelJson() {
-    assertThat(meteringPointRepository.existsInPropertyCollection("top")).isEmpty();
+    assertThat(meteringPointJpaRepository.existsInPropertyCollection("top")).isEmpty();
   }
 }

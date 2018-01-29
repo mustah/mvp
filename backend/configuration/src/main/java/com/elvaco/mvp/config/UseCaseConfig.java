@@ -2,6 +2,8 @@ package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.Measurements;
+import com.elvaco.mvp.core.usecase.MeteringPoints;
+import com.elvaco.mvp.core.usecase.MeteringPointsUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.Settings;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -14,12 +16,19 @@ import org.springframework.context.annotation.Configuration;
 class UseCaseConfig {
 
   private final Users users;
+  private final MeteringPoints meteringPoints;
   private final Settings settings;
   private final Measurements measurements;
 
   @Autowired
-  UseCaseConfig(Users users, Settings settings, Measurements measurements) {
+  UseCaseConfig(
+    Users users,
+    Settings settings,
+    MeteringPoints meteringPoints,
+    Measurements measurements
+  ) {
     this.users = users;
+    this.meteringPoints = meteringPoints;
     this.settings = settings;
     this.measurements = measurements;
   }
@@ -32,6 +41,11 @@ class UseCaseConfig {
   @Bean
   UserUseCases userUseCases() {
     return new UserUseCases(users);
+  }
+
+  @Bean
+  MeteringPointsUseCases meteringPointsUseCases() {
+    return new MeteringPointsUseCases(meteringPoints);
   }
 
   @Bean
