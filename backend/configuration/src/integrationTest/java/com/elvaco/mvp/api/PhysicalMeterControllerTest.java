@@ -135,8 +135,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   }
 
   private ResponseEntity<RestResponsePage<MeasurementDto>> getPage(String url) {
-    return restClient()
-      .loginWith("user@domain.tld", "complicated_password")
+    return asSuperAdmin()
       .getPage(url, MeasurementDto.class);
   }
 }

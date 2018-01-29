@@ -41,6 +41,10 @@ public class MvpUserDetails implements UserDetails {
     return user.organisation.id.equals(organisation.id);
   }
 
+  public Long getOrganisationId() {
+    return user.organisation.id;
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return authorities;
