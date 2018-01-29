@@ -6,7 +6,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
-import {DomainModel} from '../domainModels';
+import {ObjectsById} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {
   Meter,
@@ -21,12 +21,12 @@ import {
 import {selectionTreeSchema} from './meterSchema';
 
 export const getMetersTotal = (state: MetersState): number => state.total;
-export const getMeterEntities = (state: MetersState): DomainModel<Meter> => state.entities;
+export const getMeterEntities = (state: MetersState): ObjectsById<Meter> => state.entities;
 
-export const getSelectionTree = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionTreeData>(
+export const getSelectionTree = createSelector<MetersState, uuid[], ObjectsById<Meter>, SelectionTreeData>(
   getResultDomainModels,
   getMeterEntities,
-  (meterIds: uuid[], metersDict: DomainModel<Meter>) => {
+  (meterIds: uuid[], metersDict: ObjectsById<Meter>) => {
 
     const selectionTree: {[key: string]: SelectionTreeItem[]} = {
       cities: [], addresses: [], addressClusters: [], meters: [],
@@ -183,10 +183,10 @@ const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Me
   };
 };
 
-export const getMeterDataSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, Maybe<MeterDataSummary>>(
+export const getMeterDataSummary = createSelector<MetersState, uuid[], ObjectsById<Meter>, Maybe<MeterDataSummary>>(
   getResultDomainModels,
   getMeterEntities,
-  (metersIds: uuid[], meters: DomainModel<Meter>): Maybe<MeterDataSummary> => {
+  (metersIds: uuid[], meters: ObjectsById<Meter>): Maybe<MeterDataSummary> => {
     const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
       flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
     };

@@ -1,9 +1,9 @@
 import {uuid} from '../../../../types/Types';
-import {DomainModel} from '../../domainModels';
+import {ObjectsById} from '../../domainModels';
 import {Gateway, GatewaysState} from '../gatewayModels';
 import {getGatewayDataSummary} from '../gatewaySelectors';
 
-type PartialDomainModel = DomainModel<Partial<Gateway>>;
+type PartialDomainModel = ObjectsById<Partial<Gateway>>;
 
 describe('gatewaySelectors', () => {
 
@@ -32,7 +32,7 @@ describe('gatewaySelectors', () => {
         },
       };
       const gatewayState: Partial<GatewaysState> = {
-        entities: gateways as DomainModel<Gateway>,
+        entities: gateways as ObjectsById<Gateway>,
         result: gatewayIds,
       };
 

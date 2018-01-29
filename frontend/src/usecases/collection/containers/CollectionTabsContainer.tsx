@@ -14,7 +14,7 @@ import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetail
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {
@@ -43,7 +43,7 @@ import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
-  gateways: DomainModel<Gateway>;
+  gateways: ObjectsById<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;

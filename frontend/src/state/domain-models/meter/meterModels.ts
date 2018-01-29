@@ -1,5 +1,5 @@
 import {IdNamed, uuid} from '../../../types/Types';
-import {DomainModel, Location, NormalizedState, SelectionEntity} from '../domainModels';
+import {ObjectsById, Location, NormalizedState, SelectionEntity} from '../domainModels';
 import {Flag} from '../flag/flagModels';
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 
@@ -53,10 +53,10 @@ export interface SelectionTreeItemsProps extends SelectionTreeItemProps {
   set: Set<uuid>;
 }
 
-export type SelectionTreeModel = DomainModel<SelectionTreeItem>;
+export type SelectionTreeModel = ObjectsById<SelectionTreeItem>;
 
 export interface SelectionTreeData {
-  result: DomainModel<uuid[]>;
+  result: ObjectsById<uuid[]>;
   entities: {[key: string]: SelectionTreeModel};
 }
 

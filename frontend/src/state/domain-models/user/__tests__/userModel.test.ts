@@ -1,5 +1,5 @@
 import {normalize} from 'normalizr';
-import {DomainModel} from '../../domainModels';
+import {ObjectsById} from '../../domainModels';
 import {filterUsersByUser, Role, User} from '../userModels';
 import {userSchema} from '../userSchema';
 
@@ -52,7 +52,7 @@ describe('userModel', () => {
       },
     ];
 
-    const usersFromDifferentLayers: DomainModel<User> = normalize([
+    const usersFromDifferentLayers: ObjectsById<User> = normalize([
       ...regularAdmins,
       ...regularUsers,
       ...elvacoAdmins,

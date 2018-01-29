@@ -1,10 +1,10 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {uuid} from '../../../../types/Types';
-import {DomainModel} from '../../domainModels';
+import {ObjectsById} from '../../domainModels';
 import {Meter, MetersState, SelectionTreeData} from '../meterModels';
 import {getMeterDataSummary, getSelectionTree} from '../meterSelectors';
 
-type PartialDomainModel = DomainModel<Partial<Meter>>;
+type PartialDomainModel = ObjectsById<Partial<Meter>>;
 describe('meterSelectors', () => {
 
   describe('summary', () => {
@@ -38,7 +38,7 @@ describe('meterSelectors', () => {
       };
 
       const metersState: Partial<MetersState> = {
-        entities: meters as DomainModel<Meter>,
+        entities: meters as ObjectsById<Meter>,
         result: meterIds,
       };
 

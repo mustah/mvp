@@ -9,7 +9,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {Subtitle} from '../../../components/texts/Titles';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -39,7 +39,7 @@ interface StateToProps {
   productModels: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   gatewayStatuses: SelectionListItem[];
-  citiesSelection: DomainModel<IdNamed>;
+  citiesSelection: ObjectsById<IdNamed>;
 }
 
 interface DispatchToProps {

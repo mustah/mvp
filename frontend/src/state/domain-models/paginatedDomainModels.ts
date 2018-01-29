@@ -1,5 +1,5 @@
 import {ErrorResponse, uuid} from '../../types/Types';
-import {DomainModel} from './domainModels';
+import {ObjectsById} from './domainModels';
 
 interface SortingOptions {
   direction: 'ASC' | 'DESC';
@@ -23,13 +23,13 @@ export interface PaginationMetadata {
 }
 
 export interface NormalizedPaginated<T> {
-  entities: {[key: string]: DomainModel<T>};
+  entities: {[key: string]: ObjectsById<T>};
   result: PaginationMetadata;
 }
 
 export interface NormalizedPaginatedState<T> {
-  entities: DomainModel<T>;
-  result: DomainModel<PaginatedResult>;
+  entities: ObjectsById<T>;
+  result: ObjectsById<PaginatedResult>;
 }
 
 interface PaginatedResult extends PaginationMetadata {

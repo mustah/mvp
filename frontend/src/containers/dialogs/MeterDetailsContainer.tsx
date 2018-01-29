@@ -17,7 +17,7 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
+import {ObjectsById, Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models/meter/meterModels';
@@ -75,7 +75,7 @@ interface OwnProps {
 }
 
 interface StateToProps {
-  gateways: DomainModel<Gateway>;
+  gateways: ObjectsById<Gateway>;
 }
 
 interface State {

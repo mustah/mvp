@@ -3,7 +3,7 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
 import {makeLeafletCompatibleMarkersFrom} from './clusterHelper';
@@ -13,7 +13,7 @@ interface DispatchToProps {
 }
 
 interface OwnProps {
-  markers: DomainModel<MapMarker> | MapMarker;
+  markers: ObjectsById<MapMarker> | MapMarker;
 }
 
 const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {

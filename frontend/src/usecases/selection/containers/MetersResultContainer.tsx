@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {RootState} from '../../../reducers/rootReducer';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
@@ -19,7 +19,7 @@ interface StateToProps {
   isFetching: boolean;
   pagination: Pagination;
   numOfEntities: number;
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
   paginatedList: uuid[];
 }
 

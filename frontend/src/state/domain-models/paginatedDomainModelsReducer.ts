@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action, ErrorResponse} from '../../types/Types';
-import {DomainModel, EndPoints} from './domainModels';
+import {ObjectsById, EndPoints} from './domainModels';
 import {Measurement} from './measurement/measurementModels';
 import {Meter} from './meter/meterModels';
 import {NormalizedPaginated, NormalizedPaginatedState, PaginationMetadata} from './paginatedDomainModels';
@@ -20,7 +20,7 @@ const setEntities =
       state: NormalizedPaginatedState<T>,
       {payload}: Action<NormalizedPaginated<T>>): NormalizedPaginatedState<T> => {
     const result: PaginationMetadata = payload.result;
-    const entities: DomainModel<T> = payload.entities[entity];
+    const entities: ObjectsById<T> = payload.entities[entity];
     return {
       ...state,
       entities,

@@ -1,4 +1,4 @@
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
 import {GraphContents} from '../reportModels';
@@ -23,7 +23,7 @@ describe('reportHelpers', () => {
 
     describe('axes', () => {
       it('extracts a single axis if all measurements are of the same unit', () => {
-        const sameUnit: DomainModel<Measurement> = {
+        const sameUnit: ObjectsById<Measurement> = {
           1: {
             id: 1,
             quantity: 'Power',
@@ -54,7 +54,7 @@ describe('reportHelpers', () => {
       });
 
       it('extracts two axes if measurements are of exactly two different units', () => {
-        const twoDifferentUnits: DomainModel<Measurement> = {
+        const twoDifferentUnits: ObjectsById<Measurement> = {
           1: {
             id: 1,
             quantity: 'Power',
@@ -86,7 +86,7 @@ describe('reportHelpers', () => {
       });
 
       it('ignores all measurements of a third unit, if there already are two', () => {
-        const threeDifferentUnits: DomainModel<Measurement> = {
+        const threeDifferentUnits: ObjectsById<Measurement> = {
           1: {
             id: 1,
             quantity: 'Power',

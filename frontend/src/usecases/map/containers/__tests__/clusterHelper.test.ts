@@ -1,6 +1,6 @@
 import {MapMarker, Marker} from '../../mapModels';
 import {isMapMarker, makeLeafletCompatibleMarkersFrom, isGeoPositionWithinThreshold} from '../clusterHelper';
-import {DomainModel} from '../../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../../state/domain-models/domainModels';
 import {Gateway} from '../../../../state/domain-models/gateway/gatewayModels';
 
 describe('clusterHelper', () => {
@@ -125,7 +125,7 @@ describe('clusterHelper', () => {
     });
 
     it('is not of type MapMarker', () => {
-      const markers: DomainModel<MapMarker> = {
+      const markers: ObjectsById<MapMarker> = {
         foo: {
           status: {id: 1, name: 'foo'},
           city: {id: 1, name: 'stockholm'},
@@ -142,7 +142,7 @@ describe('clusterHelper', () => {
         },
       };
 
-      expect(isMapMarker(markers as DomainModel<MapMarker>)).toBe(false);
+      expect(isMapMarker(markers as ObjectsById<MapMarker>)).toBe(false);
     });
   });
 

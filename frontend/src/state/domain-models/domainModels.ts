@@ -29,18 +29,18 @@ export interface Address extends IdNamed {
   cityId: uuid;
 }
 
-export interface DomainModel<T> {
+export interface ObjectsById<T> {
   [id: string]: T;
 }
 
 export interface Normalized<T> {
   result: uuid[];
-  entities: {[key: string]: DomainModel<T>};
+  entities: {[key: string]: ObjectsById<T>};
 }
 
 export interface NormalizedState<T> {
   result: uuid[];
-  entities: DomainModel<T>;
+  entities: ObjectsById<T>;
   isFetching: boolean;
   total: number;
   error?: ErrorResponse;

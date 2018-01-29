@@ -5,7 +5,7 @@ import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {DomainModel, GeoPosition} from '../../../../state/domain-models/domainModels';
+import {ObjectsById, GeoPosition} from '../../../../state/domain-models/domainModels';
 import {Meter} from '../../../../state/domain-models/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
@@ -19,7 +19,7 @@ import {translate} from '../../../../services/translationService';
 import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
 
 interface OwnProps {
-  markers: DomainModel<MapMarker>;
+  markers: ObjectsById<MapMarker>;
 }
 
 interface StateToProps {
@@ -34,7 +34,7 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   // TODO retrieve real data
-  const markersFailing: DomainModel<MapMarker> = {
+  const markersFailing: ObjectsById<MapMarker> = {
     0: {
       status: {id: 3, name: 'Fel'},
       address: {id: '', cityId: '', name: ''},

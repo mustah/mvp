@@ -16,7 +16,7 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {DomainModel} from '../../state/domain-models/domainModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
@@ -38,7 +38,7 @@ interface TabsState {
 }
 
 interface StateToProps {
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
 }
 
 type Props = OwnProps & StateToProps;

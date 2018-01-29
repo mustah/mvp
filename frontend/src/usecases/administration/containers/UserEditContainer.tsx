@@ -11,7 +11,7 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
@@ -21,7 +21,7 @@ import {UserEditForm} from '../../../components/forms/UserEditForm';
 interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
-  users: DomainModel<User>;
+  users: ObjectsById<User>;
   isFetching: boolean;
 }
 

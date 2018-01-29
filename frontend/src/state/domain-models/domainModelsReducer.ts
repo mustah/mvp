@@ -1,7 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
-import {DomainModel, DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
+import {ObjectsById, DomainModelsState, EndPoints, Normalized, NormalizedState, SelectionEntity} from './domainModels';
 import {
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
@@ -25,7 +25,7 @@ export const initialDomain = <T>(): NormalizedState<T> => ({
 const setEntities =
   <T>(entity: string, state: NormalizedState<T>, {payload}: Action<Normalized<T>>): NormalizedState<T> => {
     const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
-    const entities: DomainModel<T> = payload.entities[entity];
+    const entities: ObjectsById<T> = payload.entities[entity];
     return {
       ...state,
       isFetching: false,
@@ -39,7 +39,7 @@ const addEntity =
   <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload;
     const result: uuid[] = [...state.result, payload.id];
-    const entities: DomainModel<T> = {...state.entities};
+    const entities: ObjectsById<T> = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -53,7 +53,7 @@ const addEntity =
 const modifyEntity =
   <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
     const payload = action.payload;
-    const entities: DomainModel<T> = {...state.entities};
+    const entities: ObjectsById<T> = {...state.entities};
     entities[payload.id] = payload;
     return {
       ...state,
@@ -67,7 +67,7 @@ const removeEntity =
     // TODO do we need to introduce a domain model interface with id: uuid in order to avoid "as any" below?
     const payload = action.payload;
     const result: uuid[] = state.result.filter((id) => id !== payload.id);
-    const entities: DomainModel<T> = {...state.entities};
+    const entities: ObjectsById<T> = {...state.entities};
     delete entities[payload.id];
     return {
       ...state,

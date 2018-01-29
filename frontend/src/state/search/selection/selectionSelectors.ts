@@ -2,7 +2,7 @@ import {createSelector, OutputSelector} from 'reselect';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {ObjectsById, Normalized, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
@@ -115,10 +115,10 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
-export const getSelectionSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionSummary>(
+export const getSelectionSummary = createSelector<MetersState, uuid[], ObjectsById<Meter>, SelectionSummary>(
   getResultDomainModels,
   getMeterEntities,
-  (metersIds: uuid[], meters: DomainModel<Meter>) => {
+  (metersIds: uuid[], meters: ObjectsById<Meter>) => {
     const cities = new Set<uuid>();
     const addresses = new Set<uuid>();
 

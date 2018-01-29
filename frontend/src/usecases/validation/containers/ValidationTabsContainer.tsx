@@ -15,7 +15,7 @@ import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsCon
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
 import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
@@ -40,7 +40,7 @@ import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 interface StateToProps extends TabsContainerStateToProps {
   metersCount: number;
   meterDataSummary: Maybe<MeterDataSummary>;
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
   paginatedList: uuid[];
   pagination: Pagination;
   selectedMarker: Maybe<Meter>;

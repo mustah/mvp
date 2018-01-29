@@ -1,5 +1,5 @@
 import * as Leaflet from 'leaflet';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {IdNamed} from '../../../types/Types';
 import {MapMarker, MapMarkerItem, Marker} from '../mapModels';
 
@@ -12,7 +12,7 @@ const icons = {
 
 const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
 
-export const isMarkersWithinThreshold = (markers: DomainModel<MapMarker>): boolean => {
+export const isMarkersWithinThreshold = (markers: ObjectsById<MapMarker>): boolean => {
   return markers && Object.keys(markers)
     .map((key: string) => markers[key])
     .filter(isGeoPositionWithinThreshold)
@@ -30,11 +30,11 @@ const makeMarker = (marker: MapMarker): Marker => ({
   },
 });
 
-export const isMapMarker = (markers: DomainModel<MapMarker> | MapMarker): markers is MapMarker =>
+export const isMapMarker = (markers: ObjectsById<MapMarker> | MapMarker): markers is MapMarker =>
   (markers as MapMarker).status !== undefined &&
   (markers as MapMarker).position !== undefined;
 
-export const makeLeafletCompatibleMarkersFrom = (markers: DomainModel<MapMarker> | MapMarker): Marker[] => {
+export const makeLeafletCompatibleMarkersFrom = (markers: ObjectsById<MapMarker> | MapMarker): Marker[] => {
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;
   return Object.keys(mapMarkers)
     .map((key: string) => mapMarkers[key])

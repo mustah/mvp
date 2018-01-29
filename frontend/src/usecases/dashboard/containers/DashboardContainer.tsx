@@ -11,7 +11,7 @@ import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Meter} from '../../../state/domain-models/meter/meterModels';
 import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
 import {Callback} from '../../../types/Types';
@@ -23,7 +23,7 @@ import {DashboardModel} from '../dashboardModels';
 interface StateToProps {
   isFetching: boolean;
   dashboard?: DashboardModel;
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
 }
 
 interface DispatchToProps {

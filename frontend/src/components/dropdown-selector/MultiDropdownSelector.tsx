@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {DomainModel} from '../../state/domain-models/domainModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
 import {IdNamed} from '../../types/Types';
 import {dropDownStyle} from '../../app/themes';
@@ -8,7 +8,7 @@ import './DropdownSelector.scss';
 import {DropdownProps, DropdownSelector} from './DropdownSelector';
 
 interface MultiDropdownSelectorProps extends DropdownProps {
-  parentSelectionLookup: DomainModel<IdNamed>;
+  parentSelectionLookup: ObjectsById<IdNamed>;
   parentIdentifier: string;
 }
 

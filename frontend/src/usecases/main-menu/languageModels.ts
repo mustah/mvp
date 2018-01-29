@@ -1,4 +1,4 @@
-import {DomainModel} from '../../state/domain-models/domainModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 
 export interface LanguageState {
   language: Language;
@@ -9,7 +9,7 @@ export interface Language {
   code: string;
 }
 
-export const supportedLanguages: Readonly<DomainModel<Language>> = {
+export const supportedLanguages: Readonly<ObjectsById<Language>> = {
   sv: {
     code: 'sv',
     name: 'Swedish',
