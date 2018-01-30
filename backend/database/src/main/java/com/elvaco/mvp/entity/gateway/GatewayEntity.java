@@ -2,6 +2,7 @@ package com.elvaco.mvp.entity.gateway;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,9 @@ public class GatewayEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
+  @Column(nullable = false)
   public String serial;
+
+  @Column(nullable = false)
   public String model;
 }

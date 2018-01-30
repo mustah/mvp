@@ -11,9 +11,9 @@ import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,9 +25,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementControllerTest extends IntegrationTest {
-
-  @Autowired
-  ModelMapper modelMapper;
 
   @Autowired
   private MeasurementRepository measurementRepository;
@@ -80,6 +77,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     )
       .map(measurementRepository::save)
       .collect(toMap(m -> m.quantity, Function.identity()));
+  }
+
+  @After
+  public void tearDown() {
+    meterRepository.deleteAll();
+    measurementRepository.deleteAll();
   }
 
   @Test

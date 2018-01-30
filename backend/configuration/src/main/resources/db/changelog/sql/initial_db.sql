@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS users_roles (
 
 CREATE TABLE IF NOT EXISTS metering_point (
   id                  BIGSERIAL PRIMARY KEY,
+  status              VARCHAR(255),
+  medium              VARCHAR(255),
   property_collection JSONB
   -- meter_definition_id bigserial references meter_definition
 );
@@ -47,14 +49,23 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   UNIQUE (organisation_id, identity)
 );
 
--- TODO: add gateway
+CREATE TABLE IF NOT EXISTS gateway (
+  id     BIGSERIAL PRIMARY KEY,
+  serial VARCHAR(255) NOT NULL,
+  model  TEXT         NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS gateways_meters (
+  meter_id   BIGSERIAL REFERENCES physical_meter,
+  gateway_id BIGSERIAL REFERENCES gateway
+);
 
 CREATE TABLE IF NOT EXISTS measurement (
   id                BIGSERIAL PRIMARY KEY,
   physical_meter_id BIGSERIAL                   NOT NULL REFERENCES physical_meter (id) ON UPDATE CASCADE ON DELETE CASCADE,
   created           TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   quantity          VARCHAR(255)                NOT NULL,
-  value             UNIT                        NOT NULL, -- if this is a proper measurement, the value will be here
+  value             UNIT                        NOT NULL,
   UNIQUE (physical_meter_id, created, quantity, value)
 );
 
@@ -64,17 +75,17 @@ CREATE TABLE IF NOT EXISTS mvp_setting (
   value TEXT NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.name%TYPE,
-                                           _identity            physical_meter.identity%TYPE,
-                                           _medium              physical_meter.medium%TYPE,
-                                           measurement_quantity measurement.quantity%TYPE,
+CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.NAME%TYPE,
+                                           _identity            physical_meter.IDENTITY%TYPE,
+                                           _medium              physical_meter.MEDIUM%TYPE,
+                                           measurement_quantity measurement.QUANTITY%TYPE,
                                            measurement_unit     VARCHAR(255),
-                                           measurement_created  measurement.created%TYPE,
+                                           measurement_created  measurement.CREATED%TYPE,
                                            measurement_value    DOUBLE PRECISION)
-  RETURNS physical_meter.id%TYPE AS $$
+  RETURNS physical_meter.ID%TYPE AS $$
 DECLARE
-  physical_meter_id physical_meter.id%TYPE;
-  organisation_id   organisation.id%TYPE;
+  physical_meter_id physical_meter.ID%TYPE;
+  organisation_id   organisation.ID%TYPE;
 BEGIN
 
   SELECT id
@@ -103,8 +114,9 @@ BEGIN
     RETURNING id
       INTO physical_meter_id;
   END IF;
-  INSERT INTO measurement VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
-                                  (measurement_value || measurement_unit) :: UNIT);
+  INSERT INTO measurement
+  VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
+          (measurement_value || measurement_unit) :: UNIT);
   RETURN physical_meter_id;
 END;
 $$
