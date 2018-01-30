@@ -15,14 +15,17 @@ import {gatewaySchema} from './gateway/gatewaySchema';
 import {User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
-export const DOMAIN_MODELS_REQUEST = 'DOMAIN_MODELS_REQUEST';
-export const DOMAIN_MODELS_FAILURE = 'DOMAIN_MODELS_FAILURE';
+export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
+export const DOMAIN_MODELS_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
 
-export const DOMAIN_MODELS_GET_SUCCESS = `DOMAIN_MODELS_${HttpMethod.GET}_SUCCESS`;
-export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = `DOMAIN_MODELS_${HttpMethod.GET_ENTITY}_SUCCESS`;
-export const DOMAIN_MODELS_POST_SUCCESS = `DOMAIN_MODELS_${HttpMethod.POST}_SUCCESS`;
-export const DOMAIN_MODELS_PUT_SUCCESS = `DOMAIN_MODELS_${HttpMethod.PUT}_SUCCESS`;
-export const DOMAIN_MODELS_DELETE_SUCCESS = `DOMAIN_MODELS_${HttpMethod.DELETE}_SUCCESS`;
+const DOMAIN_MODELS_SUCCESS = (httpMethod: HttpMethod) => (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_${httpMethod}_SUCCESS${endPoint}`;
+
+export const DOMAIN_MODELS_GET_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET);
+export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET_ENTITY);
+export const DOMAIN_MODELS_POST_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.POST);
+export const DOMAIN_MODELS_PUT_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.PUT);
+export const DOMAIN_MODELS_DELETE_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.DELETE);
 
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
@@ -36,9 +39,9 @@ interface RestCallbacks<T> {
 }
 
 export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
-  request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST.concat(endPoint)),
-  success: createPayloadAction<string, T>(`DOMAIN_MODELS_${requestType}_SUCCESS`.concat(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE.concat(endPoint)),
+  request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST(endPoint)),
+  success: createPayloadAction<string, T>(DOMAIN_MODELS_SUCCESS(requestType)(endPoint)),
+  failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE(endPoint)),
 });
 
 interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<DAT> {
@@ -48,16 +51,17 @@ interface AsyncRequest<REQ, DAT> extends RestRequestHandle<DAT>, RestCallbacks<D
 }
 
 // TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same try-catch?
-export const asyncRequest = <REQ, DAT>({
-                                  request,
-                                  success,
-                                  failure,
-                                  afterSuccess,
-                                  afterFailure,
-                                  requestFunc,
-                                  requestData,
-                                  formatData = (id) => id,
-                                }: AsyncRequest<REQ, DAT>) =>
+const asyncRequest = <REQ, DAT>(
+  {
+    request,
+    success,
+    failure,
+    afterSuccess,
+    afterFailure,
+    requestFunc,
+    requestData,
+    formatData = (id) => id,
+  }: AsyncRequest<REQ, DAT>) =>
   async (dispatch) => {
     try {
       dispatch(request());

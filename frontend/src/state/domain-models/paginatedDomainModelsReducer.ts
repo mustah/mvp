@@ -1,12 +1,12 @@
-import {EmptyAction} from 'react-redux-typescript';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from './domainModels';
 import {Measurement} from './measurement/measurementModels';
 import {Meter} from './meter/meterModels';
 import {
+  HasComponentId,
   NormalizedPaginated,
   NormalizedPaginatedState,
-  PaginationMetadata
+  PaginationMetadata,
 } from './paginatedDomainModels';
 import {
   DOMAIN_MODELS_PAGINATED_FAILURE,
@@ -18,43 +18,71 @@ export const initialPaginatedDomain = <T extends HasId>(): NormalizedPaginatedSt
   result: {},
   entities: {},
 });
-
-const setEntities =
-  <T extends HasId>(entity: string,
-                    state: NormalizedPaginatedState<T>,
-                    {payload}: Action<NormalizedPaginated<T> & {componentId: uuid}>): NormalizedPaginatedState<T> => {
-    const objId: uuid = payload.componentId;
-    const result: PaginationMetadata = payload.result;
-    const entities: ObjectsById<T> = payload.entities[entity];
-    return {
-      ...state,
-      entities,
-      result: {
-        [objId]: {...result, isFetching: false},
-      },
-    };
+const setRequest = <T extends HasId>(
+  entity: string,
+  state: NormalizedPaginatedState<T>,
+  {payload}: Action<uuid>,
+): NormalizedPaginatedState<T> => {
+  const componentId: uuid = payload;
+  return {
+    ...state,
+    result: {
+      ...state.result,
+      [componentId]: {...state.result[componentId], isFetching: true},
+    },
   };
+};
+
+const setEntities = <T extends HasId>(
+  entity: string,
+  state: NormalizedPaginatedState<T>,
+  {payload}: Action<NormalizedPaginated<T>>,
+): NormalizedPaginatedState<T> => {
+  const componentId: uuid = payload.componentId;
+  const result: PaginationMetadata = payload.result;
+  const entities: ObjectsById<T> = payload.entities[entity];
+  return {
+    ...state,
+    entities: {...state.entities, ...entities},
+    result: {
+      ...state.result,
+      [componentId]: {...result, isFetching: false},
+    },
+  };
+};
+
+const setFailure = <T extends HasId>(
+  entity: string,
+  state: NormalizedPaginatedState<T>,
+  {payload: {componentId, ...error}}: Action<ErrorResponse & HasComponentId>,
+): NormalizedPaginatedState<T> => {
+
+  return {
+    ...state,
+    result: {
+      ...state.result,
+      [componentId]: {...state.result[componentId], error, isFetching: false},
+    },
+  };
+};
 
 type ActionTypes<T extends HasId> =
-  | EmptyAction<string>
   | Action<NormalizedPaginated<T>>
-  | Action<ErrorResponse>;
+  | Action<uuid>
+  | Action<ErrorResponse & HasComponentId>;
 
 export const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
-  (state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
-   action: ActionTypes<T>): NormalizedPaginatedState<T> => {
+  (
+    state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
+    action: ActionTypes<T>,
+  ): NormalizedPaginatedState<T> => {
     switch (action.type) {
-      case DOMAIN_MODELS_PAGINATED_REQUEST.concat(endPoint):
-        return {
-          ...state,
-        };
+      case DOMAIN_MODELS_PAGINATED_REQUEST(endPoint):
+        return setRequest(entity, state, action as Action<uuid>);
       case DOMAIN_MODELS_PAGINATED_GET_SUCCESS(endPoint):
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
-      case DOMAIN_MODELS_PAGINATED_FAILURE.concat(endPoint):
-        return {
-          ...state,
-          error: {...(action as Action<ErrorResponse>).payload},
-        };
+      case DOMAIN_MODELS_PAGINATED_FAILURE(endPoint):
+        return setFailure<T>(entity, state, action as Action<ErrorResponse & HasComponentId>);
       default:
         return state;
     }

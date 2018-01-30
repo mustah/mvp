@@ -22,8 +22,11 @@ export interface PaginationMetadata {
   totalPages: number;
 }
 
-export interface NormalizedPaginated<T extends HasId> {
+export interface HasComponentId {
   componentId: uuid;
+}
+
+export interface NormalizedPaginated<T extends HasId> extends HasComponentId {
   entities: {[entityType: string]: ObjectsById<T>};
   result: PaginationMetadata;
 }
