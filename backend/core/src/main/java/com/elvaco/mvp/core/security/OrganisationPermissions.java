@@ -46,7 +46,7 @@ public class OrganisationPermissions {
   }
 
   private boolean cannotRemoveLastSuperAdminUser(Permission permission) {
-    return !permission.equals(Permission.DELETE) || users.findByRole(Role.superAdmin()).size() != 1;
+    return !permission.equals(Permission.DELETE) || users.findByRole(Role.SUPER_ADMIN).size() != 1;
   }
 
   public enum Permission {

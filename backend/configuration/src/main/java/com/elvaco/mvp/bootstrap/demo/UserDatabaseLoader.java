@@ -2,12 +2,10 @@ package com.elvaco.mvp.bootstrap.demo;
 
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.RoleEntity;
-import com.elvaco.mvp.fixture.Entities;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
 import com.elvaco.mvp.security.MvpUserDetails;
@@ -65,16 +63,9 @@ public class UserDatabaseLoader implements CommandLineRunner {
       return;
     }
     organisationRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY));
-    User systemUser = new User(
-      "system",
-      "system@elvaco.se",
-      "",
-      null,
-      singletonList(Role.SUPER_ADMIN)
-    );
-    Authentication authentication = new UsernamePasswordAuthenticationToken(new MvpUserDetails(
-      systemUser), null);
 
+    MvpUserDetails principal = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     roleRepository.save(asList(
