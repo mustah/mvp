@@ -28,7 +28,7 @@ public class UserMapperTest {
       .getConfiguration()
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
-    userMapper = new UserMapper(modelMapper);
+    userMapper = new UserMapper(modelMapper, new OrganisationMapper());
   }
 
   @Test

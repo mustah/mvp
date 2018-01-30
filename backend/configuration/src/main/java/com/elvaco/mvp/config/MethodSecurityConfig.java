@@ -1,28 +1,27 @@
 package com.elvaco.mvp.config;
 
-import com.elvaco.mvp.core.usecase.Users;
-import com.elvaco.mvp.mapper.UserMapper;
-import com.elvaco.mvp.security.OrganisationPermissionEvaluator;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @Configuration
 class MethodSecurityConfig {
 
-  private final Users users;
-  private final UserMapper userMapper;
-
-  @Autowired
-  MethodSecurityConfig(Users users, UserMapper userMapper) {
-    this.users = users;
-    this.userMapper = userMapper;
-  }
-
   @Bean
-  PermissionEvaluator permissionEvaluator() {
-    return new OrganisationPermissionEvaluator(users, userMapper);
+  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  AuthenticatedUser currentUser() {
+    Authentication authentication = SecurityContextHolder.getContext()
+      .getAuthentication();
+    if (authentication == null) {
+      throw new InsufficientAuthenticationException("No authentication information available!");
+    }
+    return (AuthenticatedUser) authentication.getPrincipal();
   }
-
 }

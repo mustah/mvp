@@ -2,7 +2,7 @@ package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.IdNamedDto;
 import com.elvaco.mvp.dto.MapMarkerDto;
 import com.elvaco.mvp.dto.MeasurementDto;
@@ -25,16 +25,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @Configuration
 class ApplicationConfig {
 
-  private final UserUseCases userUseCases;
+  private final Users users;
 
   @Autowired
-  ApplicationConfig(@Lazy UserUseCases userUseCases) {
-    this.userUseCases = userUseCases;
+  ApplicationConfig(@Lazy Users users) {
+    this.users = users;
   }
 
   @Bean
   UserDetailsService userDetailsService() {
-    return new JpaUserDetailsService(userUseCases);
+    return new JpaUserDetailsService(users);
   }
 
   @Bean

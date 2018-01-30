@@ -3,6 +3,7 @@ package com.elvaco.mvp.repository.access;
 import java.util.List;
 import java.util.Optional;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -16,15 +17,18 @@ public class UserRepository implements Users {
 
   private final UserJpaRepository userJpaRepository;
   private final UserMapper userMapper;
+  private final OrganisationMapper organisationMapper;
   private final PasswordEncoder passwordEncoder;
 
   public UserRepository(
     UserJpaRepository userJpaRepository,
     UserMapper userMapper,
+    OrganisationMapper organisationMapper,
     PasswordEncoder passwordEncoder
   ) {
     this.userJpaRepository = userJpaRepository;
     this.userMapper = userMapper;
+    this.organisationMapper = organisationMapper;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -72,6 +76,15 @@ public class UserRepository implements Users {
   @Override
   public List<User> findByRole(Role role) {
     return userJpaRepository.findByRoles_Role(role.role).stream().map(userMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
+  public List<User> findByOrganisation(Organisation organisation) {
+    return userJpaRepository
+      .findByOrganisation(organisationMapper.toEntity(organisation))
+      .stream()
+      .map(userMapper::toDomainModel)
       .collect(toList());
   }
 }

@@ -16,7 +16,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.LocaleResolver;
@@ -33,7 +32,6 @@ import static java.util.Collections.singletonList;
 
 @EnableZuulProxy
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @ComponentScan(basePackages = "com.elvaco.mvp")
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class MvpApplication extends WebMvcConfigurerAdapter {

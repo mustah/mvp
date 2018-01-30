@@ -23,7 +23,7 @@ public class UserUseCasesTest extends IntegrationTest {
   public void newlyCreatedUserShouldHaveEncodedPassword() {
     String rawPassword = "test123";
 
-    User user = userUseCases.create(newUser(rawPassword, "noo@b.com"));
+    User user = userUseCases.create(newUser(rawPassword, "noo@b.com")).get();
 
     assertThat(user.password).isNotEqualTo(rawPassword);
     assertThat(passwordEncoder.matches(rawPassword, user.password)).isTrue();
@@ -33,7 +33,7 @@ public class UserUseCasesTest extends IntegrationTest {
   public void updateUserShouldNotUpdatePassword() {
     String rawPassword = "test123";
 
-    User user = userUseCases.create(newUser(rawPassword, "me@me.com"));
+    User user = userUseCases.create(newUser(rawPassword, "me@me.com")).get();
 
     User userToUpdate = new User(
       user.id,

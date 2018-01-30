@@ -11,9 +11,13 @@ import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
+import com.elvaco.mvp.security.MvpUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import static java.util.Arrays.asList;
@@ -43,20 +47,33 @@ public class UserDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
+
     if (settingUseCases.isDemoUsersLoaded()) {
       log.info("Demo users seems to already be loaded - skipping demo user loading!");
       return;
     }
+    User systemUser = new User(
+      "system",
+      "system@elvaco.se",
+      "",
+      null,
+      singletonList(Role.superAdmin())
+    );
+    Authentication authentication = new UsernamePasswordAuthenticationToken(new MvpUserDetails(
+      systemUser), null);
+
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
     organisationRepository.save(asList(
       new OrganisationEntity(
-      1L,
-      "Elvaco",
-      "elvaco"
+        1L,
+        "Elvaco",
+        "elvaco"
       ),
       new OrganisationEntity(
-      2L,
-      "Wayne Industries",
-      "wayne-industries"
+        2L,
+        "Wayne Industries",
+        "wayne-industries"
       )
     ));
 

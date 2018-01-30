@@ -1,5 +1,7 @@
 package com.elvaco.mvp.config;
 
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.Measurements;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
@@ -39,8 +41,8 @@ class UseCaseConfig {
   }
 
   @Bean
-  UserUseCases userUseCases() {
-    return new UserUseCases(users);
+  UserUseCases userUseCases(AuthenticatedUser currentUser) {
+    return new UserUseCases(currentUser, users, new OrganisationPermissions(users));
   }
 
   @Bean
@@ -49,7 +51,7 @@ class UseCaseConfig {
   }
 
   @Bean
-  MeasurementUseCases measurementUseCases() {
-    return new MeasurementUseCases(measurements);
+  MeasurementUseCases measurementUseCases(AuthenticatedUser currentUser) {
+    return new MeasurementUseCases(currentUser, measurements);
   }
 }
