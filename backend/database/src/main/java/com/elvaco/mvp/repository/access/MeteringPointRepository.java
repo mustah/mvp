@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 
 public class MeteringPointRepository implements MeteringPoints {
+
   private final MeteringPointJpaRepository meteringPointJpaRepository;
   private final MeteringPointMapper meteringPointMapper;
 

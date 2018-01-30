@@ -19,31 +19,31 @@ import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MeteringPointJpaRepository extends
-    QueryDslJpaRepository<MeteringPointEntity, Long> {
+public class MeteringPointJpaRepository extends QueryDslJpaRepository<MeteringPointEntity, Long> {
 
   private final EntityManager entityManager;
 
   @Autowired
   MeteringPointJpaRepository(EntityManager entityManager) {
     this(
-        new JpaMetamodelEntityInformation<>(
-            MeteringPointEntity.class,
-            entityManager.getMetamodel()),
-        entityManager
+      new JpaMetamodelEntityInformation<>(
+        MeteringPointEntity.class,
+        entityManager.getMetamodel()
+      ),
+      entityManager
     );
   }
 
   private MeteringPointJpaRepository(
-      JpaEntityInformation<MeteringPointEntity, Long> entityInformation,
-      EntityManager entityManager
+    JpaEntityInformation<MeteringPointEntity, Long> entityInformation,
+    EntityManager entityManager
   ) {
     super(entityInformation, entityManager);
     this.entityManager = entityManager;
   }
 
   public List<MeteringPointEntity> containsInPropertyCollection(
-      PropertyCollectionDto requestModel
+    PropertyCollectionDto requestModel
   ) {
     JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
     QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
@@ -57,9 +57,11 @@ public class MeteringPointJpaRepository extends
     }
 
     Predicate predicate = Expressions
-        .booleanTemplate("jsonb_contains({0}, {1})",
-            queryMeteringPoint.propertyCollection,
-            propertyCollection).eq(true);
+      .booleanTemplate(
+        "jsonb_contains({0}, {1})",
+        queryMeteringPoint.propertyCollection,
+        propertyCollection
+      ).eq(true);
     query.from(queryMeteringPoint).where(predicate);
     return query.fetch();
   }
@@ -68,6 +70,7 @@ public class MeteringPointJpaRepository extends
    * Get all {@link MeteringPointEntity}s that has the given fieldName as a top level property.
    *
    * @param fieldName is the top-level json field name.
+   *
    * @return a list of entities that has <code>fieldName</code> in the top-level, otherwise an
    *   empty list.
    */
@@ -75,8 +78,9 @@ public class MeteringPointJpaRepository extends
     JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
     QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
     Predicate predicate = Expressions
-        .booleanTemplate("jsonb_exists({0}, {1})",
-            queryMeteringPoint.propertyCollection, fieldName).eq(true);
+      .booleanTemplate("jsonb_exists({0}, {1})",
+                       queryMeteringPoint.propertyCollection, fieldName
+      ).eq(true);
     query.from(queryMeteringPoint).where(predicate);
     return query.fetch();
   }

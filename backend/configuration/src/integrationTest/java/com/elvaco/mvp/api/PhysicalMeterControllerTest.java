@@ -7,7 +7,7 @@ import java.util.List;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestResponsePage;
@@ -23,10 +23,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PhysicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
-  private MeasurementRepository measurementRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
   private PhysicalMeterRepository physicalMeterRepository;
+
   private Long id;
   private List<MeasurementEntity> saved;
 
@@ -41,7 +42,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
 
     // What are midichlorians measured in?
     // https://scifi.stackexchange.com/a/28354
-    saved = measurementRepository.save(
+    saved = measurementJpaRepository.save(
       asList(
         new MeasurementEntity(
           new Date(),

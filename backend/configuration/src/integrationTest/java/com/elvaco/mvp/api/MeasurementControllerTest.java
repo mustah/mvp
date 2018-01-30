@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeasurementControllerTest extends IntegrationTest {
 
   @Autowired
-  private MeasurementRepository measurementRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
   private PhysicalMeterRepository meterRepository;
@@ -75,14 +75,14 @@ public class MeasurementControllerTest extends IntegrationTest {
         milkMeter
       )
     )
-      .map(measurementRepository::save)
+      .map(measurementJpaRepository::save)
       .collect(toMap(m -> m.quantity, Function.identity()));
   }
 
   @After
   public void tearDown() {
+    measurementJpaRepository.deleteAll();
     meterRepository.deleteAll();
-    measurementRepository.deleteAll();
   }
 
   @Test
