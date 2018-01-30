@@ -10,6 +10,7 @@ import com.elvaco.mvp.dto.MeteringPointDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.jpa.mappers.MeteringPointToPredicateMapper;
 import com.elvaco.mvp.security.JpaUserDetailsService;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
@@ -39,6 +40,11 @@ class ApplicationConfig {
   @Bean
   FilterToPredicateMapper predicateMapper() {
     return new MeasurementFilterToPredicateMapper();
+  }
+
+  @Bean
+  MeteringPointToPredicateMapper meteringPointToPredicateMapper() {
+    return new MeteringPointToPredicateMapper();
   }
 
   @Bean
