@@ -38,19 +38,19 @@ public class MeteringPointController {
   private final MeteringPointsUseCases meteringPointsUseCases;
 
   private final ModelMapper modelMapper;
-  private final FilterToPredicateMapper predicateMapper;
+  private final FilterToPredicateMapper meteringPointToPredicateMapper;
   private final MeteringPointMapper meteringPointMapper;
 
   @Autowired
   MeteringPointController(
     MeteringPointJpaRepository meteringPointJpaRepository,
     ModelMapper modelMapper,
-    FilterToPredicateMapper predicateMapper,
+    FilterToPredicateMapper meteringPointToPredicateMapper,
     MeteringPointMapper meteringPointMapper,
     MeteringPointsUseCases meteringPointsUseCases) {
     this.meteringPointJpaRepository = meteringPointJpaRepository;
     this.modelMapper = modelMapper;
-    this.predicateMapper = predicateMapper;
+    this.meteringPointToPredicateMapper = meteringPointToPredicateMapper;
     this.meteringPointMapper = meteringPointMapper;
     this.meteringPointsUseCases = meteringPointsUseCases;
   }
@@ -88,7 +88,7 @@ public class MeteringPointController {
     Map<String, List<String>> filter,
     Pageable pageable
   ) {
-    Predicate predicate = predicateMapper.map(filter);
+    Predicate predicate = meteringPointToPredicateMapper.map(filter);
     return meteringPointJpaRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeteringPointDto.class));
