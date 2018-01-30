@@ -84,7 +84,11 @@ public class DemoDataLoader implements CommandLineRunner {
       List<GatewayEntity> gatewayEntities = new ArrayList<>();
       gatewayEntities.add(gatewayEntity);
 
-      MeteringPointEntity meteringPointEntity = mockMeteringPoint(meterIdentity, gatewayEntities, i);
+      MeteringPointEntity meteringPointEntity = mockMeteringPoint(
+        meterIdentity,
+        gatewayEntities,
+        i);
+
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
         organisationEntity,
         meterIdentity,

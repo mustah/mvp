@@ -35,10 +35,19 @@ public class MeteringPointMapper {
   public MeteringPointEntity toEntity(MeteringPoint meteringPoint) {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
     meteringPointEntity.propertyCollection = new PropertyCollection()
-      .put("user", userPropertyToDto(meteringPoint.propertyCollection.userProperty))
       .put("latitude", meteringPoint.location.getLatitude().orElse(null))
       .put("longitude", meteringPoint.location.getLongitude().orElse(null))
       .put("confidence", meteringPoint.location.getConfidence());
+
+    if (meteringPoint.propertyCollection.userProperty != null) {
+      meteringPointEntity.propertyCollection.put(
+        "user", userPropertyToDto(meteringPoint.propertyCollection.userProperty)
+      );
+    }
+
+    meteringPointEntity.id = meteringPoint.id;
+    meteringPointEntity.created = meteringPoint.created;
+    meteringPointEntity.status = meteringPoint.status;
 
     return meteringPointEntity;
   }

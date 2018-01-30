@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Date;
+
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -22,7 +23,7 @@ public class MeteringPoint {
     this.id = id;
     this.status = status;
     this.location = location;
-    this.created = created;
+    this.created = created == null ? null : (Date) created.clone();
     this.propertyCollection = propertyCollection;
   }
 }

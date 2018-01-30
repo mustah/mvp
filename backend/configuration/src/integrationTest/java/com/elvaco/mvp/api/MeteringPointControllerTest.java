@@ -53,6 +53,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @After
   public void tearDown() {
     meteringPointRepository.deleteAll();
+
     restClient().logout();
   }
 

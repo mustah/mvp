@@ -30,7 +30,7 @@ public class MeteringPointMapperTest {
   }
 
   @Test
-  public void mapMeterPointEntityToDtoWithPosition() {
+  public void mapMeterPointEntityToDomainModelWithPosition() {
     long id = 1;
     String status = "Ok";
     double latitude = 3.1;
@@ -61,7 +61,7 @@ public class MeteringPointMapperTest {
   }
 
   @Test
-  public void mapMeterPointEntityToDtoOutPosition() {
+  public void mapMeterPointEntityToDomainModelOutPosition() {
     long id = 1;
     String status = "Ok";
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
@@ -83,5 +83,41 @@ public class MeteringPointMapperTest {
         new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
       )
     );
+  }
+
+  @Test
+  public void mapMeterPointDomainModelToEntity() {
+    long id = 1;
+    String status = "Ok";
+    double latitude = 3.1;
+    double longitude = 2.1;
+    double confidence = 1.1;
+    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    com.elvaco.mvp.core.domainmodels.PropertyCollection propertyCollection =
+      new com.elvaco.mvp.core.domainmodels.PropertyCollection(null);
+
+    MeteringPoint meteringPoint = new MeteringPoint(
+      id,
+      status,
+      latitude,
+      longitude,
+      confidence,
+      created,
+      propertyCollection
+    );
+
+    final MeteringPointEntity meteringPointEntityActual =
+      meteringPointMapper.toEntity(meteringPoint);
+
+    MeteringPointEntity meteringPointEntityExpected = new MeteringPointEntity();
+    meteringPointEntityExpected.id = id;
+    meteringPointEntityExpected.status = status;
+    meteringPointEntityExpected.propertyCollection = new PropertyCollection();
+    meteringPointEntityExpected.propertyCollection.put("latitude", latitude);
+    meteringPointEntityExpected.propertyCollection.put("longitude", longitude);
+    meteringPointEntityExpected.propertyCollection.put("confidence", confidence);
+    meteringPointEntityExpected.created = created;
+
+    assertThat(meteringPointEntityActual).isEqualTo(meteringPointEntityExpected);
   }
 }
