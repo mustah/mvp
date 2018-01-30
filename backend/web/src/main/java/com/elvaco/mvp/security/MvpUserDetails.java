@@ -6,14 +6,14 @@ import java.util.Objects;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.MvpPrincipal;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static java.util.stream.Collectors.toList;
 
-public class MvpUserDetails implements UserDetails, MvpPrincipal {
+public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
   private static final long serialVersionUID = 1234L;
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
@@ -46,8 +46,8 @@ public class MvpUserDetails implements UserDetails, MvpPrincipal {
   }
 
   @Override
-  public Long getOrganisationId() {
-    return user.organisation.id;
+  public Organisation getOrganisation() {
+    return user.organisation;
   }
 
   @Override

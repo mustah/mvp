@@ -1,6 +1,7 @@
 package com.elvaco.mvp.api;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -11,8 +12,6 @@ import com.elvaco.mvp.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostFilter;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,7 +34,6 @@ public class UserController {
   }
 
   @GetMapping
-  @PostFilter("hasPermission(filterObject, 'read')")
   public List<UserDto> allUsers() {
     return userUseCases.findAll()
       .stream()
@@ -44,22 +42,26 @@ public class UserController {
   }
 
   @GetMapping("{id}")
-  @PreAuthorize("hasPermission(#id, 'com.elvaco.mvp.dto.UserDto', 'read')")
   public UserDto userById(@PathVariable Long id) {
     return userUseCases.findById(id)
       .map(userMapper::toDto)
       .orElseThrow(() -> new UserNotFound(id));
   }
 
-  @PreAuthorize("hasPermission(#user, 'create')")
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
-    User createdUser = userUseCases.create(userMapper.toDomainModel(user));
-    UserDto responseModel = userMapper.toDto(createdUser);
-    return ResponseEntity.status(HttpStatus.CREATED).body(responseModel);
+    Optional<UserDto> createdUser = userUseCases.create(
+      userMapper.toDomainModel(user)
+    ).map(userMapper::toDto);
+
+    return createdUser.map(
+      userDto ->
+        ResponseEntity.status(HttpStatus.CREATED).body(userDto))
+      .orElse(
+        ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+      );
   }
 
-  @PreAuthorize("hasPermission(#user, 'update')")
   @PutMapping
   public UserDto updateUser(@RequestBody UserDto user) {
     return userUseCases.update(userMapper.toDomainModel(user))
@@ -67,14 +69,12 @@ public class UserController {
       .orElseThrow(() -> new UserNotFound(user.id));
   }
 
-  @PreAuthorize("hasPermission(#id, 'com.elvaco.mvp.dto.UserDto', 'delete')")
   @DeleteMapping("{id}")
   public UserDto deleteUser(@PathVariable Long id) {
-    UserDto user = userUseCases.findById(id)
-      .map(userMapper::toDto)
+    User user = userUseCases.findById(id)
       .orElseThrow(() -> new UserNotFound(id));
     // TODO[!must!] delete should actually not remove the entity, just mark it as deleted.
-    userUseCases.deleteById(id);
-    return user;
+    userUseCases.delete(user);
+    return userMapper.toDto(user);
   }
 }

@@ -1,18 +1,18 @@
 package com.elvaco.mvp.repository.access;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.entity.user.OrganisationEntity;
 import org.modelmapper.ModelMapper;
 
 public class MeasurementMapper implements DomainEntityMapper<Measurement, MeasurementEntity> {
   private final ModelMapper modelMapper;
+  private final OrganisationMapper organisationMapper;
 
-  public MeasurementMapper(ModelMapper modelMapper) {
+  public MeasurementMapper(ModelMapper modelMapper, OrganisationMapper organisationMapper) {
     this.modelMapper = modelMapper;
+    this.organisationMapper = organisationMapper;
   }
 
   @Override
@@ -33,13 +33,11 @@ public class MeasurementMapper implements DomainEntityMapper<Measurement, Measur
   }
 
   private PhysicalMeter newPhysicalMeter(PhysicalMeterEntity physicalMeter) {
-    return new PhysicalMeter(physicalMeter.id,
-      newOrganisation(physicalMeter.organisation),
+    return new PhysicalMeter(
+      physicalMeter.id,
+      organisationMapper.toDomainModel(physicalMeter.organisation),
       physicalMeter.identity,
-      physicalMeter.medium);
-  }
-
-  private Organisation newOrganisation(OrganisationEntity organisation) {
-    return new Organisation(organisation.id, organisation.name, organisation.code);
+      physicalMeter.medium
+    );
   }
 }

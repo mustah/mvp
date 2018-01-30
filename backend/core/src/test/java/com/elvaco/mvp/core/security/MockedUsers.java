@@ -1,14 +1,16 @@
-package com.elvaco.mvp.security;
+package com.elvaco.mvp.core.security;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
+
+import static java.util.stream.Collectors.toList;
 
 class MockedUsers implements Users {
   private List<User> users;
@@ -54,6 +56,11 @@ class MockedUsers implements Users {
 
   @Override
   public List<User> findByRole(Role role) {
-    return users.stream().filter(u -> u.roles.contains(role)).collect(Collectors.toList());
+    return users.stream().filter(u -> u.roles.contains(role)).collect(toList());
+  }
+
+  @Override
+  public List<User> findByOrganisation(Organisation organisation) {
+    return users.stream().filter(u -> u.organisation.id.equals(organisation.id)).collect(toList());
   }
 }

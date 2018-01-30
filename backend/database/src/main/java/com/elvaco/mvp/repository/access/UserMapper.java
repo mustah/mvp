@@ -3,10 +3,8 @@ package com.elvaco.mvp.repository.access;
 import java.util.Collection;
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.entity.user.UserEntity;
 import org.modelmapper.ModelMapper;
@@ -16,9 +14,11 @@ import static java.util.stream.Collectors.toList;
 public class UserMapper implements DomainEntityMapper<User, UserEntity> {
 
   private final ModelMapper modelMapper;
+  private final OrganisationMapper organisationMapper;
 
-  public UserMapper(ModelMapper modelMapper) {
+  public UserMapper(ModelMapper modelMapper, OrganisationMapper organisationMapper) {
     this.modelMapper = modelMapper;
+    this.organisationMapper = organisationMapper;
   }
 
   @Override
@@ -28,7 +28,7 @@ public class UserMapper implements DomainEntityMapper<User, UserEntity> {
       userEntity.name,
       userEntity.email,
       userEntity.password,
-      newOrganisation(userEntity.organisation),
+      organisationMapper.toDomainModel(userEntity.organisation),
       rolesOf(userEntity.roles)
     );
   }
@@ -48,9 +48,5 @@ public class UserMapper implements DomainEntityMapper<User, UserEntity> {
       .stream()
       .map(r -> new Role(r.role))
       .collect(toList());
-  }
-
-  private Organisation newOrganisation(OrganisationEntity organisation) {
-    return new Organisation(organisation.id, organisation.name, organisation.code);
   }
 }

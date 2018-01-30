@@ -1,6 +1,5 @@
 package com.elvaco.mvp.api;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +9,11 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.exception.MeasurementNotFound;
-import com.elvaco.mvp.security.MvpUserDetails;
 import com.elvaco.mvp.spring.PageableAdapter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,11 +36,9 @@ public class MeasurementController {
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
-    Measurement measurement = measurementUseCases.findById(id);
-    if (measurement != null) {
-      return toDto(measurement);
-    }
-    throw new MeasurementNotFound(id);
+    return measurementUseCases.findById(id)
+      .map(this::toDto)
+      .orElseThrow(() -> new MeasurementNotFound(id));
   }
 
   @GetMapping

@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.usecase;
 import java.util.List;
 import java.util.Optional;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -24,4 +25,6 @@ public interface Users {
   void deleteById(Long id);
 
   List<User> findByRole(Role role);
+
+  List<User> findByOrganisation(Organisation organisation);
 }

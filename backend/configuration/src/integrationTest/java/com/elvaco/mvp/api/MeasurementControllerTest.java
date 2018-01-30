@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.repository.access.OrganisationMapper;
 import com.elvaco.mvp.repository.access.UserMapper;
 import com.elvaco.mvp.repository.jpa.MeasurementRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
@@ -44,7 +45,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void setUp() {
     elvacoUser = userUseCases.findByEmail("peteri@elvaco.se").get();
     wayneIndustriesUser = userUseCases.findByEmail("user@wayne.se").get();
-    UserMapper userMapper = new UserMapper(modelMapper);
+    UserMapper userMapper = new UserMapper(modelMapper, new OrganisationMapper());
 
     PhysicalMeterEntity butterMeter =
       new PhysicalMeterEntity(

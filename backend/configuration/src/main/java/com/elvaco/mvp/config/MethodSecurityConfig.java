@@ -1,42 +1,23 @@
 package com.elvaco.mvp.config;
 
-import com.elvaco.mvp.core.security.MvpPrincipal;
-import com.elvaco.mvp.core.usecase.Users;
-import com.elvaco.mvp.mapper.UserMapper;
-import com.elvaco.mvp.security.OrganisationPermissionEvaluator;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @Configuration
 class MethodSecurityConfig {
 
-  private final Users users;
-  private final UserMapper userMapper;
-
-  @Autowired
-  MethodSecurityConfig(Users users, UserMapper userMapper) {
-    this.users = users;
-    this.userMapper = userMapper;
-  }
-
   @Bean
-  @Scope(value = SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-  MvpPrincipal currentPrincipal() {
-    return (MvpPrincipal) SecurityContextHolder.getContext()
-      .getAuthentication()
-      .getPrincipal();
+  @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
+  AuthenticatedUser currentUser() {
+    Authentication authentication = SecurityContextHolder.getContext()
+      .getAuthentication();
+    return (AuthenticatedUser) authentication.getPrincipal();
   }
-
-  @Bean
-  PermissionEvaluator permissionEvaluator() {
-    return new OrganisationPermissionEvaluator(users, userMapper);
-  }
-
 }

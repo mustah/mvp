@@ -8,6 +8,7 @@ import com.elvaco.mvp.repository.access.MeasurementMapper;
 import com.elvaco.mvp.repository.access.MeasurementRepository;
 import com.elvaco.mvp.repository.access.MeteringPointMapper;
 import com.elvaco.mvp.repository.access.MeteringPointRepository;
+import com.elvaco.mvp.repository.access.OrganisationMapper;
 import com.elvaco.mvp.repository.access.SettingMapper;
 import com.elvaco.mvp.repository.access.SettingRepository;
 import com.elvaco.mvp.repository.access.UserMapper;
@@ -52,9 +53,11 @@ class DataProviderConfig {
 
   @Bean
   Users users() {
+    OrganisationMapper organisationMapper = new OrganisationMapper();
     return new UserRepository(
       userJpaRepository,
-      new UserMapper(modelMapper),
+      new UserMapper(modelMapper, organisationMapper),
+      organisationMapper,
       passwordEncoder::encode
     );
   }
@@ -80,7 +83,7 @@ class DataProviderConfig {
     return new MeasurementRepository(
       measurementJpaRepository,
       new MeasurementFilterToPredicateMapper(),
-      new MeasurementMapper(modelMapper)
+      new MeasurementMapper(modelMapper, new OrganisationMapper())
     );
   }
 }
