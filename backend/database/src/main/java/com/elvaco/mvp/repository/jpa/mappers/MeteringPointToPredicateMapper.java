@@ -1,5 +1,7 @@
 package com.elvaco.mvp.repository.jpa.mappers;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -28,5 +30,12 @@ public class MeteringPointToPredicateMapper extends FilterToPredicateMapper {
 
     FILTERABLE_PROPERTIES.put("status", Q.status::eq);
 
+    FILTERABLE_PROPERTIES.put("before", (String before) -> Q.created.before(toDate(before)));
+
+    FILTERABLE_PROPERTIES.put("after", (String after) -> Q.created.after(toDate(after)));
+  }
+
+  private static Date toDate(String before) {
+    return Date.from(Instant.parse(before));
   }
 }

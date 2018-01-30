@@ -1,5 +1,6 @@
 package com.elvaco.mvp.api;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +44,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
       1L,
       "ok",
       new Location(1.1, 1.1, 1.1),
+      new Date(),
       new PropertyCollection(new UserProperty("abc123", "Some project"))
     );
     meteringPointRepository.save(meteringPoint);

@@ -27,6 +27,7 @@ public class MeteringPointMapper {
       meteringPointEntity.id,
       meteringPointEntity.status,
       location,
+      meteringPointEntity.created,
       new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty)
     );
   }

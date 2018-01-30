@@ -38,6 +38,7 @@ public class MeteringPointMapperTest {
       id,
       status,
       location,
+      null,
       null
     );
 
