@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 
 public class MeasurementUseCases {
+
   private final AuthenticatedUser currentUser;
   private final Measurements measurements;
 

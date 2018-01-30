@@ -57,7 +57,6 @@ public class MeasurementController {
         filterParams,
         pageableAdapter
       );
-
     } else {
       page = measurementUseCases.findAll(filterParams, pageableAdapter);
     }

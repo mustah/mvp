@@ -9,11 +9,12 @@ public class PhysicalMeter {
   public final String identity;
   public final String medium;
 
-  public PhysicalMeter(Organisation organisation, String identity, String medium) {
-    this(null, organisation, identity, medium);
-  }
-
-  public PhysicalMeter(Long id, Organisation organisation, String identity, String medium) {
+  public PhysicalMeter(
+    @Nullable Long id,
+    Organisation organisation,
+    String identity,
+    String medium
+  ) {
     this.id = id;
     this.organisation = organisation;
     this.identity = identity;
