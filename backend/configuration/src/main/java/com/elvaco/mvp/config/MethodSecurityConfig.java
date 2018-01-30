@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -18,6 +19,9 @@ class MethodSecurityConfig {
   AuthenticatedUser currentUser() {
     Authentication authentication = SecurityContextHolder.getContext()
       .getAuthentication();
+    if (authentication == null) {
+      throw new InsufficientAuthenticationException("No authentication information available!");
+    }
     return (AuthenticatedUser) authentication.getPrincipal();
   }
 }
