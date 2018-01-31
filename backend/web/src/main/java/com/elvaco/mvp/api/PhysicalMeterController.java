@@ -5,9 +5,7 @@ import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.dto.MeasurementDto;
-import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
 import com.querydsl.core.types.Predicate;
 import org.modelmapper.ModelMapper;
@@ -26,27 +24,19 @@ import static com.elvaco.mvp.util.ParametersHelper.combineParams;
 @ExposesResourceFor(PhysicalMeter.class)
 public class PhysicalMeterController {
 
-  private final PhysicalMeterRepository repository;
   private final MeasurementJpaRepository measurementRepository;
   private final ModelMapper modelMapper;
   private final FilterToPredicateMapper predicateMapper;
 
   @Autowired
   public PhysicalMeterController(
-    PhysicalMeterRepository repository,
     MeasurementJpaRepository measurementRepository,
     ModelMapper modelMapper,
     FilterToPredicateMapper predicateMapper
   ) {
-    this.repository = repository;
     this.measurementRepository = measurementRepository;
     this.modelMapper = modelMapper;
     this.predicateMapper = predicateMapper;
-  }
-
-  @GetMapping("{id}")
-  public PhysicalMeterEntity physicalMeter(@PathVariable("id") Long id) {
-    return repository.findOne(id);
   }
 
   @GetMapping("{meterId}/measurements/{quantity}")
@@ -65,11 +55,6 @@ public class PhysicalMeterController {
     Pageable pageable
   ) {
     return filterMeasurementDtos(combineParams(pathVars, requestParams), pageable);
-  }
-
-  @GetMapping
-  public Page<PhysicalMeterEntity> physicalMeters(Pageable pageable) {
-    return repository.findAll(pageable);
   }
 
   private Page<MeasurementDto> filterMeasurementDtos(
