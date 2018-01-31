@@ -10,16 +10,16 @@ CREATE TABLE IF NOT EXISTS meter_definition (
 );
 
 CREATE TABLE IF NOT EXISTS organisation (
-  id   BIGSERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255),
   code VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
-  id              BIGSERIAL PRIMARY KEY,
-  name            TEXT NOT NULL,
-  email           TEXT NOT NULL UNIQUE,
-  password        TEXT NOT NULL,
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
   organisation_id BIGSERIAL REFERENCES organisation
 );
 
@@ -33,34 +33,45 @@ CREATE TABLE IF NOT EXISTS users_roles (
 );
 
 CREATE TABLE IF NOT EXISTS metering_point (
-  id                  BIGSERIAL PRIMARY KEY,
+  id BIGSERIAL PRIMARY KEY,
+  status VARCHAR(255),
+  medium VARCHAR(255),
   property_collection JSONB
   -- meter_definition_id bigserial references meter_definition
 );
 
 CREATE TABLE IF NOT EXISTS physical_meter (
-  id                BIGSERIAL PRIMARY KEY,
-  organisation_id   BIGSERIAL REFERENCES organisation,
-  identity          VARCHAR(255),
-  medium            VARCHAR(255),
-  metering_point_id BIGSERIAL REFERENCES metering_point,
+  id BIGSERIAL PRIMARY KEY,
+  organisation_id BIGSERIAL REFERENCES organisation,
+  identity VARCHAR(255),
+  medium VARCHAR(255),
+  metering_point_id BIGINT REFERENCES metering_point,
   UNIQUE (organisation_id, identity)
 );
 
--- TODO: add gateway
+CREATE TABLE IF NOT EXISTS gateway (
+  id BIGSERIAL PRIMARY KEY,
+  serial VARCHAR(255) NOT NULL,
+  model TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS gateways_meters (
+  meter_id BIGSERIAL REFERENCES physical_meter,
+  gateway_id BIGSERIAL REFERENCES gateway
+);
 
 CREATE TABLE IF NOT EXISTS measurement (
-  id                BIGSERIAL PRIMARY KEY,
-  physical_meter_id BIGSERIAL                   NOT NULL REFERENCES physical_meter (id) ON UPDATE CASCADE ON DELETE CASCADE,
-  created           TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-  quantity          VARCHAR(255)                NOT NULL,
-  value             UNIT                        NOT NULL, -- if this is a proper measurement, the value will be here
+  id BIGSERIAL PRIMARY KEY,
+  physical_meter_id BIGSERIAL NOT NULL REFERENCES physical_meter (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+  quantity VARCHAR(255) NOT NULL,
+  value UNIT NOT NULL,
   UNIQUE (physical_meter_id, created, quantity, value)
 );
 
 CREATE TABLE IF NOT EXISTS mvp_setting (
-  id    BIGSERIAL PRIMARY KEY,
-  name  TEXT NOT NULL UNIQUE,
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL UNIQUE,
   value TEXT NOT NULL
 );
 
@@ -103,8 +114,9 @@ BEGIN
     RETURNING id
       INTO physical_meter_id;
   END IF;
-  INSERT INTO measurement VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
-                                  (measurement_value || measurement_unit) :: UNIT);
+  INSERT INTO measurement
+  VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
+          (measurement_value || measurement_unit) :: UNIT);
   RETURN physical_meter_id;
 END;
 $$

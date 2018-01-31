@@ -1,8 +1,9 @@
 package com.elvaco.mvp.entity.measurement;
 
 public class MeasurementUnit {
-  private double value;
+
   private String unit;
+  private double value;
 
   public MeasurementUnit() {}
 
@@ -25,6 +26,14 @@ public class MeasurementUnit {
     this.value = value;
   }
 
+  public double getValue() {
+    return value;
+  }
+
+  public String getUnit() {
+    return unit;
+  }
+
   @Override
   public String toString() {
     if (value == (long) value) {
@@ -32,13 +41,5 @@ public class MeasurementUnit {
     } else {
       return String.format("%s %s", value, unit);
     }
-  }
-
-  public double getValue() {
-    return value;
-  }
-
-  public String getUnit() {
-    return unit;
   }
 }

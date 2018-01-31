@@ -2,8 +2,6 @@ package com.elvaco.mvp.api;
 
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.OrganisationDto;
@@ -18,11 +16,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
+
+  private static final OrganisationDto ELVACO_DTO = new OrganisationDto(1L, "Elvaco", "elvaco");
+  private static final OrganisationDto WAYNE_INDUSTRIES_DTO = new OrganisationDto(
+    2L,
+    "Wayne Industries",
+    "wayne-industries"
+  );
 
   @Autowired
   private Users users;
@@ -117,7 +128,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void updateSavedUserName() {
-    User user = users.findByEmail("evanil@elvaco.se").get();
+    User user = users.findByEmail(OTHER_ELVACO_USER.email).get();
 
     UserDto userDto = userMapper.toDto(user);
     userDto.name = "Eva Andersson";
@@ -135,8 +146,8 @@ public class UserControllerTest extends IntegrationTest {
       "john doh",
       "noo@b.com",
       "test123",
-      new Organisation(1L, "Elvaco", "elvaco"),
-      asList(Role.admin(), Role.user())
+      ELVACO,
+      asList(ADMIN, USER)
     ));
 
     ResponseEntity<UserDto> response = asSuperAdmin().delete(
@@ -218,7 +229,6 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(savedUser.name).isEqualTo(user.name);
   }
 
-
   @Test
   public void adminCanCreateUserOfSameOrganisation() {
     UserWithPasswordDto user = createUserDto("stranger@danger.us", "hello");
@@ -234,22 +244,17 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateUserOfDifferentOrganisation() {
-    UserDto user = createUserDto("50@blessings.hm", new OrganisationDto(50L, "Phone hom",
-                                                                        "phone-hom"
-    ));
+    UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES_DTO);
 
     ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
 
-
   @Test
   public void adminCannotSeeUsersOfDifferentOrganisation() {
     UserDto batman = asSuperAdmin()
-      .post("/users", createUserDto("b@tm.an", new OrganisationDto(2L, "Wayne Industries",
-                                                                   "wayne-industries"
-      )), UserDto.class)
+      .post("/users", createUserDto("b@tm.an", WAYNE_INDUSTRIES_DTO), UserDto.class)
       .getBody();
 
     UserDto colleague = asSuperAdmin()
@@ -266,8 +271,8 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.password = "secret stuff";
-    user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
-    user.roles = asList(Role.USER, Role.ADMIN, Role.SUPER_ADMIN);
+    user.organisation = ELVACO_DTO;
+    user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
 
@@ -276,8 +281,8 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = password;
-    user.organisation = new OrganisationDto(1L, "Elvaco", "elvaco");
-    user.roles = asList(Role.USER, Role.ADMIN);
+    user.organisation = ELVACO_DTO;
+    user.roles = asList(USER.role, ADMIN.role);
     return user;
   }
 
@@ -287,8 +292,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "i am batman";
     user.organisation = organisation;
-    user.roles = asList(Role.USER);
+    user.roles = singletonList(USER.role);
     return user;
   }
-
 }

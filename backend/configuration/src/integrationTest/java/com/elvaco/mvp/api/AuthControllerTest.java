@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.fixture.DomainModels.DEVELOPER_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
@@ -19,16 +20,12 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void authenticate() {
-    String email = "evanil@elvaco.se";
-    String rawPassword = "eva123";
-
     ResponseEntity<UserDto> response = restClient()
-      .loginWith(email, rawPassword)
+      .loginWith(DEVELOPER_USER.email, DEVELOPER_USER.password)
       .get("/authenticate", UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    assertThat(response.getBody().email).isEqualTo(email);
+    assertThat(response.getBody().email).isEqualTo(DEVELOPER_USER.email);
   }
 
   @Test

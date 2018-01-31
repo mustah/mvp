@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -12,10 +13,11 @@ import com.elvaco.mvp.core.usecase.Users;
 
 import static java.util.stream.Collectors.toList;
 
-class MockedUsers implements Users {
-  private List<User> users;
+class MockUsers implements Users {
 
-  public MockedUsers(List<User> users) {
+  private final List<User> users;
+
+  MockUsers(List<User> users) {
     this.users = new ArrayList<>(users);
   }
 
@@ -31,7 +33,17 @@ class MockedUsers implements Users {
 
   @Override
   public Optional<User> findById(Long id) {
-    return users.stream().filter(u -> u.id.equals(id)).findFirst();
+    return users.stream().filter(u -> Objects.requireNonNull(u.id).equals(id)).findFirst();
+  }
+
+  @Override
+  public List<User> findByRole(Role role) {
+    return users.stream().filter(u -> u.roles.contains(role)).collect(toList());
+  }
+
+  @Override
+  public List<User> findByOrganisation(Organisation organisation) {
+    return users.stream().filter(u -> u.organisation.id.equals(organisation.id)).collect(toList());
   }
 
   @Override
@@ -52,15 +64,5 @@ class MockedUsers implements Users {
   @Override
   public void deleteById(Long id) {
     throw new UnsupportedOperationException("Not implemented");
-  }
-
-  @Override
-  public List<User> findByRole(Role role) {
-    return users.stream().filter(u -> u.roles.contains(role)).collect(toList());
-  }
-
-  @Override
-  public List<User> findByOrganisation(Organisation organisation) {
-    return users.stream().filter(u -> u.organisation.id.equals(organisation.id)).collect(toList());
   }
 }

@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
 class MockAuthenticatedUser implements AuthenticatedUser {
+
   private final User user;
 
   MockAuthenticatedUser(User user) {

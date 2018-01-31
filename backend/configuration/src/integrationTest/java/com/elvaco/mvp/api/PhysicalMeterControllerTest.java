@@ -7,9 +7,7 @@ import java.util.List;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.entity.user.OrganisationEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
-import com.elvaco.mvp.repository.jpa.OrganisationRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.RestResponsePage;
@@ -18,34 +16,39 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PhysicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
-  private MeasurementRepository measurementRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
   private PhysicalMeterRepository physicalMeterRepository;
 
-  @Autowired
-  private OrganisationRepository organisationRepository;
+  private Long id;
+  private List<MeasurementEntity> saved;
 
   @Before
   public void setUp() {
-    OrganisationEntity organisationEntity = new OrganisationEntity("The Jedi Order", "jedi-order");
-    organisationRepository.save(organisationEntity);
-    PhysicalMeterEntity forceMeter = new PhysicalMeterEntity(organisationEntity, "force-meter",
-      "Jedi aptitude");
-    physicalMeterRepository.save(forceMeter);
-    measurementRepository.save(
+    PhysicalMeterEntity forceMeter = new PhysicalMeterEntity(
+      WAYNE_INDUSTRIES_ENTITY,
+      String.valueOf(Math.random()),
+      "vacum"
+    );
+    id = physicalMeterRepository.save(forceMeter).id;
+
+    // What are midichlorians measured in?
+    // https://scifi.stackexchange.com/a/28354
+    saved = measurementJpaRepository.save(
       asList(
         new MeasurementEntity(
           new Date(),
-          "Midi-chlorians",
-          20001,
-          "one", //What are midichlorians measured in?
+          "Heat",
+          150,
+          "°C",
           forceMeter
         ),
         new MeasurementEntity(
@@ -69,36 +72,37 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeter() {
     List<MeasurementDto> contents =
-      getPage("/physical-meters/1/measurements")
+      getPage("/physical-meters/" + id + "/measurements")
+        .getBody()
+        .newPage()
+        .getContent();
+
+    assertThat(contents).hasSize(3);
+  }
+
+  @Test
+  public void fetchMeasurementsForHeatMeter() {
+    List<MeasurementDto> contents =
+      getPage("/physical-meters/" + id + "/measurements/Heat")
         .getBody()
         .newPage()
         .getContent();
 
     MeasurementDto dto = contents.get(0);
-    assertThat(dto.quantity).isEqualTo("Midi-chlorians");
-    // "The readings are off the chart. Over 20,000. Even Master Yoda
-    //  doesn't have a midi-chlorian count that high."
-    assertThat(dto.value).isEqualTo(20001);
+    assertThat(contents).hasSize(1);
+    assertThat(dto.quantity).isEqualTo("Heat");
+
+    // TODO[!must!] fix this when we have a PhysicalModelMapper in place!
+    /*String valueAndUnit = dto.value + " " + dto.unit;
+    assertThat(toMeasurementUnit(valueAndUnit, "K").toString()).isEqualTo("423.15 K");*/
   }
 
   @Test
   public void fetchMeasurementsForMeterByQuantity() {
+    Long id1 = saved.get(0).id;
+    Long id2 = saved.get(1).id;
     List<MeasurementDto> contents =
-      getPage("/physical-meters/1/measurements/LightsaberPower")
-        .getBody()
-        .newPage()
-        .getContent();
-
-    MeasurementDto dto = contents.get(0);
-    assertThat(contents.size()).isEqualTo(2);
-    assertThat(dto.quantity).isEqualTo("LightsaberPower");
-    assertThat(dto.value).isEqualTo(28);
-  }
-
-  @Test
-  public void fetchMeasurementsForMeterByQuantity2() {
-    List<MeasurementDto> contents =
-      getPage("/physical-meters/1/measurements?id=1&id=2")
+      getPage("/physical-meters/" + id + "/measurements?id=" + id1 + "&id=" + id2)
         .getBody()
         .newPage()
         .getContent();
@@ -108,8 +112,9 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
+    String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getPage("/physical-meters/1/measurements/LightsaberPower?before=1990-01-01T08:00:00Z")
+      getPage("/physical-meters/" + id + "/measurements/LightsaberPower?before=" + date)
         .getBody()
         .newPage()
         .getContent();
@@ -122,8 +127,9 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
+    String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getPage("/physical-meters/1/measurements/LightsaberPower?after=1990-01-01T08:00:00Z")
+      getPage("/physical-meters/" + id + "/measurements/LightsaberPower?after=" + date)
         .getBody()
         .newPage()
         .getContent();

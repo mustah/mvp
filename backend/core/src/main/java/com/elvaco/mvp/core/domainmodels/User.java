@@ -32,8 +32,8 @@ public class User {
     this.password = password;
     this.organisation = organisation;
     this.roles = unmodifiableList(roles);
-    this.isSuperAdmin = roles.contains(Role.superAdmin());
-    this.isAdmin = roles.contains(Role.admin());
+    this.isSuperAdmin = roles.contains(Role.SUPER_ADMIN);
+    this.isAdmin = roles.contains(Role.ADMIN);
   }
 
   public User(Long id, String name, String email, Organisation organisation, List<Role> roles) {

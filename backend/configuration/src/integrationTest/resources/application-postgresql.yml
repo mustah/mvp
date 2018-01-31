@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: MVP
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mvp
+    username: mvp
+    password: mvp
+  jpa:
+    properties:
+      hibernate.dialect: com.elvaco.mvp.dialect.MvpPostgreSqlDialect
+      hibernate.show_sql: true
+      hibernate.use_sql_comments: true
+      hibernate.format_sql: true
+      hibernate.type: trace
+
+liquibase:
+  enabled: true
+  change-log: classpath:/db/changelog/db.changelog.json

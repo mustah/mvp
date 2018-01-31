@@ -7,6 +7,10 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_ADMIN_USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO_USER;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 // By default, remove application context after each class to avoid
@@ -27,14 +31,14 @@ public abstract class IntegrationTest {
   }
 
   protected RestClient asElvacoUser() {
-    return restClient().loginWith("peteri@elvaco.se", "peter123");
+    return restClient().loginWith(ELVACO_USER.email, ELVACO_USER.password);
   }
 
   protected RestClient asAdminOfElvaco() {
-    return restClient().loginWith("hansjo@elvaco.se", "hanna123");
+    return restClient().loginWith(ELVACO_ADMIN_USER.email, ELVACO_ADMIN_USER.password);
   }
 
   protected RestClient asSuperAdmin() {
-    return restClient().loginWith("user@domain.tld", "complicated_password");
+    return restClient().loginWith(ELVACO_SUPER_ADMIN_USER.email, ELVACO_SUPER_ADMIN_USER.password);
   }
 }

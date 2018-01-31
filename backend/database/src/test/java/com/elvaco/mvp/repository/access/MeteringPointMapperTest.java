@@ -22,7 +22,7 @@ public class MeteringPointMapperTest {
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(Configuration.AccessLevel.PUBLIC);
 
-    meteringPointMapper = new MeteringPointMapper(modelMapper);
+    meteringPointMapper = new MeteringPointMapper();
   }
 
   @Test

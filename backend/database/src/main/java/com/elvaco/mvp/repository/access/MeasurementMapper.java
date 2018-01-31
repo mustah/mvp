@@ -7,6 +7,7 @@ import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import org.modelmapper.ModelMapper;
 
 public class MeasurementMapper implements DomainEntityMapper<Measurement, MeasurementEntity> {
+
   private final ModelMapper modelMapper;
   private final OrganisationMapper organisationMapper;
 

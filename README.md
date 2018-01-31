@@ -27,6 +27,16 @@ arguments for the configuration in your idea:
 `--server.port=8080 --spring.datasource.url=jdbc:postgresql://localhost:5432/mvp`
 
 and active profile, set to `postgresql`.
+
+#### Run system tests with postgresql
+All the classes that are run as integration tests can also be run as system tests with postgresql
+database. Just run the `systemTest` task manually after your postgres database has been started.
+
+1. Start postgres DB.
+2. `./gradlew clean systemTest`
+3. Clear the mvp database before you restart the testing of the system tests.
+
+> TODO: make sure the system tests can be run without wiping the tables created in postgres DB.  
  
 ### Backend only
 If the changes you're working on are isolated to the backend, and do not rely

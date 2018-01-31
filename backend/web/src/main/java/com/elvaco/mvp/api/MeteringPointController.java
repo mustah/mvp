@@ -47,7 +47,8 @@ public class MeteringPointController {
     ModelMapper modelMapper,
     FilterToPredicateMapper meteringPointToPredicateMapper,
     MeteringPointMapper meteringPointMapper,
-    MeteringPointsUseCases meteringPointsUseCases) {
+    MeteringPointsUseCases meteringPointsUseCases
+  ) {
     this.meteringPointJpaRepository = meteringPointJpaRepository;
     this.modelMapper = modelMapper;
     this.meteringPointToPredicateMapper = meteringPointToPredicateMapper;

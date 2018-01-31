@@ -15,20 +15,20 @@ public final class Json {
 
   private Json() {}
 
-  public static String toJson(Object object) {
-    try {
-      return OBJECT_MAPPER.writeValueAsString(object);
-    } catch (IOException e) {
-      log.warn("Unable to serialize object: {}", object, e);
-      return null;
-    }
-  }
-
   public static JsonNode toJsonNode(Object object) {
     try {
       return OBJECT_MAPPER.readTree(toJson(object));
     } catch (IOException e) {
       log.warn("Unable to read object tree: {}", object, e);
+      return null;
+    }
+  }
+
+  private static String toJson(Object object) {
+    try {
+      return OBJECT_MAPPER.writeValueAsString(object);
+    } catch (IOException e) {
+      log.warn("Unable to serialize object: {}", object, e);
       return null;
     }
   }

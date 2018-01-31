@@ -1,67 +1,56 @@
 package com.elvaco.mvp.api;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.access.OrganisationMapper;
-import com.elvaco.mvp.repository.access.UserMapper;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
+import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
+import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
   @Autowired
-  ModelMapper modelMapper;
-  @Autowired
-  private MeasurementRepository measurementRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
+
   @Autowired
   private PhysicalMeterRepository meterRepository;
-  @Autowired
-  private UserUseCases userUseCases;
 
-  private User elvacoUser;
-  private User wayneIndustriesUser;
   private Map<String, MeasurementEntity> measurementQuantities;
 
   @Before
   public void setUp() {
-    elvacoUser = userUseCases.findByEmail("peteri@elvaco.se").get();
-    wayneIndustriesUser = userUseCases.findByEmail("user@wayne.se").get();
-    UserMapper userMapper = new UserMapper(modelMapper, new OrganisationMapper());
-
     PhysicalMeterEntity butterMeter =
       new PhysicalMeterEntity(
-        userMapper.toEntity(elvacoUser).organisation,
+        ELVACO_ENTITY,
         "test-butter-meter-1",
         "Butter"
       );
 
     PhysicalMeterEntity milkMeter =
       new PhysicalMeterEntity(
-        userMapper.toEntity(wayneIndustriesUser).organisation,
+        WAYNE_INDUSTRIES_ENTITY,
         "test-milk-meter-1",
         "Milk"
       );
 
-    meterRepository.save(Arrays.asList(butterMeter, milkMeter));
+    meterRepository.save(asList(butterMeter, milkMeter));
 
     measurementQuantities = Stream.of(
       new MeasurementEntity(
@@ -85,10 +74,15 @@ public class MeasurementControllerTest extends IntegrationTest {
         "°C",
         milkMeter
       )
-    ).map(measurementRepository::save).collect(Collectors.toMap(
-      m -> m.quantity,
-      Function.identity()
-    ));
+    )
+      .map(measurementJpaRepository::save)
+      .collect(toMap(m -> m.quantity, Function.identity()));
+  }
+
+  @After
+  public void tearDown() {
+    measurementJpaRepository.deleteAll();
+    meterRepository.deleteAll();
   }
 
   @Test
@@ -112,7 +106,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     assertThat(measurement.id).isEqualTo(butterTemperatureId);
     assertThat(measurement.quantity).isEqualTo("Butter temperature");
-    assertThat(measurement.value).isEqualTo(12.44);
   }
 
   @Test
@@ -137,12 +130,14 @@ public class MeasurementControllerTest extends IntegrationTest {
       .physicalMeter
       .getHref();
 
-    assertThat(href).isEqualTo(restClient().getBaseUrl() + "/physical-meters/" + butterMeasurement.physicalMeter.id);
+    Long physicalMeterId = butterMeasurement.physicalMeter.id;
+    assertThat(href).isEqualTo(restClient().getBaseUrl() + "/physical-meters/" + physicalMeterId);
   }
 
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
-    Page<MeasurementDto> page = asElvacoUser().getPage("/measurements", MeasurementDto.class)
+    Page<MeasurementDto> page = asElvacoUser()
+      .getPage("/measurements", MeasurementDto.class)
       .getBody()
       .newPage();
     page.forEach(
@@ -173,7 +168,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanSeeAllMeasurements() {
-    Page<MeasurementDto> page = asSuperAdmin().getPage("/measurements", MeasurementDto.class)
+    Page<MeasurementDto> page = asSuperAdmin()
+      .getPage("/measurements", MeasurementDto.class)
       .getBody()
       .newPage();
     assertThat(page).hasSize(3);
@@ -186,5 +182,4 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeasurementEntity measurementOf(String measurementQuantity) {
     return measurementQuantities.get(measurementQuantity);
   }
-
 }

@@ -16,7 +16,7 @@ import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
-import com.elvaco.mvp.repository.jpa.MeasurementRepository;
+import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
@@ -32,23 +32,25 @@ import static java.util.Arrays.asList;
 @Component
 @Slf4j
 public class DemoDataLoader implements CommandLineRunner {
+
   private final MeteringPointJpaRepository meteringPointJpaRepository;
-  private final MeasurementRepository measurementRepository;
+  private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterRepository physicalMeterRepository;
   private final OrganisationRepository organisationRepository;
   private final GatewayRepository gatewayRepository;
   private final SettingUseCases settingUseCases;
 
   @Autowired
-  public DemoDataLoader(MeteringPointJpaRepository meteringPointJpaRepository,
-                        MeasurementRepository measurementRepository,
-                        PhysicalMeterRepository physicalMeterRepository,
-                        OrganisationRepository organisationRepository,
-                        GatewayRepository gatewayRepository,
-                        SettingUseCases settingUseCases
+  public DemoDataLoader(
+    MeteringPointJpaRepository meteringPointJpaRepository,
+    MeasurementJpaRepository measurementJpaRepository,
+    PhysicalMeterRepository physicalMeterRepository,
+    OrganisationRepository organisationRepository,
+    GatewayRepository gatewayRepository,
+    SettingUseCases settingUseCases
   ) {
     this.meteringPointJpaRepository = meteringPointJpaRepository;
-    this.measurementRepository = measurementRepository;
+    this.measurementJpaRepository = measurementJpaRepository;
     this.physicalMeterRepository = physicalMeterRepository;
     this.organisationRepository = organisationRepository;
     this.gatewayRepository = gatewayRepository;
@@ -85,7 +87,8 @@ public class DemoDataLoader implements CommandLineRunner {
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
         organisationEntity,
         meterIdentity,
-        meteringPointEntity);
+        meteringPointEntity
+      );
 
       mockMeasurementData(
         random,
@@ -130,7 +133,7 @@ public class DemoDataLoader implements CommandLineRunner {
       );
       measurementEntities.add(measurementEntity);
     }
-    measurementRepository.save(measurementEntities);
+    measurementJpaRepository.save(measurementEntities);
   }
 
   private PhysicalMeterEntity mockPhysicalMeter(
@@ -142,7 +145,8 @@ public class DemoDataLoader implements CommandLineRunner {
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationEntity,
       meterIdentity,
-      "Electricity");
+      "Electricity"
+    );
     physicalMeterEntity.meteringPoint = meteringPointEntity;
     physicalMeterRepository.save(physicalMeterEntity);
     return physicalMeterEntity;

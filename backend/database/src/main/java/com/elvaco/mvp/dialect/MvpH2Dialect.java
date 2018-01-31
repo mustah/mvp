@@ -23,7 +23,6 @@ public class MvpH2Dialect extends H2Dialect {
       "jsonb_contains",
       new SQLFunctionTemplate(BooleanType.INSTANCE, "jsonb_contains(?1, ?2)")
     );
-
   }
 
   @Override
