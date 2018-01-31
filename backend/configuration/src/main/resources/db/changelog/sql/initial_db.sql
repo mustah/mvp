@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS gateway (
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
-  meter_id BIGSERIAL REFERENCES physical_meter,
+  meter_id BIGSERIAL REFERENCES metering_point,
   gateway_id BIGSERIAL REFERENCES gateway
 );
 

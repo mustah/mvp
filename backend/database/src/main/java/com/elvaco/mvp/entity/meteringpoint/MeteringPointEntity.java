@@ -49,9 +49,9 @@ public class MeteringPointEntity {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "gateways_meters",
-      joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
+    name = "gateways_meters",
+    joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
 

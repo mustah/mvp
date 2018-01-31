@@ -30,7 +30,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
-  private PhysicalMeterRepository meterRepository;
+  private PhysicalMeterRepository physicalMeterRepository;
 
   private Map<String, MeasurementEntity> measurementQuantities;
 
@@ -50,7 +50,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         "Milk"
       );
 
-    meterRepository.save(asList(butterMeter, milkMeter));
+    physicalMeterRepository.save(asList(butterMeter, milkMeter));
 
     measurementQuantities = Stream.of(
       new MeasurementEntity(
@@ -82,7 +82,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @After
   public void tearDown() {
     measurementJpaRepository.deleteAll();
-    meterRepository.deleteAll();
+    physicalMeterRepository.deleteAll();
   }
 
   @Test
