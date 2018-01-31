@@ -1,10 +1,7 @@
 package com.elvaco.mvp.api;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.dto.MeasurementDto;
@@ -23,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static java.util.Collections.singletonList;
+import static com.elvaco.mvp.util.ParametersHelper.combineParams;
 
 @RestApi("/v1/api/physical-meters")
 @ExposesResourceFor(PhysicalMeter.class)
@@ -83,21 +80,5 @@ public class PhysicalMeterController {
     return measurementRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeasurementDto.class));
-  }
-
-  private Map<String, List<String>> combineParams(
-    Map<String, String> pathVars,
-    Map<String, List<String>> requestParams
-  ) {
-    Map<String, List<String>> filter = new HashMap<>();
-    filter.putAll(requestParams);
-    filter.putAll(
-      pathVars
-        .entrySet()
-        .stream()
-        .map(e -> new SimpleEntry<>(e.getKey(), singletonList(e.getValue())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-    );
-    return filter;
   }
 }
