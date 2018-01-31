@@ -88,9 +88,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementsRetrievableAtEndpoint() {
     Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements", MeasurementDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/measurements", MeasurementDto.class);
 
     assertThat(page.getContent().get(0).quantity).isEqualTo("Butter temperature");
   }
@@ -111,9 +109,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementUnitScaled() {
     Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class);
 
     MeasurementDto measurementDto = page.getContent().get(0);
     assertThat(measurementDto.quantity).isEqualTo("Butter temperature");
@@ -137,9 +133,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
     Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements", MeasurementDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/measurements", MeasurementDto.class);
+
     page.forEach(
       measurementDto -> assertThat(measurementDto.quantity).isNotEqualTo("Milk temperature")
     );
@@ -169,9 +164,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void superAdminCanSeeAllMeasurements() {
     Page<MeasurementDto> page = asSuperAdmin()
-      .getPage("/measurements", MeasurementDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/measurements", MeasurementDto.class);
     assertThat(page).hasSize(3);
   }
 

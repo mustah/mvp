@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -58,7 +59,11 @@ public final class RestClient {
     template.delete(apiUrlOf(url));
   }
 
-  public <T> ResponseEntity<RestResponsePage<T>> getPage(String url, Class<T> pagedClass) {
+  public <T> Page<T> getPage(String url, Class<T> pagedClass) {
+    return getPageResponse(url, pagedClass).getBody().newPage();
+  }
+
+  public <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
     ParameterizedTypeReference<RestResponsePage<T>> responseType =
       new ParameterizedTypeReference<RestResponsePage<T>>() {
         @Override

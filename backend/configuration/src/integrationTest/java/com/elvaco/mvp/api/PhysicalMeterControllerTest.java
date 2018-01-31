@@ -10,11 +10,10 @@ import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.RestResponsePage;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 
 import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
@@ -72,9 +71,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeter() {
     List<MeasurementDto> contents =
-      getPage("/physical-meters/" + id + "/measurements")
-        .getBody()
-        .newPage()
+      getPageAsSuperAdmin("/physical-meters/" + id + "/measurements")
         .getContent();
 
     assertThat(contents).hasSize(3);
@@ -83,9 +80,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForHeatMeter() {
     List<MeasurementDto> contents =
-      getPage("/physical-meters/" + id + "/measurements/Heat")
-        .getBody()
-        .newPage()
+      getPageAsSuperAdmin("/physical-meters/" + id + "/measurements/Heat")
         .getContent();
 
     MeasurementDto dto = contents.get(0);
@@ -102,9 +97,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
     Long id1 = saved.get(0).id;
     Long id2 = saved.get(1).id;
     List<MeasurementDto> contents =
-      getPage("/physical-meters/" + id + "/measurements?id=" + id1 + "&id=" + id2)
-        .getBody()
-        .newPage()
+      getPageAsSuperAdmin("/physical-meters/" + id + "/measurements?id=" + id1 + "&id=" + id2)
         .getContent();
 
     assertThat(contents).hasSize(2);
@@ -114,9 +107,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getPage("/physical-meters/" + id + "/measurements/LightsaberPower?before=" + date)
-        .getBody()
-        .newPage()
+      getPageAsSuperAdmin("/physical-meters/" + id + "/measurements/LightsaberPower?before=" + date)
         .getContent();
 
     MeasurementDto dto = contents.get(0);
@@ -129,9 +120,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getPage("/physical-meters/" + id + "/measurements/LightsaberPower?after=" + date)
-        .getBody()
-        .newPage()
+      getPageAsSuperAdmin("/physical-meters/" + id + "/measurements/LightsaberPower?after=" + date)
         .getContent();
 
     MeasurementDto dto = contents.get(0);
@@ -140,7 +129,7 @@ public class PhysicalMeterControllerTest extends IntegrationTest {
     assertThat(dto.value).isEqualTo(28);
   }
 
-  private ResponseEntity<RestResponsePage<MeasurementDto>> getPage(String url) {
+  private Page<MeasurementDto> getPageAsSuperAdmin(String url) {
     return asSuperAdmin()
       .getPage(url, MeasurementDto.class);
   }

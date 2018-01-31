@@ -91,18 +91,14 @@ public class MeteringPointControllerTest extends IntegrationTest {
   @Test
   public void findAll() {
     Page<MeteringPointDto> response = asElvacoUser()
-      .getPage("/meters", MeteringPointDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/meters", MeteringPointDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(20);
     assertThat(response.getTotalPages()).isEqualTo(3);
 
     response = asElvacoUser()
-      .getPage("/meters?page=2", MeteringPointDto.class)
-      .getBody()
-      .newPage();
+      .getPage("/meters?page=2", MeteringPointDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
