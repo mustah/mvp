@@ -110,6 +110,7 @@ class ApplicationConfig {
         dto.id = source.id;
         dto.medium = source.medium;
         dto.created = source.created.toString();
+
         return dto;
       }
     };

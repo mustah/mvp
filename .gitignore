@@ -29,6 +29,7 @@ frontend/src/i18n/locales/*.mo
 
 ### IntelliJ IDEA ###
 # User-specific stuff:
+.idea/
 .idea/codeStyles/
 .idea/inspectionProfiles/
 .idea/libraries/
@@ -47,6 +48,9 @@ frontend/src/i18n/locales/*.mo
 .idea/dataSources
 .idea/dataSources.xml
 .idea/dataSources.local.xml
+.idea/runConfigurations/
+.idea/jsLinters/tslint.xml
+.idea/runConfigurations/MvpApplication.xml
 .idea/dictionaries
 
 backend/.idea/runConfigurations/

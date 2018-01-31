@@ -99,9 +99,10 @@ public class MeteringPointMapperTest {
     MeteringPoint meteringPoint = new MeteringPoint(
       id,
       status,
-      latitude,
-      longitude,
-      confidence,
+      new Location(
+        latitude,
+        longitude,
+        confidence),
       created,
       propertyCollection
     );

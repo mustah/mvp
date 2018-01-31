@@ -23,7 +23,7 @@ public class MeteringPoint {
     this.id = id;
     this.status = status;
     this.location = location;
-    this.created = created == null ? null : (Date) created.clone();
+    this.created = (Date) created.clone();
     this.propertyCollection = propertyCollection;
   }
 }
