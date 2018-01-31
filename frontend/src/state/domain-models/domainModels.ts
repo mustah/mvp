@@ -35,7 +35,9 @@ export interface ObjectsById<T extends HasId> {
 
 export interface Normalized<T extends HasId> {
   result: uuid[];
-  entities: {[entityType: string]: ObjectsById<T>};
+  entities: {
+    [entityType: string]: ObjectsById<T>,
+  };
 }
 
 export interface DomainModel<T extends HasId> {

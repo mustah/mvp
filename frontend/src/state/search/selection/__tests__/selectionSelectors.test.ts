@@ -18,20 +18,16 @@ import {
   gateways,
   gatewayStatuses,
   initialDomain,
-  initialPaginatedDomain,
   manufacturers,
-  measurements,
-  meters,
   meterStatuses,
   productModels,
   users,
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {Measurement} from '../../../domain-models/measurement/measurementModels';
 import {Meter} from '../../../domain-models/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
-import {SearchParameterState} from '../../searchParameterReducer';
+import {limit} from '../../../ui/pagination/paginationReducer';
 import {addSelectionAction, selectPeriodAction} from '../selectionActions';
 import {
   LookupState,
@@ -48,27 +44,30 @@ import {
   getSelectedPeriod,
   getSelection,
   getSelectionSummary,
+  UriLookupState,
 } from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
-  const initialSearchParametersState: SearchParameterState = {selection: {...initialState}, saved: []};
-  const initialEncodedParameters = getEncodedUriParametersForMeters(initialSearchParametersState);
+  const initialSearchParameterState = {selection: {...initialState}, saved: []};
+  const initialUriLookupState: UriLookupState = {
+    ...initialSearchParameterState,
+    componentId: 'test',
+    pagination: {},
+  };
+  const initialEncodedParameters = getEncodedUriParametersForMeters(initialUriLookupState);
 
   const initialDomainModelState = initialDomain<SelectionEntity>();
-  const initialMeasurementState = initialPaginatedDomain<Measurement>();
 
-  const domainModels = (domainModelPayload): DomainModelsState => ({
+  const domainModels = (domainModelPayload): Partial<DomainModelsState> => ({
     addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
     manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    measurements: measurements(initialMeasurementState, selectionsRequest.success(domainModelPayload)),
     meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    meters: meters(initialDomain<Meter>(), {type: 'none'}),
     productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     users: users(initialDomain<User>(), {type: 'none'}),
   });
@@ -77,11 +76,11 @@ describe('selectionSelectors', () => {
   const stockholm: IdNamed = {...testData.selections.cities[1]};
 
   it('has entities', () => {
-    expect(getSelection({...initialSearchParametersState})).toEqual(initialState);
+    expect(getSelection({...initialSearchParameterState})).toEqual(initialState);
   });
 
   it('encode the initial, empty, selection', () => {
-    expect(initialEncodedParameters).toEqual('');
+    expect(initialEncodedParameters).toEqual(`size=${limit}&page=0`);
   });
 
   it('gets entities for type city', () => {
@@ -91,7 +90,7 @@ describe('selectionSelectors', () => {
 
     const state: LookupState = {
       selection: selection(initialState, addSelectionAction(payload)),
-      domainModels: domainModels(domainModelPayload),
+      domainModels: domainModels(domainModelPayload) as DomainModelsState,
     };
 
     const stockholmSelected: SelectionListItem[] = [
@@ -107,12 +106,12 @@ describe('selectionSelectors', () => {
     const domainModelPayload = normalize(testData.selections, selectionsSchema);
 
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-    const notCity: DomainModelsState = domainModels(domainModelPayload);
+    const notCity: Partial<DomainModelsState> = domainModels(domainModelPayload);
     notCity.cities = cities(initialDomainModelState, {type: 'unknown'});
 
     const state: LookupState = {
       selection: selection(initialState, addSelectionAction(payload)),
-      domainModels: notCity,
+      domainModels: notCity as DomainModelsState,
     };
 
     expect(getCities(state)).toEqual([]);
@@ -124,9 +123,14 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const state: SelectionState = selection(initialState, addSelectionAction(payload));
 
-      const encodedUriParametersForMeters = getEncodedUriParametersForMeters({selection: state, saved: []});
+      const encodedUriParametersForMeters = getEncodedUriParametersForMeters({
+        selection: state,
+        saved: [],
+        componentId: 'test',
+        pagination: {},
+      });
 
-      expect(encodedUriParametersForMeters).toEqual('city.id=sto');
+      expect(encodedUriParametersForMeters).toEqual(`size=${limit}&page=0&city.id=sto`);
     });
 
     it('has two selected cities', () => {
@@ -135,8 +139,8 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, addSelectionAction(payloadGot));
       const state: SelectionState = selection(prevState, addSelectionAction(payloadSto));
 
-      expect(getEncodedUriParametersForMeters({selection: state, saved: []}))
-        .toEqual('city.id=got&city.id=sto');
+      expect(getEncodedUriParametersForMeters({selection: state, saved: [], componentId: 'test', pagination: {}}))
+        .toEqual(`size=${limit}&page=0&city.id=got&city.id=sto`);
     });
   });
 
@@ -162,7 +166,7 @@ describe('selectionSelectors', () => {
 
       const state: LookupState = {
         selection: selection(initialState, addSelectionAction(payload)),
-        domainModels: domainModels(domainModelPayload),
+        domainModels: domainModels(domainModelPayload) as DomainModelsState,
       };
 
       const stockholmSelected: SelectionListItem[] = [

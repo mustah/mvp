@@ -1,14 +1,6 @@
 import {ErrorResponse, HasId, uuid} from '../../types/Types';
+import {SortingOptions} from '../ui/pagination/paginationModels';
 import {ObjectsById} from './domainModels';
-
-interface SortingOptions {
-  direction: 'ASC' | 'DESC';
-  property: string;
-  ignoreCase: boolean;
-  nullHandling: string;
-  ascending: boolean;
-  descending: boolean;
-}
 
 export interface PaginationMetadata {
   content: uuid[];

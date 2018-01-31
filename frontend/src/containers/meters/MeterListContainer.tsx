@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {Loader} from '../../components/loading/Loader';
 import {MeterListItem} from '../../components/meters/MeterListItem';
+import {PaginationControl} from '../../components/pagination-control/PaginationControl';
 import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
@@ -33,6 +34,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps;
 
+// TODO: ComponentId should be passed down in OwnProps
 const componentId = 'validationMeterList';
 
 class MeterList extends React.Component<Props> {
@@ -101,15 +103,21 @@ class MeterList extends React.Component<Props> {
             renderCell={renderActionDropdown}
           />
         </Table>
+        <PaginationControl pagination={} numOfEntities={} changePage={}/>
       </Loader>
     );
   }
 }
 
-const mapStateToProps = ({searchParameters, domainModels: {paginatedMeters}}: RootState): StateToProps => ({
+const mapStateToProps = (
+  {
+    searchParameters,
+    domainModels: {paginatedMeters},
+    ui: {pagination},
+  }: RootState): StateToProps => ({
   entities: getMeterEntities({...paginatedMeters, componentId}),
   result: getMeterResult({...paginatedMeters, componentId}),
-  encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
+  encodedUriParametersForMeters: getEncodedUriParametersForMeters({...searchParameters, componentId, pagination}),
   isFetching: getMetersIsFetching({...paginatedMeters, componentId}),
 });
 

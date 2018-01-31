@@ -53,21 +53,21 @@ interface Props {
 }
 
 export const PaginationControl =
-  ({pagination: {page, limit}, changePage, numOfEntities}: Props) => {
-    const numPages = Math.ceil(numOfEntities / limit);
+  ({pagination: {currentPage, size}, changePage, numOfEntities}: Props) => {
+    const numPages = Math.ceil(numOfEntities / size);
 
     if (numPages <= 1) {
       return null;
     }
 
-    const noPrev = page === 1;
-    const noNext = page >= numPages;
+    const noPrev = currentPage === 1;
+    const noNext = currentPage >= numPages;
 
-    const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
-    const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
+    const changePagePrev = noPrev ? () => void(0) : () => changePage(currentPage - 1);
+    const changePageNext = noNext ? () => void(0) : () => changePage(currentPage + 1);
 
     const pageNumberButtons = renderPageNumberButtons({
-      current: page,
+      current: currentPage,
       total: numPages,
       changePage,
     });

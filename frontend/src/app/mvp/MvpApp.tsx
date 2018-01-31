@@ -10,8 +10,6 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {fetchGateways} from '../../state/domain-models/domainModelsActions';
-import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
@@ -23,22 +21,15 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
-  encodedUriParametersForGateways: string;
 }
 
 interface DispatchToProps {
-  fetchGateways: (encodedUriParameters: string) => void;
   toggleShowHideSideMenu: OnClick;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 class MvpApp extends React.Component<Props> {
-
-  componentDidMount() {
-    const {fetchGateways, encodedUriParametersForGateways} = this.props;
-    fetchGateways(encodedUriParametersForGateways);
-  }
 
 // TODO fix so that SelectionTreeContainer don't break.
   render() {
@@ -68,13 +59,11 @@ class MvpApp extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ui, searchParameters}: RootState): StateToProps => ({
+const mapStateToProps = ({ui}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
-  encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchGateways,
   toggleShowHideSideMenu,
 }, dispatch);
 

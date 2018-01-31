@@ -1,6 +1,8 @@
 import {Period} from '../components/dates/dateModels';
-import {EndPoints, PaginationMetadata} from '../state/domain-models/domainModels';
+import {EndPoints} from '../state/domain-models/domainModels';
+import {PaginationMetadata} from '../state/domain-models/paginatedDomainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
+import {Pagination} from '../state/ui/pagination/paginationModels';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
@@ -40,17 +42,24 @@ const meterParameterNames: ParameterNames = {
   productModels: 'gatewayProductModel',
 };
 
-export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, meterParameterNames, parameterCallbacks);
+export const encodedUriParametersForMeters = (pagination: Pagination, selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom(pagination, selectedIds, meterParameterNames, parameterCallbacks);
 };
 
-export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, gatewayParameterNames, parameterCallbacks);
+export const encodedUriParametersForGateways = (pagination, selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom(pagination, selectedIds, meterParameterNames, parameterCallbacks);
 };
 
 const encodedUriParametersFrom =
-  (selectedIds: SelectedParameters, parameterNames: ParameterNames, parameterCallbacks: ParameterCallbacks): string => {
+  (
+    {currentPage, size}: Pagination,
+    selectedIds: SelectedParameters,
+    parameterNames: ParameterNames,
+    parameterCallbacks: ParameterCallbacks,
+  ): string => {
     const parameters: string[] = [];
+    parameters.push(`size=${encodeURIComponent(size.toString())}`);
+    parameters.push(`page=${encodeURIComponent(currentPage.toString())}`);
 
     const addParameterWith = (name: string, value: uuid | Period) =>
       parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
