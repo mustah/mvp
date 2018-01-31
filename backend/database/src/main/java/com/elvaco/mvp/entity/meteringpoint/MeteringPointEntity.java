@@ -54,5 +54,6 @@ public class MeteringPointEntity {
   public List<GatewayEntity> gateways;
 
   public MeteringPointEntity() {
+    this.propertyCollection = new PropertyCollection();
   }
 }

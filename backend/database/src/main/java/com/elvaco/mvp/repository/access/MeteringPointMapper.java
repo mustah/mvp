@@ -1,5 +1,6 @@
 package com.elvaco.mvp.repository.access;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
@@ -11,24 +12,21 @@ public class MeteringPointMapper {
   MeteringPoint toDomainModel(MeteringPointEntity meteringPointEntity) {
     PropertyCollection props = meteringPointEntity.propertyCollection;
 
-    Double latitude = null;
-    Double longitude = null;
-    Double confidence = null;
-    UserProperty userProperty = null;
+    UserProperty userProperty =
+      props
+        .asObject("user", UserProperty.class)
+        .orElse(null);
 
-    if (props != null) {
-      latitude = props.get("latitude") == null ? null : props.get("latitude").doubleValue();
-      longitude = props.get("longitude") == null ? null : props.get("longitude").doubleValue();
-      confidence = props.get("confidence") == null ? null : props.get("confidence").doubleValue();
-      userProperty = props.get("user") == null ? null : props.asObject("user", UserProperty.class);
-    }
+    Location location = new Location(
+      props.getDoubleValue("latitude").orElse(null),
+      props.getDoubleValue("longitude").orElse(null),
+      props.getDoubleValue("confidence").orElse(null)
+    );
 
     return new MeteringPoint(
       meteringPointEntity.id,
       meteringPointEntity.status,
-      latitude,
-      longitude,
-      confidence,
+      location,
       new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty)
     );
   }
@@ -37,14 +35,17 @@ public class MeteringPointMapper {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
     meteringPointEntity.propertyCollection = new PropertyCollection()
       .put("user", userPropertyToDto(meteringPoint.propertyCollection.userProperty))
-      .put("latitude", meteringPoint.latitude)
-      .put("longitude", meteringPoint.longitude)
-      .put("confidence", meteringPoint.confidence);
+      .put("latitude", meteringPoint.location.getLatitude().orElse(null))
+      .put("longitude", meteringPoint.location.getLongitude().orElse(null))
+      .put("confidence", meteringPoint.location.getConfidence());
 
     return meteringPointEntity;
   }
 
   private UserPropertyDto userPropertyToDto(UserProperty userProperty) {
-    return new UserPropertyDto(userProperty.externalId, userProperty.project);
+    return new UserPropertyDto(
+      userProperty.externalId,
+      userProperty.project
+    );
   }
 }

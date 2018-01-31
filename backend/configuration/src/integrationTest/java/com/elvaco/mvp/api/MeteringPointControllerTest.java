@@ -3,6 +3,7 @@ package com.elvaco.mvp.api;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
@@ -30,17 +31,21 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    for (int i = 0; i < 55; i++) {
-      MeteringPoint meteringPoint = new MeteringPoint(
-        1L,
-        "ok",
-        1.1,
-        1.1,
-        1.1,
-        new PropertyCollection(new UserProperty("abc123", "Some project"))
-      );
-      meteringPointRepository.save(meteringPoint);
+    for (int x = 0; x < 55; x++) {
+      mockMeteringPoint();
     }
+
+    restClient().loginWith("evanil@elvaco.se", "eva123");
+  }
+
+  private void mockMeteringPoint() {
+    MeteringPoint meteringPoint = new MeteringPoint(
+      1L,
+      "ok",
+      new Location(1.1, 1.1, 1.1),
+      new PropertyCollection(new UserProperty("abc123", "Some project"))
+    );
+    meteringPointRepository.save(meteringPoint);
   }
 
   @After

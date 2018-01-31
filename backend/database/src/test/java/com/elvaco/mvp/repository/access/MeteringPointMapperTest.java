@@ -1,5 +1,6 @@
 package com.elvaco.mvp.repository.access;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
@@ -47,9 +48,7 @@ public class MeteringPointMapperTest {
       new MeteringPoint(
         id,
         status,
-        latitude,
-        longitude,
-        confidence,
+        new Location(latitude, longitude, confidence),
         new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
       )
     );
@@ -69,9 +68,7 @@ public class MeteringPointMapperTest {
       new MeteringPoint(
         id,
         status,
-        null,
-        null,
-        null,
+        new Location(),
         new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
       )
     );

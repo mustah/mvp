@@ -1,5 +1,6 @@
 package com.elvaco.mvp.mapper;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.dto.IdNamedDto;
@@ -30,17 +31,13 @@ public class MeteringPointMapperTest {
   public void mapMeteringPointToMapMarkerDto() {
     Long id = 1L;
     String status = "Ok";
-    double latitude = 3.1;
-    double longitude = 2.1;
-    double confidence = 1.1;
+    Location location = new Location(3.1, 2.1, 1.1);
 
 
     MeteringPoint meteringPoint = new MeteringPoint(
       id,
       status,
-      latitude,
-      longitude,
-      confidence,
+      location,
       null
     );
 
@@ -48,9 +45,9 @@ public class MeteringPointMapperTest {
 
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
     mapMarkerDtoExpected.id = id;
-    mapMarkerDtoExpected.latitude = latitude;
-    mapMarkerDtoExpected.longitude = longitude;
-    mapMarkerDtoExpected.confidence = confidence;
+    mapMarkerDtoExpected.latitude = 3.1;
+    mapMarkerDtoExpected.longitude = 2.1;
+    mapMarkerDtoExpected.confidence = 1.1;
     mapMarkerDtoExpected.status = new IdNamedDto();
     mapMarkerDtoExpected.status.name = status;
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
