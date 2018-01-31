@@ -26,9 +26,9 @@ public class MeteringPointMapper {
     //TODO how to handle statuses?
     mapMarkerDto.status = new IdNamedDto();
     mapMarkerDto.status.name = meteringPoint.status;
-    mapMarkerDto.latitude = meteringPoint.latitude;
-    mapMarkerDto.longitude = meteringPoint.longitude;
-    mapMarkerDto.confidence = meteringPoint.confidence;
+    mapMarkerDto.latitude = meteringPoint.location.getLatitude().orElse(null);
+    mapMarkerDto.longitude = meteringPoint.location.getLongitude().orElse(null);
+    mapMarkerDto.confidence = meteringPoint.location.getConfidence();
 
     return mapMarkerDto;
   }

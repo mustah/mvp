@@ -1,6 +1,7 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -45,11 +46,19 @@ public class PropertyCollection {
     return json.toString();
   }
 
-  public JsonNode get(String fieldName) {
-    return json.get(fieldName);
+  public Optional<JsonNode> get(String fieldName) {
+    return Optional.ofNullable(json.get(fieldName));
   }
 
-  public <T> T asObject(String fieldName, Class<T> valueType) {
-    return toObject(json.get(fieldName).toString(), valueType);
+  public <T> Optional<T> asObject(String fieldName, Class<T> valueType) {
+    T returnObject = null;
+    if (json.has(fieldName)) {
+      returnObject = toObject(json.get(fieldName).toString(), valueType);
+    }
+    return Optional.ofNullable(returnObject);
+  }
+
+  public Optional<Double> getDoubleValue(String fieldName) {
+    return get(fieldName).map(JsonNode::doubleValue);
   }
 }
