@@ -1,7 +1,5 @@
 package com.elvaco.mvp.api;
 
-import java.util.AbstractMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static java.util.Collections.singletonList;
+import static com.elvaco.mvp.util.ParametersHelper.combineParams;
 
 @RestApi("/v1/api/meters")
 @ExposesResourceFor(MeteringPointDto.class)
@@ -93,21 +91,5 @@ public class MeteringPointController {
     return meteringPointJpaRepository
       .findAll(predicate, pageable)
       .map(source -> modelMapper.map(source, MeteringPointDto.class));
-  }
-
-  private Map<String, List<String>> combineParams(
-    Map<String, String> pathVars,
-    Map<String, List<String>> requestParams
-  ) {
-    Map<String, List<String>> filter = new HashMap<>();
-    filter.putAll(requestParams);
-    filter.putAll(
-      pathVars
-        .entrySet()
-        .stream()
-        .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), singletonList(e.getValue())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
-    );
-    return filter;
   }
 }
