@@ -63,4 +63,20 @@ public class ParametersHelperTest {
                                                                    .build()
                                                                    .asMap());
   }
+
+  @Test
+  public void pathVarsOverridesRequestParams() {
+    Map<String, String> pathVars = new HashMap<>();
+    pathVars.put("a", "b");
+    pathVars.put("c", "d");
+
+    Map<String, List<String>> requestParams = new HashMap<>();
+    requestParams.put("c", asList("x", "y", "z"));
+
+    assertThat(combineParams(pathVars, requestParams)).isEqualTo(ImmutableMultimap.builder()
+                                                                   .put("a", "b")
+                                                                   .put("c", "d")
+                                                                   .build()
+                                                                   .asMap());
+  }
 }
