@@ -3,6 +3,7 @@ package com.elvaco.mvp.bootstrap.demo;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -83,7 +84,11 @@ public class DemoDataLoader implements CommandLineRunner {
       List<GatewayEntity> gatewayEntities = new ArrayList<>();
       gatewayEntities.add(gatewayEntity);
 
-      MeteringPointEntity meteringPointEntity = mockMeteringPoint(meterIdentity, gatewayEntities);
+      MeteringPointEntity meteringPointEntity = mockMeteringPoint(
+        meterIdentity,
+        gatewayEntities,
+        i);
+
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
         organisationEntity,
         meterIdentity,
@@ -154,7 +159,8 @@ public class DemoDataLoader implements CommandLineRunner {
 
   private MeteringPointEntity mockMeteringPoint(
     String meterIdentity,
-    List<GatewayEntity> gatewayEntities
+    List<GatewayEntity> gatewayEntities,
+    int seed
   ) {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
     meteringPointEntity.propertyCollection = new PropertyCollection()
@@ -164,8 +170,15 @@ public class DemoDataLoader implements CommandLineRunner {
       .put("longitude", 1.1)
       .put("confidence", 1.1);
 
+    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(created);
+    calendar.add(Calendar.DATE, seed);
+    created = calendar.getTime();
+
     meteringPointEntity.status = "Ok";
     meteringPointEntity.medium = "Water";
+    meteringPointEntity.created = created;
     meteringPointEntity.gateways = gatewayEntities;
 
     meteringPointJpaRepository.save(meteringPointEntity);

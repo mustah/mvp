@@ -1,5 +1,6 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -44,6 +45,7 @@ public class MeteringPointEntity {
 
   public String status;
   public String medium;
+  public Date created;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(

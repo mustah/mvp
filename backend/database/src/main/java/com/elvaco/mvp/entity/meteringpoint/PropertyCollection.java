@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
@@ -13,6 +14,7 @@ import static com.elvaco.mvp.util.Json.toJsonNode;
 import static com.elvaco.mvp.util.Json.toObject;
 
 @ToString
+@EqualsAndHashCode
 public class PropertyCollection {
 
   private final ObjectNode json;

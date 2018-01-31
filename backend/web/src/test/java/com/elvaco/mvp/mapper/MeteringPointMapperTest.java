@@ -1,5 +1,7 @@
 package com.elvaco.mvp.mapper;
 
+import java.util.Date;
+
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.dto.MapMarkerType;
@@ -38,6 +40,7 @@ public class MeteringPointMapperTest {
       id,
       status,
       location,
+      new Date(),
       null
     );
 

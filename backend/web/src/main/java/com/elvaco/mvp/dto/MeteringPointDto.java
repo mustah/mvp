@@ -15,7 +15,7 @@ public class MeteringPointDto extends LocationDto {
   public String manufacturer;
   public String statusChanged;
   public List<MeterStatusChangeLogDto> statusChangelog;
-  public String date;
+  public String created;
   public IdNamedDto status;
   public Long gatewayId;
   public IdNamedDto gatewayStatus;
