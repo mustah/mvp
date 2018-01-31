@@ -29,7 +29,7 @@ import {
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersResultContainer} from './MetersResultContainer';
+import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -124,7 +124,7 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
         <SelectionQuantity/>
       </Row>
 
-      <MetersResultContainer/>
+      <SearchResultList/>
 
     </Column>
   );

@@ -2,7 +2,7 @@ import {createSelector, OutputSelector} from 'reselect';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {ObjectsById, Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {ObjectsById, Normalized, SelectionEntity, DomainModel} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
@@ -21,7 +21,7 @@ import {Period} from '../../../components/dates/dateModels';
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
 const getSelectionGroup = (entityType: string) =>
-  (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
+  (state: LookupState): DomainModel<SelectionEntity> => state.domainModels[entityType];
 
 const getSelectedEntityIdsSelector = (entityType: string) =>
   createSelector<LookupState, SelectedParameters, uuid[]>(

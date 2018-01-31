@@ -38,9 +38,12 @@ export interface Normalized<T extends HasId> {
   entities: {[entityType: string]: ObjectsById<T>};
 }
 
-export interface NormalizedState<T extends HasId> {
+export interface DomainModel<T extends HasId> {
   result: uuid[];
   entities: ObjectsById<T>;
+}
+
+export interface NormalizedState<T extends HasId> extends DomainModel<T> {
   isFetching: boolean;
   total: number;
   error?: ErrorResponse;
@@ -57,9 +60,9 @@ export interface DomainModelsState {
   gatewayStatuses: SelectionEntityState;
   gateways: GatewaysState;
   manufacturers: SelectionEntityState;
-  measurements: MeasurementState;
+  paginatedMeasurements: MeasurementState;
   meterStatuses: SelectionEntityState;
-  meters: MetersState;
+  paginatedMeters: MetersState;
   productModels: SelectionEntityState;
   users: UserState;
 }

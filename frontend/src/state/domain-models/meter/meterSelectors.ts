@@ -8,6 +8,7 @@ import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
 import {ObjectsById} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
+import {HasComponentId} from '../paginatedDomainModels';
 import {
   Meter,
   MeterDataSummary,
@@ -20,8 +21,15 @@ import {
 } from './meterModels';
 import {selectionTreeSchema} from './meterSchema';
 
-export const getMetersTotal = (state: MetersState): number => state.total;
-export const getMeterEntities = (state: MetersState): ObjectsById<Meter> => state.entities;
+type PaginatedMeterState = MetersState & HasComponentId;
+
+export const getMeterEntities = ({entities}: PaginatedMeterState): ObjectsById<Meter> => entities;
+// TODO: Make this function more rigid to missing fetched data.
+export const getMeterResult = ({result, componentId}: PaginatedMeterState): uuid[] =>
+  result[componentId] ? result[componentId].content : [];
+
+export const getMetersIsFetching =
+  ({result, componentId}: PaginatedMeterState): boolean => result[componentId] ? result[componentId].isFetching : false;
 
 export const getSelectionTree = createSelector<MetersState, uuid[], ObjectsById<Meter>, SelectionTreeData>(
   getResultDomainModels,

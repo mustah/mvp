@@ -1,4 +1,6 @@
+import * as classNames from 'classnames';
 import AppBar from 'material-ui/AppBar';
+import 'MvpApp.scss';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -9,29 +11,23 @@ import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {fetchGateways} from '../../state/domain-models/domainModelsActions';
-import {fetchMeters} from '../../state/domain-models/paginatedDomainModelsActions';
 import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {OnClick, uuid} from '../../types/Types';
+import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
-import {SelectionTreeContainer} from '../../usecases/sidemenu/containers/selection-tree/SelectionTreeContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import {MvpPages} from './MvpPages';
-import * as classNames from 'classnames';
-import 'MvpApp.scss';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
-  encodedUriParametersForMeters: string;
   encodedUriParametersForGateways: string;
 }
 
 interface DispatchToProps {
   fetchGateways: (encodedUriParameters: string) => void;
-  fetchMeters: (component: uuid, encodedUriParameters: string) => void;
   toggleShowHideSideMenu: OnClick;
 }
 
@@ -40,11 +36,11 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class MvpApp extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchGateways, fetchMeters, encodedUriParametersForMeters, encodedUriParametersForGateways} = this.props;
+    const {fetchGateways, encodedUriParametersForGateways} = this.props;
     fetchGateways(encodedUriParametersForGateways);
-    fetchMeters(encodedUriParametersForMeters);
   }
 
+// TODO fix so that SelectionTreeContainer don't break.
   render() {
     const {isSideMenuOpen, toggleShowHideSideMenu} = this.props;
 
@@ -60,7 +56,7 @@ class MvpApp extends React.Component<Props> {
               showMenuIconButton={false}
             />
             <SavedSelectionsContainer/>
-            <SelectionTreeContainer topLevel={'cities'}/>
+            {/*<SelectionTreeContainer topLevel={'cities'}/>*/}
           </SideMenuContainer>
         </Layout>
         <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
@@ -72,15 +68,13 @@ class MvpApp extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ui, searchParameters}: RootState) => ({
+const mapStateToProps = ({ui, searchParameters}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
-  encodedUriParametersForMeters: getEncodedUriParametersForMeters(searchParameters),
   encodedUriParametersForGateways: getEncodedUriParametersForMeters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchGateways,
-  fetchMeters,
   toggleShowHideSideMenu,
 }, dispatch);
 
