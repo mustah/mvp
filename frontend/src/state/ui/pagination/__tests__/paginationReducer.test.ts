@@ -1,46 +1,53 @@
-import {
-  changePaginationCollection,
-  changePaginationSelection,
-  changePaginationValidation,
-} from '../paginationActions';
-import {initialState, limit, pagination} from '../paginationReducer';
+import {paginationSetPage} from '../paginationActions';
+import {Pagination, PaginationState, SelectedPagination} from '../paginationModels';
+import {limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
   describe('pagination', () => {
 
-    it('changes pagination for collection', () => {
-      expect(pagination(initialState, changePaginationCollection(2))).toEqual({
-        ...initialState,
-        collection: {page: 2, limit},
-      });
+    const paginatedState: Readonly<PaginationState> = {
+      test: {
+        first: false,
+        last: false,
+        currentPage: 4,
+        numberOfElements: 10,
+        size: limit,
+        sort: null,
+        totalElements: 200,
+        totalPages: 20,
+      },
+    };
+    const paginationData: Readonly<Pagination> = {
+      first: false,
+      last: false,
+      currentPage: 2,
+      numberOfElements: 10,
+      size: limit,
+      sort: null,
+      totalElements: 200,
+      totalPages: 20,
+    };
+
+    it('has initial state', () => {
+      expect(pagination({}, {type: 'unknown'})).toEqual({});
     });
 
-    it('changes pagination for collection twice', () => {
-      expect(pagination(initialState, changePaginationCollection(77))).toEqual({
-        ...initialState,
-        collection: {page: 77, limit},
-      });
+    it('changes pagination for a component', () => {
+      const payload: SelectedPagination = {page: paginationData, componentId: 'test'};
 
-      expect(pagination(initialState, changePaginationCollection(48))).toEqual({
-        ...initialState,
-        collection: {page: 48, limit},
+      expect(pagination(paginatedState, paginationSetPage(payload))).toEqual({
+        ...paginatedState,
+        test: {...paginationData},
       });
     });
+    it('only updates the targeted component and leave the others untouched', () => {
+      const payload: SelectedPagination = {page: paginationData, componentId: 'test2'};
 
-    it('changes pagination for selection', () => {
-      expect(pagination(initialState, changePaginationSelection(123))).toEqual({
-        ...initialState,
-        selection: {page: 123, limit},
-      });
-    });
-
-    it('changes pagination for validation', () => {
-      expect(pagination(initialState, changePaginationValidation(789))).toEqual({
-        ...initialState,
-        validation: {page: 789, limit},
+      expect(pagination(paginatedState, paginationSetPage(payload))).toEqual({
+        ...paginatedState,
+        test2: {...paginationData},
       });
     });
   });
-
 });

@@ -1,3 +1,5 @@
+import {HasComponentId} from '../../domain-models/paginatedDomainModels';
+
 export interface Pagination {
   first: boolean;
   last: boolean;
@@ -9,9 +11,8 @@ export interface Pagination {
   totalPages: number;
 }
 
-export interface SelectedPagination  {
-  page: number;
-  useCase: string;
+export interface SelectedPagination extends HasComponentId {
+  page: Pagination;
 }
 
 export type OnChangePage = (page: number) => void;

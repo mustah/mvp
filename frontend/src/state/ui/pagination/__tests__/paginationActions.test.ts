@@ -4,7 +4,7 @@ import {
   changePaginationCollection,
   changePaginationSelection,
   changePaginationValidation,
-  PAGINATION_CHANGE_PAGE,
+  PAGINATION_SET_PAGE,
 } from '../paginationActions';
 
 describe('paginationActions', () => {
@@ -23,7 +23,7 @@ describe('paginationActions', () => {
       store.dispatch(action);
 
       expect(store.getActions()).toEqual([{
-        type: PAGINATION_CHANGE_PAGE,
+        type: PAGINATION_SET_PAGE,
         payload: {
           page: 2,
           useCase: UseCases.collection,
@@ -37,7 +37,7 @@ describe('paginationActions', () => {
       store.dispatch(action);
 
       expect(store.getActions()).toEqual([{
-        type: PAGINATION_CHANGE_PAGE,
+        type: PAGINATION_SET_PAGE,
         payload: {
           page: 3,
           useCase: UseCases.validation,
@@ -51,7 +51,7 @@ describe('paginationActions', () => {
       store.dispatch(action);
 
       expect(store.getActions()).toEqual([{
-        type: PAGINATION_CHANGE_PAGE,
+        type: PAGINATION_SET_PAGE,
         payload: {
           page: 6,
           useCase: UseCases.selection,
