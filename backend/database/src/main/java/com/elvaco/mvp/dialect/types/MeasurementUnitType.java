@@ -18,7 +18,7 @@ public abstract class MeasurementUnitType implements UserType {
   public abstract int[] sqlTypes();
 
   @Override
-  public Class returnedClass() {
+  public Class<?> returnedClass() {
     return MeasurementUnit.class;
   }
 
