@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
@@ -45,13 +48,16 @@ public class MeteringPointEntity {
 
   public String status;
   public String medium;
+
+  @Temporal(value = TemporalType.TIMESTAMP)
+  @Column(nullable = false)
   public Date created;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "gateways_meters",
-      joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
-      inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
+    name = "gateways_meters",
+    joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
+    inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
 

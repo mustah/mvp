@@ -14,7 +14,6 @@ import com.elvaco.mvp.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
@@ -27,7 +26,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
+import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 @Profile("demo")
 @Component
@@ -66,10 +68,8 @@ public class DemoDataLoader implements CommandLineRunner {
     }
 
     Random random = new Random();
-    OrganisationEntity organisationEntity = new OrganisationEntity();
-    organisationEntity.code = "elvaco";
-    organisationEntity.name = "Elvaco AB";
-    organisationRepository.save(organisationEntity);
+
+    organisationRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY));
 
     int meters = 10;
     int daysPerMeter = 30;
@@ -79,10 +79,9 @@ public class DemoDataLoader implements CommandLineRunner {
 
     for (int i = 0; i < meters; ++i) {
       String meterIdentity = "DEMO-METER-" + i;
+      String serial = "DEMO-GATEWAY-" + i;
 
-      GatewayEntity gatewayEntity = mockGateway("DEMO-GATEWAY-" + i);
-      List<GatewayEntity> gatewayEntities = new ArrayList<>();
-      gatewayEntities.add(gatewayEntity);
+      List<GatewayEntity> gatewayEntities = singletonList(mockGateway(serial));
 
       MeteringPointEntity meteringPointEntity = mockMeteringPoint(
         meterIdentity,
@@ -90,12 +89,12 @@ public class DemoDataLoader implements CommandLineRunner {
         i);
 
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
-        organisationEntity,
+        ELVACO_ENTITY,
         meterIdentity,
         meteringPointEntity
       );
 
-      mockMeasurementData(
+      mockMeasurement(
         random,
         physicalMeterEntity,
         measurementCount,
@@ -112,12 +111,10 @@ public class DemoDataLoader implements CommandLineRunner {
     gatewayEntity.model = "2100";
     gatewayEntity.serial = serial;
 
-    gatewayRepository.save(gatewayEntity);
-
-    return gatewayEntity;
+    return gatewayRepository.save(gatewayEntity);
   }
 
-  private void mockMeasurementData(
+  private void mockMeasurement(
     Random random,
     PhysicalMeterEntity physicalMeterEntity,
     int measurementCount,
@@ -146,7 +143,6 @@ public class DemoDataLoader implements CommandLineRunner {
     String meterIdentity,
     MeteringPointEntity meteringPointEntity
   ) {
-    // Physical meters
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationEntity,
       meterIdentity,
@@ -163,7 +159,7 @@ public class DemoDataLoader implements CommandLineRunner {
     int seed
   ) {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.propertyCollection = new PropertyCollection()
+    meteringPointEntity.propertyCollection
       .put("user", new UserPropertyDto(meterIdentity, "Demo project"))
       .putArray("numbers", asList(1, 2, 3, 17))
       .put("latitude", 1.1)
@@ -181,7 +177,6 @@ public class DemoDataLoader implements CommandLineRunner {
     meteringPointEntity.created = created;
     meteringPointEntity.gateways = gatewayEntities;
 
-    meteringPointJpaRepository.save(meteringPointEntity);
-    return meteringPointEntity;
+    return meteringPointJpaRepository.save(meteringPointEntity);
   }
 }

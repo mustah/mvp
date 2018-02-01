@@ -63,21 +63,6 @@ public final class RestClient {
     return getPageResponse(url, pagedClass).getBody().newPage();
   }
 
-  public <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
-    ParameterizedTypeReference<RestResponsePage<T>> responseType =
-      new ParameterizedTypeReference<RestResponsePage<T>>() {
-        @Override
-        public Type getType() {
-          return new ParameterizedTypeReferenceImpl(
-            (ParameterizedType) super.getType(),
-            new Type[] {pagedClass}
-          );
-        }
-      };
-    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
-  }
-
-
   public <T> ResponseEntity<List<T>> getList(String url, Class<T> listedClass) {
     ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {
       @Override
@@ -105,6 +90,20 @@ public final class RestClient {
         return execution.execute(request, body);
       }));
     return this;
+  }
+
+  private <T> ResponseEntity<RestResponsePage<T>> getPageResponse(String url, Class<T> pagedClass) {
+    ParameterizedTypeReference<RestResponsePage<T>> responseType =
+      new ParameterizedTypeReference<RestResponsePage<T>>() {
+        @Override
+        public Type getType() {
+          return new ParameterizedTypeReferenceImpl(
+            (ParameterizedType) super.getType(),
+            new Type[] {pagedClass}
+          );
+        }
+      };
+    return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
   }
 
   private RestClient authorization(String token) {

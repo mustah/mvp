@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS metering_point (
   id BIGSERIAL PRIMARY KEY,
   status VARCHAR(255),
   medium VARCHAR(255),
+  created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   property_collection JSONB
   -- meter_definition_id bigserial references meter_definition
 );
@@ -56,7 +57,7 @@ CREATE TABLE IF NOT EXISTS gateway (
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
-  meter_id BIGSERIAL REFERENCES physical_meter,
+  meter_id BIGSERIAL REFERENCES metering_point,
   gateway_id BIGSERIAL REFERENCES gateway
 );
 
