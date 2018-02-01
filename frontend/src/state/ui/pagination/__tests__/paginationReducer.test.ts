@@ -1,5 +1,5 @@
-import {paginationSetPage} from '../paginationActions';
-import {Pagination, PaginationState, SelectedPagination} from '../paginationModels';
+import {paginationUpdateMetaData} from '../paginationActions';
+import {Pagination, PaginationState, PaginationMetadataPayload} from '../paginationModels';
 import {limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
@@ -34,17 +34,17 @@ describe('paginationReducer', () => {
     });
 
     it('changes pagination for a component', () => {
-      const payload: SelectedPagination = {page: paginationData, componentId: 'test'};
+      const payload: PaginationMetadataPayload = {page: paginationData, componentId: 'test'};
 
-      expect(pagination(paginatedState, paginationSetPage(payload))).toEqual({
+      expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
         ...paginatedState,
         test: {...paginationData},
       });
     });
     it('only updates the targeted component and leave the others untouched', () => {
-      const payload: SelectedPagination = {page: paginationData, componentId: 'test2'};
+      const payload: PaginationMetadataPayload = {page: paginationData, componentId: 'test2'};
 
-      expect(pagination(paginatedState, paginationSetPage(payload))).toEqual({
+      expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
         ...paginatedState,
         test2: {...paginationData},
       });

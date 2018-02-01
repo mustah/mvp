@@ -16,7 +16,9 @@ import {Flag} from '../../state/domain-models/flag/flagModels';
 import {Meter} from '../../state/domain-models/meter/meterModels';
 import {getMeterEntities, getMeterResult, getMetersIsFetching} from '../../state/domain-models/meter/meterSelectors';
 import {fetchMeters} from '../../state/domain-models/paginatedDomainModelsActions';
-import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
+import {getEncodedUriParametersForMeters, getPagination} from '../../state/search/selection/selectionSelectors';
+import {paginationRequestPage} from '../../state/ui/pagination/paginationActions';
+import {Pagination, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
@@ -25,11 +27,13 @@ interface StateToProps {
   entities: ObjectsById<Meter>;
   isFetching: boolean;
   encodedUriParametersForMeters: string;
+  pagination: Pagination;
 }
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchMeters: (component: uuid, encodedUriParameters: string) => void;
+  paginationRequestPage: (payload: PaginationChangePayload) => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -44,8 +48,19 @@ class MeterList extends React.Component<Props> {
     fetchMeters(componentId, encodedUriParametersForMeters);
   }
 
+  componentWillReceiveProps(
+    {
+      fetchMeters,
+      encodedUriParametersForMeters,
+      pagination: {currentPage, requestedPage},
+    }: Props) {
+    if (currentPage !== requestedPage) {
+      fetchMeters(componentId, encodedUriParametersForMeters);
+    }
+  }
+
   render() {
-    const {result, entities, selectEntryAdd, isFetching} = this.props;
+    const {result, entities, selectEntryAdd, isFetching, pagination, paginationRequestPage} = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
@@ -58,52 +73,62 @@ class MeterList extends React.Component<Props> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
+
+    const changePage = (page: number) => {
+      paginationRequestPage({
+        componentId,
+        page,
+      });
+    };
+
 // TODO: Add pagination control
     return (
       <Loader isFetching={isFetching}>
-        <Table result={result} entities={entities}>
-          <TableColumn
-            header={<TableHead className="first">{translate('facility')}</TableHead>}
-            renderCell={renderMeterListItem}
-          />
-          <TableColumn
-            header={<TableHead>{translate('city')}</TableHead>}
-            renderCell={renderCityName}
-          />
-          <TableColumn
-            header={<TableHead>{translate('address')}</TableHead>}
-            renderCell={renderAddressName}
-          />
-          <TableColumn
-            header={<TableHead>{translate('manufacturer')}</TableHead>}
-            renderCell={renderManufacturer}
-          />
-          <TableColumn
-            header={<TableHead>{translate('medium')}</TableHead>}
-            renderCell={renderMedium}
-          />
-          <TableColumn
-            header={<TableHead>{translate('gateway')}</TableHead>}
-            renderCell={renderGatewayId}
-          />
-          <TableColumn
-            header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-            renderCell={renderStatusCell}
-          />
-          <TableColumn
-            header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
-            renderCell={renderStatusChanged}
-          />
-          <TableColumn
-            header={<TableHead>{translate('flags')}</TableHead>}
-            renderCell={renderFlags}
-          />
-          <TableColumn
-            header={<TableHead className="actionDropdown">{' '}</TableHead>}
-            renderCell={renderActionDropdown}
-          />
-        </Table>
-        <PaginationControl pagination={} numOfEntities={} changePage={}/>
+        <div>
+          <Table result={result} entities={entities}>
+            <TableColumn
+              header={<TableHead className="first">{translate('facility')}</TableHead>}
+              renderCell={renderMeterListItem}
+            />
+            <TableColumn
+              header={<TableHead>{translate('city')}</TableHead>}
+              renderCell={renderCityName}
+            />
+            <TableColumn
+              header={<TableHead>{translate('address')}</TableHead>}
+              renderCell={renderAddressName}
+            />
+            <TableColumn
+              header={<TableHead>{translate('manufacturer')}</TableHead>}
+              renderCell={renderManufacturer}
+            />
+            <TableColumn
+              header={<TableHead>{translate('medium')}</TableHead>}
+              renderCell={renderMedium}
+            />
+            <TableColumn
+              header={<TableHead>{translate('gateway')}</TableHead>}
+              renderCell={renderGatewayId}
+            />
+            <TableColumn
+              header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
+              renderCell={renderStatusCell}
+            />
+            <TableColumn
+              header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+              renderCell={renderStatusChanged}
+            />
+            <TableColumn
+              header={<TableHead>{translate('flags')}</TableHead>}
+              renderCell={renderFlags}
+            />
+            <TableColumn
+              header={<TableHead className="actionDropdown">{' '}</TableHead>}
+              renderCell={renderActionDropdown}
+            />
+          </Table>
+          <PaginationControl pagination={pagination} changePage={changePage}/>
+        </div>
       </Loader>
     );
   }
@@ -114,16 +139,21 @@ const mapStateToProps = (
     searchParameters,
     domainModels: {paginatedMeters},
     ui: {pagination},
-  }: RootState): StateToProps => ({
-  entities: getMeterEntities({...paginatedMeters, componentId}),
-  result: getMeterResult({...paginatedMeters, componentId}),
-  encodedUriParametersForMeters: getEncodedUriParametersForMeters({...searchParameters, componentId, pagination}),
-  isFetching: getMetersIsFetching({...paginatedMeters, componentId}),
-});
+  }: RootState): StateToProps => {
+  const uriLookupState = {...searchParameters, componentId, pagination};
+  return ({
+    entities: getMeterEntities({...paginatedMeters, componentId}),
+    result: getMeterResult({...paginatedMeters, componentId}),
+    encodedUriParametersForMeters: getEncodedUriParametersForMeters(uriLookupState),
+    isFetching: getMetersIsFetching({...paginatedMeters, componentId}),
+    pagination: getPagination(uriLookupState),
+  });
+};
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchMeters,
+  paginationRequestPage,
 }, dispatch);
 
 export const MeterListContainer =

@@ -66,15 +66,15 @@ const asyncRequest = <REQ, DAT>(
     try {
       dispatch(request());
       const {data: domainModelData} = await requestFunc(requestData);
-      dispatch(success(formatData(domainModelData)));
+      const formattedData = formatData(domainModelData);
+      dispatch(success(formattedData));
       if (afterSuccess) {
-        afterSuccess(domainModelData, dispatch);
+        afterSuccess(formattedData, dispatch);
       }
     } catch (error) {
       const {response: {data}} = error;
       dispatch(failure(data));
       if (afterFailure) {
-        // TODO: Could this be a source of failure if there is no message field in "data"?
         afterFailure(data.message, dispatch);
       }
     }

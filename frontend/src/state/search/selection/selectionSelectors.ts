@@ -104,7 +104,7 @@ export interface UriLookupState {
   };
 }
 
-const getPagination = ({componentId, pagination}: UriLookupState): Pagination =>
+export const getPagination = ({componentId, pagination}: UriLookupState): Pagination =>
   pagination[componentId] ? pagination[componentId] : {...initialComponentPagination};
 
 export const getEncodedUriParametersForMeters = createSelector<UriLookupState, Pagination, SelectedParameters, string>(

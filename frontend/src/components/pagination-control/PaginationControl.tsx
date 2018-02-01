@@ -27,13 +27,13 @@ const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps):
 
   for (let page = 1; page <= total; page++) {
     const key = `pagination-${page}-${paginationUuid}`;
-    if (page === current) {
+    if (page === current + 1) {
       pages.push(<PageNumberButton disabled={true} key={key} page={page}/>);
       lastPrintedAreDots = false;
-    } else if (Math.abs(page - current) <= visibilityProximity
-               || page <= visibilityProximity
-               || page > (total - visibilityProximity)) {
-      const onClick = () => changePage(page);
+    } else if (Math.abs(page - current + 1) <= visibilityProximity
+      || page <= visibilityProximity
+      || page > (total - visibilityProximity)) {
+      const onClick = () => changePage(page - 1);
       pages.push(<PageNumberButton onClick={onClick} key={key} page={page}/>);
       lastPrintedAreDots = false;
     } else if (!lastPrintedAreDots) {
@@ -48,27 +48,25 @@ const iconArrowStyle = {marginTop: 8};
 
 interface Props {
   pagination: Pagination;
-  numOfEntities: number;
-  changePage: OnChangePage;
+  changePage: (page: number) => void;
 }
 
 export const PaginationControl =
-  ({pagination: {currentPage, size}, changePage, numOfEntities}: Props) => {
-    const numPages = Math.ceil(numOfEntities / size);
+  ({pagination: {currentPage, size, totalPages}, changePage}: Props) => {
 
-    if (numPages <= 1) {
+    if (totalPages <= 1) {
       return null;
     }
 
-    const noPrev = currentPage === 1;
-    const noNext = currentPage >= numPages;
+    const noPrev = currentPage === 0;
+    const noNext = currentPage + 1 >= totalPages;
 
     const changePagePrev = noPrev ? () => void(0) : () => changePage(currentPage - 1);
     const changePageNext = noNext ? () => void(0) : () => changePage(currentPage + 1);
 
     const pageNumberButtons = renderPageNumberButtons({
       current: currentPage,
-      total: numPages,
+      total: totalPages,
       changePage,
     });
 

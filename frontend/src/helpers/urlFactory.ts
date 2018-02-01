@@ -52,14 +52,14 @@ export const encodedUriParametersForGateways = (pagination, selectedIds: Selecte
 
 const encodedUriParametersFrom =
   (
-    {currentPage, size}: Pagination,
+    {requestedPage, size}: Pagination,
     selectedIds: SelectedParameters,
     parameterNames: ParameterNames,
     parameterCallbacks: ParameterCallbacks,
   ): string => {
     const parameters: string[] = [];
     parameters.push(`size=${encodeURIComponent(size.toString())}`);
-    parameters.push(`page=${encodeURIComponent(currentPage.toString())}`);
+    parameters.push(`page=${encodeURIComponent(requestedPage.toString())}`);
 
     const addParameterWith = (name: string, value: uuid | Period) =>
       parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));

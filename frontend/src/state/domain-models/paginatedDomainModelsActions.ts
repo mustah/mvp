@@ -5,6 +5,7 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {ErrorResponse, HasId, uuid} from '../../types/Types';
+import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
 import {EndPoints, HttpMethod} from './domainModels';
 import {Measurement} from './measurement/measurementModels';
 import {measurementSchema} from './measurement/measurementSchema';
@@ -57,9 +58,10 @@ const asyncRequest = <REQ, DAT>(
     try {
       dispatch(request(componentId));
       const {data: domainModelData} = await requestFunc(requestData);
-      dispatch(success(formatData(domainModelData)));
+      const formattedData = formatData(domainModelData);
+      dispatch(success(formattedData));
       if (afterSuccess) {
-        afterSuccess(domainModelData, dispatch);
+        afterSuccess(formattedData, dispatch);
       }
     } catch (error) {
       const {response: {data}} = error;
@@ -70,7 +72,11 @@ const asyncRequest = <REQ, DAT>(
     }
   };
 
-const restPaginatedGet = <T extends HasId>(endPoint: EndPoints, schema: Schema) => {
+const restPaginatedGet = <T extends HasId>(
+  endPoint: EndPoints,
+  schema: Schema,
+  restCallbacks?: RestCallbacks<NormalizedPaginated<T>>,
+) => {
   const requestGet = requestMethodPaginated<NormalizedPaginated<T>>(endPoint);
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
@@ -80,9 +86,17 @@ const restPaginatedGet = <T extends HasId>(endPoint: EndPoints, schema: Schema) 
     requestFunc,
     requestData,
     componentId,
+    ...restCallbacks,
   });
 };
 
-// TODO support pagination, i.e. "fetch page 2 of this query"
 export const fetchMeasurements = restPaginatedGet<Measurement>(EndPoints.measurements, measurementSchema);
-export const fetchMeters = restPaginatedGet<Meter>(EndPoints.meters, meterSchema);
+export const fetchMeters = restPaginatedGet<Meter>(EndPoints.meters, meterSchema, {
+  afterSuccess: (
+    {componentId, result: {content, number, ...pagination}}: NormalizedPaginated<Meter>,
+    dispatch,
+  ) => dispatch(paginationUpdateMetaData({
+    componentId,
+    page: {...pagination, currentPage: number, requestedPage: number},
+  })),
+});
