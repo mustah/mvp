@@ -1,63 +1,41 @@
-import configureStore, {MockStore} from 'redux-mock-store';
-import {UseCases} from '../../../../types/Types';
+import configureStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import {
-  changePaginationCollection,
-  changePaginationSelection,
-  changePaginationValidation,
-  PAGINATION_SET_PAGE,
+  PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA, paginationRequestPage,
+  paginationUpdateMetaData
 } from '../paginationActions';
+import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
+import {initialComponentPagination} from '../paginationReducer';
+
+const configureMockStore = configureStore([thunk]);
+let store;
 
 describe('paginationActions', () => {
-
-  let store: MockStore<any>;
-
   beforeEach(() => {
-    store = configureStore()({});
+    store = configureMockStore({});
   });
 
   describe('changePaginationAction', () => {
+    it('dipatches a requestPage action', () => {
+      const payload: PaginationChangePayload = {componentId: 'test', page: 2};
 
-    it('changes pagination for collection', () => {
-      const action = changePaginationCollection(2);
+      store.dispatch(paginationRequestPage(payload));
 
-      store.dispatch(action);
-
-      expect(store.getActions()).toEqual([{
-        type: PAGINATION_SET_PAGE,
-        payload: {
-          page: 2,
-          useCase: UseCases.collection,
-        },
-      }]);
+      expect(store.getActions()).toEqual([
+        {type: PAGINATION_REQUEST_PAGE, payload},
+      ]);
     });
 
-    it('changes pagination for validation', () => {
-      const action = changePaginationValidation(3);
+    it('dispatches a update metadata request', () => {
+      const payload: PaginationMetadataPayload = {
+        componentId: 'test', page: {...initialComponentPagination},
+      };
 
-      store.dispatch(action);
+      store.dispatch(paginationUpdateMetaData(payload));
 
-      expect(store.getActions()).toEqual([{
-        type: PAGINATION_SET_PAGE,
-        payload: {
-          page: 3,
-          useCase: UseCases.validation,
-        },
-      }]);
-    });
-
-    it('changes pagination for selection', () => {
-      const action = changePaginationSelection(6);
-
-      store.dispatch(action);
-
-      expect(store.getActions()).toEqual([{
-        type: PAGINATION_SET_PAGE,
-        payload: {
-          page: 6,
-          useCase: UseCases.selection,
-        },
-      }]);
+      expect(store.getActions()).toEqual([
+        {type: PAGINATION_UPDATE_METADATA, payload},
+      ]);
     });
   });
-
 });
