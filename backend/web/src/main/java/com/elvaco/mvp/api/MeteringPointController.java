@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.elvaco.mvp.core.usecase.MeteringPointsUseCases;
 import com.elvaco.mvp.dto.MapMarkerDto;
 import com.elvaco.mvp.dto.MeteringPointDto;
-import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.mapper.MeteringPointMapper;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
@@ -20,8 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -72,13 +69,6 @@ public class MeteringPointController {
     Pageable pageable
   ) {
     return filterMeteringPointDtos(combineParams(pathVars, requestParams), pageable);
-  }
-
-  @PostMapping(value = "/property-collections")
-  public List<MeteringPointEntity> containsInPropertyCollections(
-    @RequestBody PropertyCollectionDto requestModel
-  ) {
-    return meteringPointJpaRepository.containsInPropertyCollection(requestModel);
   }
 
   private Page<MeteringPointDto> filterMeteringPointDtos(
