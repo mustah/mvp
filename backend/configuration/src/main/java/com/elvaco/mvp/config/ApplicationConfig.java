@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.hateoas.core.AbstractEntityLinks;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
@@ -46,7 +45,7 @@ class ApplicationConfig {
   }
 
   @Bean
-  ModelMapper modelMapper(AbstractEntityLinks entityLinks) {
+  ModelMapper modelMapper() {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper.addConverter(meteringPointConverter());
     modelMapper.addConverter(mapMarkerConverter());

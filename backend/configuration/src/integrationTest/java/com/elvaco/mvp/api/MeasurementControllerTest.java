@@ -137,19 +137,6 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(measurementDto.value).isEqualTo(285.59); // 12.44 Celsius = 285.59 Kelvin
   }
 
-  /*@Test
-  public void measurementLinksToItsPhysicalMeter() {
-    MeasurementEntity butterMeasurement = measurementOf("Butter temperature");
-    String href = asElvacoUser()
-      .get("/measurements/" + butterMeasurement.id, MeasurementDto.class)
-      .getBody()
-      .physicalMeter
-      .getHref();
-
-    Long physicalMeterId = butterMeasurement.physicalMeter.id;
-    assertThat(href).isEqualTo(restClient().getBaseUrl() + "/physical-meters/" + physicalMeterId);
-  }*/
-
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
     Page<MeasurementDto> page = asElvacoUser()

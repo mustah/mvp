@@ -17,7 +17,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.util.ParametersHelper.combineParams;
 
 @RestApi("/v1/api/meters")
-@ExposesResourceFor(MeteringPointDto.class)
 public class MeteringPointController {
 
   private final MeteringPointJpaRepository meteringPointJpaRepository;
