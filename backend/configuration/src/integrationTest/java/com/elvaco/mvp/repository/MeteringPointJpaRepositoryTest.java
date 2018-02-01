@@ -1,6 +1,6 @@
 package com.elvaco.mvp.repository;
 
-import java.util.Arrays;
+import java.util.Date;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringPointJpaRepositoryTest extends IntegrationTest {
@@ -22,9 +23,10 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
   @Before
   public void setUp() {
     MeteringPointEntity mp = new MeteringPointEntity();
+    mp.created = new Date();
     mp.propertyCollection = new PropertyCollection()
       .put("user", new UserPropertyDto("abc123", "Under construction"))
-      .putArray("numbers", Arrays.asList(1, 2, 3, 17));
+      .putArray("numbers", asList(1, 2, 3, 17));
     meteringPointJpaRepository.save(mp);
   }
 

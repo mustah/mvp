@@ -10,13 +10,13 @@ import com.elvaco.mvp.dto.MapMarkerDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.modelmapper.config.Configuration.AccessLevel;
 
 public class MeteringPointMapperTest {
 
-  MeteringPointMapper meteringPointMapper;
+  private MeteringPointMapper meteringPointMapper;
 
   @Before
   public void setUp() {
@@ -24,38 +24,30 @@ public class MeteringPointMapperTest {
     modelMapper
       .getConfiguration()
       .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(Configuration.AccessLevel.PUBLIC);
+      .setFieldAccessLevel(AccessLevel.PUBLIC);
 
     meteringPointMapper = new MeteringPointMapper(modelMapper);
   }
 
   @Test
   public void mapMeteringPointToMapMarkerDto() {
-    Long id = 1L;
-    String status = "Ok";
-    Location location = new Location(3.1, 2.1, 1.1);
-
-
-    MeteringPoint meteringPoint = new MeteringPoint(
-      id,
-      status,
-      location,
-      new Date(),
-      null
-    );
-
-    final MapMarkerDto mapMarkerDtoActual = meteringPointMapper.toMapMarkerDto(meteringPoint);
-
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
-    mapMarkerDtoExpected.id = id;
+    mapMarkerDtoExpected.id = 1L;
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.1;
     mapMarkerDtoExpected.status = new IdNamedDto();
-    mapMarkerDtoExpected.status.name = status;
+    mapMarkerDtoExpected.status.name = "Ok";
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
-    assertThat(mapMarkerDtoActual).isEqualTo(mapMarkerDtoExpected);
+    MeteringPoint meteringPoint = new MeteringPoint(
+      1L,
+      "Ok",
+      new Location(3.1, 2.1, 1.1),
+      new Date(),
+      null
+    );
 
+    assertThat(meteringPointMapper.toMapMarkerDto(meteringPoint)).isEqualTo(mapMarkerDtoExpected);
   }
 }

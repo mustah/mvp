@@ -51,7 +51,7 @@ class ApplicationConfig {
   ModelMapper modelMapper(AbstractEntityLinks entityLinks) {
     ModelMapper modelMapper = new ModelMapper();
     modelMapper.addConverter(measurementConverter(entityLinks));
-    modelMapper.addConverter(meteringPointConverter(entityLinks));
+    modelMapper.addConverter(meteringPointConverter());
     modelMapper.addConverter(mapMarkerConverter(entityLinks));
     modelMapper
       .getConfiguration()
@@ -100,9 +100,7 @@ class ApplicationConfig {
     };
   }
 
-  private AbstractConverter<MeteringPointEntity, MeteringPointDto> meteringPointConverter(
-    AbstractEntityLinks entityLinks
-  ) {
+  private AbstractConverter<MeteringPointEntity, MeteringPointDto> meteringPointConverter() {
     return new AbstractConverter<MeteringPointEntity, MeteringPointDto>() {
       @Override
       protected MeteringPointDto convert(MeteringPointEntity source) {
@@ -110,7 +108,6 @@ class ApplicationConfig {
         dto.id = source.id;
         dto.medium = source.medium;
         dto.created = source.created.toString();
-
         return dto;
       }
     };
