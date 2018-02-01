@@ -9,33 +9,43 @@ import lombok.EqualsAndHashCode;
 public class Location {
 
   @Nullable
-  private final Double latitude;
+  private final String country;
   @Nullable
-  private final Double longitude;
-  private final Double confidence;
+  private final String city;
+  @Nullable
+  private final String streetAddress;
+  @Nullable
+  private final GeoCoordinate coordinate;
 
-  public Location(@Nullable Double latitude, @Nullable Double longitude, Double confidence) {
-    this.latitude = latitude;
-    this.longitude = longitude;
-    this.confidence = confidence;
+  public Location(
+    GeoCoordinate coordinate,
+    String country,
+    String city,
+    String streetAddress
+  ) {
+    this.coordinate = coordinate;
+    this.country = country;
+    this.city = city;
+    this.streetAddress = streetAddress;
   }
 
-  public Location() {
-    this(null, null, 0.0);
+  public Optional<String> getCountry() {
+    return Optional.ofNullable(country);
   }
 
-  public Optional<Double> getLatitude() {
-    return Optional.ofNullable(latitude);
+  public Optional<String> getCity() {
+    return Optional.ofNullable(city);
   }
 
-  public Optional<Double> getLongitude() {
-    return Optional.ofNullable(longitude);
+  public GeoCoordinate getCoordinate() {
+    return coordinate;
   }
 
-  public Double getConfidence() {
-    if (longitude == null || latitude == null) {
-      return 0.0;
-    }
-    return confidence;
+  public boolean hasCoordinates() {
+    return coordinate != null;
+  }
+
+  public Optional<String> getStreetAddress() {
+    return Optional.ofNullable(streetAddress);
   }
 }

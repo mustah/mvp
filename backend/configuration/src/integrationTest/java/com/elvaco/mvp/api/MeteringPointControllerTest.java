@@ -5,7 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
@@ -36,23 +37,6 @@ public class MeteringPointControllerTest extends IntegrationTest {
     }
 
     restClient().loginWith("evanil@elvaco.se", "eva123");
-  }
-
-  private void mockMeteringPoint(int seed, String status) {
-    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(created);
-    calendar.add(Calendar.DATE, seed);
-    created = calendar.getTime();
-
-    MeteringPoint meteringPoint = new MeteringPoint(
-      Long.valueOf(seed),
-      status,
-      new Location(1.1, 1.1, 1.1),
-      created,
-      new PropertyCollection(new UserProperty("abc123", "Some project"))
-    );
-    meteringPointRepository.save(meteringPoint);
   }
 
   @After
@@ -122,5 +106,22 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
     assertThat(response.getBody().size()).isEqualTo(55);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  private void mockMeteringPoint(int seed, String status) {
+    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(created);
+    calendar.add(Calendar.DATE, seed);
+    created = calendar.getTime();
+
+    MeteringPoint meteringPoint = new MeteringPoint(
+      status,
+      new LocationBuilder()
+        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
+      created,
+      new PropertyCollection(new UserProperty("abc123", "Some project"))
+    );
+    meteringPointRepository.save(meteringPoint);
   }
 }
