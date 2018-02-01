@@ -1,11 +1,12 @@
 package com.elvaco.mvp.repository.access;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
+
+import static java.util.stream.Collectors.toList;
 
 public class MeteringPointRepository implements MeteringPoints {
 
@@ -25,7 +26,7 @@ public class MeteringPointRepository implements MeteringPoints {
     return meteringPointJpaRepository.findAll()
       .stream()
       .map(meteringPointMapper::toDomainModel)
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @Override

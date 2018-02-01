@@ -14,7 +14,8 @@ public class MeteringPointMapper {
 
     UserProperty userProperty =
       props
-        .asObject("user", UserProperty.class)
+        .asObject("user", UserPropertyDto.class)
+        .map(this::toUserProperty)
         .orElse(null);
 
     Location location = new Location(
@@ -34,14 +35,14 @@ public class MeteringPointMapper {
 
   public MeteringPointEntity toEntity(MeteringPoint meteringPoint) {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.propertyCollection = new PropertyCollection()
+    meteringPointEntity.propertyCollection
       .put("latitude", meteringPoint.location.getLatitude().orElse(null))
       .put("longitude", meteringPoint.location.getLongitude().orElse(null))
       .put("confidence", meteringPoint.location.getConfidence());
 
     if (meteringPoint.propertyCollection.userProperty != null) {
       meteringPointEntity.propertyCollection.put(
-        "user", userPropertyToDto(meteringPoint.propertyCollection.userProperty)
+        "user", toUserPropertyDto(meteringPoint.propertyCollection.userProperty)
       );
     }
 
@@ -52,10 +53,11 @@ public class MeteringPointMapper {
     return meteringPointEntity;
   }
 
-  private UserPropertyDto userPropertyToDto(UserProperty userProperty) {
-    return new UserPropertyDto(
-      userProperty.externalId,
-      userProperty.project
-    );
+  private UserPropertyDto toUserPropertyDto(UserProperty userProperty) {
+    return new UserPropertyDto(userProperty.externalId, userProperty.project);
+  }
+
+  private UserProperty toUserProperty(UserPropertyDto userPropertyDto) {
+    return new UserProperty(userPropertyDto.externalId, userPropertyDto.project);
   }
 }

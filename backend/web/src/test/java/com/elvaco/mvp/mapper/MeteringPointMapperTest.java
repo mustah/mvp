@@ -36,8 +36,7 @@ public class MeteringPointMapperTest {
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.1;
-    mapMarkerDtoExpected.status = new IdNamedDto();
-    mapMarkerDtoExpected.status.name = "Ok";
+    mapMarkerDtoExpected.status = new IdNamedDto(1L, "Ok");
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     MeteringPoint meteringPoint = new MeteringPoint(

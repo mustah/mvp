@@ -1,8 +1,6 @@
 package com.elvaco.mvp.api;
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -47,24 +45,16 @@ public class MeasurementController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    Map<String, List<String>> filterParams = new HashMap<>(requestParams);
-    PageableAdapter pageableAdapter = new PageableAdapter(pageable);
-    Page<Measurement> page;
-
-    if (scale != null) {
-      page = measurementUseCases.findAllScaled(
-        scale,
-        filterParams,
-        pageableAdapter
-      );
-    } else {
-      page = measurementUseCases.findAll(filterParams, pageableAdapter);
-    }
+    Page<Measurement> page = measurementUseCases.findAllPageable(
+      scale,
+      new HashMap<>(requestParams),
+      new PageableAdapter(pageable)
+    );
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(this::toDto);
   }
 
-  private MeasurementDto toDto(Measurement entity) {
-    return modelMapper.map(entity, MeasurementDto.class);
+  private MeasurementDto toDto(Measurement measurement) {
+    return modelMapper.map(measurement, MeasurementDto.class);
   }
 }
