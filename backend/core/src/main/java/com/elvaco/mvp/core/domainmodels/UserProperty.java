@@ -6,6 +6,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class UserProperty {
+
   public final String externalId;
   public final String project;
 

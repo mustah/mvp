@@ -5,7 +5,6 @@ import java.util.Date;
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
@@ -24,7 +23,7 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
   public void setUp() {
     MeteringPointEntity mp = new MeteringPointEntity();
     mp.created = new Date();
-    mp.propertyCollection = new PropertyCollection()
+    mp.propertyCollection
       .put("user", new UserPropertyDto("abc123", "Under construction"))
       .putArray("numbers", asList(1, 2, 3, 17));
     meteringPointJpaRepository.save(mp);

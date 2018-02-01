@@ -36,9 +36,6 @@ public class MeteringPointEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  /**
-   * Metering object identifier.
-   */
   @Type(type = "property-collection")
   public PropertyCollection propertyCollection;
 
@@ -63,5 +60,12 @@ public class MeteringPointEntity {
 
   public MeteringPointEntity() {
     this.propertyCollection = new PropertyCollection();
+  }
+
+  public MeteringPointEntity(Long id, Date created, String status) {
+    this();
+    this.id = id;
+    this.created = (Date) created.clone();
+    this.status = status;
   }
 }

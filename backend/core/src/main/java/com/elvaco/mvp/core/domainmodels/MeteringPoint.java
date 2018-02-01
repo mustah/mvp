@@ -8,6 +8,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class MeteringPoint {
+
   public final Long id;
   public final String status;
   public final Location location;
@@ -19,7 +20,8 @@ public class MeteringPoint {
     String status,
     Location location,
     Date created,
-    PropertyCollection propertyCollection) {
+    PropertyCollection propertyCollection
+  ) {
     this.id = id;
     this.status = status;
     this.location = location;
