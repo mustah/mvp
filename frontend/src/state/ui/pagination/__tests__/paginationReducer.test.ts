@@ -1,27 +1,30 @@
-import {paginationUpdateMetaData} from '../paginationActions';
-import {Pagination, PaginationState, PaginationMetadataPayload} from '../paginationModels';
+import {paginationRequestPage, paginationUpdateMetaData} from '../paginationActions';
+import {Pagination, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from '../paginationModels';
 import {limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
-  describe('pagination', () => {
+  const paginatedState: Readonly<PaginationState> = {
+    test: {
+      first: false,
+      last: false,
+      currentPage: 4,
+      requestedPage: 4,
+      numberOfElements: 10,
+      size: limit,
+      sort: null,
+      totalElements: 200,
+      totalPages: 20,
+    },
+  };
 
-    const paginatedState: Readonly<PaginationState> = {
-      test: {
-        first: false,
-        last: false,
-        currentPage: 4,
-        numberOfElements: 10,
-        size: limit,
-        sort: null,
-        totalElements: 200,
-        totalPages: 20,
-      },
-    };
+  describe('pagination meta data', () => {
+
     const paginationData: Readonly<Pagination> = {
       first: false,
       last: false,
       currentPage: 2,
+      requestedPage: 2,
       numberOfElements: 10,
       size: limit,
       sort: null,
@@ -33,7 +36,7 @@ describe('paginationReducer', () => {
       expect(pagination({}, {type: 'unknown'})).toEqual({});
     });
 
-    it('changes pagination for a component', () => {
+    it('updates pagination meta data for a component', () => {
       const payload: PaginationMetadataPayload = {page: paginationData, componentId: 'test'};
 
       expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
@@ -47,6 +50,33 @@ describe('paginationReducer', () => {
       expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
         ...paginatedState,
         test2: {...paginationData},
+      });
+    });
+  });
+  describe('pagination requestedPage', () => {
+    it('changes requestedPage', () => {
+      const payload: PaginationChangePayload = {
+        componentId: 'test',
+        page: 10,
+      };
+
+      expect(pagination({}, paginationRequestPage(payload))).toEqual({
+        test: {requestedPage: 10},
+      });
+
+      expect(pagination(paginatedState, paginationRequestPage(payload))).toEqual({
+        test: {...paginatedState.test, requestedPage: 10},
+      });
+    });
+    it('only changes requestedPage for the targeted component', () => {
+      const payload: PaginationChangePayload = {
+        componentId: 'test2',
+        page: 10,
+      };
+
+      expect(pagination(paginatedState, paginationRequestPage(payload))).toEqual({
+        ...paginatedState,
+        test2: {requestedPage: 10},
       });
     });
   });
