@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.dto.MeteringPointDto;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -67,10 +66,10 @@ public class MeteringPointControllerTest extends IntegrationTest {
   public void findById() {
     List<MeteringPoint> meteringPoints = meteringPointRepository.findAll();
 
-    ResponseEntity<MeteringPointEntity> response = asElvacoUser()
-      .get("/meters/" + meteringPoints.get(0).id, MeteringPointEntity.class);
+    ResponseEntity<MeteringPointDto> response = asElvacoUser()
+      .get("/meters/" + meteringPoints.get(0).id, MeteringPointDto.class);
 
-    MeteringPointEntity meteringPoint = response.getBody();
+    MeteringPointDto meteringPoint = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(meteringPoint.id).isEqualTo(meteringPoints.get(0).id);

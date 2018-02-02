@@ -4,17 +4,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.MeteringPointsUseCases;
 import com.elvaco.mvp.dto.MapMarkerDto;
 import com.elvaco.mvp.dto.MeteringPointDto;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.mapper.MeteringPointMapper;
-import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
-import com.querydsl.core.types.Predicate;
+import com.elvaco.mvp.spring.PageableAdapter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,6 @@ import static com.elvaco.mvp.util.ParametersHelper.combineParams;
 @RestApi("/v1/api/meters")
 public class MeteringPointController {
 
-  private final MeteringPointJpaRepository meteringPointJpaRepository;
   private final MeteringPointsUseCases meteringPointsUseCases;
 
   private final ModelMapper modelMapper;
@@ -36,13 +35,11 @@ public class MeteringPointController {
 
   @Autowired
   MeteringPointController(
-    MeteringPointJpaRepository meteringPointJpaRepository,
     ModelMapper modelMapper,
     FilterToPredicateMapper meteringPointToPredicateMapper,
     MeteringPointMapper meteringPointMapper,
     MeteringPointsUseCases meteringPointsUseCases
   ) {
-    this.meteringPointJpaRepository = meteringPointJpaRepository;
     this.modelMapper = modelMapper;
     this.meteringPointToPredicateMapper = meteringPointToPredicateMapper;
     this.meteringPointMapper = meteringPointMapper;
@@ -50,8 +47,8 @@ public class MeteringPointController {
   }
 
   @GetMapping("{id}")
-  public MeteringPointEntity meteringPoint(@PathVariable Long id) {
-    return meteringPointJpaRepository.findOne(id);
+  public MeteringPointDto meteringPoint(@PathVariable Long id) {
+    return modelMapper.map(meteringPointsUseCases.findOne(id), MeteringPointDto.class);
   }
 
   @RequestMapping("/map-data")
@@ -63,7 +60,7 @@ public class MeteringPointController {
   }
 
   @GetMapping
-  public Page<MeteringPointDto> meteringPoints(
+  public org.springframework.data.domain.Page<MeteringPointDto> meteringPoints(
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
@@ -71,13 +68,14 @@ public class MeteringPointController {
     return filterMeteringPointDtos(combineParams(pathVars, requestParams), pageable);
   }
 
-  private Page<MeteringPointDto> filterMeteringPointDtos(
+  private org.springframework.data.domain.Page<MeteringPointDto> filterMeteringPointDtos(
     Map<String, List<String>> filter,
     Pageable pageable
   ) {
-    Predicate predicate = meteringPointToPredicateMapper.map(filter);
-    return meteringPointJpaRepository
-      .findAll(predicate, pageable)
+    PageableAdapter pageableAdapter = new PageableAdapter(pageable);
+    Page<MeteringPoint> page = meteringPointsUseCases
+      .findAll(filter, pageableAdapter);
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(source -> modelMapper.map(source, MeteringPointDto.class));
   }
 }

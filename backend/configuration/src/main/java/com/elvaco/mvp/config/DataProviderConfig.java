@@ -18,6 +18,7 @@ import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.jpa.mappers.MeteringPointToPredicateMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -74,6 +75,7 @@ class DataProviderConfig {
   MeteringPoints meteringPoints() {
     return new MeteringPointRepository(
       meteringPointJpaRepository,
+      new MeteringPointToPredicateMapper(),
       new MeteringPointMapper()
     );
   }

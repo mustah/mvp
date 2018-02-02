@@ -46,8 +46,8 @@ class UseCaseConfig {
   }
 
   @Bean
-  MeteringPointsUseCases meteringPointsUseCases() {
-    return new MeteringPointsUseCases(meteringPoints);
+  MeteringPointsUseCases meteringPointsUseCases(AuthenticatedUser currentUser) {
+    return new MeteringPointsUseCases(currentUser, meteringPoints);
   }
 
   @Bean
