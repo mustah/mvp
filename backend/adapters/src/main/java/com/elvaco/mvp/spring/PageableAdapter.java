@@ -4,7 +4,8 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.Sort;
 
 public class PageableAdapter implements Pageable {
-  final org.springframework.data.domain.Pageable delegate;
+
+  private final org.springframework.data.domain.Pageable delegate;
 
   public PageableAdapter(org.springframework.data.domain.Pageable pageable) {
     this.delegate = pageable;
@@ -37,8 +38,7 @@ public class PageableAdapter implements Pageable {
 
   @Override
   public Pageable previousOrFirst() {
-    return new PageableAdapter(delegate
-      .previousOrFirst());
+    return new PageableAdapter(delegate.previousOrFirst());
   }
 
   @Override

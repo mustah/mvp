@@ -1,5 +1,7 @@
 package com.elvaco.mvp.repository.access;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
@@ -12,10 +14,10 @@ public class MeteringPointMapper {
   MeteringPoint toDomainModel(MeteringPointEntity meteringPointEntity) {
     PropertyCollection props = meteringPointEntity.propertyCollection;
 
-    UserProperty userProperty =
-      props
-        .asObject("user", UserProperty.class)
-        .orElse(null);
+    UserProperty userProperty = props
+      .asObject("user", UserPropertyDto.class)
+      .map(this::toUserProperty)
+      .orElse(null);
 
     Location location = new Location(
       props.getDoubleValue("latitude").orElse(null),
@@ -33,29 +35,28 @@ public class MeteringPointMapper {
   }
 
   public MeteringPointEntity toEntity(MeteringPoint meteringPoint) {
-    MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.propertyCollection = new PropertyCollection()
+    MeteringPointEntity meteringPointEntity = new MeteringPointEntity(
+      meteringPoint.id,
+      meteringPoint.created,
+      meteringPoint.status
+    );
+    meteringPointEntity.propertyCollection
       .put("latitude", meteringPoint.location.getLatitude().orElse(null))
       .put("longitude", meteringPoint.location.getLongitude().orElse(null))
       .put("confidence", meteringPoint.location.getConfidence());
 
-    if (meteringPoint.propertyCollection.userProperty != null) {
-      meteringPointEntity.propertyCollection.put(
-        "user", userPropertyToDto(meteringPoint.propertyCollection.userProperty)
-      );
-    }
-
-    meteringPointEntity.id = meteringPoint.id;
-    meteringPointEntity.created = meteringPoint.created;
-    meteringPointEntity.status = meteringPoint.status;
+    Optional.ofNullable(meteringPoint.propertyCollection.userProperty)
+      .map(this::toUserPropertyDto)
+      .map(userPropertyDto -> meteringPointEntity.propertyCollection.put("user", userPropertyDto));
 
     return meteringPointEntity;
   }
 
-  private UserPropertyDto userPropertyToDto(UserProperty userProperty) {
-    return new UserPropertyDto(
-      userProperty.externalId,
-      userProperty.project
-    );
+  private UserPropertyDto toUserPropertyDto(UserProperty userProperty) {
+    return new UserPropertyDto(userProperty.externalId, userProperty.project);
+  }
+
+  private UserProperty toUserProperty(UserPropertyDto userPropertyDto) {
+    return new UserProperty(userPropertyDto.externalId, userPropertyDto.project);
   }
 }

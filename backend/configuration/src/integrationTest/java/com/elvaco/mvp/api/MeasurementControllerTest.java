@@ -1,6 +1,8 @@
 package com.elvaco.mvp.api;
 
+import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -21,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
 import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,26 +36,45 @@ public class MeasurementControllerTest extends IntegrationTest {
   private PhysicalMeterRepository physicalMeterRepository;
 
   private Map<String, MeasurementEntity> measurementQuantities;
+  private PhysicalMeterEntity forceMeter;
 
   @Before
   public void setUp() {
-    PhysicalMeterEntity butterMeter =
-      new PhysicalMeterEntity(
-        ELVACO_ENTITY,
-        "test-butter-meter-1",
-        "Butter"
-      );
+    PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
+      ELVACO_ENTITY,
+      "test-butter-meter-1",
+      "Butter"
+    );
+    PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
+      WAYNE_INDUSTRIES_ENTITY,
+      "test-milk-meter-1",
+      "Milk"
+    );
+    forceMeter = new PhysicalMeterEntity(
+      WAYNE_INDUSTRIES_ENTITY,
+      String.valueOf(Math.random()),
+      "vacum"
+    );
 
-    PhysicalMeterEntity milkMeter =
-      new PhysicalMeterEntity(
-        WAYNE_INDUSTRIES_ENTITY,
-        "test-milk-meter-1",
-        "Milk"
-      );
+    physicalMeterRepository.save(asList(butterMeter, milkMeter, forceMeter));
 
-    physicalMeterRepository.save(asList(butterMeter, milkMeter));
-
+    // What are midichlorians measured in?
+    // https://scifi.stackexchange.com/a/28354
     measurementQuantities = Stream.of(
+      new MeasurementEntity(
+        new Date(),
+        "Heat",
+        150,
+        "°C",
+        forceMeter
+      ),
+      new MeasurementEntity(
+        Date.from(Instant.parse("1983-05-24T12:00:01Z")),
+        "LightsaberPower",
+        0,
+        "kW",
+        forceMeter
+      ),
       new MeasurementEntity(
         new Date(),
         "Butter temperature",
@@ -96,10 +118,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementRetrievableById() {
     Long butterTemperatureId = idOf("Butter temperature");
-    MeasurementDto measurement = asElvacoUser().get(
-      "/measurements/" + butterTemperatureId,
-      MeasurementDto.class
-    )
+    MeasurementDto measurement = asElvacoUser()
+      .get("/measurements/" + butterTemperatureId, MeasurementDto.class)
       .getBody();
 
     assertThat(measurement.id).isEqualTo(butterTemperatureId);
@@ -118,19 +138,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void measurementLinksToItsPhysicalMeter() {
-    MeasurementEntity butterMeasurement = measurementOf("Butter temperature");
-    String href = asElvacoUser()
-      .get("/measurements/" + butterMeasurement.id, MeasurementDto.class)
-      .getBody()
-      .physicalMeter
-      .getHref();
-
-    Long physicalMeterId = butterMeasurement.physicalMeter.id;
-    assertThat(href).isEqualTo(restClient().getBaseUrl() + "/physical-meters/" + physicalMeterId);
-  }
-
-  @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
     Page<MeasurementDto> page = asElvacoUser()
       .getPage("/measurements", MeasurementDto.class);
@@ -145,6 +152,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     HttpStatus statusCode = asElvacoUser()
       .get("/measurements/" + idOf("Milk temperature"), MeasurementDto.class)
       .getStatusCode();
+
     assertThat(statusCode).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -153,19 +161,72 @@ public class MeasurementControllerTest extends IntegrationTest {
     HttpStatus statusCode = asSuperAdmin()
       .get("/measurements/" + idOf("Milk temperature"), MeasurementDto.class)
       .getStatusCode();
+
     assertThat(statusCode).isEqualTo(HttpStatus.OK);
 
     statusCode = asSuperAdmin()
       .get("/measurements/" + idOf("Butter temperature"), MeasurementDto.class)
       .getStatusCode();
+
     assertThat(statusCode).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   public void superAdminCanSeeAllMeasurements() {
-    Page<MeasurementDto> page = asSuperAdmin()
-      .getPage("/measurements", MeasurementDto.class);
-    assertThat(page).hasSize(3);
+    assertThat(getPageAsSuperAdmin("/measurements")).hasSize(5);
+  }
+
+  @Test
+  public void fetchMeasurementsForMeter() {
+    List<String> quantities = getPageAsSuperAdmin("/measurements?meterId=" + forceMeter.id)
+      .getContent()
+      .stream()
+      .map(c -> c.quantity)
+      .collect(toList());
+
+    assertThat(quantities).hasSize(2);
+    assertThat(quantities).containsExactlyInAnyOrder("Heat", "LightsaberPower");
+  }
+
+  @Test
+  public void fetchMeasurementsForHeatMeter() {
+    List<MeasurementDto> contents = getPageAsSuperAdmin("/measurements?quantity=Heat").getContent();
+
+    MeasurementDto dto = contents.get(0);
+    assertThat(contents).hasSize(1);
+    assertThat(dto.quantity).isEqualTo("Heat");
+
+    // TODO[!must!] fix this when we have a PhysicalModelMapper in place!
+    /*String valueAndUnit = dto.value + " " + dto.unit;
+    assertThat(toMeasurementUnit(valueAndUnit, "K").toString()).isEqualTo("423.15 K");*/
+  }
+
+  @Test
+  public void fetchMeasurementsForMeterByQuantityBeforeTime() {
+    String date = "1990-01-01T08:00:00Z";
+    List<MeasurementDto> contents =
+      getPageAsSuperAdmin("/measurements?quantity?LightsaberPower&before=" + date)
+        .getContent();
+
+    MeasurementDto dto = contents.get(0);
+    assertThat(contents).hasSize(1);
+    assertThat(dto.quantity).isEqualTo("LightsaberPower");
+    assertThat(dto.value).isEqualTo(0);
+  }
+
+  @Test
+  public void fetchMeasurementsForMeterByQuantityAfterTime() {
+    List<MeasurementDto> contents =
+      getPageAsSuperAdmin("/measurements?quantity=Heat&after=1990-01-01T08:00:00Z")
+        .getContent();
+
+    MeasurementDto dto = contents.get(0);
+    assertThat(contents).hasSize(1);
+    assertThat(dto.quantity).isEqualTo("Heat");
+  }
+
+  private Page<MeasurementDto> getPageAsSuperAdmin(String url) {
+    return asSuperAdmin().getPage(url, MeasurementDto.class);
   }
 
   private Long idOf(String measurementQuantity) {

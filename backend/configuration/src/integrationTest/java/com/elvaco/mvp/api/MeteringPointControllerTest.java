@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeteringPointControllerTest extends IntegrationTest {
 
   @Autowired
-  MeteringPoints meteringPointRepository;
+  private MeteringPoints meteringPointRepository;
 
   @Before
   public void setUp() {

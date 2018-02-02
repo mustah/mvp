@@ -72,7 +72,7 @@ public class MeteringPointMapperTest {
         "Ok",
         new Location(),
         created,
-        new com.elvaco.mvp.core.domainmodels.PropertyCollection(null)
+        new PropertyCollection(null)
       )
     );
   }

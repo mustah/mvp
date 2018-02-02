@@ -9,7 +9,6 @@ dependencies {
   compile project(':backend:database') //FIXME: remove dep on database, should only need core!
 
   compile 'org.springframework.boot:spring-boot-starter-actuator'
-  compile 'org.springframework.boot:spring-boot-starter-hateoas'
   compile 'org.springframework.security:spring-security-web'
   compile 'org.modelmapper:modelmapper:1.1.0'
 

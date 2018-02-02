@@ -6,7 +6,7 @@ import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 
 public class MeteringPointsUseCases {
 
-  private MeteringPoints meteringPoints;
+  private final MeteringPoints meteringPoints;
 
   public MeteringPointsUseCases(MeteringPoints meteringPoints) {
     this.meteringPoints = meteringPoints;
