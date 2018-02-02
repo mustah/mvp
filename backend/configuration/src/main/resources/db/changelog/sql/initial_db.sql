@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
 CREATE TABLE IF NOT EXISTS gateway (
   id BIGSERIAL PRIMARY KEY,
   serial VARCHAR(255) NOT NULL,
-  model TEXT NOT NULL
+  productModel TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (

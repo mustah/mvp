@@ -1,5 +1,6 @@
 package com.elvaco.mvp.entity.gateway;
 
+import javax.annotation.Nonnull;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -25,5 +26,12 @@ public class GatewayEntity {
   public String serial;
 
   @Column(nullable = false)
-  public String model;
+  public String productModel;
+
+  public GatewayEntity() {}
+
+  public GatewayEntity(String serial, String productModel) {
+    this.serial = serial;
+    this.productModel = productModel;
+  }
 }

@@ -107,11 +107,7 @@ public class DemoDataLoader implements CommandLineRunner {
   }
 
   private GatewayEntity mockGateway(String serial) {
-    GatewayEntity gatewayEntity = new GatewayEntity();
-    gatewayEntity.model = "2100";
-    gatewayEntity.serial = serial;
-
-    return gatewayRepository.save(gatewayEntity);
+    return gatewayRepository.save(new GatewayEntity(serial, "2100"));
   }
 
   private void mockMeasurement(
