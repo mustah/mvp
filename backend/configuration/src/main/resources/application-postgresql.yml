@@ -21,6 +21,9 @@ zuul:
     gateways:
       path: /v1/api/gateways/**
       url: http://localhost:4000/v1/api/gateways/
+    meters:
+      path: /v1/api/meters/**
+      url: http://localhost:4000/v1/api/meters/
     selections:
       path: /v1/api/selections/**
       url: http://localhost:4000/v1/api/selections/
