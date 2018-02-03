@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.security.OrganisationFilter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 
@@ -50,11 +51,18 @@ public class MeasurementUseCases {
     Map<String, List<String>> filterParams,
     Pageable pageable
   ) {
-    return measurements.findAllByScale(scale, complementFilterParameters(filterParams), pageable);
+    return measurements.findAllByScale(
+      scale,
+      OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
+      pageable
+    );
   }
 
   private Page<Measurement> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
-    return measurements.findAll(complementFilterParameters(filterParams), pageable);
+    return measurements.findAll(
+      OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
+      pageable
+    );
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {

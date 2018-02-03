@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
@@ -12,9 +11,6 @@ import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.dto.MeteringPointDto;
-import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
-import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -67,41 +63,13 @@ public class MeteringPointControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findMatchesPropertyCollection() {
-    PropertyCollectionDto request = new PropertyCollectionDto(
-      new UserPropertyDto("abc123")
-    );
-
-    ResponseEntity<List> response = asElvacoUser()
-      .post("/meters/property-collections", request, List.class);
-
-    Map<String, Object> result = (Map<String, Object>) response
-      .getBody()
-      .get(0);
-
-    assertThat(result).isNotNull();
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
-  @Test
-  public void cannotFindMatchingPropertyCollection() {
-    PropertyCollectionDto request = new PropertyCollectionDto(new UserPropertyDto("xyz"));
-
-    ResponseEntity<List> response = asElvacoUser()
-      .post("/meters/property-collections", request, List.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEmpty();
-  }
-
-  @Test
   public void findById() {
     List<MeteringPoint> meteringPoints = meteringPointRepository.findAll();
 
-    ResponseEntity<MeteringPointEntity> response = asElvacoUser()
-      .get("/meters/" + meteringPoints.get(0).id, MeteringPointEntity.class);
+    ResponseEntity<MeteringPointDto> response = asElvacoUser()
+      .get("/meters/" + meteringPoints.get(0).id, MeteringPointDto.class);
 
-    MeteringPointEntity meteringPoint = response.getBody();
+    MeteringPointDto meteringPoint = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(meteringPoint.id).isEqualTo(meteringPoints.get(0).id);
