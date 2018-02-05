@@ -1,7 +1,10 @@
 package com.elvaco.mvp.entity.measurement;
 
-public class MeasurementUnit {
+import java.io.Serializable;
 
+public class MeasurementUnit implements Serializable {
+
+  private static final long serialVersionUID = -8237162225719810274L;
   private String unit;
   private double value;
 

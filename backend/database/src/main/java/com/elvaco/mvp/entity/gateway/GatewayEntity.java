@@ -1,5 +1,6 @@
 package com.elvaco.mvp.entity.gateway;
 
+import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -15,8 +16,9 @@ import lombok.ToString;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
-public class GatewayEntity {
+public class GatewayEntity implements Serializable {
 
+  private static final long serialVersionUID = -2132372383987246715L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;

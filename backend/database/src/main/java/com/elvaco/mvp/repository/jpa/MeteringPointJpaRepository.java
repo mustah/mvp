@@ -70,7 +70,6 @@ public class MeteringPointJpaRepository extends QueryDslJpaRepository<MeteringPo
    * Get all {@link MeteringPointEntity}s that has the given fieldName as a top level property.
    *
    * @param fieldName is the top-level json field name.
-   *
    * @return a list of entities that has <code>fieldName</code> in the top-level, otherwise an
    *   empty list.
    */

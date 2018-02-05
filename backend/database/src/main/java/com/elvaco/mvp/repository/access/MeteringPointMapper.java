@@ -6,10 +6,17 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
+import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
 
 public class MeteringPointMapper {
+
+  private final LocationMapper locationMapper;
+
+  public MeteringPointMapper(LocationMapper locationMapper) {
+    this.locationMapper = locationMapper;
+  }
 
   MeteringPoint toDomainModel(MeteringPointEntity meteringPointEntity) {
     PropertyCollection props = meteringPointEntity.propertyCollection;
@@ -19,11 +26,7 @@ public class MeteringPointMapper {
       .map(this::toUserProperty)
       .orElse(null);
 
-    Location location = new Location(
-      props.getDoubleValue("latitude").orElse(null),
-      props.getDoubleValue("longitude").orElse(null),
-      props.getDoubleValue("confidence").orElse(null)
-    );
+    Location location = locationMapper.toDomainModel(meteringPointEntity.getLocation());
 
     return new MeteringPoint(
       meteringPointEntity.id,
@@ -40,14 +43,14 @@ public class MeteringPointMapper {
       meteringPoint.created,
       meteringPoint.status
     );
-    meteringPointEntity.propertyCollection
-      .put("latitude", meteringPoint.location.getLatitude().orElse(null))
-      .put("longitude", meteringPoint.location.getLongitude().orElse(null))
-      .put("confidence", meteringPoint.location.getConfidence());
 
     Optional.ofNullable(meteringPoint.propertyCollection.userProperty)
       .map(this::toUserPropertyDto)
-      .map(userPropertyDto -> meteringPointEntity.propertyCollection.put("user", userPropertyDto));
+      .map(userPropertyDto ->
+             meteringPointEntity.propertyCollection.put("user", userPropertyDto));
+
+    LocationEntity locationEntity = locationMapper.toEntity(meteringPoint.location);
+    meteringPointEntity.setLocation(locationEntity);
 
     return meteringPointEntity;
   }

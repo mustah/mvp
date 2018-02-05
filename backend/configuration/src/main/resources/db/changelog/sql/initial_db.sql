@@ -41,6 +41,16 @@ CREATE TABLE IF NOT EXISTS metering_point (
   -- meter_definition_id bigserial references meter_definition
 );
 
+CREATE TABLE IF NOT EXISTS location (
+  meter_id BIGSERIAL REFERENCES metering_point ON DELETE CASCADE PRIMARY KEY,
+  country TEXT,
+  city TEXT,
+  street_address TEXT,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  confidence DOUBLE PRECISION
+);
+
 CREATE TABLE IF NOT EXISTS physical_meter (
   id BIGSERIAL PRIMARY KEY,
   organisation_id BIGSERIAL REFERENCES organisation,

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.mapper;
 
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.dto.IdNamedDto;
@@ -23,13 +24,15 @@ public class MeteringPointMapper {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = meteringPoint.id;
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
-
     //TODO how to handle statuses?
     mapMarkerDto.status = new IdNamedDto(meteringPoint.status);
-    mapMarkerDto.latitude = meteringPoint.location.getLatitude().orElse(null);
-    mapMarkerDto.longitude = meteringPoint.location.getLongitude().orElse(null);
-    mapMarkerDto.confidence = meteringPoint.location.getConfidence();
-
+    mapMarkerDto.status.name = meteringPoint.status;
+    if (meteringPoint.location.hasCoordinates()) {
+      GeoCoordinate coord = meteringPoint.location.getCoordinate();
+      mapMarkerDto.confidence = coord.getConfidence();
+      mapMarkerDto.latitude = coord.getLatitude();
+      mapMarkerDto.longitude = coord.getLongitude();
+    }
     return mapMarkerDto;
   }
 

@@ -7,8 +7,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class UserProperty {
 
-  public final String externalId;
-  public final String project;
+  public String externalId;
+  public String project;
+
+  public UserProperty() {}
 
   public UserProperty(String externalId, String project) {
     this.externalId = externalId;

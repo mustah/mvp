@@ -13,6 +13,7 @@ import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
@@ -157,10 +158,7 @@ public class DemoDataLoader implements CommandLineRunner {
     MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
     meteringPointEntity.propertyCollection
       .put("user", new UserPropertyDto(meterIdentity, "Demo project"))
-      .putArray("numbers", asList(1, 2, 3, 17))
-      .put("latitude", 1.1)
-      .put("longitude", 1.1)
-      .put("confidence", 1.1);
+      .putArray("numbers", asList(1, 2, 3, 17));
 
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
@@ -172,6 +170,14 @@ public class DemoDataLoader implements CommandLineRunner {
     meteringPointEntity.medium = "Water";
     meteringPointEntity.created = created;
     meteringPointEntity.gateways = gatewayEntities;
+    LocationEntity locationEntity = new LocationEntity();
+    locationEntity.confidence = 0.8;
+    locationEntity.latitude = 57.5052592;
+    locationEntity.longitude = 12.0683196;
+    locationEntity.streetAddress = "Kabelgatan 2T";
+    locationEntity.city = "Kungsbacka";
+    locationEntity.country = "Sweden";
+    meteringPointEntity.setLocation(locationEntity);
 
     return meteringPointJpaRepository.save(meteringPointEntity);
   }

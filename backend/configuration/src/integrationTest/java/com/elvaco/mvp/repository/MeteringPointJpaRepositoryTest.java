@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
+import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
 import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringPointJpaRepositoryTest extends IntegrationTest {
 
+  Long meteringPointId;
   @Autowired
   private MeteringPointJpaRepository meteringPointJpaRepository;
 
@@ -26,7 +28,20 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     mp.propertyCollection
       .put("user", new UserPropertyDto("abc123", "Under construction"))
       .putArray("numbers", asList(1, 2, 3, 17));
-    meteringPointJpaRepository.save(mp);
+    LocationEntity locationEntity = new LocationEntity();
+    locationEntity.confidence = 1.0;
+    locationEntity.latitude = 1.0;
+    locationEntity.longitude = 2.0;
+    mp.setLocation(locationEntity);
+    meteringPointId = meteringPointJpaRepository.save(mp).id;
+  }
+
+  @Test
+  public void locationIsPersisted() {
+    MeteringPointEntity foundEntity = meteringPointJpaRepository.findOne(meteringPointId);
+    assertThat(foundEntity.getLocation().confidence).isEqualTo(1.0);
+    assertThat(foundEntity.getLocation().latitude).isEqualTo(1.0);
+    assertThat(foundEntity.getLocation().longitude).isEqualTo(2.0);
   }
 
   @Test

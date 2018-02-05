@@ -1,7 +1,7 @@
 package com.elvaco.mvp.entity.meter;
 
+import java.io.Serializable;
 import java.util.List;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -23,8 +23,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
-public class PhysicalMeterEntity {
+public class PhysicalMeterEntity implements Serializable {
 
+  private static final long serialVersionUID = 1100904291210178685L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;

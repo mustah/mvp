@@ -4,6 +4,7 @@ import com.elvaco.mvp.core.usecase.Measurements;
 import com.elvaco.mvp.core.usecase.MeteringPoints;
 import com.elvaco.mvp.core.usecase.Settings;
 import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.repository.access.LocationMapper;
 import com.elvaco.mvp.repository.access.MeasurementMapper;
 import com.elvaco.mvp.repository.access.MeasurementRepository;
 import com.elvaco.mvp.repository.access.MeteringPointMapper;
@@ -76,7 +77,9 @@ class DataProviderConfig {
     return new MeteringPointRepository(
       meteringPointJpaRepository,
       new MeteringPointToPredicateMapper(),
-      new MeteringPointMapper()
+      new MeteringPointMapper(
+        new LocationMapper()
+      )
     );
   }
 

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.entity.measurement;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -20,8 +21,9 @@ import org.hibernate.annotations.Type;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "measurement")
-public class MeasurementEntity {
+public class MeasurementEntity implements Serializable {
 
+  private static final long serialVersionUID = -3650501037709018061L;
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;

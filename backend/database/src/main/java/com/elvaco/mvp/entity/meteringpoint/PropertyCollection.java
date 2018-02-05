@@ -1,5 +1,6 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +16,10 @@ import static com.elvaco.mvp.util.Json.toObject;
 
 @ToString
 @EqualsAndHashCode
-public class PropertyCollection {
+public class PropertyCollection implements Serializable {
 
-  private final ObjectNode json;
+  private static final long serialVersionUID = -7594482554930519496L;
+  private transient ObjectNode json;
 
   public PropertyCollection(ObjectNode json) {
     this.json = json;

@@ -1,9 +1,11 @@
 package com.elvaco.mvp.entity.meteringpoint;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +33,9 @@ import org.hibernate.annotations.Type;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "metering_point")
-public class MeteringPointEntity {
+public class MeteringPointEntity implements Serializable {
+
+  private static final long serialVersionUID = 5528298891965340483L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,14 +47,11 @@ public class MeteringPointEntity {
   @OneToMany(mappedBy = "meteringPoint")
   @JsonManagedReference
   public List<PhysicalMeterEntity> physicalMeters;
-
   public String status;
   public String medium;
-
   @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
   public Date created;
-
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     name = "gateways_meters",
@@ -57,9 +59,13 @@ public class MeteringPointEntity {
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
+  @OneToOne(mappedBy = "meteringPoint", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  private LocationEntity location;
 
   public MeteringPointEntity() {
     this.propertyCollection = new PropertyCollection();
+    setLocation(new LocationEntity());
   }
 
   public MeteringPointEntity(Long id, Date created, String status) {
@@ -67,5 +73,14 @@ public class MeteringPointEntity {
     this.id = id;
     this.created = (Date) created.clone();
     this.status = status;
+  }
+
+  public LocationEntity getLocation() {
+    return location;
+  }
+
+  public void setLocation(LocationEntity location) {
+    this.location = location;
+    this.location.meteringPoint = this;
   }
 }
