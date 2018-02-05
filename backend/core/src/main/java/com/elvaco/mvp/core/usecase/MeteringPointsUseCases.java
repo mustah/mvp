@@ -19,8 +19,8 @@ public class MeteringPointsUseCases {
     this.meteringPoints = meteringPoints;
   }
 
-  public MeteringPoint findOne(Long id) {
-    return meteringPoints.findOne(id);
+  public MeteringPoint findById(Long id) {
+    return meteringPoints.findById(id);
   }
 
   public List<MeteringPoint> findAll() {

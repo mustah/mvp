@@ -4,10 +4,20 @@ import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.dto.IdNamedDto;
 import com.elvaco.mvp.dto.MapMarkerDto;
+import com.elvaco.mvp.dto.MeteringPointDto;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MeteringPointMapper {
+
+  private final ModelMapper modelMapper;
+
+  @Autowired
+  public MeteringPointMapper(ModelMapper modelMapper) {
+    this.modelMapper = modelMapper;
+  }
 
   public MapMarkerDto toMapMarkerDto(MeteringPoint meteringPoint) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
@@ -21,5 +31,9 @@ public class MeteringPointMapper {
     mapMarkerDto.confidence = meteringPoint.location.getConfidence();
 
     return mapMarkerDto;
+  }
+
+  public MeteringPointDto toDto(MeteringPoint meteringPoint) {
+    return modelMapper.map(meteringPoint, MeteringPointDto.class);
   }
 }

@@ -8,7 +8,8 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 
 public interface MeteringPoints {
-  MeteringPoint findOne(Long id);
+
+  MeteringPoint findById(Long id);
 
   List<MeteringPoint> findAll();
 

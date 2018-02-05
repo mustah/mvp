@@ -1,6 +1,5 @@
 package com.elvaco.mvp.entity.gateway;
 
-import javax.annotation.Nonnull;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
