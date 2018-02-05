@@ -1,6 +1,8 @@
 package com.elvaco.mvp.api;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -52,6 +54,18 @@ public class MeasurementController {
     );
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(this::toDto);
+  }
+
+  @GetMapping
+  public List<MeasurementDto> measurements(
+    @RequestParam(value = "scale", required = false) String scale,
+    @RequestParam MultiValueMap<String, String> requestParams
+  ) {
+    return measurementUseCases.findAll(
+      scale,
+      new HashMap<>(requestParams)
+    ).stream().map(source -> toDto(source))
+      .collect(Collectors.toList());
   }
 
   private MeasurementDto toDto(Measurement measurement) {

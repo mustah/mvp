@@ -16,7 +16,14 @@ public interface Measurements {
     Pageable pageable
   );
 
+  List<Measurement> findAllByScale(
+    String scale,
+    Map<String, List<String>> filterParams
+  );
+
   Page<Measurement> findAll(Map<String, List<String>> filterParams, Pageable pageable);
+
+  List<Measurement> findAll(Map<String, List<String>> filterParams);
 
   Optional<Measurement> findById(Long id);
 }

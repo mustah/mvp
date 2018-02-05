@@ -35,6 +35,17 @@ public class MeasurementUseCases {
     }
   }
 
+  public List<Measurement> findAll(
+    String scale,
+    Map<String, List<String>> filterParams
+  ) {
+    if (scale != null) {
+      return measurements.findAllByScale(scale, filterParams);
+    } else {
+      return measurements.findAll(filterParams);
+    }
+  }
+
   public Optional<Measurement> findById(Long id) {
     return measurements.findById(id)
       .flatMap(m -> {

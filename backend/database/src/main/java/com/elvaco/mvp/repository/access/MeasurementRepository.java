@@ -13,6 +13,8 @@ import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.spring.PageAdapter;
 import org.springframework.data.domain.PageRequest;
 
+import static java.util.stream.Collectors.toList;
+
 public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
@@ -44,6 +46,14 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
+  public List<Measurement> findAllByScale(String scale, Map<String, List<String>> filterParams) {
+    return measurementJpaRepository.findAllScaled(
+      scale,
+      filterMapper.map(filterParams)
+    ).stream().map(measurementMapper::toDomainModel).collect(toList());
+  }
+
+  @Override
   public Page<Measurement> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
     return new PageAdapter<>(
       measurementJpaRepository.findAll(
@@ -51,6 +61,14 @@ public class MeasurementRepository implements Measurements {
         new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
       ).map(measurementMapper::toDomainModel)
     );
+  }
+
+  @Override
+  public List<Measurement> findAll(Map<String, List<String>> filterParams) {
+    return
+      measurementJpaRepository.findAll(
+        filterMapper.map(filterParams)
+      ).stream().map(measurementMapper::toDomainModel).collect(toList());
   }
 
   @Override
