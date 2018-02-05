@@ -1,4 +1,4 @@
-import {HasComponentId} from '../../domain-models/paginatedDomainModels';
+import {uuid} from '../../../types/Types';
 
 export interface Pagination {
   first: boolean;
@@ -10,6 +10,10 @@ export interface Pagination {
   sort: SortingOptions[] | null;
   totalElements: number;
   totalPages: number;
+}
+
+export interface HasComponentId {
+  componentId: uuid;
 }
 
 export interface PaginationMetadataPayload extends HasComponentId {

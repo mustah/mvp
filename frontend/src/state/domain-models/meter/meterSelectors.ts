@@ -8,7 +8,7 @@ import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
 import {ObjectsById} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
-import {HasComponentId} from '../paginatedDomainModels';
+import {HasComponentId} from '../../ui/pagination/paginationModels';
 import {
   Meter,
   MeterDataSummary,

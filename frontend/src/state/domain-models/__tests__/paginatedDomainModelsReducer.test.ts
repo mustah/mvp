@@ -1,7 +1,7 @@
 import {ErrorResponse, HasId} from '../../../types/Types';
 import {EndPoints} from '../domainModels';
 import {Measurement, MeasurementState} from '../measurement/measurementModels';
-import {HasComponentId, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
+import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
 import {requestMethodPaginated} from '../paginatedDomainModelsActions';
 import {initialPaginatedDomain, paginatedMeasurements as reducer} from '../paginatedDomainModelsReducer';
 
@@ -14,10 +14,10 @@ describe('paginatedDomainModelsReducer', () => {
     const getRequest =
       requestMethodPaginated<NormalizedPaginated<Measurement>>(EndPoints.measurements);
 
-    const componentId = 'list1';
+    const page = 0;
 
     const normalizedMeasurement: NormalizedPaginated<Measurement> = {
-      componentId,
+      page,
       entities: {
         measurements: {
           1: {
@@ -58,15 +58,15 @@ describe('paginatedDomainModelsReducer', () => {
     };
 
     it('has initial state', () => {
-      expect(reducer(initialState, {type: 'unknown', payload: ''})).toEqual({...initialState});
+      expect(reducer(initialState, {type: 'unknown', payload: -1})).toEqual({...initialState});
     });
 
     it('requests measurements', () => {
-      const stateAfterRequestInitiation = reducer(initialState, getRequest.request(componentId));
-      const expected = {
+      const stateAfterRequestInitiation = reducer(initialState, getRequest.request(page));
+      const expected: NormalizedPaginatedState<Measurement> = {
         ...initialState,
         result: {
-          [componentId]: {isFetching: true},
+          [page]: {isFetching: true},
         },
       };
       expect(stateAfterRequestInitiation).toEqual(expected);
@@ -77,8 +77,8 @@ describe('paginatedDomainModelsReducer', () => {
       const expected: NormalizedPaginatedState<Measurement> = {
         entities: {...normalizedMeasurement.entities.measurements},
         result: {
-          [componentId]: {
-            ...normalizedMeasurement.result,
+          [page]: {
+            result: normalizedMeasurement.result.content,
             isFetching: false,
           },
         },
@@ -91,10 +91,10 @@ describe('paginatedDomainModelsReducer', () => {
       const populatedState: NormalizedPaginatedState<Measurement> =
         reducer(initialState, getRequest.success(normalizedMeasurement));
 
-      const additionalComponentId = '234';
+      const anotherPage = 2;
 
       const payload: NormalizedPaginated<HasId> = {
-          componentId: additionalComponentId,
+          page: anotherPage,
           result: {
             content: [1, 4],
             first: true,
@@ -119,7 +119,7 @@ describe('paginatedDomainModelsReducer', () => {
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
-          [additionalComponentId]: {...payload.result, isFetching: false},
+          [anotherPage]: {result: payload.result.content, isFetching: false},
         },
       };
 
@@ -128,14 +128,15 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('has error when fetching has failed', () => {
-      const payload: ErrorResponse & HasComponentId = {message: 'failed', componentId: '123'};
+      const page = 0;
+      const payload: ErrorResponse & HasPageNumber = {message: 'failed', page};
 
       const stateAfterFailure = reducer(initialState, getRequest.failure(payload));
 
       const failedState = {
         ...initialState,
         result: {
-          123: {
+          [page]: {
             error: {message: payload.message},
             isFetching: false,
           },
