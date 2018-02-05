@@ -1,5 +1,6 @@
 package com.elvaco.mvp.repository.jpa;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
@@ -56,10 +57,36 @@ public class MeasurementJpaRepository extends QueryDslJpaRepository<MeasurementE
     this.querydsl = new Querydsl(entityManager, builder);
   }
 
+  public List<MeasurementEntity> findAllScaled(
+    String scale,
+    Predicate predicate
+  ) {
+    JPQLQuery<MeasurementEntity> query = getMeasurementEntityJpqlQuery(scale, predicate);
+
+    // TODO: Implement and test sorting...
+    // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
+
+    return query.fetch();
+  }
+
   public Page<MeasurementEntity> findAllScaled(
     String scale,
     Predicate predicate,
     Pageable pageable
+  ) {
+    JPQLQuery<MeasurementEntity> query = getMeasurementEntityJpqlQuery(scale, predicate);
+
+    JPQLQuery<?> countQuery = createCountQuery(predicate);
+    // TODO: Implement and test sorting...
+    // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
+    query = querydsl.applyPagination(pageable, query);
+
+    return PageableExecutionUtils.getPage(query.fetch(), pageable, countQuery::fetchCount);
+  }
+
+  private JPQLQuery<MeasurementEntity> getMeasurementEntityJpqlQuery(
+    String scale,
+    Predicate predicate
   ) {
     JPQLQuery<MeasurementEntity> query = new JPAQuery<>(entityManager);
     QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
@@ -79,13 +106,7 @@ public class MeasurementJpaRepository extends QueryDslJpaRepository<MeasurementE
       ))
       .where(predicate)
       .from(path);
-
-    JPQLQuery<?> countQuery = createCountQuery(predicate);
-    // TODO: Implement and test sorting...
-    // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
-    query = querydsl.applyPagination(pageable, query);
-
-    return PageableExecutionUtils.getPage(query.fetch(), pageable, countQuery::fetchCount);
+    return query;
   }
 }
 

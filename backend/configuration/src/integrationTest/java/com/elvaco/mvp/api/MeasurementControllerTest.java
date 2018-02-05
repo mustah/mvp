@@ -17,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 
 import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
@@ -109,10 +108,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementsRetrievableAtEndpoint() {
-    Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements", MeasurementDto.class);
+    List<MeasurementDto> measurements = asElvacoUser()
+      .getList("/measurements", MeasurementDto.class).getBody();
 
-    assertThat(page.getContent().get(0).quantity).isEqualTo("Butter temperature");
+    assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
   }
 
   @Test
@@ -128,21 +127,22 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementUnitScaled() {
-    Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class);
+    List<MeasurementDto> measurements = asElvacoUser()
+      .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
+      .getBody();
 
-    MeasurementDto measurementDto = page.getContent().get(0);
-    assertThat(measurementDto.quantity).isEqualTo("Butter temperature");
-    assertThat(measurementDto.unit).isEqualTo("K");
-    assertThat(measurementDto.value).isEqualTo(285.59); // 12.44 Celsius = 285.59 Kelvin
+    assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
+    assertThat(measurements.get(0).unit).isEqualTo("K");
+    assertThat(measurements.get(0).value).isEqualTo(285.59); // 12.44 Celsius = 285.59 Kelvin
   }
 
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
-    Page<MeasurementDto> page = asElvacoUser()
-      .getPage("/measurements", MeasurementDto.class);
+    List<MeasurementDto> measurements = asElvacoUser()
+      .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
+      .getBody();
 
-    page.forEach(
+    measurements.forEach(
       measurementDto -> assertThat(measurementDto.quantity).isNotEqualTo("Milk temperature")
     );
   }
@@ -173,13 +173,12 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanSeeAllMeasurements() {
-    assertThat(getPageAsSuperAdmin("/measurements")).hasSize(5);
+    assertThat(getListAsSuperAdmin("/measurements")).hasSize(5);
   }
 
   @Test
   public void fetchMeasurementsForMeter() {
-    List<String> quantities = getPageAsSuperAdmin("/measurements?meterId=" + forceMeter.id)
-      .getContent()
+    List<String> quantities = getListAsSuperAdmin("/measurements?meterId=" + forceMeter.id)
       .stream()
       .map(c -> c.quantity)
       .collect(toList());
@@ -190,7 +189,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForHeatMeter() {
-    List<MeasurementDto> contents = getPageAsSuperAdmin("/measurements?quantity=Heat").getContent();
+    List<MeasurementDto> contents = getListAsSuperAdmin("/measurements?quantity=Heat");
 
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
@@ -205,8 +204,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getPageAsSuperAdmin("/measurements?quantity?LightsaberPower&before=" + date)
-        .getContent();
+      getListAsSuperAdmin("/measurements?quantity?LightsaberPower&before=" + date);
 
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
@@ -217,16 +215,15 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
     List<MeasurementDto> contents =
-      getPageAsSuperAdmin("/measurements?quantity=Heat&after=1990-01-01T08:00:00Z")
-        .getContent();
+      getListAsSuperAdmin("/measurements?quantity=Heat&after=1990-01-01T08:00:00Z");
 
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("Heat");
   }
 
-  private Page<MeasurementDto> getPageAsSuperAdmin(String url) {
-    return asSuperAdmin().getPage(url, MeasurementDto.class);
+  private List<MeasurementDto> getListAsSuperAdmin(String url) {
+    return asSuperAdmin().getList(url, MeasurementDto.class).getBody();
   }
 
   private Long idOf(String measurementQuantity) {

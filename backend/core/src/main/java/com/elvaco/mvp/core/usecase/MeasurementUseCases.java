@@ -7,10 +7,8 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationFilter;
-import com.elvaco.mvp.core.spi.data.Page;
-import com.elvaco.mvp.core.spi.data.Pageable;
 
+import static com.elvaco.mvp.core.security.OrganisationFilter.complementFilterWithOrganisationParameters;
 import static java.util.Collections.singletonList;
 
 public class MeasurementUseCases {
@@ -23,15 +21,19 @@ public class MeasurementUseCases {
     this.measurements = measurements;
   }
 
-  public Page<Measurement> findAllPageable(
+  public List<Measurement> findAll(
     String scale,
-    Map<String, List<String>> filterParams,
-    Pageable pageable
+    Map<String, List<String>> filterParams
   ) {
     if (scale != null) {
-      return findAllByScale(scale, filterParams, pageable);
+      return measurements.findAllByScale(
+        scale,
+        complementFilterWithOrganisationParameters(currentUser, filterParams)
+      );
     } else {
-      return findAll(filterParams, pageable);
+      return measurements.findAll(
+        complementFilterWithOrganisationParameters(currentUser, filterParams)
+      );
     }
   }
 
@@ -44,25 +46,6 @@ public class MeasurementUseCases {
           return Optional.empty();
         }
       });
-  }
-
-  private Page<Measurement> findAllByScale(
-    String scale,
-    Map<String, List<String>> filterParams,
-    Pageable pageable
-  ) {
-    return measurements.findAllByScale(
-      scale,
-      OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
-      pageable
-    );
-  }
-
-  private Page<Measurement> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
-    return measurements.findAll(
-      OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
-      pageable
-    );
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
