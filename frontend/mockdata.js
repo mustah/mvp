@@ -59,24 +59,23 @@ const statusChangelog = [
   },
 ];
 
-const
-  alarmsLookup = [
-    'Låg batterinivå',
-    'Flödessensorfel (luft)',
-    'Flödessensorfel (generisk)',
-    'Flödessensorfel (smutsig)',
-    'Läckage',
-    'Högt flöde',
-    'Felvänt flöde',
-    'Ingående temperatursensorfel',
-    'Utgående temeratursensorfel',
-    'Temperatursensorfel (generisk)',
-    'Temperatursensor inverterad',
-    'Tamperfel',
-    'Matningsspänningsfel',
-    'Behöver batteribyte',
-    'Internt mätarfel',
-  ];
+const alarmsLookup = [
+  'Låg batterinivå',
+  'Flödessensorfel (luft)',
+  'Flödessensorfel (generisk)',
+  'Flödessensorfel (smutsig)',
+  'Läckage',
+  'Högt flöde',
+  'Felvänt flöde',
+  'Ingående temperatursensorfel',
+  'Utgående temeratursensorfel',
+  'Temperatursensorfel (generisk)',
+  'Temperatursensor inverterad',
+  'Tamperfel',
+  'Matningsspänningsfel',
+  'Behöver batteribyte',
+  'Internt mätarfel',
+];
 
 const getRandomAlarm = (meterStatus) => {
   if (meterStatus === 0 || meterStatus === 4) {
@@ -154,7 +153,9 @@ const parseMeasurementSeedData = (path) => {
   return {measurements, statusChanges};
 };
 
-const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeocoding: false, statusChanges: {}}) => {
+const parseMeterSeedData = (path, seedOptions = {
+  geocodeCacheFile: null, doGeocoding: false, statusChanges: {}
+}) => {
   const {geocodeCacheFile, doGeocoding, statusChanges} = seedOptions;
   const r = {
     meters: [],
@@ -199,7 +200,7 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
     const options = {
       delimiter: ';',
       headers: 'facility;address;city;medium;meter_id;meter_manufacturer;' +
-      'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
+               'gateway_id;gateway_product_model;tel;ip;port;gateway_status;meter_status',
     };
     const obj = csvjson.toObject(meterData, options);
     return Promise.all(obj.map(async (row) => {
@@ -322,7 +323,9 @@ const parseMeterSeedData = (path, seedOptions = {geocodeCacheFile: null, doGeoco
         manufacturers.add(row.meter_manufacturer);
       }
       if (!productModels.has(row.gateway_product_model)) {
-        r.selections.productModels.push({id: row.gateway_product_model, name: row.gateway_product_model});
+        r.selections.productModels.push({
+          id: row.gateway_product_model, name: row.gateway_product_model
+        });
         productModels.add(row.gateway_product_model);
       }
     }));

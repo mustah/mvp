@@ -20,6 +20,7 @@ public class SettingEntity {
 
   @Column(nullable = false, unique = true)
   public String name;
+
   @Column(nullable = false)
   public String value;
 

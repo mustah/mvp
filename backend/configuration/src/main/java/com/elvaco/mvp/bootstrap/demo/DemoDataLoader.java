@@ -86,7 +86,8 @@ public class DemoDataLoader implements CommandLineRunner {
       MeteringPointEntity meteringPointEntity = mockMeteringPoint(
         meterIdentity,
         gatewayEntities,
-        i);
+        i
+      );
 
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
         ELVACO_ENTITY,
@@ -107,11 +108,7 @@ public class DemoDataLoader implements CommandLineRunner {
   }
 
   private GatewayEntity mockGateway(String serial) {
-    GatewayEntity gatewayEntity = new GatewayEntity();
-    gatewayEntity.model = "2100";
-    gatewayEntity.serial = serial;
-
-    return gatewayRepository.save(gatewayEntity);
+    return gatewayRepository.save(new GatewayEntity(serial, "2100"));
   }
 
   private void mockMeasurement(
@@ -149,8 +146,7 @@ public class DemoDataLoader implements CommandLineRunner {
       "Electricity"
     );
     physicalMeterEntity.meteringPoint = meteringPointEntity;
-    physicalMeterRepository.save(physicalMeterEntity);
-    return physicalMeterEntity;
+    return physicalMeterRepository.save(physicalMeterEntity);
   }
 
   private MeteringPointEntity mockMeteringPoint(

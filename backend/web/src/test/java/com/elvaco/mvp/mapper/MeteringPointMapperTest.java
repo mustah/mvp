@@ -7,11 +7,27 @@ import com.elvaco.mvp.core.domainmodels.MeteringPoint;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.dto.IdNamedDto;
 import com.elvaco.mvp.dto.MapMarkerDto;
+import org.junit.Before;
 import org.junit.Test;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.config.Configuration.AccessLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringPointMapperTest {
+
+  private MeteringPointMapper mapper;
+
+  @Before
+  public void setUp() {
+    ModelMapper modelMapper = new ModelMapper();
+    modelMapper
+      .getConfiguration()
+      .setFieldMatchingEnabled(true)
+      .setFieldAccessLevel(AccessLevel.PUBLIC);
+
+    mapper = new MeteringPointMapper(modelMapper);
+  }
 
   @Test
   public void mapMeteringPointToMapMarkerDto() {
@@ -31,7 +47,7 @@ public class MeteringPointMapperTest {
       null
     );
 
-    MapMarkerDto mapMarkerDto = new MeteringPointMapper().toMapMarkerDto(meteringPoint);
+    MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(meteringPoint);
 
     assertThat(mapMarkerDto).isEqualTo(mapMarkerDtoExpected);
   }

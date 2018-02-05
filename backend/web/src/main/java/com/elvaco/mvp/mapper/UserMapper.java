@@ -54,7 +54,7 @@ public class UserMapper {
     );
   }
 
-  public Organisation organisationOf(OrganisationDto organisation) {
+  private Organisation organisationOf(OrganisationDto organisation) {
     return new Organisation(organisation.id, organisation.name, organisation.code);
   }
 

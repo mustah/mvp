@@ -31,7 +31,7 @@ public class MeteringPointRepository implements MeteringPoints {
   }
 
   @Override
-  public MeteringPoint findOne(Long id) {
+  public MeteringPoint findById(Long id) {
     return meteringPointMapper.toDomainModel(
       meteringPointJpaRepository.findOne(id)
     );

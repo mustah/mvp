@@ -25,5 +25,12 @@ public class GatewayEntity {
   public String serial;
 
   @Column(nullable = false)
-  public String model;
+  public String productModel;
+
+  public GatewayEntity() {}
+
+  public GatewayEntity(String serial, String productModel) {
+    this.serial = serial;
+    this.productModel = productModel;
+  }
 }
