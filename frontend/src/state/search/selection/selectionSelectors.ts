@@ -7,7 +7,7 @@ import {DomainModel, Normalized, ObjectsById, SelectionEntity} from '../../domai
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Meter, MetersState} from '../../domain-models/meter/meterModels';
 import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
-import {Pagination} from '../../ui/pagination/paginationModels';
+import {PaginationMetadata} from '../../ui/pagination/paginationModels';
 import {initialComponentPagination} from '../../ui/pagination/paginationReducer';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
@@ -100,21 +100,21 @@ export interface UriLookupState {
   selection: SelectionState;
   saved: SelectionState[];
   pagination: {
-    [componentId: string]: Pagination,
+    [componentId: string]: PaginationMetadata,
   };
 }
 
-export const getPagination = ({componentId, pagination}: UriLookupState): Pagination =>
+export const getPagination = ({componentId, pagination}: UriLookupState): PaginationMetadata =>
   pagination[componentId] ? pagination[componentId] : {...initialComponentPagination};
 
-export const getEncodedUriParametersForMeters = createSelector<UriLookupState, Pagination, SelectedParameters, string>(
+export const getEncodedUriParametersForMeters = createSelector<UriLookupState, PaginationMetadata, SelectedParameters, string>(
   getPagination,
   getSelectedParameters,
   encodedUriParametersForMeters,
 );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<UriLookupState, Pagination, SelectedParameters, string>(
+  createSelector<UriLookupState, PaginationMetadata, SelectedParameters, string>(
     getPagination,
     getSelectedParameters,
     encodedUriParametersForGateways,

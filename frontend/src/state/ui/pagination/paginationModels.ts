@@ -1,13 +1,9 @@
 import {uuid} from '../../../types/Types';
+import {DomainModelsState} from '../../domain-models/domainModels';
+import {HasPageNumber} from '../../domain-models/paginatedDomainModels';
 
-export interface Pagination {
-  first: boolean;
-  last: boolean;
-  requestedPage: number;
-  currentPage: number;
-  numberOfElements: number;
+export interface PaginationMetadata {
   size: number;
-  sort: SortingOptions[] | null;
   totalElements: number;
   totalPages: number;
 }
@@ -16,19 +12,17 @@ export interface HasComponentId {
   componentId: uuid;
 }
 
-export interface PaginationMetadataPayload extends HasComponentId {
-  page: Pagination;
-}
-
-export interface PaginationChangePayload extends HasComponentId {
-  page: number;
-}
+export type PaginationChangePayload = HasComponentId & HasPageNumber;
 
 export type OnChangePage = (page: number) => void;
 
-export interface PaginationState {
-  [useCase: string]: Pagination;
+interface PaginationModel extends PaginationMetadata {
+  useCases: {[component: string]: HasPageNumber};
 }
+
+export type PaginationState = {
+  [model in keyof DomainModelsState] : PaginationModel
+  };
 
 export interface SortingOptions {
   direction: 'ASC' | 'DESC';

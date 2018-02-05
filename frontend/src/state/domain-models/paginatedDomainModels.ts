@@ -1,8 +1,15 @@
 import {ErrorResponse, HasId, uuid} from '../../types/Types';
-import {HasComponentId, SortingOptions} from '../ui/pagination/paginationModels';
+import {SortingOptions} from '../ui/pagination/paginationModels';
 import {ObjectsById} from './domainModels';
+import {MeasurementState} from './measurement/measurementModels';
+import {MetersState} from './meter/meterModels';
 
-export interface PaginationMetadata {
+export interface PaginatedDomainModelsState {
+  meters: MetersState;
+  measurements: MeasurementState;
+}
+
+export interface NormalizedPaginatedResult {
   content: uuid[];
   first: boolean;
   last: boolean;
@@ -20,7 +27,7 @@ export interface HasPageNumber {
 
 export interface NormalizedPaginated<T extends HasId> extends HasPageNumber {
   entities: {[entityType: string]: ObjectsById<T>};
-  result: PaginationMetadata;
+  result: NormalizedPaginatedResult;
 }
 
 export interface NormalizedPaginatedState<T extends HasId = HasId> {

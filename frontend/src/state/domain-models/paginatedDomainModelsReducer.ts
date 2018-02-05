@@ -1,3 +1,4 @@
+import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from './domainModels';
 import {Measurement} from './measurement/measurementModels';
@@ -83,5 +84,10 @@ export const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints)
     }
   };
 
-export const paginatedMeters = reducerFor<Meter>('meters', EndPoints.meters);
-export const paginatedMeasurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
+export const meters = reducerFor<Meter>('meters', EndPoints.meters);
+export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
+
+export const paginatedDomainModels = combineReducers({
+  meters,
+  measurements,
+});

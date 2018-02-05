@@ -2,6 +2,7 @@ import {routerReducer as routing, RouterState} from 'react-router-redux';
 import {combineReducers} from 'redux';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
+import {PaginatedDomainModelsState} from '../state/domain-models/paginatedDomainModels';
 import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {AuthState} from '../usecases/auth/authModels';
@@ -16,6 +17,7 @@ import {report} from '../usecases/report/reportReducer';
 export interface RootState {
   auth: AuthState;
   domainModels: DomainModelsState;
+  paginatedDomainModels: PaginatedDomainModelsState;
   dashboard: DashboardState;
   routing: RouterState;
   report: ReportState;

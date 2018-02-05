@@ -1,8 +1,9 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
+import {NormalizedPaginatedResult} from '../../../domain-models/paginatedDomainModels';
 import {
   PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA, paginationRequestPage,
-  paginationUpdateMetaData
+  paginationUpdateMetaData,
 } from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
 import {initialComponentPagination} from '../paginationReducer';
@@ -27,7 +28,7 @@ describe('paginationActions', () => {
     });
 
     it('dispatches a update metadata request', () => {
-      const payload: PaginationMetadataPayload = {
+      const payload: NormalizedPaginatedResult = {
         componentId: 'test', page: {...initialComponentPagination},
       };
 

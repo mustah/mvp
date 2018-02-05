@@ -17,7 +17,7 @@ import {getResultDomainModels} from '../../../state/domain-models/domainModelsSe
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities, getUsersTotal} from '../../../state/domain-models/user/userSelectors';
 import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
-import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
+import {OnChangePage, PaginationMetadata} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';
 import {UserLinkButton} from '../components/UserLinkButton';
@@ -28,7 +28,7 @@ interface StateToProps {
   users: DomainModel<User>;
   isFetching: boolean;
   paginatedList: uuid[];
-  pagination: Pagination;
+  pagination: PaginationMetadata;
   encodedUriParametersForUsers: string;
 }
 

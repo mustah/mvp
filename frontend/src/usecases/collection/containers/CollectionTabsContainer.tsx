@@ -24,7 +24,7 @@ import {
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
-import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
+import {OnChangePage, PaginationMetadata} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
@@ -46,7 +46,7 @@ interface StateToProps extends TabsContainerStateToProps {
   gateways: ObjectsById<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
-  pagination: Pagination;
+  pagination: PaginationMetadata;
   selectedMaker: Maybe<Gateway>;
   isFetching: boolean;
 }

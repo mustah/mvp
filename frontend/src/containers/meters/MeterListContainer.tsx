@@ -18,7 +18,7 @@ import {getMeterEntities, getMeterResult, getMetersIsFetching} from '../../state
 import {fetchMeters} from '../../state/domain-models/paginatedDomainModelsActions';
 import {getEncodedUriParametersForMeters, getPagination} from '../../state/search/selection/selectionSelectors';
 import {paginationRequestPage} from '../../state/ui/pagination/paginationActions';
-import {Pagination, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
+import {PaginationMetadata, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
@@ -27,7 +27,7 @@ interface StateToProps {
   entities: ObjectsById<Meter>;
   isFetching: boolean;
   encodedUriParametersForMeters: string;
-  pagination: Pagination;
+  pagination: PaginationMetadata;
 }
 
 interface DispatchToProps {

@@ -1,10 +1,10 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
 import {PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
-import {Pagination, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from './paginationModels';
+import {PaginationMetadata, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from './paginationModels';
 
 export const limit = 5;
-export const initialComponentPagination: Pagination = {
+export const initialComponentPagination: PaginationMetadata = {
   first: true,
   last: false,
   requestedPage: 0,

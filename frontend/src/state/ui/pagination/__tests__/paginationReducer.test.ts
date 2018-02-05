@@ -1,5 +1,5 @@
 import {paginationRequestPage, paginationUpdateMetaData} from '../paginationActions';
-import {Pagination, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from '../paginationModels';
+import {PaginationMetadata, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from '../paginationModels';
 import {limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
@@ -20,7 +20,7 @@ describe('paginationReducer', () => {
 
   describe('pagination meta data', () => {
 
-    const paginationData: Readonly<Pagination> = {
+    const paginationData: Readonly<PaginationMetadata> = {
       first: false,
       last: false,
       currentPage: 2,

@@ -3,7 +3,7 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
 import {idGenerator} from '../../helpers/idGenerator';
-import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
+import {OnChangePage, PaginationMetadata} from '../../state/ui/pagination/paginationModels';
 import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PageNumberButton} from './PageNumberButton';
@@ -47,7 +47,7 @@ const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps):
 const iconArrowStyle = {marginTop: 8};
 
 interface Props {
-  pagination: Pagination;
+  pagination: PaginationMetadata;
   changePage: (page: number) => void;
 }
 

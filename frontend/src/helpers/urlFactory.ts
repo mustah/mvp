@@ -1,8 +1,8 @@
 import {Period} from '../components/dates/dateModels';
 import {EndPoints} from '../state/domain-models/domainModels';
-import {PaginationMetadata} from '../state/domain-models/paginatedDomainModels';
+import {NormalizedPaginatedResult} from '../state/domain-models/paginatedDomainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
-import {Pagination} from '../state/ui/pagination/paginationModels';
+import {PaginationMetadata} from '../state/ui/pagination/paginationModels';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
@@ -42,7 +42,7 @@ const meterParameterNames: ParameterNames = {
   productModels: 'gatewayProductModel',
 };
 
-export const encodedUriParametersForMeters = (pagination: Pagination, selectedIds: SelectedParameters): string => {
+export const encodedUriParametersForMeters = (pagination: PaginationMetadata, selectedIds: SelectedParameters): string => {
   return encodedUriParametersFrom(pagination, selectedIds, meterParameterNames, parameterCallbacks);
 };
 
@@ -52,7 +52,7 @@ export const encodedUriParametersForGateways = (pagination, selectedIds: Selecte
 
 const encodedUriParametersFrom =
   (
-    {requestedPage, size}: Pagination,
+    {requestedPage, size}: PaginationMetadata,
     selectedIds: SelectedParameters,
     parameterNames: ParameterNames,
     parameterCallbacks: ParameterCallbacks,
@@ -86,7 +86,7 @@ export const makeUrl = (endpoint: string, encodedUriParameters?: string): string
 };
 
 const navigatePageinatedEndpoint =
-  (direction: 'next' | 'previous', endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> => {
+  (direction: 'next' | 'previous', endpoint: EndPoints, currentPage: NormalizedPaginatedResult): Maybe<string> => {
     if ((currentPage.last && direction === 'next') || (currentPage.first && direction === 'previous')) {
       return Maybe.nothing();
     }
@@ -103,8 +103,8 @@ const navigatePageinatedEndpoint =
     return Maybe.just(makeUrl(endpoint, parameters.join('&')));
   };
 
-export const urlForNextPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
+export const urlForNextPage = (endpoint: EndPoints, currentPage: NormalizedPaginatedResult): Maybe<string> =>
   navigatePageinatedEndpoint('next', endpoint, currentPage);
 
-export const urlForPreviousPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
+export const urlForPreviousPage = (endpoint: EndPoints, currentPage: NormalizedPaginatedResult): Maybe<string> =>
   navigatePageinatedEndpoint('previous', endpoint, currentPage);

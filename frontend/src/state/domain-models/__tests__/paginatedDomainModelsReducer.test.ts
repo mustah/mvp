@@ -3,7 +3,7 @@ import {EndPoints} from '../domainModels';
 import {Measurement, MeasurementState} from '../measurement/measurementModels';
 import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
 import {requestMethodPaginated} from '../paginatedDomainModelsActions';
-import {initialPaginatedDomain, paginatedMeasurements as reducer} from '../paginatedDomainModelsReducer';
+import {initialPaginatedDomain, measurements as reducer} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
 
