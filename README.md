@@ -30,11 +30,14 @@ and active profile, set to `postgresql`.
 
 #### Run system tests with postgresql
 All the classes that are run as integration tests can also be run as system tests with postgresql
-database. Just run the `systemTest` task manually after your postgres database has been started.
+database. Just run the `systemTest` task and a postgresql instance will be started and used as
+the database for the session.
 
-1. Start postgres DB.
-2. `./gradlew clean systemTest`
-3. Clear the mvp database before you restart the testing of the system tests.
+`./gradlew clean systemTest`
+
+> NOTE! If you already have a postgresql instance running, that instance will be used. Also beware
+> that if that instance was launched using docker-compose, it will be destroyed along with all its
+> data at the end of the system tests.
 
 > TODO: make sure the system tests can be run without wiping the tables created in postgres DB.  
  
