@@ -7,6 +7,12 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Organisations;
+
+import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.CREATE;
+import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.DELETE;
+import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.READ;
+import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.UPDATE;
 
 public class OrganisationUseCases {
 
@@ -33,20 +39,18 @@ public class OrganisationUseCases {
 
   public Optional<Organisation> findById(Long id) {
     return organisations.findById(id)
-      .filter(
-        organisation -> organisationPermissions.isAllowed(currentUser, organisation)
-      );
+      .filter(organisation -> organisationPermissions.isAllowed(currentUser, organisation, READ));
   }
 
   public Optional<Organisation> create(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation)) {
+    if (organisationPermissions.isAllowed(currentUser, organisation, CREATE)) {
       return Optional.of(organisations.create(organisation));
     }
     return Optional.empty();
   }
 
   public Optional<Organisation> update(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation)) {
+    if (organisationPermissions.isAllowed(currentUser, organisation, UPDATE)) {
       return findById(organisation.id)
         .map(organisations::update);
     }
@@ -54,7 +58,7 @@ public class OrganisationUseCases {
   }
 
   public void delete(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation)) {
+    if (organisationPermissions.isAllowed(currentUser, organisation, DELETE)) {
       organisations.deleteById(organisation.id);
     }
   }

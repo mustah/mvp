@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.usecase.Organisations;
+import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
+import com.elvaco.mvp.repository.mappers.OrganisationMapper;
 
 import static java.util.stream.Collectors.toList;
 
@@ -38,19 +40,18 @@ public class OrganisationRepository implements Organisations {
 
   @Override
   public Organisation create(Organisation organisation) {
-    return organisationMapper.toDomainModel(organisationJpaRepository.save(organisationMapper
-      .toEntity(organisation)));
+    OrganisationEntity entity = organisationMapper.toEntity(organisation);
+    return organisationMapper.toDomainModel(organisationJpaRepository.save(entity));
   }
 
   @Override
   public Organisation update(Organisation organisation) {
-    return organisationMapper.toDomainModel(organisationJpaRepository.save(organisationMapper
-      .toEntity(organisation)));
+    OrganisationEntity entity = organisationMapper.toEntity(organisation);
+    return organisationMapper.toDomainModel(organisationJpaRepository.save(entity));
   }
 
   @Override
   public void deleteById(Long id) {
     organisationJpaRepository.delete(id);
   }
-
 }

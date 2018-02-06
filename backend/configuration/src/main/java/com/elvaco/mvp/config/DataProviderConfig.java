@@ -2,16 +2,19 @@ package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.repository.access.MeasurementRepository;
+import com.elvaco.mvp.repository.access.OrganisationRepository;
 import com.elvaco.mvp.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.repository.access.SettingRepository;
 import com.elvaco.mvp.repository.access.UserRepository;
 import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
@@ -24,6 +27,7 @@ import com.elvaco.mvp.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.repository.mappers.SettingMapper;
 import com.elvaco.mvp.repository.mappers.UserMapper;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +44,7 @@ class DataProviderConfig {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
+  private final OrganisationJpaRepository organisationJpaRepository;
 
   @Autowired
   DataProviderConfig(
@@ -49,7 +54,8 @@ class DataProviderConfig {
     SettingJpaRepository settingJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
     LogicalMeterJpaRepository logicalMeterJpaRepository,
-    PhysicalMeterJpaRepository physicalMeterJpaRepository
+    PhysicalMeterJpaRepository physicalMeterJpaRepository,
+    OrganisationJpaRepository organisationJpaRepository
   ) {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
@@ -58,6 +64,7 @@ class DataProviderConfig {
     this.passwordEncoder = passwordEncoder;
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.physicalMeterJpaRepository = physicalMeterJpaRepository;
+    this.organisationJpaRepository = organisationJpaRepository;
   }
 
   @Bean
@@ -106,5 +113,13 @@ class DataProviderConfig {
 
   private PhysicalMeterMapper newPhysicalMeterMapper() {
     return new PhysicalMeterMapper(new OrganisationMapper());
+  }
+
+  @Bean
+  Organisations organisations() {
+    return new OrganisationRepository(
+      organisationJpaRepository,
+      new OrganisationMapper()
+    );
   }
 }

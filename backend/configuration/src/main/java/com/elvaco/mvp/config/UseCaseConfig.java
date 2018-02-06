@@ -8,6 +8,8 @@ import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +23,21 @@ class UseCaseConfig {
   private final LogicalMeters logicalMeters;
   private final Settings settings;
   private final Measurements measurements;
+  private final Organisations organisations;
 
   @Autowired
   UseCaseConfig(
     Users users,
     Settings settings,
     LogicalMeters logicalMeters,
-    Measurements measurements
+    Measurements measurements,
+    Organisations organisations
   ) {
     this.users = users;
     this.logicalMeters = logicalMeters;
     this.settings = settings;
     this.measurements = measurements;
+    this.organisations = organisations;
   }
 
   @Bean
@@ -48,6 +53,11 @@ class UseCaseConfig {
   @Bean
   LogicalMeterUseCases logicalMeterUseCases(AuthenticatedUser currentUser) {
     return new LogicalMeterUseCases(currentUser, logicalMeters);
+  }
+
+  @Bean
+  OrganisationUseCases organisationUseCases(AuthenticatedUser currentUser) {
+    return new OrganisationUseCases(currentUser, organisations, new OrganisationPermissions(users));
   }
 
   @Bean
