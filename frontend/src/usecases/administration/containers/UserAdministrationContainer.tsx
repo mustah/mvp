@@ -16,7 +16,6 @@ import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsA
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities, getUsersTotal} from '../../../state/domain-models/user/userSelectors';
-import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, PaginationMetadata} from '../../../state/ui/pagination/paginationModels';
 import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';

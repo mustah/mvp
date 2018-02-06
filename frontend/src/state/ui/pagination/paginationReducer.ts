@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {HasPageNumber} from '../../domain-models/paginatedDomainModels';
+import {HasPageNumber} from '../../domain-models-paginated/paginatedDomainModels';
 import {PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 

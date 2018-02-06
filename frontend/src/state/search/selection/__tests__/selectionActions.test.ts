@@ -10,7 +10,7 @@ import {IdNamed} from '../../../../types/Types';
 import {EndPoints, HttpMethod, Normalized} from '../../../domain-models/domainModels';
 import {requestMethod} from '../../../domain-models/domainModelsActions';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {Meter} from '../../../domain-models/meter/meterModels';
+import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {SearchParameterState} from '../../searchParameterReducer';
 import {
   addSelectionAction, closeSelectionPage, closeSelectionPageAction, deselectSelection, selectPeriod,

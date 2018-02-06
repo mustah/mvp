@@ -6,14 +6,19 @@ import {RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId} from '../../types/Types';
+import {EndPoints, HttpMethod} from '../domain-models/domainModels';
+import {Measurement} from '../domain-models/measurement/measurementModels';
+import {measurementSchema} from '../domain-models/measurement/measurementSchema';
 import {showFailMessage} from '../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
-import {EndPoints, HttpMethod} from './domainModels';
-import {Measurement} from './measurement/measurementModels';
-import {measurementSchema} from './measurement/measurementSchema';
 import {Meter} from './meter/meterModels';
 import {meterSchema} from './meter/meterSchema';
-import {HasPageNumber, NormalizedPaginated, PaginatedDomainModelsState} from './paginatedDomainModels';
+import {
+  HasPageNumber,
+  NormalizedPaginated,
+  PaginatedDomainModelsState,
+  RestGetPaginated,
+} from './paginatedDomainModels';
 
 export const DOMAIN_MODELS_PAGINATED_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_REQUEST${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endPoint: EndPoints) =>
@@ -61,7 +66,8 @@ const asyncRequest = <REQ, DAT>(
   }: AsyncRequest<REQ, DAT>) =>
   async (dispatch, getState: () => RootState) => {
     const {paginatedDomainModels: models} = getState();
-    const shouldFetch = !(models[model].result[page] && models[model].result[page].result);
+    const shouldFetch =
+      !(models[model].result[page] && (models[model].result[page].result || models[model].result[page].isFetching));
     // TODO: Perhaps move this check one level up to restGetIfNeeded
     if (shouldFetch) {
       try {
@@ -88,7 +94,7 @@ const restGetIfNeeded = <T extends HasId>(
   schema: Schema,
   model: keyof PaginatedDomainModelsState,
   restCallbacks?: RestCallbacks<NormalizedPaginated<T>>,
-) => {
+): RestGetPaginated => {
   const requestGet = requestMethodPaginated<NormalizedPaginated<T>>(endPoint);
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
@@ -103,11 +109,13 @@ const restGetIfNeeded = <T extends HasId>(
   });
 };
 
-// TODO: Add tests to both fetchMeasurements and fetchMeters
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
 export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
-  afterSuccess: ({result}: NormalizedPaginated<Meter>, dispatch) => dispatch(paginationUpdateMetaData(result)),
+  afterSuccess: (
+    {result}: NormalizedPaginated<Meter>,
+    dispatch,
+  ) => dispatch(paginationUpdateMetaData({model: 'meters', ...result})),
   afterFailure: (
     {message}: ErrorResponse,
     dispatch,

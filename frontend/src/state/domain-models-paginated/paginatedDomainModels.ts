@@ -1,11 +1,11 @@
 import {ErrorResponse, HasId, uuid} from '../../types/Types';
+import {ObjectsById} from '../domain-models/domainModels';
+import {MeasurementState} from '../domain-models/measurement/measurementModels';
 import {SortingOptions} from '../ui/pagination/paginationModels';
-import {ObjectsById} from './domainModels';
-import {MeasurementState} from './measurement/measurementModels';
-import {MetersState} from './meter/meterModels';
+import {Meter} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
-  meters: MetersState;
+  meters: NormalizedPaginatedState<Meter>;
   measurements: MeasurementState;
 }
 
@@ -40,3 +40,5 @@ interface PaginatedResult {
   error?: ErrorResponse;
   result?: uuid[];
 }
+
+export type RestGetPaginated = (page: number, requestData?: string) => void;

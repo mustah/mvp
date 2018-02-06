@@ -1,8 +1,7 @@
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {IdNamed, uuid} from '../../../types/Types';
-import {Location, ObjectsById, SelectionEntity} from '../domainModels';
-import {Flag} from '../flag/flagModels';
-import {NormalizedPaginatedState} from '../paginatedDomainModels';
+import {Location, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
+import {Flag} from '../../domain-models/flag/flagModels';
 
 export interface MeterStatusChangelog {
   id: uuid;
@@ -31,8 +30,6 @@ export interface Meter extends Location {
   gatewayProductModel: string;
 }
 
-export type MetersState = NormalizedPaginatedState<Meter>;
-
 export interface SelectionTreeItem {
   id: uuid;
   name: string;
@@ -57,7 +54,7 @@ export interface SelectionTreeItemsProps extends SelectionTreeItemProps {
 export type SelectionTreeModel = ObjectsById<SelectionTreeItem>;
 
 export interface SelectionTreeData {
-  result: ObjectsById<uuid[]>;
+  result: {[key: string]: uuid[]};
   entities: {[key: string]: SelectionTreeModel};
 }
 

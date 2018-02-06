@@ -6,8 +6,8 @@ import {bindActionCreators} from 'redux';
 import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
-import {getSelectionTree} from '../../../../state/domain-models/meter/meterSelectors';
+import {SelectionTreeData} from '../../../../state/domain-models-paginated/meter/meterModels';
+import {getSelectionTree} from '../../../../state/domain-models-paginated/meter/meterSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {OnClickWithId, uuid} from '../../../../types/Types';
@@ -62,7 +62,7 @@ const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProp
   );
 };
 
-const mapStateToProps = ({report, domainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
+const mapStateToProps = ({report, paginatedDomainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
   return {
     selectionTree: getSelectionTree(meters),
     openListItems: getOpenListItems(selectionTree),

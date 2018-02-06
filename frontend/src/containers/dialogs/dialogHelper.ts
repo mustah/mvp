@@ -4,7 +4,7 @@ import {Normalized} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
 import {Gateway, GatewayStatusChangelog} from '../../state/domain-models/gateway/gatewayModels';
 import {statusChangelogSchema} from '../../state/domain-models/gateway/gatewaySchema';
-import {Meter, MeterStatusChangelog} from '../../state/domain-models/meter/meterModels';
+import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 
 export const titleOf = (flags: Flag[]): string => {
   if (flags.length) {

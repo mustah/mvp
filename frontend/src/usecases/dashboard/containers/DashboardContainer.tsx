@@ -11,9 +11,9 @@ import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {getPaginatedEntities} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {Callback} from '../../../types/Types';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
@@ -65,11 +65,11 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
 }, dispatch);
 
-const mapStateToProps = ({dashboard, domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({dashboard, paginatedDomainModels: {meters}}: RootState): StateToProps => {
   return {
     isFetching: dashboard.isFetching,
     dashboard: dashboard.record,
-    meters: getMeterEntities(meters),
+    meters: getPaginatedEntities(meters),
   };
 };
 

@@ -20,7 +20,7 @@ import {translate} from '../../services/translationService';
 import {ObjectsById, Normalized} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
-import {Meter} from '../../state/domain-models/meter/meterModels';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';

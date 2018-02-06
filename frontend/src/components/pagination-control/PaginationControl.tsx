@@ -3,7 +3,8 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
 import {idGenerator} from '../../helpers/idGenerator';
-import {OnChangePage, PaginationMetadata} from '../../state/ui/pagination/paginationModels';
+import {Pagination} from '../../state/search/selection/selectionSelectors';
+import {OnChangePage} from '../../state/ui/pagination/paginationModels';
 import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PageNumberButton} from './PageNumberButton';
@@ -47,25 +48,25 @@ const renderPageNumberButtons = ({total, current, changePage}: PageNumberProps):
 const iconArrowStyle = {marginTop: 8};
 
 interface Props {
-  pagination: PaginationMetadata;
+  pagination: Pagination;
   changePage: (page: number) => void;
 }
 
 export const PaginationControl =
-  ({pagination: {currentPage, size, totalPages}, changePage}: Props) => {
+  ({pagination: {page, size, totalPages}, changePage}: Props) => {
 
     if (totalPages <= 1) {
       return null;
     }
 
-    const noPrev = currentPage === 0;
-    const noNext = currentPage + 1 >= totalPages;
+    const noPrev = page === 0;
+    const noNext = page + 1 >= totalPages;
 
-    const changePagePrev = noPrev ? () => void(0) : () => changePage(currentPage - 1);
-    const changePageNext = noNext ? () => void(0) : () => changePage(currentPage + 1);
+    const changePagePrev = noPrev ? () => void(0) : () => changePage(page - 1);
+    const changePageNext = noNext ? () => void(0) : () => changePage(page + 1);
 
     const pageNumberButtons = renderPageNumberButtons({
-      current: currentPage,
+      current: page,
       total: totalPages,
       changePage,
     });

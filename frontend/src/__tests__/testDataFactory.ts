@@ -1,4 +1,4 @@
-import {Meter} from '../state/domain-models/meter/meterModels';
+import {Meter} from '../state/domain-models-paginated/meter/meterModels';
 
 const selections = {
   cities: [

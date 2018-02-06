@@ -22,10 +22,10 @@ import {Bold} from '../../../components/texts/Texts';
 import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {fetchMeasurements} from '../../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
-import {fetchMeasurements} from '../../../state/domain-models/paginatedDomainModelsActions';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
@@ -153,7 +153,7 @@ class GraphComponent extends React.Component<Props> {
 
 const mapStateToProps =
   ({
-     domainModels: {measurements},
+     paginatedDomainModels: {measurements},
      report: {selectedListItems},
      searchParameters: {selection: {selected: {period}}},
    }: RootState): StateToProps =>

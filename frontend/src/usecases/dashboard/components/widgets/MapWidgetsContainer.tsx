@@ -6,7 +6,7 @@ import {Row} from '../../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {ObjectsById, GeoPosition} from '../../../../state/domain-models/domainModels';
-import {Meter} from '../../../../state/domain-models/meter/meterModels';
+import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
 import {OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
 import {Map} from '../../../map/containers/Map';

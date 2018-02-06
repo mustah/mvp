@@ -23,7 +23,7 @@ const SummaryComponent = (props: StateToProps) => {
   );
 };
 
-const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({paginatedDomainModels: {meters}}: RootState): StateToProps => {
   return {
     selectionSummary: getSelectionSummary(meters),
   };

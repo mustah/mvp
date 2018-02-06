@@ -1,9 +1,8 @@
 import {uuid} from '../../../types/Types';
 import {
-  HasPageNumber,
-  NormalizedPaginatedResult,
+  HasPageNumber, NormalizedPaginatedResult,
   PaginatedDomainModelsState,
-} from '../../domain-models/paginatedDomainModels';
+} from '../../domain-models-paginated/paginatedDomainModels';
 
 export interface PaginationMetadata {
   size: number;

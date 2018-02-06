@@ -7,15 +7,18 @@ import {initLanguage} from '../../../i18n/i18n';
 import {RootState} from '../../../reducers/rootReducer';
 import {makeRestClient} from '../../../services/restClient';
 import {ErrorResponse} from '../../../types/Types';
+import {NormalizedPaginated} from '../../domain-models-paginated/paginatedDomainModels';
+import {
+  fetchMeasurements, fetchMeters,
+  requestMethodPaginated,
+} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {EndPoints} from '../domainModels';
 import {Measurement} from '../measurement/measurementModels';
 import {measurementSchema} from '../measurement/measurementSchema';
-import {Meter} from '../meter/meterModels';
-import {meterSchema} from '../meter/meterSchema';
-import {NormalizedPaginated} from '../paginatedDomainModels';
-import {fetchMeasurements, fetchMeters, requestMethodPaginated} from '../paginatedDomainModelsActions';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {meterSchema} from '../../domain-models-paginated/meter/meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
 initLanguage({code: 'en', name: 'english'});
@@ -160,7 +163,7 @@ describe('paginatedDomainModelsActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
         requestMeters.success({...normalizedMeterResponse}),
-        paginationUpdateMetaData(normalizedMeterResponse(page).result),
+        paginationUpdateMetaData({model: 'meters', ...normalizedMeterResponse(page).result}),
       ]);
     });
 
@@ -201,7 +204,7 @@ describe('paginatedDomainModelsActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(existingPage),
         requestMeters.success({...normalizedMeterResponse(existingPage)}),
-        paginationUpdateMetaData(normalizedMeterResponse(existingPage).result),
+        paginationUpdateMetaData({model: 'meters', ...normalizedMeterResponse(existingPage).result}),
       ]);
     });
 

@@ -25,7 +25,7 @@ import {
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {Meter} from '../../../domain-models/meter/meterModels';
+import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
 import {limit} from '../../../ui/pagination/paginationReducer';
 import {addSelectionAction, selectPeriodAction} from '../selectionActions';

@@ -1,9 +1,9 @@
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
-import {EndPoints, ObjectsById} from './domainModels';
-import {Measurement} from './measurement/measurementModels';
+import {EndPoints, ObjectsById} from '../domain-models/domainModels';
+import {Measurement} from '../domain-models/measurement/measurementModels';
 import {Meter} from './meter/meterModels';
-import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState,} from './paginatedDomainModels';
+import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from './paginatedDomainModels';
 import {
   DOMAIN_MODELS_PAGINATED_FAILURE,
   DOMAIN_MODELS_PAGINATED_GET_SUCCESS,

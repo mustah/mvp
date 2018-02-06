@@ -1,5 +1,5 @@
 import {schema} from 'normalizr';
-import {address, city} from '../domainModelsSchemas';
+import {address, city} from '../../domain-models/domainModelsSchemas';
 
 const meter = new schema.Entity('meters');
 export const meterSchema = {content: [meter]};

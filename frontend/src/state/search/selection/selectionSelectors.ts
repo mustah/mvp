@@ -3,11 +3,16 @@ import {Period} from '../../../components/dates/dateModels';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {
+  HasPageNumber,
+  NormalizedPaginatedState,
+  PaginatedDomainModelsState,
+} from '../../domain-models-paginated/paginatedDomainModels';
+import {getPaginatedEntities} from '../../domain-models-paginated/paginatedDomainModelsSelectors';
 import {DomainModel, Normalized, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {Meter, MetersState} from '../../domain-models/meter/meterModels';
-import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
-import {PaginationMetadata} from '../../ui/pagination/paginationModels';
+import {PaginationMetadata, PaginationState} from '../../ui/pagination/paginationModels';
 import {initialComponentPagination} from '../../ui/pagination/paginationReducer';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
@@ -96,25 +101,29 @@ export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
 export interface UriLookupState {
+  model: keyof PaginatedDomainModelsState;
   componentId: uuid;
   selection: SelectionState;
   saved: SelectionState[];
-  pagination: {
-    [componentId: string]: PaginationMetadata,
-  };
+  pagination: PaginationState;
 }
 
-export const getPagination = ({componentId, pagination}: UriLookupState): PaginationMetadata =>
-  pagination[componentId] ? pagination[componentId] : {...initialComponentPagination};
+export type Pagination = HasPageNumber & PaginationMetadata;
 
-export const getEncodedUriParametersForMeters = createSelector<UriLookupState, PaginationMetadata, SelectedParameters, string>(
-  getPagination,
-  getSelectedParameters,
-  encodedUriParametersForMeters,
-);
+export const getPagination = ({model, componentId, pagination}: UriLookupState): Pagination => {
+  const {useCases, ...metaData} = pagination[model];
+  return useCases[componentId] ? {...metaData, ...useCases[componentId]} : {...metaData, ...initialComponentPagination};
+};
+
+export const getEncodedUriParametersForMeters =
+  createSelector<UriLookupState, Pagination, SelectedParameters, string>(
+    getPagination,
+    getSelectedParameters,
+    encodedUriParametersForMeters,
+  );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<UriLookupState, PaginationMetadata, SelectedParameters, string>(
+  createSelector<UriLookupState, Pagination, SelectedParameters, string>(
     getPagination,
     getSelectedParameters,
     encodedUriParametersForGateways,
@@ -132,23 +141,24 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
-export const getSelectionSummary = createSelector<MetersState, uuid[], ObjectsById<Meter>, SelectionSummary>(
-  getResultDomainModels,
-  getMeterEntities,
-  (metersIds: uuid[], meters: ObjectsById<Meter>) => {
-    const cities = new Set<uuid>();
-    const addresses = new Set<uuid>();
+export const getSelectionSummary =
+  createSelector<NormalizedPaginatedState<Meter>, uuid[], ObjectsById<Meter>, SelectionSummary>(
+    getResultDomainModels,
+    getPaginatedEntities,
+    (metersIds: uuid[], meters: ObjectsById<Meter>) => {
+      const cities = new Set<uuid>();
+      const addresses = new Set<uuid>();
 
-    metersIds.map((meterId: uuid) => {
-        const {city, address} = meters[meterId];
-        cities.add(city.id);
-        addresses.add(address.id);
-      },
-    );
-    return ({
-      cities: cities.size,
-      addresses: addresses.size,
-      meters: metersIds.length,
-    });
-  },
-);
+      metersIds.map((meterId: uuid) => {
+          const {city, address} = meters[meterId];
+          cities.add(city.id);
+          addresses.add(address.id);
+        },
+      );
+      return ({
+        cities: cities.size,
+        addresses: addresses.size,
+        meters: metersIds.length,
+      });
+    },
+  );

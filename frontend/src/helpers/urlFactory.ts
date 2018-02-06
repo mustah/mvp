@@ -1,8 +1,8 @@
 import {Period} from '../components/dates/dateModels';
+import {NormalizedPaginatedResult} from '../state/domain-models-paginated/paginatedDomainModels';
 import {EndPoints} from '../state/domain-models/domainModels';
-import {NormalizedPaginatedResult} from '../state/domain-models/paginatedDomainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
-import {PaginationMetadata} from '../state/ui/pagination/paginationModels';
+import {Pagination} from '../state/search/selection/selectionSelectors';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
 import {Maybe} from './Maybe';
@@ -42,24 +42,24 @@ const meterParameterNames: ParameterNames = {
   productModels: 'gatewayProductModel',
 };
 
-export const encodedUriParametersForMeters = (pagination: PaginationMetadata, selectedIds: SelectedParameters): string => {
+export const encodedUriParametersForMeters = (pagination: Pagination, selectedIds: SelectedParameters): string => {
   return encodedUriParametersFrom(pagination, selectedIds, meterParameterNames, parameterCallbacks);
 };
 
-export const encodedUriParametersForGateways = (pagination, selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(pagination, selectedIds, meterParameterNames, parameterCallbacks);
+export const encodedUriParametersForGateways = (pagination: Pagination, selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom(pagination, selectedIds, gatewayParameterNames, parameterCallbacks);
 };
 
 const encodedUriParametersFrom =
   (
-    {requestedPage, size}: PaginationMetadata,
+    {page, size}: Pagination,
     selectedIds: SelectedParameters,
     parameterNames: ParameterNames,
     parameterCallbacks: ParameterCallbacks,
   ): string => {
     const parameters: string[] = [];
     parameters.push(`size=${encodeURIComponent(size.toString())}`);
-    parameters.push(`page=${encodeURIComponent(requestedPage.toString())}`);
+    parameters.push(`page=${encodeURIComponent(page.toString())}`);
 
     const addParameterWith = (name: string, value: uuid | Period) =>
       parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));

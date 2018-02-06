@@ -11,14 +11,24 @@ import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
+import {fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {
+  getPaginatedEntities,
+  getPageIsFetching,
+  getPageResult,
+} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
-import {Meter} from '../../state/domain-models/meter/meterModels';
-import {getMeterEntities, getMeterResult, getMetersIsFetching} from '../../state/domain-models/meter/meterSelectors';
-import {fetchMeters} from '../../state/domain-models/paginatedDomainModelsActions';
-import {getEncodedUriParametersForMeters, getPagination} from '../../state/search/selection/selectionSelectors';
+import {
+  getEncodedUriParametersForMeters,
+  getPagination,
+  Pagination,
+  UriLookupState,
+} from '../../state/search/selection/selectionSelectors';
 import {paginationRequestPage} from '../../state/ui/pagination/paginationActions';
-import {PaginationMetadata, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
+import {PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
@@ -27,12 +37,12 @@ interface StateToProps {
   entities: ObjectsById<Meter>;
   isFetching: boolean;
   encodedUriParametersForMeters: string;
-  pagination: PaginationMetadata;
+  pagination: Pagination;
 }
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
-  fetchMeters: (component: uuid, encodedUriParameters: string) => void;
+  fetchMeters: RestGetPaginated;
   paginationRequestPage: (payload: PaginationChangePayload) => void;
 }
 
@@ -44,44 +54,39 @@ const componentId = 'validationMeterList';
 class MeterList extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchMeters, encodedUriParametersForMeters} = this.props;
-    fetchMeters(componentId, encodedUriParametersForMeters);
+    const {fetchMeters, encodedUriParametersForMeters, pagination: {page}} = this.props;
+    fetchMeters(page, encodedUriParametersForMeters);
   }
 
-  componentWillReceiveProps(
-    {
-      fetchMeters,
-      encodedUriParametersForMeters,
-      pagination: {currentPage, requestedPage},
-    }: Props) {
-    if (currentPage !== requestedPage) {
-      fetchMeters(componentId, encodedUriParametersForMeters);
-    }
+  componentWillReceiveProps({fetchMeters, encodedUriParametersForMeters, pagination: {page}}: Props) {
+    fetchMeters(page, encodedUriParametersForMeters);
   }
 
   render() {
     const {result, entities, selectEntryAdd, isFetching, pagination, paginationRequestPage} = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-    const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
-    const renderCityName = ({city}: Meter) => city.name;
-    const renderAddressName = ({address}: Meter) => address.name;
-    const renderFlags = ({flags}: Meter) => flags.map((flag: Flag) => flag.title).join(', ');
+    const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : <Status id={0} name={'ok'}/>;
+    const renderCityName = ({city}: Meter) => city ? city.name : 'NAME';
+    const renderAddressName = ({address}: Meter) => address ? address.name : 'NAME';
+    const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : 'FLAGS';
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewayId = ({gatewayId}: Meter) => gatewayId;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-    const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
+    const renderStatusChanged = ({statusChanged}: Meter) => statusChanged ||
+      <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
 
     const changePage = (page: number) => {
       paginationRequestPage({
+        model: 'meters',
         componentId,
         page,
       });
     };
 
-// TODO: Add pagination control
+    // TODO: Add pagination control
     return (
       <Loader isFetching={isFetching}>
         <div>
@@ -137,16 +142,24 @@ class MeterList extends React.Component<Props> {
 const mapStateToProps = (
   {
     searchParameters,
-    domainModels: {paginatedMeters},
+    paginatedDomainModels: {meters},
     ui: {pagination},
   }: RootState): StateToProps => {
-  const uriLookupState = {...searchParameters, componentId, pagination};
+
+  const uriLookupState: UriLookupState = {
+    ...searchParameters,
+    componentId,
+    model: 'meters',
+    pagination,
+  };
+  const paginationData: Pagination = getPagination(uriLookupState);
+
   return ({
-    entities: getMeterEntities({...paginatedMeters, componentId}),
-    result: getMeterResult({...paginatedMeters, componentId}),
+    entities: getPaginatedEntities<Meter>(meters),
+    result: getPageResult<Meter>(meters, paginationData.page),
     encodedUriParametersForMeters: getEncodedUriParametersForMeters(uriLookupState),
-    isFetching: getMetersIsFetching({...paginatedMeters, componentId}),
-    pagination: getPagination(uriLookupState),
+    isFetching: getPageIsFetching(meters, paginationData.page),
+    pagination: paginationData,
   });
 };
 

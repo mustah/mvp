@@ -1,12 +1,12 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {NormalizedPaginatedResult} from '../../../domain-models/paginatedDomainModels';
 import {
-  PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA, paginationRequestPage,
+  PAGINATION_REQUEST_PAGE,
+  PAGINATION_UPDATE_METADATA,
+  paginationRequestPage,
   paginationUpdateMetaData,
 } from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
-import {initialComponentPagination} from '../paginationReducer';
 
 const configureMockStore = configureStore([thunk]);
 let store;
@@ -18,7 +18,7 @@ describe('paginationActions', () => {
 
   describe('changePaginationAction', () => {
     it('dipatches a requestPage action', () => {
-      const payload: PaginationChangePayload = {componentId: 'test', page: 2};
+      const payload: PaginationChangePayload = {model: 'meters', componentId: 'test', page: 2};
 
       store.dispatch(paginationRequestPage(payload));
 
@@ -28,8 +28,20 @@ describe('paginationActions', () => {
     });
 
     it('dispatches a update metadata request', () => {
-      const payload: NormalizedPaginatedResult = {
-        componentId: 'test', page: {...initialComponentPagination},
+      const payload: PaginationMetadataPayload = {
+        model: 'meters',
+        content: [
+          1,
+          2,
+        ],
+        totalPages: 1440,
+        totalElements: 28800,
+        last: false,
+        size: 2,
+        number: 0,
+        first: true,
+        numberOfElements: 2,
+        sort: null,
       };
 
       store.dispatch(paginationUpdateMetaData(payload));

@@ -1,8 +1,9 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
 import {combineReducers} from 'redux';
+import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
+import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
-import {PaginatedDomainModelsState} from '../state/domain-models/paginatedDomainModels';
 import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {AuthState} from '../usecases/auth/authModels';
@@ -30,6 +31,7 @@ export interface RootState {
 export const rootReducer = combineReducers<RootState>({
   auth,
   domainModels,
+  paginatedDomainModels,
   dashboard,
   routing,
   report,

@@ -23,7 +23,6 @@ import {
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {changePaginationCollection} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, PaginationMetadata} from '../../../state/ui/pagination/paginationModels';
 import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
