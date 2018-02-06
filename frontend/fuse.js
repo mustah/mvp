@@ -81,6 +81,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
       isProduction && QuantumPlugin({
         removeExportsInterop: false,
         uglify: true,
+        treeshake: true,
       }),
     ],
   });

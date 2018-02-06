@@ -6,7 +6,7 @@
   left: $main-menu-width;
   right: 0;
   z-index: $selection-header-z-index;
-  padding: 0 0 0 $lg-space;
+  padding: 0 $space 0 $lg-space;
   background-color: $white;
   height: $main-menu-height;
   justify-content: space-between;
@@ -25,6 +25,7 @@
     .Normal {
       margin-right: $space;
     }
+
     .SelectionIcon-margin {
       margin-right: 15px;
     }
