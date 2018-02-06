@@ -7,9 +7,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
@@ -17,12 +15,12 @@ import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
 import tec.uom.se.unit.Units;
 
+import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+
 @Slf4j
-public final class CompatibilityFunctions {
+final class CompatibilityFunctions {
 
   private static final Map<String, Unit<?>> CUSTOM_TYPES = new HashMap<>();
-  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-    .setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
   static {
     SimpleUnitFormat.getInstance().alias(Units.CELSIUS, "Celsius");
@@ -34,7 +32,7 @@ public final class CompatibilityFunctions {
 
   private CompatibilityFunctions() {}
 
-  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
+  static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     Quantity<?> sourceQuantity;
     try {
       sourceQuantity = Quantities.getQuantity(valueAndUnit);
