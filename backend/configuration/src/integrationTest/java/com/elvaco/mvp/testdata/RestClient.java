@@ -2,6 +2,7 @@ package com.elvaco.mvp.testdata;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,6 +48,14 @@ public final class RestClient {
 
   public void put(String url, Object request) {
     template.put(apiUrlOf(url), request);
+  }
+
+  public <T1, T2> ResponseEntity<T2> put(String url, T1 body, Class<T2> responseType) {
+    RequestEntity<T1> request = RequestEntity
+      .post(URI.create(apiUrlOf(url)))
+      .accept(MediaType.APPLICATION_JSON)
+      .body(body);
+    return template.exchange(request, responseType);
   }
 
   public <T> ResponseEntity<T> delete(String url, Class<T> responseType) {
