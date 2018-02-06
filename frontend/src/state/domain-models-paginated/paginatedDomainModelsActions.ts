@@ -2,7 +2,7 @@ import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
 import {createPayloadAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
-import {RootState} from '../../reducers/rootReducer';
+import {GetState, RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId} from '../../types/Types';
@@ -48,10 +48,10 @@ interface AsyncRequest<REQ, DAT> extends RestRequestHandlePaginated<DAT>, RestCa
   formatData?: (data: any) => DAT;
   requestData?: REQ;
   page: number;
-  model: keyof PaginatedDomainModelsState;
+  dispatch: Dispatch<RootState>;
 }
 
-const asyncRequest = <REQ, DAT>(
+const asyncRequest = async <REQ, DAT>(
   {
     request,
     success,
@@ -62,32 +62,28 @@ const asyncRequest = <REQ, DAT>(
     formatData = (id) => id,
     requestData,
     page,
-    model,
-  }: AsyncRequest<REQ, DAT>) =>
-  async (dispatch, getState: () => RootState) => {
-    const {paginatedDomainModels: models} = getState();
-    const shouldFetch =
-      !(models[model].result[page] && (models[model].result[page].result || models[model].result[page].isFetching));
-    // TODO: Perhaps move this check one level up to restGetIfNeeded
-    if (shouldFetch) {
-      try {
-        dispatch(request(page));
-        const {data: domainModelData} = await requestFunc(requestData);
-        const formattedData = formatData(domainModelData);
-        dispatch(success(formattedData));
-        if (afterSuccess) {
-          afterSuccess(formattedData, dispatch);
-        }
-      } catch (error) {
-        const {response} = error;
-        const data: ErrorResponse = response.data || {message: firstUpperTranslated('an unexpected error occurred')};
-        dispatch(failure({...data, page}));
-        if (afterFailure) {
-          afterFailure(data, dispatch);
-        }
-      }
+    dispatch,
+  }: AsyncRequest<REQ, DAT>) => {
+  try {
+    dispatch(request(page));
+    const {data: domainModelData} = await requestFunc(requestData);
+    const formattedData = formatData(domainModelData);
+    dispatch(success(formattedData));
+    if (afterSuccess) {
+      afterSuccess(formattedData, dispatch);
     }
-  };
+  } catch (error) {
+    const {response} = error;
+    const data: ErrorResponse = response.data || {message: firstUpperTranslated('an unexpected error occurred')};
+    dispatch(failure({...data, page}));
+    if (afterFailure) {
+      afterFailure(data, dispatch);
+    }
+  }
+};
+
+const isFetchingOrExisting = <T extends HasId>(page: number, {result}: NormalizedPaginated<T>) =>
+  result[page] && (result[page].result || result[page].isFetching);
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -95,18 +91,30 @@ const restGetIfNeeded = <T extends HasId>(
   model: keyof PaginatedDomainModelsState,
   restCallbacks?: RestCallbacks<NormalizedPaginated<T>>,
 ): RestGetPaginated => {
+
   const requestGet = requestMethodPaginated<NormalizedPaginated<T>>(endPoint);
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
-  return (page: number, requestData?: string) => asyncRequest<string, NormalizedPaginated<T>>({
-    ...requestGet,
-    formatData: (data) => ({...normalize(data, schema), page}),
-    requestFunc,
-    requestData,
-    page,
-    ...restCallbacks,
-    model,
-  });
+  return (page: number, requestData?: string) =>
+    (dispatch: Dispatch<RootState>, getState: GetState) => {
+
+      const {paginatedDomainModels} = getState();
+      const shouldFetch = !isFetchingOrExisting<T>(page, paginatedDomainModels[model]);
+
+      if (shouldFetch) {
+        return asyncRequest<string, NormalizedPaginated<T>>({
+          ...requestGet,
+          formatData: (data) => ({...normalize(data, schema), page}),
+          requestFunc,
+          requestData,
+          page,
+          ...restCallbacks,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
 };
 
 export const fetchMeasurements =

@@ -2,7 +2,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Period} from '../../../components/dates/dateModels';
 import {Maybe} from '../../../helpers/Maybe';
-import {RootState} from '../../../reducers/rootReducer';
+import {GetState} from '../../../reducers/rootReducer';
 import {uuid} from '../../../types/Types';
 import {fetchMeters} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {fetchGateways} from '../../domain-models/domainModelsActions';
@@ -41,7 +41,7 @@ export const selectSavedSelectionAction = createPayloadAction<string, SelectionS
 
 // TODO[!must!] do not fetch both every time (good enough for the demo though)
 const fetchMetersAndGateways = () =>
-  (dispatch, getState: () => RootState) => {
+  (dispatch, getState: GetState) => {
     dispatch(fetchMeters(getEncodedUriParametersForMeters(getState().searchParameters)));
     dispatch(fetchGateways(getEncodedUriParametersForGateways(getState().searchParameters)));
   };
@@ -62,7 +62,7 @@ export const updateSelection = (selection: SelectionState) =>
   (dispatch) => dispatch(updateSelectionAction(selection));
 
 export const selectSavedSelection = (selectedId: uuid) =>
-  (dispatch, getState: () => RootState) => {
+  (dispatch, getState: GetState) => {
     const savedSelection = getState().searchParameters.saved
       .find((item: SelectionState) => item.id === selectedId);
 
@@ -82,7 +82,7 @@ export const resetSelection = () =>
 
 // TODO: ToggleSelection should not be able to accept array values for "id" as the typing suggest now.
 export const toggleSelection = (selectionParameter: SelectionParameter) =>
-  (dispatch, getState: () => RootState) => {
+  (dispatch, getState: GetState) => {
     const {parameter, id} = selectionParameter;
     const selected = getSelection(getState().searchParameters).selected[parameter];
 

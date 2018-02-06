@@ -28,6 +28,8 @@ export interface RootState {
   map: MapState;
 }
 
+export type GetState = () => RootState;
+
 export const rootReducer = combineReducers<RootState>({
   auth,
   domainModels,
