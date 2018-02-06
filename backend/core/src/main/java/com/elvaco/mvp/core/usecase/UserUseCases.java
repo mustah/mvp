@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Users;
 
 import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.CREATE;
 import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.DELETE;

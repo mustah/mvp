@@ -1,7 +1,7 @@
 package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.dto.IdNamedDto;
 import com.elvaco.mvp.dto.LogicalMeterDto;
 import com.elvaco.mvp.dto.MapMarkerDto;

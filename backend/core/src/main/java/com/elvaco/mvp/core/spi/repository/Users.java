@@ -1,4 +1,4 @@
-package com.elvaco.mvp.core.usecase;
+package com.elvaco.mvp.core.spi.repository;
 
 import java.util.List;
 import java.util.Optional;

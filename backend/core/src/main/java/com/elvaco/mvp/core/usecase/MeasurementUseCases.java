@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.complementFilterWithOrganisationParameters;
 import static java.util.Collections.singletonList;

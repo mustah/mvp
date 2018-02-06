@@ -1,9 +1,9 @@
 package com.elvaco.mvp.config;
 
-import com.elvaco.mvp.core.usecase.LogicalMeters;
-import com.elvaco.mvp.core.usecase.Measurements;
-import com.elvaco.mvp.core.usecase.Settings;
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.spi.repository.Settings;
+import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.repository.access.LocationMapper;
 import com.elvaco.mvp.repository.access.LogicalMeterMapper;
 import com.elvaco.mvp.repository.access.LogicalMeterRepository;

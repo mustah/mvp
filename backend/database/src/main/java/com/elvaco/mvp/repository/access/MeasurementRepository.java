@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.usecase.Measurements;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
 

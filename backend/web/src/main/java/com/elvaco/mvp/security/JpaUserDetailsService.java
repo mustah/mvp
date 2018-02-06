@@ -1,6 +1,6 @@
 package com.elvaco.mvp.security;
 
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.Users;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

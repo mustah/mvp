@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
 
 import static java.util.stream.Collectors.toList;

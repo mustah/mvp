@@ -2,7 +2,7 @@ package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.OrganisationPermissions.Permission;
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.Users;
 import org.junit.Before;
 import org.junit.Test;
 
