@@ -1,7 +1,8 @@
-package com.elvaco.mvp.repository.access;
+package com.elvaco.mvp.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.entity.setting.SettingEntity;
+import com.elvaco.mvp.repository.mappers.DomainEntityMapper;
 
 public class SettingMapper implements DomainEntityMapper<Setting, SettingEntity> {
 

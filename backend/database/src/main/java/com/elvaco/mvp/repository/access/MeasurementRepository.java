@@ -7,7 +7,8 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.mappers.MeasurementFilterToPredicateMapper;
+import com.elvaco.mvp.repository.mappers.MeasurementMapper;
 
 import static java.util.stream.Collectors.toList;
 

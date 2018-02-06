@@ -8,7 +8,8 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.repository.jpa.mappers.LogicalMeterToPredicateMapper;
+import com.elvaco.mvp.repository.mappers.LogicalMeterMapper;
+import com.elvaco.mvp.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.spring.PageAdapter;
 import org.springframework.data.domain.PageRequest;
 

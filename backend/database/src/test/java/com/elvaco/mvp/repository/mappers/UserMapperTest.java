@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository.access;
+package com.elvaco.mvp.repository.mappers;
 
 import java.util.List;
 
