@@ -6,9 +6,10 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.RoleEntity;
-import com.elvaco.mvp.repository.jpa.OrganisationRepository;
+import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
 import com.elvaco.mvp.security.MvpUserDetails;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -30,6 +31,8 @@ import static com.elvaco.mvp.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.fixture.DomainModels.OTHER_USER;
 import static com.elvaco.mvp.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
+import static com.elvaco.mvp.fixture.Entities.SECRET_SERVICE;
+import static com.elvaco.mvp.fixture.Entities.THE_BEATLES;
 import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -39,19 +42,19 @@ import static java.util.Collections.singletonList;
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final RoleRepository roleRepository;
-  private final OrganisationRepository organisationRepository;
+  private final OrganisationJpaRepository organisationJpaRepository;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
 
   @Autowired
   public UserDatabaseLoader(
     RoleRepository roleRepository,
-    OrganisationRepository organisationRepository,
+    OrganisationJpaRepository organisationJpaRepository,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
     this.roleRepository = roleRepository;
-    this.organisationRepository = organisationRepository;
+    this.organisationJpaRepository = organisationJpaRepository;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
   }
@@ -62,7 +65,8 @@ public class UserDatabaseLoader implements CommandLineRunner {
       log.info("Demo users seems to already be loaded - skipping demo user loading!");
       return;
     }
-    organisationRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY));
+    organisationJpaRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY, SECRET_SERVICE,
+      THE_BEATLES));
 
     MvpUserDetails principal = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
     Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);

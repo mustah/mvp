@@ -4,5 +4,5 @@ import com.elvaco.mvp.entity.user.OrganisationEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrganisationRepository extends JpaRepository<OrganisationEntity, Long> {
+public interface OrganisationJpaRepository extends JpaRepository<OrganisationEntity, Long> {
 }

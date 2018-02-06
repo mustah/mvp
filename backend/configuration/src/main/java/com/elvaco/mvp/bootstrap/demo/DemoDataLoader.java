@@ -16,11 +16,12 @@ import com.elvaco.mvp.entity.meter.LocationEntity;
 import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
+import com.elvaco.mvp.repository.access.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
 import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -48,7 +49,7 @@ public class DemoDataLoader implements CommandLineRunner {
   public DemoDataLoader(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
-    PhysicalMeterJpaRepository physicalMeterRepository,
+    PhysicalMeterRepository physicalMeterRepository,
     OrganisationRepository organisationRepository,
     GatewayRepository gatewayRepository,
     SettingUseCases settingUseCases
