@@ -2,7 +2,7 @@ package com.elvaco.mvp.dialect.types;
 
 import java.io.Serializable;
 
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.elvaco.mvp.entity.meter.PropertyCollection;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;

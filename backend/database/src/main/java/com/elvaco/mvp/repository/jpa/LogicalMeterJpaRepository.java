@@ -4,9 +4,9 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
-import com.elvaco.mvp.entity.meteringpoint.QMeteringPointEntity;
+import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.entity.meter.PropertyCollection;
+import com.elvaco.mvp.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.util.Json;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
@@ -19,34 +19,34 @@ import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class MeteringPointJpaRepository extends QueryDslJpaRepository<MeteringPointEntity, Long> {
+public class LogicalMeterJpaRepository extends QueryDslJpaRepository<LogicalMeterEntity, Long> {
 
   private final EntityManager entityManager;
 
   @Autowired
-  MeteringPointJpaRepository(EntityManager entityManager) {
+  LogicalMeterJpaRepository(EntityManager entityManager) {
     this(
       new JpaMetamodelEntityInformation<>(
-        MeteringPointEntity.class,
+        LogicalMeterEntity.class,
         entityManager.getMetamodel()
       ),
       entityManager
     );
   }
 
-  private MeteringPointJpaRepository(
-    JpaEntityInformation<MeteringPointEntity, Long> entityInformation,
+  private LogicalMeterJpaRepository(
+    JpaEntityInformation<LogicalMeterEntity, Long> entityInformation,
     EntityManager entityManager
   ) {
     super(entityInformation, entityManager);
     this.entityManager = entityManager;
   }
 
-  public List<MeteringPointEntity> containsInPropertyCollection(
+  public List<LogicalMeterEntity> containsInPropertyCollection(
     PropertyCollectionDto requestModel
   ) {
-    JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
-    QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
+    JPQLQuery<LogicalMeterEntity> query = new JPAQuery<>(entityManager);
+    QLogicalMeterEntity queryLogicalMeter = QLogicalMeterEntity.logicalMeterEntity;
     PropertyCollection propertyCollection = new PropertyCollection();
     if (requestModel.user != null) {
       propertyCollection.put("user", Json.toJsonNode(requestModel.user));
@@ -59,28 +59,28 @@ public class MeteringPointJpaRepository extends QueryDslJpaRepository<MeteringPo
     Predicate predicate = Expressions
       .booleanTemplate(
         "jsonb_contains({0}, {1})",
-        queryMeteringPoint.propertyCollection,
+        queryLogicalMeter.propertyCollection,
         propertyCollection
       ).eq(true);
-    query.from(queryMeteringPoint).where(predicate);
+    query.from(queryLogicalMeter).where(predicate);
     return query.fetch();
   }
 
   /**
-   * Get all {@link MeteringPointEntity}s that has the given fieldName as a top level property.
+   * Get all {@link LogicalMeterEntity}s that has the given fieldName as a top level property.
    *
    * @param fieldName is the top-level json field name.
    * @return a list of entities that has <code>fieldName</code> in the top-level, otherwise an
    *   empty list.
    */
-  public List<MeteringPointEntity> existsInPropertyCollection(String fieldName) {
-    JPQLQuery<MeteringPointEntity> query = new JPAQuery<>(entityManager);
-    QMeteringPointEntity queryMeteringPoint = QMeteringPointEntity.meteringPointEntity;
+  public List<LogicalMeterEntity> existsInPropertyCollection(String fieldName) {
+    JPQLQuery<LogicalMeterEntity> query = new JPAQuery<>(entityManager);
+    QLogicalMeterEntity queryLogicalMeter = QLogicalMeterEntity.logicalMeterEntity;
     Predicate predicate = Expressions
       .booleanTemplate("jsonb_exists({0}, {1})",
-                       queryMeteringPoint.propertyCollection, fieldName
+                       queryLogicalMeter.propertyCollection, fieldName
       ).eq(true);
-    query.from(queryMeteringPoint).where(predicate);
+    query.from(queryLogicalMeter).where(predicate);
     return query.fetch();
   }
 }

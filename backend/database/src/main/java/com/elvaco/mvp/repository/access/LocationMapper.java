@@ -3,7 +3,7 @@ package com.elvaco.mvp.repository.access;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
+import com.elvaco.mvp.entity.meter.LocationEntity;
 
 public class LocationMapper implements DomainEntityMapper<Location, LocationEntity> {
   @Override

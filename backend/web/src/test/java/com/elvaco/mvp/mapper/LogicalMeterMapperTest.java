@@ -5,7 +5,7 @@ import java.util.Date;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.dto.IdNamedDto;
 import com.elvaco.mvp.dto.MapMarkerDto;
@@ -16,9 +16,9 @@ import org.modelmapper.config.Configuration.AccessLevel;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringPointMapperTest {
+public class LogicalMeterMapperTest {
 
-  private MeteringPointMapper mapper;
+  private LogicalMeterMapper mapper;
 
   @Before
   public void setUp() {
@@ -28,11 +28,11 @@ public class MeteringPointMapperTest {
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
 
-    mapper = new MeteringPointMapper(modelMapper);
+    mapper = new LogicalMeterMapper(modelMapper);
   }
 
   @Test
-  public void mapMeteringPointToMapMarkerDto() {
+  public void mapLogicalMeterToMapMarkerDto() {
 
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
     mapMarkerDtoExpected.id = 1L;
@@ -46,7 +46,7 @@ public class MeteringPointMapperTest {
       .coordinate(new GeoCoordinate(3.1, 2.1, 1.0))
       .build();
 
-    MeteringPoint meteringPoint = new MeteringPoint(
+    LogicalMeter logicalMeter = new LogicalMeter(
       1L,
       "Ok",
       location,
@@ -54,7 +54,7 @@ public class MeteringPointMapperTest {
       null
     );
 
-    MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(meteringPoint);
+    MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(logicalMeter);
 
     assertThat(mapMarkerDto).isEqualTo(mapMarkerDtoExpected);
   }

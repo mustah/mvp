@@ -2,10 +2,10 @@ package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.LogicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.Measurements;
-import com.elvaco.mvp.core.usecase.MeteringPoints;
-import com.elvaco.mvp.core.usecase.MeteringPointsUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.Settings;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 class UseCaseConfig {
 
   private final Users users;
-  private final MeteringPoints meteringPoints;
+  private final LogicalMeters logicalMeters;
   private final Settings settings;
   private final Measurements measurements;
 
@@ -26,11 +26,11 @@ class UseCaseConfig {
   UseCaseConfig(
     Users users,
     Settings settings,
-    MeteringPoints meteringPoints,
+    LogicalMeters logicalMeters,
     Measurements measurements
   ) {
     this.users = users;
-    this.meteringPoints = meteringPoints;
+    this.logicalMeters = logicalMeters;
     this.settings = settings;
     this.measurements = measurements;
   }
@@ -46,8 +46,8 @@ class UseCaseConfig {
   }
 
   @Bean
-  MeteringPointsUseCases meteringPointsUseCases(AuthenticatedUser currentUser) {
-    return new MeteringPointsUseCases(currentUser, meteringPoints);
+  LogicalMeterUseCases logicalMeterUseCases(AuthenticatedUser currentUser) {
+    return new LogicalMeterUseCases(currentUser, logicalMeters);
   }
 
   @Bean

@@ -53,7 +53,7 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   }
   systemProperty "spring.profiles.active", "postgresql"
   testClassesDir = sourceSets.integrationTest.output.classesDir
-  classpath = sourceSets.integrationTest.runtimeClasspath 
+  classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
 task cleanupPostgresDocker {

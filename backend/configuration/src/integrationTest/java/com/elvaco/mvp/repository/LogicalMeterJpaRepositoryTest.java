@@ -4,9 +4,9 @@ import java.util.Date;
 
 import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
-import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
-import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
+import com.elvaco.mvp.entity.meter.LocationEntity;
+import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,15 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringPointJpaRepositoryTest extends IntegrationTest {
+public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
-  Long meteringPointId;
+  Long logicalMeterId;
   @Autowired
-  private MeteringPointJpaRepository meteringPointJpaRepository;
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Before
   public void setUp() {
-    MeteringPointEntity mp = new MeteringPointEntity();
+    LogicalMeterEntity mp = new LogicalMeterEntity();
     mp.created = new Date();
     mp.propertyCollection
       .put("user", new UserPropertyDto("abc123", "Under construction"))
@@ -33,12 +33,12 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     locationEntity.latitude = 1.0;
     locationEntity.longitude = 2.0;
     mp.setLocation(locationEntity);
-    meteringPointId = meteringPointJpaRepository.save(mp).id;
+    logicalMeterId = logicalMeterJpaRepository.save(mp).id;
   }
 
   @Test
   public void locationIsPersisted() {
-    MeteringPointEntity foundEntity = meteringPointJpaRepository.findOne(meteringPointId);
+    LogicalMeterEntity foundEntity = logicalMeterJpaRepository.findOne(logicalMeterId);
     assertThat(foundEntity.getLocation().confidence).isEqualTo(1.0);
     assertThat(foundEntity.getLocation().latitude).isEqualTo(1.0);
     assertThat(foundEntity.getLocation().longitude).isEqualTo(2.0);
@@ -49,14 +49,14 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("12cccx123");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
+    assertThat(logicalMeterJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test
   public void containsInPropertyCollection() {
     PropertyCollectionDto requestModel = new PropertyCollectionDto(new UserPropertyDto("abc123"));
 
-    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(logicalMeterJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -65,7 +65,7 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     user.project = "Under construction";
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(logicalMeterJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -73,7 +73,7 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "Under construction");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
+    assertThat(logicalMeterJpaRepository.containsInPropertyCollection(requestModel)).isNotEmpty();
   }
 
   @Test
@@ -81,16 +81,16 @@ public class MeteringPointJpaRepositoryTest extends IntegrationTest {
     UserPropertyDto user = new UserPropertyDto("abc123", "building does not exist yet");
     PropertyCollectionDto requestModel = new PropertyCollectionDto(user);
 
-    assertThat(meteringPointJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
+    assertThat(logicalMeterJpaRepository.containsInPropertyCollection(requestModel)).isEmpty();
   }
 
   @Test
   public void fieldNameExistsAtTopLevelJson() {
-    assertThat(meteringPointJpaRepository.existsInPropertyCollection("user")).isNotEmpty();
+    assertThat(logicalMeterJpaRepository.existsInPropertyCollection("user")).isNotEmpty();
   }
 
   @Test
   public void fieldNameDoesNotExistAtTopLevelJson() {
-    assertThat(meteringPointJpaRepository.existsInPropertyCollection("top")).isEmpty();
+    assertThat(logicalMeterJpaRepository.existsInPropertyCollection("top")).isEmpty();
   }
 }

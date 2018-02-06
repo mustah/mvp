@@ -7,11 +7,11 @@ import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
-import com.elvaco.mvp.core.usecase.MeteringPoints;
-import com.elvaco.mvp.dto.MeteringPointDto;
+import com.elvaco.mvp.core.usecase.LogicalMeters;
+import com.elvaco.mvp.dto.LogicalMeterDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -24,16 +24,16 @@ import org.springframework.http.ResponseEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
-public class MeteringPointControllerTest extends IntegrationTest {
+public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
-  private MeteringPoints meteringPointRepository;
+  private LogicalMeters logicalMeterRepository;
 
   @Before
   public void setUp() {
     for (int x = 1; x <= 55; x++) {
       String status = x % 10 == 0 ? "Warning" : "Ok";
-      mockMeteringPoint(x, status);
+      mockLogicalMeter(x, status);
     }
 
     restClient().loginWith("evanil@elvaco.se", "eva123");
@@ -41,35 +41,35 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    meteringPointRepository.deleteAll();
+    logicalMeterRepository.deleteAll();
 
     restClient().logout();
   }
 
   @Test
   public void findById() {
-    List<MeteringPoint> meteringPoints = meteringPointRepository.findAll();
+    List<LogicalMeter> logicalMeters = logicalMeterRepository.findAll();
 
-    ResponseEntity<MeteringPointDto> response = asElvacoUser()
-      .get("/meters/" + meteringPoints.get(0).id, MeteringPointDto.class);
+    ResponseEntity<LogicalMeterDto> response = asElvacoUser()
+      .get("/meters/" + logicalMeters.get(0).id, LogicalMeterDto.class);
 
-    MeteringPointDto meteringPoint = response.getBody();
+    LogicalMeterDto logicalMeterDto = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(meteringPoint.id).isEqualTo(meteringPoints.get(0).id);
+    assertThat(logicalMeterDto.id).isEqualTo(logicalMeters.get(0).id);
   }
 
   @Test
   public void findAll() {
-    Page<MeteringPointDto> response = asElvacoUser()
-      .getPage("/meters", MeteringPointDto.class);
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage("/meters", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(20);
     assertThat(response.getTotalPages()).isEqualTo(3);
 
     response = asElvacoUser()
-      .getPage("/meters?page=2", MeteringPointDto.class);
+      .getPage("/meters?page=2", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
@@ -78,10 +78,10 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithinPeriod() {
-    Page<MeteringPointDto> response = restClient()
+    Page<LogicalMeterDto> response = restClient()
       .getPage(
         "/meters?before=2001-01-20T10:10:00.00Z&after=2001-01-10T10:10:00.00Z",
-        MeteringPointDto.class
+        LogicalMeterDto.class
       );
 
     assertThat(response.getTotalElements()).isEqualTo(10);
@@ -91,8 +91,8 @@ public class MeteringPointControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithPredicates() {
-    Page<MeteringPointDto> response = restClient()
-      .getPage("/meters?status=Warning", MeteringPointDto.class);
+    Page<LogicalMeterDto> response = restClient()
+      .getPage("/meters?status=Warning", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(5);
     assertThat(response.getNumberOfElements()).isEqualTo(5);
@@ -100,7 +100,7 @@ public class MeteringPointControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMapDataForMeteringPoints() {
+  public void findAllMapDataForLogicalMeters() {
     ResponseEntity<List> response = asElvacoUser()
       .get("/meters/map-data", List.class);
 
@@ -108,20 +108,20 @@ public class MeteringPointControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
-  private void mockMeteringPoint(int seed, String status) {
+  private void mockLogicalMeter(int seed, String status) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(created);
     calendar.add(Calendar.DATE, seed);
     created = calendar.getTime();
 
-    MeteringPoint meteringPoint = new MeteringPoint(
+    LogicalMeter logicalMeter = new LogicalMeter(
       status,
       new LocationBuilder()
         .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
       new PropertyCollection(new UserProperty("abc123", "Some project"))
     );
-    meteringPointRepository.save(meteringPoint);
+    logicalMeterRepository.save(logicalMeter);
   }
 }
