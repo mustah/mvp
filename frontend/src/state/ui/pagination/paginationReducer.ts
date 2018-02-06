@@ -1,40 +1,44 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
+import {HasPageNumber} from '../../domain-models/paginatedDomainModels';
 import {PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
-import {PaginationMetadata, PaginationState, PaginationMetadataPayload, PaginationChangePayload} from './paginationModels';
+import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
 export const limit = 5;
-export const initialComponentPagination: PaginationMetadata = {
-  first: true,
-  last: false,
-  requestedPage: 0,
-  currentPage: 0,
-  numberOfElements: -1,
-  size: limit,
-  sort: null,
+
+export const initialPaginationModel: PaginationModel = {
+  useCases: {},
   totalElements: -1,
   totalPages: -1,
+  size: limit,
 };
+
+export const initialPaginationState: PaginationState = {
+  meters: {...initialPaginationModel},
+  measurements: {...initialPaginationModel},
+};
+
+export const initialComponentPagination: HasPageNumber = {page: 0};
 
 type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePayload> | EmptyAction<string>;
 
 const requestPage = (
   state: PaginationState,
-  {payload: {componentId, page}}: Action<PaginationChangePayload>,
+  {payload: {model, componentId, page}}: Action<PaginationChangePayload>,
 ): PaginationState => ({
   ...state,
-  [componentId]: {...state[componentId], requestedPage: page},
+  [model]: {...state[model], useCases: {...state[model].useCases, [componentId]: {page}}},
 });
 
 const updateMetaData = (
   state: PaginationState,
-  {payload: {page, componentId}}: Action<PaginationMetadataPayload>,
+  {payload: {model, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
 ): PaginationState => ({
   ...state,
-  [componentId]: {...state[componentId], ...page},
+  [model]: {...state[model], totalElements, totalPages},
 });
 
-export const pagination = (state: PaginationState = {}, action: ActionTypes) => {
+export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {
   switch (action.type) {
     case PAGINATION_REQUEST_PAGE:
       return requestPage(state, action as Action<PaginationChangePayload>);

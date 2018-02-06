@@ -1,6 +1,9 @@
 import {uuid} from '../../../types/Types';
-import {DomainModelsState} from '../../domain-models/domainModels';
-import {HasPageNumber} from '../../domain-models/paginatedDomainModels';
+import {
+  HasPageNumber,
+  NormalizedPaginatedResult,
+  PaginatedDomainModelsState,
+} from '../../domain-models/paginatedDomainModels';
 
 export interface PaginationMetadata {
   size: number;
@@ -12,16 +15,18 @@ export interface HasComponentId {
   componentId: uuid;
 }
 
-export type PaginationChangePayload = HasComponentId & HasPageNumber;
+export type PaginationChangePayload = HasComponentId & HasPageNumber & {model: keyof  PaginatedDomainModelsState};
+export type PaginationMetadataPayload = NormalizedPaginatedResult & {model: keyof PaginatedDomainModelsState};
 
 export type OnChangePage = (page: number) => void;
 
-interface PaginationModel extends PaginationMetadata {
+export interface PaginationModel extends PaginationMetadata {
   useCases: {[component: string]: HasPageNumber};
 }
 
+// TODO: perhaps make a type of "keyof PaginatedDomainModelsState"
 export type PaginationState = {
-  [model in keyof DomainModelsState] : PaginationModel
+  [model in keyof PaginatedDomainModelsState] : PaginationModel
   };
 
 export interface SortingOptions {

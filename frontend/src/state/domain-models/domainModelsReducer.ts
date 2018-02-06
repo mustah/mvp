@@ -12,7 +12,6 @@ import {
   DOMAIN_MODELS_REQUEST,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
-import {measurements, meters} from './paginatedDomainModelsReducer';
 import {User} from './user/userModels';
 
 export const initialDomain = <T extends HasId>(): NormalizedState<T> => ({
