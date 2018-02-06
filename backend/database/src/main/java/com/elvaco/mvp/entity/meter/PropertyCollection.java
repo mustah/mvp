@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entity.meteringpoint;
+package com.elvaco.mvp.entity.meter;
 
 import java.io.Serializable;
 import java.util.List;

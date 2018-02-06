@@ -3,35 +3,35 @@ package com.elvaco.mvp.core.usecase;
 import java.util.List;
 import java.util.Map;
 
-import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationFilter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 
-public class MeteringPointsUseCases {
+public class LogicalMeterUseCases {
 
-  private final MeteringPoints meteringPoints;
+  private final LogicalMeters logicalMeters;
   private final AuthenticatedUser currentUser;
 
-  public MeteringPointsUseCases(AuthenticatedUser currentUser, MeteringPoints meteringPoints) {
+  public LogicalMeterUseCases(AuthenticatedUser currentUser, LogicalMeters logicalMeters) {
     this.currentUser = currentUser;
-    this.meteringPoints = meteringPoints;
+    this.logicalMeters = logicalMeters;
   }
 
-  public MeteringPoint findById(Long id) {
-    return meteringPoints.findById(id);
+  public LogicalMeter findById(Long id) {
+    return logicalMeters.findById(id);
   }
 
-  public List<MeteringPoint> findAll() {
-    return meteringPoints.findAll();
+  public List<LogicalMeter> findAll() {
+    return logicalMeters.findAll();
   }
 
-  public Page<MeteringPoint> findAll(
+  public Page<LogicalMeter> findAll(
     Map<String, List<String>> filterParams,
     Pageable pageable
   ) {
-    return meteringPoints.findAll(
+    return logicalMeters.findAll(
       OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
       pageable
     );

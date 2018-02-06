@@ -3,7 +3,7 @@ package com.elvaco.mvp.dialect;
 import com.elvaco.mvp.dialect.types.Types;
 import com.elvaco.mvp.dialect.types.h2.H2MeasurementUnitType;
 import com.elvaco.mvp.dialect.types.h2.H2PropertyCollectionType;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.elvaco.mvp.entity.meter.PropertyCollection;
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;

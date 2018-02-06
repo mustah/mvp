@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entity.meteringpoint;
+package com.elvaco.mvp.entity.meter;
 
 import java.io.Serializable;
 import javax.persistence.Access;
@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "location")
 @Access(AccessType.FIELD)
-@EqualsAndHashCode(exclude = "meteringPoint")
+@EqualsAndHashCode(exclude = "logicalMeter")
 public class LocationEntity implements Serializable {
 
   private static final long serialVersionUID = -6244183552379157552L;
@@ -24,7 +24,7 @@ public class LocationEntity implements Serializable {
   @OneToOne
   @JoinColumn(name = "meter_id")
   @JsonBackReference
-  public MeteringPointEntity meteringPoint;
+  public LogicalMeterEntity logicalMeter;
 
   public String country;
   public String city;

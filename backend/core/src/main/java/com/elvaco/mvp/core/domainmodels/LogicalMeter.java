@@ -9,7 +9,7 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
-public class MeteringPoint {
+public class LogicalMeter {
 
   @Nullable
   public final Long id;
@@ -18,7 +18,7 @@ public class MeteringPoint {
   public final Date created;
   public final PropertyCollection propertyCollection;
 
-  public MeteringPoint(
+  public LogicalMeter(
     String status,
     Location location,
     Date created,
@@ -27,7 +27,7 @@ public class MeteringPoint {
     this(null, status, location, created, propertyCollection);
   }
 
-  public MeteringPoint(
+  public LogicalMeter(
     @Nullable
     Long id,
     String status,

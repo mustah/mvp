@@ -12,13 +12,13 @@ import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.entity.meter.LocationEntity;
+import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
+import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.MeteringPointJpaRepository;
 import com.elvaco.mvp.repository.jpa.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import static java.util.Collections.singletonList;
 @Slf4j
 public class DemoDataLoader implements CommandLineRunner {
 
-  private final MeteringPointJpaRepository meteringPointJpaRepository;
+  private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterRepository physicalMeterRepository;
   private final OrganisationRepository organisationRepository;
@@ -46,14 +46,14 @@ public class DemoDataLoader implements CommandLineRunner {
 
   @Autowired
   public DemoDataLoader(
-    MeteringPointJpaRepository meteringPointJpaRepository,
+    LogicalMeterJpaRepository logicalMeterJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
     PhysicalMeterRepository physicalMeterRepository,
     OrganisationRepository organisationRepository,
     GatewayRepository gatewayRepository,
     SettingUseCases settingUseCases
   ) {
-    this.meteringPointJpaRepository = meteringPointJpaRepository;
+    this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.measurementJpaRepository = measurementJpaRepository;
     this.physicalMeterRepository = physicalMeterRepository;
     this.organisationRepository = organisationRepository;
@@ -84,7 +84,7 @@ public class DemoDataLoader implements CommandLineRunner {
 
       List<GatewayEntity> gatewayEntities = singletonList(mockGateway(serial));
 
-      MeteringPointEntity meteringPointEntity = mockMeteringPoint(
+      LogicalMeterEntity logicalMeterEntity = mockLogicalMeterEntity(
         meterIdentity,
         gatewayEntities,
         i
@@ -93,7 +93,7 @@ public class DemoDataLoader implements CommandLineRunner {
       PhysicalMeterEntity physicalMeterEntity = mockPhysicalMeter(
         ELVACO_ENTITY,
         meterIdentity,
-        meteringPointEntity
+        logicalMeterEntity
       );
 
       mockMeasurement(
@@ -139,24 +139,24 @@ public class DemoDataLoader implements CommandLineRunner {
   private PhysicalMeterEntity mockPhysicalMeter(
     OrganisationEntity organisationEntity,
     String meterIdentity,
-    MeteringPointEntity meteringPointEntity
+    LogicalMeterEntity logicalMeterEntity
   ) {
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationEntity,
       meterIdentity,
       "Electricity"
     );
-    physicalMeterEntity.meteringPoint = meteringPointEntity;
+    physicalMeterEntity.logicalMeter = logicalMeterEntity;
     return physicalMeterRepository.save(physicalMeterEntity);
   }
 
-  private MeteringPointEntity mockMeteringPoint(
+  private LogicalMeterEntity mockLogicalMeterEntity(
     String meterIdentity,
     List<GatewayEntity> gatewayEntities,
     int seed
   ) {
-    MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.propertyCollection
+    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
+    logicalMeterEntity.propertyCollection
       .put("user", new UserPropertyDto(meterIdentity, "Demo project"))
       .putArray("numbers", asList(1, 2, 3, 17));
 
@@ -166,10 +166,10 @@ public class DemoDataLoader implements CommandLineRunner {
     calendar.add(Calendar.DATE, seed);
     created = calendar.getTime();
 
-    meteringPointEntity.status = "Ok";
-    meteringPointEntity.medium = "Water";
-    meteringPointEntity.created = created;
-    meteringPointEntity.gateways = gatewayEntities;
+    logicalMeterEntity.status = "Ok";
+    logicalMeterEntity.medium = "Water";
+    logicalMeterEntity.created = created;
+    logicalMeterEntity.gateways = gatewayEntities;
     LocationEntity locationEntity = new LocationEntity();
     locationEntity.confidence = 0.8;
     locationEntity.latitude = 57.5052592;
@@ -177,8 +177,8 @@ public class DemoDataLoader implements CommandLineRunner {
     locationEntity.streetAddress = "Kabelgatan 2T";
     locationEntity.city = "Kungsbacka";
     locationEntity.country = "Sweden";
-    meteringPointEntity.setLocation(locationEntity);
+    logicalMeterEntity.setLocation(locationEntity);
 
-    return meteringPointJpaRepository.save(meteringPointEntity);
+    return logicalMeterJpaRepository.save(logicalMeterEntity);
   }
 }

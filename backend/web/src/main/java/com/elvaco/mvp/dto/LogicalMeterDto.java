@@ -2,7 +2,7 @@ package com.elvaco.mvp.dto;
 
 import java.util.List;
 
-public class MeteringPointDto extends LocationDto {
+public class LogicalMeterDto extends LocationDto {
   public Long id;
   public String moid;
   public String sapId;

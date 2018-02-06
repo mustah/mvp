@@ -1,4 +1,4 @@
-package com.elvaco.mvp.entity.meteringpoint;
+package com.elvaco.mvp.entity.meter;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,7 +22,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -32,8 +31,8 @@ import org.hibernate.annotations.Type;
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "metering_point")
-public class MeteringPointEntity implements Serializable {
+@Table(name = "logical_meter")
+public class LogicalMeterEntity implements Serializable {
 
   private static final long serialVersionUID = 5528298891965340483L;
 
@@ -44,7 +43,7 @@ public class MeteringPointEntity implements Serializable {
   @Type(type = "property-collection")
   public PropertyCollection propertyCollection;
 
-  @OneToMany(mappedBy = "meteringPoint")
+  @OneToMany(mappedBy = "logicalMeter")
   @JsonManagedReference
   public List<PhysicalMeterEntity> physicalMeters;
   public String status;
@@ -59,16 +58,16 @@ public class MeteringPointEntity implements Serializable {
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
-  @OneToOne(mappedBy = "meteringPoint", cascade = CascadeType.ALL)
+  @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
   private LocationEntity location;
 
-  public MeteringPointEntity() {
+  public LogicalMeterEntity() {
     this.propertyCollection = new PropertyCollection();
     setLocation(new LocationEntity());
   }
 
-  public MeteringPointEntity(Long id, Date created, String status) {
+  public LogicalMeterEntity(Long id, Date created, String status) {
     this();
     this.id = id;
     this.created = (Date) created.clone();
@@ -81,6 +80,6 @@ public class MeteringPointEntity implements Serializable {
 
   public void setLocation(LocationEntity location) {
     this.location = location;
-    this.location.meteringPoint = this;
+    this.location.logicalMeter = this;
   }
 }

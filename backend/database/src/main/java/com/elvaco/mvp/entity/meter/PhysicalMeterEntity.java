@@ -15,7 +15,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -41,7 +40,7 @@ public class PhysicalMeterEntity implements Serializable {
 
   @ManyToOne
   @JsonBackReference
-  public MeteringPointEntity meteringPoint;
+  public LogicalMeterEntity logicalMeter;
 
   public PhysicalMeterEntity() {}
 

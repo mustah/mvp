@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS users_roles (
   role_id VARCHAR(255) REFERENCES role
 );
 
-CREATE TABLE IF NOT EXISTS metering_point (
+CREATE TABLE IF NOT EXISTS logical_meter (
   id BIGSERIAL PRIMARY KEY,
   status VARCHAR(255),
   medium VARCHAR(255),
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS metering_point (
 );
 
 CREATE TABLE IF NOT EXISTS location (
-  meter_id BIGSERIAL REFERENCES metering_point ON DELETE CASCADE PRIMARY KEY,
+  meter_id BIGSERIAL REFERENCES logical_meter ON DELETE CASCADE PRIMARY KEY,
   country TEXT,
   city TEXT,
   street_address TEXT,
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   organisation_id BIGSERIAL REFERENCES organisation,
   identity VARCHAR(255),
   medium VARCHAR(255),
-  metering_point_id BIGINT REFERENCES metering_point,
+  logical_meter_id BIGINT REFERENCES logical_meter,
   UNIQUE (organisation_id, identity)
 );
 
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS gateway (
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
-  meter_id BIGSERIAL REFERENCES metering_point,
+  meter_id BIGSERIAL REFERENCES logical_meter,
   gateway_id BIGSERIAL REFERENCES gateway
 );
 

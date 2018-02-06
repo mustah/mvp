@@ -3,12 +3,12 @@ package com.elvaco.mvp.config;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.dto.IdNamedDto;
+import com.elvaco.mvp.dto.LogicalMeterDto;
 import com.elvaco.mvp.dto.MapMarkerDto;
-import com.elvaco.mvp.dto.MeteringPointDto;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.mappers.FilterToPredicateMapper;
+import com.elvaco.mvp.repository.jpa.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.repository.jpa.mappers.MeasurementFilterToPredicateMapper;
-import com.elvaco.mvp.repository.jpa.mappers.MeteringPointToPredicateMapper;
 import com.elvaco.mvp.security.JpaUserDetailsService;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
@@ -40,14 +40,14 @@ class ApplicationConfig {
   }
 
   @Bean
-  MeteringPointToPredicateMapper meteringPointToPredicateMapper() {
-    return new MeteringPointToPredicateMapper();
+  LogicalMeterToPredicateMapper logicalMeterToPredicateMapper() {
+    return new LogicalMeterToPredicateMapper();
   }
 
   @Bean
   ModelMapper modelMapper() {
     ModelMapper modelMapper = new ModelMapper();
-    modelMapper.addConverter(meteringPointConverter());
+    modelMapper.addConverter(logicalMeterConverter());
     modelMapper.addConverter(mapMarkerConverter());
     modelMapper
       .getConfiguration()
@@ -56,10 +56,10 @@ class ApplicationConfig {
     return modelMapper;
   }
 
-  private AbstractConverter<MeteringPointEntity, MapMarkerDto> mapMarkerConverter() {
-    return new AbstractConverter<MeteringPointEntity, MapMarkerDto>() {
+  private AbstractConverter<LogicalMeterEntity, MapMarkerDto> mapMarkerConverter() {
+    return new AbstractConverter<LogicalMeterEntity, MapMarkerDto>() {
       @Override
-      protected MapMarkerDto convert(MeteringPointEntity source) {
+      protected MapMarkerDto convert(LogicalMeterEntity source) {
         MapMarkerDto dto = new MapMarkerDto();
         dto.id = source.id;
         dto.status = new IdNamedDto(1L, "ok");
@@ -69,11 +69,11 @@ class ApplicationConfig {
     };
   }
 
-  private AbstractConverter<MeteringPointEntity, MeteringPointDto> meteringPointConverter() {
-    return new AbstractConverter<MeteringPointEntity, MeteringPointDto>() {
+  private AbstractConverter<LogicalMeterEntity, LogicalMeterDto> logicalMeterConverter() {
+    return new AbstractConverter<LogicalMeterEntity, LogicalMeterDto>() {
       @Override
-      protected MeteringPointDto convert(MeteringPointEntity source) {
-        MeteringPointDto dto = new MeteringPointDto();
+      protected LogicalMeterDto convert(LogicalMeterEntity source) {
+        LogicalMeterDto dto = new LogicalMeterDto();
         dto.id = source.id;
         dto.medium = source.medium;
         dto.created = source.created.toString();

@@ -5,10 +5,10 @@ import java.util.Date;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
-import com.elvaco.mvp.core.domainmodels.MeteringPoint;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
-import com.elvaco.mvp.entity.meteringpoint.LocationEntity;
-import com.elvaco.mvp.entity.meteringpoint.MeteringPointEntity;
+import com.elvaco.mvp.entity.meter.LocationEntity;
+import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -16,9 +16,9 @@ import org.modelmapper.ModelMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.modelmapper.config.Configuration.AccessLevel;
 
-public class MeteringPointMapperTest {
+public class LogicalMeterMapperTest {
 
-  private MeteringPointMapper meteringPointMapper;
+  private LogicalMeterMapper logicalMeterMapper;
 
   @Before
   public void setUp() {
@@ -28,35 +28,35 @@ public class MeteringPointMapperTest {
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
 
-    meteringPointMapper = new MeteringPointMapper(
+    logicalMeterMapper = new LogicalMeterMapper(
       new LocationMapper()
     );
   }
 
   @Test
-  public void mapMeterPointEntityToDomainModelWithPosition() {
+  public void mapLogicalMeterEntityToDomainModelWithPosition() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     LocationEntity locationEntity = new LocationEntity();
     locationEntity.latitude = 3.1;
     locationEntity.longitude = 2.1;
     locationEntity.confidence = 1.0;
-    MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.id = (long) 1;
-    meteringPointEntity.status = "Ok";
-    meteringPointEntity.created = created;
-    meteringPointEntity.setLocation(locationEntity);
+    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
+    logicalMeterEntity.id = (long) 1;
+    logicalMeterEntity.status = "Ok";
+    logicalMeterEntity.created = created;
+    logicalMeterEntity.setLocation(locationEntity);
 
-    MeteringPoint meteringPoint = meteringPointMapper.toDomainModel(meteringPointEntity);
+    LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
 
     Location expectedLocation = new LocationBuilder()
       .latitude(3.1)
       .longitude(2.1)
       .confidence(1.0)
       .build();
-    assertThat(expectedLocation.getCoordinate()).isEqualTo(meteringPoint.location.getCoordinate());
+    assertThat(expectedLocation.getCoordinate()).isEqualTo(logicalMeter.location.getCoordinate());
 
-    assertThat(meteringPoint).isEqualTo(
-      new MeteringPoint(
+    assertThat(logicalMeter).isEqualTo(
+      new LogicalMeter(
         (long) 1,
         "Ok",
         expectedLocation,
@@ -67,18 +67,18 @@ public class MeteringPointMapperTest {
   }
 
   @Test
-  public void mapMeterPointEntityToDomainModelOutPosition() {
+  public void mapLogicalMeterEntityToDomainModelOutPosition() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
-    MeteringPointEntity meteringPointEntity = new MeteringPointEntity();
-    meteringPointEntity.id = (long) 1;
-    meteringPointEntity.status = "Ok";
-    meteringPointEntity.created = created;
+    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
+    logicalMeterEntity.id = (long) 1;
+    logicalMeterEntity.status = "Ok";
+    logicalMeterEntity.created = created;
 
-    MeteringPoint meteringPoint = meteringPointMapper.toDomainModel(meteringPointEntity);
+    LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
 
-    assertThat(meteringPoint).isEqualTo(
-      new MeteringPoint(
+    assertThat(logicalMeter).isEqualTo(
+      new LogicalMeter(
         (long) 1,
         "Ok",
         new LocationBuilder().build(),
@@ -89,14 +89,14 @@ public class MeteringPointMapperTest {
   }
 
   @Test
-  public void mapMeterPointDomainModelToEntity() {
+  public void mapLogicalMeterDomainModelToEntity() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Location location = new LocationBuilder()
       .latitude(3.1)
       .longitude(2.1)
       .confidence(1.0)
       .build();
-    final MeteringPoint meteringPoint = new MeteringPoint(
+    final LogicalMeter logicalMeter = new LogicalMeter(
       (long) 1,
       "Ok",
       location,
@@ -109,14 +109,14 @@ public class MeteringPointMapperTest {
     locationEntityExpected.longitude = 2.1;
     locationEntityExpected.latitude = 3.1;
 
-    MeteringPointEntity meteringPointEntityExpected = new MeteringPointEntity();
-    meteringPointEntityExpected.id = (long) 1;
-    meteringPointEntityExpected.status = "Ok";
-    meteringPointEntityExpected.created = created;
-    meteringPointEntityExpected.setLocation(locationEntityExpected);
+    LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity();
+    logicalMeterEntityExpected.id = (long) 1;
+    logicalMeterEntityExpected.status = "Ok";
+    logicalMeterEntityExpected.created = created;
+    logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
-    assertThat(meteringPointMapper.toEntity(meteringPoint).getLocation()).isEqualTo(
+    assertThat(logicalMeterMapper.toEntity(logicalMeter).getLocation()).isEqualTo(
       locationEntityExpected);
-    assertThat(meteringPointMapper.toEntity(meteringPoint)).isEqualTo(meteringPointEntityExpected);
+    assertThat(logicalMeterMapper.toEntity(logicalMeter)).isEqualTo(logicalMeterEntityExpected);
   }
 }

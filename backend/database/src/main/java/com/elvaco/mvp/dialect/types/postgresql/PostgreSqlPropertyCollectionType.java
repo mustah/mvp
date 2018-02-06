@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import com.elvaco.mvp.dialect.types.PropertyCollectionType;
-import com.elvaco.mvp.entity.meteringpoint.PropertyCollection;
+import com.elvaco.mvp.entity.meter.PropertyCollection;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
