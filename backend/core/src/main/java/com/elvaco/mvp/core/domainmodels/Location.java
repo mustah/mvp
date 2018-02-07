@@ -9,19 +9,19 @@ import lombok.EqualsAndHashCode;
 public class Location {
 
   @Nullable
-  private final String country;
+  private final String streetAddress;
   @Nullable
   private final String city;
   @Nullable
-  private final String streetAddress;
+  private final String country;
   @Nullable
   private final GeoCoordinate coordinate;
 
-  public Location(
-    GeoCoordinate coordinate,
-    String country,
-    String city,
-    String streetAddress
+  Location(
+    @Nullable GeoCoordinate coordinate,
+    @Nullable String country,
+    @Nullable String city,
+    @Nullable String streetAddress
   ) {
     this.coordinate = coordinate;
     this.country = country;
@@ -29,23 +29,24 @@ public class Location {
     this.streetAddress = streetAddress;
   }
 
-  public Optional<String> getCountry() {
-    return Optional.ofNullable(country);
+  public Optional<String> getStreetAddress() {
+    return Optional.ofNullable(streetAddress);
   }
 
   public Optional<String> getCity() {
     return Optional.ofNullable(city);
   }
 
+  public Optional<String> getCountry() {
+    return Optional.ofNullable(country);
+  }
+
+  @Nullable
   public GeoCoordinate getCoordinate() {
     return coordinate;
   }
 
   public boolean hasCoordinates() {
     return coordinate != null;
-  }
-
-  public Optional<String> getStreetAddress() {
-    return Optional.ofNullable(streetAddress);
   }
 }

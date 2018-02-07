@@ -2,8 +2,20 @@ package com.elvaco.mvp.bootstrap.demo;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Date;
+import java.util.Map;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
+import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PropertyCollection;
+import com.elvaco.mvp.core.domainmodels.UserProperty;
+import com.elvaco.mvp.dto.GeoPositionDto;
+import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.ToString;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
@@ -11,12 +23,15 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 
+import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toMap;
 
 @Profile("demo")
 public class CsvLoader implements CommandLineRunner {
 
-  private CsvLoader() {}
+  private static final String DELIMITER = " :: ";
 
   public static void main(String[] args) throws Exception {
     testing();
@@ -28,27 +43,80 @@ public class CsvLoader implements CommandLineRunner {
   }
 
   private static void testing() throws java.io.IOException {
-    URL resource = CsvLoader.class.getClassLoader()
-      .getResource("data/perstorp_metering_export_meters.csv");
+    URL metersResource = loadResource("data/meters_perstorp.csv");
+    URL geoDataResource = loadResource("data/geodata.json");
 
-    File file = new File(requireNonNull(resource).getFile());
+    Map<String, GeoPositionDto> map =
+      OBJECT_MAPPER.readValue(
+        getFile(geoDataResource),
+        new TypeReference<Map<String, GeoPositionDto>>() {}
+      );
 
-    CsvMapper<MyObject> mapper = CsvMapperFactory.newInstance().newMapper(MyObject.class);
+    Map<String, Location> locationMap = map.entrySet()
+      .stream()
+      .map(entry -> parseKeyToLocation(entry.getKey())
+        .coordinate(toGeoCoordinate(entry.getValue()))
+        .build())
+      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
 
     CsvParser.separator(';')
-      .mapWith(mapper)
-      .stream(file, stream -> {
-        stream.forEach(System.out::println);
-        return stream;
-      });
+      .mapWith(csvMapper())
+      .stream(getFile(metersResource), stream ->
+        stream
+          .map(meterData -> {
+            LogicalMeter meteringPoint = new LogicalMeter(
+              meterData.meterStatus,
+              locationMap.get(meterData.address),
+              new Date(),
+              new PropertyCollection(new UserProperty(meterData.facilityId))
+            );
+            return new PhysicalMeter(
+              null,
+              ELVACO,
+              meteringPoint,
+              meterData.meterId,
+              meterData.medium
+            );
+          })
+      )
+      .forEach(System.out::println);
+  }
+
+  private static LocationBuilder parseKeyToLocation(String s) {
+    String[] parts = s.split(DELIMITER);
+    return new LocationBuilder()
+      .streetAddress(parts[0])
+      .city(parts[1])
+      .country(parts[2]);
+  }
+
+  private static CsvMapper<MeterData> csvMapper() {
+    return CsvMapperFactory.newInstance().newMapper(MeterData.class);
+  }
+
+  private static URL loadResource(String file) {
+    return CsvLoader.class.getClassLoader().getResource(file);
+  }
+
+  private static File getFile(URL metersResource) {
+    return new File(requireNonNull(metersResource).getFile());
+  }
+
+  private static GeoCoordinate toGeoCoordinate(GeoPositionDto geoPosition) {
+    return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
+  }
+
+  @Nullable
+  private static String toNull(String value) {
+    return value.equals("NULL") ? null : value;
   }
 
   @ToString
-  public static class MyObject {
+  public static class MeterData {
 
-    public final Long meterId;
+    public final String meterId;
     public final String meterStatus;
-    public final String facility;
+    public final String facilityId;
     public final String address;
     public final String city;
     public final String medium;
@@ -63,12 +131,12 @@ public class CsvLoader implements CommandLineRunner {
     public final String gatewayProductModel;
     public final String gatewayStatus;
 
-    public MyObject(
-      String facility,
+    public MeterData(
+      String facilityId,
       String address,
       String city,
       String medium,
-      Long meterId,
+      String meterId,
       String meterManufacturer,
       Long gatewayId,
       String gatewayProductModel,
@@ -78,11 +146,11 @@ public class CsvLoader implements CommandLineRunner {
       String meterStatus,
       String gatewayStatus
     ) {
-      this.facility = facility;
+      this.facilityId = facilityId;
       this.address = address;
       this.city = city;
-      this.medium = medium;
       this.meterId = meterId;
+      this.medium = medium;
       this.meterManufacturer = meterManufacturer;
       this.gatewayId = gatewayId;
       this.gatewayProductModel = gatewayProductModel;
@@ -92,10 +160,5 @@ public class CsvLoader implements CommandLineRunner {
       this.meterStatus = meterStatus;
       this.gatewayStatus = gatewayStatus;
     }
-  }
-
-  @Nullable
-  private static String toNull(String value) {
-    return value.equals("NULL") ? null : value;
   }
 }

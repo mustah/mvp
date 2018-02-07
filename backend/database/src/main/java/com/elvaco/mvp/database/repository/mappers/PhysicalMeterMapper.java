@@ -7,9 +7,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
 
   private final OrganisationMapper organisationMapper;
 
-  public PhysicalMeterMapper(
-    OrganisationMapper organisationMapper
-  ) {
+  public PhysicalMeterMapper(OrganisationMapper organisationMapper) {
     this.organisationMapper = organisationMapper;
   }
 

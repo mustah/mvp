@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class LogicalMeterJpaRepository extends QueryDslJpaRepository<LogicalMeterEntity, Long> {
 
   private final EntityManager entityManager;

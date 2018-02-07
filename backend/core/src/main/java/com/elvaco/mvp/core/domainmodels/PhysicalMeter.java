@@ -5,9 +5,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class PhysicalMeter {
+
   @Nullable
   public final Long id;
   public final Organisation organisation;

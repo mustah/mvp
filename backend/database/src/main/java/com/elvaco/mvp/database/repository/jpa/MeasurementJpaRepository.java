@@ -24,7 +24,9 @@ import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.data.querydsl.EntityPathResolver;
 import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class MeasurementJpaRepository extends QueryDslJpaRepository<MeasurementEntity, Long> {
 
   private final EntityManager entityManager;

@@ -1,4 +1,4 @@
-facility;address;city;medium;meter_id;meter_manufacturer;gateway_id;gateway_product_model;phone;ip;port;gateway_status;meter_status
+facility_id;address;city;medium;meter_id;meter_manufacturer;gateway_id;gateway_product_model;phone;ip;port;gateway_status;meter_status
 426;Bäckavägen 2 A;Perstorp;Heat, Return temp;67606252;ELV;12031925;CMi2110;07190000355115;NULL;NULL;OK;OK
 232;Duvstigen 8C;Perstorp;Heat, Return temp;67190406;ELV;12022564;CMi2110;07190000388838;NULL;NULL;OK;OK
 227;Duvstigen 1;Perstorp;Heat, Return temp;68349271;ELV;12046827;CMi2110;0037282172804;NULL;NULL;OK;OK

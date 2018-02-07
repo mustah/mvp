@@ -193,8 +193,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       status,
-      new LocationBuilder()
-        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
+      new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
       new PropertyCollection(new UserProperty("abc123", "Some project"))
     );
