@@ -10,8 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.fixture.DomainModels.WAYNE_INDUSTRIES;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;

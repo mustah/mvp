@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PhysicalMetersTest extends IntegrationTest {

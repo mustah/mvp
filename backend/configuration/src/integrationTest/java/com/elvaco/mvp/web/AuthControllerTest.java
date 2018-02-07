@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.fixture.DomainModels.DEVELOPER_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.DEVELOPER_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {

@@ -19,7 +19,7 @@ import static com.elvaco.mvp.database.entity.user.RoleEntity.admin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.superAdmin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.user;
 import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;

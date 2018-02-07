@@ -1,4 +1,4 @@
-package com.elvaco.mvp.fixture;
+package com.elvaco.mvp.core.fixture;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
