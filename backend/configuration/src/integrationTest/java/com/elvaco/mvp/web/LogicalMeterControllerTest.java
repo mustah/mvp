@@ -24,7 +24,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
@@ -61,9 +60,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void setUp() {
     logicalMeterRepository.deleteAll();
 
-    for (int x = 1; x <= 55; x++) {
-      String status = x % 10 == 0 ? "Warning" : "Ok";
-      mockLogicalMeter(x, status);
+    for (int seed = 1; seed <= 55; seed++) {
+      String status = seed % 10 == 0 ? "Warning" : "Ok";
+      saveLogicalMeter(seed, status);
     }
 
     restClient().loginWith("evanil@elvaco.se", "eva123");
@@ -184,7 +183,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurement.unit).isEqualTo("m3");
   }
 
-  private void mockLogicalMeter(int seed, String status) {
+  private LogicalMeter saveLogicalMeter(int seed, String status) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(created);
@@ -197,6 +196,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       created,
       new PropertyCollection(new UserProperty("abc123", "Some project"))
     );
-    logicalMeterRepository.save(logicalMeter);
+    return logicalMeterRepository.save(logicalMeter);
   }
 }

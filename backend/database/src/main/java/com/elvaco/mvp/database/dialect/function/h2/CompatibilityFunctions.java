@@ -17,8 +17,9 @@ import tec.uom.se.unit.Units;
 
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 
+@SuppressWarnings("WeakerAccess") // Used by H2 DB
 @Slf4j
-final class CompatibilityFunctions {
+public final class CompatibilityFunctions {
 
   private static final Map<String, Unit<?>> CUSTOM_TYPES = new HashMap<>();
 
@@ -32,7 +33,7 @@ final class CompatibilityFunctions {
 
   private CompatibilityFunctions() {}
 
-  static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
+  public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     Quantity<?> sourceQuantity;
     try {
       sourceQuantity = Quantities.getQuantity(valueAndUnit);

@@ -14,72 +14,37 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
-import com.elvaco.mvp.dto.GeoPositionDto;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.ToString;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.util.Json.OBJECT_MAPPER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
 @Profile("demo")
+@Component
 public class CsvLoader implements CommandLineRunner {
 
   private static final String DELIMITER = " :: ";
 
-  public static void main(String[] args) throws Exception {
-    testing();
-  }
+  private final LogicalMeters logicalMeters;
+  private final PhysicalMeters physicalMeters;
 
-  @Override
-  public void run(String... args) throws Exception {
-    testing();
-  }
-
-  private static void testing() throws java.io.IOException {
-    URL metersResource = loadResource("data/meters_perstorp.csv");
-    URL geoDataResource = loadResource("data/geodata.json");
-
-    Map<String, GeoPositionDto> map =
-      OBJECT_MAPPER.readValue(
-        getFile(geoDataResource),
-        new TypeReference<Map<String, GeoPositionDto>>() {}
-      );
-
-    Map<String, Location> locationMap = map.entrySet()
-      .stream()
-      .map(entry -> parseKeyToLocation(entry.getKey())
-        .coordinate(toGeoCoordinate(entry.getValue()))
-        .build())
-      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
-
-    CsvParser.separator(';')
-      .mapWith(csvMapper())
-      .stream(getFile(metersResource), stream ->
-        stream
-          .map(meterData -> {
-            LogicalMeter meteringPoint = new LogicalMeter(
-              meterData.meterStatus,
-              locationMap.get(meterData.address),
-              new Date(),
-              new PropertyCollection(new UserProperty(meterData.facilityId))
-            );
-            return new PhysicalMeter(
-              null,
-              ELVACO,
-              meteringPoint,
-              meterData.meterId,
-              meterData.medium
-            );
-          })
-      )
-      .forEach(System.out::println);
+  @Autowired
+  public CsvLoader(LogicalMeters logicalMeters, PhysicalMeters physicalMeters) {
+    this.logicalMeters = logicalMeters;
+    this.physicalMeters = physicalMeters;
   }
 
   private static LocationBuilder parseKeyToLocation(String s) {
@@ -109,6 +74,52 @@ public class CsvLoader implements CommandLineRunner {
   @Nullable
   private static String toNull(String value) {
     return value.equals("NULL") ? null : value;
+  }
+
+  @Override
+  public void run(String... args) throws Exception {
+    testing();
+  }
+
+  private void testing() throws java.io.IOException {
+    URL metersResource = loadResource("data/meters_perstorp.csv");
+    URL geoDataResource = loadResource("data/geodata.json");
+
+    Map<String, GeoPositionDto> map =
+      OBJECT_MAPPER.readValue(
+        getFile(geoDataResource),
+        new TypeReference<Map<String, GeoPositionDto>>() {}
+      );
+
+    Map<String, Location> locationMap = map.entrySet()
+      .stream()
+      .map(entry -> parseKeyToLocation(entry.getKey())
+        .coordinate(toGeoCoordinate(entry.getValue()))
+        .build())
+      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
+
+    CsvParser.separator(';')
+      .mapWith(csvMapper())
+      .stream(getFile(metersResource), stream ->
+        stream
+          .map(meterData -> {
+            LogicalMeter meteringPoint = new LogicalMeter(
+              meterData.meterStatus,
+              locationMap.get(meterData.address),
+              new Date(),
+              new PropertyCollection(new UserProperty(meterData.facilityId))
+            );
+            meteringPoint = logicalMeters.save(meteringPoint);
+            return new PhysicalMeter(
+              ELVACO,
+              meterData.meterId,
+              meterData.medium,
+              meteringPoint.id
+            );
+          })
+      )
+      .peek(physicalMeters::save)
+      .forEach(System.out::println);
   }
 
   @ToString

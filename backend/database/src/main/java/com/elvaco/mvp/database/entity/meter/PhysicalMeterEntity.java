@@ -60,5 +60,4 @@ public class PhysicalMeterEntity implements Serializable {
     this.medium = medium;
     this.logicalMeterId = logicalMeterId;
   }
-
 }

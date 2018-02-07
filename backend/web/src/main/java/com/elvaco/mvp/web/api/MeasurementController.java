@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -14,6 +13,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static java.util.stream.Collectors.toList;
 
 @RestApi("/v1/api/measurements")
 public class MeasurementController {
@@ -45,8 +46,9 @@ public class MeasurementController {
     return measurementUseCases.findAll(
       scale,
       new HashMap<>(requestParams)
-    ).stream().map(source -> toDto(source))
-      .collect(Collectors.toList());
+    ).stream()
+      .map(this::toDto)
+      .collect(toList());
   }
 
   private MeasurementDto toDto(Measurement measurement) {

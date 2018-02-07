@@ -32,18 +32,18 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public List<Measurement> findAllByScale(String scale, Map<String, List<String>> filterParams) {
-    return measurementJpaRepository.findAllScaled(
-      scale,
-      filterMapper.map(filterParams)
-    ).stream().map(measurementMapper::toDomainModel).collect(toList());
+    return measurementJpaRepository.findAllScaled(scale, filterMapper.map(filterParams))
+      .stream()
+      .map(measurementMapper::toDomainModel)
+      .collect(toList());
   }
 
   @Override
   public List<Measurement> findAll(Map<String, List<String>> filterParams) {
-    return
-      measurementJpaRepository.findAll(
-        filterMapper.map(filterParams)
-      ).stream().map(measurementMapper::toDomainModel).collect(toList());
+    return measurementJpaRepository.findAll(filterMapper.map(filterParams))
+      .stream()
+      .map(measurementMapper::toDomainModel)
+      .collect(toList());
   }
 
   @Override
