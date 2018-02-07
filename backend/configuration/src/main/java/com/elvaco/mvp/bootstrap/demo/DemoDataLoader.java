@@ -16,10 +16,10 @@ import com.elvaco.mvp.entity.meter.LocationEntity;
 import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.entity.user.OrganisationEntity;
-import com.elvaco.mvp.repository.access.OrganisationRepository;
 import com.elvaco.mvp.repository.jpa.GatewayRepository;
 import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class DemoDataLoader implements CommandLineRunner {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterRepository;
-  private final OrganisationRepository organisationRepository;
+  private final OrganisationJpaRepository organisationRepository;
   private final GatewayRepository gatewayRepository;
   private final SettingUseCases settingUseCases;
 
@@ -49,8 +49,8 @@ public class DemoDataLoader implements CommandLineRunner {
   public DemoDataLoader(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
-    PhysicalMeterRepository physicalMeterRepository,
-    OrganisationRepository organisationRepository,
+    PhysicalMeterJpaRepository physicalMeterRepository,
+    OrganisationJpaRepository organisationRepository,
     GatewayRepository gatewayRepository,
     SettingUseCases settingUseCases
   ) {
