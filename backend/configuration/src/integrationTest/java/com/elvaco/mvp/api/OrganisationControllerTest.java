@@ -159,8 +159,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(organisation.code).isEqualTo(oldCode);
 
     // act
-    final String newCode = "batcave";
-    organisation.code = newCode;
+    organisation.code = "batcave";
     ResponseEntity<UnauthorizedDto> put = asAdminOfElvaco()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
@@ -184,8 +183,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     assertThat(organisation.code).isEqualTo(oldCode);
 
     // act
-    final String newCode = "batcave";
-    organisation.code = newCode;
+    organisation.code = "batcave";
     ResponseEntity<UnauthorizedDto> put = asElvacoUser()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
