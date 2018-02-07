@@ -1,4 +1,4 @@
-package com.elvaco.mvp.spring;
+package com.elvaco.mvp.adapters.spring;
 
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.Sort;

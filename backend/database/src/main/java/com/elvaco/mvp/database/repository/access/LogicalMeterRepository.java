@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -10,7 +11,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
-import com.elvaco.mvp.spring.PageAdapter;
+
 import org.springframework.data.domain.PageRequest;
 
 import static java.util.stream.Collectors.toList;

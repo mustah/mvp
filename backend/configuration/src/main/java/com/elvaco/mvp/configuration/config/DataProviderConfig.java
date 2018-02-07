@@ -1,4 +1,4 @@
-package com.elvaco.mvp.config;
+package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;

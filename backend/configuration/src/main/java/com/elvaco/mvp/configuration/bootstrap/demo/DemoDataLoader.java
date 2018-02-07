@@ -1,4 +1,4 @@
-package com.elvaco.mvp.bootstrap.demo;
+package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

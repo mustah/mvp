@@ -1,4 +1,4 @@
-package com.elvaco.mvp.api;
+package com.elvaco.mvp.web;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.elvaco.mvp.config;
+package com.elvaco.mvp.configuration.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

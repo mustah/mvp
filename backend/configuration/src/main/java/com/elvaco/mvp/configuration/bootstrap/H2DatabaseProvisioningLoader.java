@@ -1,4 +1,4 @@
-package com.elvaco.mvp.bootstrap;
+package com.elvaco.mvp.configuration.bootstrap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

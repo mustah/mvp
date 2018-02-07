@@ -1,4 +1,4 @@
-package com.elvaco.mvp.api;
+package com.elvaco.mvp.web;
 
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
