@@ -31,6 +31,7 @@ public class PhysicalMeterEntity implements Serializable {
 
   @OneToOne
   public OrganisationEntity organisation;
+
   public String identity;
   public String medium;
 
@@ -45,6 +46,16 @@ public class PhysicalMeterEntity implements Serializable {
   public PhysicalMeterEntity() {}
 
   public PhysicalMeterEntity(OrganisationEntity organisation, String identity, String medium) {
+    this(null, organisation, identity, medium);
+  }
+
+  public PhysicalMeterEntity(
+    Long id,
+    OrganisationEntity organisation,
+    String identity,
+    String medium
+  ) {
+    this.id = id;
     this.organisation = organisation;
     this.identity = identity;
     this.medium = medium;

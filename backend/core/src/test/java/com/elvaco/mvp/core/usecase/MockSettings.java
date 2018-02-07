@@ -8,10 +8,11 @@ import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.core.spi.repository.Settings;
 
 class MockSettings implements Settings {
-  private List<Setting> settings;
 
-  public MockSettings() {
-    settings = new ArrayList<>();
+  private final List<Setting> settings;
+
+  MockSettings() {
+    this.settings = new ArrayList<>();
   }
 
   @Override

@@ -6,6 +6,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Setting;
 
 public interface Settings {
+
   List<Setting> findAll();
 
   Optional<Setting> findByName(String name);
