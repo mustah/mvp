@@ -1,6 +1,5 @@
 package com.elvaco.mvp.api;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.elvaco.mvp.dto.OrganisationDto;
@@ -60,7 +59,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void superAdminFindsAllOrganisations() throws IOException {
+  public void superAdminFindsAllOrganisations() {
     ResponseEntity<List> request = asSuperAdmin()
       .get("/organisations", List.class);
 
@@ -73,7 +72,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void adminDoesNotFindOrganisations() throws IOException {
+  public void adminDoesNotFindOrganisations() {
     ResponseEntity<List> request = asAdminOfElvaco()
       .get("/organisations", List.class);
 
@@ -82,7 +81,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void regularUsersDoesNotFindOrganisations() throws IOException {
+  public void regularUsersDoesNotFindOrganisations() {
     ResponseEntity<List> request = asElvacoUser()
       .get("/organisations", List.class);
 
