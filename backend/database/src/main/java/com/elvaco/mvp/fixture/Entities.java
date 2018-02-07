@@ -18,5 +18,19 @@ public final class Entities {
       "wayne-industries"
     );
 
+  public static final OrganisationEntity SECRET_SERVICE =
+    new OrganisationEntity(
+      3L,
+      "Secret Service",
+      "secret-service"
+    );
+
+  public static final OrganisationEntity THE_BEATLES =
+    new OrganisationEntity(
+      4L,
+      "The Beatles",
+      "the-beatles"
+    );
+
   private Entities() { }
 }

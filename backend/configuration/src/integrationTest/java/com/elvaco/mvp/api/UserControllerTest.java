@@ -128,16 +128,18 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void updateSavedUserName() {
-    User user = users.findByEmail(OTHER_ELVACO_USER.email).get();
+    String newName = "Eva Andersson";
 
+    User user = users.findByEmail(OTHER_ELVACO_USER.email).get();
     UserDto userDto = userMapper.toDto(user);
-    userDto.name = "Eva Andersson";
+    assertThat(userDto.name).isNotEqualTo(newName);
+    userDto.name = newName;
 
     asSuperAdmin().put("/users", userDto);
 
     User updatedUser = users.findById(user.id).get();
 
-    assertThat(updatedUser.name).isEqualTo("Eva Andersson");
+    assertThat(updatedUser.name).isEqualTo(newName);
   }
 
   @Test

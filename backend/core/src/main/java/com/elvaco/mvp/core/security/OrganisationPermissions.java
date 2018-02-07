@@ -17,6 +17,14 @@ public class OrganisationPermissions {
 
   public boolean isAllowed(
     AuthenticatedUser authenticatedUser,
+    Organisation targetDomainObject,
+    Permission permission
+  ) {
+    return authenticatedUser.isSuperAdmin();
+  }
+
+  public boolean isAllowed(
+    AuthenticatedUser authenticatedUser,
     User targetDomainObject,
     Permission permission
   ) {
