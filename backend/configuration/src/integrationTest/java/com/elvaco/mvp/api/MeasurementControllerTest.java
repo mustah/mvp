@@ -11,7 +11,7 @@ import com.elvaco.mvp.dto.MeasurementDto;
 import com.elvaco.mvp.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.PhysicalMeterRepository;
+import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +32,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeasurementJpaRepository measurementJpaRepository;
 
   @Autowired
-  private PhysicalMeterRepository physicalMeterRepository;
+  private PhysicalMeterJpaRepository physicalMeterRepository;
 
   private Map<String, MeasurementEntity> measurementQuantities;
   private PhysicalMeterEntity forceMeter;

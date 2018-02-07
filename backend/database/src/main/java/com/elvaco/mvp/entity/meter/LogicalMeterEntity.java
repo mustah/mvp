@@ -46,11 +46,14 @@ public class LogicalMeterEntity implements Serializable {
   @OneToMany(mappedBy = "logicalMeter")
   @JsonManagedReference
   public List<PhysicalMeterEntity> physicalMeters;
+
   public String status;
   public String medium;
+
   @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
   public Date created;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     name = "gateways_meters",
@@ -58,6 +61,7 @@ public class LogicalMeterEntity implements Serializable {
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
+
   @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
   private LocationEntity location;
