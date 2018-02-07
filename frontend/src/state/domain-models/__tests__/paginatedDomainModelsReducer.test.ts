@@ -1,9 +1,12 @@
 import {ErrorResponse, HasId} from '../../../types/Types';
+import {
+  HasPageNumber, NormalizedPaginated,
+  NormalizedPaginatedState
+} from '../../domain-models-paginated/paginatedDomainModels';
+import {requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {initialPaginatedDomain, measurements} from '../../domain-models-paginated/paginatedDomainModelsReducer';
 import {EndPoints} from '../domainModels';
 import {Measurement, MeasurementState} from '../measurement/measurementModels';
-import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
-import {requestMethodPaginated} from '../paginatedDomainModelsActions';
-import {initialPaginatedDomain, measurements as reducer} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
 
@@ -58,11 +61,11 @@ describe('paginatedDomainModelsReducer', () => {
     };
 
     it('has initial state', () => {
-      expect(reducer(initialState, {type: 'unknown', payload: -1})).toEqual({...initialState});
+      expect(measurements(initialState, {type: 'unknown', payload: -1})).toEqual({...initialState});
     });
 
     it('requests measurements', () => {
-      const stateAfterRequestInitiation = reducer(initialState, getRequest.request(page));
+      const stateAfterRequestInitiation = measurements(initialState, getRequest.request(page));
       const expected: NormalizedPaginatedState<Measurement> = {
         ...initialState,
         result: {
@@ -73,7 +76,7 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('adds new measurement to state', () => {
-      const newState = reducer(initialState, getRequest.success(normalizedMeasurement));
+      const newState = measurements(initialState, getRequest.success(normalizedMeasurement));
       const expected: NormalizedPaginatedState<Measurement> = {
         entities: {...normalizedMeasurement.entities.measurements},
         result: {
@@ -89,7 +92,7 @@ describe('paginatedDomainModelsReducer', () => {
     it('appends entities', () => {
 
       const populatedState: NormalizedPaginatedState<Measurement> =
-        reducer(initialState, getRequest.success(normalizedMeasurement));
+        measurements(initialState, getRequest.success(normalizedMeasurement));
 
       const anotherPage = 2;
 
@@ -123,7 +126,7 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
 
-      const newState = reducer(populatedState, getRequest.success(payload as NormalizedPaginated<Measurement>));
+      const newState = measurements(populatedState, getRequest.success(payload as NormalizedPaginated<Measurement>));
       expect(newState).toEqual(expectedState);
     });
 
@@ -131,7 +134,7 @@ describe('paginatedDomainModelsReducer', () => {
       const page = 0;
       const payload: ErrorResponse & HasPageNumber = {message: 'failed', page};
 
-      const stateAfterFailure = reducer(initialState, getRequest.failure(payload));
+      const stateAfterFailure = measurements(initialState, getRequest.failure(payload));
 
       const failedState = {
         ...initialState,

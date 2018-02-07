@@ -16,6 +16,7 @@ import {meterSchema} from './meter/meterSchema';
 import {
   HasPageNumber,
   NormalizedPaginated,
+  NormalizedPaginatedState,
   PaginatedDomainModelsState,
   RestGetPaginated,
 } from './paginatedDomainModels';
@@ -82,7 +83,7 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const isFetchingOrExisting = <T extends HasId>(page: number, {result}: NormalizedPaginated<T>) =>
+const isFetchingOrExisting = (page: number, {result}: NormalizedPaginatedState<HasId>) =>
   result[page] && (result[page].result || result[page].isFetching);
 
 const restGetIfNeeded = <T extends HasId>(
@@ -99,7 +100,7 @@ const restGetIfNeeded = <T extends HasId>(
     (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
-      const shouldFetch = !isFetchingOrExisting<T>(page, paginatedDomainModels[model]);
+      const shouldFetch = !isFetchingOrExisting(page, paginatedDomainModels[model]);
 
       if (shouldFetch) {
         return asyncRequest<string, NormalizedPaginated<T>>({
@@ -119,6 +120,7 @@ const restGetIfNeeded = <T extends HasId>(
 
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
+
 export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
   afterSuccess: (
     {result}: NormalizedPaginated<Meter>,

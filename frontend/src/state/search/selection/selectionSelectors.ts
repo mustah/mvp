@@ -100,11 +100,9 @@ export const getProductModels = getList(ParameterName.productModels);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export interface UriLookupState {
+export interface UriLookupState extends SearchParameterState {
   model: keyof PaginatedDomainModelsState;
   componentId: uuid;
-  selection: SelectionState;
-  saved: SelectionState[];
   pagination: PaginationState;
 }
 

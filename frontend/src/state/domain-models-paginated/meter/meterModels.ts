@@ -1,5 +1,5 @@
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
-import {IdNamed, uuid} from '../../../types/Types';
+import {HasId, IdNamed, uuid} from '../../../types/Types';
 import {Location, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
 import {Flag} from '../../domain-models/flag/flagModels';
 
@@ -10,8 +10,7 @@ export interface MeterStatusChangelog {
   date: string;
 }
 
-export interface Meter extends Location {
-  id: uuid;
+export interface Meter extends Location, HasId {
   moid: uuid;
   sapId?: uuid;
   measurementId?: uuid;

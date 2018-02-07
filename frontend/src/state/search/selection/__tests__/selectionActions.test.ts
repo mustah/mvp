@@ -7,19 +7,26 @@ import {Period} from '../../../../components/dates/dateModels';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {makeRestClient} from '../../../../services/restClient';
 import {IdNamed} from '../../../../types/Types';
+import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {EndPoints, HttpMethod, Normalized} from '../../../domain-models/domainModels';
 import {requestMethod} from '../../../domain-models/domainModelsActions';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {Meter} from '../../../domain-models-paginated/meter/meterModels';
-import {SearchParameterState} from '../../searchParameterReducer';
 import {
-  addSelectionAction, closeSelectionPage, closeSelectionPageAction, deselectSelection, selectPeriod,
-  selectPeriodAction, selectSavedSelection, selectSavedSelectionAction, setSelection, setSelectionAction,
+  addSelectionAction,
+  closeSelectionPage,
+  closeSelectionPageAction,
+  deselectSelection,
+  selectPeriod,
+  selectPeriodAction,
+  selectSavedSelection,
+  selectSavedSelectionAction,
+  setSelection,
+  setSelectionAction,
   toggleSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
-import {initialState, selection} from '../selectionReducer';
-import {getEncodedUriParametersForMeters} from '../selectionSelectors';
+import {initialState} from '../selectionReducer';
+import {getEncodedUriParametersForMeters, UriLookupState} from '../selectionSelectors';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -45,6 +52,28 @@ describe('selectionActions', () => {
     mockRestClient.reset();
   });
 
+  const savedSelection21 = {
+    ...initialState,
+    id: 21,
+    name: 'test 21',
+  };
+  const saved: SelectionState[] = [
+    {
+      ...initialState,
+      id: 1,
+      name: 'test 1',
+    },
+    savedSelection21,
+  ];
+  const rootState = {searchParameters: {selection: {...initialState}, saved}};
+  const rootStateNoSaved = {...rootState, searchParameters: {...rootState.searchParameters, saved: []}};
+
+  const onFakeFetchMetersAndGateways = (uriLookupState: UriLookupState) => {
+    const encodedUriParameters = getEncodedUriParametersForMeters(uriLookupState);
+    mockRestClient.onGet(makeUrl(EndPoints.meters, encodedUriParameters)).reply(200, testData.meters);
+    mockRestClient.onGet(makeUrl(EndPoints.gateways, encodedUriParameters)).reply(200, testData.gateways);
+  };
+
   describe('close selection page', () => {
 
     it('closes selection page and navigates back to previous page', () => {
@@ -60,25 +89,9 @@ describe('selectionActions', () => {
   describe('select from saved selections', () => {
 
     it('sets new selection', () => {
-      const savedSelection21 = {
-        ...initialState,
-        id: 21,
-        name: 'test 21',
-      };
-
-      const saved: SelectionState[] = [
-        {
-          ...initialState,
-          id: 1,
-          name: 'test 1',
-        },
-        savedSelection21,
-      ];
-
-      const rootState = {searchParameters: {selection: initialState, saved}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
       store = configureMockStore(rootState);
 
+      onFakeFetchMetersAndGateways(rootState.searchParameters);
       store.dispatch(selectSavedSelection(savedSelection21.id));
 
       expect(store.getActions()).toEqual([
@@ -89,20 +102,8 @@ describe('selectionActions', () => {
     });
 
     it('does not dispatch if the selection cannot be found', () => {
-      const saved: SelectionState[] = [
-        {
-          ...initialState,
-          id: 1,
-          name: 'test 1',
-        },
-        {
-          ...initialState,
-          id: 21,
-          name: 'test 21',
-        },
-      ];
 
-      store = configureMockStore({searchParameters: {selection: initialState, saved}});
+      store = configureMockStore(rootState);
 
       store.dispatch(selectSavedSelection({
         ...initialState,
@@ -118,14 +119,11 @@ describe('selectionActions', () => {
   describe('toggle selection', () => {
 
     it('set selection', async () => {
-      const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
-      store = configureMockStore(rootState);
-
       const selection: IdNamed = {...gothenburg};
-
       const parameter: SelectionParameter = {...selection, parameter: ParameterName.cities};
+      store = configureMockStore(rootStateNoSaved);
 
+      onFakeFetchMetersAndGateways(rootStateNoSaved.searchParameters);
       store.dispatch(toggleSelection(parameter));
 
       expect(store.getActions()).toEqual([
@@ -136,12 +134,10 @@ describe('selectionActions', () => {
     });
 
     it('select period', async () => {
-      const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
-      store = configureMockStore(rootState);
-
       const period = Period.previousMonth;
+      store = configureMockStore(rootStateNoSaved);
 
+      onFakeFetchMetersAndGateways(rootStateNoSaved.searchParameters);
       store.dispatch(selectPeriod(period));
 
       expect(store.getActions()).toEqual([
@@ -152,32 +148,27 @@ describe('selectionActions', () => {
     });
 
     it('deselects selected city', () => {
+      const selection = {selected: {...initialState, [ParameterName.cities]: [stockholm.id]}};
+      const stateWithSelection = {searchParameters: {selection, saved: []}};
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: SelectionState = selection(initialState, addSelectionAction(payload));
+      store = configureMockStore(stateWithSelection);
 
-      const rootState = {searchParameters: {selection: state, saved: []}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
-      store = configureMockStore(rootState);
-
-      const parameter: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-
-      store.dispatch(toggleSelection(parameter));
+      onFakeFetchMetersAndGateways(stateWithSelection.searchParameters);
+      store.dispatch(toggleSelection(payload));
 
       expect(store.getActions()).toEqual([
-        deselectSelection(parameter),
+        deselectSelection(payload),
         meterRequest.request(),
         gatewayRequest.request(),
       ]);
     });
 
     it('set several selections', () => {
-      const rootState = {searchParameters: {selection: initialState, saved: []}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
-      store = configureMockStore(rootState);
-
       const p1: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const p2: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
+      store = configureMockStore(rootStateNoSaved);
 
+      onFakeFetchMetersAndGateways(rootStateNoSaved.searchParameters);
       store.dispatch(toggleSelection(p1));
       store.dispatch(toggleSelection(p2));
 
@@ -194,27 +185,18 @@ describe('selectionActions', () => {
 
   describe('set selection action', () => {
     it('set the selection of one parameter id', () => {
-
       const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
-      onFakeFetchMetersAndGateways(rootState.searchParameters);
+      const payload: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
       store = configureMockStore(rootState);
 
-      const selection: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
-
-      store.dispatch(setSelection(selection));
+      onFakeFetchMetersAndGateways(rootState.searchParameters);
+      store.dispatch(setSelection(payload));
 
       expect(store.getActions()).toEqual([
-        setSelectionAction(selection),
+        setSelectionAction(payload),
         meterRequest.request(),
         gatewayRequest.request(),
       ]);
     });
   });
-
-  const onFakeFetchMetersAndGateways = (searchParameters: SearchParameterState) => {
-    const encodedUriParameters = getEncodedUriParametersForMeters(searchParameters);
-    mockRestClient.onGet(makeUrl(EndPoints.meters, encodedUriParameters)).reply(200, testData.meters);
-    mockRestClient.onGet(makeUrl(EndPoints.gateways, encodedUriParameters)).reply(200, testData.gateways);
-  };
-
 });

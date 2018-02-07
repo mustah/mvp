@@ -1,4 +1,4 @@
-import {uuid} from '../../../types/Types';
+import {HasId} from '../../../types/Types';
 import {NormalizedPaginatedState} from '../../domain-models-paginated/paginatedDomainModels';
 
 interface PhysicalMeter {
@@ -6,8 +6,7 @@ interface PhysicalMeter {
   href: string;
 }
 
-export interface Measurement {
-  id: uuid;
+export interface Measurement extends HasId {
   created: number;
   value: number;
   quantity: string;
