@@ -1,8 +1,12 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.Instant;
 import java.util.Date;
 import javax.annotation.Nullable;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public class Measurement {
   @Nullable
   public final Long id;
@@ -10,8 +14,16 @@ public class Measurement {
   public final String quantity;
   public final double value;
   public final String unit;
-  @Nullable
   public final PhysicalMeter physicalMeter;
+
+  public Measurement(
+    Quantity quantity,
+    double value,
+    String unit,
+    PhysicalMeter physicalMeter
+  ) {
+    this(null, Date.from(Instant.now()), quantity.getName(), value, unit, physicalMeter);
+  }
 
   public Measurement(
     @Nullable Long id,
@@ -19,7 +31,7 @@ public class Measurement {
     String quantity,
     double value,
     String unit,
-    @Nullable PhysicalMeter physicalMeter
+    PhysicalMeter physicalMeter
   ) {
     this.id = id;
     this.created = new Date(created.getTime());

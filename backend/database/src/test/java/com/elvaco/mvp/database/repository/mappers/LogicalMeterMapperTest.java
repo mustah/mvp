@@ -1,21 +1,22 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.repository.mappers.LocationMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.modelmapper.config.Configuration.AccessLevel;
 
@@ -32,8 +33,23 @@ public class LogicalMeterMapperTest {
       .setFieldAccessLevel(AccessLevel.PUBLIC);
 
     logicalMeterMapper = new LogicalMeterMapper(
-      new LocationMapper()
+      new MeterDefinitionMapper(),
+      new LocationMapper(),
+      new PhysicalMeterMapper(new OrganisationMapper())
     );
+  }
+
+  @Test
+  public void mapsPhysicalMeters() {
+    LogicalMeter logicalMeter = new LogicalMeter(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      Collections.singletonList(
+        new PhysicalMeter(ELVACO, "1234", "My medium")
+      )
+    );
+    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);
+    assertThat(logicalMeterEntity.physicalMeters).hasSize(1);
+    assertThat(logicalMeterMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
   }
 
   @Test
@@ -64,7 +80,9 @@ public class LogicalMeterMapperTest {
         "Ok",
         expectedLocation,
         created,
-        new PropertyCollection(null)
+        new PropertyCollection(null),
+        Collections.emptyList(),
+        null
       )
     );
   }
@@ -86,7 +104,9 @@ public class LogicalMeterMapperTest {
         "Ok",
         new LocationBuilder().build(),
         created,
-        new PropertyCollection(null)
+        new PropertyCollection(null),
+        Collections.emptyList(),
+        null
       )
     );
   }
@@ -104,7 +124,9 @@ public class LogicalMeterMapperTest {
       "Ok",
       location,
       created,
-      new PropertyCollection(null)
+      new PropertyCollection(null),
+      Collections.emptyList(),
+      null
     );
 
     LocationEntity locationEntityExpected = new LocationEntity();

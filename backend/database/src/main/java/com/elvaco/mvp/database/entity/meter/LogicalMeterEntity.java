@@ -1,8 +1,10 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
@@ -15,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -44,12 +47,10 @@ public class LogicalMeterEntity implements Serializable {
   @Type(type = "property-collection")
   public PropertyCollection propertyCollection;
 
-  @OneToMany(mappedBy = "logicalMeter")
-  @JsonManagedReference
-  public List<PhysicalMeterEntity> physicalMeters;
+  @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
+  public Set<PhysicalMeterEntity> physicalMeters;
 
   public String status;
-  public String medium;
 
   @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
@@ -63,12 +64,16 @@ public class LogicalMeterEntity implements Serializable {
   )
   public List<GatewayEntity> gateways;
 
+  @ManyToOne
+  public MeterDefinitionEntity meterDefinition;
+
   @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
   private LocationEntity location;
 
   public LogicalMeterEntity() {
     this.propertyCollection = new PropertyCollection();
+    this.physicalMeters = Collections.emptySet();
     setLocation(new LocationEntity());
   }
 

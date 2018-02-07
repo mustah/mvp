@@ -51,8 +51,11 @@ class UseCaseConfig {
   }
 
   @Bean
-  LogicalMeterUseCases logicalMeterUseCases(AuthenticatedUser currentUser) {
-    return new LogicalMeterUseCases(currentUser, logicalMeters);
+  LogicalMeterUseCases logicalMeterUseCases(
+    AuthenticatedUser currentUser,
+    Measurements measurements
+  ) {
+    return new LogicalMeterUseCases(currentUser, logicalMeters, measurements);
   }
 
   @Bean

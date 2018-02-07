@@ -3,11 +3,11 @@ package com.elvaco.mvp.core.security;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
-class MockAuthenticatedUser implements AuthenticatedUser {
+public class MockAuthenticatedUser implements AuthenticatedUser {
 
   private final User user;
 
-  MockAuthenticatedUser(User user) {
+  public MockAuthenticatedUser(User user) {
     this.user = user;
   }
 

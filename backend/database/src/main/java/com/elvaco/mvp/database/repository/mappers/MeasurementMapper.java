@@ -2,15 +2,13 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import org.modelmapper.ModelMapper;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 
 public class MeasurementMapper implements DomainEntityMapper<Measurement, MeasurementEntity> {
 
-  private final ModelMapper modelMapper;
   private final PhysicalMeterMapper physicalMeterMapper;
 
-  public MeasurementMapper(ModelMapper modelMapper, PhysicalMeterMapper physicalMeterMapper) {
-    this.modelMapper = modelMapper;
+  public MeasurementMapper(PhysicalMeterMapper physicalMeterMapper) {
     this.physicalMeterMapper = physicalMeterMapper;
   }
 
@@ -28,6 +26,12 @@ public class MeasurementMapper implements DomainEntityMapper<Measurement, Measur
 
   @Override
   public MeasurementEntity toEntity(Measurement domainModel) {
-    return modelMapper.map(domainModel, MeasurementEntity.class);
+    return new MeasurementEntity(
+      domainModel.id,
+      domainModel.created,
+      domainModel.quantity,
+      new MeasurementUnit(domainModel.unit, domainModel.value),
+      physicalMeterMapper.toEntity(domainModel.physicalMeter)
+    );
   }
 }

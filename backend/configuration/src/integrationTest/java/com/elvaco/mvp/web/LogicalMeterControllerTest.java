@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,12 +9,23 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
+import com.elvaco.mvp.core.fixture.DomainModels;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
+import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 
+import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +42,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Autowired
   private LogicalMeters logicalMeterRepository;
 
+  @Autowired
+  private PhysicalMetersRepository physicalMeterRepository;
+
+  @Autowired
+  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
+  @Autowired
+  private MeasurementJpaRepository measurementJpaRepository;
+
+  @Autowired
+  private MeasurementUseCases measurementUseCases;
+
+  @Autowired
+  private MeterDefinitions meterDefinitions;
+
   @Before
   public void setUp() {
     logicalMeterRepository.deleteAll();
@@ -44,6 +71,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    measurementJpaRepository.deleteAll();
+    physicalMeterJpaRepository.deleteAll();
     logicalMeterRepository.deleteAll();
 
     restClient().logout();
@@ -109,6 +138,50 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getBody().size()).isEqualTo(55);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+  }
+
+  @Test
+  public void findMeasurementsForLogicalMeter() {
+    MeterDefinition districtHeatingMeterDefinition =
+      meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
+
+    LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
+      new LogicalMeter(districtHeatingMeterDefinition)
+    );
+
+    PhysicalMeter physicalMeter = physicalMeterRepository.save(
+      new PhysicalMeter(
+        DomainModels.ELVACO,
+        "111-222-333-444",
+        "Some device specific medium name",
+        savedLogicalMeter.id
+      )
+    );
+
+    measurementUseCases.save(Arrays.asList(
+      // We should find these
+      new Measurement(Quantity.VOLUME, 2.0, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 3.1, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 4.0, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.0, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.2, "m3", physicalMeter),
+
+      // ... But not these, as they are of a quantity not defined in the meter definition
+      new Measurement(Quantity.TEMPERATURE, 99, "°C", physicalMeter),
+      new Measurement(Quantity.TEMPERATURE, 32, "°C", physicalMeter)
+    ));
+
+    Long meterId = savedLogicalMeter.id;
+
+
+    ResponseEntity<List<MeasurementDto>> response = asElvacoUser()
+      .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<MeasurementDto> measurementDtos = response.getBody();
+    assertThat(measurementDtos).hasSize(5);
+    MeasurementDto measurement = measurementDtos.get(0);
+    assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.getName());
+    assertThat(measurement.unit).isEqualTo("m3");
   }
 
   private void mockLogicalMeter(int seed, String status) {

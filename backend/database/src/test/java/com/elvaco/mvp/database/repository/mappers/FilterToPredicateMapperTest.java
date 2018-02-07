@@ -14,6 +14,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +29,23 @@ public class FilterToPredicateMapperTest {
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         return null;
+      }
+    };
+
+    assertThat(test.map(filters)).isNull();
+  }
+
+  @Test
+  public void mapEmptyFilter() {
+    Map<String, List<String>> filters = new HashMap<>();
+    filters.put("foo", emptyList());
+    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+      @Override
+      @NotNull
+      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+        map.put("foo", (String v) -> Expressions.FALSE);
+        return map;
       }
     };
 

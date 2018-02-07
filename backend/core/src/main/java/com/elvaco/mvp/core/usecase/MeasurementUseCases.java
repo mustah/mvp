@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -10,7 +11,6 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.complementFilterWithOrganisationParameters;
-import static java.util.Collections.singletonList;
 
 public class MeasurementUseCases {
 
@@ -49,17 +49,12 @@ public class MeasurementUseCases {
       });
   }
 
-  private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
-    return physicalMeter != null && currentUser.isWithinOrganisation(physicalMeter.organisation);
+  public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {
+    return measurements.save(measurementsCollection);
+
   }
 
-  private Map<String, List<String>> complementFilterParameters(
-    Map<String, List<String>> filterParams
-  ) {
-    if (!currentUser.isSuperAdmin()) {
-      Long organisationId = currentUser.getOrganisation().id;
-      filterParams.put("organisation", singletonList(organisationId.toString()));
-    }
-    return filterParams;
+  private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
+    return physicalMeter != null && currentUser.isWithinOrganisation(physicalMeter.organisation);
   }
 }

@@ -55,7 +55,7 @@ public abstract class FilterToPredicateMapper {
 
       Function<String, BooleanExpression> lambda =
         filterableProperties.get(propertyFilter.getKey());
-      if (lambda == null) {
+      if (lambda == null || propertyValues.isEmpty()) {
         continue;
       }
       String param = propertyValues.get(0);

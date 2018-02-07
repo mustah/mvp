@@ -1,7 +1,9 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
-
+import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -17,6 +19,32 @@ public class LogicalMeter {
   public final Location location;
   public final Date created;
   public final PropertyCollection propertyCollection;
+  public final List<PhysicalMeter> physicalMeters;
+
+  @Nullable
+  private MeterDefinition meterDefinition;
+
+  public LogicalMeter(@Nullable MeterDefinition meterDefinition) {
+    this(
+      meterDefinition,
+      Collections.emptyList()
+    );
+  }
+
+  public LogicalMeter(
+    @Nullable MeterDefinition meterDefinition,
+    List<PhysicalMeter> physicalMeters
+  ) {
+    this(
+      null,
+      "Ok",
+      new LocationBuilder().build(),
+      Date.from(Instant.now()),
+      new PropertyCollection(new UserProperty()),
+      physicalMeters,
+      meterDefinition
+    );
+  }
 
   public LogicalMeter(
     String status,
@@ -24,21 +52,45 @@ public class LogicalMeter {
     Date created,
     PropertyCollection propertyCollection
   ) {
-    this(null, status, location, created, propertyCollection);
+    this(null, status, location, created, propertyCollection, Collections.emptyList(), null);
   }
 
   public LogicalMeter(
-    @Nullable
-    Long id,
+    @Nullable Long id,
     String status,
     Location location,
     Date created,
-    PropertyCollection propertyCollection
+    PropertyCollection propertyCollection,
+    List<PhysicalMeter> physicalMeters,
+    @Nullable MeterDefinition meterDefinition
   ) {
     this.id = id;
     this.status = status;
     this.location = location;
     this.created = (Date) created.clone();
     this.propertyCollection = propertyCollection;
+    this.physicalMeters = Collections.unmodifiableList(physicalMeters);
+    this.meterDefinition = meterDefinition;
+  }
+
+  public String getMedium() {
+    return meterDefinition != null ? meterDefinition.getMedium() : "Unknown medium";
+  }
+
+  public List<Quantity> getQuantities() {
+    return meterDefinition != null ? meterDefinition.getQuantities() : Collections.emptyList();
+  }
+
+  @Nullable
+  public MeterDefinition getMeterDefinition() {
+    return meterDefinition;
+  }
+
+  public void setMeterDefinition(@Nullable MeterDefinition meterDefinition) {
+    this.meterDefinition = meterDefinition;
+  }
+
+  public boolean hasMeterDefinition() {
+    return meterDefinition != null;
   }
 }

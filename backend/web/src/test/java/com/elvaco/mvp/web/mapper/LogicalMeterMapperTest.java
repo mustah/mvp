@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.Collections;
 import java.util.Date;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
@@ -53,6 +54,8 @@ public class LogicalMeterMapperTest {
       "Ok",
       location,
       new Date(),
+      null,
+      Collections.emptyList(),
       null
     );
 
