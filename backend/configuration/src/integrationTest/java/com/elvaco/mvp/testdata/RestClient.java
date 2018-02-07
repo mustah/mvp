@@ -16,8 +16,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static com.elvaco.mvp.util.Constants.API_V1;
-import static com.elvaco.mvp.util.Constants.AUTHORIZATION;
+import static com.elvaco.mvp.web.util.Constants.API_V1;
+import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {

@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.entity.user.RoleEntity;
 import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.repository.jpa.RoleRepository;
-import com.elvaco.mvp.security.MvpUserDetails;
+import com.elvaco.mvp.web.security.MvpUserDetails;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

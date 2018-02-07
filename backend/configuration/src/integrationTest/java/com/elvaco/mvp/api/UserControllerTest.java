@@ -4,12 +4,13 @@ import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
-import com.elvaco.mvp.dto.OrganisationDto;
-import com.elvaco.mvp.dto.UnauthorizedDto;
-import com.elvaco.mvp.dto.UserDto;
-import com.elvaco.mvp.dto.UserWithPasswordDto;
-import com.elvaco.mvp.mapper.UserMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.web.dto.OrganisationDto;
+import com.elvaco.mvp.web.dto.UnauthorizedDto;
+import com.elvaco.mvp.web.dto.UserDto;
+import com.elvaco.mvp.web.dto.UserWithPasswordDto;
+import com.elvaco.mvp.web.mapper.UserMapper;
+
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

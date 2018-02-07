@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static com.elvaco.mvp.util.Constants.API_V1;
+import static com.elvaco.mvp.web.util.Constants.API_V1;
 
 @EnableWebSecurity
 @Configuration

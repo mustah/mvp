@@ -2,14 +2,15 @@ package com.elvaco.mvp.config;
 
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.core.spi.repository.Users;
-import com.elvaco.mvp.dto.IdNamedDto;
-import com.elvaco.mvp.dto.LogicalMeterDto;
-import com.elvaco.mvp.dto.MapMarkerDto;
 import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.repository.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.repository.mappers.MeasurementFilterToPredicateMapper;
-import com.elvaco.mvp.security.JpaUserDetailsService;
+import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.LogicalMeterDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.security.JpaUserDetailsService;
+
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;

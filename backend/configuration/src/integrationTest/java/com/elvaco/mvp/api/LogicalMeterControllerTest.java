@@ -11,8 +11,9 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.dto.LogicalMeterDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.web.dto.LogicalMeterDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
