@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 
@@ -20,8 +20,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
-import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
+import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
+import static com.elvaco.mvp.database.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;

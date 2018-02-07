@@ -2,11 +2,11 @@ package com.elvaco.mvp.repository;
 
 import java.util.Date;
 
-import com.elvaco.mvp.dto.propertycollection.PropertyCollectionDto;
-import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
-import com.elvaco.mvp.entity.meter.LocationEntity;
-import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.dto.propertycollection.PropertyCollectionDto;
+import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
+import com.elvaco.mvp.database.entity.meter.LocationEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;

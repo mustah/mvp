@@ -11,7 +11,7 @@ spring:
       enabled: true
   jpa:
     properties:
-      hibernate.dialect: com.elvaco.mvp.dialect.MvpH2Dialect
+      hibernate.dialect: com.elvaco.mvp.database.dialect.MvpH2Dialect
 
 zuul:
   routes:

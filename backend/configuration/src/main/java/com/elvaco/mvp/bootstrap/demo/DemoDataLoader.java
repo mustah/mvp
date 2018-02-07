@@ -9,18 +9,18 @@ import java.util.List;
 import java.util.Random;
 
 import com.elvaco.mvp.core.usecase.SettingUseCases;
-import com.elvaco.mvp.dto.propertycollection.UserPropertyDto;
-import com.elvaco.mvp.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.entity.meter.LocationEntity;
-import com.elvaco.mvp.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.entity.meter.PhysicalMeterEntity;
-import com.elvaco.mvp.entity.user.OrganisationEntity;
-import com.elvaco.mvp.repository.jpa.GatewayRepository;
-import com.elvaco.mvp.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
+import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.LocationEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.jpa.GatewayRepository;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import static com.elvaco.mvp.fixture.Entities.ELVACO_ENTITY;
-import static com.elvaco.mvp.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
+import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
+import static com.elvaco.mvp.database.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
