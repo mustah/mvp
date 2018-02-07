@@ -31,6 +31,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    logicalMeterRepository.deleteAll();
+
     for (int x = 1; x <= 55; x++) {
       String status = x % 10 == 0 ? "Warning" : "Ok";
       mockLogicalMeter(x, status);
