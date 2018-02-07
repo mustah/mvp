@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository.access;
+package com.elvaco.mvp.repository.mappers;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ public class LogicalMeterMapper {
     this.locationMapper = locationMapper;
   }
 
-  LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
+  public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
     PropertyCollection props = logicalMeterEntity.propertyCollection;
 
     UserProperty userProperty = props

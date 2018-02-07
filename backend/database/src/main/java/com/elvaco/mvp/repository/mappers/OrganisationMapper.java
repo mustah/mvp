@@ -1,4 +1,4 @@
-package com.elvaco.mvp.repository.access;
+package com.elvaco.mvp.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.entity.user.OrganisationEntity;

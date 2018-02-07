@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationFilter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 
 public class LogicalMeterUseCases {
 

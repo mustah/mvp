@@ -7,9 +7,11 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
-import com.elvaco.mvp.core.usecase.Users;
 import com.elvaco.mvp.repository.jpa.UserJpaRepository;
+import com.elvaco.mvp.repository.mappers.OrganisationMapper;
+import com.elvaco.mvp.repository.mappers.UserMapper;
 
 import static java.util.stream.Collectors.toList;
 

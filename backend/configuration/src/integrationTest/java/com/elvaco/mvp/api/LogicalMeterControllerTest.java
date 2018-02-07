@@ -10,7 +10,7 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
-import com.elvaco.mvp.core.usecase.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.dto.LogicalMeterDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.After;

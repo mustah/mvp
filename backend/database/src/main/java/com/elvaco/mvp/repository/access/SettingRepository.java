@@ -4,8 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
-import com.elvaco.mvp.core.usecase.Settings;
+import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.repository.jpa.SettingJpaRepository;
+import com.elvaco.mvp.repository.mappers.SettingMapper;
 
 import static java.util.stream.Collectors.toList;
 

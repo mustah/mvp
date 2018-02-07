@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
+import com.elvaco.mvp.core.spi.repository.Settings;
 
 public class SettingUseCases {
 

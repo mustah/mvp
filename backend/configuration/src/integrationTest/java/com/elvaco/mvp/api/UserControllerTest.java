@@ -3,7 +3,7 @@ package com.elvaco.mvp.api;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.usecase.Users;
+import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.dto.OrganisationDto;
 import com.elvaco.mvp.dto.UnauthorizedDto;
 import com.elvaco.mvp.dto.UserDto;
