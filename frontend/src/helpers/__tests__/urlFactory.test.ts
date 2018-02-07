@@ -1,9 +1,7 @@
 import {Period} from '../../components/dates/dateModels';
-import {EndPoints, PaginationMetadata} from '../../state/domain-models/domainModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Status} from '../../types/Types';
-import {Maybe} from '../Maybe';
-import {encodedUriParametersForMeters, urlForNextPage, urlForPreviousPage} from '../urlFactory';
+import {encodedUriParametersForMeters} from '../urlFactory';
 
 describe('urlFactory', () => {
 
@@ -62,67 +60,5 @@ describe('urlFactory', () => {
       expect(encodedUriParametersForMeters(selection)).toEqual(expected);
     });
 
-  });
-
-  describe('can navigate through paginated resources', () => {
-    it('determines first page', () => {
-      const paginationOptions: PaginationMetadata = {
-        totalPages: 1,
-        totalElements: 2,
-        last: true,
-        first: true,
-        numberOfElements: 20,
-        sort: null,
-        size: 20,
-        number: 0,
-      };
-
-      expect(urlForPreviousPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.nothing());
-    });
-  });
-
-  it('determines last page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 1,
-      totalElements: 2,
-      last: true,
-      first: true,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 0,
-    };
-
-    expect(urlForNextPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.nothing());
-  });
-
-  it('determines url for next page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 2,
-      totalElements: 21,
-      last: false,
-      first: true,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 0,
-    };
-
-    expect(urlForNextPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.just('/measurements?number=1'));
-  });
-
-  it('determines url for previous page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 2,
-      totalElements: 21,
-      last: true,
-      first: false,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 1,
-    };
-
-    expect(urlForPreviousPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.just('/measurements?number=0'));
   });
 });
