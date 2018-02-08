@@ -1,14 +1,12 @@
 package com.elvaco.mvp.web.api;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +26,10 @@ public class OrganisationController {
   private final OrganisationMapper organisationMapper;
 
   @Autowired
-  OrganisationController(OrganisationUseCases organisationUseCases, OrganisationMapper
-    organisationMapper) {
+  OrganisationController(
+    OrganisationUseCases organisationUseCases,
+    OrganisationMapper organisationMapper
+  ) {
     this.organisationUseCases = organisationUseCases;
     this.organisationMapper = organisationMapper;
   }
@@ -53,16 +53,10 @@ public class OrganisationController {
   public ResponseEntity<OrganisationDto> createOrganisation(
     @RequestBody OrganisationDto organisation
   ) {
-    Optional<OrganisationDto> createdOrganisation = organisationUseCases.create(
-      organisationMapper.toDomainModel(organisation)
-    ).map(organisationMapper::toDto);
-
-    return createdOrganisation.map(
-      organisationDto ->
-        ResponseEntity.status(HttpStatus.CREATED).body(organisationDto))
-      .orElse(
-        ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-      );
+    return organisationUseCases.create(organisationMapper.toDomainModel(organisation))
+      .map(organisationMapper::toDto)
+      .map(ResponseEntity.status(HttpStatus.CREATED)::body)
+      .orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
   }
 
   @PutMapping

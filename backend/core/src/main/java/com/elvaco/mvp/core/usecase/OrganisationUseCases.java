@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.security.OrganisationPermissions.Permission;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
 import static com.elvaco.mvp.core.security.Permission.CREATE;
@@ -43,23 +44,24 @@ public class OrganisationUseCases {
   }
 
   public Optional<Organisation> create(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation, CREATE)) {
-      return Optional.of(organisations.create(organisation));
-    }
-    return Optional.empty();
+    return persist(organisation, CREATE);
   }
 
   public Optional<Organisation> update(Organisation organisation) {
-    if (organisationPermissions.isAllowed(currentUser, organisation, UPDATE)) {
-      return findById(organisation.id)
-        .map(organisations::update);
-    }
-    return Optional.empty();
+    return persist(organisation, UPDATE);
   }
 
   public void delete(Organisation organisation) {
     if (organisationPermissions.isAllowed(currentUser, organisation, DELETE)) {
       organisations.deleteById(organisation.id);
+    }
+  }
+
+  private Optional<Organisation> persist(Organisation organisation, Permission permission) {
+    if (organisationPermissions.isAllowed(currentUser, organisation, permission)) {
+      return Optional.of(organisations.save(organisation));
+    } else {
+      return Optional.empty();
     }
   }
 }

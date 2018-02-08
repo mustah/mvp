@@ -1,15 +1,15 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleRepository;
 import com.elvaco.mvp.web.security.MvpUserDetails;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,10 +31,8 @@ import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
-import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
 import static com.elvaco.mvp.database.fixture.Entities.SECRET_SERVICE;
 import static com.elvaco.mvp.database.fixture.Entities.THE_BEATLES;
-import static com.elvaco.mvp.database.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
@@ -44,19 +42,19 @@ import static java.util.Collections.singletonList;
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final RoleRepository roleRepository;
-  private final OrganisationJpaRepository organisationJpaRepository;
+  private final Organisations organisations;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
 
   @Autowired
   public UserDatabaseLoader(
     RoleRepository roleRepository,
-    OrganisationJpaRepository organisationJpaRepository,
+    Organisations organisations,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
     this.roleRepository = roleRepository;
-    this.organisationJpaRepository = organisationJpaRepository;
+    this.organisations = organisations;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
   }
@@ -67,8 +65,13 @@ public class UserDatabaseLoader implements CommandLineRunner {
       log.info("Demo users seems to already be loaded - skipping demo user loading!");
       return;
     }
-    organisationJpaRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY, SECRET_SERVICE,
-      THE_BEATLES));
+
+    Stream.of(
+      ELVACO,
+      WAYNE_INDUSTRIES,
+      SECRET_SERVICE,
+      THE_BEATLES
+    ).forEach(organisations::save);
 
     MvpUserDetails principal = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
     Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);

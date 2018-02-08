@@ -11,11 +11,25 @@ import static java.util.Collections.singletonList;
 public final class DomainModels {
 
   public static final Organisation ELVACO = new Organisation(1L, "Elvaco", "elvaco");
-  public static final Organisation WAYNE_INDUSTRIES = new Organisation(
-    2L,
-    "Wayne Industries",
-    "wayne-industries"
-  );
+  public static final Organisation WAYNE_INDUSTRIES =
+    new Organisation(
+      2L,
+      "Wayne Industries",
+      "wayne-industries"
+    );
+  public static final Organisation SECRET_SERVICE =
+    new Organisation(
+      3L,
+      "Secret Service",
+      "secret-service"
+    );
+
+  public static final Organisation THE_BEATLES =
+    new Organisation(
+      4L,
+      "The Beatles",
+      "the-beatles"
+    );
 
   public static final User OTHER_ADMIN_USER = new User(
     "Elvis Cohan",
