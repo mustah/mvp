@@ -44,14 +44,14 @@ import {
   getSelectedPeriod,
   getSelection,
   getSelectionSummary,
-  UriLookupState,
+  UriLookupStatePaginated,
 } from '../selectionSelectors';
 
 describe('selectionSelectors', () => {
 
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
-  const initialUriLookupState: UriLookupState = {
+  const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
     componentId: 'test',
     pagination: {},

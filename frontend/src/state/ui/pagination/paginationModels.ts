@@ -1,6 +1,7 @@
 import {uuid} from '../../../types/Types';
 import {
-  HasPageNumber, NormalizedPaginatedResult,
+  HasPageNumber,
+  NormalizedPaginatedResult,
   PaginatedDomainModelsState,
 } from '../../domain-models-paginated/paginatedDomainModels';
 
@@ -36,3 +37,5 @@ export interface SortingOptions {
   ascending: boolean;
   descending: boolean;
 }
+
+export type Pagination = HasPageNumber & PaginationMetadata;

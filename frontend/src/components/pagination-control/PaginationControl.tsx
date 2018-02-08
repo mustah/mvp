@@ -3,8 +3,7 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
 import {idGenerator} from '../../helpers/idGenerator';
-import {Pagination} from '../../state/search/selection/selectionSelectors';
-import {OnChangePage} from '../../state/ui/pagination/paginationModels';
+import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PageNumberButton} from './PageNumberButton';

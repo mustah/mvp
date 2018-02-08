@@ -1,6 +1,6 @@
 import {Period} from '../../components/dates/dateModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
-import {Pagination} from '../../state/search/selection/selectionSelectors';
+import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {Status} from '../../types/Types';
 import {encodedUriParametersForMeters} from '../urlFactory';
 

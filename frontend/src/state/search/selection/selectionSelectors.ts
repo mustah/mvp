@@ -5,15 +5,14 @@ import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '..
 import {IdNamed, uuid} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {
-  HasPageNumber,
   NormalizedPaginatedState,
   PaginatedDomainModelsState,
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {getPaginatedEntities} from '../../domain-models-paginated/paginatedDomainModelsSelectors';
-import {DomainModel, Normalized, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
+import {DomainModel, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {PaginationMetadata, PaginationState} from '../../ui/pagination/paginationModels';
-import {initialComponentPagination} from '../../ui/pagination/paginationReducer';
+import {Pagination, PaginationState} from '../../ui/pagination/paginationModels';
+import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
   LookupState,
@@ -39,24 +38,24 @@ const getSelectedEntityIdsSelector = (entityType: string) =>
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter((a) => !subSet.includes(a));
 
 const deselectedIdsSelector = (entityType: string) =>
-  createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
+  createSelector<LookupState, DomainModel<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
-    ({result}: Normalized<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
+    ({result}: DomainModel<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string) =>
-  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
+  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map((id) => entities[id]),
+    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) => ids.map((id) => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string) =>
-  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
+  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: Normalized<SelectionEntity>) =>
+    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) =>
       ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
@@ -100,29 +99,26 @@ export const getProductModels = getList(ParameterName.productModels);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export interface UriLookupState extends SearchParameterState {
+export interface UriLookupStatePaginated extends SearchParameterState {
   model: keyof PaginatedDomainModelsState;
   componentId: uuid;
   pagination: PaginationState;
 }
 
-export type Pagination = HasPageNumber & PaginationMetadata;
-
-export const getPagination = ({model, componentId, pagination}: UriLookupState): Pagination => {
-  const {useCases, ...metaData} = pagination[model];
-  return useCases[componentId] ? {...metaData, ...useCases[componentId]} : {...metaData, ...initialComponentPagination};
-};
+export interface UriLookupState extends SearchParameterState {
+  model: keyof PaginatedDomainModelsState;
+  componentId: uuid;
+}
 
 export const getEncodedUriParametersForMeters =
-  createSelector<UriLookupState, Pagination, SelectedParameters, string>(
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
     getPagination,
     getSelectedParameters,
     encodedUriParametersForMeters,
   );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<UriLookupState, Pagination, SelectedParameters, string>(
-    getPagination,
+  createSelector<UriLookupState, SelectedParameters, string>(
     getSelectedParameters,
     encodedUriParametersForGateways,
   );

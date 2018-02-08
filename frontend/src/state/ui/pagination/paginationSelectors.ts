@@ -1,7 +1,9 @@
 import {createSelector, OutputSelector} from 'reselect';
 import {UseCases, uuid} from '../../../types/Types';
+import {UriLookupStatePaginated} from '../../search/selection/selectionSelectors';
 import {UiState} from '../uiReducer';
-import {PaginationMetadata, PaginationState} from './paginationModels';
+import {Pagination, PaginationMetadata, PaginationState} from './paginationModels';
+import {initialComponentPagination} from './paginationReducer';
 
 export interface PaginatedDomainModel {
   pagination: PaginationMetadata;
@@ -20,7 +22,7 @@ const getPaginationFor: (useCase: string) => UseCasePaginationSelector = (useCas
   );
 
 const getResult = (state: PaginatedDomainModel): uuid[] => state.result;
-const getPagination = (state: PaginatedDomainModel): PaginationMetadata => state.pagination;
+const getPaginationObsolete = (state: PaginatedDomainModel): PaginationMetadata => state.pagination;
 
 type PaginationListSelector =
   OutputSelector<PaginatedDomainModel, uuid[], (res1: uuid[], res2: PaginationMetadata) => uuid[]>;
@@ -28,10 +30,14 @@ type PaginationListSelector =
 export const getPaginationList: PaginationListSelector =
   createSelector<PaginatedDomainModel, uuid[], PaginationMetadata, uuid[]>(
     getResult,
-    getPagination,
+    getPaginationObsolete,
     (result: uuid[], {page, limit}: PaginationMetadata) => {
       return result.slice((page - 1) * limit, page * limit);
     });
 
 export const getCollectionPagination = getPaginationFor(UseCases.collection);
-export const getValidationPagination = getPaginationFor(UseCases.validation);
+
+export const getPagination = ({model, componentId, pagination}: UriLookupStatePaginated): Pagination => {
+  const {useCases, ...metaData} = pagination[model];
+  return useCases[componentId] ? {...metaData, ...useCases[componentId]} : {...metaData, ...initialComponentPagination};
+};

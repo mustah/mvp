@@ -23,12 +23,11 @@ import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
 import {
   getEncodedUriParametersForMeters,
-  getPagination,
-  Pagination,
-  UriLookupState,
+  UriLookupStatePaginated,
 } from '../../state/search/selection/selectionSelectors';
 import {paginationRequestPage} from '../../state/ui/pagination/paginationActions';
-import {PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
+import {Pagination, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
+import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
@@ -146,7 +145,7 @@ const mapStateToProps = (
     ui: {pagination},
   }: RootState): StateToProps => {
 
-  const uriLookupState: UriLookupState = {
+  const uriLookupState: UriLookupStatePaginated = {
     ...searchParameters,
     componentId,
     model: 'meters',
