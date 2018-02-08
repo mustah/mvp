@@ -20,13 +20,13 @@ public class LocationMapper implements DomainEntityMapper<Location, LocationEnti
   }
 
   @Override
-  public LocationEntity toEntity(Location domainModel) {
+  public LocationEntity toEntity(Location location) {
     LocationEntity entity = new LocationEntity();
-    entity.country = domainModel.getCountry().orElse(null);
-    entity.city = domainModel.getCity().orElse(null);
-    entity.streetAddress = domainModel.getStreetAddress().orElse(null);
-    if (domainModel.hasCoordinates()) {
-      GeoCoordinate coordinate = domainModel.getCoordinate();
+    entity.country = location.getCountry().orElse(null);
+    entity.city = location.getCity().orElse(null);
+    entity.streetAddress = location.getStreetAddress().orElse(null);
+    if (location.hasCoordinates()) {
+      GeoCoordinate coordinate = location.getCoordinate();
       entity.latitude = coordinate.getLatitude();
       entity.longitude = coordinate.getLongitude();
       entity.confidence = coordinate.getConfidence();

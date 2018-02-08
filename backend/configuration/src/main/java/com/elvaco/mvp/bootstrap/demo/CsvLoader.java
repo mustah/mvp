@@ -25,6 +25,7 @@ import org.simpleflatmapper.csv.CsvParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
@@ -32,6 +33,7 @@ import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
+@Order(3)
 @Profile("demo")
 @Component
 public class CsvLoader implements CommandLineRunner {
@@ -103,18 +105,18 @@ public class CsvLoader implements CommandLineRunner {
       .stream(getFile(metersResource), stream ->
         stream
           .map(meterData -> {
-            LogicalMeter meteringPoint = new LogicalMeter(
+            LogicalMeter logicalMeter = logicalMeters.save(new LogicalMeter(
+              1L,
               meterData.meterStatus,
               locationMap.get(meterData.address),
               new Date(),
               new PropertyCollection(new UserProperty(meterData.facilityId))
-            );
-            meteringPoint = logicalMeters.save(meteringPoint);
+            ));
             return new PhysicalMeter(
               ELVACO,
               meterData.meterId,
               meterData.medium,
-              meteringPoint.id
+              logicalMeter.id
             );
           })
       )

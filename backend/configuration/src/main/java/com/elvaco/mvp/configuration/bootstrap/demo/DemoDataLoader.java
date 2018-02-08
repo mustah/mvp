@@ -19,20 +19,19 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
-import static com.elvaco.mvp.database.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
+@Order(2)
 @Profile("demo")
 @Component
 @Slf4j
@@ -41,7 +40,6 @@ public class DemoDataLoader implements CommandLineRunner {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterRepository;
-  private final OrganisationJpaRepository organisationRepository;
   private final GatewayRepository gatewayRepository;
   private final SettingUseCases settingUseCases;
 
@@ -50,14 +48,12 @@ public class DemoDataLoader implements CommandLineRunner {
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
     PhysicalMeterJpaRepository physicalMeterRepository,
-    OrganisationJpaRepository organisationRepository,
     GatewayRepository gatewayRepository,
     SettingUseCases settingUseCases
   ) {
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.measurementJpaRepository = measurementJpaRepository;
     this.physicalMeterRepository = physicalMeterRepository;
-    this.organisationRepository = organisationRepository;
     this.gatewayRepository = gatewayRepository;
     this.settingUseCases = settingUseCases;
   }
@@ -70,8 +66,6 @@ public class DemoDataLoader implements CommandLineRunner {
     }
 
     Random random = new Random();
-
-    organisationRepository.save(asList(ELVACO_ENTITY, WAYNE_INDUSTRIES_ENTITY));
 
     int meters = 10;
     int daysPerMeter = 30;

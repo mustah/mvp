@@ -191,6 +191,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     created = calendar.getTime();
 
     LogicalMeter logicalMeter = new LogicalMeter(
+      null,
       status,
       new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
