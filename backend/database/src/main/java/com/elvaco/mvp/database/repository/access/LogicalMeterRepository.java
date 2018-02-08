@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
-
 import org.springframework.data.domain.PageRequest;
 
 import static java.util.stream.Collectors.toList;

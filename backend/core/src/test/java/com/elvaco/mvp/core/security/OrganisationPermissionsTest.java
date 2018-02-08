@@ -1,21 +1,20 @@
 package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.security.OrganisationPermissions.Permission;
 import com.elvaco.mvp.core.spi.repository.Users;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.CREATE;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.DELETE;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.READ;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.UPDATE;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
+import static com.elvaco.mvp.core.security.Permission.CREATE;
+import static com.elvaco.mvp.core.security.Permission.DELETE;
+import static com.elvaco.mvp.core.security.Permission.READ;
+import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static java.util.Arrays.asList;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;

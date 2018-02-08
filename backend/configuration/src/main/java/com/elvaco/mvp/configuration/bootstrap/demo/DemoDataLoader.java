@@ -47,8 +47,8 @@ public class DemoDataLoader implements CommandLineRunner {
 
   @Autowired
   public DemoDataLoader(
-    LogicalMeterJpaRepository logicalMeterJpaRepository,
     MeasurementJpaRepository measurementJpaRepository,
+    LogicalMeterJpaRepository logicalMeterJpaRepository,
     PhysicalMeterJpaRepository physicalMeterRepository,
     OrganisationJpaRepository organisationRepository,
     GatewayRepository gatewayRepository,

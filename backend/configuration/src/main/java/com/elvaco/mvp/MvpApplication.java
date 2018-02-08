@@ -1,4 +1,4 @@
-package com.elvaco.mvp.configuration;
+package com.elvaco.mvp;
 
 import java.io.IOException;
 import java.util.Arrays;

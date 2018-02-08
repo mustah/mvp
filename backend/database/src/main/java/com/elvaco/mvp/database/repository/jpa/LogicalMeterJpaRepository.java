@@ -8,7 +8,6 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PropertyCollection;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.util.Json;
-
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -71,15 +70,18 @@ public class LogicalMeterJpaRepository extends QueryDslJpaRepository<LogicalMete
    * Get all {@link LogicalMeterEntity}s that has the given fieldName as a top level property.
    *
    * @param fieldName is the top-level json field name.
+   *
    * @return a list of entities that has <code>fieldName</code> in the top-level, otherwise an
-   * empty list.
+   *   empty list.
    */
   public List<LogicalMeterEntity> existsInPropertyCollection(String fieldName) {
     JPQLQuery<LogicalMeterEntity> query = new JPAQuery<>(entityManager);
     QLogicalMeterEntity queryLogicalMeter = QLogicalMeterEntity.logicalMeterEntity;
     Predicate predicate = Expressions
-      .booleanTemplate("jsonb_exists({0}, {1})",
-        queryLogicalMeter.propertyCollection, fieldName
+      .booleanTemplate(
+        "jsonb_exists({0}, {1})",
+        queryLogicalMeter.propertyCollection,
+        fieldName
       ).eq(true);
     query.from(queryLogicalMeter).where(predicate);
     return query.fetch();
