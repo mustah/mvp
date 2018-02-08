@@ -1,6 +1,6 @@
-import {uuid} from '../../types/Types';
 import {createPayloadAction} from 'react-redux-typescript';
-import {GetState, RootState} from '../../reducers/rootReducer';
+import {GetState} from '../../reducers/rootReducer';
+import {uuid} from '../../types/Types';
 
 export const SET_SELECTED_ENTRIES = 'SET_SELECTED_ENTRIES';
 

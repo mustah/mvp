@@ -27,8 +27,8 @@ import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
-import {limit} from '../../../ui/pagination/paginationReducer';
-import {addSelectionAction, selectPeriodAction} from '../selectionActions';
+import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
+import {addSelectionAction, selectPeriod} from '../selectionActions';
 import {
   LookupState,
   ParameterName,
@@ -53,8 +53,9 @@ describe('selectionSelectors', () => {
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
+    model: 'meters',
     componentId: 'test',
-    pagination: {},
+    pagination: initialPaginationState,
   };
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialUriLookupState);
 
@@ -126,8 +127,9 @@ describe('selectionSelectors', () => {
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({
         selection: state,
         saved: [],
+        model: 'meters',
         componentId: 'test',
-        pagination: {},
+        pagination: initialPaginationState,
       });
 
       expect(encodedUriParametersForMeters).toEqual(`size=${limit}&page=0&city.id=sto`);
@@ -139,7 +141,13 @@ describe('selectionSelectors', () => {
       const prevState: SelectionState = selection(initialState, addSelectionAction(payloadGot));
       const state: SelectionState = selection(prevState, addSelectionAction(payloadSto));
 
-      expect(getEncodedUriParametersForMeters({selection: state, saved: [], componentId: 'test', pagination: {}}))
+      expect(getEncodedUriParametersForMeters({
+        selection: state,
+        saved: [],
+        model: 'meters',
+        componentId: 'test',
+        pagination: initialPaginationState,
+      }))
         .toEqual(`size=${limit}&page=0&city.id=got&city.id=sto`);
     });
   });
@@ -151,7 +159,7 @@ describe('selectionSelectors', () => {
     });
 
     it('get selected period', () => {
-      const state: SelectionState = selection(initialState, selectPeriodAction(Period.currentWeek));
+      const state: SelectionState = selection(initialState, selectPeriod(Period.currentWeek));
 
       expect(getSelectedPeriod(state)).toBe(Period.currentWeek);
     });

@@ -162,7 +162,7 @@ describe('paginatedDomainModelsActions', () => {
 
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
-        requestMeters.success({...normalizedMeterResponse}),
+        requestMeters.success({...normalizedMeterResponse(page)}),
         paginationUpdateMetaData({model: 'meters', ...normalizedMeterResponse(page).result}),
       ]);
     });

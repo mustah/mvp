@@ -16,10 +16,16 @@ export interface HasComponentId {
   componentId: uuid;
 }
 
-export type PaginationChangePayload = HasComponentId & HasPageNumber & {model: keyof PaginatedDomainModelsState};
-export type PaginationMetadataPayload = NormalizedPaginatedResult & {model: keyof PaginatedDomainModelsState};
+export type PaginationChangePayload =
+  HasComponentId
+  & HasPageNumber
+  & {model: keyof (PaginatedDomainModelsState & DomainModelsState)};
 
-export type OnChangePage = (page: number) => void;
+export type PaginationMetadataPayload =
+  NormalizedPaginatedResult
+  & {model: keyof (PaginatedDomainModelsState & DomainModelsState)};
+
+export type OnChangePage = (payload: PaginationChangePayload) => void;
 
 export interface PaginationModel extends PaginationMetadata {
   useCases: {[component: string]: HasPageNumber};

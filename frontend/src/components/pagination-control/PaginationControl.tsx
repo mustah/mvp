@@ -3,7 +3,7 @@ import NavigationChevronLeft from 'material-ui/svg-icons/navigation/chevron-left
 import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-right';
 import * as React from 'react';
 import {idGenerator} from '../../helpers/idGenerator';
-import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
+import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {uuid} from '../../types/Types';
 import {RowCenter} from '../layouts/row/Row';
 import {PageNumberButton} from './PageNumberButton';
@@ -14,7 +14,7 @@ type PageElements = Array<React.ReactElement<FlatButton | HTMLSpanElement>>;
 interface PageNumberProps {
   current: number;
   total: number;
-  changePage: OnChangePage;
+  changePage: (page: number) => void;
 }
 
 const visibilityProximity: number = 5;

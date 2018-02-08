@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Content} from '../../../components/content/Content';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
@@ -23,29 +24,29 @@ import {
   getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {OnChangePage, PaginationMetadata} from '../../../state/ui/pagination/paginationModels';
-import {getCollectionPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
+import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {paginationChangePage} from '../../../state/ui/pagination/paginationActions';
+import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
+import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
-import {Content} from '../../../components/content/Content';
-import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayCount: number;
   gateways: ObjectsById<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
-  pagination: PaginationMetadata;
+  pagination: Pagination;
   selectedMaker: Maybe<Gateway>;
   isFetching: boolean;
 }
@@ -56,6 +57,8 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
 }
+
+const componentId = 'gatewayList';
 
 const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   const {
@@ -82,6 +85,12 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     </Dialog>
   );
 
+  const changePage = (page: number) => (paginationChangePage({
+    model: 'gateways',
+    componentId,
+    page,
+  }));
+
   return (
     <Tabs>
       <TabTopBar>
@@ -101,7 +110,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <Loader isFetching={isFetching}>
           <div>
             <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-            <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={gatewayCount}/>
+            <PaginationControl pagination={{...pagination, totalElements: gatewayCount}} changePage={changePage} />
           </div>
         </Loader>
       </TabContent>
@@ -121,15 +130,19 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateToProps => {
-  const pagination = getCollectionPagination(ui);
+const mapStateToProps = ({ui: {pagination, tabs}, map, domainModels: {gateways}}: RootState): StateToProps => {
+  const paginationData: Pagination = getPagination({pagination, componentId: 'gatewayList', model: 'gateways'});
   return {
-    selectedTab: getSelectedTab(ui.tabs.collection),
+    selectedTab: getSelectedTab(tabs.collection),
     gatewayCount: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(gateways)}),
-    pagination,
+    paginatedList: getPaginationList({
+      page: paginationData.page,
+      size: paginationData.size,
+      result: getResultDomainModels(gateways),
+    }),
+    pagination: paginationData,
     selectedMaker: getSelectedGatewayMarker(map),
     isFetching: gateways.isFetching,
   };
@@ -137,7 +150,7 @@ const mapStateToProps = ({ui, map, domainModels: {gateways}}: RootState): StateT
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
-  paginationChangePage: changePaginationCollection,
+  paginationChangePage,
   setSelection,
   selectEntryAdd,
   closeClusterDialog,

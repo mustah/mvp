@@ -1,7 +1,8 @@
 import {ErrorResponse, HasId} from '../../../types/Types';
 import {
-  HasPageNumber, NormalizedPaginated,
-  NormalizedPaginatedState
+  HasPageNumber,
+  NormalizedPaginated,
+  NormalizedPaginatedState,
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {initialPaginatedDomain, measurements} from '../../domain-models-paginated/paginatedDomainModelsReducer';

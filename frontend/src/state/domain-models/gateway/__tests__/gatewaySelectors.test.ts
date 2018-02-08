@@ -1,9 +1,9 @@
-import {uuid} from '../../../../types/Types';
+import {HasId, uuid} from '../../../../types/Types';
 import {ObjectsById} from '../../domainModels';
 import {Gateway, GatewaysState} from '../gatewayModels';
 import {getGatewayDataSummary} from '../gatewaySelectors';
 
-type PartialDomainModel = ObjectsById<Partial<Gateway>>;
+type PartialDomainModel = ObjectsById<Partial<Gateway> & HasId>;
 
 describe('gatewaySelectors', () => {
 
@@ -13,18 +13,21 @@ describe('gatewaySelectors', () => {
       const gatewayIds: uuid[] = [1, 2, 3];
       const gateways: PartialDomainModel = {
         1: {
+          id: 1,
           status: {id: 0, name: 'ok'},
           flagged: false,
           city: {id: 'sto', name: 'stockholm'},
           productModel: 'Ci2000',
         },
         2: {
+          id: 1,
           status: {id: 0, name: 'ok'},
           flagged: false,
           city: {id: 'sto', name: 'stockholm'},
           productModel: 'Cm3000',
         },
         3: {
+          id: 1,
           status: {id: 0, name: 'ok'},
           flagged: true,
           city: {id: 'got', name: 'göteborg'},

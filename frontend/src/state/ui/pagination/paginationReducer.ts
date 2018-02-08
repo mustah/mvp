@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
+import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
 export const limit = 5;
@@ -24,7 +24,7 @@ const requestPage = (
   {payload: {model, componentId, page}}: Action<PaginationChangePayload>,
 ): PaginationState => ({
   ...state,
-  [model]: {...state[model], useCases: {...state[model].useCases, [componentId]: {page}}},
+  [model]: {...state[model], useCases: {...state[model]!.useCases, [componentId]: {page}}},
 });
 
 const updateMetaData = (
@@ -37,7 +37,7 @@ const updateMetaData = (
 
 export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {
   switch (action.type) {
-    case PAGINATION_REQUEST_PAGE:
+    case PAGINATION_CHANGE_PAGE:
       return requestPage(state, action as Action<PaginationChangePayload>);
     case PAGINATION_UPDATE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);

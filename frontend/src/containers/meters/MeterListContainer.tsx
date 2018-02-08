@@ -15,9 +15,9 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
-  getPaginatedEntities,
   getPageIsFetching,
   getPageResult,
+  getPaginatedEntities,
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
@@ -25,8 +25,8 @@ import {
   getEncodedUriParametersForMeters,
   UriLookupStatePaginated,
 } from '../../state/search/selection/selectionSelectors';
-import {paginationRequestPage} from '../../state/ui/pagination/paginationActions';
-import {Pagination, PaginationChangePayload} from '../../state/ui/pagination/paginationModels';
+import {paginationChangePage} from '../../state/ui/pagination/paginationActions';
+import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
@@ -42,7 +42,7 @@ interface StateToProps {
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchMeters: RestGetPaginated;
-  paginationRequestPage: (payload: PaginationChangePayload) => void;
+  paginationChangePage: OnChangePage;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -62,7 +62,7 @@ class MeterList extends React.Component<Props> {
   }
 
   render() {
-    const {result, entities, selectEntryAdd, isFetching, pagination, paginationRequestPage} = this.props;
+    const {result, entities, selectEntryAdd, isFetching, pagination, paginationChangePage} = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : <Status id={0} name={'ok'}/>;
@@ -77,13 +77,11 @@ class MeterList extends React.Component<Props> {
       <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
 
-    const changePage = (page: number) => {
-      paginationRequestPage({
-        model: 'meters',
-        componentId,
-        page,
-      });
-    };
+    const changePage = (page: number) => paginationChangePage({
+      model: 'meters',
+      componentId,
+      page,
+    });
 
     // TODO: Add pagination control
     return (
@@ -165,7 +163,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchMeters,
-  paginationRequestPage,
+  paginationChangePage,
 }, dispatch);
 
 export const MeterListContainer =
