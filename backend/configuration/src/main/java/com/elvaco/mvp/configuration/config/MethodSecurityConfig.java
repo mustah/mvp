@@ -17,8 +17,7 @@ class MethodSecurityConfig {
   @Bean
   @Scope(value = SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.TARGET_CLASS)
   AuthenticatedUser currentUser() {
-    Authentication authentication = SecurityContextHolder.getContext()
-      .getAuthentication();
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null) {
       throw new InsufficientAuthenticationException("No authentication information available!");
     }

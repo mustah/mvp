@@ -30,9 +30,9 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.SECRET_SERVICE;
+import static com.elvaco.mvp.core.fixture.DomainModels.THE_BEATLES;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
-import static com.elvaco.mvp.database.fixture.Entities.SECRET_SERVICE;
-import static com.elvaco.mvp.database.fixture.Entities.THE_BEATLES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 

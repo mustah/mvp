@@ -2,9 +2,7 @@ package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.web.dto.OrganisationDto;
-import org.springframework.stereotype.Component;
 
-@Component
 public class OrganisationMapper {
 
   public OrganisationDto toDto(Organisation organisation) {

@@ -7,15 +7,11 @@ import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 public class LogicalMeterMapper {
 
   private final ModelMapper modelMapper;
 
-  @Autowired
   public LogicalMeterMapper(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
   }

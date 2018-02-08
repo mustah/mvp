@@ -7,7 +7,7 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
-import com.elvaco.mvp.core.security.OrganisationPermissions.Permission;
+import com.elvaco.mvp.core.security.Permission;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
 import static com.elvaco.mvp.core.security.Permission.CREATE;
