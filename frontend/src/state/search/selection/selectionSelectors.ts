@@ -11,7 +11,7 @@ import {
 import {getPaginatedEntities} from '../../domain-models-paginated/paginatedDomainModelsSelectors';
 import {DomainModel, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
 import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {Pagination, PaginationState} from '../../ui/pagination/paginationModels';
+import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
@@ -99,16 +99,7 @@ export const getProductModels = getList(ParameterName.productModels);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export interface UriLookupStatePaginated extends SearchParameterState {
-  model: keyof PaginatedDomainModelsState;
-  componentId: uuid;
-  pagination: PaginationState;
-}
-
-export interface UriLookupState extends SearchParameterState {
-  model: keyof PaginatedDomainModelsState;
-  componentId: uuid;
-}
+export type UriLookupStatePaginated = SearchParameterState & PaginationLookupState<PaginatedDomainModelsState>;
 
 export const getEncodedUriParametersForMeters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
@@ -118,7 +109,7 @@ export const getEncodedUriParametersForMeters =
   );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<UriLookupState, SelectedParameters, string>(
+  createSelector<SearchParameterState, SelectedParameters, string>(
     getSelectedParameters,
     encodedUriParametersForGateways,
   );

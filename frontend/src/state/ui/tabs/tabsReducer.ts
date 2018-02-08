@@ -8,7 +8,7 @@ const overviewTab: SelectedTabs = {
 };
 
 export const initialState: TabsState = {
-  validation: {selectedTab: TabName.list},
+  validation: {...overviewTab},
   collection: {...overviewTab},
 };
 

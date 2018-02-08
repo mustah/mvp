@@ -1,6 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {HasPageNumber} from '../../domain-models-paginated/paginatedDomainModels';
 import {PAGINATION_REQUEST_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
@@ -17,8 +16,6 @@ export const initialPaginationState: PaginationState = {
   meters: {...initialPaginationModel},
   measurements: {...initialPaginationModel},
 };
-
-export const initialComponentPagination: HasPageNumber = {page: 0};
 
 type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePayload> | EmptyAction<string>;
 

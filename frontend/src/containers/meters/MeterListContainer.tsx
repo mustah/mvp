@@ -87,8 +87,8 @@ class MeterList extends React.Component<Props> {
 
     // TODO: Add pagination control
     return (
-      <Loader isFetching={isFetching}>
-        <div>
+      <div>
+        <Loader isFetching={isFetching}>
           <Table result={result} entities={entities}>
             <TableColumn
               header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -131,9 +131,9 @@ class MeterList extends React.Component<Props> {
               renderCell={renderActionDropdown}
             />
           </Table>
-          <PaginationControl pagination={pagination} changePage={changePage}/>
-        </div>
-      </Loader>
+        </Loader>
+        <PaginationControl pagination={pagination} changePage={changePage}/>
+      </div>
     );
   }
 }

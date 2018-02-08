@@ -1,81 +1,126 @@
-import {UiState} from '../../uiReducer';
-import {
-  getCollectionPagination,
-  getPaginationList,
-  PaginatedDomainModel,
-} from '../paginationSelectors';
+import {DomainModelsState} from '../../../domain-models/domainModels';
+import {Pagination, PaginationLookupState, PaginationState} from '../paginationModels';
+import {limit} from '../paginationReducer';
+import {getPagination, getPaginationList, PaginatedDomainModel} from '../paginationSelectors';
 
 describe('paginationSelectors', () => {
 
-  it('can retrieve the correct pagination metadata', () => {
-    const fakedCollectionState: UiState = {
-      tabs: {},
-      indicator: {
-        selectedIndicators: {},
-      },
-      sideMenu: {
-        isOpen: false,
-      },
-      selectionTree: {
-        openListItems: [],
-      },
-      pagination: {
-        collection: {
-          page: 3,
-          limit: 4,
+  describe('getPagination', () => {
+    const initialState: PaginationState = {
+      meters: {
+        useCases: {
+          meterList: {
+            page: 5,
+          },
         },
-        validation: {
-          page: 5,
-          limit: 6,
-        },
-        selection: {
-          page: 7,
-          limit: 8,
-        },
+        size: 4,
+        totalPages: 10,
+        totalElements: 40,
       },
-      message: {
-        isOpen: false,
-        message: '',
+      gateways: {
+        useCases: {
+          gatewayList: {
+            page: 3,
+          },
+        },
+        size: 4,
+        totalPages: 10,
+        totalElements: 40,
+      },
+      measurements: {
+        useCases: {
+          meterList: {
+            page: 5,
+          },
+        },
+        size: 4,
+        totalPages: 10,
+        totalElements: 40,
       },
     };
 
-    expect(getCollectionPagination(fakedCollectionState)).toEqual({limit: 4, page: 3});
-  });
+    it('retrieves pagination from existing model and componentId', () => {
+      const lookupState: PaginationLookupState<DomainModelsState> = {
+        pagination: initialState,
+        componentId: 'gatewayList',
+        model: 'gateways',
+      };
 
-  it('can paginate the collection result, based on pagination metadata', () => {
-    const paginationData: PaginatedDomainModel = {
-      pagination: {
-        page: 2,
-        limit: 1,
-      },
-      result: [1, 2],
-    };
+      const expected: Pagination = {
+        page: 3,
+        size: 4,
+        totalElements: 40,
+        totalPages: 10,
+      };
 
-    expect(getPaginationList(paginationData)).toEqual([2]);
-  });
+      expect(getPagination(lookupState)).toEqual(expected);
+    });
 
-  it('defaults to an empty result set if limit is 0', () => {
-    const paginationData: PaginatedDomainModel = {
-      pagination: {
-        page: 1,
-        limit: 0,
-      },
-      result: [1],
-    };
+    it('retrieves pagination from existing model but non-existing componentId', () => {
+      const lookupState: PaginationLookupState<DomainModelsState> = {
+        pagination: initialState,
+        componentId: 'dont exist',
+        model: 'gateways',
+      };
 
-    expect(getPaginationList(paginationData)).toEqual([]);
-  });
-
-  it('defaults to an empty result set if page is 0', () => {
-    const paginationData: PaginatedDomainModel = {
-      pagination: {
+      const expected: Pagination = {
         page: 0,
-        limit: 1,
-      },
-      result: [1],
-    };
+        size: 4,
+        totalElements: 40,
+        totalPages: 10,
+      };
 
-    expect(getPaginationList(paginationData)).toEqual([]);
+      expect(getPagination(lookupState)).toEqual(expected);
+    });
+
+    it('retrieves pagination from non-existing model', () => {
+      const lookupState: PaginationLookupState<DomainModelsState> = {
+        pagination: initialState,
+        componentId: 'dont exist',
+        model: 'cities',
+      };
+
+      const expected: Pagination = {
+        page: 0,
+        size: limit,
+        totalElements: -1,
+        totalPages: -1,
+      };
+
+      expect(getPagination(lookupState)).toEqual(expected);
+    });
   });
 
+  describe('getPaginationList', () => {
+
+    it('can paginate the collection result, based on pagination metadata', () => {
+      const paginationData: PaginatedDomainModel = {
+        page: 2,
+        size: 1,
+        result: [1, 2],
+      };
+
+      expect(getPaginationList(paginationData)).toEqual([2]);
+    });
+
+    it('defaults to an empty result set if limit is 0', () => {
+      const paginationData: PaginatedDomainModel = {
+        page: 1,
+        size: 0,
+        result: [1],
+      };
+
+      expect(getPaginationList(paginationData)).toEqual([]);
+    });
+
+    it('defaults to an empty result set if page is 0', () => {
+      const paginationData: PaginatedDomainModel = {
+        page: 0,
+        size: 1,
+        result: [1],
+      };
+
+      expect(getPaginationList(paginationData)).toEqual([]);
+    });
+  });
 });
