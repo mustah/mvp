@@ -10,7 +10,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.complementFilterWithOrganisationParameters;
+import static com.elvaco.mvp.core.security.OrganisationFilter.addOrganisationIdToFilterParams;
 
 public class MeasurementUseCases {
 
@@ -29,11 +29,11 @@ public class MeasurementUseCases {
     if (scale != null) {
       return measurements.findAllByScale(
         scale,
-        complementFilterWithOrganisationParameters(currentUser, filterParams)
+        addOrganisationIdToFilterParams(currentUser, filterParams)
       );
     } else {
       return measurements.findAll(
-        complementFilterWithOrganisationParameters(currentUser, filterParams)
+        addOrganisationIdToFilterParams(currentUser, filterParams)
       );
     }
   }

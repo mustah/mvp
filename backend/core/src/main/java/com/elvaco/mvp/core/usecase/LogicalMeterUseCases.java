@@ -10,11 +10,12 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.security.OrganisationFilter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+
+import static com.elvaco.mvp.core.security.OrganisationFilter.addOrganisationIdToFilterParams;
 
 public class LogicalMeterUseCases {
 
@@ -45,7 +46,7 @@ public class LogicalMeterUseCases {
     Pageable pageable
   ) {
     return logicalMeters.findAll(
-      OrganisationFilter.complementFilterWithOrganisationParameters(currentUser, filterParams),
+      addOrganisationIdToFilterParams(currentUser, filterParams),
       pageable
     );
   }
