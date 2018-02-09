@@ -1,8 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Content} from '../../../components/content/Content';
-import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -11,7 +9,6 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -32,13 +29,9 @@ import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
-import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
-import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
-import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
 
 interface StateToProps extends TabsContainerStateToProps {
@@ -65,25 +58,25 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     selectedTab,
     changeTab,
     gateways,
-    gatewayDataSummary,
+    // gatewayDataSummary,
     pagination,
     paginationChangePage,
     paginatedList,
     gatewayCount,
-    setSelection,
+    // setSelection,
     selectEntryAdd,
-    selectedMaker,
-    closeClusterDialog,
+    // selectedMaker,
+    // closeClusterDialog,
     isFetching,
   } = props;
 
-  const hasGateways: boolean = isMarkersWithinThreshold(gateways);
+  // const hasGateways: boolean = isMarkersWithinThreshold(gateways);
 
-  const dialog = selectedMaker.isJust() && (
-    <Dialog isOpen={true} close={closeClusterDialog}>
-      <GatewayDetailsContainer gateway={selectedMaker.get()}/>
-    </Dialog>
-  );
+  // const dialog = selectedMaker.isJust() && (
+  //   <Dialog isOpen={true} close={closeClusterDialog}>
+  //     <GatewayDetailsContainer gateway={selectedMaker.get()}/>
+  //   </Dialog>
+  // );
 
   const changePage = (page: number) => (paginationChangePage({
     model: 'gateways',
@@ -102,9 +95,9 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
-        </Loader>
+        {/*<Loader isFetching={isFetching}>*/}
+          {/*<CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>*/}
+        {/*</Loader>*/}
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
         <Loader isFetching={isFetching}>
@@ -115,16 +108,16 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         </Loader>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <div>
-            <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
-              <Map>
-                <ClusterContainer markers={gateways}/>
-              </Map>
-            </Content>
-            {dialog}
-          </div>
-        </Loader>
+        {/*<Loader isFetching={isFetching}>*/}
+          {/*<div>*/}
+            {/*<Content hasContent={hasGateways} noContentText={translate('no gateways')}>*/}
+              {/*<Map>*/}
+                {/*<ClusterContainer markers={gateways}/>*/}
+              {/*</Map>*/}
+            {/*</Content>*/}
+            {/*{dialog}*/}
+          {/*</div>*/}
+        {/*</Loader>*/}
       </TabContent>
     </Tabs>
   );

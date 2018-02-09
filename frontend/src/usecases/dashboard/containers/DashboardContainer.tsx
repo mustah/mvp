@@ -8,14 +8,12 @@ import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {getPaginatedEntities} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {Callback} from '../../../types/Types';
-import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
@@ -39,13 +37,13 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {isFetching, dashboard, meters} = this.props;
+    const {isFetching, dashboard} = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
           <Row>
-            <SummaryContainer/>
+            {/*<SummaryContainer/>*/}
             <PeriodContainer/>
           </Row>
         </Row>
@@ -53,7 +51,7 @@ class DashboardContainerComponent extends React.Component<Props> {
         <Loader isFetching={isFetching}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgetsContainer markers={meters}/>
+            {/*<MapWidgetsContainer markers={meters}/>*/}
           </Column>
         </Loader>
       </MvpPageContainer>
