@@ -1,11 +1,11 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -21,7 +21,6 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayRepository;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
@@ -63,35 +62,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
     this.settingUseCases = settingUseCases;
   }
 
-  private static LocationBuilder parseKeyToLocation(String s) {
-    String[] parts = s.split(DELIMITER);
-    return new LocationBuilder()
-      .streetAddress(parts[0])
-      .city(parts[1])
-      .country(parts[2]);
-  }
-
-  private static CsvMapper<MeterData> csvMapper() {
-    return CsvMapperFactory.newInstance().newMapper(MeterData.class);
-  }
-
-  private static URL loadResource(String file) {
-    return CsvDemoDataLoader.class.getClassLoader().getResource(file);
-  }
-
-  private static File getFile(URL metersResource) {
-    return new File(requireNonNull(metersResource).getFile());
-  }
-
-  private static GeoCoordinate toGeoCoordinate(GeoPositionDto geoPosition) {
-    return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
-  }
-
-  @Nullable
-  private static String toNull(String value) {
-    return value.equals("NULL") ? null : value;
-  }
-
   @Override
   public void run(String... args) throws Exception {
     if (settingUseCases.isDemoDataLoaded()) {
@@ -99,25 +69,16 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       return;
     }
 
-    URL metersResource = loadResource("data/meters_perstorp.csv");
-    URL geoDataResource = loadResource("data/geodata.json");
+    importFrom("data/meters_perstorp.csv");
 
-    Map<String, GeoPositionDto> map =
-      OBJECT_MAPPER.readValue(
-        getFile(geoDataResource),
-        new TypeReference<Map<String, GeoPositionDto>>() {}
-      );
+    settingUseCases.setDemoDataLoaded();
+  }
 
-    Map<String, Location> locationMap = map.entrySet()
-      .stream()
-      .map(entry -> parseKeyToLocation(entry.getKey())
-        .coordinate(toGeoCoordinate(entry.getValue()))
-        .build())
-      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
-
+  private void importFrom(String filePath) throws IOException {
+    Map<String, Location> locationMap = mapAddressToLocation();
     CsvParser.separator(';')
-      .mapWith(csvMapper())
-      .stream(getFile(metersResource), stream ->
+      .mapWith(csvMapper(MeterData.class))
+      .stream(getFile(filePath), stream ->
         stream
           .map(csvData -> {
             LogicalMeter logicalMeter = new LogicalMeter(
@@ -142,9 +103,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       )
       .forEach(p -> {
         gatewayRepository.save(p.gateway);
-        LogicalMeter logicalMeter = logicalMeters.save(
-          p.logicalMeter
-        );
+        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter);
         PhysicalMeter physicalMeter = p.physicalMeter;
         physicalMeters.save(
           new PhysicalMeter(
@@ -153,11 +112,49 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.identity,
             physicalMeter.medium,
             physicalMeter.manufacturer,
-            logicalMeter.id
-          ));
+            logicalMeter.id));
       });
+  }
 
-    settingUseCases.setDemoDataLoaded();
+  private static Map<String, Location> mapAddressToLocation() throws IOException {
+    return loadGeodata()
+      .entrySet()
+      .stream()
+      .map(entry -> parseKeyToLocation(entry.getKey())
+        .coordinate(toGeoCoordinate(entry.getValue()))
+        .build())
+      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
+  }
+
+  private static Map<String, GeoPositionDto> loadGeodata() throws IOException {
+    return OBJECT_MAPPER.readValue(
+      getFile("data/geodata.json"),
+      new TypeReference<Map<String, GeoPositionDto>>() {}
+    );
+  }
+
+  private static LocationBuilder parseKeyToLocation(String s) {
+    String[] parts = s.split(DELIMITER);
+    return new LocationBuilder()
+      .streetAddress(parts[0])
+      .city(parts[1])
+      .country(parts[2]);
+  }
+
+  private static <T> CsvMapper<T> csvMapper(Class<T> target) {
+    return CsvMapperFactory.newInstance().newMapper(target);
+  }
+
+  private static URL loadResource(String file) {
+    return CsvDemoDataLoader.class.getClassLoader().getResource(file);
+  }
+
+  private static File getFile(String filePath) {
+    return new File(requireNonNull(loadResource(filePath)).getFile());
+  }
+
+  private static GeoCoordinate toGeoCoordinate(GeoPositionDto geoPosition) {
+    return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
   }
 
   private static class Parameters {
@@ -174,57 +171,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       this.logicalMeter = logicalMeter;
       this.physicalMeter = physicalMeter;
       this.gateway = gateway;
-    }
-  }
-
-  @ToString
-  public static class MeterData {
-
-    public final String meterId;
-    public final String meterStatus;
-    public final String facilityId;
-    public final String address;
-    public final String city;
-    public final String medium;
-    public final String meterManufacturer;
-    public final String phone;
-    @Nullable
-    public final String ip;
-    @Nullable
-    public final String port;
-
-    public final String gatewayId;
-    public final String gatewayProductModel;
-    public final String gatewayStatus;
-
-    public MeterData(
-      String facilityId,
-      String address,
-      String city,
-      String medium,
-      String meterId,
-      String meterManufacturer,
-      String gatewayId,
-      String gatewayProductModel,
-      String phone,
-      String ip,
-      String port,
-      String meterStatus,
-      String gatewayStatus
-    ) {
-      this.facilityId = facilityId;
-      this.address = address;
-      this.city = city;
-      this.meterId = meterId;
-      this.medium = medium;
-      this.meterManufacturer = meterManufacturer;
-      this.gatewayId = gatewayId;
-      this.gatewayProductModel = gatewayProductModel;
-      this.phone = phone;
-      this.ip = toNull(ip);
-      this.port = toNull(port);
-      this.meterStatus = meterStatus;
-      this.gatewayStatus = gatewayStatus;
     }
   }
 }
