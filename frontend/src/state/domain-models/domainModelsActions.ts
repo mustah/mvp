@@ -12,6 +12,8 @@ import {EndPoints, HttpMethod, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
+import {Measurement} from './measurement/measurementModels';
+import {measurementSchema} from './measurement/measurementSchema';
 import {User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
@@ -126,9 +128,10 @@ const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => 
 export const fetchSelections = restGet<IdNamed>(EndPoints.selections, selectionsSchema);
 export const fetchGateways = restGet<Gateway>(EndPoints.gateways, gatewaySchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
-
-// TODO: Add tests
 export const fetchUser = restGetEntity<User>(EndPoints.users);
+export const fetchMeasurements =
+  restGet<Measurement>(EndPoints.measurements, measurementSchema);
+// TODO: Add tests ^
 
 export const addUser = restPost<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {

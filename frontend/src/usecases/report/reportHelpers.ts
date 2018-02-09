@@ -1,6 +1,5 @@
 import {unixTimestampMillisecondsToDate} from '../../helpers/formatters';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {labelOfMeasurement} from '../../state/domain-models/measurement/measurementHelpers';
 import {Measurement} from '../../state/domain-models/measurement/measurementModels';
 import {GraphContents, LineProps} from './reportModels';
 
@@ -27,8 +26,7 @@ export const mapNormalizedPaginatedResultToGraphData = (entities: ObjectsById<Me
     if (!byDate[created]) {
       byDate[created] = {};
     }
-
-    const label: string = labelOfMeasurement(entity);
+    const label: string = entity.id.toString();
     if (!meters.includes(label)) {
       meters.push(label);
       const props: LineProps = {

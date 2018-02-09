@@ -9,7 +9,6 @@ import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
@@ -39,7 +38,7 @@ class SelectionContainerComponent extends React.Component<Props> {
         <Row className="space-between">
           <MainTitle>{title}</MainTitle>
           <Row>
-            <SummaryContainer/>
+            {/*<SummaryContainer/>*/}
             <PeriodContainer/>
           </Row>
         </Row>

@@ -1,5 +1,6 @@
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {GatewaysState} from './gateway/gatewayModels';
+import {MeasurementState} from './measurement/measurementModels';
 import {UserState} from './user/userModels';
 
 export interface Location {
@@ -62,6 +63,7 @@ export interface DomainModelsState {
   manufacturers: SelectionEntityState;
   meterStatuses: SelectionEntityState;
   productModels: SelectionEntityState;
+  measurements: MeasurementState;
   users: UserState;
 }
 

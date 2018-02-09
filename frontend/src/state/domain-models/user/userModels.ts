@@ -1,7 +1,7 @@
-import {IdNamed, uuid} from '../../../types/Types';
-import {ObjectsById, NormalizedState} from '../domainModels';
+import {HasId, uuid} from '../../../types/Types';
+import {NormalizedState, ObjectsById} from '../domainModels';
 
-export interface Organisation extends IdNamed {
+export interface Organisation extends HasId {
   code: uuid;
   name: string;
 }

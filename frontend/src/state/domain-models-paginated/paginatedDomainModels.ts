@@ -1,12 +1,10 @@
 import {ErrorResponse, HasId, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
-import {MeasurementState} from '../domain-models/measurement/measurementModels';
 import {SortingOptions} from '../ui/pagination/paginationModels';
 import {Meter} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
   meters: NormalizedPaginatedState<Meter>;
-  measurements: MeasurementState;
 }
 
 export interface NormalizedPaginatedResult {

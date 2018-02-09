@@ -1,7 +1,6 @@
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from '../domain-models/domainModels';
-import {Measurement} from '../domain-models/measurement/measurementModels';
 import {Meter} from './meter/meterModels';
 import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from './paginatedDomainModels';
 import {
@@ -85,9 +84,7 @@ export const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints)
   };
 
 export const meters = reducerFor<Meter>('meters', EndPoints.meters);
-export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
 
 export const paginatedDomainModels = combineReducers({
   meters,
-  measurements,
 });

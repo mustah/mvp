@@ -1,15 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -22,8 +13,8 @@ import {Bold} from '../../../components/texts/Texts';
 import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {fetchMeasurements} from '../../../state/domain-models-paginated/paginatedDomainModelsActions';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
@@ -33,7 +24,7 @@ import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
 interface StateToProps {
-  measurements: DomainModel<Measurement>;
+  measurements: ObjectsById<Measurement>;
   period: Period;
   selectedListItems: uuid[];
 }
@@ -43,7 +34,7 @@ interface OwnProps {
 }
 
 interface DispatchToProps {
-  fetchMeasurements: (component: uuid, encodedUriParameters: string) => void;
+  fetchMeasurements: (encodedUriParameters: string) => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -92,7 +83,7 @@ class GraphComponent extends React.Component<Props> {
     // TODO Spring uses 20 as a default page size, we need to think about how we request graph data
     parameters.push('size=500');
 
-    this.props.fetchMeasurements(parameters.join('&'));
+    // this.props.fetchMeasurements(parameters.join('&'));
   }
 
   componentDidMount() {
@@ -113,6 +104,7 @@ class GraphComponent extends React.Component<Props> {
 
     const selectedTab: TabName = TabName.graph;
 
+    // TODO: [!Carl]
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
     // it breaks. Setting width of ResponsiveContainer to 100% will case the menu to overlap when
     // toggled
@@ -153,7 +145,7 @@ class GraphComponent extends React.Component<Props> {
 
 const mapStateToProps =
   ({
-     paginatedDomainModels: {measurements},
+     domainModels: {measurements},
      report: {selectedListItems},
      searchParameters: {selection: {selected: {period}}},
    }: RootState): StateToProps =>
@@ -163,8 +155,9 @@ const mapStateToProps =
       period,
     });
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMeasurements,
 }, dispatch);
 
-export const GraphContainer = connect(mapStateToProps, mapDispatchToProps)(GraphComponent);
+export const GraphContainer =
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);

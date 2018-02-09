@@ -12,6 +12,7 @@ import {
   DOMAIN_MODELS_REQUEST,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
+import {Measurement} from './measurement/measurementModels';
 import {User} from './user/userModels';
 
 export const initialDomain = <T extends HasId>(): NormalizedState<T> => ({
@@ -125,6 +126,7 @@ export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 export const manufacturers = reducerFor<SelectionEntity>('manufacturers', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
+export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
 export const users = reducerFor<User>('users', EndPoints.users);
 
 export const domainModels = combineReducers<DomainModelsState>({
@@ -137,4 +139,5 @@ export const domainModels = combineReducers<DomainModelsState>({
   meterStatuses,
   productModels,
   users,
+  measurements,
 });

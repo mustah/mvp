@@ -13,7 +13,6 @@ import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
@@ -34,7 +33,7 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
     <Row className="space-between">
       <MainTitle>{translate('report')}</MainTitle>
       <Row>
-        <SummaryContainer/>
+        {/*<SummaryContainer/>*/}
         <PeriodContainer/>
       </Row>
     </Row>

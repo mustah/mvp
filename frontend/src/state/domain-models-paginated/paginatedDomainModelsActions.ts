@@ -7,8 +7,6 @@ import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId} from '../../types/Types';
 import {EndPoints, HttpMethod} from '../domain-models/domainModels';
-import {Measurement} from '../domain-models/measurement/measurementModels';
-import {measurementSchema} from '../domain-models/measurement/measurementSchema';
 import {showFailMessage} from '../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
 import {Meter} from './meter/meterModels';
@@ -117,9 +115,6 @@ const restGetIfNeeded = <T extends HasId>(
       }
     };
 };
-
-export const fetchMeasurements =
-  restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
 
 export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
   afterSuccess: (
