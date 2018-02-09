@@ -1,50 +1,64 @@
 import {ErrorResponse, HasId} from '../../../types/Types';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {
   HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../../domain-models-paginated/paginatedDomainModels';
 import {requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
-import {initialPaginatedDomain, measurements} from '../../domain-models-paginated/paginatedDomainModelsReducer';
+import {initialPaginatedDomain, meters} from '../../domain-models-paginated/paginatedDomainModelsReducer';
 import {EndPoints} from '../domainModels';
-import {Measurement, MeasurementState} from '../measurement/measurementModels';
 
 describe('paginatedDomainModelsReducer', () => {
 
-  describe('measurements, paginated', () => {
+  describe('meters, paginated', () => {
 
-    const initialState: MeasurementState = initialPaginatedDomain<Measurement>();
+    const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
 
     const getRequest =
-      requestMethodPaginated<NormalizedPaginated<Measurement>>(EndPoints.measurements);
+      requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 
-    const normalizedMeasurement: NormalizedPaginated<Measurement> = {
+    const normalizedMeters: NormalizedPaginated<Meter> = {
       page,
       entities: {
-        measurements: {
+        meters: {
           1: {
             id: 1,
-            quantity: 'Power',
-            value: 0.06368699009387613,
-            unit: 'mW',
-            created: 1514637786120,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            address: {id: 1, name: 'Kungsgatan', cityId: 'got'},
+            city: {id: 'got', name: 'Göteborg'},
+            position: {latitude: 10, longitude: 10, confidence: 1},
+            moid: 123,
+            facility: 'torp',
+            alarm: '',
+            flags: [],
+            flagged: false,
+            medium: 'Electricity',
+            manufacturer: 'ABB',
+            statusChangelog: [],
+            status: {id: 1, name: 'ok'},
+            gatewayId: 1,
+            gatewayStatus: {id: 1, name: 'ok'},
+            gatewayProductModel: 'Elvaco',
           },
           2: {
             id: 2,
-            quantity: 'Power',
-            value: 0.24113868538294558,
-            unit: 'mW',
-            created: 1514638686120,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            address: {id: 1, name: 'Kungsgatan', cityId: 'got'},
+            city: {id: 'got', name: 'Göteborg'},
+            position: {latitude: 10, longitude: 10, confidence: 1},
+            moid: 123,
+            facility: 'torp',
+            alarm: '',
+            flags: [],
+            flagged: false,
+            medium: 'Electricity',
+            manufacturer: 'ABB',
+            statusChangelog: [],
+            status: {id: 1, name: 'ok'},
+            gatewayId: 1,
+            gatewayStatus: {id: 1, name: 'ok'},
+            gatewayProductModel: 'Elvaco',
           },
         },
       },
@@ -53,7 +67,7 @@ describe('paginatedDomainModelsReducer', () => {
         totalPages: 1440,
         totalElements: 28800,
         last: false,
-        size: 20,
+        size: 2,
         number: 0,
         first: true,
         numberOfElements: 20,
@@ -62,12 +76,12 @@ describe('paginatedDomainModelsReducer', () => {
     };
 
     it('has initial state', () => {
-      expect(measurements(initialState, {type: 'unknown', payload: -1})).toEqual({...initialState});
+      expect(meters(initialState, {type: 'unknown', payload: -1})).toEqual({...initialState});
     });
 
-    it('requests measurements', () => {
-      const stateAfterRequestInitiation = measurements(initialState, getRequest.request(page));
-      const expected: NormalizedPaginatedState<Measurement> = {
+    it('requests meters', () => {
+      const stateAfterRequestInitiation = meters(initialState, getRequest.request(page));
+      const expected: NormalizedPaginatedState<Meter> = {
         ...initialState,
         result: {
           [page]: {isFetching: true},
@@ -76,13 +90,13 @@ describe('paginatedDomainModelsReducer', () => {
       expect(stateAfterRequestInitiation).toEqual(expected);
     });
 
-    it('adds new measurement to state', () => {
-      const newState = measurements(initialState, getRequest.success(normalizedMeasurement));
-      const expected: NormalizedPaginatedState<Measurement> = {
-        entities: {...normalizedMeasurement.entities.measurements},
+    it('adds new meter to state', () => {
+      const newState = meters(initialState, getRequest.success(normalizedMeters));
+      const expected: NormalizedPaginatedState<Meter> = {
+        entities: {...normalizedMeters.entities.meters},
         result: {
           [page]: {
-            result: normalizedMeasurement.result.content,
+            result: normalizedMeters.result.content,
             isFetching: false,
           },
         },
@@ -92,8 +106,8 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('appends entities', () => {
 
-      const populatedState: NormalizedPaginatedState<Measurement> =
-        measurements(initialState, getRequest.success(normalizedMeasurement));
+      const populatedState: NormalizedPaginatedState<Meter> =
+        meters(initialState, getRequest.success(normalizedMeters));
 
       const anotherPage = 2;
 
@@ -111,7 +125,7 @@ describe('paginatedDomainModelsReducer', () => {
             totalPages: 1,
           },
           entities: {
-            measurements: {
+            meters: {
               1: {id: 1},
               4: {id: 4},
             },
@@ -127,7 +141,7 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
 
-      const newState = measurements(populatedState, getRequest.success(payload as NormalizedPaginated<Measurement>));
+      const newState = meters(populatedState, getRequest.success(payload as NormalizedPaginated<Meter>));
       expect(newState).toEqual(expectedState);
     });
 
@@ -135,7 +149,7 @@ describe('paginatedDomainModelsReducer', () => {
       const page = 0;
       const payload: ErrorResponse & HasPageNumber = {message: 'failed', page};
 
-      const stateAfterFailure = measurements(initialState, getRequest.failure(payload));
+      const stateAfterFailure = meters(initialState, getRequest.failure(payload));
 
       const failedState = {
         ...initialState,

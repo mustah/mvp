@@ -29,7 +29,7 @@ interface StateToProps {
   selectedListItems: uuid[];
 }
 
-interface OwnProps {
+interface State {
   selectedTabOption: string;
 }
 
@@ -68,7 +68,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
 
 class GraphComponent extends React.Component<Props> {
 
-  state: OwnProps = {selectedTabOption: 'power'};
+  state: State = {selectedTabOption: 'power'};
 
   onChangeTab = () => void(0);
 
@@ -83,7 +83,7 @@ class GraphComponent extends React.Component<Props> {
     // TODO Spring uses 20 as a default page size, we need to think about how we request graph data
     parameters.push('size=500');
 
-    // this.props.fetchMeasurements(parameters.join('&'));
+    this.props.fetchMeasurements(parameters.join('&'));
   }
 
   componentDidMount() {
@@ -160,4 +160,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const GraphContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);

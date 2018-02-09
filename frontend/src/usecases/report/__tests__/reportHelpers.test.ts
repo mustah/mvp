@@ -31,8 +31,7 @@ describe('reportHelpers', () => {
             unit: 'mW',
             created: 1516521585107,
             physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
+              id: 1,
             },
           },
           10: {
@@ -42,8 +41,7 @@ describe('reportHelpers', () => {
             unit: 'mW',
             created: 1516529685107,
             physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
+              id: 1,
             },
           },
         };
@@ -61,10 +59,7 @@ describe('reportHelpers', () => {
             value: 0.4353763591158477,
             unit: 'mW',
             created: 1516521585107,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            physicalMeter: {id: 1},
           },
           10: {
             id: 10,
@@ -72,10 +67,7 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'mA',
             created: 1516529685107,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            physicalMeter: {id: 1},
           },
         };
 
@@ -93,10 +85,7 @@ describe('reportHelpers', () => {
             value: 0.4353763591158477,
             unit: 'mW',
             created: 1516521585107,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            physicalMeter: {id: 1},
           },
           10: {
             id: 10,
@@ -104,10 +93,7 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'mA',
             created: 1516529685107,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            physicalMeter: {id: 1},
           },
           11: {
             id: 10,
@@ -115,10 +101,7 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'C',
             created: 1516529685107,
-            physicalMeter: {
-              rel: 'self',
-              href: 'http://localhost:8080/v1/api/physical-meters/1',
-            },
+            physicalMeter: {id: 1},
           },
         };
 

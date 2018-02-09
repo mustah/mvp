@@ -26,7 +26,7 @@ export const mapNormalizedPaginatedResultToGraphData = (entities: ObjectsById<Me
     if (!byDate[created]) {
       byDate[created] = {};
     }
-    const label: string = entity.id.toString();
+    const label: string = entity.physicalMeter.id.toString();
     if (!meters.includes(label)) {
       meters.push(label);
       const props: LineProps = {

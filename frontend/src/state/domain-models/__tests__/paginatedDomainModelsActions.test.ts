@@ -7,18 +7,13 @@ import {initLanguage} from '../../../i18n/i18n';
 import {RootState} from '../../../reducers/rootReducer';
 import {makeRestClient} from '../../../services/restClient';
 import {ErrorResponse} from '../../../types/Types';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {meterSchema} from '../../domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../domain-models-paginated/paginatedDomainModels';
-import {
-  fetchMeasurements, fetchMeters,
-  requestMethodPaginated,
-} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {fetchMeters, requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {EndPoints} from '../domainModels';
-import {Measurement} from '../measurement/measurementModels';
-import {measurementSchema} from '../measurement/measurementSchema';
-import {Meter} from '../../domain-models-paginated/meter/meterModels';
-import {meterSchema} from '../../domain-models-paginated/meter/meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
 initLanguage({code: 'en', name: 'english'});
@@ -31,12 +26,9 @@ describe('paginatedDomainModelsActions', () => {
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
       meters: {entities: {}, result: {}},
-      measurements: {entities: {}, result: {}},
     },
   };
 
-  const requestMeasurements =
-    requestMethodPaginated<NormalizedPaginated<Measurement>>(EndPoints.measurements);
   const requestMeters =
     requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
 
@@ -48,77 +40,6 @@ describe('paginatedDomainModelsActions', () => {
 
   afterEach(() => {
     mockRestClient.reset();
-  });
-
-  describe('fetch measurements from /measurements', () => {
-    const page = 1;
-    const measurement1: Measurement = {
-      id: 1,
-      quantity: 'Power',
-      value: 0.06368699009387613,
-      unit: 'mW',
-      created: 1514637786120,
-      physicalMeter: {
-        rel: 'self',
-        href: 'http://localhost:8080/v1/api/physical-meters/1',
-      },
-    };
-    const measurement2: Measurement = {
-      id: 2,
-      quantity: 'Power',
-      value: 0.24113868538294558,
-      unit: 'mW',
-      created: 1514638686120,
-      physicalMeter: {
-        rel: 'self',
-        href: 'http://localhost:8080/v1/api/physical-meters/1',
-      },
-    };
-    const measurementResponse = {
-      content: [
-        measurement1,
-        measurement2,
-      ],
-      totalPages: 1440,
-      totalElements: 28800,
-      last: false,
-      size: 2,
-      number: 0,
-      first: true,
-      numberOfElements: 2,
-      sort: null,
-    };
-    const errorResponse: ErrorResponse = {message: 'an error'};
-
-    const getMeasurementsWithResponseOk = async (page: number) => {
-      mockRestClient.onGet(EndPoints.measurements).reply(200, measurementResponse);
-      return store.dispatch(fetchMeasurements(page));
-    };
-
-    const getMeasurementWithBadRequest = async (page: number) => {
-      mockRestClient.onGet(EndPoints.measurements).reply(401, errorResponse);
-      return store.dispatch(fetchMeasurements(page));
-    };
-
-    it('normalizes data on successful request', async () => {
-      await getMeasurementsWithResponseOk(page);
-
-      expect(store.getActions()).toEqual([
-        requestMeasurements.request(page),
-        requestMeasurements.success({
-          page,
-          ...normalize(measurementResponse, measurementSchema),
-        }),
-      ]);
-    });
-    it('get an error message back on a bad request', async () => {
-      await getMeasurementWithBadRequest(page);
-
-      expect(store.getActions()).toEqual([
-        requestMeasurements.request(page),
-        requestMeasurements.failure({...errorResponse, page}),
-      ]);
-    });
   });
 
   describe('fetch meters from /meters', () => {
@@ -193,7 +114,6 @@ describe('paginatedDomainModelsActions', () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
-          measurements: {entities: {}, result: {}},
           meters: {entities: {}, result: {[existingPage]: {isFetching: false}}},
         },
       };
@@ -212,7 +132,6 @@ describe('paginatedDomainModelsActions', () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
-          measurements: {entities: {}, result: {}},
           meters: {entities: {}, result: {[existingPage]: {isFetching: false, result: [1]}}},
         },
       };
