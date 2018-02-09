@@ -51,6 +51,13 @@ public class LogicalMeterUseCases {
     );
   }
 
+  public List<LogicalMeter> findAll(Map<String, List<String>> filterParams) {
+    return logicalMeters.findAll(addOrganisationIdToFilterParams(
+      currentUser,
+      filterParams
+    ));
+  }
+
   public LogicalMeter save(LogicalMeter logicalMeter) {
     return logicalMeters.save(logicalMeter);
   }

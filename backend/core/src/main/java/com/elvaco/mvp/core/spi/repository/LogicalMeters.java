@@ -15,6 +15,8 @@ public interface LogicalMeters {
 
   Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable);
 
+  List<LogicalMeter> findAll(Map<String, List<String>> filterParams);
+
   LogicalMeter save(LogicalMeter logicalMeter);
 
   void deleteAll();

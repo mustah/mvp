@@ -47,6 +47,14 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
+  public List<LogicalMeter> findAll(Map<String, List<String>> filterParams) {
+    return logicalMeterJpaRepository.findAll(filterMapper.map(filterParams))
+      .stream()
+      .map(logicalMeterMapper::toDomainModel)
+      .collect(toList());
+  }
+
+  @Override
   public Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
     return new PageAdapter<>(
       logicalMeterJpaRepository.findAll(

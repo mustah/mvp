@@ -91,7 +91,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAll() {
+  public void findAllPaged() {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage("/meters", LogicalMeterDto.class);
 
@@ -105,6 +105,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
     assertThat(response.getTotalPages()).isEqualTo(3);
+  }
+
+  @Test
+  public void findAll() {
+    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+      .getList("/meters/all", LogicalMeterDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(55);
+
+    response = asElvacoUser()
+      .getList("/meters/all?id=1", LogicalMeterDto.class);
+
+    assertThat(response.getBody()).hasSize(1);
+    assertThat(response.getBody().get(0).id).isEqualTo(1);
   }
 
   @Test
