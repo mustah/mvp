@@ -5,8 +5,20 @@ INSERT INTO unit_units VALUES ('Celsius', '1 K' :: UNIT, 273.15, 'K');
 INSERT INTO unit_units VALUES ('Kelvin', '1 K' :: UNIT, default, 'K');
 INSERT INTO unit_units VALUES ('m3', 'm^3' :: UNIT, default, 'm');
 
+CREATE TABLE IF NOT EXISTS quantity (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  unit VARCHAR(255) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS meter_definition (
-  id BIGSERIAL PRIMARY KEY
+  id BIGSERIAL PRIMARY KEY,
+  medium TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS meter_definition_quantities (
+  quantity_id BIGINT REFERENCES quantity NOT NULL,
+  meter_definition_id BIGINT REFERENCES meter_definition NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS organisation (
@@ -37,8 +49,8 @@ CREATE TABLE IF NOT EXISTS logical_meter (
   status VARCHAR(255),
   medium VARCHAR(255),
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-  property_collection JSONB
-  -- meter_definition_id BIGINT REFERENCES meter_definition
+  property_collection JSONB,
+  meter_definition_id BIGINT REFERENCES meter_definition
 );
 
 CREATE TABLE IF NOT EXISTS location (
