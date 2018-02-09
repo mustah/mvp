@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO_ADMIN_USER;
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_ADMIN_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)

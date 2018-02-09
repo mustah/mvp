@@ -9,10 +9,10 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.CREATE;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.DELETE;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.READ;
-import static com.elvaco.mvp.core.security.OrganisationPermissions.Permission.UPDATE;
+import static com.elvaco.mvp.core.security.Permission.CREATE;
+import static com.elvaco.mvp.core.security.Permission.DELETE;
+import static com.elvaco.mvp.core.security.Permission.READ;
+import static com.elvaco.mvp.core.security.Permission.UPDATE;
 
 public class OrganisationUseCases {
 

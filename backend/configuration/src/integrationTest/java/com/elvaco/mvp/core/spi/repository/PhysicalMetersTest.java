@@ -1,13 +1,14 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.elvaco.mvp.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PhysicalMetersTest extends IntegrationTest {

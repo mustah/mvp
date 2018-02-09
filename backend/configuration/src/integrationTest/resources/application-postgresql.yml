@@ -10,7 +10,7 @@ spring:
     password: mvp
   jpa:
     properties:
-      hibernate.dialect: com.elvaco.mvp.dialect.MvpPostgreSqlDialect
+      hibernate.dialect: com.elvaco.mvp.database.dialect.MvpPostgreSqlDialect
       hibernate.show_sql: true
       hibernate.use_sql_comments: true
       hibernate.format_sql: true

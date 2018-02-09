@@ -1,7 +1,5 @@
 package com.elvaco.mvp.core.security;
 
-import java.util.NoSuchElementException;
-
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -55,27 +53,5 @@ public class OrganisationPermissions {
 
   private boolean cannotRemoveLastSuperAdminUser(Permission permission) {
     return !permission.equals(Permission.DELETE) || users.findByRole(Role.SUPER_ADMIN).size() != 1;
-  }
-
-  public enum Permission {
-    CREATE("create"),
-    READ("read"),
-    UPDATE("update"),
-    DELETE("delete");
-
-    private final String name;
-
-    Permission(String name) {
-      this.name = name;
-    }
-
-    public static Permission fromString(String s) {
-      for (Permission p : values()) {
-        if (p.name.equalsIgnoreCase(s)) {
-          return p;
-        }
-      }
-      throw new NoSuchElementException(s);
-    }
   }
 }
