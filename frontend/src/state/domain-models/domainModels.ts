@@ -1,4 +1,5 @@
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
+import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MeasurementState} from './measurement/measurementModels';
 import {UserState} from './user/userModels';
@@ -12,6 +13,7 @@ export interface Location {
 export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
+  metersAll = '/meters/all',
   gateways = '/gateways',
   users = '/users',
   authenticate = '/authenticate',
@@ -64,6 +66,7 @@ export interface DomainModelsState {
   meterStatuses: SelectionEntityState;
   productModels: SelectionEntityState;
   measurements: MeasurementState;
+  metersAll: NormalizedState<Meter>;
   users: UserState;
 }
 

@@ -2,7 +2,10 @@ import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from '../domain-models/domainModels';
 import {Meter} from './meter/meterModels';
-import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from './paginatedDomainModels';
+import {
+  HasPageNumber, NormalizedPaginated, NormalizedPaginatedState,
+  PaginatedDomainModelsState,
+} from './paginatedDomainModels';
 import {
   DOMAIN_MODELS_PAGINATED_FAILURE,
   DOMAIN_MODELS_PAGINATED_GET_SUCCESS,
@@ -85,6 +88,6 @@ export const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints)
 
 export const meters = reducerFor<Meter>('meters', EndPoints.meters);
 
-export const paginatedDomainModels = combineReducers({
+export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
   meters,
 });

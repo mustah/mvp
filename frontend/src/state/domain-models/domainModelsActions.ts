@@ -7,6 +7,8 @@ import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {authSetUser} from '../../usecases/auth/authActions';
+import {Meter} from '../domain-models-paginated/meter/meterModels';
+import {metersAllSchema} from '../domain-models-paginated/meter/meterSchema';
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
 import {EndPoints, HttpMethod, Normalized} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
@@ -126,11 +128,12 @@ const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => 
 };
 
 export const fetchSelections = restGet<IdNamed>(EndPoints.selections, selectionsSchema);
+export const fetchMetersAll = restGet<Meter>(EndPoints.metersAll, metersAllSchema);
 export const fetchGateways = restGet<Gateway>(EndPoints.gateways, gatewaySchema);
 export const fetchUsers = restGet<User>(EndPoints.users, userSchema);
-export const fetchUser = restGetEntity<User>(EndPoints.users);
 export const fetchMeasurements =
   restGet<Measurement>(EndPoints.measurements, measurementSchema);
+export const fetchUser = restGetEntity<User>(EndPoints.users);
 // TODO: Add tests ^
 
 export const addUser = restPost<User>(EndPoints.users, {

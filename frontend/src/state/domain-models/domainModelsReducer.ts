@@ -1,6 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
+import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {DomainModelsState, EndPoints, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
   DOMAIN_MODELS_DELETE_SUCCESS,
@@ -128,6 +129,7 @@ export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoi
 export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
 export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
 export const users = reducerFor<User>('users', EndPoints.users);
+export const metersAll = reducerFor<Meter>('metersAll', EndPoints.metersAll);
 
 export const domainModels = combineReducers<DomainModelsState>({
   addresses,
@@ -140,4 +142,5 @@ export const domainModels = combineReducers<DomainModelsState>({
   productModels,
   users,
   measurements,
+  metersAll,
 });
