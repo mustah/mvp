@@ -3,13 +3,14 @@ import {Action} from '../../../types/Types';
 import {CHANGE_TAB} from './tabsActions';
 import {SelectedTabs, TabName, TabSelection, TabsState} from './tabsModels';
 
-const overviewTab: SelectedTabs = {
-  selectedTab: TabName.overview,
+// TODO: Change this to overviewTab and set selectedTab to TabName.overview
+const listTab: SelectedTabs = {
+  selectedTab: TabName.list,
 };
 
 export const initialState: TabsState = {
-  validation: {...overviewTab},
-  collection: {...overviewTab},
+  validation: {...listTab},
+  collection: {...listTab},
 };
 
 type ActionType = Action<TabSelection> | EmptyAction<string>;
