@@ -139,7 +139,8 @@ public class DemoDataLoader implements CommandLineRunner {
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationEntity,
       meterIdentity,
-      "Electricity"
+      "Electricity",
+      "ELV"
     );
     physicalMeterEntity.logicalMeterId = logicalMeterEntity.id;
     return physicalMeterRepository.save(physicalMeterEntity);

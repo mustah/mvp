@@ -49,35 +49,6 @@ public class CsvLoader implements CommandLineRunner {
     this.physicalMeters = physicalMeters;
   }
 
-  private static LocationBuilder parseKeyToLocation(String s) {
-    String[] parts = s.split(DELIMITER);
-    return new LocationBuilder()
-      .streetAddress(parts[0])
-      .city(parts[1])
-      .country(parts[2]);
-  }
-
-  private static CsvMapper<MeterData> csvMapper() {
-    return CsvMapperFactory.newInstance().newMapper(MeterData.class);
-  }
-
-  private static URL loadResource(String file) {
-    return CsvLoader.class.getClassLoader().getResource(file);
-  }
-
-  private static File getFile(URL metersResource) {
-    return new File(requireNonNull(metersResource).getFile());
-  }
-
-  private static GeoCoordinate toGeoCoordinate(GeoPositionDto geoPosition) {
-    return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
-  }
-
-  @Nullable
-  private static String toNull(String value) {
-    return value.equals("NULL") ? null : value;
-  }
-
   @Override
   public void run(String... args) throws Exception {
     testing();
@@ -116,12 +87,42 @@ public class CsvLoader implements CommandLineRunner {
               ELVACO,
               meterData.meterId,
               meterData.medium,
+              meterData.meterManufacturer,
               logicalMeter.id
             );
           })
       )
       .peek(physicalMeters::save)
       .forEach(System.out::println);
+  }
+
+  private static LocationBuilder parseKeyToLocation(String s) {
+    String[] parts = s.split(DELIMITER);
+    return new LocationBuilder()
+      .streetAddress(parts[0])
+      .city(parts[1])
+      .country(parts[2]);
+  }
+
+  private static CsvMapper<MeterData> csvMapper() {
+    return CsvMapperFactory.newInstance().newMapper(MeterData.class);
+  }
+
+  private static URL loadResource(String file) {
+    return CsvLoader.class.getClassLoader().getResource(file);
+  }
+
+  private static File getFile(URL metersResource) {
+    return new File(requireNonNull(metersResource).getFile());
+  }
+
+  private static GeoCoordinate toGeoCoordinate(GeoPositionDto geoPosition) {
+    return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
+  }
+
+  @Nullable
+  private static String toNull(String value) {
+    return value.equals("NULL") ? null : value;
   }
 
   @ToString

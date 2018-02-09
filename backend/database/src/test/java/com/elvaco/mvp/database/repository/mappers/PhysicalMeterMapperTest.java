@@ -14,10 +14,11 @@ public class PhysicalMeterMapperTest {
 
   @Test
   public void mapping() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "567890", "My Medium");
+    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "567890", "My Medium", "ELV");
     PhysicalMeterEntity physicalMeterEntity = physicalMeterMapper.toEntity(physicalMeter);
     assertThat(physicalMeterEntity.identity).isEqualTo("567890");
     assertThat(physicalMeterEntity.medium).isEqualTo("My Medium");
+    assertThat(physicalMeterEntity.manufacturer).isEqualTo("ELV");
     assertThat(physicalMeterMapper.toDomainModel(physicalMeterEntity)).isEqualTo(physicalMeter);
   }
 

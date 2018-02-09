@@ -153,6 +153,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         DomainModels.ELVACO,
         "111-222-333-444",
         "Some device specific medium name",
+        "ELV",
         savedLogicalMeter.id
       )
     );

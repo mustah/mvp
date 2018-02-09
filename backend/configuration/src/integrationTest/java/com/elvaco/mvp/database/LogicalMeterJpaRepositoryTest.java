@@ -48,7 +48,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationRepository.findOne(0L),
       "123123",
-      "Some medium"
+      "Some medium",
+      "ELV"
     );
     physicalMeterEntity.logicalMeterId = mp.id;
     physicalMeterJpaRepository.save(physicalMeterEntity);

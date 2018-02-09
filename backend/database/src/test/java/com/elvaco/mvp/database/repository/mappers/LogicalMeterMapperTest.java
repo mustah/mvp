@@ -44,7 +44,7 @@ public class LogicalMeterMapperTest {
     LogicalMeter logicalMeter = new LogicalMeter(
       MeterDefinition.DISTRICT_HEATING_METER,
       Collections.singletonList(
-        new PhysicalMeter(ELVACO, "1234", "My medium")
+        new PhysicalMeter(ELVACO, "1234", "My medium", "ELV")
       )
     );
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);

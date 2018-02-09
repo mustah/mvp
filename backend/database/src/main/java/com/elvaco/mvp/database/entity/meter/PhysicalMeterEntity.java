@@ -34,6 +34,7 @@ public class PhysicalMeterEntity implements Serializable {
 
   public String identity;
   public String medium;
+  public String manufacturer;
 
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
@@ -43,8 +44,13 @@ public class PhysicalMeterEntity implements Serializable {
 
   public PhysicalMeterEntity() {}
 
-  public PhysicalMeterEntity(OrganisationEntity organisation, String identity, String medium) {
-    this(null, organisation, identity, medium, null);
+  public PhysicalMeterEntity(
+    OrganisationEntity organisation,
+    String identity,
+    String medium,
+    String manufacturer
+  ) {
+    this(null, organisation, identity, medium, manufacturer, null);
   }
 
   public PhysicalMeterEntity(
@@ -52,12 +58,14 @@ public class PhysicalMeterEntity implements Serializable {
     OrganisationEntity organisation,
     String identity,
     String medium,
+    String manufacturer,
     Long logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;
     this.identity = identity;
     this.medium = medium;
+    this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
   }
 }

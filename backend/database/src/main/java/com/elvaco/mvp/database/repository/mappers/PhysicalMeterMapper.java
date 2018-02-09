@@ -18,6 +18,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       organisationMapper.toDomainModel(entity.organisation),
       entity.identity,
       entity.medium,
+      entity.manufacturer,
       entity.logicalMeterId
     );
   }
@@ -29,6 +30,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       organisationMapper.toEntity(domainModel.organisation),
       domainModel.identity,
       domainModel.medium,
+      domainModel.manufacturer,
       domainModel.logicalMeterId
     );
   }
