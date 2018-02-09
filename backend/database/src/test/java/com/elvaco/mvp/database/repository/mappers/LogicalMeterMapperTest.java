@@ -114,21 +114,6 @@ public class LogicalMeterMapperTest {
   @Test
   public void mapLogicalMeterDomainModelToEntity() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
-    Location location = new LocationBuilder()
-      .latitude(3.1)
-      .longitude(2.1)
-      .confidence(1.0)
-      .build();
-
-    LogicalMeter logicalMeter = new LogicalMeter(
-      1L,
-      "Ok",
-      location,
-      created,
-      new PropertyCollection(null),
-      Collections.emptyList(),
-      null
-    );
 
     LocationEntity locationEntityExpected = new LocationEntity();
     locationEntityExpected.confidence = 1.0;
@@ -141,8 +126,22 @@ public class LogicalMeterMapperTest {
     logicalMeterEntityExpected.created = created;
     logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
-    assertThat(logicalMeterMapper.toEntity(logicalMeter).getLocation()).isEqualTo(
-      locationEntityExpected);
-    assertThat(logicalMeterMapper.toEntity(logicalMeter)).isEqualTo(logicalMeterEntityExpected);
+    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
+      new LogicalMeter(
+        1L,
+        "Ok",
+        new LocationBuilder()
+          .latitude(3.1)
+          .longitude(2.1)
+          .confidence(1.0)
+          .build(),
+        created,
+        new PropertyCollection(null),
+        Collections.emptyList(),
+        null
+      ));
+
+    assertThat(logicalMeterEntity.getLocation()).isEqualTo(locationEntityExpected);
+    assertThat(logicalMeterEntity).isEqualTo(logicalMeterEntityExpected);
   }
 }

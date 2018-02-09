@@ -69,13 +69,15 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       return;
     }
 
-    importFrom("data/meters_perstorp.csv");
+    Map<String, Location> locationMap = mapAddressToLocation();
+
+    importFrom("data/meters_perstorp.csv", locationMap);
+    importFrom("data/meters_almhult.csv", locationMap);
 
     settingUseCases.setDemoDataLoaded();
   }
 
-  private void importFrom(String filePath) throws IOException {
-    Map<String, Location> locationMap = mapAddressToLocation();
+  private void importFrom(String filePath, Map<String, Location> locationMap) throws IOException {
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
       .stream(getFile(filePath), stream ->
