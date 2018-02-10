@@ -7,7 +7,9 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
 
   private final OrganisationMapper organisationMapper;
 
-  public PhysicalMeterMapper(OrganisationMapper organisationMapper) {
+  public PhysicalMeterMapper(
+    OrganisationMapper organisationMapper
+  ) {
     this.organisationMapper = organisationMapper;
   }
 
@@ -17,15 +19,19 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       entity.id,
       organisationMapper.toDomainModel(entity.organisation),
       entity.identity,
-      entity.medium
+      entity.medium,
+      entity.logicalMeterId
     );
   }
 
   @Override
   public PhysicalMeterEntity toEntity(PhysicalMeter domainModel) {
-    return new PhysicalMeterEntity(domainModel.id,
-                                   organisationMapper.toEntity(domainModel.organisation),
-                                   domainModel.identity,
-                                   domainModel.medium);
+    return new PhysicalMeterEntity(
+      domainModel.id,
+      organisationMapper.toEntity(domainModel.organisation),
+      domainModel.identity,
+      domainModel.medium,
+      domainModel.logicalMeterId
+    );
   }
 }

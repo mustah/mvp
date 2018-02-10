@@ -9,19 +9,19 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
+@EqualsAndHashCode(exclude = {"measurements"})
 public class PhysicalMeterEntity implements Serializable {
 
   private static final long serialVersionUID = 1100904291210178685L;
@@ -39,25 +39,26 @@ public class PhysicalMeterEntity implements Serializable {
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
 
-  @ManyToOne
-  @JsonBackReference
-  public LogicalMeterEntity logicalMeter;
+  public Long logicalMeterId;
 
   public PhysicalMeterEntity() {}
 
   public PhysicalMeterEntity(OrganisationEntity organisation, String identity, String medium) {
-    this(null, organisation, identity, medium);
+    this(null, organisation, identity, medium, null);
   }
 
   public PhysicalMeterEntity(
     Long id,
     OrganisationEntity organisation,
     String identity,
-    String medium
+    String medium,
+    Long logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;
     this.identity = identity;
     this.medium = medium;
+    this.logicalMeterId = logicalMeterId;
   }
+
 }

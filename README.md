@@ -39,7 +39,17 @@ the database for the session.
 > that if that instance was launched using docker-compose, it will be destroyed along with all its
 > data at the end of the system tests.
 
-> TODO: make sure the system tests can be run without wiping the tables created in postgres DB.  
+> TODO: make sure the system tests can be run without wiping the tables created in postgres DB.
+
+A handy tip: If you're only troubleshooting one, or a collection of, failing test cases you can specify to run only those tests by conveniently specifying which tests to run using the `--tests` option, like so:
+
+`./gradlew systemTest --tests com.elvaco.mvp.repository.LogicalMeterJpaRepositoryTest`
+
+or
+
+`./gradlew systemTest --tests com.elvaco.mvp.repository.LogicalMeterJpaRepositoryTest.containsInPropertyCollection`
+
+Look [here](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test) for more examples, and a more thorough explanation of test filters.
  
 ### Backend only
 If the changes you're working on are isolated to the backend, and do not rely

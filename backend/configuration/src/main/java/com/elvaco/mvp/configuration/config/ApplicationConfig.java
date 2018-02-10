@@ -76,7 +76,7 @@ class ApplicationConfig {
       protected LogicalMeterDto convert(LogicalMeterEntity source) {
         LogicalMeterDto dto = new LogicalMeterDto();
         dto.id = source.id;
-        dto.medium = source.medium;
+        dto.medium = source.meterDefinition.medium;
         dto.created = source.created.toString();
         return dto;
       }

@@ -16,6 +16,8 @@ import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Type;
 
 @Entity
@@ -37,6 +39,7 @@ public class MeasurementEntity implements Serializable {
 
   @ManyToOne
   @JsonBackReference
+  @Cascade(CascadeType.MERGE)
   public PhysicalMeterEntity physicalMeter;
 
   @Type(type = "measurement-unit")

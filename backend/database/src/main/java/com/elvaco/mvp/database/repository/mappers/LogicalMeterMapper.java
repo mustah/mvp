@@ -1,9 +1,11 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
@@ -12,10 +14,18 @@ import com.elvaco.mvp.database.entity.meter.PropertyCollection;
 
 public class LogicalMeterMapper {
 
+  private final MeterDefinitionMapper meterDefinitionMapper;
   private final LocationMapper locationMapper;
+  private final PhysicalMeterMapper physicalMeterMapper;
 
-  public LogicalMeterMapper(LocationMapper locationMapper) {
+  public LogicalMeterMapper(
+    MeterDefinitionMapper meterDefinitionMapper,
+    LocationMapper locationMapper,
+    PhysicalMeterMapper physicalMeterMapper
+  ) {
+    this.meterDefinitionMapper = meterDefinitionMapper;
     this.locationMapper = locationMapper;
+    this.physicalMeterMapper = physicalMeterMapper;
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
@@ -28,12 +38,22 @@ public class LogicalMeterMapper {
 
     Location location = locationMapper.toDomainModel(logicalMeterEntity.getLocation());
 
+    MeterDefinition meterDefinition = null;
+    if (logicalMeterEntity.meterDefinition != null) {
+      meterDefinition = meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition);
+    }
+
     return new LogicalMeter(
       logicalMeterEntity.id,
       logicalMeterEntity.status,
       location,
       logicalMeterEntity.created,
-      new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty)
+      new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty),
+      logicalMeterEntity.physicalMeters.stream()
+        .map(physicalMeterMapper::toDomainModel)
+        .collect(Collectors.toList()),
+      meterDefinition
+
     );
   }
 
@@ -51,6 +71,13 @@ public class LogicalMeterMapper {
 
     LocationEntity locationEntity = locationMapper.toEntity(logicalMeter.location);
     logicalMeterEntity.setLocation(locationEntity);
+    if (logicalMeter.hasMeterDefinition()) {
+      logicalMeterEntity.meterDefinition = meterDefinitionMapper.toEntity(logicalMeter
+                                                                            .getMeterDefinition());
+    }
+    logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
+      .map(physicalMeterMapper::toEntity)
+      .collect(Collectors.toSet());
 
     return logicalMeterEntity;
   }

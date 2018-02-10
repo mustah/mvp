@@ -10,7 +10,9 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,14 +28,17 @@ public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final LogicalMeterMapper logicalMeterMapper;
+  private final ModelMapper modelMapper;
 
   @Autowired
   LogicalMeterController(
     LogicalMeterMapper logicalMeterMapper,
-    LogicalMeterUseCases logicalMeterUseCases
+    LogicalMeterUseCases logicalMeterUseCases,
+    ModelMapper modelMapper
   ) {
     this.logicalMeterMapper = logicalMeterMapper;
     this.logicalMeterUseCases = logicalMeterUseCases;
+    this.modelMapper = modelMapper;
   }
 
   @GetMapping("{id}")
@@ -46,6 +51,15 @@ public class LogicalMeterController {
     return logicalMeterUseCases.findAll()
       .stream()
       .map(logicalMeterMapper::toMapMarkerDto)
+      .collect(Collectors.toList());
+  }
+
+  @GetMapping("{id}/measurements")
+  public List<MeasurementDto> measurements(@PathVariable Long id) {
+    LogicalMeter logicalMeter = logicalMeterUseCases.findById(id);
+    return logicalMeterUseCases.measurements(logicalMeter)
+      .stream()
+      .map(m -> modelMapper.map(m, MeasurementDto.class))
       .collect(Collectors.toList());
   }
 

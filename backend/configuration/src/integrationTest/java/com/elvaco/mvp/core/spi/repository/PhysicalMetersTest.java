@@ -26,7 +26,7 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void createNew() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(null, ELVACO, "someId", "Heat");
+    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "someId", "Heat");
 
     PhysicalMeter saved = physicalMeters.save(physicalMeter);
 
@@ -35,7 +35,7 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void update() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(null, ELVACO, "something-else", "unknown");
+    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "something-else", "unknown");
 
     PhysicalMeter saved = physicalMeters.save(physicalMeter);
 
@@ -54,25 +54,25 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void findAll() {
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test12", "Heat"));
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test13", "Vacuum"));
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test14", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test12", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test13", "Vacuum"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test14", "Heat"));
 
     assertThat(physicalMeters.findAll()).hasSize(3);
   }
 
   @Test
   public void findByIdentity() {
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "myId", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "myId", "Heat"));
 
     assertThat(physicalMeters.findByIdentity("myId").isPresent()).isTrue();
   }
 
   @Test
   public void findByMedium() {
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test12", "Heat"));
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test13", "Vacuum"));
-    physicalMeters.save(new PhysicalMeter(null, ELVACO, "test14", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test12", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test13", "Vacuum"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test14", "Heat"));
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);
   }

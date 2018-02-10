@@ -21,7 +21,6 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -47,8 +46,8 @@ public class DemoDataLoader implements CommandLineRunner {
 
   @Autowired
   public DemoDataLoader(
-    MeasurementJpaRepository measurementJpaRepository,
     LogicalMeterJpaRepository logicalMeterJpaRepository,
+    MeasurementJpaRepository measurementJpaRepository,
     PhysicalMeterJpaRepository physicalMeterRepository,
     OrganisationJpaRepository organisationRepository,
     GatewayRepository gatewayRepository,
@@ -147,7 +146,7 @@ public class DemoDataLoader implements CommandLineRunner {
       meterIdentity,
       "Electricity"
     );
-    physicalMeterEntity.logicalMeter = logicalMeterEntity;
+    physicalMeterEntity.logicalMeterId = logicalMeterEntity.id;
     return physicalMeterRepository.save(physicalMeterEntity);
   }
 
@@ -168,7 +167,7 @@ public class DemoDataLoader implements CommandLineRunner {
     created = calendar.getTime();
 
     logicalMeterEntity.status = "Ok";
-    logicalMeterEntity.medium = "Water";
+    logicalMeterEntity.meterDefinition = null;
     logicalMeterEntity.created = created;
     logicalMeterEntity.gateways = gatewayEntities;
     LocationEntity locationEntity = new LocationEntity();

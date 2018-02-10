@@ -2,6 +2,9 @@ package com.elvaco.mvp.database.entity.measurement;
 
 import java.io.Serializable;
 
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
 public class MeasurementUnit implements Serializable {
 
   private static final long serialVersionUID = -8237162225719810274L;

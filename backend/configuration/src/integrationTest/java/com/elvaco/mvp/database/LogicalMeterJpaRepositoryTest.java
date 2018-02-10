@@ -6,7 +6,10 @@ import com.elvaco.mvp.database.dto.propertycollection.PropertyCollectionDto;
 import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +24,12 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
+  @Autowired
+  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
+  @Autowired
+  private OrganisationJpaRepository organisationRepository;
+
   @Before
   public void setUp() {
     LogicalMeterEntity mp = new LogicalMeterEntity();
@@ -33,7 +42,16 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     locationEntity.latitude = 1.0;
     locationEntity.longitude = 2.0;
     mp.setLocation(locationEntity);
-    logicalMeterId = logicalMeterJpaRepository.save(mp).id;
+
+    mp = logicalMeterJpaRepository.save(mp);
+    PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
+      organisationRepository.findOne(0L),
+      "123123",
+      "Some medium"
+    );
+    physicalMeterEntity.logicalMeterId = mp.id;
+    physicalMeterJpaRepository.save(physicalMeterEntity);
+    logicalMeterId = mp.id;
   }
 
   @Test
@@ -92,5 +110,10 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Test
   public void fieldNameDoesNotExistAtTopLevelJson() {
     assertThat(logicalMeterJpaRepository.existsInPropertyCollection("top")).isEmpty();
+  }
+
+  @Test
+  public void physicalMetersAreFetched() {
+    assertThat(logicalMeterJpaRepository.findOne(logicalMeterId).physicalMeters).isNotEmpty();
   }
 }

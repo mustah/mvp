@@ -22,7 +22,7 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
   static {
     FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
 
-    FILTERABLE_PROPERTIES.put("medium", Q.medium::eq);
+    FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
 
     FILTERABLE_PROPERTIES.put("status", Q.status::eq);
 
