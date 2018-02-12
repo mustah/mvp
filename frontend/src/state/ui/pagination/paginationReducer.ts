@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
+import {PAGINATION_CHANGE_PAGE, PAGINATION_RESET, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
 export const limit = 5;
@@ -40,6 +40,8 @@ export const pagination = (state: PaginationState = initialPaginationState, acti
       return requestPage(state, action as Action<PaginationChangePayload>);
     case PAGINATION_UPDATE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
+    case PAGINATION_RESET:
+      return {...initialPaginationState};
     default:
       return state;
   }

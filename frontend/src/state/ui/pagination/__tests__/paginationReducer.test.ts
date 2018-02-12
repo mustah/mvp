@@ -1,4 +1,4 @@
-import {paginationChangePage, paginationUpdateMetaData} from '../paginationActions';
+import {paginationChangePage, paginationReset, paginationUpdateMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
 import {initialPaginationState, limit, pagination} from '../paginationReducer';
 
@@ -84,6 +84,17 @@ describe('paginationReducer', () => {
 
       expect(pagination(paginatedState, paginationChangePage(payload))).toEqual(expectedState);
 
+    });
+  });
+  describe('reset pagination', () => {
+    it('sets pagination to initialState when getting the reset action', () => {
+      const paginatedState: PaginationState = {
+        meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+      };
+
+      expect(pagination(paginatedState, paginationReset())).toEqual({
+        ...initialPaginationState,
+      });
     });
   });
 });
