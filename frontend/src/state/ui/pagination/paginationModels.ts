@@ -16,14 +16,16 @@ export interface HasComponentId {
   componentId: uuid;
 }
 
+export type EntityTypes = keyof (PaginatedDomainModelsState & DomainModelsState);
+
 export type PaginationChangePayload =
   HasComponentId
   & HasPageNumber
-  & {model: keyof (PaginatedDomainModelsState & DomainModelsState)};
+  & {entityType: EntityTypes};
 
 export type PaginationMetadataPayload =
   NormalizedPaginatedResult
-  & {model: keyof (PaginatedDomainModelsState & DomainModelsState)};
+  & {entityType: EntityTypes};
 
 export type OnChangePage = (payload: PaginationChangePayload) => void;
 
@@ -54,6 +56,6 @@ export interface SortingOptions {
 export type Pagination = HasPageNumber & PaginationMetadata;
 
 export interface PaginationLookupState<T> extends HasComponentId {
-  model: keyof T;
+  entityType: keyof T;
   pagination: PaginationState;
 }

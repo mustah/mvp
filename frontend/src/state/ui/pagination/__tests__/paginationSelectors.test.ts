@@ -43,7 +43,7 @@ describe('paginationSelectors', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'gatewayList',
-        model: 'gateways',
+        entityType: 'gateways',
       };
 
       const expected: Pagination = {
@@ -60,7 +60,7 @@ describe('paginationSelectors', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',
-        model: 'gateways',
+        entityType: 'gateways',
       };
 
       const expected: Pagination = {
@@ -77,7 +77,7 @@ describe('paginationSelectors', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',
-        model: 'cities',
+        entityType: 'cities',
       };
 
       const expected: Pagination = {

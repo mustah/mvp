@@ -17,8 +17,8 @@ describe('paginationActions', () => {
   });
 
   describe('changePaginationAction', () => {
-    it('dipatches a requestPage action', () => {
-      const payload: PaginationChangePayload = {model: 'meters', componentId: 'test', page: 2};
+    it('dispatches a requestPage action', () => {
+      const payload: PaginationChangePayload = {entityType: 'meters', componentId: 'test', page: 2};
 
       store.dispatch(paginationChangePage(payload));
 
@@ -29,7 +29,7 @@ describe('paginationActions', () => {
 
     it('dispatches a update metadata request', () => {
       const payload: PaginationMetadataPayload = {
-        model: 'meters',
+        entityType: 'meters',
         content: [
           1,
           2,

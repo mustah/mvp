@@ -17,7 +17,7 @@ describe('paginationReducer', () => {
 
     it('updates pagination meta data for a component', () => {
       const payload: PaginationMetadataPayload = {
-        model: 'meters',
+        entityType: 'meters',
         content: [],
         first: false,
         last: false,
@@ -45,7 +45,7 @@ describe('paginationReducer', () => {
   describe('pagination change page', () => {
     const payload: PaginationChangePayload = {
       componentId: 'test',
-      model: 'meters',
+      entityType: 'meters',
       page: 10,
     };
 

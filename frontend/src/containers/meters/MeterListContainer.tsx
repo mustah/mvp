@@ -78,7 +78,7 @@ class MeterList extends React.Component<Props> {
     const renderMedium = ({medium}: Meter) => medium;
 
     const changePage = (page: number) => paginationChangePage({
-      model: 'meters',
+      entityType: 'meters',
       componentId,
       page,
     });
@@ -146,7 +146,7 @@ const mapStateToProps = (
   const uriLookupState: UriLookupStatePaginated = {
     ...searchParameters,
     componentId,
-    model: 'meters',
+    entityType: 'meters',
     pagination,
   };
   const paginationData: Pagination = getPagination(uriLookupState);

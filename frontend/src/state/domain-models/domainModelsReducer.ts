@@ -89,7 +89,7 @@ type ActionTypes<T extends HasId> =
   | Action<ErrorResponse>;
 
 // TODO: Add tests for PUT, POST, DELETE
-const reducerFor = <T extends HasId>(entity: string, endPoint: EndPoints) =>
+const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: EndPoints) =>
   (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
     switch (action.type) {
       case DOMAIN_MODELS_REQUEST(endPoint):

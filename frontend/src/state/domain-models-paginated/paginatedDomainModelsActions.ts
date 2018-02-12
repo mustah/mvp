@@ -87,7 +87,7 @@ const isFetchingOrExisting = (page: number, {result}: NormalizedPaginatedState<H
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
   schema: Schema,
-  model: keyof PaginatedDomainModelsState,
+  entityType: keyof PaginatedDomainModelsState,
   restCallbacks?: RestCallbacks<NormalizedPaginated<T>>,
 ): RestGetPaginated => {
 
@@ -98,7 +98,7 @@ const restGetIfNeeded = <T extends HasId>(
     (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
-      const shouldFetch = !isFetchingOrExisting(page, paginatedDomainModels[model]);
+      const shouldFetch = !isFetchingOrExisting(page, paginatedDomainModels[entityType]);
 
       if (shouldFetch) {
         return asyncRequest<string, NormalizedPaginated<T>>({
@@ -120,7 +120,7 @@ export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema,
   afterSuccess: (
     {result}: NormalizedPaginated<Meter>,
     dispatch,
-  ) => dispatch(paginationUpdateMetaData({model: 'meters', ...result})),
+  ) => dispatch(paginationUpdateMetaData({entityType: 'meters', ...result})),
   afterFailure: (
     {message}: ErrorResponse,
     dispatch,

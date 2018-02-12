@@ -53,7 +53,7 @@ describe('selectionSelectors', () => {
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
-    model: 'meters',
+    entityType: 'meters',
     componentId: 'test',
     pagination: initialPaginationState,
   };
@@ -127,7 +127,7 @@ describe('selectionSelectors', () => {
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({
         selection: state,
         saved: [],
-        model: 'meters',
+        entityType: 'meters',
         componentId: 'test',
         pagination: initialPaginationState,
       });
@@ -144,7 +144,7 @@ describe('selectionSelectors', () => {
       expect(getEncodedUriParametersForMeters({
         selection: state,
         saved: [],
-        model: 'meters',
+        entityType: 'meters',
         componentId: 'test',
         pagination: initialPaginationState,
       }))

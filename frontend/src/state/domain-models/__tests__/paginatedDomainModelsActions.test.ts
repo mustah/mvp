@@ -84,7 +84,7 @@ describe('paginatedDomainModelsActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
         requestMeters.success({...normalizedMeterResponse(page)}),
-        paginationUpdateMetaData({model: 'meters', ...normalizedMeterResponse(page).result}),
+        paginationUpdateMetaData({entityType: 'meters', ...normalizedMeterResponse(page).result}),
       ]);
     });
 
@@ -124,7 +124,7 @@ describe('paginatedDomainModelsActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(existingPage),
         requestMeters.success({...normalizedMeterResponse(existingPage)}),
-        paginationUpdateMetaData({model: 'meters', ...normalizedMeterResponse(existingPage).result}),
+        paginationUpdateMetaData({entityType: 'meters', ...normalizedMeterResponse(existingPage).result}),
       ]);
     });
 

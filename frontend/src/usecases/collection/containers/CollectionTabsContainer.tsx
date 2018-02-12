@@ -79,7 +79,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
   // );
 
   const changePage = (page: number) => (paginationChangePage({
-    model: 'gateways',
+    entityType: 'gateways',
     componentId,
     page,
   }));
@@ -124,7 +124,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
 };
 
 const mapStateToProps = ({ui: {pagination, tabs}, map, domainModels: {gateways}}: RootState): StateToProps => {
-  const paginationData: Pagination = getPagination({pagination, componentId: 'gatewayList', model: 'gateways'});
+  const paginationData: Pagination = getPagination({pagination, componentId: 'gatewayList', entityType: 'gateways'});
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayCount: getGatewaysTotal(gateways),
