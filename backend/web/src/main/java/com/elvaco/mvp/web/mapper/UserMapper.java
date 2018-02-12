@@ -9,17 +9,13 @@ import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.toList;
 
-@Component
 public class UserMapper {
 
   private final ModelMapper modelMapper;
 
-  @Autowired
   public UserMapper(ModelMapper modelMapper) {
     this.modelMapper = modelMapper;
   }

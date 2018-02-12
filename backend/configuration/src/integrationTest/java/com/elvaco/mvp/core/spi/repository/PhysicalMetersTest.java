@@ -3,7 +3,6 @@ package com.elvaco.mvp.core.spi.repository;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +25,26 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void createNew() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "someId", "Heat");
-
-    PhysicalMeter saved = physicalMeters.save(physicalMeter);
+    PhysicalMeter saved = physicalMeters.save(
+      new PhysicalMeter(
+        ELVACO,
+        "someId",
+        "Heat",
+        "ELV"
+      ));
 
     assertThat(saved.id).isPositive();
   }
 
   @Test
   public void update() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "something-else", "unknown");
-
-    PhysicalMeter saved = physicalMeters.save(physicalMeter);
+    PhysicalMeter saved = physicalMeters.save(
+      new PhysicalMeter(
+        ELVACO,
+        "something-else",
+        "unknown",
+        "ELV"
+      ));
 
     assertThat(saved.medium).isEqualTo("unknown");
 
@@ -45,7 +52,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       saved.id,
       saved.organisation,
       saved.identity,
-      "Heat"
+      "Heat",
+      "ELV"
     ));
 
     assertThat(updated.id).isEqualTo(saved.id);
@@ -54,25 +62,25 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void findAll() {
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test12", "Heat"));
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test13", "Vacuum"));
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test14", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test12", "Heat", "ELV"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test13", "Vacuum", "ELV"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "test14", "Heat", "ELV"));
 
     assertThat(physicalMeters.findAll()).hasSize(3);
   }
 
   @Test
   public void findByIdentity() {
-    physicalMeters.save(new PhysicalMeter(ELVACO, "myId", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "myId", "Heat", "ELV"));
 
     assertThat(physicalMeters.findByIdentity("myId").isPresent()).isTrue();
   }
 
   @Test
   public void findByMedium() {
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test12", "Heat"));
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test13", "Vacuum"));
-    physicalMeters.save(new PhysicalMeter(ELVACO, "test14", "Heat"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "abc123", "Heat", "ELV"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "cvb123", "Vacuum", "ELV"));
+    physicalMeters.save(new PhysicalMeter(ELVACO, "oiu876", "Heat", "ELV"));
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);
   }

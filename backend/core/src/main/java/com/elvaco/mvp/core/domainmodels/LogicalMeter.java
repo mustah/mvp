@@ -47,6 +47,7 @@ public class LogicalMeter {
   }
 
   public LogicalMeter(
+    @Nullable Long id,
     String status,
     Location location,
     Date created,

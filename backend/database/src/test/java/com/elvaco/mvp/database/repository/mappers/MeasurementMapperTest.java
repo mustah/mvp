@@ -20,7 +20,7 @@ public class MeasurementMapperTest {
 
   @Test
   public void mapping() {
-    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "123-123", "Some medium");
+    PhysicalMeter physicalMeter = new PhysicalMeter(ELVACO, "123-123", "Some medium", "ELV");
     Measurement measurement = new Measurement(Quantity.VOLUME, 2.0, "m3", physicalMeter);
     MeasurementEntity entity = measurementMapper.toEntity(measurement);
     assertThat(entity.quantity).isEqualTo("Volume");

@@ -97,11 +97,7 @@ class DataProviderConfig {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       new LogicalMeterToPredicateMapper(),
-      new LogicalMeterMapper(
-        new MeterDefinitionMapper(),
-        new LocationMapper(),
-        newPhysicalMeterMapper()
-      )
+      newLogicalMeterMapper()
     );
   }
 
@@ -130,6 +126,14 @@ class DataProviderConfig {
   @Bean
   MeterDefinitions meterDefinitions() {
     return new MeterDefinitionRepository(meterDefinitionJpaRepository, new MeterDefinitionMapper());
+  }
+
+  private LogicalMeterMapper newLogicalMeterMapper() {
+    return new LogicalMeterMapper(
+      new MeterDefinitionMapper(),
+      new LocationMapper(),
+      newPhysicalMeterMapper()
+    );
   }
 
   private PhysicalMeterMapper newPhysicalMeterMapper() {

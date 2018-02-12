@@ -1,17 +1,21 @@
 package com.elvaco.mvp.core.security;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class OrganisationFilter {
-  public static Map<String, List<String>> complementFilterWithOrganisationParameters(
+import static java.util.Collections.singletonList;
+
+public final class OrganisationFilter {
+
+  private OrganisationFilter() {}
+
+  public static Map<String, List<String>> addOrganisationIdToFilterParams(
     AuthenticatedUser currentUser,
     Map<String, List<String>> filterParams
   ) {
     if (!currentUser.isSuperAdmin()) {
       Long organisationId = currentUser.getOrganisation().id;
-      filterParams.put("organisation", Collections.singletonList(organisationId.toString()));
+      filterParams.put("organisation", singletonList(organisationId.toString()));
     }
     return filterParams;
   }

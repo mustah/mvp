@@ -10,8 +10,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -36,7 +34,6 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
-
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
     mapMarkerDtoExpected.id = 1L;
     mapMarkerDtoExpected.latitude = 3.1;

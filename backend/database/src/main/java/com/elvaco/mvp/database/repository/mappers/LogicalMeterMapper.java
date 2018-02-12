@@ -53,7 +53,6 @@ public class LogicalMeterMapper {
         .map(physicalMeterMapper::toDomainModel)
         .collect(Collectors.toList()),
       meterDefinition
-
     );
   }
 
@@ -69,8 +68,6 @@ public class LogicalMeterMapper {
       .map(userPropertyDto ->
              logicalMeterEntity.propertyCollection.put("user", userPropertyDto));
 
-    LocationEntity locationEntity = locationMapper.toEntity(logicalMeter.location);
-    logicalMeterEntity.setLocation(locationEntity);
     if (logicalMeter.hasMeterDefinition()) {
       logicalMeterEntity.meterDefinition = meterDefinitionMapper.toEntity(logicalMeter
                                                                             .getMeterDefinition());
@@ -78,6 +75,11 @@ public class LogicalMeterMapper {
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(physicalMeterMapper::toEntity)
       .collect(Collectors.toSet());
+
+    if (logicalMeter.location != null) {
+      LocationEntity locationEntity = locationMapper.toEntity(logicalMeter.location);
+      logicalMeterEntity.setLocation(locationEntity);
+    }
 
     return logicalMeterEntity;
   }

@@ -44,7 +44,7 @@ public class LogicalMeterMapperTest {
     LogicalMeter logicalMeter = new LogicalMeter(
       MeterDefinition.DISTRICT_HEATING_METER,
       Collections.singletonList(
-        new PhysicalMeter(ELVACO, "1234", "My medium")
+        new PhysicalMeter(ELVACO, "1234", "My medium", "ELV")
       )
     );
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);
@@ -60,7 +60,7 @@ public class LogicalMeterMapperTest {
     locationEntity.longitude = 2.1;
     locationEntity.confidence = 1.0;
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.id = (long) 1;
+    logicalMeterEntity.id = 1L;
     logicalMeterEntity.status = "Ok";
     logicalMeterEntity.created = created;
     logicalMeterEntity.setLocation(locationEntity);
@@ -76,7 +76,7 @@ public class LogicalMeterMapperTest {
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
-        (long) 1,
+        1L,
         "Ok",
         expectedLocation,
         created,
@@ -92,7 +92,7 @@ public class LogicalMeterMapperTest {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.id = (long) 1;
+    logicalMeterEntity.id = 1L;
     logicalMeterEntity.status = "Ok";
     logicalMeterEntity.created = created;
 
@@ -100,7 +100,7 @@ public class LogicalMeterMapperTest {
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
-        (long) 1,
+        1L,
         "Ok",
         new LocationBuilder().build(),
         created,
@@ -114,20 +114,6 @@ public class LogicalMeterMapperTest {
   @Test
   public void mapLogicalMeterDomainModelToEntity() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
-    Location location = new LocationBuilder()
-      .latitude(3.1)
-      .longitude(2.1)
-      .confidence(1.0)
-      .build();
-    final LogicalMeter logicalMeter = new LogicalMeter(
-      (long) 1,
-      "Ok",
-      location,
-      created,
-      new PropertyCollection(null),
-      Collections.emptyList(),
-      null
-    );
 
     LocationEntity locationEntityExpected = new LocationEntity();
     locationEntityExpected.confidence = 1.0;
@@ -135,13 +121,27 @@ public class LogicalMeterMapperTest {
     locationEntityExpected.latitude = 3.1;
 
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity();
-    logicalMeterEntityExpected.id = (long) 1;
+    logicalMeterEntityExpected.id = 1L;
     logicalMeterEntityExpected.status = "Ok";
     logicalMeterEntityExpected.created = created;
     logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
-    assertThat(logicalMeterMapper.toEntity(logicalMeter).getLocation()).isEqualTo(
-      locationEntityExpected);
-    assertThat(logicalMeterMapper.toEntity(logicalMeter)).isEqualTo(logicalMeterEntityExpected);
+    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
+      new LogicalMeter(
+        1L,
+        "Ok",
+        new LocationBuilder()
+          .latitude(3.1)
+          .longitude(2.1)
+          .confidence(1.0)
+          .build(),
+        created,
+        new PropertyCollection(null),
+        Collections.emptyList(),
+        null
+      ));
+
+    assertThat(logicalMeterEntity.getLocation()).isEqualTo(locationEntityExpected);
+    assertThat(logicalMeterEntity).isEqualTo(logicalMeterEntityExpected);
   }
 }

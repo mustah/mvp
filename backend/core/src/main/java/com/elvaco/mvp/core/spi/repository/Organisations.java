@@ -11,9 +11,7 @@ public interface Organisations {
 
   Optional<Organisation> findById(Long id);
 
-  Organisation create(Organisation organisation);
-
-  Organisation update(Organisation organisation);
+  Organisation save(Organisation organisation);
 
   void deleteById(Long id);
 }

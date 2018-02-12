@@ -39,13 +39,7 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  public Organisation create(Organisation organisation) {
-    OrganisationEntity entity = organisationMapper.toEntity(organisation);
-    return organisationMapper.toDomainModel(organisationJpaRepository.save(entity));
-  }
-
-  @Override
-  public Organisation update(Organisation organisation) {
+  public Organisation save(Organisation organisation) {
     OrganisationEntity entity = organisationMapper.toEntity(organisation);
     return organisationMapper.toDomainModel(organisationJpaRepository.save(entity));
   }

@@ -20,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
-  Long logicalMeterId;
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
@@ -29,6 +28,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
   @Autowired
   private OrganisationJpaRepository organisationRepository;
+
+  private Long logicalMeterId;
 
   @Before
   public void setUp() {
@@ -47,7 +48,8 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationRepository.findOne(0L),
       "123123",
-      "Some medium"
+      "Some medium",
+      "ELV"
     );
     physicalMeterEntity.logicalMeterId = mp.id;
     physicalMeterJpaRepository.save(physicalMeterEntity);

@@ -5,9 +5,12 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class PhysicalMeter {
+
   @Nullable
   public final Long id;
   public final Organisation organisation;
@@ -15,6 +18,7 @@ public class PhysicalMeter {
   public final String medium;
   @Nullable
   public final Long logicalMeterId;
+  public final String manufacturer;
   private List<Measurement> measurements;
 
   public PhysicalMeter(
@@ -22,35 +26,44 @@ public class PhysicalMeter {
     Organisation organisation,
     String identity,
     String medium,
+    String manufacturer,
     @Nullable Long logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;
     this.identity = identity;
     this.medium = medium;
+    this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.measurements = new ArrayList<>();
-  }
-
-  public PhysicalMeter(Organisation organisation, String identity, String medium) {
-    this(null, organisation, identity, medium, null);
-  }
-
-  public PhysicalMeter(
-    @Nullable Long id,
-    Organisation organisation,
-    String identity,
-    String medium
-  ) {
-    this(id, organisation, identity, medium, null);
   }
 
   public PhysicalMeter(
     Organisation organisation,
     String identity,
     String medium,
+    String manufacturer
+  ) {
+    this(null, organisation, identity, medium, manufacturer, null);
+  }
+
+  public PhysicalMeter(
+    @Nullable Long id,
+    Organisation organisation,
+    String identity,
+    String medium,
+    String manufacturer
+  ) {
+    this(id, organisation, identity, medium, manufacturer, null);
+  }
+
+  public PhysicalMeter(
+    Organisation organisation,
+    String identity,
+    String medium,
+    String manufacturer,
     Long logicalMeterId
   ) {
-    this(null, organisation, identity, medium, logicalMeterId);
+    this(null, organisation, identity, medium, manufacturer, logicalMeterId);
   }
 }

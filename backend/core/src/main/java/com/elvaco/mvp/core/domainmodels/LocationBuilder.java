@@ -45,7 +45,7 @@ public class LocationBuilder {
   }
 
   public Location build() {
-    if (coordinate == null && haveCoordinateInfo()) {
+    if (coordinate == null && hasLatLng()) {
       if (confidence == null) {
         coordinate = new GeoCoordinate(latitude, longitude);
       } else {
@@ -55,7 +55,7 @@ public class LocationBuilder {
     return new Location(coordinate, country, city, streetAddress);
   }
 
-  private boolean haveCoordinateInfo() {
+  private boolean hasLatLng() {
     return latitude != null && longitude != null;
   }
 }

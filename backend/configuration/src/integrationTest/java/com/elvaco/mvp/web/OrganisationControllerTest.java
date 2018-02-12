@@ -5,7 +5,6 @@ import java.util.List;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -91,9 +90,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto();
-    input.name = "Something borrowed";
-    input.code = "something-blue";
+    OrganisationDto input = new OrganisationDto(null, "Something borrowed", "something-blue");
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -106,7 +103,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto(6L, "ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto(null, "ich bin wieder hier", "bei-dir");
     ResponseEntity<OrganisationDto> created = asAdminOfElvaco()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -115,7 +112,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto(6L, "ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto(null, "ich bin wieder hier", "bei-dir");
     ResponseEntity<OrganisationDto> created = asElvacoUser()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -124,27 +121,24 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanUpdateOrganisation() {
-    // arrange
-    ResponseEntity<OrganisationDto> original = asSuperAdmin()
-      .get("/organisations/1", OrganisationDto.class);
-    assertThat(original.getStatusCode()).isEqualTo(HttpStatus.OK);
+    OrganisationDto requestModel = new OrganisationDto(null, "OrganisationName", "org-code");
 
-    OrganisationDto organisation = original.getBody();
-    assertThat(organisation.id).isEqualTo(1L);
-    assertThat(organisation.code).isEqualTo("elvaco");
+    ResponseEntity<OrganisationDto> response = asSuperAdmin()
+      .post("/organisations", requestModel, OrganisationDto.class);
 
-    // act
-    final String newCode = "ocavle";
-    organisation.code = newCode;
-    ResponseEntity<OrganisationDto> updateResponse = asSuperAdmin()
-      .put("/organisations", organisation, OrganisationDto.class);
-    assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    OrganisationDto created = response.getBody();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(created.name).isEqualTo("OrganisationName");
 
-    // assert
+    created.name = "NewName";
+
+    asSuperAdmin().put("/organisations", created, OrganisationDto.class);
+
     ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
-      .get("/organisations/1", OrganisationDto.class);
+      .get("/organisations/" + created.id, OrganisationDto.class);
+
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(updatedDto.getBody().code).isEqualTo(newCode);
+    assertThat(updatedDto.getBody().name).isEqualTo("NewName");
   }
 
   @Test

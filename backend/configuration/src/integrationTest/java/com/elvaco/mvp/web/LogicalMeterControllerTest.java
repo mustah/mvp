@@ -24,7 +24,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
-
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
@@ -61,9 +60,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void setUp() {
     logicalMeterRepository.deleteAll();
 
-    for (int x = 1; x <= 55; x++) {
-      String status = x % 10 == 0 ? "Warning" : "Ok";
-      mockLogicalMeter(x, status);
+    for (int seed = 1; seed <= 55; seed++) {
+      String status = seed % 10 == 0 ? "Warning" : "Ok";
+      saveLogicalMeter(seed, status);
     }
 
     restClient().loginWith("evanil@elvaco.se", "eva123");
@@ -154,17 +153,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         DomainModels.ELVACO,
         "111-222-333-444",
         "Some device specific medium name",
+        "ELV",
         savedLogicalMeter.id
       )
     );
 
     measurementUseCases.save(Arrays.asList(
       // We should find these
-      new Measurement(Quantity.VOLUME, 2.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 3.1, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 4.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.2, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 2.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 3.1, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 4.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.2, "m^3", physicalMeter),
 
       // ... But not these, as they are of a quantity not defined in the meter definition
       new Measurement(Quantity.TEMPERATURE, 99, "°C", physicalMeter),
@@ -181,10 +181,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurementDtos).hasSize(5);
     MeasurementDto measurement = measurementDtos.get(0);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.getName());
-    assertThat(measurement.unit).isEqualTo("m3");
+    assertThat(measurement.unit).isEqualTo("m^3");
   }
 
-  private void mockLogicalMeter(int seed, String status) {
+  private LogicalMeter saveLogicalMeter(int seed, String status) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(created);
@@ -192,12 +192,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     created = calendar.getTime();
 
     LogicalMeter logicalMeter = new LogicalMeter(
+      null,
       status,
-      new LocationBuilder()
-        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
+      new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
       new PropertyCollection(new UserProperty("abc123", "Some project"))
     );
-    logicalMeterRepository.save(logicalMeter);
+    return logicalMeterRepository.save(logicalMeter);
   }
 }
