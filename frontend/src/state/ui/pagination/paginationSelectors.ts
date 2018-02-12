@@ -18,15 +18,15 @@ export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], {s
 
 type GetPagination = PaginationLookupState<PaginatedDomainModelsState & DomainModelsState>;
 
-const isPaginationDefined = ({pagination, model}: GetPagination): boolean => !!pagination[model];
-const isPageAssigned = ({pagination, model, componentId}: GetPagination): boolean =>
-  isPaginationDefined({pagination, model, componentId}) && !!pagination[model]!.useCases[componentId];
+const isPaginationDefined = ({pagination, entityType}: GetPagination): boolean => !!pagination[entityType];
+const isPageAssigned = ({pagination, entityType, componentId}: GetPagination): boolean =>
+  isPaginationDefined({pagination, entityType, componentId}) && !!pagination[entityType]!.useCases[componentId];
 
 const getMetadata = (state: GetPagination): PaginationModel => isPaginationDefined(state) ?
-  state.pagination[state.model]! : {...initialPaginationModel};
+  state.pagination[state.entityType]! : {...initialPaginationModel};
 
 const getPage = (state: GetPagination): HasPageNumber => isPageAssigned(state) ?
-  state.pagination[state.model]!.useCases[state.componentId] : {page: 0};
+  state.pagination[state.entityType]!.useCases[state.componentId] : {page: 0};
 
 export const getPagination = createSelector<GetPagination, PaginationModel, HasPageNumber, Pagination>(
   getMetadata,

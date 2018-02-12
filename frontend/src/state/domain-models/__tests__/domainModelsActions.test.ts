@@ -8,11 +8,17 @@ import {makeRestClient} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
-import {EndPoints, HttpMethod, Normalized} from '../domainModels';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
-  addUser, deleteUser, fetchSelections, fetchUser, modifyProfile, modifyUser,
+  addUser,
+  deleteUser,
+  fetchSelections,
+  fetchUser,
+  modifyProfile,
+  modifyUser,
   requestMethod,
 } from '../domainModelsActions';
+import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
@@ -31,7 +37,10 @@ describe('domainModelsActions', () => {
   const userEntityRequest = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
 
   beforeEach(() => {
-    store = configureMockStore({});
+    const initialState: Partial<DomainModelsState> = {
+      cities: {...initialDomain()},
+    };
+    store = configureMockStore({domainModels: initialState});
     mockRestClient = new MockAdapter(axios);
     makeRestClient('test');
   });
@@ -70,6 +79,27 @@ describe('domainModelsActions', () => {
         selectionsRequest.request(),
         selectionsRequest.failure({...response}),
       ]);
+    });
+    it('does not fetch data if it already exists', async () => {
+      const fetchedState: Partial<DomainModelsState> = {
+        cities: {isFetching: false, total: 1, entities: {1: {id: 1, name: '1'}}, result: [1]},
+      };
+      store = configureMockStore({domainModels: {...fetchedState}});
+
+      await getSelectionWithResponseOk();
+
+      expect(store.getActions()).toEqual([]);
+    });
+    it('does not fetch data if already fetching', async () => {
+      const fetchedState: Partial<DomainModelsState> = {
+        cities: {isFetching: true, total: 0, entities: {}, result: []},
+      };
+
+      store = configureMockStore({domainModels: {...fetchedState}});
+
+      await getSelectionWithResponseOk();
+
+      expect(store.getActions()).toEqual([]);
     });
   });
 

@@ -95,7 +95,7 @@ const restGetIfNeeded = <T extends HasId>(
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
   return (page: number, requestData?: string) =>
-    (dispatch: Dispatch<RootState>, getState: GetState) => {
+     (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
       const shouldFetch = !isFetchingOrExisting(page, paginatedDomainModels[entityType]);

@@ -20,18 +20,18 @@ type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePa
 
 const requestPage = (
   state: PaginationState,
-  {payload: {model, componentId, page}}: Action<PaginationChangePayload>,
+  {payload: {entityType, componentId, page}}: Action<PaginationChangePayload>,
 ): PaginationState => ({
   ...state,
-  [model]: {...state[model], useCases: {...state[model]!.useCases, [componentId]: {page}}},
+  [entityType]: {...state[entityType], useCases: {...state[entityType]!.useCases, [componentId]: {page}}},
 });
 
 const updateMetaData = (
   state: PaginationState,
-  {payload: {model, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
+  {payload: {entityType, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
 ): PaginationState => ({
   ...state,
-  [model]: {...state[model], totalElements, totalPages},
+  [entityType]: {...state[entityType], totalElements, totalPages},
 });
 
 export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {

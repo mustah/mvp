@@ -39,7 +39,7 @@ describe('paginationSelectors', () => {
       },
     };
 
-    it('retrieves pagination from existing model and componentId', () => {
+    it('retrieves pagination from existing entityType and componentId', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'gatewayList',
@@ -56,7 +56,7 @@ describe('paginationSelectors', () => {
       expect(getPagination(lookupState)).toEqual(expected);
     });
 
-    it('retrieves pagination from existing model but non-existing componentId', () => {
+    it('retrieves pagination from existing entityType but non-existing componentId', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',
@@ -73,7 +73,7 @@ describe('paginationSelectors', () => {
       expect(getPagination(lookupState)).toEqual(expected);
     });
 
-    it('retrieves pagination from non-existing model', () => {
+    it('retrieves pagination from non-existing entityType', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',

@@ -38,10 +38,10 @@ export interface PaginationModel extends PaginationMetadata {
 export type PaginationState = Paginated & Pageable;
 
 type Paginated = {
-  [model in keyof PaginatedDomainModelsState] : PaginationModel;
+  [entityType in keyof PaginatedDomainModelsState] : PaginationModel;
   };
 type Pageable = {
-  [model in keyof DomainModelsState]?: PaginationModel;
+  [entityType in keyof DomainModelsState]?: PaginationModel;
   };
 
 export interface SortingOptions {
