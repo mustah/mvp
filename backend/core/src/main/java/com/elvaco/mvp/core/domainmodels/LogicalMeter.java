@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -10,17 +9,16 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(doNotUseGetters = true)
 public class LogicalMeter {
 
   @Nullable
   public final Long id;
   public final String status;
   public final Location location;
-  public final Date created;
   public final PropertyCollection propertyCollection;
   public final List<PhysicalMeter> physicalMeters;
-
+  private Date created;
   @Nullable
   private MeterDefinition meterDefinition;
 
@@ -38,9 +36,9 @@ public class LogicalMeter {
     this(
       null,
       "Ok",
-      new LocationBuilder().build(),
-      Date.from(Instant.now()),
-      new PropertyCollection(new UserProperty()),
+      Location.unknownLocation(),
+      new Date(),
+      PropertyCollection.empty(),
       physicalMeters,
       meterDefinition
     );
@@ -68,10 +66,18 @@ public class LogicalMeter {
     this.id = id;
     this.status = status;
     this.location = location;
-    this.created = (Date) created.clone();
+    this.created = new Date(created.getTime());
     this.propertyCollection = propertyCollection;
     this.physicalMeters = Collections.unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
+  }
+
+  public Date getCreated() {
+    return new Date(created.getTime());
+  }
+
+  public void setCreated(Date created) {
+    this.created = new Date(created.getTime());
   }
 
   public String getMedium() {

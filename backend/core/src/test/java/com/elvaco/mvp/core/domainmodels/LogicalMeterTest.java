@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.junit.Test;
 
@@ -35,5 +36,17 @@ public class LogicalMeterTest {
       Quantity.FLOW,
       Quantity.TEMPERATURE
     ));
+  }
+
+  @Test
+  public void logicalMeterEquality() {
+    assertThat(new LogicalMeter(MeterDefinition.HOT_WATER_METER))
+      .isNotEqualTo(new LogicalMeter(MeterDefinition.HOT_WATER_METER));
+    LogicalMeter logicalMeter = new LogicalMeter(MeterDefinition.HOT_WATER_METER);
+    Date now = new Date();
+    logicalMeter.setCreated(now);
+    LogicalMeter otherLogicalMeter = new LogicalMeter(MeterDefinition.HOT_WATER_METER);
+    otherLogicalMeter.setCreated(now);
+    assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 }
