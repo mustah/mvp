@@ -15,4 +15,8 @@ public class PropertyCollection {
   public PropertyCollection(@Nullable UserProperty userProperty) {
     this.userProperty = userProperty;
   }
+
+  public static PropertyCollection empty() {
+    return new PropertyCollection(new UserProperty());
+  }
 }
