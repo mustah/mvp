@@ -8,10 +8,12 @@ import {makeRestClient} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
+import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
+import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
   addUser,
-  deleteUser,
+  deleteUser, fetchGateways,
   fetchSelections,
   fetchUser,
   modifyProfile,
@@ -20,6 +22,8 @@ import {
 } from '../domainModelsActions';
 import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {Gateway} from '../gateway/gatewayModels';
+import {gatewaySchema} from '../gateway/gatewaySchema';
 import {Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -31,6 +35,7 @@ describe('domainModelsActions', () => {
   let mockRestClient: MockAdapter;
   let store;
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
+  const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
   const userPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
   const userPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
   const userDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
@@ -39,6 +44,7 @@ describe('domainModelsActions', () => {
   beforeEach(() => {
     const initialState: Partial<DomainModelsState> = {
       cities: {...initialDomain()},
+      gateways: {...initialDomain()},
     };
     store = configureMockStore({domainModels: initialState});
     mockRestClient = new MockAdapter(axios);
@@ -100,6 +106,29 @@ describe('domainModelsActions', () => {
       await getSelectionWithResponseOk();
 
       expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('get gateways', () => {
+
+    const getGatewaysWithResponseOk = async () => {
+      mockRestClient.onGet(EndPoints.gateways).reply(200, testData.gateways);
+      return store.dispatch(fetchGateways());
+    };
+
+    it('normalizes data and updates pagination metaData', async () => {
+      await getGatewaysWithResponseOk();
+
+      expect(store.getActions()).toEqual([
+        gatewayRequest.request(),
+        gatewayRequest.success(normalize(testData.gateways, gatewaySchema)),
+        paginationUpdateMetaData({
+          entityType: 'gateways',
+          content: ['g1', 'g2', 'g3', 'g4', 'g5'],
+          totalElements: 5,
+          totalPages: Math.ceil(5 / limit),
+        }),
+      ]);
     });
   });
 

@@ -9,12 +9,12 @@ export interface PaginatedDomainModelsState {
 
 export interface NormalizedPaginatedResult {
   content: uuid[];
-  first: boolean;
-  last: boolean;
-  number: number;
-  numberOfElements: number;
-  size: number;
-  sort: SortingOptions[] | null;
+  first?: boolean;
+  last?: boolean;
+  number?: number;
+  numberOfElements?: number;
+  size?: number;
+  sort?: SortingOptions[] | null;
   totalElements: number;
   totalPages: number;
 }

@@ -62,7 +62,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
     pagination,
     paginationChangePage,
     paginatedList,
-    gatewayCount,
+    // gatewayCount,
     // setSelection,
     selectEntryAdd,
     // selectedMaker,
@@ -103,7 +103,7 @@ const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
         <Loader isFetching={isFetching}>
           <div>
             <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-            <PaginationControl pagination={{...pagination, totalElements: gatewayCount}} changePage={changePage} />
+            <PaginationControl pagination={pagination} changePage={changePage} />
           </div>
         </Loader>
       </TabContent>

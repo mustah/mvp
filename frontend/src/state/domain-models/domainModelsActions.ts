@@ -9,7 +9,10 @@ import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {authSetUser} from '../../usecases/auth/authActions';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {metersAllSchema} from '../domain-models-paginated/meter/meterSchema';
+import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
+import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
+import {limit} from '../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
@@ -92,6 +95,7 @@ const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
   schema: Schema,
   entityType: keyof DomainModelsState,
+  restCallbacks?: RestCallbacks<Normalized<T>>,
 ) => {
   const requestGet = requestMethod<Normalized<T>>(endPoint, HttpMethod.GET);
   const formatData = (data) => normalize(data, schema);
@@ -107,6 +111,7 @@ const restGetIfNeeded = <T extends HasId>(
         formatData,
         requestFunc,
         requestData,
+        ...restCallbacks,
         dispatch,
       });
     } else {
@@ -165,11 +170,23 @@ const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => 
   });
 };
 
+const paginationMetaDataFromResult = (result: uuid[]): NormalizedPaginatedResult => ({
+  content: result,
+  totalPages: Math.ceil(result.length / limit),
+  totalElements: result.length,
+});
+
 // TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything
 // have been fetched from 'selections', should perhaps come up with a better way of doing this.
 export const fetchSelections = restGetIfNeeded<IdNamed>(EndPoints.selections, selectionsSchema, 'cities');
 export const fetchMetersAll = restGetIfNeeded<Meter>(EndPoints.metersAll, metersAllSchema, 'metersAll');
-export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewaySchema, 'gateways');
+
+export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewaySchema, 'gateways', {
+  afterSuccess: (
+    {result},
+    dispatch,
+  ) => dispatch(paginationUpdateMetaData({entityType: 'gateways', ...paginationMetaDataFromResult(result)})),
+});
 export const fetchUsers = restGetIfNeeded<User>(EndPoints.users, userSchema, 'users');
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
