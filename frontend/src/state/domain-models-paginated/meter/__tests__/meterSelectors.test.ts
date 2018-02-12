@@ -1,7 +1,6 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {HasId, uuid} from '../../../../types/Types';
-import {ObjectsById} from '../../../domain-models/domainModels';
-import {NormalizedPaginatedState} from '../../paginatedDomainModels';
+import {NormalizedState, ObjectsById} from '../../../domain-models/domainModels';
 import {Meter, SelectionTreeData} from '../meterModels';
 import {getMeterDataSummary, getSelectionTree} from '../meterSelectors';
 
@@ -41,12 +40,12 @@ describe('meterSelectors', () => {
         },
       };
 
-      const metersState: Partial<NormalizedPaginatedState<Meter>> = {
+      const metersState: Partial<NormalizedState<Meter>> = {
         entities: meters as ObjectsById<Meter>,
         result: meterIds,
       };
 
-      const reduced = getMeterDataSummary(metersState as NormalizedPaginatedState<Meter>);
+      const reduced = getMeterDataSummary(metersState as NormalizedState<Meter>);
 
       expect(reduced.get()).toEqual({
         flagged:
@@ -80,7 +79,7 @@ describe('meterSelectors', () => {
   describe('selection tree', () => {
 
     it('handles mismatches between result list and actual entities', () => {
-      const metersState: NormalizedPaginatedState<Meter> = {
+      const metersState: NormalizedState<Meter> = {
         isFetching: false,
         total: 4,
         result: [1, 2, 3, 4],
@@ -101,7 +100,7 @@ describe('meterSelectors', () => {
     });
 
     it('can make a tree of meters; categorized by cities, addresses and such', () => {
-      const metersState: NormalizedPaginatedState<Meter> = {
+      const metersState: NormalizedState<Meter> = {
         isFetching: false,
         total: 4,
         result: [1, 2, 3],

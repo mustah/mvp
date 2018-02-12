@@ -32,6 +32,9 @@ describe('reportHelpers', () => {
             created: 1516521585107,
             physicalMeter: {
               id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
             },
           },
           10: {
@@ -42,6 +45,9 @@ describe('reportHelpers', () => {
             created: 1516529685107,
             physicalMeter: {
               id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
             },
           },
         };
@@ -59,7 +65,12 @@ describe('reportHelpers', () => {
             value: 0.4353763591158477,
             unit: 'mW',
             created: 1516521585107,
-            physicalMeter: {id: 1},
+            physicalMeter: {
+              id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
+            },
           },
           10: {
             id: 10,
@@ -67,7 +78,12 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'mA',
             created: 1516529685107,
-            physicalMeter: {id: 1},
+            physicalMeter: {
+              id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
+            },
           },
         };
 
@@ -85,7 +101,12 @@ describe('reportHelpers', () => {
             value: 0.4353763591158477,
             unit: 'mW',
             created: 1516521585107,
-            physicalMeter: {id: 1},
+            physicalMeter: {
+              id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
+            },
           },
           10: {
             id: 10,
@@ -93,7 +114,12 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'mA',
             created: 1516529685107,
-            physicalMeter: {id: 1},
+            physicalMeter: {
+              id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
+            },
           },
           11: {
             id: 10,
@@ -101,7 +127,12 @@ describe('reportHelpers', () => {
             value: 0.22359517968389853,
             unit: 'C',
             created: 1516529685107,
-            physicalMeter: {id: 1},
+            physicalMeter: {
+              id: 1,
+              identity: 'any',
+              medium: 'water',
+              organisation: {id: 1, name: 'test', code: 'elv'},
+            },
           },
         };
 

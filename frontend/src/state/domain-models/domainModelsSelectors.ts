@@ -1,9 +1,6 @@
-import {uuid} from '../../types/Types';
-import {SelectionEntityState} from './domainModels';
-import {GatewaysState} from './gateway/gatewayModels';
-import {UserState} from './user/userModels';
+import {HasId, uuid} from '../../types/Types';
+import {NormalizedState, ObjectsById} from './domainModels';
 
-type State = GatewaysState | SelectionEntityState | UserState;
+export const getResultDomainModels = <T extends HasId>(state: NormalizedState<T>): uuid[] => state.result;
 
-export const getResultDomainModels = (state: State): uuid[] =>
-  state.result;
+export const getEntitiesDomainModels = <T extends HasId>(state: NormalizedState<T>): ObjectsById<T> => state.entities;

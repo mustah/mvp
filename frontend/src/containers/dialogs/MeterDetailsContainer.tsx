@@ -17,7 +17,7 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {ObjectsById, Normalized} from '../../state/domain-models/domainModels';
+import {ObjectsById, Normalized, DomainModel} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
@@ -155,7 +155,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {meter, gateways} = this.props;
 
     const gateway = gateways[meter.gatewayId];
-    const normalizedGateways: Normalized<Gateway> = {
+    const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},
       result: [gateway.id],
     };

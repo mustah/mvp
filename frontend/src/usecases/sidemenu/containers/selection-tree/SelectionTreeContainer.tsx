@@ -62,9 +62,9 @@ const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProp
   );
 };
 
-const mapStateToProps = ({report, paginatedDomainModels: {meters}, ui: {selectionTree}}: RootState): StateToProps => {
+const mapStateToProps = ({report, domainModels: {metersAll}, ui: {selectionTree}}: RootState): StateToProps => {
   return {
-    selectionTree: getSelectionTree(meters),
+    selectionTree: getSelectionTree(metersAll),
     openListItems: getOpenListItems(selectionTree),
     selectedListItems: getSelectedListItems(report),
   };

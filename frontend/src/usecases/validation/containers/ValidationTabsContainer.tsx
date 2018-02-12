@@ -14,19 +14,21 @@ import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 
-interface StateToProps extends TabsContainerStateToProps {
-  // meterDataSummary: Maybe<MeterDataSummary>;
-  // meters: ObjectsById<Meter>;
-  // selectedMarker: Maybe<Meter>;
-}
+// interface StateToProps extends TabsContainerStateToProps {
+//   // meterDataSummary: Maybe<MeterDataSummary>;
+//   // meters: ObjectsById<Meter>;
+//   // selectedMarker: Maybe<Meter>;
+// }
+//
+// interface DispatchToProps extends TabsContainerDispatchToProps {
+//   // setSelection: OnSelectParameter;
+//   // closeClusterDialog: OnClick;
+// }
 
-interface DispatchToProps extends TabsContainerDispatchToProps {
-  // setSelection: OnSelectParameter;
-  // closeClusterDialog: OnClick;
-}
+type Props = TabsContainerStateToProps & TabsContainerDispatchToProps;
 
 // TODO: ValdationTabsContainer, components that don't hadle the paginated endpoints need to be fixed.
-const ValidationTabs = (props: StateToProps & DispatchToProps) => {
+const ValidationTabs = (props: Props) => {
   const {
     selectedTab,
     changeTab,
@@ -75,7 +77,7 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({ui}: RootState): StateToProps => {
+const mapStateToProps = ({ui}: RootState): TabsContainerStateToProps => {
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
     // meterDataSummary: getMeterDataSummary(meters),
@@ -84,11 +86,11 @@ const mapStateToProps = ({ui}: RootState): StateToProps => {
   };
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): TabsContainerDispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   // setSelection,
   // closeClusterDialog,
 }, dispatch);
 
 export const ValidationTabsContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);
+  connect<TabsContainerStateToProps, TabsContainerDispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);

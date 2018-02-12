@@ -5,11 +5,9 @@ import {hasItems} from '../../../helpers/functionalHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, uuid} from '../../../types/Types';
-import {ObjectsById} from '../../domain-models/domainModels';
-import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
+import {NormalizedState, ObjectsById} from '../../domain-models/domainModels';
+import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
-import {NormalizedPaginatedState} from '../paginatedDomainModels';
-import {getPaginatedEntities} from '../paginatedDomainModelsSelectors';
 import {
   Meter,
   MeterDataSummary,
@@ -22,9 +20,9 @@ import {
 import {selectionTreeSchema} from './meterSchema';
 
 export const getSelectionTree =
-  createSelector<NormalizedPaginatedState<Meter>, uuid[], ObjectsById<Meter>, SelectionTreeData>(
+  createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, SelectionTreeData>(
     getResultDomainModels,
-    getPaginatedEntities,
+    getEntitiesDomainModels,
     (meterIds: uuid[], metersDict: ObjectsById<Meter>) => {
 
       const selectionTree: {[key: string]: SelectionTreeItem[]} = {
@@ -183,9 +181,9 @@ const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Me
 };
 
 export const getMeterDataSummary =
-  createSelector<NormalizedPaginatedState<Meter>, uuid[], ObjectsById<Meter>, Maybe<MeterDataSummary>>(
+  createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, Maybe<MeterDataSummary>>(
     getResultDomainModels,
-    getPaginatedEntities,
+    getEntitiesDomainModels,
     (metersIds: uuid[], meters: ObjectsById<Meter>): Maybe<MeterDataSummary> => {
       const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
         flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},

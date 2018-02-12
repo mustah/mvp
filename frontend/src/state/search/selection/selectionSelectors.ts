@@ -4,13 +4,9 @@ import {getTranslationOrName} from '../../../helpers/translations';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
-import {
-  NormalizedPaginatedState,
-  PaginatedDomainModelsState,
-} from '../../domain-models-paginated/paginatedDomainModels';
-import {getPaginatedEntities} from '../../domain-models-paginated/paginatedDomainModelsSelectors';
-import {DomainModel, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
-import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
+import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
+import {DomainModel, NormalizedState, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
+import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
@@ -127,9 +123,9 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
 export const getSelectionSummary =
-  createSelector<NormalizedPaginatedState<Meter>, uuid[], ObjectsById<Meter>, SelectionSummary>(
+  createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, SelectionSummary>(
     getResultDomainModels,
-    getPaginatedEntities,
+    getEntitiesDomainModels,
     (metersIds: uuid[], meters: ObjectsById<Meter>) => {
       const cities = new Set<uuid>();
       const addresses = new Set<uuid>();
