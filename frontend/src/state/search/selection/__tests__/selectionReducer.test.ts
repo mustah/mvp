@@ -4,9 +4,12 @@ import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {
-  ADD_SELECTION, CLOSE_SELECTION_PAGE, DESELECT_SELECTION,
-  resetSelection, SELECT_SAVED_SELECTION,
-  setSelection,
+  ADD_SELECTION,
+  CLOSE_SELECTION_PAGE,
+  DESELECT_SELECTION,
+  RESET_SELECTION,
+  SELECT_SAVED_SELECTION,
+  SET_SELECTION,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
@@ -174,8 +177,16 @@ describe('selectionReducer', () => {
         ...stockholm,
       };
 
-      const intermediateState: SelectionState = selection(initialState, setSelection(selectionParameterInitial));
-      const finalState: SelectionState = selection(intermediateState, setSelection(selectionParametersFinal));
+      const intermediateState: SelectionState = selection(initialState, {
+          type: SET_SELECTION,
+          payload: selectionParameterInitial,
+        })
+      ;
+      const finalState: SelectionState = selection(intermediateState, {
+          type: SET_SELECTION,
+          payload: selectionParametersFinal,
+        })
+      ;
 
       expect(finalState).toEqual({
         ...intermediateState,
@@ -201,8 +212,14 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: SelectionState = selection(initialState, setSelection(selectionParameterInitial));
-      const finalState: SelectionState = selection(intermediateState, setSelection(selectionParametersFinal));
+      const intermediateState: SelectionState = selection(initialState, {
+        type: SET_SELECTION,
+        payload: selectionParameterInitial,
+      });
+      const finalState: SelectionState = selection(intermediateState, {
+        type: SET_SELECTION,
+        payload: selectionParametersFinal,
+      });
 
       expect(finalState).toEqual({
         ...intermediateState,
@@ -223,7 +240,7 @@ describe('selectionReducer', () => {
 
       expect(state).not.toEqual(initialState);
 
-      state = selection(state, resetSelection());
+      state = selection(state, {type: RESET_SELECTION});
 
       expect(state).toEqual(initialState);
     });

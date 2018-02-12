@@ -4,6 +4,9 @@ import {Period} from '../../../components/dates/dateModels';
 import {Maybe} from '../../../helpers/Maybe';
 import {GetState} from '../../../reducers/rootReducer';
 import {uuid} from '../../../types/Types';
+import {paginatedDomainModelsClear} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {domainModelsClear} from '../../domain-models/domainModelsActions';
+import {paginationReset} from '../../ui/pagination/paginationActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {getSelection} from './selectionSelectors';
 
@@ -24,10 +27,10 @@ const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELE
 const saveSelectionAction = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
 const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
 
-export const updateSelection = createPayloadAction<string, SelectionState>(UPDATE_SELECTION);
-export const resetSelection = createEmptyAction(RESET_SELECTION);
-export const setSelection = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
-export const selectPeriod = createPayloadAction<string, Period>(SELECT_PERIOD);
+const updateSelectionAction = createPayloadAction<string, SelectionState>(UPDATE_SELECTION);
+const resetSelectionAction = createEmptyAction(RESET_SELECTION);
+const setSelectionAction = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
+const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
 
 export const closeSelectionPage = () => (dispatch) => {
   dispatch(closeSelectionPageAction());
@@ -48,8 +51,10 @@ export const selectSavedSelection = (selectedId: uuid) =>
     Maybe.maybe<SelectionState>(savedSelection)
       .map((selected: SelectionState) => {
         dispatch(selectSavedSelectionAction(selected));
+        dispatch(paginationReset());
+        dispatch(domainModelsClear());
+        dispatch(paginatedDomainModelsClear());
       });
-
   };
 
 // TODO: ToggleSelection should not be able to accept array values for "id" as the typing suggest now.
@@ -62,4 +67,32 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
       .filter((value: Period | FilterParam[]) => Array.isArray(value) && value.includes(id as FilterParam))
       .map(() => dispatch(deselectSelection(selectionParameter)))
       .orElseGet(() => dispatch(addSelection(selectionParameter)));
+    dispatch(paginationReset());
+    dispatch(domainModelsClear());
+    dispatch(paginatedDomainModelsClear());
   };
+
+export const updateSelection = (payload: SelectionState) => (dispatch) => {
+  dispatch(updateSelectionAction(payload));
+  dispatch(paginationReset());
+  dispatch(domainModelsClear());
+  dispatch(paginatedDomainModelsClear());
+};
+export const resetSelection = () => (dispatch) => {
+  dispatch(resetSelectionAction());
+  dispatch(paginationReset());
+  dispatch(domainModelsClear());
+  dispatch(paginatedDomainModelsClear());
+};
+export const setSelection = (payload: SelectionParameter) => (dispatch) => {
+  dispatch(setSelectionAction(payload));
+  dispatch(paginationReset());
+  dispatch(domainModelsClear());
+  dispatch(paginatedDomainModelsClear());
+};
+export const selectPeriod = (payload: Period) => (dispatch) => {
+  dispatch(selectPeriodAction(payload));
+  dispatch(paginationReset());
+  dispatch(domainModelsClear());
+  dispatch(paginatedDomainModelsClear());
+};

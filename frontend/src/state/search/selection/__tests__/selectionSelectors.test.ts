@@ -28,7 +28,7 @@ import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
-import {ADD_SELECTION, selectPeriod} from '../selectionActions';
+import {ADD_SELECTION, SELECT_PERIOD} from '../selectionActions';
 import {
   LookupState,
   ParameterName,
@@ -159,7 +159,7 @@ describe('selectionSelectors', () => {
     });
 
     it('get selected period', () => {
-      const state: SelectionState = selection(initialState, selectPeriod(Period.currentWeek));
+      const state: SelectionState = selection(initialState, {type: SELECT_PERIOD, payload: Period.currentWeek});
 
       expect(getSelectedPeriod(state)).toBe(Period.currentWeek);
     });

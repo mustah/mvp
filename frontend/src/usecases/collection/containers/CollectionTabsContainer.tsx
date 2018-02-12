@@ -70,8 +70,7 @@ class CollectionTabs extends React.Component<Props> {
     fetchGateways(encodedUriParametersForGateways);
   }
 
-  componentWillReceiveProps(props: Props) {
-    const {encodedUriParametersForGateways, fetchGateways} = this.props;
+  componentWillReceiveProps({encodedUriParametersForGateways, fetchGateways}: Props) {
     fetchGateways(encodedUriParametersForGateways);
   }
 

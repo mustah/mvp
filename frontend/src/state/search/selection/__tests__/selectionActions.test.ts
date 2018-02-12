@@ -4,6 +4,9 @@ import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
+import {DOMAIN_MODELS_PAGINATED_CLEAR} from '../../../domain-models-paginated/paginatedDomainModelsActions';
+import {DOMAIN_MODELS_CLEAR} from '../../../domain-models/domainModelsActions';
+import {PAGINATION_RESET} from '../../../ui/pagination/paginationActions';
 import {
   ADD_SELECTION,
   CLOSE_SELECTION_PAGE,
@@ -66,6 +69,9 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: SELECT_SAVED_SELECTION, payload: savedSelection21},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
 
@@ -95,6 +101,9 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: ADD_SELECTION, payload: parameter},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
 
@@ -108,6 +117,9 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: DESELECT_SELECTION, payload},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
 
@@ -121,7 +133,13 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: ADD_SELECTION, payload: p1},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
         {type: ADD_SELECTION, payload: p2},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
 
@@ -133,6 +151,9 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: SELECT_PERIOD, payload: period},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
   });
@@ -147,6 +168,9 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: SET_SELECTION, payload},
+        {type: PAGINATION_RESET},
+        {type: DOMAIN_MODELS_CLEAR},
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
   });
