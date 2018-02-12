@@ -99,6 +99,20 @@ CREATE TABLE IF NOT EXISTS mvp_setting (
   value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS physical_meter_status (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS physical_meter_status_log (
+  id BIGSERIAL PRIMARY KEY,
+
+  start TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+  stop TIMESTAMP WITHOUT TIME ZONE,
+  status_id BIGINT REFERENCES physical_meter_status (id),
+  physical_meter_id BIGINT REFERENCES physical_meter (id)
+);
+
 CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.name%TYPE,
                                            _identity            physical_meter.identity%TYPE,
                                            _medium              physical_meter.medium%TYPE,

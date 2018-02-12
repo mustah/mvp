@@ -35,7 +35,7 @@ public class LogicalMeterMapperTest {
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
-      new PhysicalMeterMapper(new OrganisationMapper())
+      new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper())
     );
   }
 
@@ -82,7 +82,8 @@ public class LogicalMeterMapperTest {
         created,
         PropertyCollection.empty(),
         Collections.emptyList(),
-        null
+        null,
+        Collections.emptyList()
       )
     );
   }
@@ -106,7 +107,8 @@ public class LogicalMeterMapperTest {
         created,
         PropertyCollection.empty(),
         Collections.emptyList(),
-        null
+        null,
+        Collections.emptyList()
       )
     );
   }
@@ -138,7 +140,8 @@ public class LogicalMeterMapperTest {
         created,
         PropertyCollection.empty(),
         Collections.emptyList(),
-        null
+        null,
+        Collections.emptyList()
       ));
 
     assertThat(logicalMeterEntity.getLocation()).isEqualTo(locationEntityExpected);

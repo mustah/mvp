@@ -38,7 +38,7 @@ public class LogicalMeterMapperTest {
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
 
-    mapper = new LogicalMeterMapper();
+    mapper = new LogicalMeterMapper(new MeterStatusLogMapper());
   }
 
   @Test
@@ -62,7 +62,8 @@ public class LogicalMeterMapperTest {
       new Date(),
       null,
       Collections.emptyList(),
-      null
+      null,
+      Collections.emptyList()
     );
 
     MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(logicalMeter);
@@ -88,7 +89,8 @@ public class LogicalMeterMapperTest {
       Collections.singletonList(new PhysicalMeter(
         ELVACO, "123123", "Some device specific medium", "ELV"
       )),
-      MeterDefinition.HOT_WATER_METER
+      MeterDefinition.HOT_WATER_METER,
+      Collections.emptyList()
     );
     LogicalMeterDto actual = mapper.toDto(logicalMeter, TimeZone.getTimeZone("Europe/Stockholm"));
     assertThat(actual.created).isEqualTo("2018-02-12 15:14:25");

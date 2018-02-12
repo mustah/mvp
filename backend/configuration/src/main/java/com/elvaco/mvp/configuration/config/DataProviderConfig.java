@@ -3,6 +3,8 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
+import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
+import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
@@ -10,6 +12,8 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.database.repository.access.MeasurementRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
+import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
+import com.elvaco.mvp.database.repository.access.MeterStatusRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
@@ -17,8 +21,10 @@ import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationMapper;
@@ -27,6 +33,9 @@ import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterStatusLogToPredicateMapper;
+import com.elvaco.mvp.database.repository.mappers.MeterStatusMapper;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
@@ -49,6 +58,8 @@ class DataProviderConfig {
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
   private final OrganisationJpaRepository organisationJpaRepository;
+  private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+  private final MeterStatusJpaRepository meterStatusJpaRepository;
 
   @Autowired
   DataProviderConfig(
@@ -60,7 +71,9 @@ class DataProviderConfig {
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     PhysicalMeterJpaRepository physicalMeterJpaRepository,
     MeterDefinitionJpaRepository meterDefinitionJpaRepository,
-    OrganisationJpaRepository organisationJpaRepository
+    OrganisationJpaRepository organisationJpaRepository,
+    PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
+    MeterStatusJpaRepository meterStatusJpaRepository
   ) {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
@@ -71,6 +84,8 @@ class DataProviderConfig {
     this.physicalMeterJpaRepository = physicalMeterJpaRepository;
     this.meterDefinitionJpaRepository = meterDefinitionJpaRepository;
     this.organisationJpaRepository = organisationJpaRepository;
+    this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
+    this.meterStatusJpaRepository = meterStatusJpaRepository;
   }
 
   @Bean
@@ -81,6 +96,22 @@ class DataProviderConfig {
       new UserMapper(modelMapper, organisationMapper),
       organisationMapper,
       passwordEncoder::encode
+    );
+  }
+
+  @Bean
+  MeterStatusLogs meterStatusLog() {
+    return new MeterStatusLogsRepository(
+      physicalMeterStatusLogJpaRepository,
+      new MeterStatusLogToPredicateMapper(),
+      new MeterStatusLogMapper());
+  }
+
+  @Bean
+  MeterStatuses meterStatuses() {
+    return new MeterStatusRepository(
+      meterStatusJpaRepository,
+      new MeterStatusMapper()
     );
   }
 
@@ -137,6 +168,6 @@ class DataProviderConfig {
   }
 
   private PhysicalMeterMapper newPhysicalMeterMapper() {
-    return new PhysicalMeterMapper(new OrganisationMapper());
+    return new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper());
   }
 }

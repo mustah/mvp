@@ -14,7 +14,8 @@ public class MeasurementMapperTest {
 
   private final MeasurementMapper measurementMapper = new MeasurementMapper(
     new PhysicalMeterMapper(
-      new OrganisationMapper()
+      new OrganisationMapper(),
+      new MeterStatusLogMapper()
     )
   );
 

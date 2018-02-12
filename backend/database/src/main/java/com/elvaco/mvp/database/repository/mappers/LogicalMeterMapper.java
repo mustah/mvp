@@ -1,11 +1,15 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
@@ -43,16 +47,23 @@ public class LogicalMeterMapper {
       meterDefinition = meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition);
     }
 
+    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
+      .map(physicalMeterMapper::toDomainModel)
+      .collect(Collectors.toList());
+
+    List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
+
+    physicalMeters.forEach(physicalMeter -> meterStatusLogs.addAll(physicalMeter.meterStatusLogs));
+
     return new LogicalMeter(
       logicalMeterEntity.id,
       logicalMeterEntity.status,
       location,
       logicalMeterEntity.created,
       new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty),
-      logicalMeterEntity.physicalMeters.stream()
-        .map(physicalMeterMapper::toDomainModel)
-        .collect(Collectors.toList()),
-      meterDefinition
+      physicalMeters,
+      meterDefinition,
+      meterStatusLogs
     );
   }
 

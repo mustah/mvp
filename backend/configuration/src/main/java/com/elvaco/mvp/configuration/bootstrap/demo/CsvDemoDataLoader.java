@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -102,7 +103,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               new Date(),
               new PropertyCollection(new UserProperty(csvData.facilityId)),
               emptyList(),
-              meterDefinition
+              meterDefinition,
+              Collections.emptyList()
             );
             PhysicalMeter physicalMeter = new PhysicalMeter(
               ELVACO,
@@ -128,7 +130,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.identity,
             physicalMeter.medium,
             physicalMeter.manufacturer,
-            logicalMeter.id
+            logicalMeter.id,
+            Collections.emptyList()
           ));
       });
   }
@@ -146,7 +149,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
   private static Map<String, GeoPositionDto> loadGeodata() throws IOException {
     return OBJECT_MAPPER.readValue(
       getFile("data/geodata.json"),
-      new TypeReference<Map<String, GeoPositionDto>>() {}
+      new TypeReference<Map<String, GeoPositionDto>>() {
+      }
     );
   }
 

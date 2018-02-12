@@ -7,12 +7,17 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.core.usecase.MeterLogUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
+import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
+import com.elvaco.mvp.web.util.ParametersHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -31,20 +36,46 @@ public class LogicalMeterController {
   private final LogicalMeterMapper logicalMeterMapper;
   private final ModelMapper modelMapper;
 
+  private final MeterLogUseCases meterLogUseCases;
+  private final MeterStatusLogMapper meterStatusLogMapper;
+
   @Autowired
   LogicalMeterController(
     LogicalMeterMapper logicalMeterMapper,
     LogicalMeterUseCases logicalMeterUseCases,
-    ModelMapper modelMapper
+    ModelMapper modelMapper,
+    MeterStatusLogMapper meterStatusLogMapper,
+    MeterLogUseCases meterLogUseCases
+
   ) {
     this.logicalMeterMapper = logicalMeterMapper;
     this.logicalMeterUseCases = logicalMeterUseCases;
     this.modelMapper = modelMapper;
+    this.meterStatusLogMapper = meterStatusLogMapper;
+    this.meterLogUseCases = meterLogUseCases;
   }
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable Long id) {
     return logicalMeterMapper.toDto(logicalMeterUseCases.findById(id), timeZone);
+  }
+
+  @GetMapping("{meterId}/status")
+  public org.springframework.data.domain.Page<MeterStatusLogDto> meterStatus(
+    @PathVariable Map<String, String> pathVars,
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable) {
+
+    Page<MeterStatusLog> page = meterLogUseCases.findAll(
+      ParametersHelper.combineParams(pathVars, requestParams),
+      new PageableAdapter(pageable)
+    );
+
+    return new PageImpl<MeterStatusLog>(
+      page.getContent(),
+      pageable,
+      page.getTotalElements()
+    ).map(meterStatusLogMapper::toDto);
   }
 
   @GetMapping("/map-data")
