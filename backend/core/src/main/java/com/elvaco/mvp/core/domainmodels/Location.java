@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class Location {
 
+  private static Location unknownLocation = new Location(null, null, null, null);
   @Nullable
   private final String streetAddress;
   @Nullable
@@ -27,6 +28,10 @@ public class Location {
     this.country = country;
     this.city = city;
     this.streetAddress = streetAddress;
+  }
+
+  public static Location unknownLocation() {
+    return unknownLocation;
   }
 
   public Optional<String> getStreetAddress() {
