@@ -1,9 +1,9 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
-import {EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
-import {requestMethod} from '../domainModelsActions';
-import {addresses, cities, initialDomain, users} from '../domainModelsReducer';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
+import {domainModelsClear, requestMethod} from '../domainModelsActions';
+import {addresses, cities, domainModels, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Role, User, UserState} from '../user/userModels';
 
@@ -155,6 +155,31 @@ describe('domainModelsReducer', () => {
         entities: {3: user},
         isFetching: false,
         total: 1,
+      });
+    });
+  });
+  describe('clear domainModels', () => {
+    it('resets all domain models', () => {
+      const initialState: DomainModelsState = {
+        addresses: initialDomain(),
+        gateways: initialDomain(),
+        cities: initialDomain(),
+        alarms: initialDomain(),
+        gatewayStatuses: initialDomain(),
+        manufacturers: initialDomain(),
+        measurements: initialDomain(),
+        metersAll: initialDomain(),
+        meterStatuses: initialDomain(),
+        productModels: initialDomain(),
+        users: initialDomain(),
+      };
+      const nonInitialState: DomainModelsState = {
+        ...initialState,
+        gateways: {...initialState.gateways, isFetching: true},
+      };
+
+      expect(domainModels(nonInitialState, domainModelsClear())).toEqual({
+        ...initialState,
       });
     });
   });

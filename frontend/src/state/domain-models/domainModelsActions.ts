@@ -34,6 +34,9 @@ export const DOMAIN_MODELS_POST_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.POST)
 export const DOMAIN_MODELS_PUT_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.PUT);
 export const DOMAIN_MODELS_DELETE_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.DELETE);
 
+export const DOMAIN_MODELS_CLEAR = 'DOMAIN_MODELS_CLEAR';
+export const domainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_CLEAR);
+
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
   success: (payload: T) => PayloadAction<string, T>;

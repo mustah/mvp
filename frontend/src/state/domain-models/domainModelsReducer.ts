@@ -4,6 +4,7 @@ import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {DomainModelsState, EndPoints, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
+  DOMAIN_MODELS_CLEAR,
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
   DOMAIN_MODELS_GET_ENTITY_SUCCESS,
@@ -114,6 +115,8 @@ const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: 
           isFetching: false,
           error: {...(action as Action<ErrorResponse>).payload},
         };
+      case DOMAIN_MODELS_CLEAR:
+        return {...initialDomain<T>()};
       default:
         return state;
     }

@@ -13,7 +13,7 @@ import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
   addUser,
-  deleteUser, fetchGateways,
+  deleteUser, DOMAIN_MODELS_CLEAR, domainModelsClear, fetchGateways,
   fetchSelections,
   fetchUser,
   modifyProfile,
@@ -324,6 +324,15 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userEntityRequest.request(),
         userEntityRequest.failure(errorResponse),
+      ]);
+    });
+  });
+  describe('clear domainModels', () => {
+    it('dispatches a clear action', () => {
+      store.dispatch(domainModelsClear());
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_CLEAR},
       ]);
     });
   });
