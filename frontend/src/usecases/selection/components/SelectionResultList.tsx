@@ -6,7 +6,7 @@ import './SelectionResultList.scss';
 export const SearchResultList = () => {
   return (
     <Column className="SearchResultList">
-      <MeterListContainer />
+      <MeterListContainer componentId={'selectionMeterList'}/>
     </Column>
   );
 };

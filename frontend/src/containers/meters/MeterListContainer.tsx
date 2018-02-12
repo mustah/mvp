@@ -45,10 +45,11 @@ interface DispatchToProps {
   paginationChangePage: OnChangePage;
 }
 
-type Props = StateToProps & DispatchToProps;
+interface OwnProps {
+  componentId: string;
+}
 
-// TODO: ComponentId should be passed down in OwnProps
-const componentId = 'validationMeterList';
+type Props = StateToProps & DispatchToProps & OwnProps;
 
 class MeterList extends React.Component<Props> {
 
@@ -62,7 +63,7 @@ class MeterList extends React.Component<Props> {
   }
 
   render() {
-    const {result, entities, selectEntryAdd, isFetching, pagination, paginationChangePage} = this.props;
+    const {result, entities, selectEntryAdd, isFetching, pagination, paginationChangePage, componentId} = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : <Status id={0} name={'ok'}/>;
@@ -141,7 +142,8 @@ const mapStateToProps = (
     searchParameters,
     paginatedDomainModels: {meters},
     ui: {pagination},
-  }: RootState): StateToProps => {
+  }: RootState,
+  {componentId}: OwnProps): StateToProps => {
 
   const uriLookupState: UriLookupStatePaginated = {
     ...searchParameters,
@@ -167,4 +169,4 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const MeterListContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MeterList);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(MeterList);

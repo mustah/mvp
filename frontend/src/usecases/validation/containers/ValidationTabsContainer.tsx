@@ -61,7 +61,7 @@ const ValidationTabs = (props: Props) => {
         {/*<ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>*/}
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <MeterListContainer/>
+        <MeterListContainer componentId={'validationMeterList'}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
         {/*<div>*/}
