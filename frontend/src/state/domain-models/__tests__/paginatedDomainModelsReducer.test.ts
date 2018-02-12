@@ -1,3 +1,4 @@
+import {makeMeter} from '../../../__tests__/testDataFactory';
 import {ErrorResponse, HasId} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {
@@ -5,8 +6,14 @@ import {
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../../domain-models-paginated/paginatedDomainModels';
-import {requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
-import {initialPaginatedDomain, meters} from '../../domain-models-paginated/paginatedDomainModelsReducer';
+import {
+  paginatedDomainModelsClear,
+  requestMethodPaginated,
+} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {
+  initialPaginatedDomain, meters,
+  paginatedDomainModels,
+} from '../../domain-models-paginated/paginatedDomainModelsReducer';
 import {EndPoints} from '../domainModels';
 
 describe('paginatedDomainModelsReducer', () => {
@@ -161,6 +168,16 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
       expect(stateAfterFailure).toEqual(failedState);
+    });
+  });
+  describe('clear paginatedDomainModels', () => {
+    it('clears a cached data', () => {
+      expect(paginatedDomainModels({
+        meters: {
+          ...initialPaginatedDomain<Meter>(),
+          entities: {1: {...makeMeter(1, 1, 'Mo', 1, 'b')}},
+        },
+      }, paginatedDomainModelsClear())).toEqual({meters: initialPaginatedDomain()});
     });
   });
 })

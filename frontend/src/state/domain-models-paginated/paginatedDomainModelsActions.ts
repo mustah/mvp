@@ -1,6 +1,6 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {createPayloadAction, PayloadAction} from 'react-redux-typescript';
+import {createEmptyAction, createPayloadAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
@@ -23,7 +23,9 @@ export const DOMAIN_MODELS_PAGINATED_REQUEST = (endPoint: EndPoints) => `DOMAIN_
 export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
-export const DOMAIN_MODELS_PAGINATED_CLEAR = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_CLEAR${endPoint}`;
+export const DOMAIN_MODELS_PAGINATED_CLEAR = 'DOMAIN_MODELS_PAGINATED_CLEAR';
+
+export const paginatedDomainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_PAGINATED_CLEAR);
 
 interface RestRequestHandlePaginated<T> {
   request: (payload) => PayloadAction<string, number>;

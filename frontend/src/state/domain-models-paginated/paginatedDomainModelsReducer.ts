@@ -7,6 +7,7 @@ import {
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 import {
+  DOMAIN_MODELS_PAGINATED_CLEAR,
   DOMAIN_MODELS_PAGINATED_FAILURE,
   DOMAIN_MODELS_PAGINATED_GET_SUCCESS,
   DOMAIN_MODELS_PAGINATED_REQUEST,
@@ -81,6 +82,8 @@ export const reducerFor = <T extends HasId>(entity: keyof PaginatedDomainModelsS
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
       case DOMAIN_MODELS_PAGINATED_FAILURE(endPoint):
         return setFailure<T>(entity, state, action as Action<ErrorResponse & HasPageNumber>);
+      case DOMAIN_MODELS_PAGINATED_CLEAR:
+        return {...initialPaginatedDomain<T>()};
       default:
         return state;
     }

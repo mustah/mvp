@@ -10,7 +10,11 @@ import {ErrorResponse} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {meterSchema} from '../../domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginated} from '../../domain-models-paginated/paginatedDomainModels';
-import {fetchMeters, requestMethodPaginated} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {
+  DOMAIN_MODELS_PAGINATED_CLEAR,
+  fetchMeters, paginatedDomainModelsClear,
+  requestMethodPaginated,
+} from '../../domain-models-paginated/paginatedDomainModelsActions';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {EndPoints} from '../domainModels';
@@ -140,6 +144,15 @@ describe('paginatedDomainModelsActions', () => {
       await getMetersWithResponseOk(existingPage);
 
       expect(store.getActions()).toEqual([]);
+    });
+  });
+  describe('clear paginatedDomainModels', () => {
+    it('sends clear request', () => {
+      store.dispatch(paginatedDomainModelsClear());
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
+      ]);
     });
   });
 });
