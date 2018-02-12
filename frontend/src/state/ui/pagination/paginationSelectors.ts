@@ -13,7 +13,7 @@ export interface PaginatedDomainModel extends HasPageNumber {
 export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], {size: number} & HasPageNumber, uuid[]>(
   ({result}: PaginatedDomainModel) => result,
   ({page, size}: PaginatedDomainModel) => ({page, size}),
-  (result: uuid[], {page, size}: {size: number} & HasPageNumber) => result.slice((page - 1) * size, page * size),
+  (result: uuid[], {page, size}: {size: number} & HasPageNumber) => result.slice((page) * size, (page + 1) * size),
 );
 
 type GetPagination = PaginationLookupState<PaginatedDomainModelsState & DomainModelsState>;

@@ -41,6 +41,22 @@ describe('paginationReducer', () => {
       expect(pagination(undefined, paginationUpdateMetaData(payload))).toEqual(expectedState);
     });
   });
+  it('updates pagination but leaves useCases intact', () => {
+    const paginatedState: PaginationState = {
+      meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+    };
+    const payload: PaginationMetadataPayload = {
+      entityType: 'meters',
+      content: [],
+      totalElements: 2000,
+      totalPages: 200,
+    };
+
+    expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
+      meters: {size: limit, totalPages: 200, totalElements: 2000, useCases: {validationList: {page: 1}}},
+    });
+
+  });
 
   describe('pagination change page', () => {
     const payload: PaginationChangePayload = {

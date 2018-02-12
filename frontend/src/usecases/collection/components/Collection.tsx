@@ -6,7 +6,7 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {translate} from '../../../services/translationService';
-import CollectionTabsContainer from '../containers/CollectionTabsContainer';
+import {CollectionTabsContainer} from '../containers/CollectionTabsContainer';
 
 export const Collection = () => {
   return (

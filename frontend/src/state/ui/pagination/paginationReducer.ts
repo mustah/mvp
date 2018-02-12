@@ -31,7 +31,7 @@ const updateMetaData = (
   {payload: {entityType, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
 ): PaginationState => ({
   ...state,
-  [entityType]: {...state[entityType], totalElements, totalPages},
+  [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
 export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {

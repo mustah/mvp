@@ -95,17 +95,17 @@ describe('paginationSelectors', () => {
 
     it('can paginate the collection result, based on pagination metadata', () => {
       const paginationData: PaginatedDomainModel = {
-        page: 2,
+        page: 0,
         size: 1,
         result: [1, 2],
       };
 
-      expect(getPaginationList(paginationData)).toEqual([2]);
+      expect(getPaginationList(paginationData)).toEqual([1]);
     });
 
     it('defaults to an empty result set if limit is 0', () => {
       const paginationData: PaginatedDomainModel = {
-        page: 1,
+        page: 0,
         size: 0,
         result: [1],
       };
@@ -113,9 +113,18 @@ describe('paginationSelectors', () => {
       expect(getPaginationList(paginationData)).toEqual([]);
     });
 
-    it('defaults to an empty result set if page is 0', () => {
+    it('defaults to an empty result set if page is set to negative', () => {
       const paginationData: PaginatedDomainModel = {
-        page: 0,
+        page: -1,
+        size: 1,
+        result: [1],
+      };
+
+      expect(getPaginationList(paginationData)).toEqual([]);
+    });
+    it('defaults to an empty result set if page is set over the number of avaliable pages', () => {
+      const paginationData: PaginatedDomainModel = {
+        page: 1,
         size: 1,
         result: [1],
       };

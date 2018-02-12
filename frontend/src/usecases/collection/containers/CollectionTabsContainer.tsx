@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Content} from '../../../components/content/Content';
+import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -9,19 +11,21 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {fetchGateways} from '../../../state/domain-models/domainModelsActions';
 import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {
   getGatewayDataSummary,
   getGatewayEntities,
-  getGatewaysTotal,
 } from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
 import {paginationChangePage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
@@ -29,19 +33,23 @@ import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClusterContainer} from '../../map/containers/ClusterContainer';
+import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
+import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
+import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
 
 interface StateToProps extends TabsContainerStateToProps {
-  gatewayCount: number;
   gateways: ObjectsById<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
   selectedMaker: Maybe<Gateway>;
   isFetching: boolean;
+  encodedUriParametersForGateways: string;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -49,85 +57,105 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   setSelection: OnSelectParameter;
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
+  fetchGateways: RestGet;
 }
+
+type Props = StateToProps & DispatchToProps;
 
 const componentId = 'gatewayList';
 
-const CollectionTabsContainer = (props: StateToProps & DispatchToProps) => {
-  const {
-    selectedTab,
-    changeTab,
-    gateways,
-    // gatewayDataSummary,
-    pagination,
-    paginationChangePage,
-    paginatedList,
-    // gatewayCount,
-    // setSelection,
-    selectEntryAdd,
-    // selectedMaker,
-    // closeClusterDialog,
-    isFetching,
-  } = props;
+class CollectionTabs extends React.Component<Props> {
+  componentDidMount() {
+    const {encodedUriParametersForGateways, fetchGateways} = this.props;
+    fetchGateways(encodedUriParametersForGateways);
+  }
 
-  // const hasGateways: boolean = isMarkersWithinThreshold(gateways);
+  componentWillReceiveProps(props: Props) {
+    const {encodedUriParametersForGateways, fetchGateways} = this.props;
+    fetchGateways(encodedUriParametersForGateways);
+  }
 
-  // const dialog = selectedMaker.isJust() && (
-  //   <Dialog isOpen={true} close={closeClusterDialog}>
-  //     <GatewayDetailsContainer gateway={selectedMaker.get()}/>
-  //   </Dialog>
-  // );
+  render() {
+    const {
+      selectedTab,
+      changeTab,
+      gateways,
+      gatewayDataSummary,
+      pagination,
+      paginationChangePage,
+      paginatedList,
+      setSelection,
+      selectEntryAdd,
+      selectedMaker,
+      closeClusterDialog,
+      isFetching,
+    } = this.props;
 
-  const changePage = (page: number) => (paginationChangePage({
-    entityType: 'gateways',
-    componentId,
-    page,
-  }));
+    const hasGateways: boolean = isMarkersWithinThreshold(gateways);
 
-  return (
-    <Tabs>
-      <TabTopBar>
-        <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab tab={TabName.overview} title={translate('overview')}/>
-          <Tab tab={TabName.list} title={translate('list')}/>
-          <Tab tab={TabName.map} title={translate('map')}/>
-        </TabHeaders>
-        <TabSettings/>
-      </TabTopBar>
-      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        {/*<Loader isFetching={isFetching}>*/}
-          {/*<CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>*/}
-        {/*</Loader>*/}
-      </TabContent>
-      <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <div>
-            <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-            <PaginationControl pagination={pagination} changePage={changePage} />
-          </div>
-        </Loader>
-      </TabContent>
-      <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        {/*<Loader isFetching={isFetching}>*/}
-          {/*<div>*/}
-            {/*<Content hasContent={hasGateways} noContentText={translate('no gateways')}>*/}
-              {/*<Map>*/}
-                {/*<ClusterContainer markers={gateways}/>*/}
-              {/*</Map>*/}
-            {/*</Content>*/}
-            {/*{dialog}*/}
-          {/*</div>*/}
-        {/*</Loader>*/}
-      </TabContent>
-    </Tabs>
-  );
-};
+    const dialog = selectedMaker.isJust() && (
+      <Dialog isOpen={true} close={closeClusterDialog}>
+        <GatewayDetailsContainer gateway={selectedMaker.get()}/>
+      </Dialog>
+    );
 
-const mapStateToProps = ({ui: {pagination, tabs}, map, domainModels: {gateways}}: RootState): StateToProps => {
-  const paginationData: Pagination = getPagination({pagination, componentId: 'gatewayList', entityType: 'gateways'});
+    const changePage = (page: number) => (paginationChangePage({
+      entityType: 'gateways',
+      componentId,
+      page,
+    }));
+
+    return (
+      <Tabs>
+        <TabTopBar>
+          <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+            <Tab tab={TabName.overview} title={translate('overview')}/>
+            <Tab tab={TabName.list} title={translate('list')}/>
+            <Tab tab={TabName.map} title={translate('map')}/>
+          </TabHeaders>
+          <TabSettings/>
+        </TabTopBar>
+        <TabContent tab={TabName.overview} selectedTab={selectedTab}>
+          <Loader isFetching={isFetching}>
+            <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
+          </Loader>
+        </TabContent>
+        <TabContent tab={TabName.list} selectedTab={selectedTab}>
+          <Loader isFetching={isFetching}>
+            <div>
+              <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
+              <PaginationControl pagination={pagination} changePage={changePage}/>
+            </div>
+          </Loader>
+        </TabContent>
+        <TabContent tab={TabName.map} selectedTab={selectedTab}>
+          <Loader isFetching={isFetching}>
+            <div>
+              <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
+                <Map>
+                  <ClusterContainer markers={gateways}/>
+                </Map>
+              </Content>
+              {dialog}
+            </div>
+          </Loader>
+        </TabContent>
+      </Tabs>
+    );
+  }
+}
+
+const mapStateToProps = (
+  {
+    ui: {pagination, tabs},
+    map,
+    domainModels: {gateways},
+    searchParameters,
+  }: RootState,
+): StateToProps => {
+  const paginationData: Pagination = getPagination({pagination, componentId, entityType: 'gateways'});
   return {
     selectedTab: getSelectedTab(tabs.collection),
-    gatewayCount: getGatewaysTotal(gateways),
     gateways: getGatewayEntities(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
     paginatedList: getPaginationList({
@@ -138,6 +166,7 @@ const mapStateToProps = ({ui: {pagination, tabs}, map, domainModels: {gateways}}
     pagination: paginationData,
     selectedMaker: getSelectedGatewayMarker(map),
     isFetching: gateways.isFetching,
+    encodedUriParametersForGateways: getEncodedUriParametersForGateways(searchParameters),
   };
 };
 
@@ -147,6 +176,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   setSelection,
   selectEntryAdd,
   closeClusterDialog,
+  fetchGateways,
 }, dispatch);
 
-export default connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabsContainer);
+export const CollectionTabsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(CollectionTabs);

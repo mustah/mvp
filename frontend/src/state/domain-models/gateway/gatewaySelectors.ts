@@ -9,7 +9,6 @@ import {ObjectsById} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
 
-export const getGatewaysTotal = (state: GatewaysState): number => state.total;
 export const getGatewayEntities = (state: GatewaysState): ObjectsById<Gateway> => state.entities;
 
 const addToCategory = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
