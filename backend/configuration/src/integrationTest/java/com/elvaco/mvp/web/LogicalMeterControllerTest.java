@@ -160,11 +160,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     measurementUseCases.save(Arrays.asList(
       // We should find these
-      new Measurement(Quantity.VOLUME, 2.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 3.1, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 4.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.0, "m3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.2, "m3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 2.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 3.1, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 4.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.0, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.2, "m^3", physicalMeter),
 
       // ... But not these, as they are of a quantity not defined in the meter definition
       new Measurement(Quantity.TEMPERATURE, 99, "°C", physicalMeter),
@@ -181,7 +181,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurementDtos).hasSize(5);
     MeasurementDto measurement = measurementDtos.get(0);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.getName());
-    assertThat(measurement.unit).isEqualTo("m3");
+    assertThat(measurement.unit).isEqualTo("m^3");
   }
 
   private LogicalMeter saveLogicalMeter(int seed, String status) {
