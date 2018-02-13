@@ -1,6 +1,7 @@
 image: sgrio/java-oracle:jdk_8
 
 stages:
+    - docker
     - build
     - deploy
 
@@ -11,6 +12,15 @@ before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
+postgresql:
+    stage: docker
+    tags:
+      - shell
+    script:
+      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
+      - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+
 build:
     stage: build
     cache:
@@ -19,10 +29,14 @@ build:
             - .gradle/wrapper
             - .gradle/caches
             - .yarn
+    services:
+        - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+          alias: pg_host
     script:
         - apt-get update && apt-get -y install git
         - ./gradlew dotVersion
         - ./gradlew clean build assemble
+        - ./gradlew systemTestCI
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:

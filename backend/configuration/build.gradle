@@ -45,6 +45,15 @@ task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
+task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
+  systemProperty "spring.profiles.active", "postgresql"
+  systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
+  systemProperty "spring.datasource.username", "mvp"
+  systemProperty "spring.datasource.password", "mvp"
+  testClassesDir = sourceSets.integrationTest.output.classesDir
+  classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
 task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   doFirst {
     exec {
