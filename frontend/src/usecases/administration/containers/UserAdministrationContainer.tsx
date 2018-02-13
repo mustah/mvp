@@ -1,21 +1,21 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {routes} from '../../../app/routes';
 import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
+import {UsersActionsDropdown} from '../../../components/actions-dropdown/UsersActionsDropdown';
 import {DeleteUserAlert} from '../../../components/dialog/DeleteUserDialog';
 import {Column} from '../../../components/layouts/column/Column';
+import {RowRight} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
 import {OnClickWithId, uuid} from '../../../types/Types';
-import {UserLinkButton} from '../components/UserLinkButton';
 
 interface StateToProps {
   currentUser: User;
@@ -69,7 +69,9 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps,
     return (
       <Loader isFetching={isFetching}>
         <Column>
-          <UserLinkButton to={routes.adminUsersAdd} text={firstUpperTranslated('add user')}/>
+          <RowRight>
+            <UsersActionsDropdown/>
+          </RowRight>
           <Table result={paginatedList} entities={usersToRender}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
