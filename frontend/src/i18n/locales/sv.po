@@ -230,6 +230,9 @@ msgstr "e-post"
 msgid "organisation"
 msgstr "organisation"
 
+msgid "organisations"
+msgstr "organisationer"
+
 msgid "roles"
 msgstr "roller"
 

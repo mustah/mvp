@@ -230,6 +230,9 @@ msgstr "email"
 msgid "organisation"
 msgstr "organisation"
 
+msgid "organisations"
+msgstr "organisations"
+
 msgid "roles"
 msgstr "roles"
 
