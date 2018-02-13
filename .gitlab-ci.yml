@@ -1,8 +1,8 @@
 image: sgrio/java-oracle:jdk_8
 
 stages:
-    - docker
     - build
+    - test
     - deploy
 
 variables:
@@ -12,8 +12,8 @@ before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
-postgresql:
-    stage: docker
+docker:postgresql:
+    stage: build
     tags:
       - shell
     script:
