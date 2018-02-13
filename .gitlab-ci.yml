@@ -3,6 +3,7 @@ image: sgrio/java-oracle:jdk_8
 stages:
     - build
     - test
+    - package
     - deploy
 
 variables:
@@ -29,14 +30,50 @@ build:
             - .gradle/wrapper
             - .gradle/caches
             - .yarn
+            - .version
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew dotVersion
+        - ./gradlew clean build -x test -x integrationTest
+
+system:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
     script:
         - apt-get update && apt-get -y install git
-        - ./gradlew dotVersion
-        - ./gradlew clean build assemble
         - ./gradlew systemTestCI
+
+integration:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew integrationTest
+unit:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew test
+
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
