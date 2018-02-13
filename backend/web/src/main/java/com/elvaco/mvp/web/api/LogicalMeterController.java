@@ -66,12 +66,13 @@ public class LogicalMeterController {
 
   @GetMapping("/all")
   public List<LogicalMeterDto> logicalMetersAll(
+    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     return logicalMeterUseCases.findAll(combineParams(pathVars, requestParams))
       .stream()
-      .map(logicalMeterMapper::toDto)
+      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone))
       .collect(Collectors.toList());
   }
 
