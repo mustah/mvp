@@ -37,7 +37,7 @@ public class LogicalMeter {
     this(
       null,
       "Ok",
-      Location.unknownLocation(),
+      Location.UNKNOWN_LOCATION,
       new Date(),
       PropertyCollection.empty(),
       physicalMeters,

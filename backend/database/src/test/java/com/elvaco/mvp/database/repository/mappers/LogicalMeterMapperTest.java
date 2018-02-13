@@ -102,7 +102,7 @@ public class LogicalMeterMapperTest {
       new LogicalMeter(
         1L,
         "Ok",
-        Location.unknownLocation(),
+        Location.UNKNOWN_LOCATION,
         created,
         PropertyCollection.empty(),
         Collections.emptyList(),
