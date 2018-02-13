@@ -21,7 +21,7 @@ public class LogicalMeter {
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
   @Nullable
-  private MeterDefinition meterDefinition;
+  public final MeterDefinition meterDefinition;
 
   public LogicalMeter(@Nullable MeterDefinition meterDefinition) {
     this(
@@ -93,15 +93,6 @@ public class LogicalMeter {
     return meterDefinition != null ? meterDefinition.getQuantities() : Collections.emptyList();
   }
 
-  @Nullable
-  public MeterDefinition getMeterDefinition() {
-    return meterDefinition;
-  }
-
-  public void setMeterDefinition(@Nullable MeterDefinition meterDefinition) {
-    this.meterDefinition = meterDefinition;
-  }
-
   public boolean hasMeterDefinition() {
     return meterDefinition != null;
   }
@@ -110,6 +101,18 @@ public class LogicalMeter {
     return activePhysicalMeter()
       .map(physicalMeter -> physicalMeter.manufacturer)
       .orElse("Unknown manufacturer");
+  }
+
+  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
+    return new LogicalMeter(
+      id,
+      status,
+      location,
+      created,
+      propertyCollection,
+      physicalMeters,
+      meterDefinition
+    );
   }
 
   private Optional<PhysicalMeter> activePhysicalMeter() {

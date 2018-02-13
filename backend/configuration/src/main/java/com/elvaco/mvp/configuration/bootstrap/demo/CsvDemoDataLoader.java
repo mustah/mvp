@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
@@ -89,7 +90,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               locationMap.get(csvData.address),
               new Date(),
               new PropertyCollection(new UserProperty(csvData.facilityId))
-            );
+            ).withMeterDefinition(MeterDefinition.DISTRICT_HEATING_METER);
             PhysicalMeter physicalMeter = new PhysicalMeter(
               ELVACO,
               csvData.meterId,
