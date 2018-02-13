@@ -1,6 +1,7 @@
 image: sgrio/java-oracle:jdk_8
 
 stages:
+    - docker
     - build
     - deploy
 
@@ -10,6 +11,15 @@ variables:
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
+
+docker:
+    stage: docker
+    tags:
+      - shell
+    script:
+      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
+      - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
 build:
     stage: build
