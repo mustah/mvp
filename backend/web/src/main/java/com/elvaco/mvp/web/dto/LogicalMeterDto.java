@@ -2,12 +2,17 @@ package com.elvaco.mvp.web.dto;
 
 import java.util.List;
 
-public class LogicalMeterDto extends LocationDto {
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode
+public class LogicalMeterDto {
   public Long id;
+  public String facility;
+  public AddressDto address;
+  public IdNamedDto city;
+  public GeoPositionDto position;
   public String moid;
   public String sapId;
-  public Long measurementId;
-  public String facility;
   public String alarm;
   public List<FlagDto> flags;
   public boolean flagged;

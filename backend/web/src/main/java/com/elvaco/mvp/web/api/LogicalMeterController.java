@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
@@ -42,8 +43,8 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}")
-  public LogicalMeterDto logicalMeter(@PathVariable Long id) {
-    return logicalMeterMapper.toDto(logicalMeterUseCases.findById(id));
+  public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable Long id) {
+    return logicalMeterMapper.toDto(logicalMeterUseCases.findById(id), timeZone);
   }
 
   @GetMapping("/map-data")
@@ -76,20 +77,22 @@ public class LogicalMeterController {
 
   @GetMapping
   public org.springframework.data.domain.Page<LogicalMeterDto> logicalMeters(
+    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    return filterLogicalMeterDtos(combineParams(pathVars, requestParams), pageable);
+    return filterLogicalMeterDtos(combineParams(pathVars, requestParams), pageable, timeZone);
   }
 
   private org.springframework.data.domain.Page<LogicalMeterDto> filterLogicalMeterDtos(
     Map<String, List<String>> filter,
-    Pageable pageable
+    Pageable pageable,
+    TimeZone timeZone
   ) {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<LogicalMeter> page = logicalMeterUseCases.findAll(filter, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(logicalMeterMapper::toDto);
+      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone));
   }
 }

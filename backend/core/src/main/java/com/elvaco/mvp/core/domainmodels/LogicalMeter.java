@@ -1,26 +1,25 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(doNotUseGetters = true)
 public class LogicalMeter {
 
   @Nullable
   public final Long id;
   public final String status;
   public final Location location;
-  public final Date created;
   public final PropertyCollection propertyCollection;
   public final List<PhysicalMeter> physicalMeters;
-
+  public final Date created;
   @Nullable
   private MeterDefinition meterDefinition;
 
@@ -38,9 +37,9 @@ public class LogicalMeter {
     this(
       null,
       "Ok",
-      new LocationBuilder().build(),
-      Date.from(Instant.now()),
-      new PropertyCollection(new UserProperty()),
+      Location.UNKNOWN_LOCATION,
+      new Date(),
+      PropertyCollection.empty(),
       physicalMeters,
       meterDefinition
     );
@@ -68,10 +67,22 @@ public class LogicalMeter {
     this.id = id;
     this.status = status;
     this.location = location;
-    this.created = (Date) created.clone();
+    this.created = new Date(created.getTime());
     this.propertyCollection = propertyCollection;
     this.physicalMeters = Collections.unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
+  }
+
+  public LogicalMeter createdAt(Date creationTime) {
+    return new LogicalMeter(
+      id,
+      status,
+      location,
+      creationTime,
+      propertyCollection,
+      physicalMeters,
+      meterDefinition
+    );
   }
 
   public String getMedium() {
@@ -93,5 +104,21 @@ public class LogicalMeter {
 
   public boolean hasMeterDefinition() {
     return meterDefinition != null;
+  }
+
+  public String getManufacturer() {
+    return activePhysicalMeter()
+      .map(physicalMeter -> physicalMeter.manufacturer)
+      .orElse("Unknown manufacturer");
+  }
+
+  private Optional<PhysicalMeter> activePhysicalMeter() {
+    if (physicalMeters.size() == 1) {
+      return Optional.of(physicalMeters.get(0));
+    } else if (physicalMeters.isEmpty()) {
+      return Optional.empty();
+    }
+    throw new UnsupportedOperationException(
+      "Active meter identification with multiple meters is not implemented!");
   }
 }

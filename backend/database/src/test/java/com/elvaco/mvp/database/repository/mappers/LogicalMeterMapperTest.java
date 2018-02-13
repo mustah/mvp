@@ -80,7 +80,7 @@ public class LogicalMeterMapperTest {
         "Ok",
         expectedLocation,
         created,
-        new PropertyCollection(null),
+        PropertyCollection.empty(),
         Collections.emptyList(),
         null
       )
@@ -102,9 +102,9 @@ public class LogicalMeterMapperTest {
       new LogicalMeter(
         1L,
         "Ok",
-        new LocationBuilder().build(),
+        Location.UNKNOWN_LOCATION,
         created,
-        new PropertyCollection(null),
+        PropertyCollection.empty(),
         Collections.emptyList(),
         null
       )
@@ -136,7 +136,7 @@ public class LogicalMeterMapperTest {
           .confidence(1.0)
           .build(),
         created,
-        new PropertyCollection(null),
+        PropertyCollection.empty(),
         Collections.emptyList(),
         null
       ));

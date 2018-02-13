@@ -20,7 +20,7 @@ class MapperConfig {
 
   @Bean
   LogicalMeterMapper logicalMeterMapper() {
-    return new LogicalMeterMapper(modelMapper);
+    return new LogicalMeterMapper();
   }
 
   @Bean

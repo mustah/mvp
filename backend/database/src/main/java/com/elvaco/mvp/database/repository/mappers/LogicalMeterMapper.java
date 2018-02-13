@@ -34,7 +34,7 @@ public class LogicalMeterMapper {
     UserProperty userProperty = props
       .asObject("user", UserPropertyDto.class)
       .map(this::toUserProperty)
-      .orElse(null);
+      .orElse(new UserProperty());
 
     Location location = locationMapper.toDomainModel(logicalMeterEntity.getLocation());
 
