@@ -42,19 +42,24 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     }
   }
 
-  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
-  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
-  changeRoles = (event, index, value) => this.setState({roles: value});
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
-
   componentWillReceiveProps({user}: UserFormProps) {
     if (user) {
       this.setState({...user, password: ''});
     }
   }
 
+  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
+  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
+  changeRoles = (event, index, value) => this.setState({roles: value});
+  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+
+  wrappedSubmit = (event) => {
+    event.preventDefault();
+    this.props.onSubmit(this.state);
+  }
+
   render() {
-    const {onSubmit, organisations, possibleRoles, isEditSelf} = this.props;
+    const {organisations, possibleRoles, isEditSelf} = this.props;
     const {name, email, organisation, roles, password} = this.state;
 
     const nameLabel = firstUpperTranslated('name');
@@ -64,16 +69,11 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
 
-    const wrappedSubmit = (event) => {
-      event.preventDefault();
-      onSubmit(this.state);
-    };
-
     const organisationOptions: IdNamed[] = organisations.map(({id, name}: Organisation) => ({id, name}));
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
 
     return (
-      <form onSubmit={wrappedSubmit}>
+      <form onSubmit={this.wrappedSubmit}>
         <Column className="EditUserContainer">
           <TextFieldInput
             floatingLabelText={nameLabel}

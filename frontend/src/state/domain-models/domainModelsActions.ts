@@ -19,7 +19,7 @@ import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
 import {Measurement} from './measurement/measurementModels';
 import {measurementSchema} from './measurement/measurementSchema';
-import {User} from './user/userModels';
+import {Organisation, User} from './user/userModels';
 import {userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
@@ -202,6 +202,17 @@ export const addUser = restPost<User>(EndPoints.users, {
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
+  },
+});
+
+export const addOrganisation = restPost<Organisation>(EndPoints.organisations, {
+  afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
+    dispatch(showSuccessMessage(
+        firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
+      ));
+  },
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error})));
   },
 });
 

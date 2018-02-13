@@ -12,6 +12,7 @@ import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
+  addOrganisation,
   addUser,
   deleteUser, DOMAIN_MODELS_CLEAR, domainModelsClear, fetchGateways,
   fetchSelections,
@@ -24,7 +25,7 @@ import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Gateway} from '../gateway/gatewayModels';
 import {gatewaySchema} from '../gateway/gatewaySchema';
-import {Role, User} from '../user/userModels';
+import {Organisation, Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
@@ -37,6 +38,7 @@ describe('domainModelsActions', () => {
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
   const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
   const userPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
+  const organisationPostRequest = requestMethod<Organisation>(EndPoints.organisations, HttpMethod.POST);
   const userPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
   const userDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
   const userEntityRequest = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
@@ -327,6 +329,46 @@ describe('domainModelsActions', () => {
       ]);
     });
   });
+
+  describe('add new organisation', () => {
+
+    const newOrganisation: Partial<Organisation> = {
+      name: 'Hällesåkers IF',
+      code: 'HIF',
+    };
+    const returnedOrganisation: Partial<Organisation> = {...newOrganisation, id: 1};
+    const errorResponse = {message: 'An error'};
+
+    const postOrganisationWithResponseOk = async (organisation: Partial<Organisation>) => {
+      mockRestClient.onPost(EndPoints.organisations, organisation).reply(200, returnedOrganisation);
+      return store.dispatch(addOrganisation(organisation as Organisation));
+    };
+    const postUserWithBadRequest = async (organisation: Partial<Organisation>) => {
+      mockRestClient.onPost(EndPoints.organisations, organisation).reply(401, errorResponse);
+      return store.dispatch(addOrganisation(organisation as Organisation));
+    };
+
+    it('sends a post request to backend and get a user with an id back', async () => {
+      await postOrganisationWithResponseOk(newOrganisation);
+
+      expect(store.getActions()).toEqual([
+        organisationPostRequest.request(),
+        organisationPostRequest.success(returnedOrganisation as Organisation),
+        showSuccessMessage('Successfully created the organisation ' +
+          `${returnedOrganisation.name} (${returnedOrganisation.code})`),
+      ]);
+    });
+    it('send a post request to backend and get an error back', async () => {
+      await postUserWithBadRequest(newOrganisation);
+
+      expect(store.getActions()).toEqual([
+        organisationPostRequest.request(),
+        organisationPostRequest.failure({...errorResponse}),
+        showFailMessage(`Failed to create organisation: ${errorResponse.message}`),
+      ]);
+    });
+  });
+
   describe('clear domainModels', () => {
     it('dispatches a clear action', () => {
       store.dispatch(domainModelsClear());

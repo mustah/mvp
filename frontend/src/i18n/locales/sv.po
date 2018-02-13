@@ -233,6 +233,21 @@ msgstr "organisation"
 msgid "organisations"
 msgstr "organisationer"
 
+msgid "add organisation"
+msgstr "lägg till organisation"
+
+msgid "organisation name"
+msgstr "organisationsnamn"
+
+msgid "organisation code"
+msgstr "organisationskod"
+
+msgid "successfully created the organisation {{name}} ({{code}})"
+msgstr "skapade organisationen {{name}} ({{code}})"
+
+msgid "failed to create organisation: {{error}}"
+msgstr "misslyckades skapa organisationen: {{error}}"
+
 msgid "roles"
 msgstr "roller"
 

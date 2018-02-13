@@ -7,12 +7,12 @@ import {ActionMenuItem} from './ActionMenuItem';
 import {ActionsDropdown} from './ActionsDropdown';
 import 'ActionsDropdown.scss';
 
-export const UsersActionsDropdown = () => {
+export const OrganisationsActionsDropdown = () => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     return [(
-      <Link to={routes.adminUsersAdd} className="link" key={'add user'}>
-        <ActionMenuItem name={translate('add user')} onClick={onClick}/>
+      <Link to={routes.adminOrganisationsAdd} className="link" key={'add organisation'}>
+        <ActionMenuItem name={translate('add organisation')} onClick={onClick}/>
       </Link>),
     ];
   };
