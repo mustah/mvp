@@ -1,20 +1,29 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
@@ -29,7 +38,7 @@ public class LogicalMeterMapperTest {
       .setFieldMatchingEnabled(true)
       .setFieldAccessLevel(AccessLevel.PUBLIC);
 
-    mapper = new LogicalMeterMapper(modelMapper);
+    mapper = new LogicalMeterMapper();
   }
 
   @Test
@@ -59,5 +68,56 @@ public class LogicalMeterMapperTest {
     MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(logicalMeter);
 
     assertThat(mapMarkerDto).isEqualTo(mapMarkerDtoExpected);
+  }
+
+  @Test
+  public void toDto() throws ParseException {
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+    LogicalMeter logicalMeter = new LogicalMeter(
+      1L,
+      "Ok",
+      new LocationBuilder().city("Kungsbacka")
+        .streetAddress("Kabelgatan 2T")
+        .latitude(57.5052592)
+        .longitude(12.0683196)
+        .build(),
+      dateFormat.parse("2018-02-12T14:14:25"),
+      PropertyCollection.empty(),
+      Collections.singletonList(new PhysicalMeter(
+        ELVACO, "123123", "Some device specific medium", "ELV"
+      )),
+      MeterDefinition.HOT_WATER_METER
+    );
+    LogicalMeterDto actual = mapper.toDto(logicalMeter, TimeZone.getTimeZone("Europe/Stockholm"));
+    assertThat(actual.created).isEqualTo("2018-02-12 15:14:25");
+    assertThat(actual.medium).isEqualTo("Hot water meter");
+    assertThat(actual.id).isEqualTo(1L);
+    assertThat(actual.address.name).isEqualTo("Kabelgatan 2T");
+    assertThat(actual.city.name).isEqualTo("Kungsbacka");
+    assertThat(actual.manufacturer).isEqualTo("ELV");
+    assertThat(actual.position.confidence).isEqualTo(1.0);
+    assertThat(actual.position.latitude).isEqualTo(57.5052592);
+    assertThat(actual.position.longitude).isEqualTo(12.0683196);
+  }
+
+  @Test
+  public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    LogicalMeter logicalMeter = new LogicalMeter(0L, "Ok",
+                                                 Location.unknownLocation(),
+                                                 dateFormat.parse("2018-02-12T14:14:25"),
+                                                 PropertyCollection.empty()
+    );
+
+    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created).isEqualTo(
+      "2018-02-12 14:14:25");
+    assertThat(mapper.toDto(
+      logicalMeter,
+      TimeZone.getTimeZone("America/Los_Angeles")
+    ).created).isEqualTo("2018-02-12 06:14:25");
+
   }
 }

@@ -1,7 +1,7 @@
 package com.elvaco.mvp.web.dto;
 
 public class GeoPositionDto {
-  public double latitude;
-  public double longitude;
+  public Double latitude;
+  public Double longitude;
   public double confidence;
 }

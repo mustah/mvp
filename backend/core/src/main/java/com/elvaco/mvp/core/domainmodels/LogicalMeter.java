@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.domainmodels;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -99,5 +100,21 @@ public class LogicalMeter {
 
   public boolean hasMeterDefinition() {
     return meterDefinition != null;
+  }
+
+  public String getManufacturer() {
+    return activePhysicalMeter()
+      .map(physicalMeter -> physicalMeter.manufacturer)
+      .orElse("Unknown manufacturer");
+  }
+
+  private Optional<PhysicalMeter> activePhysicalMeter() {
+    if (physicalMeters.size() == 1) {
+      return Optional.of(physicalMeters.get(0));
+    } else if (physicalMeters.isEmpty()) {
+      return Optional.empty();
+    }
+    throw new UnsupportedOperationException(
+      "Active meter identification with multiple meters is not implemented!");
   }
 }
