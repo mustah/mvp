@@ -12,7 +12,7 @@ before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
-docker:
+postgresql:
     stage: docker
     tags:
       - shell
@@ -29,10 +29,14 @@ build:
             - .gradle/wrapper
             - .gradle/caches
             - .yarn
+    services:
+        - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+          alias: pg_host
     script:
         - apt-get update && apt-get -y install git
         - ./gradlew dotVersion
         - ./gradlew clean build assemble
+        - ./gradlew systemTestCI
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
