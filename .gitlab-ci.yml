@@ -74,6 +74,19 @@ unit:
         - apt-get update && apt-get -y install git
         - ./gradlew test
 
+assemble:
+    stage: package
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+            - .version
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew dotVersion
+        - ./gradlew assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
@@ -107,7 +120,7 @@ unit:
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
     dependencies:
-      - build
+      - assemble
 
 deploy_protected:
   <<: *review_app
