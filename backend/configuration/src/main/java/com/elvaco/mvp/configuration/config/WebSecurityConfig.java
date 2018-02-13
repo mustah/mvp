@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
@@ -24,10 +23,15 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private static final String H2_CONSOLE = "/h2-console/**";
 
   private final UserDetailsService userDetailsService;
+  private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  WebSecurityConfig(UserDetailsService userDetailsService) {
+  WebSecurityConfig(
+    UserDetailsService userDetailsService,
+    PasswordEncoder passwordEncoder
+  ) {
     this.userDetailsService = userDetailsService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
@@ -60,12 +64,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   DaoAuthenticationProvider authProvider() {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userDetailsService);
-    authProvider.setPasswordEncoder(passwordEncoder());
+    authProvider.setPasswordEncoder(passwordEncoder);
     return authProvider;
-  }
-
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(13);
   }
 }
