@@ -35,7 +35,7 @@ public class LogicalMeterMapper {
   public LogicalMeterDto toDto(LogicalMeter logicalMeter, TimeZone timeZone) {
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
-    meterDto.created = Dates.formatTime(logicalMeter.getCreated(), timeZone);
+    meterDto.created = Dates.formatTime(logicalMeter.created, timeZone);
     meterDto.id = logicalMeter.id;
     meterDto.address = new AddressDto();
     meterDto.address.name = logicalMeter.location.getStreetAddress().orElse("Unknown address");

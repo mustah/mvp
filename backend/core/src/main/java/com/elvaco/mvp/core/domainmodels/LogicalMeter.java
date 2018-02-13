@@ -19,7 +19,7 @@ public class LogicalMeter {
   public final Location location;
   public final PropertyCollection propertyCollection;
   public final List<PhysicalMeter> physicalMeters;
-  private Date created;
+  public final Date created;
   @Nullable
   private MeterDefinition meterDefinition;
 
@@ -73,12 +73,16 @@ public class LogicalMeter {
     this.meterDefinition = meterDefinition;
   }
 
-  public Date getCreated() {
-    return new Date(created.getTime());
-  }
-
-  public void setCreated(Date created) {
-    this.created = new Date(created.getTime());
+  public LogicalMeter createdAt(Date creationTime) {
+    return new LogicalMeter(
+      id,
+      status,
+      location,
+      creationTime,
+      propertyCollection,
+      physicalMeters,
+      meterDefinition
+    );
   }
 
   public String getMedium() {

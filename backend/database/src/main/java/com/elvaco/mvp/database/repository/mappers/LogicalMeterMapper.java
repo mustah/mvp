@@ -59,7 +59,7 @@ public class LogicalMeterMapper {
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeter.id,
-      logicalMeter.getCreated(),
+      logicalMeter.created,
       logicalMeter.status
     );
 

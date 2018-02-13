@@ -40,13 +40,12 @@ public class LogicalMeterTest {
 
   @Test
   public void logicalMeterEquality() {
-    assertThat(new LogicalMeter(MeterDefinition.HOT_WATER_METER))
-      .isNotEqualTo(new LogicalMeter(MeterDefinition.HOT_WATER_METER));
-    LogicalMeter logicalMeter = new LogicalMeter(MeterDefinition.HOT_WATER_METER);
     Date now = new Date();
-    logicalMeter.setCreated(now);
-    LogicalMeter otherLogicalMeter = new LogicalMeter(MeterDefinition.HOT_WATER_METER);
-    otherLogicalMeter.setCreated(now);
+    LogicalMeter logicalMeter =
+      new LogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+    LogicalMeter otherLogicalMeter =
+      new LogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 }
