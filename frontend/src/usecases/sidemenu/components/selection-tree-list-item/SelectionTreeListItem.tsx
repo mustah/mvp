@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
-import {SelectionTreeData} from '../../../../state/domain-models/meter/meterModels';
+import {SelectionTreeData} from '../../../../state/domain-models-paginated/meter/meterModels';
 import {OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
 

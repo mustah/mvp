@@ -1,13 +1,12 @@
 import {unixTimestampMillisecondsToDate} from '../../helpers/formatters';
-import {DomainModel} from '../../state/domain-models/domainModels';
-import {labelOfMeasurement} from '../../state/domain-models/measurement/measurementHelpers';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Measurement} from '../../state/domain-models/measurement/measurementModels';
 import {GraphContents, LineProps} from './reportModels';
 
 // TODO this may return undefined
 const colorize = (index: number): string => ['#8884d8', '#82ca9d', '#ffb4a4'][index];
 
-export const mapNormalizedPaginatedResultToGraphData = (entities: DomainModel<Measurement>): GraphContents => {
+export const mapNormalizedPaginatedResultToGraphData = (entities: ObjectsById<Measurement>): GraphContents => {
   const graphContents: GraphContents = {
     axes: {
       left: undefined,
@@ -27,8 +26,7 @@ export const mapNormalizedPaginatedResultToGraphData = (entities: DomainModel<Me
     if (!byDate[created]) {
       byDate[created] = {};
     }
-
-    const label: string = labelOfMeasurement(entity);
+    const label: string = entity.physicalMeter.id.toString();
     if (!meters.includes(label)) {
       meters.push(label);
       const props: LineProps = {

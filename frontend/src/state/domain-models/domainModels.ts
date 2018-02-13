@@ -1,7 +1,7 @@
-import {ErrorResponse, IdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
+import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MeasurementState} from './measurement/measurementModels';
-import {MetersState} from './meter/meterModels';
 import {UserState} from './user/userModels';
 
 export interface Location {
@@ -13,6 +13,7 @@ export interface Location {
 export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
+  metersAll = '/meters/all',
   gateways = '/gateways',
   users = '/users',
   authenticate = '/authenticate',
@@ -29,53 +30,26 @@ export interface Address extends IdNamed {
   cityId: uuid;
 }
 
-export interface DomainModel<T> {
+export interface ObjectsById<T extends HasId> {
   [id: string]: T;
 }
 
-export interface Normalized<T> {
+export interface Normalized<T extends HasId> {
   result: uuid[];
-  entities: DomainModel<T>;
+  entities: {
+    [entityType: string]: ObjectsById<T>,
+  };
 }
 
-export interface NormalizedState<T> extends Normalized<T> {
+export interface DomainModel<T extends HasId> {
+  result: uuid[];
+  entities: ObjectsById<T>;
+}
+
+export interface NormalizedState<T extends HasId> extends DomainModel<T> {
   isFetching: boolean;
   total: number;
   error?: ErrorResponse;
-}
-
-interface SortingOptions {
-  direction: 'ASC' | 'DESC';
-  property: string;
-  ignoreCase: boolean;
-  nullHandling: string;
-  ascending: boolean;
-  descending: boolean;
-}
-
-export interface PaginationMetadata {
-  first: boolean;
-  last: boolean;
-  number: number;
-  numberOfElements: number;
-  size: number;
-  sort: SortingOptions[] | null;
-  totalElements: number;
-  totalPages: number;
-}
-
-export interface PaginatedResult extends PaginationMetadata {
-  content: uuid[];
-}
-
-export interface NormalizedPaginated<T> {
-  entities: DomainModel<T>;
-  result: PaginatedResult;
-}
-
-export interface NormalizedPaginatedState<T> extends NormalizedPaginated<T> {
-  error?: ErrorResponse;
-  isFetching: boolean;
 }
 
 export type SelectionEntity = IdNamed | Address;
@@ -89,10 +63,10 @@ export interface DomainModelsState {
   gatewayStatuses: SelectionEntityState;
   gateways: GatewaysState;
   manufacturers: SelectionEntityState;
-  measurements: MeasurementState;
   meterStatuses: SelectionEntityState;
-  meters: MetersState;
   productModels: SelectionEntityState;
+  measurements: MeasurementState;
+  metersAll: NormalizedState<Meter>;
   users: UserState;
 }
 
@@ -103,3 +77,5 @@ export enum HttpMethod {
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
+
+export type RestGet = (requestData?: string) => void;

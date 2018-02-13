@@ -212,6 +212,12 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
 
+msgid "an unexpected error occurred"
+msgstr "ett oväntat fel inträffade"
+
+msgid "error: {{message}}"
+msgstr "fel: {{message}}"
+
 msgid "add user"
 msgstr "lägg till användare"
 

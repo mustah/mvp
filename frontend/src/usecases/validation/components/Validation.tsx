@@ -5,11 +5,12 @@ import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {ValidationTabsContainer} from '../containers/ValidationTabsContainer';
 
 export const Validation = () => {
+
+  // TODO: Fix so that SummaryContainer don't break.
   return (
     <MvpPageContainer>
       <Row className="space-between">
@@ -17,7 +18,7 @@ export const Validation = () => {
           {translate('validation')}
         </MainTitle>
         <Row>
-          <SummaryContainer/>
+          {/*<SummaryContainer/>*/}
           <PeriodContainer/>
         </Row>
       </Row>

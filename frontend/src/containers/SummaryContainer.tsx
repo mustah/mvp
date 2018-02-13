@@ -23,9 +23,9 @@ const SummaryComponent = (props: StateToProps) => {
   );
 };
 
-const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({domainModels: {metersAll}}: RootState): StateToProps => {
   return {
-    selectionSummary: getSelectionSummary(meters),
+    selectionSummary: getSelectionSummary(metersAll),
   };
 };
 

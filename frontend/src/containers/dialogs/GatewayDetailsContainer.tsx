@@ -16,10 +16,10 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MainTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {DomainModel} from '../../state/domain-models/domainModels';
+import {getPaginatedEntities} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
-import {Meter} from '../../state/domain-models/meter/meterModels';
-import {getMeterEntities} from '../../state/domain-models/meter/meterSelectors';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {Map} from '../../usecases/map/containers/Map';
@@ -38,7 +38,7 @@ interface TabsState {
 }
 
 interface StateToProps {
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
 }
 
 type Props = OwnProps & StateToProps;
@@ -164,8 +164,8 @@ const GatewayDetails = (props: Props) => (
   </div>
 );
 
-const mapStateToProps = ({domainModels: {meters}}: RootState): StateToProps => ({
-  meters: getMeterEntities(meters),
+const mapStateToProps = ({paginatedDomainModels: {meters}}: RootState): StateToProps => ({
+  meters: getPaginatedEntities(meters),
 });
 
 export const GatewayDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(GatewayDetails);

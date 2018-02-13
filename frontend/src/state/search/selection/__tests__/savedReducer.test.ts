@@ -1,6 +1,6 @@
 import {Period} from '../../../../components/dates/dateModels';
 import {saved} from '../saveReducer';
-import {saveSelectionAction, updateSelectionAction} from '../selectionActions';
+import {SAVE_SELECTION, UPDATE_SELECTION} from '../selectionActions';
 import {SelectionState} from '../selectionModels';
 
 describe('selectionReducer', () => {
@@ -29,18 +29,18 @@ describe('selectionReducer', () => {
     };
 
     it('has initial state', () => {
-      expect(saved([], {type: 'unknown', payload: {...payload}})).toEqual([]);
+      expect(saved(undefined, {type: 'unknown', payload: {...payload}})).toEqual([]);
     });
 
     it('saves selection to empty saved list', () => {
-      expect(saved([], saveSelectionAction(payload))).toEqual([{...payload}]);
+      expect(saved([], {type: SAVE_SELECTION, payload})).toEqual([{...payload}]);
     });
 
     it('saves selection to already existing saved selections', () => {
       const newPayload: SelectionState = {...mockPayload};
 
-      let state = saved([], saveSelectionAction(payload));
-      state = saved(state, saveSelectionAction(newPayload));
+      let state = saved([], {type: SAVE_SELECTION, payload});
+      state = saved(state, {type: SAVE_SELECTION, payload: newPayload});
 
       expect(state).toEqual([newPayload, payload]);
     });
@@ -49,14 +49,14 @@ describe('selectionReducer', () => {
   describe('saved selections', () => {
 
     it('saves new selection', () => {
-      const state = saved([], saveSelectionAction(mockPayload));
+      const state = saved([], {type: SAVE_SELECTION, payload: mockPayload});
 
       expect(state).toEqual([{...mockPayload}]);
     });
 
     it('update name of the selection', () => {
-      let state = saved([], saveSelectionAction(mockPayload));
-      state = saved(state, updateSelectionAction({...mockPayload, name: 'test'}));
+      let state = saved([], {type: SAVE_SELECTION, payload: mockPayload});
+      state = saved(state, {type: UPDATE_SELECTION, payload: {...mockPayload, name: 'test'}});
 
       expect(state).toEqual([{...mockPayload, name: 'test'}]);
     });

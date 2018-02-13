@@ -1,7 +1,7 @@
-import {IdNamed, uuid} from '../../../types/Types';
-import {DomainModel, NormalizedState} from '../domainModels';
+import {HasId, uuid} from '../../../types/Types';
+import {NormalizedState, ObjectsById} from '../domainModels';
 
-export interface Organisation extends IdNamed {
+export interface Organisation extends HasId {
   code: uuid;
   name: string;
 }
@@ -23,7 +23,7 @@ export const enum Role {
   SUPER_ADMIN = 'SUPER_ADMIN',
 }
 
-export const filterUsersByUser = (users: DomainModel<User>, currentUser: User): DomainModel<User> => {
+export const filterUsersByUser = (users: ObjectsById<User>, currentUser: User): ObjectsById<User> => {
   if (currentUser.organisation.code === 'elvaco') {
     return users;
   }

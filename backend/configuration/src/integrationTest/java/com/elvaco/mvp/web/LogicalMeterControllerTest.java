@@ -25,6 +25,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,7 +92,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAll() {
+  public void findAllPaged() {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage("/meters", LogicalMeterDto.class);
 
@@ -105,6 +106,23 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
     assertThat(response.getTotalPages()).isEqualTo(3);
+  }
+
+  @Test
+  public void findAll() {
+    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+      .getList("/meters/all", LogicalMeterDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(55);
+
+    Long meterId = response.getBody().get(0).id;
+
+    response = asElvacoUser()
+      .getList("/meters/all?id=" + meterId, LogicalMeterDto.class);
+
+    assertThat(response.getBody()).hasSize(1);
+    assertThat(response.getBody().get(0).id).isEqualTo(meterId);
   }
 
   @Test

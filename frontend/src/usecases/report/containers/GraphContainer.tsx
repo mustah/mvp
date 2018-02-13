@@ -1,15 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {Period} from '../../../components/dates/dateModels';
 import {Tab} from '../../../components/tabs/components/Tab';
@@ -22,7 +13,7 @@ import {Bold} from '../../../components/texts/Texts';
 import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
@@ -33,12 +24,12 @@ import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
 interface StateToProps {
-  measurements: DomainModel<Measurement>;
+  measurements: ObjectsById<Measurement>;
   period: Period;
   selectedListItems: uuid[];
 }
 
-interface OwnProps {
+interface State {
   selectedTabOption: string;
 }
 
@@ -77,7 +68,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
 
 class GraphComponent extends React.Component<Props> {
 
-  state: OwnProps = {selectedTabOption: 'power'};
+  state: State = {selectedTabOption: 'power'};
 
   onChangeTab = () => void(0);
 
@@ -113,6 +104,7 @@ class GraphComponent extends React.Component<Props> {
 
     const selectedTab: TabName = TabName.graph;
 
+    // TODO: [!Carl]
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
     // it breaks. Setting width of ResponsiveContainer to 100% will case the menu to overlap when
     // toggled
@@ -167,4 +159,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMeasurements,
 }, dispatch);
 
-export const GraphContainer = connect(mapStateToProps, mapDispatchToProps)(GraphComponent);
+export const GraphContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(GraphComponent);

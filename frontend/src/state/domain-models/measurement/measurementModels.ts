@@ -1,13 +1,14 @@
-import {uuid} from '../../../types/Types';
-import {NormalizedPaginatedState} from '../domainModels';
+import {HasId} from '../../../types/Types';
+import {NormalizedState} from '../domainModels';
+import {Organisation} from '../user/userModels';
 
-interface PhysicalMeter {
-  rel: string;
-  href: string;
+interface PhysicalMeter extends HasId {
+  organisation: Organisation;
+  identity: string;
+  medium: string;
 }
 
-export interface Measurement {
-  id: uuid;
+export interface Measurement extends HasId {
   created: number;
   value: number;
   quantity: string;
@@ -15,4 +16,4 @@ export interface Measurement {
   physicalMeter: PhysicalMeter;
 }
 
-export type MeasurementState = NormalizedPaginatedState<Measurement>;
+export type MeasurementState = NormalizedState<Measurement>;

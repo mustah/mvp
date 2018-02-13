@@ -8,14 +8,12 @@ import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
-import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import {Meter} from '../../../state/domain-models/meter/meterModels';
-import {getMeterEntities} from '../../../state/domain-models/meter/meterSelectors';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {getPaginatedEntities} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Callback} from '../../../types/Types';
-import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
@@ -23,7 +21,7 @@ import {DashboardModel} from '../dashboardModels';
 interface StateToProps {
   isFetching: boolean;
   dashboard?: DashboardModel;
-  meters: DomainModel<Meter>;
+  meters: ObjectsById<Meter>;
 }
 
 interface DispatchToProps {
@@ -39,13 +37,13 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {isFetching, dashboard, meters} = this.props;
+    const {isFetching, dashboard} = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
           <Row>
-            <SummaryContainer/>
+            {/*<SummaryContainer/>*/}
             <PeriodContainer/>
           </Row>
         </Row>
@@ -53,7 +51,7 @@ class DashboardContainerComponent extends React.Component<Props> {
         <Loader isFetching={isFetching}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgetsContainer markers={meters}/>
+            {/*<MapWidgetsContainer markers={meters}/>*/}
           </Column>
         </Loader>
       </MvpPageContainer>
@@ -65,11 +63,11 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
 }, dispatch);
 
-const mapStateToProps = ({dashboard, domainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({dashboard, paginatedDomainModels: {meters}}: RootState): StateToProps => {
   return {
     isFetching: dashboard.isFetching,
     dashboard: dashboard.record,
-    meters: getMeterEntities(meters),
+    meters: getPaginatedEntities(meters),
   };
 };
 

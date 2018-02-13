@@ -4,12 +4,12 @@ import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {
-  addSelectionAction,
-  closeSelectionPageAction,
-  deselectSelection,
-  resetSelectionAction,
-  selectSavedSelectionAction,
-  setSelectionAction,
+  ADD_SELECTION,
+  CLOSE_SELECTION_PAGE,
+  DESELECT_SELECTION,
+  RESET_SELECTION,
+  SELECT_SAVED_SELECTION,
+  SET_SELECTION,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
@@ -108,7 +108,7 @@ describe('selectionReducer', () => {
   describe('select saved selections', () => {
 
     it('replaces current selection', () => {
-      const state = selection(initialState, selectSavedSelectionAction(mockPayload));
+      const state = selection(initialState, {type: SELECT_SAVED_SELECTION, payload: mockPayload});
 
       expect(state).toEqual({...mockPayload, isChanged: false});
     });
@@ -124,7 +124,7 @@ describe('selectionReducer', () => {
         parameter: ParameterName.cities,
       };
 
-      expect(selection(state, addSelectionAction(selectionParameters))).toEqual({
+      expect(selection(state, {type: ADD_SELECTION, payload: selectionParameters})).toEqual({
         ...initialState,
         isChanged: true,
         selected: {
@@ -148,8 +148,14 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: SelectionState = selection(initialState, addSelectionAction(selectionParameterItem));
-      const finalState: SelectionState = selection(intermediateState, addSelectionAction(selectionParametersArray));
+      const intermediateState: SelectionState = selection(initialState, {
+        type: ADD_SELECTION,
+        payload: selectionParameterItem,
+      });
+      const finalState: SelectionState = selection(intermediateState, {
+        type: ADD_SELECTION,
+        payload: selectionParametersArray,
+      });
 
       expect(finalState).toEqual({
         ...intermediateState,
@@ -171,8 +177,16 @@ describe('selectionReducer', () => {
         ...stockholm,
       };
 
-      const intermediateState: SelectionState = selection(initialState, setSelectionAction(selectionParameterInitial));
-      const finalState: SelectionState = selection(intermediateState, setSelectionAction(selectionParametersFinal));
+      const intermediateState: SelectionState = selection(initialState, {
+          type: SET_SELECTION,
+          payload: selectionParameterInitial,
+        })
+      ;
+      const finalState: SelectionState = selection(intermediateState, {
+          type: SET_SELECTION,
+          payload: selectionParametersFinal,
+        })
+      ;
 
       expect(finalState).toEqual({
         ...intermediateState,
@@ -198,8 +212,14 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: SelectionState = selection(initialState, setSelectionAction(selectionParameterInitial));
-      const finalState: SelectionState = selection(intermediateState, setSelectionAction(selectionParametersFinal));
+      const intermediateState: SelectionState = selection(initialState, {
+        type: SET_SELECTION,
+        payload: selectionParameterInitial,
+      });
+      const finalState: SelectionState = selection(intermediateState, {
+        type: SET_SELECTION,
+        payload: selectionParametersFinal,
+      });
 
       expect(finalState).toEqual({
         ...intermediateState,
@@ -216,11 +236,11 @@ describe('selectionReducer', () => {
   describe('reset selection', () => {
 
     it('resets current selection', () => {
-      let state = selection(initialState, selectSavedSelectionAction(mockPayload));
+      let state = selection(initialState, {type: SELECT_SAVED_SELECTION, payload: mockPayload});
 
       expect(state).not.toEqual(initialState);
 
-      state = selection(state, resetSelectionAction());
+      state = selection(state, {type: RESET_SELECTION});
 
       expect(state).toEqual(initialState);
     });
@@ -235,7 +255,7 @@ describe('selectionReducer', () => {
         ...gothenburg,
       };
 
-      const state = selection(mockPayload, deselectSelection(parameter));
+      const state = selection(mockPayload, {type: DESELECT_SELECTION, payload: parameter});
 
       expect(state).toEqual({
         id: 5,
@@ -249,13 +269,13 @@ describe('selectionReducer', () => {
   describe('closeSelectionPage', () => {
 
     it('will mark selection state as not changed when the page is closed', () => {
-      const state = selection({...mockPayload, isChanged: true}, closeSelectionPageAction());
+      const state = selection({...mockPayload, isChanged: true}, {type: CLOSE_SELECTION_PAGE});
 
       expect(state).toEqual({...mockPayload, isChanged: false});
     });
 
     it('will not toggle selection state is changed attribute when closing selection page', () => {
-      const state = selection({...mockPayload, isChanged: false}, closeSelectionPageAction());
+      const state = selection({...mockPayload, isChanged: false}, {type: CLOSE_SELECTION_PAGE});
 
       expect(state).toEqual({...mockPayload, isChanged: false});
     });

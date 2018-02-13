@@ -1,46 +1,100 @@
-import {
-  changePaginationCollection,
-  changePaginationSelection,
-  changePaginationValidation,
-} from '../paginationActions';
-import {initialState, limit, pagination} from '../paginationReducer';
+import {paginationChangePage, paginationReset, paginationUpdateMetaData} from '../paginationActions';
+import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
+import {initialPaginationState, limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
-  describe('pagination', () => {
+  const paginatedState: Readonly<PaginationState> = {
+    meters: {size: limit, totalPages: 10, totalElements: 100, useCases: {component1: {page: 0}, component2: {page: 0}}},
+    measurements: {size: limit, totalPages: 10, totalElements: 100, useCases: {}},
+  };
 
-    it('changes pagination for collection', () => {
-      expect(pagination(initialState, changePaginationCollection(2))).toEqual({
-        ...initialState,
-        collection: {page: 2, limit},
-      });
+  describe('pagination meta data', () => {
+
+    it('has initial state', () => {
+      expect(pagination(undefined, {type: 'unknown'})).toEqual({...initialPaginationState});
     });
 
-    it('changes pagination for collection twice', () => {
-      expect(pagination(initialState, changePaginationCollection(77))).toEqual({
-        ...initialState,
-        collection: {page: 77, limit},
-      });
+    it('updates pagination meta data for a component', () => {
+      const payload: PaginationMetadataPayload = {
+        entityType: 'meters',
+        content: [],
+        first: false,
+        last: false,
+        number: 2,
+        numberOfElements: 10,
+        size: 10,
+        sort: null,
+        totalElements: 2000,
+        totalPages: 200,
+      };
 
-      expect(pagination(initialState, changePaginationCollection(48))).toEqual({
-        ...initialState,
-        collection: {page: 48, limit},
-      });
+      const expectedState: PaginationState = {
+        ...initialPaginationState,
+        meters: {
+          ...initialPaginationState.meters,
+          totalPages: payload.totalPages,
+          totalElements: payload.totalElements,
+          useCases: {},
+        },
+      };
+      expect(pagination(undefined, paginationUpdateMetaData(payload))).toEqual(expectedState);
+    });
+  });
+  it('updates pagination but leaves useCases intact', () => {
+    const paginatedState: PaginationState = {
+      meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+    };
+    const payload: PaginationMetadataPayload = {
+      entityType: 'meters',
+      content: [],
+      totalElements: 2000,
+      totalPages: 200,
+    };
+
+    expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
+      meters: {size: limit, totalPages: 200, totalElements: 2000, useCases: {validationList: {page: 1}}},
     });
 
-    it('changes pagination for selection', () => {
-      expect(pagination(initialState, changePaginationSelection(123))).toEqual({
-        ...initialState,
-        selection: {page: 123, limit},
-      });
+  });
+
+  describe('pagination change page', () => {
+    const payload: PaginationChangePayload = {
+      componentId: 'test',
+      entityType: 'meters',
+      page: 10,
+    };
+
+    it('changes requestedPage', () => {
+
+      const expectedState: PaginationState = {
+        ...initialPaginationState,
+        meters: {...initialPaginationState.meters, useCases: {test: {page: 10}}},
+      };
+
+      expect(pagination(undefined, paginationChangePage(payload))).toEqual(expectedState);
+
     });
 
-    it('changes pagination for validation', () => {
-      expect(pagination(initialState, changePaginationValidation(789))).toEqual({
-        ...initialState,
-        validation: {page: 789, limit},
+    it('only changes requestedPage for the targeted component', () => {
+      const expectedState: PaginationState = {
+        ...paginatedState,
+        meters: {...paginatedState.meters, useCases: {...paginatedState.meters.useCases, test: {page: 10}}},
+      };
+
+      expect(pagination(paginatedState, paginationChangePage(payload))).toEqual(expectedState);
+
+    });
+  });
+  describe('reset pagination', () => {
+    it('sets pagination to initialState when getting the reset action', () => {
+      const paginatedState: PaginationState = {
+        meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+      };
+
+      expect(pagination(paginatedState, paginationReset())).toEqual({
+        ...initialPaginationState,
       });
     });
   });
-
 });

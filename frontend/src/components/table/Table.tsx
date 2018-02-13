@@ -3,7 +3,7 @@ import * as React from 'react';
 import {Children, uuid} from '../../types/Types';
 import './Table.scss';
 import {TableHeadProps} from './TableHead';
-import {DomainModel} from '../../state/domain-models/domainModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 
 type RenderCellCallback = (value: any) => Children;
 
@@ -14,7 +14,7 @@ export interface TableColumnProps {
 
 interface TableProps {
   result: uuid[];
-  entities: DomainModel<any>;
+  entities: ObjectsById<any>;
   children: Array<React.ReactElement<TableColumnProps>> | React.ReactElement<TableColumnProps>;
 }
 

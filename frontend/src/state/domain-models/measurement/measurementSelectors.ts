@@ -1,5 +1,5 @@
-import {DomainModel} from '../domainModels';
+import {ObjectsById} from '../domainModels';
 import {Measurement, MeasurementState} from './measurementModels';
 
-export const getMeasurements = (state: MeasurementState): DomainModel<Measurement> =>
+export const getMeasurements = (state: MeasurementState): ObjectsById<Measurement> =>
   state.entities;

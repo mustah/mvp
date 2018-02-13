@@ -1,36 +1,35 @@
-import {createSelector, OutputSelector} from 'reselect';
-import {UseCases, uuid} from '../../../types/Types';
-import {UiState} from '../uiReducer';
-import {Pagination, PaginationState} from './paginationModels';
+import {createSelector} from 'reselect';
+import {uuid} from '../../../types/Types';
+import {HasPageNumber, PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
+import {DomainModelsState} from '../../domain-models/domainModels';
+import {Pagination, PaginationLookupState, PaginationModel} from './paginationModels';
+import {initialPaginationModel} from './paginationReducer';
 
-export interface PaginatedDomainModel {
-  pagination: Pagination;
+export interface PaginatedDomainModel extends HasPageNumber {
+  size: number;
   result: uuid[];
 }
 
-const getPaginationState = (state: UiState): PaginationState => state.pagination;
+export const getPaginationList = createSelector<PaginatedDomainModel, uuid[], {size: number} & HasPageNumber, uuid[]>(
+  ({result}: PaginatedDomainModel) => result,
+  ({page, size}: PaginatedDomainModel) => ({page, size}),
+  (result: uuid[], {page, size}: {size: number} & HasPageNumber) => result.slice((page) * size, (page + 1) * size),
+);
 
-type UseCasePaginationSelector = OutputSelector<UiState, Pagination, (res: PaginationState) => Pagination>;
+type GetPagination = PaginationLookupState<PaginatedDomainModelsState & DomainModelsState>;
 
-const getPaginationFor: (useCase: string) => UseCasePaginationSelector = (useCase: string) =>
-  createSelector<UiState, PaginationState, Pagination>(
-    getPaginationState,
-    (pagination: PaginationState) => pagination[useCase],
-  );
+const isPaginationDefined = ({pagination, entityType}: GetPagination): boolean => !!pagination[entityType];
+const isPageAssigned = ({pagination, entityType, componentId}: GetPagination): boolean =>
+  isPaginationDefined({pagination, entityType, componentId}) && !!pagination[entityType]!.useCases[componentId];
 
-const getResult = (state: PaginatedDomainModel): uuid[] => state.result;
-const getPagination = (state: PaginatedDomainModel): Pagination => state.pagination;
+const getMetadata = (state: GetPagination): PaginationModel => isPaginationDefined(state) ?
+  state.pagination[state.entityType]! : {...initialPaginationModel};
 
-type PaginationListSelector = OutputSelector<PaginatedDomainModel, uuid[], (res1: uuid[], res2: Pagination) => uuid[]>;
+const getPage = (state: GetPagination): HasPageNumber => isPageAssigned(state) ?
+  state.pagination[state.entityType]!.useCases[state.componentId] : {page: 0};
 
-export const getPaginationList: PaginationListSelector =
-  createSelector<PaginatedDomainModel, uuid[], Pagination, uuid[]>(
-    getResult,
-    getPagination,
-    (result: uuid[], {page, limit}: Pagination) => {
-      return result.slice((page - 1) * limit, page * limit);
-    });
-
-export const getCollectionPagination = getPaginationFor(UseCases.collection);
-export const getValidationPagination = getPaginationFor(UseCases.validation);
-export const getSelectionPagination = getPaginationFor(UseCases.selection);
+export const getPagination = createSelector<GetPagination, PaginationModel, HasPageNumber, Pagination>(
+  getMetadata,
+  getPage,
+  ({useCases, ...metadata}: PaginationModel, hasPage: HasPageNumber) => ({...metadata, ...hasPage}),
+);

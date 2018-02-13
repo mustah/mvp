@@ -9,7 +9,7 @@ import {Row} from '../../../components/layouts/row/Row';
 import {Subtitle} from '../../../components/texts/Titles';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -29,7 +29,7 @@ import {
 } from '../../../state/search/selection/selectionSelectors';
 import {IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
-import {MetersResultContainer} from './MetersResultContainer';
+import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {
   cities: SelectionListItem[];
@@ -39,7 +39,7 @@ interface StateToProps {
   productModels: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   gatewayStatuses: SelectionListItem[];
-  citiesSelection: DomainModel<IdNamed>;
+  citiesSelection: ObjectsById<IdNamed>;
 }
 
 interface DispatchToProps {
@@ -124,7 +124,7 @@ const SelectionContent = (props: StateToProps & DispatchToProps) => {
         <SelectionQuantity/>
       </Row>
 
-      <MetersResultContainer/>
+      <SearchResultList/>
 
     </Column>
   );

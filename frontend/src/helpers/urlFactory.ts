@@ -1,9 +1,8 @@
 import {Period} from '../components/dates/dateModels';
-import {EndPoints, PaginationMetadata} from '../state/domain-models/domainModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
+import {Pagination} from '../state/ui/pagination/paginationModels';
 import {uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
-import {Maybe} from './Maybe';
 
 interface ParameterNames {
   [key: string]: string;
@@ -40,17 +39,37 @@ const meterParameterNames: ParameterNames = {
   productModels: 'gatewayProductModel',
 };
 
-export const encodedUriParametersForMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, meterParameterNames, parameterCallbacks);
+export const encodedUriParametersForMeters = (pagination: Pagination, selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom({pagination, selectedIds, parameterNames: meterParameterNames, parameterCallbacks});
 };
 
 export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom(selectedIds, gatewayParameterNames, parameterCallbacks);
+  return encodedUriParametersFrom({selectedIds, parameterNames: gatewayParameterNames, parameterCallbacks});
 };
 
+interface UriParameters {
+  pagination?: Pagination;
+  selectedIds: SelectedParameters;
+  parameterNames: ParameterNames;
+  parameterCallbacks: ParameterCallbacks;
+}
+
 const encodedUriParametersFrom =
-  (selectedIds: SelectedParameters, parameterNames: ParameterNames, parameterCallbacks: ParameterCallbacks): string => {
+  (
+    {
+      pagination = {page: -1, size: -1},
+      selectedIds,
+      parameterNames,
+      parameterCallbacks,
+    }: UriParameters,
+  ): string => {
     const parameters: string[] = [];
+
+    if (pagination.page !== -1) {
+      const {page, size} = pagination;
+      parameters.push(`size=${encodeURIComponent(size.toString())}`);
+      parameters.push(`page=${encodeURIComponent(page.toString())}`);
+    }
 
     const addParameterWith = (name: string, value: uuid | Period) =>
       parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
@@ -75,27 +94,3 @@ export const makeUrl = (endpoint: string, encodedUriParameters?: string): string
     return endpoint;
   }
 };
-
-const navigatePageinatedEndpoint =
-  (direction: 'next' | 'previous', endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> => {
-    if ((currentPage.last && direction === 'next') || (currentPage.first && direction === 'previous')) {
-      return Maybe.nothing();
-    }
-
-    const parameters: string[] = [];
-    if (Array.isArray(currentPage.sort)) {
-      currentPage.sort.forEach((current) =>
-        parameters.push(`sort=${encodeURIComponent(current.property)},${current.direction}`));
-    }
-
-    const nextPage = direction === 'next' ? currentPage.number + 1 : currentPage.number - 1;
-    parameters.push(`number=${nextPage}`);
-
-    return Maybe.just(makeUrl(endpoint, parameters.join('&')));
-  };
-
-export const urlForNextPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
-  navigatePageinatedEndpoint('next', endpoint, currentPage);
-
-export const urlForPreviousPage = (endpoint: EndPoints, currentPage: PaginationMetadata): Maybe<string> =>
-  navigatePageinatedEndpoint('previous', endpoint, currentPage);

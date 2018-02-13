@@ -1,8 +1,10 @@
 import {schema} from 'normalizr';
-import {address, city} from '../domainModelsSchemas';
+import {address, city} from '../../domain-models/domainModelsSchemas';
 
 const meter = new schema.Entity('meters');
-export const meterSchema =  [meter];
+const metersAll = new schema.Entity('metersAll');
+export const meterSchema = {content: [meter]};
+export const metersAllSchema = [metersAll];
 export const addressCluster = new schema.Entity('addressClusters');
 
 export const selectionTreeSchema = {

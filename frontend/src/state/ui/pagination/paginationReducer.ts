@@ -1,26 +1,47 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {PAGINATION_CHANGE_PAGE} from './paginationActions';
-import {PaginationState, SelectedPagination} from './paginationModels';
+import {PAGINATION_CHANGE_PAGE, PAGINATION_RESET, PAGINATION_UPDATE_METADATA} from './paginationActions';
+import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
-export const limit = 30;
+export const limit = 5;
 
-export const initialState: PaginationState = {
-  collection: {page: 1, limit},
-  validation: {page: 1, limit},
-  selection: {page: 1, limit},
+export const initialPaginationModel: PaginationModel = {
+  useCases: {},
+  totalElements: -1,
+  totalPages: -1,
+  size: limit,
 };
 
-type ActionTypes = Action<SelectedPagination> | EmptyAction<string>;
+export const initialPaginationState: PaginationState = {
+  meters: {...initialPaginationModel},
+};
 
-export const pagination = (state: PaginationState = initialState, action: ActionTypes) => {
+type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePayload> | EmptyAction<string>;
+
+const requestPage = (
+  state: PaginationState,
+  {payload: {entityType, componentId, page}}: Action<PaginationChangePayload>,
+): PaginationState => ({
+  ...state,
+  [entityType]: {...state[entityType], useCases: {...state[entityType]!.useCases, [componentId]: {page}}},
+});
+
+const updateMetaData = (
+  state: PaginationState,
+  {payload: {entityType, totalElements, totalPages}}: Action<PaginationMetadataPayload>,
+): PaginationState => ({
+  ...state,
+  [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
+});
+
+export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {
   switch (action.type) {
     case PAGINATION_CHANGE_PAGE:
-      const {payload: {useCase, page}} = (action as Action<SelectedPagination>);
-      return {
-        ...state,
-        [useCase]: {...state[useCase], page},
-      };
+      return requestPage(state, action as Action<PaginationChangePayload>);
+    case PAGINATION_UPDATE_METADATA:
+      return updateMetaData(state, action as Action<PaginationMetadataPayload>);
+    case PAGINATION_RESET:
+      return {...initialPaginationState};
     default:
       return state;
   }

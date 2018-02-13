@@ -1,10 +1,10 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
-import {uuid} from '../../../../types/Types';
-import {DomainModel} from '../../domainModels';
-import {Meter, MetersState, SelectionTreeData} from '../meterModels';
+import {HasId, uuid} from '../../../../types/Types';
+import {NormalizedState, ObjectsById} from '../../../domain-models/domainModels';
+import {Meter, SelectionTreeData} from '../meterModels';
 import {getMeterDataSummary, getSelectionTree} from '../meterSelectors';
 
-type PartialDomainModel = DomainModel<Partial<Meter>>;
+type PartialDomainModel = ObjectsById<Partial<Meter> & HasId>;
 describe('meterSelectors', () => {
 
   describe('summary', () => {
@@ -12,6 +12,7 @@ describe('meterSelectors', () => {
       const meterIds: uuid[] = [1, 2, 3];
       const meters: PartialDomainModel = {
         1: {
+          id: 1,
           flagged: false,
           city: {id: 'sto', name: 'stockholm'},
           manufacturer: 'ELV',
@@ -20,6 +21,7 @@ describe('meterSelectors', () => {
           alarm: 'none',
         },
         2: {
+          id: 2,
           flagged: false,
           city: {id: 'sto', name: 'stockholm'},
           manufacturer: 'ELV',
@@ -28,6 +30,7 @@ describe('meterSelectors', () => {
           alarm: 'none',
         },
         3: {
+          id: 3,
           flagged: true,
           city: {id: 'got', name: 'göteborg'},
           manufacturer: 'ELV',
@@ -37,12 +40,12 @@ describe('meterSelectors', () => {
         },
       };
 
-      const metersState: Partial<MetersState> = {
-        entities: meters as DomainModel<Meter>,
+      const metersState: Partial<NormalizedState<Meter>> = {
+        entities: meters as ObjectsById<Meter>,
         result: meterIds,
       };
 
-      const reduced = getMeterDataSummary(metersState as MetersState);
+      const reduced = getMeterDataSummary(metersState as NormalizedState<Meter>);
 
       expect(reduced.get()).toEqual({
         flagged:
@@ -76,7 +79,7 @@ describe('meterSelectors', () => {
   describe('selection tree', () => {
 
     it('handles mismatches between result list and actual entities', () => {
-      const metersState: MetersState = {
+      const metersState: NormalizedState<Meter> = {
         isFetching: false,
         total: 4,
         result: [1, 2, 3, 4],
@@ -97,7 +100,7 @@ describe('meterSelectors', () => {
     });
 
     it('can make a tree of meters; categorized by cities, addresses and such', () => {
-      const metersState: MetersState = {
+      const metersState: NormalizedState<Meter> = {
         isFetching: false,
         total: 4,
         result: [1, 2, 3],

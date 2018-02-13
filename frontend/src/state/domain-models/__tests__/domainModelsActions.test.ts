@@ -8,12 +8,22 @@ import {makeRestClient} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
-import {EndPoints, HttpMethod, Normalized} from '../domainModels';
+import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
+import {limit} from '../../ui/pagination/paginationReducer';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
-  addUser, deleteUser, fetchSelections, fetchUser, modifyProfile, modifyUser,
+  addUser,
+  deleteUser, DOMAIN_MODELS_CLEAR, domainModelsClear, fetchGateways,
+  fetchSelections,
+  fetchUser,
+  modifyProfile,
+  modifyUser,
   requestMethod,
 } from '../domainModelsActions';
+import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {Gateway} from '../gateway/gatewayModels';
+import {gatewaySchema} from '../gateway/gatewaySchema';
 import {Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -25,13 +35,18 @@ describe('domainModelsActions', () => {
   let mockRestClient: MockAdapter;
   let store;
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
+  const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
   const userPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
   const userPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
   const userDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
   const userEntityRequest = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
 
   beforeEach(() => {
-    store = configureMockStore({});
+    const initialState: Partial<DomainModelsState> = {
+      cities: {...initialDomain()},
+      gateways: {...initialDomain()},
+    };
+    store = configureMockStore({domainModels: initialState});
     mockRestClient = new MockAdapter(axios);
     makeRestClient('test');
   });
@@ -69,6 +84,50 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         selectionsRequest.request(),
         selectionsRequest.failure({...response}),
+      ]);
+    });
+    it('does not fetch data if it already exists', async () => {
+      const fetchedState: Partial<DomainModelsState> = {
+        cities: {isFetching: false, total: 1, entities: {1: {id: 1, name: '1'}}, result: [1]},
+      };
+      store = configureMockStore({domainModels: {...fetchedState}});
+
+      await getSelectionWithResponseOk();
+
+      expect(store.getActions()).toEqual([]);
+    });
+    it('does not fetch data if already fetching', async () => {
+      const fetchedState: Partial<DomainModelsState> = {
+        cities: {isFetching: true, total: 0, entities: {}, result: []},
+      };
+
+      store = configureMockStore({domainModels: {...fetchedState}});
+
+      await getSelectionWithResponseOk();
+
+      expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('get gateways', () => {
+
+    const getGatewaysWithResponseOk = async () => {
+      mockRestClient.onGet(EndPoints.gateways).reply(200, testData.gateways);
+      return store.dispatch(fetchGateways());
+    };
+
+    it('normalizes data and updates pagination metaData', async () => {
+      await getGatewaysWithResponseOk();
+
+      expect(store.getActions()).toEqual([
+        gatewayRequest.request(),
+        gatewayRequest.success(normalize(testData.gateways, gatewaySchema)),
+        paginationUpdateMetaData({
+          entityType: 'gateways',
+          content: ['g1', 'g2', 'g3', 'g4', 'g5'],
+          totalElements: 5,
+          totalPages: Math.ceil(5 / limit),
+        }),
       ]);
     });
   });
@@ -265,6 +324,15 @@ describe('domainModelsActions', () => {
       expect(store.getActions()).toEqual([
         userEntityRequest.request(),
         userEntityRequest.failure(errorResponse),
+      ]);
+    });
+  });
+  describe('clear domainModels', () => {
+    it('dispatches a clear action', () => {
+      store.dispatch(domainModelsClear());
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_CLEAR},
       ]);
     });
   });

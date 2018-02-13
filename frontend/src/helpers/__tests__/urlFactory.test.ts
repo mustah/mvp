@@ -1,52 +1,63 @@
 import {Period} from '../../components/dates/dateModels';
-import {EndPoints, PaginationMetadata} from '../../state/domain-models/domainModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
+import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {Status} from '../../types/Types';
-import {Maybe} from '../Maybe';
-import {encodedUriParametersForMeters, urlForNextPage, urlForPreviousPage} from '../urlFactory';
+import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../urlFactory';
 
 describe('urlFactory', () => {
 
-  describe('parameters from selected ids', () => {
+  describe('calculate uri parameters from selected ids and pagination', () => {
     const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {
       parameters.period = Period.latest;
       return parameters as SelectedParameters;
+    };
+    const pagination: Pagination = {
+      page: 0,
+      totalElements: 1000,
+      totalPages: 100,
+      size: 10,
     };
 
     it('returns empty parameters string when nothing is selected', () => {
       const selection = selectedParameters({cities: []});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}`);
     });
 
     it('returns selected city', () => {
       const selection = selectedParameters({cities: ['got']});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('city.id=got');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city.id=got`);
     });
 
     it('returns selected cities', () => {
       const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('city.id=got&city.id=sto&city.id=mmx');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city.id=got&city.id=sto&city.id=mmx`);
     });
 
     it('returns selected address', () => {
       const selection = selectedParameters({addresses: ['address 2']});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('address.id=address%202');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address.id=address%202`);
     });
 
     it('returns selected addresses', () => {
       const selection = selectedParameters({addresses: ['address 2', 'storgatan 5']});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('address.id=address%202&address.id=storgatan%205');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address.id=address%202&address.id=storgatan%205`);
     });
 
     it('returns selected statuses', () => {
       const selection = selectedParameters({meterStatuses: [Status.ok, Status.warning]});
 
-      expect(encodedUriParametersForMeters(selection)).toEqual('status.id=ok&status.id=warning');
+      expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&status.id=ok&status.id=warning`);
     });
 
     it('returns all selected parameters', () => {
@@ -57,72 +68,50 @@ describe('urlFactory', () => {
       });
 
       const expected =
-        'address.id=address%202&address.id=storgatan%205&city.id=got&city.id=sto&city.id=mmx&' +
-        'status.id=ok&status.id=warning';
-      expect(encodedUriParametersForMeters(selection)).toEqual(expected);
-    });
-
-  });
-
-  describe('can navigate through paginated resources', () => {
-    it('determines first page', () => {
-      const paginationOptions: PaginationMetadata = {
-        totalPages: 1,
-        totalElements: 2,
-        last: true,
-        first: true,
-        numberOfElements: 20,
-        sort: null,
-        size: 20,
-        number: 0,
-      };
-
-      expect(urlForPreviousPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.nothing());
+        `size=${pagination.size}&page=${pagination.page}&address.id=address%202&address.id=storgatan%205` +
+        '&city.id=got&city.id=sto&city.id=mmx&status.id=ok&status.id=warning';
+      expect(encodedUriParametersForMeters(pagination, selection)).toEqual(expected);
     });
   });
 
-  it('determines last page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 1,
-      totalElements: 2,
-      last: true,
-      first: true,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 0,
+  describe('calculate uri parameters from selected ids and no pagination', () => {
+    const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {
+      parameters.period = Period.latest;
+      return parameters as SelectedParameters;
     };
 
-    expect(urlForNextPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.nothing());
-  });
+    it('returns empty parameters string when nothing is selected', () => {
+      const selection = selectedParameters({cities: []});
 
-  it('determines url for next page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 2,
-      totalElements: 21,
-      last: false,
-      first: true,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 0,
-    };
+      expect(encodedUriParametersForGateways(selection))
+        .toEqual('');
+    });
 
-    expect(urlForNextPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.just('/measurements?number=1'));
-  });
+    it('returns selected city', () => {
+      const selection = selectedParameters({cities: ['got']});
 
-  it('determines url for previous page', () => {
-    const paginationOptions: PaginationMetadata = {
-      totalPages: 2,
-      totalElements: 21,
-      last: true,
-      first: false,
-      numberOfElements: 20,
-      sort: null,
-      size: 20,
-      number: 1,
-    };
+      expect(encodedUriParametersForGateways(selection))
+        .toEqual('city.id=got');
+    });
 
-    expect(urlForPreviousPage(EndPoints.measurements, paginationOptions)).toEqual(Maybe.just('/measurements?number=0'));
+    it('returns selected cities', () => {
+      const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
+
+      expect(encodedUriParametersForGateways(selection))
+        .toEqual('city.id=got&city.id=sto&city.id=mmx');
+    });
+
+    it('returns all selected parameters', () => {
+      const selection = selectedParameters({
+        addresses: ['address 2', 'storgatan 5'],
+        cities: ['got', 'sto', 'mmx'],
+        meterStatuses: [Status.ok, Status.warning],
+      });
+
+      const expected =
+        `address.id=address%202&address.id=storgatan%205` +
+        '&city.id=got&city.id=sto&city.id=mmx&MeterStatus.id=ok&MeterStatus.id=warning';
+      expect(encodedUriParametersForGateways(selection)).toEqual(expected);
+    });
   });
 });

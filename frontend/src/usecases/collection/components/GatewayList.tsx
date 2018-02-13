@@ -5,7 +5,7 @@ import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {translate} from '../../../services/translationService';
-import {Normalized} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
 import {OnClickWithId} from '../../../types/Types';
@@ -15,7 +15,7 @@ interface Props {
   selectEntryAdd: OnClickWithId;
 }
 
-export const GatewayList = (props: Normalized<Gateway> & Props) => {
+export const GatewayList = (props: DomainModel<Gateway> & Props) => {
   const {result, entities, selectEntryAdd} = props;
 
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;

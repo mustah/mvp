@@ -1,11 +1,14 @@
 import {createSelector, OutputSelector} from 'reselect';
+import {Period} from '../../../components/dates/dateModels';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {DomainModel, Normalized, SelectionEntity} from '../../domain-models/domainModels';
-import {getResultDomainModels} from '../../domain-models/domainModelsSelectors';
-import {Meter, MetersState} from '../../domain-models/meter/meterModels';
-import {getMeterEntities} from '../../domain-models/meter/meterSelectors';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
+import {DomainModel, NormalizedState, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
+import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
+import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
+import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
 import {
   LookupState,
@@ -16,12 +19,11 @@ import {
   SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
-import {Period} from '../../../components/dates/dateModels';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
 
 const getSelectionGroup = (entityType: string) =>
-  (state: LookupState): Normalized<SelectionEntity> => state.domainModels[entityType];
+  (state: LookupState): DomainModel<SelectionEntity> => state.domainModels[entityType];
 
 const getSelectedEntityIdsSelector = (entityType: string) =>
   createSelector<LookupState, SelectedParameters, uuid[]>(
@@ -32,24 +34,24 @@ const getSelectedEntityIdsSelector = (entityType: string) =>
 const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter((a) => !subSet.includes(a));
 
 const deselectedIdsSelector = (entityType: string) =>
-  createSelector<LookupState, Normalized<SelectionEntity>, SelectedParameters, uuid[]>(
+  createSelector<LookupState, DomainModel<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
-    ({result}: Normalized<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
+    ({result}: DomainModel<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
   );
 
 const getDeselectedEntities = (entityType: string) =>
-  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
+  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     deselectedIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: Normalized<SelectionEntity>) => ids.map((id) => entities[id]),
+    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) => ids.map((id) => entities[id]),
   );
 
 const getSelectedEntities = (entityType: string) =>
-  createSelector<LookupState, uuid[], Normalized<SelectionEntity>, SelectionEntity[]>(
+  createSelector<LookupState, uuid[], DomainModel<SelectionEntity>, SelectionEntity[]>(
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
-    (ids: uuid[], {entities}: Normalized<SelectionEntity>) =>
+    (ids: uuid[], {entities}: DomainModel<SelectionEntity>) =>
       ids.map((id: uuid) => entities[id]).filter((item) => item),
   );
 
@@ -93,15 +95,20 @@ export const getProductModels = getList(ParameterName.productModels);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export const getEncodedUriParametersForMeters = createSelector<SearchParameterState, SelectedParameters, string>(
-  getSelectedParameters,
-  encodedUriParametersForMeters,
-);
+export type UriLookupStatePaginated = SearchParameterState & PaginationLookupState<PaginatedDomainModelsState>;
 
-export const getEncodedUriParametersForGateways = createSelector<SearchParameterState, SelectedParameters, string>(
-  getSelectedParameters,
-  encodedUriParametersForGateways,
-);
+export const getEncodedUriParametersForMeters =
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
+    getPagination,
+    getSelectedParameters,
+    encodedUriParametersForMeters,
+  );
+
+export const getEncodedUriParametersForGateways =
+  createSelector<SearchParameterState, SelectedParameters, string>(
+    getSelectedParameters,
+    encodedUriParametersForGateways,
+  );
 
 export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(
   (selection: SelectionState) => selection.selected,
@@ -115,23 +122,24 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
 
-export const getSelectionSummary = createSelector<MetersState, uuid[], DomainModel<Meter>, SelectionSummary>(
-  getResultDomainModels,
-  getMeterEntities,
-  (metersIds: uuid[], meters: DomainModel<Meter>) => {
-    const cities = new Set<uuid>();
-    const addresses = new Set<uuid>();
+export const getSelectionSummary =
+  createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, SelectionSummary>(
+    getResultDomainModels,
+    getEntitiesDomainModels,
+    (metersIds: uuid[], meters: ObjectsById<Meter>) => {
+      const cities = new Set<uuid>();
+      const addresses = new Set<uuid>();
 
-    metersIds.map((meterId: uuid) => {
-        const {city, address} = meters[meterId];
-        cities.add(city.id);
-        addresses.add(address.id);
-      },
-    );
-    return ({
-      cities: cities.size,
-      addresses: addresses.size,
-      meters: metersIds.length,
-    });
-  },
-);
+      metersIds.map((meterId: uuid) => {
+          const {city, address} = meters[meterId];
+          cities.add(city.id);
+          addresses.add(address.id);
+        },
+      );
+      return ({
+        cities: cities.size,
+        addresses: addresses.size,
+        meters: metersIds.length,
+      });
+    },
+  );

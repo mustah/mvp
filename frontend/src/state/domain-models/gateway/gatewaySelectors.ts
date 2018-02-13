@@ -5,12 +5,11 @@ import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, uuid} from '../../../types/Types';
 import {FilterParam} from '../../search/selection/selectionModels';
-import {DomainModel} from '../domainModels';
+import {ObjectsById} from '../domainModels';
 import {getResultDomainModels} from '../domainModelsSelectors';
 import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
 
-export const getGatewaysTotal = (state: GatewaysState): number => state.total;
-export const getGatewayEntities = (state: GatewaysState): DomainModel<Gateway> => state.entities;
+export const getGatewayEntities = (state: GatewaysState): ObjectsById<Gateway> => state.entities;
 
 const addToCategory = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
 
@@ -70,10 +69,10 @@ const addGatewayDataToSummary = (summary, fieldKey: GatewayDataSummaryKey, gatew
 };
 
 export const getGatewayDataSummary =
-  createSelector<GatewaysState, uuid[], DomainModel<Gateway>, Maybe<GatewayDataSummary>>(
+  createSelector<GatewaysState, uuid[], ObjectsById<Gateway>, Maybe<GatewayDataSummary>>(
     getResultDomainModels,
     getGatewayEntities,
-    (gatewayIds: uuid[], gateways: DomainModel<Gateway>): Maybe<GatewayDataSummary> => {
+    (gatewayIds: uuid[], gateways: ObjectsById<Gateway>): Maybe<GatewayDataSummary> => {
       const summaryTemplate: {[P in GatewayDataSummaryKey]: PieData} = {
         status: {}, flagged: {}, city: {}, productModel: {},
       };

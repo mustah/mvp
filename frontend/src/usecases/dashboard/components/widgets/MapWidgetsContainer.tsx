@@ -1,25 +1,25 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {Content} from '../../../../components/content/Content';
 import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {DomainModel, GeoPosition} from '../../../../state/domain-models/domainModels';
-import {Meter} from '../../../../state/domain-models/meter/meterModels';
+import {translate} from '../../../../services/translationService';
+import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
+import {GeoPosition} from '../../../../state/domain-models/domainModels';
 import {OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
+import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
 import {Map} from '../../../map/containers/Map';
 import {closeClusterDialog} from '../../../map/mapActions';
 import {MapMarker} from '../../../map/mapModels';
 import {MapState} from '../../../map/mapReducer';
 import {Widget} from './Widget';
-import {Content} from '../../../../components/content/Content';
-import {translate} from '../../../../services/translationService';
-import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
 
 interface OwnProps {
-  markers: DomainModel<MapMarker>;
+  markers: {[key: string]: MapMarker};
 }
 
 interface StateToProps {
@@ -34,7 +34,7 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   // TODO retrieve real data
-  const markersFailing: DomainModel<MapMarker> = {
+  const markersFailing: {[key: string]: MapMarker} = {
     0: {
       status: {id: 3, name: 'Fel'},
       address: {id: '', cityId: '', name: ''},

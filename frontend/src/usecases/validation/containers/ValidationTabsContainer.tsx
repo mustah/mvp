@@ -1,83 +1,51 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Dialog} from '../../../components/dialog/Dialog';
-import {Loader} from '../../../components/loading/Loader';
-import {MeterList} from '../../../components/meters/MeterList';
-import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
-import {Maybe} from '../../../helpers/Maybe';
+import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {DomainModel} from '../../../state/domain-models/domainModels';
-import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {Meter, MeterDataSummary} from '../../../state/domain-models/meter/meterModels';
-import {getMeterDataSummary, getMeterEntities, getMetersTotal} from '../../../state/domain-models/meter/meterSelectors';
-import {setSelection} from '../../../state/search/selection/selectionActions';
-import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
-import {changePaginationValidation} from '../../../state/ui/pagination/paginationActions';
-import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPaginationList, getValidationPagination} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
-import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {Map} from '../../map/containers/Map';
-import {closeClusterDialog} from '../../map/mapActions';
-import {getSelectedMeterMarker} from '../../map/mapSelectors';
-import {selectEntryAdd} from '../../report/reportActions';
-import {ValidationOverview} from '../components/ValidationOverview';
-import {Content} from '../../../components/content/Content';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 
-interface StateToProps extends TabsContainerStateToProps {
-  metersCount: number;
-  meterDataSummary: Maybe<MeterDataSummary>;
-  meters: DomainModel<Meter>;
-  paginatedList: uuid[];
-  pagination: Pagination;
-  selectedMarker: Maybe<Meter>;
-  isFetching: boolean;
-}
+// interface StateToProps extends TabsContainerStateToProps {
+//   // meterDataSummary: Maybe<MeterDataSummary>;
+//   // meters: ObjectsById<Meter>;
+//   // selectedMarker: Maybe<Meter>;
+// }
+//
+// interface DispatchToProps extends TabsContainerDispatchToProps {
+//   // setSelection: OnSelectParameter;
+//   // closeClusterDialog: OnClick;
+// }
 
-interface DispatchToProps extends TabsContainerDispatchToProps {
-  paginationChangePage: OnChangePage;
-  selectEntryAdd: OnClickWithId;
-  setSelection: OnSelectParameter;
-  closeClusterDialog: OnClick;
-}
+type Props = TabsContainerStateToProps & TabsContainerDispatchToProps;
 
-const ValidationTabs = (props: StateToProps & DispatchToProps) => {
+// TODO: ValdationTabsContainer, components that don't hadle the paginated endpoints need to be fixed.
+const ValidationTabs = (props: Props) => {
   const {
     selectedTab,
     changeTab,
-    meters,
-    meterDataSummary,
-    pagination,
-    paginationChangePage,
-    paginatedList,
-    metersCount,
-    selectEntryAdd,
-    setSelection,
-    selectedMarker,
-    closeClusterDialog,
-    isFetching,
+    // meters,
+    // meterDataSummary,
+    // setSelection,
+    // selectedMarker,
+    // closeClusterDialog,
   } = props;
 
-  const dialog = selectedMarker.isJust() && (
-    <Dialog isOpen={true} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={selectedMarker.get()}/>
-    </Dialog>
-  );
+  // const dialog = selectedMarker.isJust() && (
+  //   <Dialog isOpen={true} close={closeClusterDialog}>
+  //     <MeterDetailsContainer meter={selectedMarker.get()}/>
+  //   </Dialog>
+  // );
 
-  const hasMeters: boolean = isMarkersWithinThreshold(meters);
+  // const hasMeters: boolean = isMarkersWithinThreshold(meters);
 
   return (
     <Tabs>
@@ -90,55 +58,39 @@ const ValidationTabs = (props: StateToProps & DispatchToProps) => {
         <TabSettings/>
       </TabTopBar>
       <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
-        </Loader>
+        {/*<ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>*/}
       </TabContent>
       <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <div>
-            <MeterList result={paginatedList} entities={meters} selectEntryAdd={selectEntryAdd}/>
-            <PaginationControl pagination={pagination} changePage={paginationChangePage} numOfEntities={metersCount}/>
-          </div>
-        </Loader>
+        <MeterListContainer componentId={'validationMeterList'}/>
       </TabContent>
       <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <Loader isFetching={isFetching}>
-          <div>
-            <Content hasContent={hasMeters} noContentText={translate('no meters')}>
-              <Map>
-                <ClusterContainer markers={meters}/>
-              </Map>
-            </Content>
-            {dialog}
-          </div>
-        </Loader>
+        {/*<div>*/}
+        {/*<Content hasContent={hasMeters} noContentText={translate('no meters')}>*/}
+        {/*<Map>*/}
+        {/*<ClusterContainer markers={meters}/>*/}
+        {/*</Map>*/}
+        {/*</Content>*/}
+        {/*/!*{dialog}*!/*/}
+        {/*</div>*/}
       </TabContent>
     </Tabs>
   );
 };
 
-const mapStateToProps = ({ui, map, domainModels: {meters}}: RootState): StateToProps => {
-  const pagination = getValidationPagination(ui);
+const mapStateToProps = ({ui}: RootState): TabsContainerStateToProps => {
   return {
     selectedTab: getSelectedTab(ui.tabs.validation),
-    meterDataSummary: getMeterDataSummary(meters),
-    metersCount: getMetersTotal(meters),
-    meters: getMeterEntities(meters),
-    paginatedList: getPaginationList({pagination, result: getResultDomainModels(meters)}),
-    pagination,
-    selectedMarker: getSelectedMeterMarker(map),
-    isFetching: meters.isFetching,
+    // meterDataSummary: getMeterDataSummary(meters),
+    // meters: getMeterEntities({...paginatedMeters, componentId: 'validation'}),
+    // selectedMarker: getSelectedMeterMarker(map),
   };
 };
 
-const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
+const mapDispatchToProps = (dispatch): TabsContainerDispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
-  paginationChangePage: changePaginationValidation,
-  selectEntryAdd,
-  setSelection,
-  closeClusterDialog,
+  // setSelection,
+  // closeClusterDialog,
 }, dispatch);
 
 export const ValidationTabsContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);
+  connect<TabsContainerStateToProps, TabsContainerDispatchToProps>(mapStateToProps, mapDispatchToProps)(ValidationTabs);
