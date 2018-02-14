@@ -1,10 +1,21 @@
 def getVersion = { ->
-  def stdout = new ByteArrayOutputStream()
-  exec {
-    commandLine 'git', 'describe', '--tags', '--abbrev=7', '--dirty'
-    standardOutput = stdout
-  }
-  return stdout.toString().trim()
+    def versionFile = new File('.version')
+    try {
+        def command = 'git describe --tags --abbrev=7 --dirty'
+        def proc = command.execute()
+        proc.waitFor()
+
+        versionFile.createNewFile()
+        versionFile.text = proc.text.trim()
+
+        return proc.text.trim()
+    } catch (java.io.IOException e) {
+        if (versionFile.exists()) {
+            return versionFile.text.trim()
+        } else {
+            println "No .version file, dunno what to do"
+        }
+    }
 }
 
 allprojects {
@@ -90,12 +101,6 @@ task findbugs {
 
 task check {
   dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
-}
-
-task dotVersion {
-  def file = new File(".version")
-  file.createNewFile()
-  file.text = "$version"
 }
 
 task assemble(dependsOn: ':check')

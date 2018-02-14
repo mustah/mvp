@@ -1,6 +1,8 @@
-image: sgrio/java-oracle:jdk_8
+image:
+    name: gradle:jdk8
 
 stages:
+    - prep
     - build
     - test
     - package
@@ -14,13 +16,26 @@ before_script:
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 docker:postgresql:
-    stage: build
+    stage: prep
     tags:
       - shell
     script:
       - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
       - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
       - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+
+dotVersion:
+    stage: prep
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .version
+    image:
+      name: alpine/git:latest
+      entrypoint: ["/bin/sh", "-c"]
+    script:
+      - git describe --tags --abbrev=7 --dirty > .version
+      - chmod 644 .version
 
 build:
     stage: build
@@ -32,61 +47,52 @@ build:
             - .yarn
             - .version
     script:
-        - apt-get update && apt-get -y install git
-        - ./gradlew dotVersion
-        - ./gradlew clean build -x test -x integrationTest
+        - gradle clean build -x test -x integrationTest
 
 system:
     stage: test
     cache:
         key: "$CI_COMMIT_REF_NAME"
         paths:
-            - .gradle/wrapper
             - .gradle/caches
             - .yarn
+            - .version
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
     script:
-        - apt-get update && apt-get -y install git
-        - ./gradlew systemTestCI
+        - gradle systemTestCI -x test
 
 integration:
     stage: test
     cache:
         key: "$CI_COMMIT_REF_NAME"
         paths:
-            - .gradle/wrapper
             - .gradle/caches
             - .yarn
+            - .version
     script:
-        - apt-get update && apt-get -y install git
-        - ./gradlew integrationTest
+        - gradle integrationTest -x test
 unit:
     stage: test
     cache:
         key: "$CI_COMMIT_REF_NAME"
         paths:
-            - .gradle/wrapper
             - .gradle/caches
             - .yarn
     script:
-        - apt-get update && apt-get -y install git
-        - ./gradlew test
+        - gradle test
 
 assemble:
     stage: package
     cache:
         key: "$CI_COMMIT_REF_NAME"
         paths:
-            - .gradle/wrapper
             - .gradle/caches
             - .yarn
             - .version
     script:
-        - apt-get update && apt-get -y install git
-        - ./gradlew dotVersion
-        - ./gradlew assemble
+        - gradle assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
