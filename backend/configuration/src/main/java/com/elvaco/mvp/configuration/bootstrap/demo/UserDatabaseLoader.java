@@ -124,5 +124,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
       .forEach(userUseCases::create);
 
     settingUseCases.setDemoUsersLoaded();
+    SecurityContextHolder.getContext().setAuthentication(null);
   }
 }
