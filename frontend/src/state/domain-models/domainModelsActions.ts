@@ -91,8 +91,8 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const isFetchingOrExisting = ({result, isFetching}: NormalizedState<HasId>) =>
-  result.length > 0 || isFetching;
+const isFetchingOrExistingOrError = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>) =>
+  isSuccessfullyFetched || isFetching || error;
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -106,7 +106,7 @@ const restGetIfNeeded = <T extends HasId>(
 
   return (requestData?: string) => (dispatch, getState: GetState) => {
     const {domainModels} = getState();
-    const shouldFetch = !isFetchingOrExisting(domainModels[entityType]);
+    const shouldFetch = !isFetchingOrExistingOrError(domainModels[entityType]);
 
     if (shouldFetch) {
       return asyncRequest<string, Normalized<T>>({

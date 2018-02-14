@@ -27,6 +27,7 @@ describe('domainModelsReducer', () => {
 
       expect(addresses(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
+        isSuccessfullyFetched: true,
         entities: {
           1: {id: 1, name: 'Stampgatan 46', cityId: 'got'},
           2: {id: 2, name: 'Stampgatan 33', cityId: 'got'},
@@ -65,6 +66,7 @@ describe('domainModelsReducer', () => {
 
       expect(cities(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
+        isSuccessfullyFetched: true,
         entities: {
           got: {id: 'got', name: 'Göteborg'},
           sto: {id: 'sto', name: 'Stockholm'},
@@ -103,10 +105,11 @@ describe('domainModelsReducer', () => {
     };
 
     const populatedState: UserState = {
+      ...initialState,
       result: [3],
       entities: {3: user},
-      isFetching: false,
       total: 1,
+      isSuccessfullyFetched: true,
     };
 
     it('has initial state', () => {
@@ -122,6 +125,7 @@ describe('domainModelsReducer', () => {
       expect(users(initialState, usersPostRequest.success(user))).toEqual({
         result: [3],
         entities: {3: user},
+        isSuccessfullyFetched: false,
         isFetching: false,
         total: 1,
       });
@@ -137,7 +141,10 @@ describe('domainModelsReducer', () => {
     });
 
     it('deletes a user from state', () => {
-      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual(initialState);
+      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual({
+        ...initialState,
+        isSuccessfullyFetched: true,
+      });
     });
 
     it('has error when fetching has failed', () => {
@@ -153,6 +160,7 @@ describe('domainModelsReducer', () => {
       expect(users(initialState, usersGetUserEntity.success(user))).toEqual({
         result: [3],
         entities: {3: user},
+        isSuccessfullyFetched: false,
         isFetching: false,
         total: 1,
       });

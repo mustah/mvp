@@ -21,6 +21,7 @@ export const initialDomain = <T extends HasId>(): NormalizedState<T> => ({
   result: [],
   entities: {},
   isFetching: false,
+  isSuccessfullyFetched: false,
   total: 0,
 });
 
@@ -34,6 +35,7 @@ const setEntities = <T extends HasId>(
   return {
     ...state,
     isFetching: false,
+    isSuccessfullyFetched: true,
     entities,
     result,
     total: result.length,
