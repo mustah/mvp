@@ -75,7 +75,8 @@ const asyncRequest = async <REQ, DAT>(
     }
   } catch (error) {
     const {response} = error;
-    const data: ErrorResponse = response.data || {message: firstUpperTranslated('an unexpected error occurred')};
+    const data: ErrorResponse = response && response.data ||
+      {message: firstUpperTranslated('an unexpected error occurred')};
     dispatch(failure({...data, page}));
     if (afterFailure) {
       afterFailure(data, dispatch);
@@ -97,7 +98,7 @@ const restGetIfNeeded = <T extends HasId>(
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
   return (page: number, requestData?: string) =>
-     (dispatch: Dispatch<RootState>, getState: GetState) => {
+    (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
       const shouldFetch = !isFetchingOrExistingOrError(page, paginatedDomainModels[entityType]);

@@ -83,10 +83,12 @@ const asyncRequest = async <REQ, DAT>(
       afterSuccess(formattedData, dispatch);
     }
   } catch (error) {
-    const {response: {data}} = error;
+    const {response} = error;
+    const data: ErrorResponse = response && response.data ||
+      {message: firstUpperTranslated('an unexpected error occurred')};
     dispatch(failure(data));
     if (afterFailure) {
-      afterFailure(data.message, dispatch);
+      afterFailure(data, dispatch);
     }
   }
 };
@@ -201,18 +203,18 @@ export const addUser = restPost<User>(EndPoints.users, {
     dispatch(showSuccessMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error: error.message})));
   },
 });
 
 export const addOrganisation = restPost<Organisation>(EndPoints.organisations, {
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(
-        firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
-      ));
+      firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
+    ));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error: error.message})));
   },
 });
 
@@ -221,7 +223,7 @@ export const modifyUser = restPut<User>(EndPoints.users, {
     dispatch(showSuccessMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error: error.message})));
   },
 });
 
@@ -231,7 +233,7 @@ export const modifyProfile = restPut<User>(EndPoints.users, {
     dispatch(authSetUser(user));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error: error.message})));
   },
 });
 
@@ -242,7 +244,7 @@ export const deleteUser = restDelete<User>(EndPoints.users, {
       );
     },
     afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})));
+      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error: error.message})));
     },
   },
 );
