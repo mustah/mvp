@@ -16,6 +16,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Component;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
@@ -48,6 +50,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final GatewayRepository gatewayRepository;
+  private final MeterDefinitions meterDefinitions;
   private final SettingUseCases settingUseCases;
 
   @Autowired
@@ -55,11 +58,13 @@ public class CsvDemoDataLoader implements CommandLineRunner {
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
     GatewayRepository gatewayRepository,
+    MeterDefinitions meterDefinitions,
     SettingUseCases settingUseCases
   ) {
     this.logicalMeters = logicalMeters;
     this.physicalMeters = physicalMeters;
     this.gatewayRepository = gatewayRepository;
+    this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
   }
 
@@ -70,15 +75,21 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       return;
     }
 
+    MeterDefinition meterDefinition = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
+
     Map<String, Location> locationMap = mapAddressToLocation();
 
-    importFrom("data/meters_perstorp.csv", locationMap);
-    importFrom("data/meters_almhult.csv", locationMap);
+    importFrom("data/meters_perstorp.csv", locationMap, meterDefinition);
+    importFrom("data/meters_almhult.csv", locationMap, meterDefinition);
 
     settingUseCases.setDemoDataLoaded();
   }
 
-  private void importFrom(String filePath, Map<String, Location> locationMap) throws IOException {
+  private void importFrom(
+    String filePath,
+    Map<String, Location> locationMap,
+    MeterDefinition meterDefinition
+  ) throws IOException {
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
       .stream(getFile(filePath), stream ->
@@ -89,8 +100,10 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               csvData.meterStatus,
               locationMap.get(csvData.address),
               new Date(),
-              new PropertyCollection(new UserProperty(csvData.facilityId))
-            ).withMeterDefinition(MeterDefinition.DISTRICT_HEATING_METER);
+              new PropertyCollection(new UserProperty(csvData.facilityId)),
+              emptyList(),
+              meterDefinition
+            );
             PhysicalMeter physicalMeter = new PhysicalMeter(
               ELVACO,
               csvData.meterId,
@@ -115,7 +128,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.identity,
             physicalMeter.medium,
             physicalMeter.manufacturer,
-            logicalMeter.id));
+            logicalMeter.id
+          ));
       });
   }
 

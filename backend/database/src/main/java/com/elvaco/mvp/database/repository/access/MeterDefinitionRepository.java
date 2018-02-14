@@ -6,6 +6,7 @@ import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
 
 public class MeterDefinitionRepository implements MeterDefinitions {
+
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
   private final MeterDefinitionMapper meterDefinitionMapper;
 
@@ -20,9 +21,7 @@ public class MeterDefinitionRepository implements MeterDefinitions {
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
     return meterDefinitionMapper.toDomainModel(
-      meterDefinitionJpaRepository.save(
-        meterDefinitionMapper.toEntity(meterDefinition)
-      )
+      meterDefinitionJpaRepository.save(meterDefinitionMapper.toEntity(meterDefinition))
     );
   }
 }

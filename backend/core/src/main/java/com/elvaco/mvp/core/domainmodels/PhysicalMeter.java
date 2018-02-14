@@ -19,7 +19,7 @@ public class PhysicalMeter {
   @Nullable
   public final Long logicalMeterId;
   public final String manufacturer;
-  private List<Measurement> measurements;
+  private final List<Measurement> measurements;
 
   public PhysicalMeter(
     @Nullable Long id,
