@@ -7,8 +7,9 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
-public class MeterDefinitionMapper implements DomainEntityMapper<MeterDefinition,
-  MeterDefinitionEntity> {
+public class MeterDefinitionMapper
+  implements DomainEntityMapper<MeterDefinition, MeterDefinitionEntity> {
+
   @Override
   public MeterDefinition toDomainModel(MeterDefinitionEntity entity) {
     return new MeterDefinition(
@@ -24,11 +25,11 @@ public class MeterDefinitionMapper implements DomainEntityMapper<MeterDefinition
   public MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
       domainModel.id,
-      domainModel.getQuantities()
+      domainModel.quantities
         .stream()
         .map(this::toQuantityEntity)
         .collect(Collectors.toList()),
-      domainModel.getMedium()
+      domainModel.medium
     );
   }
 

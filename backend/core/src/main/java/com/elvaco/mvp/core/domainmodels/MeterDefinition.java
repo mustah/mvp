@@ -1,16 +1,19 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableList;
+
 @EqualsAndHashCode
 public class MeterDefinition {
+
   public static final MeterDefinition HOT_WATER_METER = new MeterDefinition(
     "Hot water meter",
-    Arrays.asList(
+    asList(
       Quantity.VOLUME,
       Quantity.FLOW,
       Quantity.TEMPERATURE
@@ -19,7 +22,7 @@ public class MeterDefinition {
 
   public static final MeterDefinition DISTRICT_HEATING_METER = new MeterDefinition(
     "District heating meter",
-    Arrays.asList(
+    asList(
       Quantity.ENERGY,
       Quantity.VOLUME,
       Quantity.POWER,
@@ -32,7 +35,7 @@ public class MeterDefinition {
 
   public static final MeterDefinition DISTRICT_COOLING_METER = new MeterDefinition(
     "District cooling meter",
-    Arrays.asList(
+    asList(
       Quantity.ENERGY,
       Quantity.VOLUME,
       Quantity.POWER,
@@ -45,8 +48,8 @@ public class MeterDefinition {
 
   @Nullable
   public final Long id;
-  private String medium;
-  private List<Quantity> quantities;
+  public final String medium;
+  public final List<Quantity> quantities;
 
   private MeterDefinition(String medium, List<Quantity> quantities) {
     this(null, medium, quantities);
@@ -59,14 +62,6 @@ public class MeterDefinition {
   ) {
     this.id = id;
     this.medium = medium;
-    this.quantities = quantities;
-  }
-
-  public String getMedium() {
-    return medium;
-  }
-
-  public List<Quantity> getQuantities() {
-    return quantities;
+    this.quantities = unmodifiableList(quantities);
   }
 }

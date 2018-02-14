@@ -86,11 +86,11 @@ public class LogicalMeter {
   }
 
   public String getMedium() {
-    return meterDefinition != null ? meterDefinition.getMedium() : "Unknown medium";
+    return meterDefinition != null ? meterDefinition.medium : "Unknown medium";
   }
 
   public List<Quantity> getQuantities() {
-    return meterDefinition != null ? meterDefinition.getQuantities() : Collections.emptyList();
+    return meterDefinition != null ? meterDefinition.quantities : Collections.emptyList();
   }
 
   public boolean hasMeterDefinition() {
