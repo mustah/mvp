@@ -1,8 +1,9 @@
 image: sgrio/java-oracle:jdk_8
 
 stages:
-    - docker
     - build
+    - test
+    - package
     - deploy
 
 variables:
@@ -12,8 +13,8 @@ before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
-postgresql:
-    stage: docker
+docker:postgresql:
+    stage: build
     tags:
       - shell
     script:
@@ -29,14 +30,63 @@ build:
             - .gradle/wrapper
             - .gradle/caches
             - .yarn
+            - .version
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew dotVersion
+        - ./gradlew clean build -x test -x integrationTest
+
+system:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
     script:
         - apt-get update && apt-get -y install git
-        - ./gradlew dotVersion
-        - ./gradlew clean build assemble
         - ./gradlew systemTestCI
+
+integration:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew integrationTest
+unit:
+    stage: test
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew test
+
+assemble:
+    stage: package
+    cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+            - .gradle/wrapper
+            - .gradle/caches
+            - .yarn
+            - .version
+    script:
+        - apt-get update && apt-get -y install git
+        - ./gradlew dotVersion
+        - ./gradlew assemble
     artifacts:
         name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
         paths:
@@ -70,7 +120,7 @@ build:
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
     dependencies:
-      - build
+      - assemble
 
 deploy_protected:
   <<: *review_app
