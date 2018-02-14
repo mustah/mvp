@@ -230,6 +230,24 @@ msgstr "email"
 msgid "organisation"
 msgstr "organisation"
 
+msgid "organisations"
+msgstr "organisations"
+
+msgid "add organisation"
+msgstr "add organisation"
+
+msgid "organisation name"
+msgstr "organisation name"
+
+msgid "organisation code"
+msgstr "organisation code"
+
+msgid "successfully created the organisation {{name}} ({{code}})"
+msgstr "successfully created the organisation {{name}} ({{code}})"
+
+msgid "failed to create organisation: {{error}}"
+msgstr "failed to create organisation: {{error}}"
+
 msgid "roles"
 msgstr "roles"
 

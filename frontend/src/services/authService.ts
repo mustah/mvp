@@ -6,9 +6,14 @@ import {Role} from '../state/domain-models/user/userModels';
 
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
 const isNotAuthenticatedSelector = (state: RootState): boolean => !state.auth.isAuthenticated;
+
 export const isAdminSelector = ({auth: {user}}: RootState): boolean =>
   (user!.roles.includes(Role.ADMIN) || user!.roles.includes(Role.SUPER_ADMIN));
+export const isSuperAdminSelector = ({auth: {user}}: RootState) => user!.roles.includes(Role.SUPER_ADMIN);
+
 const isAdminAuthenticatedSelector = (state: RootState) => isAuthenticatedSelector(state) && isAdminSelector(state);
+const isSuperAdminAuthenticatedSelector = (state: RootState) =>
+  isAuthenticatedSelector(state) && isSuperAdminSelector(state);
 
 export const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.login,
@@ -19,6 +24,12 @@ export const userIsAuthenticated = connectedRouterRedirect({
 export const adminIsAuthenticated = connectedRouterRedirect({
   redirectPath: routes.home,
   authenticatedSelector: isAdminAuthenticatedSelector,
+  allowRedirectBack: false,
+});
+
+export const superAdminIsAuthenticated = connectedRouterRedirect({
+  redirectPath: routes.admin,
+  authenticatedSelector: isSuperAdminAuthenticatedSelector,
   allowRedirectBack: false,
 });
 
