@@ -5,7 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 applicationName = 'mvp'
 
 dependencyManagement {
-  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
+  imports {mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"}
 }
 
 mainClassName = "com.elvaco.mvp.MvpApplication"
@@ -20,6 +20,7 @@ dependencies {
   compile 'org.springframework.security:spring-security-web'
   compile 'org.springframework.security:spring-security-config'
   compile 'org.simpleflatmapper:sfm-csv:3.15.5'
+  compile 'org.ehcache:ehcache:3.4.0'
 
   compileOnly 'org.projectlombok:lombok:1.16.18'
 

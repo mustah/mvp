@@ -17,14 +17,15 @@ spring:
       hibernate.type: trace
       hibernate.jdbc.batch_size: 30
 
+ehcache:
+  heap-entries: 1000
+  time-to-live: 60
+
 zuul:
   routes:
     gateways:
       path: /v1/api/gateways/**
       url: http://localhost:4000/v1/api/gateways/
-    meters:
-      path: /v1/api/meters/**
-      url: http://localhost:4000/v1/api/meters/
     selections:
       path: /v1/api/selections/**
       url: http://localhost:4000/v1/api/selections/

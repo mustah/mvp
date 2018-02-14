@@ -5,7 +5,6 @@ import com.elvaco.mvp.database.repository.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.web.security.JpaUserDetailsService;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 import org.springframework.beans.factory.annotation.Autowired;

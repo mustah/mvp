@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -24,14 +25,17 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
+  private final UserCache userCache;
 
   @Autowired
   WebSecurityConfig(
     UserDetailsService userDetailsService,
-    PasswordEncoder passwordEncoder
+    PasswordEncoder passwordEncoder,
+    UserCache userCache
   ) {
     this.userDetailsService = userDetailsService;
     this.passwordEncoder = passwordEncoder;
+    this.userCache = userCache;
   }
 
   @Override
@@ -65,6 +69,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userDetailsService);
     authProvider.setPasswordEncoder(passwordEncoder);
+    authProvider.setUserCache(userCache);
     return authProvider;
   }
 }

@@ -15,5 +15,9 @@ spring:
       hibernate.type: trace
       hibernate.jdbc.batch_size: 30
 
+ehcache:
+  heap-entries: 1000
+  time-to-live: 60
+
 liquibase:
   enabled: false
