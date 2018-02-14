@@ -65,8 +65,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       String status = seed % 10 == 0 ? "Warning" : "Ok";
       saveLogicalMeter(seed, status);
     }
-
-    restClient().loginWith("evanil@elvaco.se", "eva123");
   }
 
   @After
@@ -127,7 +125,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithinPeriod() {
-    Page<LogicalMeterDto> response = restClient()
+    Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?before=2001-01-20T10:10:00.00Z&after=2001-01-10T10:10:00.00Z",
         LogicalMeterDto.class
@@ -140,7 +138,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithPredicates() {
-    Page<LogicalMeterDto> response = restClient()
+    Page<LogicalMeterDto> response = asElvacoUser()
       .getPage("/meters?status=Warning", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(5);

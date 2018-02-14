@@ -2,33 +2,64 @@ package com.elvaco.mvp.web;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrganisationControllerTest extends IntegrationTest {
 
+  @Autowired
+  Organisations organisations;
+
+  private Organisation secretService =
+    new Organisation(null, "Secret Service", "secret-service");
+
+  private Organisation wayneIndustries =
+    new Organisation(null, "Wayne Industries", "wayne-industries");
+
+  private Organisation theBeatles =
+    new Organisation(null, "The Beatles", "the-beatles");
+
+
   @After
   public void tearDown() {
+    organisations.findAll()
+      .stream()
+      .filter(organisation -> !organisation.name.equals(ELVACO.name))
+      .forEach(
+        (organisation) -> organisations.deleteById(organisation.id)
+      );
     restClient().logout();
+  }
+
+  @Before
+  public void setUp() {
+    secretService = organisations.save(secretService);
+    wayneIndustries = organisations.save(wayneIndustries);
+    theBeatles = organisations.save(theBeatles);
   }
 
   @Test
   public void superAdminFindsOrganisationById() {
     ResponseEntity<OrganisationDto> request = asSuperAdmin()
-      .get("/organisations/3", OrganisationDto.class);
+      .get("/organisations/" + secretService.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     OrganisationDto body = request.getBody();
 
-    assertThat(body).hasFieldOrPropertyWithValue("id", 3L);
+    assertThat(body).hasFieldOrPropertyWithValue("id", secretService.id);
     assertThat(body).hasFieldOrPropertyWithValue("name", "Secret Service");
     assertThat(body).hasFieldOrPropertyWithValue("code", "secret-service");
   }
@@ -36,7 +67,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asAdminOfElvaco()
-      .get("/organisations/1", OrganisationDto.class);
+      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -44,7 +75,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminDoesNotFindOtherOrganisationById() {
     ResponseEntity<OrganisationDto> request = asElvacoUser()
-      .get("/organisations/4", OrganisationDto.class);
+      .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -52,7 +83,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asElvacoUser()
-      .get("/organisations/1", OrganisationDto.class);
+      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -63,11 +94,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations", List.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
-    /*
-     * we do not teardown between every test because of the time cost. the fixtures include 2
-     * organisations, but the other tests adds and delete some
-     */
-    assertThat(request.getBody().size()).isGreaterThanOrEqualTo(2);
+    assertThat(request.getBody().size()).isGreaterThanOrEqualTo(3);
   }
 
   @Test
@@ -145,7 +172,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void adminCannotUpdateOrganisation() {
     // arrange
     ResponseEntity<OrganisationDto> original = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(original.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     OrganisationDto organisation = original.getBody();
@@ -160,7 +187,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     // assert
     assertThat(put.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(updatedDto.getBody().code).isEqualTo(oldCode);
   }
@@ -169,7 +196,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void regularUserCannotUpdateOrganisation() {
     // arrange
     ResponseEntity<OrganisationDto> original = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(original.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     OrganisationDto organisation = original.getBody();
@@ -184,7 +211,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     // assert
     assertThat(put.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(updatedDto.getBody().code).isEqualTo(oldCode);
   }
@@ -192,45 +219,45 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void superAdminCanDeleteOrganisation() {
     ResponseEntity<OrganisationDto> exists = asSuperAdmin()
-      .get("/organisations/4", OrganisationDto.class);
+      .get("/organisations/" + theBeatles.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> deleted = asSuperAdmin()
-      .delete("/organisations/4", OrganisationDto.class);
+      .delete("/organisations/" + theBeatles.id, OrganisationDto.class);
     assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> shouldBeDeleted = asSuperAdmin()
-      .get("/organisations/4", OrganisationDto.class);
+      .get("/organisations/" + theBeatles.id, OrganisationDto.class);
     assertThat(shouldBeDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void adminCannotDeleteOrganisation() {
     ResponseEntity<OrganisationDto> exists = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> notReallyDeleted = asAdminOfElvaco()
-      .delete("/organisations/2", OrganisationDto.class);
+      .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
     ResponseEntity<OrganisationDto> shouldStillExist = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(shouldStillExist.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   public void regularUserCannotDeleteOrganisation() {
     ResponseEntity<OrganisationDto> exists = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> notReallyDeleted = asElvacoUser()
-      .delete("/organisations/2", OrganisationDto.class);
+      .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
     ResponseEntity<OrganisationDto> shouldStillExist = asSuperAdmin()
-      .get("/organisations/2", OrganisationDto.class);
+      .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(shouldStillExist.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 }

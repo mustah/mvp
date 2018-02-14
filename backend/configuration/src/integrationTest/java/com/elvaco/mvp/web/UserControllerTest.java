@@ -10,8 +10,6 @@ import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.mapper.UserMapper;
-
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +39,6 @@ public class UserControllerTest extends IntegrationTest {
 
   @Autowired
   private UserMapper userMapper;
-
-  @After
-  public void tearDown() {
-    restClient().logout();
-  }
 
   @Test
   public void findUserById() {
@@ -131,14 +124,14 @@ public class UserControllerTest extends IntegrationTest {
   public void updateSavedUserName() {
     String newName = "Eva Andersson";
 
-    User user = users.findByEmail(OTHER_ELVACO_USER.email).get();
-    UserDto userDto = userMapper.toDto(user);
+    User otherElvacoUser = users.create(OTHER_ELVACO_USER);
+    UserDto userDto = userMapper.toDto(otherElvacoUser);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
     asSuperAdmin().put("/users", userDto);
 
-    User updatedUser = users.findById(user.id).get();
+    User updatedUser = users.findById(otherElvacoUser.id).get();
 
     assertThat(updatedUser.name).isEqualTo(newName);
   }
@@ -174,11 +167,15 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotDeleteUser() {
-    String email = "steste@elvaco.se";
-    User user = users.findByEmail(email).get();
-
-    asElvacoUser().delete("/users/" + user.id);
-    assertThat(users.findById(user.id).isPresent()).isTrue();
+    User regularUser = users.create(new User(
+      "Someu Ser",
+      "thisguy@users.net",
+      "hunter2",
+      ELVACO,
+      singletonList(USER)
+    ));
+    asElvacoUser().delete("/users/" + regularUser.id);
+    assertThat(users.findById(regularUser.id).isPresent()).isTrue();
   }
 
   @Test
