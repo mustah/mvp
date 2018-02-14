@@ -69,8 +69,8 @@ public class LogicalMeterMapper {
              logicalMeterEntity.propertyCollection.put("user", userPropertyDto));
 
     if (logicalMeter.hasMeterDefinition()) {
-      logicalMeterEntity.meterDefinition = meterDefinitionMapper.toEntity(logicalMeter
-                                                                            .getMeterDefinition());
+      logicalMeterEntity.meterDefinition =
+        meterDefinitionMapper.toEntity(logicalMeter.meterDefinition);
     }
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(physicalMeterMapper::toEntity)
