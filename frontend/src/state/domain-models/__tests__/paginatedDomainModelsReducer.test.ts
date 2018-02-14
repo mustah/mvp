@@ -91,7 +91,7 @@ describe('paginatedDomainModelsReducer', () => {
       const expected: NormalizedPaginatedState<Meter> = {
         ...initialState,
         result: {
-          [page]: {isFetching: true},
+          [page]: {isFetching: true, isSuccessfullyFetched: false},
         },
       };
       expect(stateAfterRequestInitiation).toEqual(expected);
@@ -105,6 +105,7 @@ describe('paginatedDomainModelsReducer', () => {
           [page]: {
             result: normalizedMeters.result.content,
             isFetching: false,
+            isSuccessfullyFetched: true,
           },
         },
       };
@@ -144,7 +145,7 @@ describe('paginatedDomainModelsReducer', () => {
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
-          [anotherPage]: {result: payload.result.content, isFetching: false},
+          [anotherPage]: {result: payload.result.content, isFetching: false, isSuccessfullyFetched: true},
         },
       };
 
@@ -158,12 +159,13 @@ describe('paginatedDomainModelsReducer', () => {
 
       const stateAfterFailure = meters(initialState, getRequest.failure(payload));
 
-      const failedState = {
+      const failedState: NormalizedPaginatedState<HasId> = {
         ...initialState,
         result: {
           [page]: {
             error: {message: payload.message},
             isFetching: false,
+            isSuccessfullyFetched: false,
           },
         },
       };

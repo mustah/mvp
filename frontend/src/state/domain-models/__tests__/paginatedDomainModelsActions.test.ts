@@ -114,29 +114,14 @@ describe('paginatedDomainModelsActions', () => {
       ]);
     });
 
-    it('request a get to an already fetched page that have no result list', async () => {
+    it('dont fetch data if already existing', async () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
-          meters: {entities: {}, result: {[existingPage]: {isFetching: false}}},
-        },
-      };
-      store = configureMockStore(initialState);
-
-      await getMetersWithResponseOk(existingPage);
-
-      expect(store.getActions()).toEqual([
-        requestMeters.request(existingPage),
-        requestMeters.success({...normalizedMeterResponse(existingPage)}),
-        paginationUpdateMetaData({entityType: 'meters', ...normalizedMeterResponse(existingPage).result}),
-      ]);
-    });
-
-    it('request a get to an already fetched page with a result list', async () => {
-      const existingPage = 1;
-      const initialState: Partial<RootState> = {
-        paginatedDomainModels: {
-          meters: {entities: {}, result: {[existingPage]: {isFetching: false, result: [1]}}},
+          meters: {
+            entities: {},
+            result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: true, result: []}},
+          },
         },
       };
       store = configureMockStore(initialState);
@@ -145,6 +130,41 @@ describe('paginatedDomainModelsActions', () => {
 
       expect(store.getActions()).toEqual([]);
     });
+
+    it('dont fetch data if already fetching', async () => {
+      const existingPage = 1;
+      const initialState: Partial<RootState> = {
+        paginatedDomainModels: {
+          meters: {
+            entities: {},
+            result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false}},
+          },
+        },
+      };
+      store = configureMockStore(initialState);
+
+      await getMetersWithResponseOk(existingPage);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('dont fetch data if received an error', async () => {
+      const existingPage = 1;
+      const initialState: Partial<RootState> = {
+        paginatedDomainModels: {
+          meters: {
+            entities: {},
+            result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: false, error: {message: 'an error'}}},
+          },
+        },
+      };
+      store = configureMockStore(initialState);
+
+      await getMetersWithResponseOk(existingPage);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
   });
   describe('clear paginatedDomainModels', () => {
     it('sends clear request', () => {

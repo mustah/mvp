@@ -20,14 +20,13 @@ export const initialPaginatedDomain = <T extends HasId>(): NormalizedPaginatedSt
 const setRequest = <T extends HasId>(
   entity: string,
   state: NormalizedPaginatedState<T>,
-  {payload}: Action<number>,
+  {payload: page}: Action<number>,
 ): NormalizedPaginatedState<T> => {
-  const page: number = payload;
   return {
     ...state,
     result: {
       ...state.result,
-      [page]: {...state.result[page], isFetching: true},
+      [page]: {isFetching: true, isSuccessfullyFetched: false},
     },
   };
 };
@@ -45,7 +44,7 @@ const setEntities = <T extends HasId>(
     entities: {...state.entities, ...entities},
     result: {
       ...state.result,
-      [page]: {result: content, isFetching: false},
+      [page]: {result: content, isFetching: false, isSuccessfullyFetched: true},
     },
   };
 };
@@ -60,7 +59,7 @@ const setFailure = <T extends HasId>(
     ...state,
     result: {
       ...state.result,
-      [page]: {...state.result[page], error, isFetching: false},
+      [page]: {isSuccessfullyFetched: false, isFetching: false, error},
     },
   };
 };
