@@ -5,7 +5,6 @@ stages:
     - prep
     - build
     - test
-    - package
     - deploy
 
 variables:
@@ -47,7 +46,13 @@ build:
             - .yarn
             - .version
     script:
-        - gradle clean build -x test -x integrationTest
+        - gradle build -x check
+    artifacts:
+        name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
+        paths:
+            - backend/configuration/build/distributions/
+            - .version
+        expire_in: 1 week
 
 system:
     stage: test
@@ -61,7 +66,7 @@ system:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
     script:
-        - gradle systemTestCI -x test
+        - gradle systemTestCI
     artifacts:
         name: "${CI_COMMIT_REF_NAME}-system"
         when: on_failure
@@ -69,7 +74,7 @@ system:
           - backend/configuration/build/reports/tests/systemTestCI/*
         expire_in: 7 days
 
-integration:
+unit_and_integration:
     stage: test
     cache:
         key: "$CI_COMMIT_REF_NAME"
@@ -85,34 +90,7 @@ integration:
         expire_in: 7 days
 
     script:
-        - gradle integrationTest -x test
-unit:
-    stage: test
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .gradle/caches
-            - .yarn
-    script:
-        - gradle test
-
-assemble:
-    stage: package
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .gradle/caches
-            - .yarn
-            - .version
-    script:
-        - gradle assemble
-    artifacts:
-        name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
-        paths:
-            - backend/configuration/build/distributions/
-            - frontend/mockup
-            - .version
-        expire_in: 1 week
+        - gradle check -x systemTest
 
 .review_app_job_template: &review_app
     stage: deploy
@@ -139,7 +117,7 @@ assemble:
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
     dependencies:
-      - assemble
+      - build
 
 deploy_protected:
   <<: *review_app
