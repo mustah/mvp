@@ -13,7 +13,7 @@ variables:
 
 .cache_gradle: &cache_gradle
      cache:
-        key: "$CI_COMMIT_REF_NAME"
+        key: "$CI_COMMIT_REF_NAME-gradle"
         paths:
           - .gradle/wrapper
           - .gradle/caches
