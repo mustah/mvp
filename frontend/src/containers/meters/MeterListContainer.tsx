@@ -13,7 +13,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {HasPageNumber, RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
+import {ClearErrorPaginated, RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
   getPageError,
@@ -46,7 +46,7 @@ interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchMeters: RestGetPaginated;
   paginationChangePage: OnChangePage;
-  clearError: (payload: HasPageNumber) => void;
+  clearError: ClearErrorPaginated;
 }
 
 interface OwnProps {

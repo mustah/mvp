@@ -81,3 +81,4 @@ export enum HttpMethod {
 }
 
 export type RestGet = (requestData?: string) => void;
+export type ClearError = () => void;

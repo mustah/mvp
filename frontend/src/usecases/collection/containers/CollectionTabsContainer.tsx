@@ -15,14 +15,11 @@ import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetail
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
-import {fetchGateways} from '../../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/domainModelsActions';
 import {getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
-import {
-  getGatewayDataSummary,
-  getGatewayEntities,
-} from '../../../state/domain-models/gateway/gatewaySelectors';
+import {getGatewayDataSummary, getGatewayEntities} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
@@ -59,6 +56,7 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
   fetchGateways: RestGet;
+  clearError: ClearError;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -90,6 +88,7 @@ class CollectionTabs extends React.Component<Props> {
       closeClusterDialog,
       isFetching,
       error,
+      clearError,
     } = this.props;
 
     const hasGateways: boolean = isMarkersWithinThreshold(gateways);
@@ -117,12 +116,12 @@ class CollectionTabs extends React.Component<Props> {
           <TabSettings/>
         </TabTopBar>
         <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={() => null}>
+          <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
           </Loader>
         </TabContent>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={() => null}>
+          <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
               <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
               <PaginationControl pagination={pagination} changePage={changePage}/>
@@ -130,7 +129,7 @@ class CollectionTabs extends React.Component<Props> {
           </Loader>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={() => null}>
+          <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
               <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
                 <Map>
@@ -179,6 +178,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   closeClusterDialog,
   fetchGateways,
+  clearError: clearErrorGateways,
 }, dispatch);
 
 export const CollectionTabsContainer =

@@ -24,15 +24,24 @@ import {userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const DOMAIN_MODELS_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
-
 const DOMAIN_MODELS_SUCCESS = (httpMethod: HttpMethod) => (endPoint: EndPoints) =>
   `DOMAIN_MODELS_${httpMethod}_SUCCESS${endPoint}`;
+
+export const DOMAIN_MODELS_CLEAR_ERROR = (endPoint: EndPoints) => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
 
 export const DOMAIN_MODELS_GET_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET);
 export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET_ENTITY);
 export const DOMAIN_MODELS_POST_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.POST);
 export const DOMAIN_MODELS_PUT_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.PUT);
 export const DOMAIN_MODELS_DELETE_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.DELETE);
+
+const clearError = (endPoint: EndPoints) =>
+  createEmptyAction<string>(DOMAIN_MODELS_CLEAR_ERROR(endPoint));
+
+export const clearErrorGateways = clearError(EndPoints.gateways);
+export const clearErrorMetersAll = clearError(EndPoints.metersAll);
+export const clearErrorUsers = clearError(EndPoints.users);
+export const clearErrorSelections = clearError(EndPoints.selections);
 
 export const DOMAIN_MODELS_CLEAR = 'DOMAIN_MODELS_CLEAR';
 export const domainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_CLEAR);

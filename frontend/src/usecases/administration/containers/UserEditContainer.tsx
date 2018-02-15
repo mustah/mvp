@@ -12,8 +12,8 @@ import {PageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorUsers, fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
@@ -31,6 +31,7 @@ interface StateToProps {
 interface DispatchToProps {
   fetchUser: (id: uuid) => void;
   modifyUser: OnClick;
+  clearError: ClearError;
 }
 
 type OwnProps = RouteComponentProps<{userId: uuid}>;
@@ -47,7 +48,9 @@ class UserEdit extends React.Component<Props, {}> {
   }
 
   render() {
-    const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching, error} = this.props;
+    const {
+      modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching, error, clearError,
+    } = this.props;
     if (!users[userId] && !isFetching) {
       return null;
     }
@@ -61,7 +64,7 @@ class UserEdit extends React.Component<Props, {}> {
         </Row>
 
         <Paper style={paperStyle}>
-          <Loader isFetching={isFetching} error={error} clearError={() => null}>
+          <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <WrapperIndent>
               <UserEditForm
                 organisations={organisations}
@@ -96,6 +99,7 @@ const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUser,
   modifyUser,
+  clearError: clearErrorUsers,
 }, dispatch);
 
 export const UserEditContainer =

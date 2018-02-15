@@ -60,7 +60,7 @@ const setError = <T extends HasId>(
 const clearError = <T extends HasId>(
   state: NormalizedPaginatedState<T>,
   {payload: {page}}: Action<HasPageNumber>,
-) => ({
+): NormalizedPaginatedState<T> => ({
   ...state,
   result: {
     ...state.result,

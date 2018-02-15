@@ -1,10 +1,11 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
-import {DomainModelsState, EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
-import {domainModelsClear, requestMethod} from '../domainModelsActions';
-import {addresses, cities, domainModels, initialDomain, users} from '../domainModelsReducer';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
+import {clearErrorGateways, domainModelsClear, requestMethod} from '../domainModelsActions';
+import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -166,6 +167,20 @@ describe('domainModelsReducer', () => {
       });
     });
   });
+  describe('clear domainModels', () => {
+    it('resets all domain models', () => {
+      const errorState: NormalizedState<Gateway> = {
+        ...initialDomain<Gateway>(),
+        isSuccessfullyFetched: true,
+        error: {message: 'an error'},
+      };
+
+      expect(gateways(errorState, clearErrorGateways())).toEqual({
+        ...initialDomain<Gateway>(),
+      });
+    });
+  });
+
   describe('clear domainModels', () => {
     it('resets all domain models', () => {
       const initialState: DomainModelsState = {

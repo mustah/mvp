@@ -12,8 +12,8 @@ import {TableHead} from '../../../components/table/TableHead';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorUsers, deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
@@ -30,6 +30,7 @@ interface StateToProps {
 interface DispatchToProps {
   deleteUser: OnClickWithId;
   fetchUsers: (encodedUriParameters: string) => void;
+  clearError: ClearError;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -63,6 +64,7 @@ class UserAdministration extends React.Component<Props, State> {
       users,
       isFetching,
       error,
+      clearError,
     } = this.props;
 
     const renderName = ({name}: User) => name;
@@ -77,7 +79,7 @@ class UserAdministration extends React.Component<Props, State> {
     const paginatedList = Object.keys(usersToRender);
 
     return (
-      <Loader isFetching={isFetching} error={error} clearError={() => null}>
+      <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
             <UsersActionsDropdown/>
@@ -128,6 +130,7 @@ const mapStateToProps = ({domainModels: {users}, auth}: RootState): StateToProps
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteUser,
   fetchUsers,
+  clearError: clearErrorUsers,
 }, dispatch);
 
 export const UserAdministrationContainer =

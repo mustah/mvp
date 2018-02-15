@@ -13,8 +13,8 @@ import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
   addOrganisation,
-  addUser,
-  deleteUser, DOMAIN_MODELS_CLEAR, domainModelsClear, fetchGateways,
+  addUser, clearErrorGateways,
+  deleteUser, DOMAIN_MODELS_CLEAR, DOMAIN_MODELS_CLEAR_ERROR, domainModelsClear, fetchGateways,
   fetchSelections,
   fetchUser,
   modifyProfile,
@@ -389,6 +389,16 @@ describe('domainModelsActions', () => {
         organisationPostRequest.request(),
         organisationPostRequest.failure({...errorResponse}),
         showFailMessage(`Failed to create organisation: ${errorResponse.message}`),
+      ]);
+    });
+  });
+
+  describe('clear error', () => {
+    it('dispatches a clear error action', () => {
+      store.dispatch(clearErrorGateways());
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_CLEAR_ERROR(EndPoints.gateways)},
       ]);
     });
   });

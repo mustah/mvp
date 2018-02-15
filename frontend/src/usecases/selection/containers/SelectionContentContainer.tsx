@@ -11,8 +11,8 @@ import {Subtitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/domainModelsActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
@@ -51,6 +51,7 @@ interface StateToProps {
 interface DispatchToProps {
   toggleSelection: OnSelectParameter;
   fetchSelections: Callback;
+  clearError: ClearError;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -77,6 +78,7 @@ class SelectionContent extends React.Component<Props> {
       citiesSelection,
       isFetching,
       error,
+      clearError,
     } = this.props;
 
     const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
@@ -101,7 +103,7 @@ class SelectionContent extends React.Component<Props> {
 
     return (
 
-      <Loader isFetching={isFetching} error={error} clearError={() => null}>
+      <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column className="SelectionContentBox">
           <Subtitle>{translate('filter')}</Subtitle>
 
@@ -176,6 +178,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSelection,
   fetchSelections,
+  clearError: clearErrorSelections,
 }, dispatch);
 
 export const SelectionContentContainer =

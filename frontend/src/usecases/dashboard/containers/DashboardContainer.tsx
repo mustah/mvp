@@ -13,7 +13,8 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorMetersAll} from '../../../state/domain-models/domainModelsActions';
 import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Callback, ErrorResponse} from '../../../types/Types';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
@@ -30,6 +31,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchDashboard: Callback;
+  clearError: ClearError;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
@@ -41,7 +43,7 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {isFetching, dashboard, meters, error} = this.props;
+    const {isFetching, dashboard, meters, error, clearError} = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -52,7 +54,7 @@ class DashboardContainerComponent extends React.Component<Props> {
           </Row>
         </Row>
 
-        <Loader isFetching={isFetching} error={error} clearError={() => null}>
+        <Loader isFetching={isFetching} error={error} clearError={clearError}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
             <MapWidgetsContainer markers={meters}/>
@@ -65,6 +67,7 @@ class DashboardContainerComponent extends React.Component<Props> {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
+  clearError: clearErrorMetersAll,
 }, dispatch);
 
 const mapStateToProps = ({dashboard, domainModels: {metersAll}}: RootState): StateToProps => {
