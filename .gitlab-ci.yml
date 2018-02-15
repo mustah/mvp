@@ -11,19 +11,21 @@ stages:
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
 
-cache:
-    key: "$CI_COMMIT_REF_NAME"
-    paths:
-        - .gradle/wrapper
-        - .gradle/caches
-        - .yarn
-        - .version
+.cache_gradle: &cache_gradle
+     cache:
+        key: "$CI_COMMIT_REF_NAME"
+        paths:
+          - .gradle/wrapper
+          - .gradle/caches
+          - .yarn
+          - .version
 
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 gradle-cache:
+    <<: *cache_gradle
     stage: clean
     script:
         - gradle clean
@@ -35,7 +37,6 @@ gradle-cache:
 
 docker:postgresql:
     stage: prep
-    cache: []
     tags:
       - shell
     script:
@@ -48,7 +49,6 @@ dotVersion:
     image:
       name: alpine/git:latest
       entrypoint: ["/bin/sh", "-c"]
-    cache: []
     script:
       - git describe --tags --abbrev=7 --dirty > .version
       - chmod 644 .version
@@ -58,6 +58,7 @@ dotVersion:
         expire_in: 7 days
 
 build:
+    <<: *cache_gradle
     stage: build
     dependencies:
         - dotVersion
@@ -71,6 +72,7 @@ build:
         expire_in: 1 week
 
 system:
+    <<: *cache_gradle
     stage: test
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
@@ -85,6 +87,7 @@ system:
         expire_in: 7 days
 
 unit_and_integration:
+    <<: *cache_gradle
     stage: test
     artifacts:
         name: "${CI_COMMIT_REF_NAME}-integration"
@@ -92,7 +95,6 @@ unit_and_integration:
         paths:
           - backend/configuration/build/reports/tests/integrationTest/*
         expire_in: 7 days
-
     script:
         - gradle check -x systemTest
 
