@@ -1,5 +1,4 @@
 include 'frontend'
-include 'rabbit-consumer'
 include 'backend'
 include 'backend:core'
 include 'backend:database'
