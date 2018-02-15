@@ -10,6 +10,14 @@ stages:
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
 
+cache:
+    key: "$CI_COMMIT_REF_NAME"
+    paths:
+        - .gradle/wrapper
+        - .gradle/caches
+        - .yarn
+        - .version
+
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
@@ -25,10 +33,6 @@ docker:postgresql:
 
 dotVersion:
     stage: prep
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .version
     image:
       name: alpine/git:latest
       entrypoint: ["/bin/sh", "-c"]
@@ -38,13 +42,6 @@ dotVersion:
 
 build:
     stage: build
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .gradle/wrapper
-            - .gradle/caches
-            - .yarn
-            - .version
     script:
         - gradle build -x check
     artifacts:
@@ -56,12 +53,6 @@ build:
 
 system:
     stage: test
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .gradle/caches
-            - .yarn
-            - .version
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
@@ -76,12 +67,6 @@ system:
 
 unit_and_integration:
     stage: test
-    cache:
-        key: "$CI_COMMIT_REF_NAME"
-        paths:
-            - .gradle/caches
-            - .yarn
-            - .version
     artifacts:
         name: "${CI_COMMIT_REF_NAME}-integration"
         when: on_failure
