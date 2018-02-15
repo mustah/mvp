@@ -22,6 +22,15 @@ subprojects { subproject ->
     options.encoding = "UTF-8"
   }
 
+  tasks.withType(Test) {
+    testLogging {
+      events "started", "passed", "skipped", "failed"
+      showExceptions true
+      showStackTraces true
+      exceptionFormat 'full'
+    }
+  }
+
   plugins.withType(JavaPlugin) {
 
     sourceCompatibility = JavaVersion.VERSION_1_8
