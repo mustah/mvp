@@ -7,12 +7,11 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
-import com.elvaco.mvp.database.entity.user.RoleEntity;
-import com.elvaco.mvp.database.repository.jpa.RoleRepository;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,24 +35,22 @@ import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
-@Order(1)
+@Order(2)
+@Profile("demo")
 @Component
 @Slf4j
 public class UserDatabaseLoader implements CommandLineRunner {
 
-  private final RoleRepository roleRepository;
   private final Organisations organisations;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
 
   @Autowired
   public UserDatabaseLoader(
-    RoleRepository roleRepository,
     Organisations organisations,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
-    this.roleRepository = roleRepository;
     this.organisations = organisations;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
@@ -67,7 +64,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
     }
 
     Stream.of(
-      ELVACO,
       WAYNE_INDUSTRIES,
       SECRET_SERVICE,
       THE_BEATLES
@@ -76,12 +72,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
     MvpUserDetails principal = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
     Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);
     SecurityContextHolder.getContext().setAuthentication(authentication);
-
-    roleRepository.save(asList(
-      RoleEntity.user(),
-      RoleEntity.admin(),
-      RoleEntity.superAdmin()
-    ));
 
     List<User> users = asList(
       new User(
@@ -134,5 +124,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
       .forEach(userUseCases::create);
 
     settingUseCases.setDemoUsersLoaded();
+    SecurityContextHolder.getContext().setAuthentication(null);
   }
 }

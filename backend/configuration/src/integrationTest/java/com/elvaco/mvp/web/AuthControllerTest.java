@@ -3,13 +3,12 @@ package com.elvaco.mvp.web;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserDto;
-
 import org.junit.After;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.DEVELOPER_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
@@ -21,12 +20,11 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void authenticate() {
-    ResponseEntity<UserDto> response = restClient()
-      .loginWith(DEVELOPER_USER.email, DEVELOPER_USER.password)
+    ResponseEntity<UserDto> response = asSuperAdmin()
       .get("/authenticate", UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().email).isEqualTo(DEVELOPER_USER.email);
+    assertThat(response.getBody().email).isEqualTo(ELVACO_SUPER_ADMIN_USER.email);
   }
 
   @Test

@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS quantity (
 
 CREATE TABLE IF NOT EXISTS meter_definition (
   id BIGSERIAL PRIMARY KEY,
-  medium TEXT NOT NULL
+  medium TEXT NOT NULL,
+  system_owned BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS meter_definition_quantities (

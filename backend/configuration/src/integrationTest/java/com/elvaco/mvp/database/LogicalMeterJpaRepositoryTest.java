@@ -11,6 +11,7 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,12 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     physicalMeterEntity.logicalMeterId = mp.id;
     physicalMeterJpaRepository.save(physicalMeterEntity);
     logicalMeterId = mp.id;
+  }
+
+  @After
+  public void tearDown() {
+    physicalMeterJpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
   }
 
   @Test

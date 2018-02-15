@@ -32,15 +32,19 @@ public class MeterDefinitionEntity implements Serializable {
 
   public String medium;
 
+  public boolean systemOwned;
+
   public MeterDefinitionEntity() {}
 
   public MeterDefinitionEntity(
     Long id,
     List<QuantityEntity> quantities,
-    String medium
+    String medium,
+    boolean systemOwned
   ) {
     this.id = id;
     this.quantities = quantities;
     this.medium = medium;
+    this.systemOwned = systemOwned;
   }
 }

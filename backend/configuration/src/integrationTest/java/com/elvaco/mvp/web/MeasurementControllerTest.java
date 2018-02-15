@@ -11,8 +11,10 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -22,8 +24,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
-import static com.elvaco.mvp.database.fixture.Entities.WAYNE_INDUSTRIES_ENTITY;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -40,8 +40,13 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
+  @Autowired
+  private OrganisationJpaRepository organisationJpaRepository;
+
   private Map<String, MeasurementEntity> measurementQuantities;
   private PhysicalMeterEntity forceMeter;
+  private OrganisationEntity elvacoEntity;
+  private OrganisationEntity wayneIndustriesEntity;
 
   @Before
   public void setUp() {
@@ -56,20 +61,25 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     logicalMeterJpaRepository.save(logicalMeterEntity);
 
+
+    elvacoEntity = organisationJpaRepository.findOne(1L);
+    wayneIndustriesEntity = organisationJpaRepository.save(
+      new OrganisationEntity("Wayne Industries", "wayne-industries")
+    );
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
-      ELVACO_ENTITY,
+      elvacoEntity,
       "test-butter-meter-1",
       "Butter",
       "ELV"
     );
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
-      WAYNE_INDUSTRIES_ENTITY,
+      wayneIndustriesEntity,
       "test-milk-meter-1",
       "Milk",
       "ELV"
     );
     forceMeter = new PhysicalMeterEntity(
-      WAYNE_INDUSTRIES_ENTITY,
+      wayneIndustriesEntity,
       String.valueOf(Math.random()),
       "vacum",
       "ELV"
@@ -125,6 +135,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    organisationJpaRepository.delete(wayneIndustriesEntity);
   }
 
   @Test
