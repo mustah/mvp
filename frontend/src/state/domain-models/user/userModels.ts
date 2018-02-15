@@ -1,5 +1,5 @@
 import {HasId, uuid} from '../../../types/Types';
-import {NormalizedState, ObjectsById} from '../domainModels';
+import {NormalizedState} from '../domainModels';
 
 export interface Organisation extends HasId {
   code: uuid;
@@ -22,21 +22,3 @@ export const enum Role {
   USER = 'USER',
   SUPER_ADMIN = 'SUPER_ADMIN',
 }
-
-export const filterUsersByUser = (users: ObjectsById<User>, currentUser: User): ObjectsById<User> => {
-  if (currentUser.organisation.code === 'elvaco') {
-    return users;
-  }
-
-  if (currentUser.roles.includes(Role.ADMIN)) {
-    const filteredUsers = Object.keys(users).reduce((sum: User, id: string) => {
-      if (currentUser.organisation.code === users[id].organisation.code) {
-        sum[id] = users[id];
-      }
-      return sum;
-    }, {});
-    return filteredUsers;
-  }
-
-  return {[currentUser.id]: currentUser};
-};

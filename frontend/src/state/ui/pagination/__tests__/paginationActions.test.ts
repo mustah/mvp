@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import {
   PAGINATION_CHANGE_PAGE, PAGINATION_RESET,
   PAGINATION_UPDATE_METADATA,
-  paginationChangePage, paginationReset,
+  changePaginationPage, paginationReset,
   paginationUpdateMetaData,
 } from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
@@ -20,7 +20,7 @@ describe('paginationActions', () => {
     it('dispatches a requestPage action', () => {
       const payload: PaginationChangePayload = {entityType: 'meters', componentId: 'test', page: 2};
 
-      store.dispatch(paginationChangePage(payload));
+      store.dispatch(changePaginationPage(payload));
 
       expect(store.getActions()).toEqual([
         {type: PAGINATION_CHANGE_PAGE, payload},

@@ -23,7 +23,7 @@ import {getGatewayDataSummary, getGatewayEntities} from '../../../state/domain-m
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
-import {paginationChangePage} from '../../../state/ui/pagination/paginationActions';
+import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
@@ -51,7 +51,7 @@ interface StateToProps extends TabsContainerStateToProps {
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
-  paginationChangePage: OnChangePage;
+  changePaginationPage: OnChangePage;
   setSelection: OnSelectParameter;
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
@@ -73,6 +73,13 @@ class CollectionTabs extends React.Component<Props> {
     fetchGateways(encodedUriParametersForGateways);
   }
 
+  changePage = (page: number) => (
+    this.props.changePaginationPage({
+      entityType: 'gateways',
+      componentId,
+      page,
+    }))
+
   render() {
     const {
       selectedTab,
@@ -80,7 +87,6 @@ class CollectionTabs extends React.Component<Props> {
       gateways,
       gatewayDataSummary,
       pagination,
-      paginationChangePage,
       paginatedList,
       setSelection,
       selectEntryAdd,
@@ -98,12 +104,6 @@ class CollectionTabs extends React.Component<Props> {
         <GatewayDetailsContainer gateway={selectedMaker.get()}/>
       </Dialog>
     );
-
-    const changePage = (page: number) => (paginationChangePage({
-      entityType: 'gateways',
-      componentId,
-      page,
-    }));
 
     return (
       <Tabs>
@@ -124,7 +124,7 @@ class CollectionTabs extends React.Component<Props> {
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
               <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-              <PaginationControl pagination={pagination} changePage={changePage}/>
+              <PaginationControl pagination={pagination} changePage={this.changePage}/>
             </div>
           </Loader>
         </TabContent>
@@ -159,8 +159,7 @@ const mapStateToProps = (
     gateways: getGatewayEntities(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
     paginatedList: getPaginationList({
-      page: paginationData.page,
-      size: paginationData.size,
+      ...paginationData,
       result: getResultDomainModels(gateways),
     }),
     pagination: paginationData,
@@ -173,7 +172,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
-  paginationChangePage,
+  changePaginationPage,
   setSelection,
   selectEntryAdd,
   closeClusterDialog,

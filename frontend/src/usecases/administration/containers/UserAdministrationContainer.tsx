@@ -12,16 +12,14 @@ import {TableHead} from '../../../components/table/TableHead';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {clearErrorUsers, deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
-import {getError} from '../../../state/domain-models/domainModelsSelectors';
-import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
-import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
+import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {User} from '../../../state/domain-models/user/userModels';
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {
-  currentUser: User;
-  users: ObjectsById<User>;
+  users: DomainModel<User>;
   encodedUriParametersForUsers: string;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
@@ -29,7 +27,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   deleteUser: OnClickWithId;
-  fetchUsers: (encodedUriParameters: string) => void;
+  fetchUsers: RestGet;
   clearError: ClearError;
 }
 
@@ -60,7 +58,6 @@ class UserAdministration extends React.Component<Props, State> {
 
   render() {
     const {
-      currentUser,
       users,
       isFetching,
       error,
@@ -74,17 +71,13 @@ class UserAdministration extends React.Component<Props, State> {
     const renderActionDropdown = ({id}: User) =>
       <UserActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
-    // TODO filter the companies in the backend instead, to get rid of this manipulation in the front end
-    const usersToRender = filterUsersByUser(users, currentUser);
-    const paginatedList = Object.keys(usersToRender);
-
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
             <UsersActionsDropdown/>
           </RowRight>
-          <Table result={paginatedList} entities={usersToRender}>
+          <Table result={users.result} entities={users.entities}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
               renderCell={renderName}
@@ -117,15 +110,12 @@ class UserAdministration extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({domainModels: {users}, auth}: RootState): StateToProps => {
-  return {
-    users: getUserEntities(users),
-    currentUser: auth.user!,
-    encodedUriParametersForUsers: '',
-    isFetching: users.isFetching,
-    error: getError(users),
-  };
-};
+const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
+  users: getDomainModel(users),
+  encodedUriParametersForUsers: '',
+  isFetching: users.isFetching,
+  error: getError(users),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteUser,

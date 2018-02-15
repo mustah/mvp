@@ -20,7 +20,7 @@ import {gatewaySchema} from './gateway/gatewaySchema';
 import {Measurement} from './measurement/measurementModels';
 import {measurementSchema} from './measurement/measurementSchema';
 import {Organisation, User} from './user/userModels';
-import {userSchema} from './user/userSchema';
+import {organisationSchema, userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const DOMAIN_MODELS_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
@@ -102,8 +102,8 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const isFetchingOrExistingOrError = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>) =>
-  isSuccessfullyFetched || isFetching || error;
+const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>): boolean =>
+  !isSuccessfullyFetched && !isFetching && !error;
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -117,9 +117,7 @@ const restGetIfNeeded = <T extends HasId>(
 
   return (requestData?: string) => (dispatch, getState: GetState) => {
     const {domainModels} = getState();
-    const shouldFetch = !isFetchingOrExistingOrError(domainModels[entityType]);
-
-    if (shouldFetch) {
+    if (shouldFetch(domainModels[entityType])) {
       return asyncRequest<string, Normalized<T>>({
         ...requestGet,
         formatData,
@@ -134,17 +132,27 @@ const restGetIfNeeded = <T extends HasId>(
   };
 };
 
-const restGetEntity = <T>(endPoint: EndPoints) => {
+const shouldFetchEntity = (id: uuid, {isFetching, error, entities}: NormalizedState<HasId>): boolean =>
+  !isFetching && !error && !entities[id];
+
+const restGetEntityIfNeeded = <T>(endPoint: EndPoints, entityType: keyof DomainModelsState) => {
   const requestGet = requestMethod<T>(endPoint, HttpMethod.GET_ENTITY);
   const requestFunc = (requestData: uuid) =>
     restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
 
-  return (requestData: uuid) => (dispatch) => asyncRequest<uuid, T>({
-    ...requestGet,
-    requestFunc,
-    requestData,
-    dispatch,
-  });
+  return (id: uuid) => (dispatch, getState: GetState) => {
+    const {domainModels} = getState();
+    if (shouldFetchEntity(id, domainModels[entityType])) {
+      return asyncRequest<uuid, T>({
+        ...requestGet,
+        requestFunc,
+        requestData: id,
+        dispatch,
+      });
+    } else {
+      return null;
+    }
+  };
 };
 
 const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
@@ -202,9 +210,18 @@ export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewa
   ) => dispatch(paginationUpdateMetaData({entityType: 'gateways', ...paginationMetaDataFromResult(result)})),
 });
 export const fetchUsers = restGetIfNeeded<User>(EndPoints.users, userSchema, 'users');
+
+export const fetchOrganisations =
+  restGetIfNeeded<Organisation>(EndPoints.organisations, organisationSchema, 'organisations', {
+    afterSuccess: (
+      {result},
+      dispatch,
+    ) => dispatch(paginationUpdateMetaData({entityType: 'organisations', ...paginationMetaDataFromResult(result)})),
+  });
+
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
-export const fetchUser = restGetEntity<User>(EndPoints.users);
+export const fetchUser = restGetEntityIfNeeded<User>(EndPoints.users, 'users');
 // TODO: Add tests ^
 
 export const addUser = restPost<User>(EndPoints.users, {
