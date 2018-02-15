@@ -34,7 +34,6 @@ import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMa
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
-import com.elvaco.mvp.database.repository.mappers.MeterStatusLogToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusMapper;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
@@ -103,7 +102,6 @@ class DataProviderConfig {
   MeterStatusLogs meterStatusLog() {
     return new MeterStatusLogsRepository(
       physicalMeterStatusLogJpaRepository,
-      new MeterStatusLogToPredicateMapper(),
       new MeterStatusLogMapper());
   }
 

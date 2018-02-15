@@ -4,13 +4,11 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.usecase.MeterLogUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -50,11 +48,6 @@ class UseCaseConfig {
   @Bean
   UserUseCases userUseCases(AuthenticatedUser currentUser) {
     return new UserUseCases(currentUser, users, new OrganisationPermissions(users));
-  }
-
-  @Bean
-  MeterLogUseCases meterLogUseCases(AuthenticatedUser currentUser, MeterStatusLogs meterStatusLog) {
-    return new MeterLogUseCases(currentUser, meterStatusLog);
   }
 
   @Bean

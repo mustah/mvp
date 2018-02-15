@@ -33,7 +33,6 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
-import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -234,19 +233,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     MeasurementDto measurement = measurementDtos.get(0);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.getName());
     assertThat(measurement.unit).isEqualTo("m^3");
-  }
-
-  @Test
-  public void findStatusLogForLogicalMeter() {
-    List<LogicalMeter> logicalMeters = logicalMeterRepository.findAll();
-
-    Page<MeterStatusLogDto> response = asElvacoUser()
-      .getPage("/meters/" + logicalMeters.get(0).id + "/status", MeterStatusLogDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(3);
-    assertThat(response.getNumberOfElements()).isEqualTo(3);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-
   }
 
   private LogicalMeter saveLogicalMeter(int seed, String status) {
