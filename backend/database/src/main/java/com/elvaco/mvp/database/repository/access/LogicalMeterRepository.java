@@ -66,10 +66,9 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
-    return logicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(
-      logicalMeterMapper.toEntity(logicalMeter)
-    ));
-
+    return logicalMeterMapper.toDomainModel(
+      logicalMeterJpaRepository.save(logicalMeterMapper.toEntity(logicalMeter))
+    );
   }
 
   @Override

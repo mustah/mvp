@@ -11,11 +11,15 @@ spring:
   jpa:
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpPostgreSqlDialect
-      hibernate.show_sql: true
-      hibernate.use_sql_comments: true
+      hibernate.show_sql: false
+      hibernate.use_sql_comments: false
       hibernate.format_sql: true
       hibernate.type: trace
       hibernate.jdbc.batch_size: 30
+
+ehcache:
+  heap-entries: 1000
+  idle-time: 60
 
 liquibase:
   enabled: true
