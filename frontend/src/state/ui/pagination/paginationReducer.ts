@@ -3,7 +3,7 @@ import {Action} from '../../../types/Types';
 import {PAGINATION_CHANGE_PAGE, PAGINATION_RESET, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
-export const limit = 5;
+export const limit = 20;
 
 export const initialPaginationModel: PaginationModel = {
   useCases: {},

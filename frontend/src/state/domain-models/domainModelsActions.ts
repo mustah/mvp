@@ -24,15 +24,24 @@ import {userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const DOMAIN_MODELS_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
-
 const DOMAIN_MODELS_SUCCESS = (httpMethod: HttpMethod) => (endPoint: EndPoints) =>
   `DOMAIN_MODELS_${httpMethod}_SUCCESS${endPoint}`;
+
+export const DOMAIN_MODELS_CLEAR_ERROR = (endPoint: EndPoints) => `DOMAIN_MODELS_CLEAR_ERROR${endPoint}`;
 
 export const DOMAIN_MODELS_GET_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET);
 export const DOMAIN_MODELS_GET_ENTITY_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.GET_ENTITY);
 export const DOMAIN_MODELS_POST_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.POST);
 export const DOMAIN_MODELS_PUT_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.PUT);
 export const DOMAIN_MODELS_DELETE_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.DELETE);
+
+const clearError = (endPoint: EndPoints) =>
+  createEmptyAction<string>(DOMAIN_MODELS_CLEAR_ERROR(endPoint));
+
+export const clearErrorGateways = clearError(EndPoints.gateways);
+export const clearErrorMetersAll = clearError(EndPoints.metersAll);
+export const clearErrorUsers = clearError(EndPoints.users);
+export const clearErrorSelections = clearError(EndPoints.selections);
 
 export const DOMAIN_MODELS_CLEAR = 'DOMAIN_MODELS_CLEAR';
 export const domainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_CLEAR);
@@ -83,16 +92,18 @@ const asyncRequest = async <REQ, DAT>(
       afterSuccess(formattedData, dispatch);
     }
   } catch (error) {
-    const {response: {data}} = error;
+    const {response} = error;
+    const data: ErrorResponse = response && response.data ||
+      {message: firstUpperTranslated('an unexpected error occurred')};
     dispatch(failure(data));
     if (afterFailure) {
-      afterFailure(data.message, dispatch);
+      afterFailure(data, dispatch);
     }
   }
 };
 
-const isFetchingOrExisting = ({result, isFetching}: NormalizedState<HasId>) =>
-  result.length > 0 || isFetching;
+const isFetchingOrExistingOrError = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>) =>
+  isSuccessfullyFetched || isFetching || error;
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -106,7 +117,7 @@ const restGetIfNeeded = <T extends HasId>(
 
   return (requestData?: string) => (dispatch, getState: GetState) => {
     const {domainModels} = getState();
-    const shouldFetch = !isFetchingOrExisting(domainModels[entityType]);
+    const shouldFetch = !isFetchingOrExistingOrError(domainModels[entityType]);
 
     if (shouldFetch) {
       return asyncRequest<string, Normalized<T>>({
@@ -201,18 +212,18 @@ export const addUser = restPost<User>(EndPoints.users, {
     dispatch(showSuccessMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error: error.message})));
   },
 });
 
 export const addOrganisation = restPost<Organisation>(EndPoints.organisations, {
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(
-        firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
-      ));
+      firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
+    ));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error: error.message})));
   },
 });
 
@@ -221,7 +232,7 @@ export const modifyUser = restPut<User>(EndPoints.users, {
     dispatch(showSuccessMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error: error.message})));
   },
 });
 
@@ -231,7 +242,7 @@ export const modifyProfile = restPut<User>(EndPoints.users, {
     dispatch(authSetUser(user));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error})));
+    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error: error.message})));
   },
 });
 
@@ -242,7 +253,7 @@ export const deleteUser = restDelete<User>(EndPoints.users, {
       );
     },
     afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error})));
+      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error: error.message})));
     },
   },
 );

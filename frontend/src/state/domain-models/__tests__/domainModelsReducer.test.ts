@@ -1,10 +1,11 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
-import {DomainModelsState, EndPoints, HttpMethod, Normalized, SelectionEntity} from '../domainModels';
-import {domainModelsClear, requestMethod} from '../domainModelsActions';
-import {addresses, cities, domainModels, initialDomain, users} from '../domainModelsReducer';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
+import {clearErrorGateways, domainModelsClear, requestMethod} from '../domainModelsActions';
+import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -27,6 +28,7 @@ describe('domainModelsReducer', () => {
 
       expect(addresses(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
+        isSuccessfullyFetched: true,
         entities: {
           1: {id: 1, name: 'Stampgatan 46', cityId: 'got'},
           2: {id: 2, name: 'Stampgatan 33', cityId: 'got'},
@@ -65,6 +67,7 @@ describe('domainModelsReducer', () => {
 
       expect(cities(initialState, selectionsRequest.success(payload))).toEqual({
         ...initialState,
+        isSuccessfullyFetched: true,
         entities: {
           got: {id: 'got', name: 'Göteborg'},
           sto: {id: 'sto', name: 'Stockholm'},
@@ -103,10 +106,11 @@ describe('domainModelsReducer', () => {
     };
 
     const populatedState: UserState = {
+      ...initialState,
       result: [3],
       entities: {3: user},
-      isFetching: false,
       total: 1,
+      isSuccessfullyFetched: true,
     };
 
     it('has initial state', () => {
@@ -122,6 +126,7 @@ describe('domainModelsReducer', () => {
       expect(users(initialState, usersPostRequest.success(user))).toEqual({
         result: [3],
         entities: {3: user},
+        isSuccessfullyFetched: false,
         isFetching: false,
         total: 1,
       });
@@ -137,7 +142,10 @@ describe('domainModelsReducer', () => {
     });
 
     it('deletes a user from state', () => {
-      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual(initialState);
+      expect(users(populatedState, usersDeleteRequest.success(user))).toEqual({
+        ...initialState,
+        isSuccessfullyFetched: true,
+      });
     });
 
     it('has error when fetching has failed', () => {
@@ -153,11 +161,26 @@ describe('domainModelsReducer', () => {
       expect(users(initialState, usersGetUserEntity.success(user))).toEqual({
         result: [3],
         entities: {3: user},
+        isSuccessfullyFetched: false,
         isFetching: false,
         total: 1,
       });
     });
   });
+  describe('clear domainModels', () => {
+    it('resets all domain models', () => {
+      const errorState: NormalizedState<Gateway> = {
+        ...initialDomain<Gateway>(),
+        isSuccessfullyFetched: true,
+        error: {message: 'an error'},
+      };
+
+      expect(gateways(errorState, clearErrorGateways())).toEqual({
+        ...initialDomain<Gateway>(),
+      });
+    });
+  });
+
   describe('clear domainModels', () => {
     it('resets all domain models', () => {
       const initialState: DomainModelsState = {

@@ -13,8 +13,8 @@ import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
   addOrganisation,
-  addUser,
-  deleteUser, DOMAIN_MODELS_CLEAR, domainModelsClear, fetchGateways,
+  addUser, clearErrorGateways,
+  deleteUser, DOMAIN_MODELS_CLEAR, DOMAIN_MODELS_CLEAR_ERROR, domainModelsClear, fetchGateways,
   fetchSelections,
   fetchUser,
   modifyProfile,
@@ -90,7 +90,13 @@ describe('domainModelsActions', () => {
     });
     it('does not fetch data if it already exists', async () => {
       const fetchedState: Partial<DomainModelsState> = {
-        cities: {isFetching: false, total: 1, entities: {1: {id: 1, name: '1'}}, result: [1]},
+        cities: {
+          isFetching: false,
+          isSuccessfullyFetched: true,
+          total: 1,
+          entities: {1: {id: 1, name: '1'}},
+          result: [1],
+        },
       };
       store = configureMockStore({domainModels: {...fetchedState}});
 
@@ -100,7 +106,25 @@ describe('domainModelsActions', () => {
     });
     it('does not fetch data if already fetching', async () => {
       const fetchedState: Partial<DomainModelsState> = {
-        cities: {isFetching: true, total: 0, entities: {}, result: []},
+        cities: {isFetching: true, isSuccessfullyFetched: false, total: 0, entities: {}, result: [1, 2]},
+      };
+
+      store = configureMockStore({domainModels: {...fetchedState}});
+
+      await getSelectionWithResponseOk();
+
+      expect(store.getActions()).toEqual([]);
+    });
+    it('does not fetch data if received an error', async () => {
+      const fetchedState: Partial<DomainModelsState> = {
+        cities: {
+          isFetching: false,
+          isSuccessfullyFetched: false,
+          total: 0,
+          entities: {},
+          result: [1, 2],
+          error: {message: 'an error'},
+        },
       };
 
       store = configureMockStore({domainModels: {...fetchedState}});
@@ -365,6 +389,16 @@ describe('domainModelsActions', () => {
         organisationPostRequest.request(),
         organisationPostRequest.failure({...errorResponse}),
         showFailMessage(`Failed to create organisation: ${errorResponse.message}`),
+      ]);
+    });
+  });
+
+  describe('clear error', () => {
+    it('dispatches a clear error action', () => {
+      store.dispatch(clearErrorGateways());
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_CLEAR_ERROR(EndPoints.gateways)},
       ]);
     });
   });

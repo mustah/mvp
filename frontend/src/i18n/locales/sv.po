@@ -269,6 +269,9 @@ msgstr "ditt lösenord"
 msgid "login"
 msgstr "logga in"
 
+msgid "retry"
+msgstr "försök igen"
+
 msgid "cities"
 msgstr "städer"
 

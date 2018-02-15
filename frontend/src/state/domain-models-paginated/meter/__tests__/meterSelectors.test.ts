@@ -81,6 +81,7 @@ describe('meterSelectors', () => {
     it('handles mismatches between result list and actual entities', () => {
       const metersState: NormalizedState<Meter> = {
         isFetching: false,
+        isSuccessfullyFetched: true,
         total: 4,
         result: [1, 2, 3, 4],
         entities: {},
@@ -102,6 +103,7 @@ describe('meterSelectors', () => {
     it('can make a tree of meters; categorized by cities, addresses and such', () => {
       const metersState: NormalizedState<Meter> = {
         isFetching: false,
+        isSuccessfullyFetched: true,
         total: 4,
         result: [1, 2, 3],
         entities: {

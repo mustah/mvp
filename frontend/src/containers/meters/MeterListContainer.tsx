@@ -9,12 +9,14 @@ import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
+import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
-import {fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {ClearErrorPaginated, RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
+import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
 import {
+  getPageError,
   getPageIsFetching,
   getPageResult,
   getPaginatedEntities,
@@ -28,7 +30,7 @@ import {
 import {paginationChangePage} from '../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
-import {OnClickWithId, uuid} from '../../types/Types';
+import {ErrorResponse, OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
 interface StateToProps {
@@ -37,12 +39,14 @@ interface StateToProps {
   isFetching: boolean;
   encodedUriParametersForMeters: string;
   pagination: Pagination;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchMeters: RestGetPaginated;
   paginationChangePage: OnChangePage;
+  clearError: ClearErrorPaginated;
 }
 
 interface OwnProps {
@@ -62,8 +66,21 @@ class MeterList extends React.Component<Props> {
     fetchMeters(page, encodedUriParametersForMeters);
   }
 
+  clearError = () => {
+    this.props.clearError({page: this.props.pagination.page});
+  }
+
   render() {
-    const {result, entities, selectEntryAdd, isFetching, pagination, paginationChangePage, componentId} = this.props;
+    const {
+      result,
+      entities,
+      selectEntryAdd,
+      isFetching,
+      pagination,
+      paginationChangePage,
+      componentId,
+      error,
+    } = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : <Status id={0} name={'ok'}/>;
@@ -86,8 +103,8 @@ class MeterList extends React.Component<Props> {
 
     // TODO: Add pagination control
     return (
-      <div>
-        <Loader isFetching={isFetching}>
+      <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+        <div>
           <Table result={result} entities={entities}>
             <TableColumn
               header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -130,9 +147,9 @@ class MeterList extends React.Component<Props> {
               renderCell={renderActionDropdown}
             />
           </Table>
-        </Loader>
-        <PaginationControl pagination={pagination} changePage={changePage}/>
-      </div>
+          <PaginationControl pagination={pagination} changePage={changePage}/>
+        </div>
+      </Loader>
     );
   }
 }
@@ -143,7 +160,8 @@ const mapStateToProps = (
     paginatedDomainModels: {meters},
     ui: {pagination},
   }: RootState,
-  {componentId}: OwnProps): StateToProps => {
+  {componentId}: OwnProps,
+): StateToProps => {
 
   const uriLookupState: UriLookupStatePaginated = {
     ...searchParameters,
@@ -159,6 +177,7 @@ const mapStateToProps = (
     encodedUriParametersForMeters: getEncodedUriParametersForMeters(uriLookupState),
     isFetching: getPageIsFetching(meters, paginationData.page),
     pagination: paginationData,
+    error: getPageError(meters, paginationData.page),
   });
 };
 
@@ -166,6 +185,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchMeters,
   paginationChangePage,
+  clearError: clearErrorMeters,
 }, dispatch);
 
 export const MeterListContainer =

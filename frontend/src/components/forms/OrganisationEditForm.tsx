@@ -5,7 +5,7 @@ import {uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {TextFieldInput} from '../inputs/InputText';
 import {Column} from '../layouts/column/Column';
-import './UserEditForm.scss';
+import './OrganisationEditForm.scss';
 
 interface OrganisationFormProps {
   onSubmit: (event: any) => void;
@@ -55,7 +55,7 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
 
     return (
       <form onSubmit={this.wrappedSubmit}>
-        <Column className="EditUserContainer">
+        <Column className="EditOrganisationContainer">
           <TextFieldInput
             floatingLabelText={nameLabel}
             hintText={nameLabel}

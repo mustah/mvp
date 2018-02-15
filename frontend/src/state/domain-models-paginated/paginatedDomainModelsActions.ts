@@ -23,9 +23,16 @@ export const DOMAIN_MODELS_PAGINATED_REQUEST = (endPoint: EndPoints) => `DOMAIN_
 export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
+export const DOMAIN_MODELS_PAGINATED_CLEAR_ERROR = (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_CLEAR = 'DOMAIN_MODELS_PAGINATED_CLEAR';
 
 export const paginatedDomainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_PAGINATED_CLEAR);
+
+const clearError = (endPoint: EndPoints) =>
+  createPayloadAction<string, HasPageNumber>(DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint));
+
+export const clearErrorMeters = clearError(EndPoints.meters);
 
 interface RestRequestHandlePaginated<T> {
   request: (payload) => PayloadAction<string, number>;
@@ -75,7 +82,8 @@ const asyncRequest = async <REQ, DAT>(
     }
   } catch (error) {
     const {response} = error;
-    const data: ErrorResponse = response.data || {message: firstUpperTranslated('an unexpected error occurred')};
+    const data: ErrorResponse = response && response.data ||
+      {message: firstUpperTranslated('an unexpected error occurred')};
     dispatch(failure({...data, page}));
     if (afterFailure) {
       afterFailure(data, dispatch);
@@ -83,8 +91,8 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const isFetchingOrExisting = (page: number, {result}: NormalizedPaginatedState<HasId>) =>
-  result[page] && (result[page].result || result[page].isFetching);
+const isFetchingOrExistingOrError = (page: number, {result}: NormalizedPaginatedState<HasId>) =>
+  result[page] && (result[page].isSuccessfullyFetched || result[page].isFetching || result[page].error);
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -97,10 +105,10 @@ const restGetIfNeeded = <T extends HasId>(
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
   return (page: number, requestData?: string) =>
-     (dispatch: Dispatch<RootState>, getState: GetState) => {
+    (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
-      const shouldFetch = !isFetchingOrExisting(page, paginatedDomainModels[entityType]);
+      const shouldFetch = !isFetchingOrExistingOrError(page, paginatedDomainModels[entityType]);
 
       if (shouldFetch) {
         return asyncRequest<string, NormalizedPaginated<T>>({

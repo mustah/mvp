@@ -49,6 +49,7 @@ export interface DomainModel<T extends HasId> {
 
 export interface NormalizedState<T extends HasId> extends DomainModel<T> {
   isFetching: boolean;
+  isSuccessfullyFetched: boolean;
   total: number;
   error?: ErrorResponse;
 }
@@ -80,3 +81,4 @@ export enum HttpMethod {
 }
 
 export type RestGet = (requestData?: string) => void;
+export type ClearError = () => void;

@@ -1,0 +1,10 @@
+@import '../../app/variables';
+
+.Retry {
+  .Retry-error-message {
+    padding: $space 0;
+  }
+  .ButtonRetry {
+    align-self: center;
+  }
+}

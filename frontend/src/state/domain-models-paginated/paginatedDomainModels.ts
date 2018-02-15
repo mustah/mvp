@@ -35,8 +35,10 @@ export interface NormalizedPaginatedState<T extends HasId = HasId> {
 
 interface PaginatedResult {
   isFetching: boolean;
+  isSuccessfullyFetched: boolean;
   error?: ErrorResponse;
   result?: uuid[];
 }
 
 export type RestGetPaginated = (page: number, requestData?: string) => void;
+export type ClearErrorPaginated = (payload: HasPageNumber) => void;

@@ -8,24 +8,30 @@ import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
+import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {getPaginatedEntities} from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {Callback} from '../../../types/Types';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorMetersAll} from '../../../state/domain-models/domainModelsActions';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {Callback, ErrorResponse} from '../../../types/Types';
+import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 
 interface StateToProps {
-  isFetching: boolean;
   dashboard?: DashboardModel;
   meters: ObjectsById<Meter>;
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   fetchDashboard: Callback;
+  clearError: ClearError;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
@@ -37,21 +43,21 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 
   render() {
-    const {isFetching, dashboard} = this.props;
+    const {isFetching, dashboard, meters, error, clearError} = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
           <MainTitle>{translate('dashboard')}</MainTitle>
           <Row>
-            {/*<SummaryContainer/>*/}
+            <SummaryContainer/>
             <PeriodContainer/>
           </Row>
         </Row>
 
-        <Loader isFetching={isFetching}>
+        <Loader isFetching={isFetching} error={error} clearError={clearError}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            {/*<MapWidgetsContainer markers={meters}/>*/}
+            <MapWidgetsContainer markers={meters}/>
           </Column>
         </Loader>
       </MvpPageContainer>
@@ -61,13 +67,15 @@ class DashboardContainerComponent extends React.Component<Props> {
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
+  clearError: clearErrorMetersAll,
 }, dispatch);
 
-const mapStateToProps = ({dashboard, paginatedDomainModels: {meters}}: RootState): StateToProps => {
+const mapStateToProps = ({dashboard, domainModels: {metersAll}}: RootState): StateToProps => {
   return {
-    isFetching: dashboard.isFetching,
     dashboard: dashboard.record,
-    meters: getPaginatedEntities(meters),
+    meters: getEntitiesDomainModels(metersAll),
+    isFetching: dashboard.isFetching,
+    error: getError(metersAll),
   };
 };
 

@@ -196,6 +196,7 @@ describe('selectionSelectors', () => {
     it('handles an empty selection', () => {
       const meterState: NormalizedState<Meter> = {
         isFetching: false,
+        isSuccessfullyFetched: false,
         total: 0,
         result: [],
         entities: {},
@@ -208,6 +209,7 @@ describe('selectionSelectors', () => {
     it('groups meters into cities and addresses', () => {
       const meterState: NormalizedState<Meter> = {
         isFetching: false,
+        isSuccessfullyFetched: true,
         total: 4,
         result: ['1', '2', '3', '4'],
         entities: {

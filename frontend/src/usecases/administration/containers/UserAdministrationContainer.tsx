@@ -9,37 +9,47 @@ import {RowRight} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorUsers, deleteUser, fetchUsers} from '../../../state/domain-models/domainModelsActions';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {filterUsersByUser, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
-import {OnClickWithId, uuid} from '../../../types/Types';
+import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {
   currentUser: User;
   users: ObjectsById<User>;
-  isFetching: boolean;
   encodedUriParametersForUsers: string;
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   deleteUser: OnClickWithId;
   fetchUsers: (encodedUriParameters: string) => void;
+  clearError: ClearError;
 }
+
+type Props = StateToProps & DispatchToProps;
 
 interface State {
   isDeleteDialogOpen: boolean;
   userToDelete?: uuid;
 }
 
-class UserAdministration extends React.Component<StateToProps & DispatchToProps, State> {
+class UserAdministration extends React.Component<Props, State> {
 
   state: State = {isDeleteDialogOpen: false};
 
   componentDidMount() {
     const {fetchUsers, encodedUriParametersForUsers} = this.props;
+    fetchUsers(encodedUriParametersForUsers);
+  }
+
+  componentWillReceiveProps({fetchUsers, encodedUriParametersForUsers}: Props) {
     fetchUsers(encodedUriParametersForUsers);
   }
 
@@ -53,6 +63,8 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps,
       currentUser,
       users,
       isFetching,
+      error,
+      clearError,
     } = this.props;
 
     const renderName = ({name}: User) => name;
@@ -67,7 +79,7 @@ class UserAdministration extends React.Component<StateToProps & DispatchToProps,
     const paginatedList = Object.keys(usersToRender);
 
     return (
-      <Loader isFetching={isFetching}>
+      <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
             <UsersActionsDropdown/>
@@ -111,12 +123,14 @@ const mapStateToProps = ({domainModels: {users}, auth}: RootState): StateToProps
     currentUser: auth.user!,
     encodedUriParametersForUsers: '',
     isFetching: users.isFetching,
+    error: getError(users),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteUser,
   fetchUsers,
+  clearError: clearErrorUsers,
 }, dispatch);
 
 export const UserAdministrationContainer =

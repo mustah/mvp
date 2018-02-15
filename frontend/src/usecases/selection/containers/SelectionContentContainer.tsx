@@ -6,10 +6,14 @@ import {MultiDropdownSelector} from '../../../components/dropdown-selector/Multi
 import {SimpleDropdownSelector} from '../../../components/dropdown-selector/SimpleDropdownSelector';
 import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
+import {Loader} from '../../../components/loading/Loader';
 import {Subtitle} from '../../../components/texts/Titles';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/domainModelsActions';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -27,7 +31,7 @@ import {
   getMeterStatuses,
   getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
-import {IdNamed} from '../../../types/Types';
+import {Callback, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
 import {SearchResultList} from '../components/SelectionResultList';
 
@@ -40,101 +44,122 @@ interface StateToProps {
   meterStatuses: SelectionListItem[];
   gatewayStatuses: SelectionListItem[];
   citiesSelection: ObjectsById<IdNamed>;
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   toggleSelection: OnSelectParameter;
+  fetchSelections: Callback;
+  clearError: ClearError;
 }
 
-const SelectionContent = (props: StateToProps & DispatchToProps) => {
-  const {
-    toggleSelection,
-    cities,
-    addresses,
-    alarms,
-    manufacturers,
-    productModels,
-    meterStatuses,
-    gatewayStatuses,
-    citiesSelection,
-  } = props;
+type Props = StateToProps & DispatchToProps;
 
-  const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
-  const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
-  const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.alarms});
-  const selectManufacturer = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: ParameterName.manufacturers});
-  const selectProductModel = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: ParameterName.productModels});
-  const selectMeterStatus = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: ParameterName.meterStatuses});
-  const selectGatewayStatus = (selection: IdNamed) =>
-    toggleSelection({...selection, parameter: ParameterName.gatewayStatuses});
+class SelectionContent extends React.Component<Props> {
+  componentDidMount() {
+    this.props.fetchSelections();
+  }
 
-  const citySelectionText = translate('city') + ': ';
-  const addressSelectionText = translate('address') + ': ';
-  const alarmSelectionText = translate('alarm') + ': ';
-  const manufacturerSelectionText = translate('manufacturer') + ': ';
-  const productModelSelectionText = translate('product model') + ': ';
-  const meterStatusSelectionText = translate('meter status') + ': ';
-  const gatewayStatusSelectionText = translate('gateway status') + ': ';
+  componentWillReceiveProps(props: Props) {
+    props.fetchSelections();
+  }
 
-  return (
-    <Column className="SelectionContentBox">
-      <Subtitle>{translate('filter')}</Subtitle>
+  render() {
+    const {
+      toggleSelection,
+      cities,
+      addresses,
+      alarms,
+      manufacturers,
+      productModels,
+      meterStatuses,
+      gatewayStatuses,
+      citiesSelection,
+      isFetching,
+      error,
+      clearError,
+    } = this.props;
 
-      <Row className="SelectionDropdownOptions">
-        <SimpleDropdownSelector
-          list={cities}
-          selectionText={citySelectionText}
-          select={selectCity}
-        />
-        <MultiDropdownSelector
-          list={addresses}
-          selectionText={addressSelectionText}
-          select={selectAddress}
-          parentSelectionLookup={citiesSelection}
-          parentIdentifier="cityId"
-        />
-        <SimpleDropdownSelector
-          list={productModels}
-          selectionText={productModelSelectionText}
-          select={selectProductModel}
-        />
-        <SimpleDropdownSelector
-          list={gatewayStatuses}
-          selectionText={gatewayStatusSelectionText}
-          select={selectGatewayStatus}
-        />
-        <SimpleDropdownSelector
-          list={manufacturers}
-          selectionText={manufacturerSelectionText}
-          select={selectManufacturer}
-        />
-        <SimpleDropdownSelector
-          list={meterStatuses}
-          selectionText={meterStatusSelectionText}
-          select={selectMeterStatus}
-        />
-        <SimpleDropdownSelector
-          list={alarms}
-          selectionText={alarmSelectionText}
-          select={selectAlarm}
-        />
-        <SelectionQuantity/>
-      </Row>
+    const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
+    const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
+    const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.alarms});
+    const selectManufacturer = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.manufacturers});
+    const selectProductModel = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.productModels});
+    const selectMeterStatus = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.meterStatuses});
+    const selectGatewayStatus = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.gatewayStatuses});
 
-      <SearchResultList/>
+    const citySelectionText = translate('city') + ': ';
+    const addressSelectionText = translate('address') + ': ';
+    const alarmSelectionText = translate('alarm') + ': ';
+    const manufacturerSelectionText = translate('manufacturer') + ': ';
+    const productModelSelectionText = translate('product model') + ': ';
+    const meterStatusSelectionText = translate('meter status') + ': ';
+    const gatewayStatusSelectionText = translate('gateway status') + ': ';
 
-    </Column>
-  );
-};
+    return (
+
+      <Loader isFetching={isFetching} error={error} clearError={clearError}>
+        <Column className="SelectionContentBox">
+          <Subtitle>{translate('filter')}</Subtitle>
+
+          <Row className="SelectionDropdownOptions">
+            <SimpleDropdownSelector
+              list={cities}
+              selectionText={citySelectionText}
+              select={selectCity}
+            />
+            <MultiDropdownSelector
+              list={addresses}
+              selectionText={addressSelectionText}
+              select={selectAddress}
+              parentSelectionLookup={citiesSelection}
+              parentIdentifier="cityId"
+            />
+            <SimpleDropdownSelector
+              list={productModels}
+              selectionText={productModelSelectionText}
+              select={selectProductModel}
+            />
+            <SimpleDropdownSelector
+              list={gatewayStatuses}
+              selectionText={gatewayStatusSelectionText}
+              select={selectGatewayStatus}
+            />
+            <SimpleDropdownSelector
+              list={manufacturers}
+              selectionText={manufacturerSelectionText}
+              select={selectManufacturer}
+            />
+            <SimpleDropdownSelector
+              list={meterStatuses}
+              selectionText={meterStatusSelectionText}
+              select={selectMeterStatus}
+            />
+            <SimpleDropdownSelector
+              list={alarms}
+              selectionText={alarmSelectionText}
+              select={selectAlarm}
+            />
+            <SelectionQuantity/>
+          </Row>
+          <SearchResultList/>
+        </Column>
+      </Loader>
+    );
+  }
+}
 
 const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootState): StateToProps => {
   const lookupState: LookupState = {
     domainModels,
     selection,
   };
+  const {cities, addresses, alarms} = domainModels;
 
   return {
     cities: getCities(lookupState),
@@ -145,11 +170,15 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     productModels: getProductModels(lookupState),
     meterStatuses: getMeterStatuses(lookupState),
     gatewayStatuses: getGatewayStatuses(lookupState),
+    isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
+    error: getError(cities),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleSelection,
+  fetchSelections,
+  clearError: clearErrorSelections,
 }, dispatch);
 
 export const SelectionContentContainer =
