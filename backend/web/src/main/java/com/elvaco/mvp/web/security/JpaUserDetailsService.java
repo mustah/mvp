@@ -17,6 +17,10 @@ public class JpaUserDetailsService implements UserDetailsService {
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     return users.findByEmail(username)
       .map(MvpUserDetails::new)
-      .orElseThrow(() -> new UsernameNotFoundException("Bad credentials"));
+      .orElseThrow(() -> usernameNotFoundException(username));
+  }
+
+  private UsernameNotFoundException usernameNotFoundException(String username) {
+    return new UsernameNotFoundException(String.format("Unable to find: '%s'", username));
   }
 }

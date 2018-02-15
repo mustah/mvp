@@ -59,8 +59,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    logicalMeterRepository.deleteAll();
-
     for (int seed = 1; seed <= 55; seed++) {
       String status = seed % 10 == 0 ? "Warning" : "Ok";
       saveLogicalMeter(seed, status);

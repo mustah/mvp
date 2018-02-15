@@ -17,7 +17,7 @@ spring:
 
 ehcache:
   heap-entries: 1000
-  time-to-live: 60
+  idle-time: 60
 
 liquibase:
   enabled: false
