@@ -9,13 +9,15 @@ import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {Loader} from '../../../components/loading/Loader';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
-import {OnClick, uuid} from '../../../types/Types';
+import {ErrorResponse, OnClick, uuid} from '../../../types/Types';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 
 interface StateToProps {
@@ -23,6 +25,7 @@ interface StateToProps {
   roles: Role[];
   users: ObjectsById<User>;
   isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
@@ -44,7 +47,7 @@ class UserEdit extends React.Component<Props, {}> {
   }
 
   render() {
-    const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching} = this.props;
+    const {modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching, error} = this.props;
     if (!users[userId] && !isFetching) {
       return null;
     }
@@ -58,7 +61,7 @@ class UserEdit extends React.Component<Props, {}> {
         </Row>
 
         <Paper style={paperStyle}>
-          <Loader isFetching={isFetching}>
+          <Loader isFetching={isFetching} error={error} clearError={() => null}>
             <WrapperIndent>
               <UserEditForm
                 organisations={organisations}
@@ -87,6 +90,7 @@ const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
   ],
   users: getUserEntities(users),
   isFetching: users.isFetching,
+  error: getError(users),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

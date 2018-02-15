@@ -17,7 +17,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
 import {fetchGateways} from '../../../state/domain-models/domainModelsActions';
-import {getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {
   getGatewayDataSummary,
@@ -32,7 +32,7 @@ import {getPagination, getPaginationList} from '../../../state/ui/pagination/pag
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ErrorResponse, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -50,6 +50,7 @@ interface StateToProps extends TabsContainerStateToProps {
   selectedMaker: Maybe<Gateway>;
   isFetching: boolean;
   encodedUriParametersForGateways: string;
+  error: Maybe<ErrorResponse>
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
@@ -88,6 +89,7 @@ class CollectionTabs extends React.Component<Props> {
       selectedMaker,
       closeClusterDialog,
       isFetching,
+      error,
     } = this.props;
 
     const hasGateways: boolean = isMarkersWithinThreshold(gateways);
@@ -115,12 +117,12 @@ class CollectionTabs extends React.Component<Props> {
           <TabSettings/>
         </TabTopBar>
         <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching}>
+          <Loader isFetching={isFetching} error={error} clearError={() => null}>
             <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
           </Loader>
         </TabContent>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching}>
+          <Loader isFetching={isFetching} error={error} clearError={() => null}>
             <div>
               <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
               <PaginationControl pagination={pagination} changePage={changePage}/>
@@ -128,7 +130,7 @@ class CollectionTabs extends React.Component<Props> {
           </Loader>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching}>
+          <Loader isFetching={isFetching} error={error} clearError={() => null}>
             <div>
               <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
                 <Map>
@@ -164,8 +166,9 @@ const mapStateToProps = (
     }),
     pagination: paginationData,
     selectedMaker: getSelectedGatewayMarker(map),
-    isFetching: gateways.isFetching,
     encodedUriParametersForGateways: getEncodedUriParametersForGateways(searchParameters),
+    isFetching: gateways.isFetching,
+    error: getError(gateways),
   };
 };
 

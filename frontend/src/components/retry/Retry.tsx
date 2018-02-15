@@ -6,19 +6,19 @@ import {ColumnCenter} from '../layouts/column/Column';
 import {RowCenter} from '../layouts/row/Row';
 import 'Retry.scss';
 
-interface Props {
-  clearErrorAction: OnClick;
+export interface RetryProps {
+  clearError: OnClick;
   error: Maybe<ErrorResponse>;
 }
 
-export const Retry = ({clearErrorAction, error}: Props) => {
+export const Retry = ({clearError, error}: RetryProps) => {
   if (error.isJust()) {
     return (
       <ColumnCenter className="Retry">
         <RowCenter className="Retry-error-message">
           {error.get().message}
         </RowCenter>
-        <ButtonRetry onClick={clearErrorAction} className="ButtonRetry"/>
+        <ButtonRetry onClick={clearError} className="ButtonRetry"/>
       </ColumnCenter>
     );
   } else {

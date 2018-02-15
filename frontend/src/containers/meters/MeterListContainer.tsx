@@ -5,7 +5,6 @@ import {ListActionsDropdown} from '../../components/actions-dropdown/ListActions
 import {Loader} from '../../components/loading/Loader';
 import {MeterListItem} from '../../components/meters/MeterListItem';
 import {PaginationControl} from '../../components/pagination-control/PaginationControl';
-import {Retry} from '../../components/retry/Retry';
 import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
@@ -104,8 +103,8 @@ class MeterList extends React.Component<Props> {
 
     // TODO: Add pagination control
     return (
-      <div>
-        <Loader isFetching={isFetching}>
+      <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
+        <div>
           <Table result={result} entities={entities}>
             <TableColumn
               header={<TableHead className="first">{translate('facility')}</TableHead>}
@@ -148,10 +147,9 @@ class MeterList extends React.Component<Props> {
               renderCell={renderActionDropdown}
             />
           </Table>
-        </Loader>
-        <Retry clearErrorAction={this.clearError} error={error}/>
-        <PaginationControl pagination={pagination} changePage={changePage}/>
-      </div>
+          <PaginationControl pagination={pagination} changePage={changePage}/>
+        </div>
+      </Loader>
     );
   }
 }

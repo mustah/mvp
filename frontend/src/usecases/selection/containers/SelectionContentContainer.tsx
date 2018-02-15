@@ -8,10 +8,12 @@ import {Column} from '../../../components/layouts/column/Column';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {Subtitle} from '../../../components/texts/Titles';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {fetchSelections} from '../../../state/domain-models/domainModelsActions';
+import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -29,7 +31,7 @@ import {
   getMeterStatuses,
   getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
-import {Callback, IdNamed} from '../../../types/Types';
+import {Callback, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
 import {SearchResultList} from '../components/SelectionResultList';
 
@@ -43,6 +45,7 @@ interface StateToProps {
   gatewayStatuses: SelectionListItem[];
   citiesSelection: ObjectsById<IdNamed>;
   isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
@@ -73,6 +76,7 @@ class SelectionContent extends React.Component<Props> {
       gatewayStatuses,
       citiesSelection,
       isFetching,
+      error,
     } = this.props;
 
     const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
@@ -97,7 +101,7 @@ class SelectionContent extends React.Component<Props> {
 
     return (
 
-      <Loader isFetching={isFetching}>
+      <Loader isFetching={isFetching} error={error} clearError={() => null}>
         <Column className="SelectionContentBox">
           <Subtitle>{translate('filter')}</Subtitle>
 
@@ -165,6 +169,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     meterStatuses: getMeterStatuses(lookupState),
     gatewayStatuses: getGatewayStatuses(lookupState),
     isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
+    error: getError(cities),
   };
 };
 
