@@ -62,6 +62,12 @@ system:
           alias: pg_host
     script:
         - gradle systemTestCI -x test
+    artifacts:
+        name: "${CI_COMMIT_REF_NAME}-system"
+        when: on_failure
+        paths:
+          - backend/configuration/build/reports/tests/systemTestCI/*
+        expire_in: 7 days
 
 integration:
     stage: test
@@ -71,6 +77,13 @@ integration:
             - .gradle/caches
             - .yarn
             - .version
+    artifacts:
+        name: "${CI_COMMIT_REF_NAME}-integration"
+        when: on_failure
+        paths:
+          - backend/configuration/build/reports/tests/integrationTest/*
+        expire_in: 7 days
+
     script:
         - gradle integrationTest -x test
 unit:
