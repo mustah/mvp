@@ -70,12 +70,13 @@ const modifyEntity =
   };
 
 const removeEntity =
-  <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
-    // TODO do we need to introduce a domain model interface with id: uuid in order to avoid "as any" below?
-    const payload = action.payload;
-    const result: uuid[] = state.result.filter((id) => id !== payload.id);
-    const entities: ObjectsById<T> = {...state.entities};
-    delete entities[payload.id];
+  <T extends HasId>(
+    entity: string,
+    state: NormalizedState<T>,
+    {payload: {id: idToDelete}}: Action<T>,
+  ): NormalizedState<T> => {
+    const result: uuid[] = state.result.filter((id) => id !== idToDelete);
+    const {[idToDelete]: deletedItem, ...entities}: ObjectsById<T> = state.entities;
     return {
       ...state,
       entities,
