@@ -13,7 +13,7 @@ def getVersion = { ->
         if (versionFile.exists()) {
             return versionFile.text.trim()
         } else {
-            println "No .version file, dunno what to do"
+            return "UNKNOWN"
         }
     }
 }
