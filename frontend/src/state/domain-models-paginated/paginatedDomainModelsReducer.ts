@@ -18,7 +18,6 @@ export const initialPaginatedDomain = <T extends HasId>(): NormalizedPaginatedSt
   entities: {},
 });
 const setRequest = <T extends HasId>(
-  entity: string,
   state: NormalizedPaginatedState<T>,
   {payload: page}: Action<number>,
 ): NormalizedPaginatedState<T> => ({
@@ -48,7 +47,6 @@ const setEntities = <T extends HasId>(
 };
 
 const setError = <T extends HasId>(
-  entity: string,
   state: NormalizedPaginatedState<T>,
   {payload: {page, ...error}}: Action<ErrorResponse & HasPageNumber>,
 ): NormalizedPaginatedState<T> => ({
@@ -60,7 +58,6 @@ const setError = <T extends HasId>(
 });
 
 const clearError = <T extends HasId>(
-  entity: string,
   state: NormalizedPaginatedState<T>,
   {payload: {page}}: Action<HasPageNumber>,
 ) => ({
@@ -84,13 +81,13 @@ export const reducerFor = <T extends HasId>(entity: keyof PaginatedDomainModelsS
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
       case DOMAIN_MODELS_PAGINATED_REQUEST(endPoint):
-        return setRequest(entity, state, action as Action<number>);
+        return setRequest(state, action as Action<number>);
       case DOMAIN_MODELS_PAGINATED_GET_SUCCESS(endPoint):
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
       case DOMAIN_MODELS_PAGINATED_FAILURE(endPoint):
-        return setError<T>(entity, state, action as Action<ErrorResponse & HasPageNumber>);
+        return setError<T>(state, action as Action<ErrorResponse & HasPageNumber>);
       case DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint):
-        return clearError(entity, state, action as Action<HasPageNumber>);
+        return clearError(state, action as Action<HasPageNumber>);
       case DOMAIN_MODELS_PAGINATED_CLEAR:
         return {...initialPaginatedDomain<T>()};
       default:

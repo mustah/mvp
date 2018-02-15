@@ -43,35 +43,26 @@ const setEntities = <T extends HasId>(
 };
 
 const addEntity =
-  <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
-    const payload = action.payload;
+  <T extends HasId>(state: NormalizedState<T>, {payload}: Action<T>): NormalizedState<T> => {
     const result: uuid[] = [...state.result, payload.id];
-    const entities: ObjectsById<T> = {...state.entities};
-    entities[payload.id] = payload;
     return {
       ...state,
       isFetching: false,
-      entities,
+      entities: {...state.entities, [payload.id]: payload},
       result,
       total: result.length,
     };
   };
 
 const modifyEntity =
-  <T extends HasId>(entity: string, state: NormalizedState<T>, action: Action<T>): NormalizedState<T> => {
-    const payload = action.payload;
-    const entities: ObjectsById<T> = {...state.entities};
-    entities[payload.id] = payload;
-    return {
-      ...state,
-      isFetching: false,
-      entities,
-    };
-  };
+  <T extends HasId>(state: NormalizedState<T>, {payload}: Action<T>): NormalizedState<T> => ({
+    ...state,
+    isFetching: false,
+    entities: {...state.entities, [payload.id]: payload},
+  });
 
 const removeEntity =
   <T extends HasId>(
-    entity: string,
     state: NormalizedState<T>,
     {payload: {id: idToDelete}}: Action<T>,
   ): NormalizedState<T> => {
@@ -105,13 +96,13 @@ const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: 
         return setEntities<T>(entity, state, action as Action<Normalized<T>>);
       // TODO: Add tests
       case DOMAIN_MODELS_GET_ENTITY_SUCCESS(endPoint):
-        return addEntity<T>(entity, state, action as Action<T>);
+        return addEntity<T>(state, action as Action<T>);
       case DOMAIN_MODELS_POST_SUCCESS(endPoint):
-        return addEntity<T>(entity, state, action as Action<T>);
+        return addEntity<T>(state, action as Action<T>);
       case DOMAIN_MODELS_PUT_SUCCESS(endPoint):
-        return modifyEntity<T>(entity, state, action as Action<T>);
+        return modifyEntity<T>(state, action as Action<T>);
       case DOMAIN_MODELS_DELETE_SUCCESS(endPoint):
-        return removeEntity<T>(entity, state, action as Action<T>);
+        return removeEntity<T>(state, action as Action<T>);
       case DOMAIN_MODELS_FAILURE(endPoint):
         return {
           ...state,
