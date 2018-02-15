@@ -269,6 +269,9 @@ msgstr "your password"
 msgid "login"
 msgstr "login"
 
+msgid "retry"
+msgstr "retry"
+
 msgid "cities"
 msgstr "cities"
 

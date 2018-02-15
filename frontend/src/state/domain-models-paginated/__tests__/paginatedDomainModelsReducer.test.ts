@@ -1,26 +1,15 @@
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {ErrorResponse, HasId} from '../../../types/Types';
-import {Meter} from '../../domain-models-paginated/meter/meterModels';
-import {
-  HasPageNumber,
-  NormalizedPaginated,
-  NormalizedPaginatedState,
-} from '../../domain-models-paginated/paginatedDomainModels';
-import {
-  paginatedDomainModelsClear,
-  requestMethodPaginated,
-} from '../../domain-models-paginated/paginatedDomainModelsActions';
-import {
-  initialPaginatedDomain, meters,
-  paginatedDomainModels,
-} from '../../domain-models-paginated/paginatedDomainModelsReducer';
-import {EndPoints} from '../domainModels';
+import {EndPoints} from '../../domain-models/domainModels';
+import {Meter} from '../meter/meterModels';
+import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
+import {clearErrorMeters, paginatedDomainModelsClear, requestMethodPaginated} from '../paginatedDomainModelsActions';
+import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
+  const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
 
   describe('meters, paginated', () => {
-
-    const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
 
     const getRequest =
       requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
@@ -170,6 +159,29 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
       expect(stateAfterFailure).toEqual(failedState);
+    });
+  });
+  describe('clear error', () => {
+    it('clears error from a page', () => {
+      const payload: HasPageNumber = {page: 1};
+      const errorState: NormalizedPaginatedState<Meter> = {
+        entities: {},
+        result: {
+          [payload.page]: {
+            isSuccessfullyFetched: false,
+            isFetching: false,
+            error: {message: 'an error'},
+            result: [],
+          },
+        },
+      };
+
+      const expected: NormalizedPaginatedState<Meter> = {
+        ...errorState,
+        result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false}},
+      };
+      expect(meters(errorState, clearErrorMeters(payload))).toEqual(expected);
+
     });
   });
   describe('clear paginatedDomainModels', () => {

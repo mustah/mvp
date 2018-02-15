@@ -23,9 +23,16 @@ export const DOMAIN_MODELS_PAGINATED_REQUEST = (endPoint: EndPoints) => `DOMAIN_
 export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
+export const DOMAIN_MODELS_PAGINATED_CLEAR_ERROR = (endPoint: EndPoints) =>
+  `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 export const DOMAIN_MODELS_PAGINATED_CLEAR = 'DOMAIN_MODELS_PAGINATED_CLEAR';
 
 export const paginatedDomainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_PAGINATED_CLEAR);
+
+const clearError = (endPoint: EndPoints) =>
+  createPayloadAction<string, HasPageNumber>(DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint));
+
+export const clearErrorMeters = clearError(EndPoints.meters);
 
 interface RestRequestHandlePaginated<T> {
   request: (payload) => PayloadAction<string, number>;

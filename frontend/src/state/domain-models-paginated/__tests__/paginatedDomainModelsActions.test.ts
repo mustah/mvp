@@ -7,17 +7,17 @@ import {initLanguage} from '../../../i18n/i18n';
 import {RootState} from '../../../reducers/rootReducer';
 import {makeRestClient} from '../../../services/restClient';
 import {ErrorResponse} from '../../../types/Types';
-import {Meter} from '../../domain-models-paginated/meter/meterModels';
-import {meterSchema} from '../../domain-models-paginated/meter/meterSchema';
-import {NormalizedPaginated} from '../../domain-models-paginated/paginatedDomainModels';
-import {
-  DOMAIN_MODELS_PAGINATED_CLEAR,
-  fetchMeters, paginatedDomainModelsClear,
-  requestMethodPaginated,
-} from '../../domain-models-paginated/paginatedDomainModelsActions';
+import {EndPoints} from '../../domain-models/domainModels';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
-import {EndPoints} from '../domainModels';
+import {Meter} from '../meter/meterModels';
+import {meterSchema} from '../meter/meterSchema';
+import {HasPageNumber, NormalizedPaginated} from '../paginatedDomainModels';
+import {
+  clearErrorMeters, DOMAIN_MODELS_PAGINATED_CLEAR, DOMAIN_MODELS_PAGINATED_CLEAR_ERROR, fetchMeters,
+  paginatedDomainModelsClear,
+  requestMethodPaginated,
+} from '../paginatedDomainModelsActions';
 import MockAdapter = require('axios-mock-adapter');
 
 initLanguage({code: 'en', name: 'english'});
@@ -166,6 +166,17 @@ describe('paginatedDomainModelsActions', () => {
     });
 
   });
+  describe('clear error', () => {
+    it('send a request to clear error of a specified page', () => {
+      const payload: HasPageNumber = {page: 1};
+      store.dispatch(clearErrorMeters(payload));
+
+      expect(store.getActions()).toEqual([
+        {type: DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(EndPoints.meters), payload},
+      ]);
+    });
+  });
+
   describe('clear paginatedDomainModels', () => {
     it('sends clear request', () => {
       store.dispatch(paginatedDomainModelsClear());
