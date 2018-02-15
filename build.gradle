@@ -98,9 +98,3 @@ task checkstyle {
 task findbugs {
   dependsOn subprojects.collect {it.tasks.withType(FindBugs)}
 }
-
-task check {
-  dependsOn([validateJsonSchema, ':backend:check', ':frontend:check'])
-}
-
-task assemble(dependsOn: ':check')
