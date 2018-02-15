@@ -24,6 +24,7 @@ before_script:
 
 docker:postgresql:
     stage: prep
+    cache: []
     tags:
       - shell
     script:
@@ -36,12 +37,19 @@ dotVersion:
     image:
       name: alpine/git:latest
       entrypoint: ["/bin/sh", "-c"]
+    cache: []
     script:
       - git describe --tags --abbrev=7 --dirty > .version
       - chmod 644 .version
+    artifacts:
+        paths:
+          - .version
+        expire_in: 7 days
 
 build:
     stage: build
+    dependencies:
+        - dotVersion
     script:
         - gradle build -x check
     artifacts:
