@@ -2,6 +2,7 @@ image:
     name: gradle:jdk8
 
 stages:
+    - clean
     - prep
     - build
     - test
@@ -21,6 +22,16 @@ cache:
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
+
+gradle-cache:
+    stage: clean
+    script:
+        - gradle clean
+    only:
+      refs:
+        - master
+        - develop
+        - /^release-.*$/
 
 docker:postgresql:
     stage: prep
