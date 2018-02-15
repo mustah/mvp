@@ -50,7 +50,7 @@ interface StateToProps extends TabsContainerStateToProps {
   selectedMaker: Maybe<Gateway>;
   isFetching: boolean;
   encodedUriParametersForGateways: string;
-  error: Maybe<ErrorResponse>
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
