@@ -42,7 +42,7 @@ docker:postgresql:
       - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
       - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
-dotVersion:
+prepare:version:
     stage: prepare
     image:
       name: alpine/git:latest
@@ -55,11 +55,11 @@ dotVersion:
           - .version
         expire_in: 7 days
 
-build:
+gradle:build:
     <<: *cache_gradle
     stage: build
     dependencies:
-        - dotVersion
+        - prepare:version
     script:
         - gradle build -x check
     artifacts:
@@ -69,7 +69,7 @@ build:
             - .version
         expire_in: 1 week
 
-system:
+test:system:
     <<: *cache_gradle
     stage: test
     services:
@@ -84,7 +84,7 @@ system:
           - backend/configuration/build/reports/tests/systemTestCI/*
         expire_in: 7 days
 
-unit_and_integration:
+test:unit_and_IT:
     <<: *cache_gradle
     stage: test
     artifacts:
@@ -121,7 +121,7 @@ unit_and_integration:
         - docker logs $CONTAINER_NAME
         - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
     dependencies:
-      - build
+      - gradle:build
 
 deploy_protected:
   <<: *review_app
