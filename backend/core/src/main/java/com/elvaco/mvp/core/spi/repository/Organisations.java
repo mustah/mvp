@@ -14,4 +14,6 @@ public interface Organisations {
   Organisation save(Organisation organisation);
 
   void deleteById(Long id);
+
+  Optional<Organisation> findByCode(String code);
 }

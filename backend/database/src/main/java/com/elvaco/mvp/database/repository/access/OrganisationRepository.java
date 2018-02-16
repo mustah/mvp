@@ -48,4 +48,10 @@ public class OrganisationRepository implements Organisations {
   public void deleteById(Long id) {
     organisationJpaRepository.delete(id);
   }
+
+  @Override
+  public Optional<Organisation> findByCode(String organisationCode) {
+    return organisationJpaRepository.findByCode(organisationCode)
+      .map(organisationMapper::toDomainModel);
+  }
 }
