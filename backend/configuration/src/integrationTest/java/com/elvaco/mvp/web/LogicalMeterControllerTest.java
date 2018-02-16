@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -33,6 +34,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -119,8 +121,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeterDto.statusChangelog.size()).isEqualTo(3);
 
-    assertThat(logicalMeterDto.statusChangelog.get(0).start).isEqualTo(new Date(statusLogStart));
-    assertThat(logicalMeterDto.statusChangelog.get(0).stop).isEqualTo(new Date(statusLogStop));
+    assertThat(logicalMeterDto.statusChangelog.get(0).start).isEqualTo(
+      Dates.formatTime(new Date(statusLogStart), TimeZone.getDefault())
+    );
+    assertThat(logicalMeterDto.statusChangelog.get(0).stop).isEqualTo(
+      Dates.formatTime(new Date(statusLogStart), TimeZone.getDefault())
+    );
   }
 
   @Test

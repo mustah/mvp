@@ -1,9 +1,8 @@
 package com.elvaco.mvp.web.dto;
 
-import java.util.Date;
-
 public class MeterStatusLogDto {
+  public Long statusId;
   public String name;
-  public Date start;
-  public Date stop;
+  public String start;
+  public String stop;
 }

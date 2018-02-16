@@ -2,6 +2,7 @@ import {Checkbox} from 'material-ui';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {checkbox, checkboxLabel} from '../../app/themes';
+import {Content} from '../../components/content/Content';
 import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
@@ -17,18 +18,17 @@ import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {ObjectsById, Normalized, DomainModel} from '../../state/domain-models/domainModels';
+import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
+import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import {Info} from './Info';
 import './MeterDetailsContainer.scss';
-import {Content} from '../../components/content/Content';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 
 // TODO[!must!] use real measurement data from backend (another MR)
 const measurements: Normalized<any> = {
@@ -87,10 +87,18 @@ type Props = StateToProps & OwnProps;
 const MeterDetailsInfo = (props: Props) => {
   const {gateways, meter} = props;
 
-  const renderAlarm = () => meter.alarm !== ':Inget fel:' && (<Info label={translate('alarm')} value={meter.alarm}/>);
+  const renderAlarm = () => meter.alarm !== ':Inget fel:' && (
+    <Info label={translate('alarm')} value={meter.alarm}/>);
 
-  const gateway = gateways[meter.gatewayId];
-  const status = gateway.status;
+  // TODO Remove hard coded "gateway"
+  const gateway = gateways[meter.gatewayId] == null
+    ? {status: {id: 1, name: 'test'}, flags: []}
+    : gateways[meter.gatewayId];
+
+  // TODO Handle meter flags
+  const meterFlags = meter.flags == null ? [] : meter.flags;
+
+  const meterStatus = meter.statusChangelog[0];
 
   return (
     <Row>
@@ -115,7 +123,7 @@ const MeterDetailsInfo = (props: Props) => {
           </Column>
           <Info
             label={translate('status')}
-            value={<IconStatus id={status.id} name={status.name}/>}
+            value={<IconStatus id={gateway.status.id} name={gateway.status.name}/>}
           />
           <Info label={translate('interval')} value="24h"/>
           <Info label={translate('resolution')} value="1h"/>
@@ -127,9 +135,12 @@ const MeterDetailsInfo = (props: Props) => {
               <Subtitle>{translate('validation')}</Subtitle>
             </Row>
           </Column>
-          <Info label={translate('status')} value={<IconStatus id={meter.status.id} name={meter.status.name}/>}/>
+          <Info
+            label={translate('status')}
+            value={<IconStatus id={meterStatus.statusId} name={meterStatus.name}/>}
+          />
           {renderAlarm()}
-          <Info label={translate('flagged for action')} value={titleOf(meter.flags)}/>
+          <Info label={translate('flagged for action')} value={titleOf(meterFlags)}/>
         </Row>
         <Row>
           <Column>
@@ -154,7 +165,32 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
-    const gateway = gateways[meter.gatewayId];
+    // TODO Remove fake gateway
+    const fakeGateway: Gateway =
+      ({
+        id: 1,
+        facility: 'a',
+        flags: [],
+        flagged: false,
+        productModel: 'cme2199',
+        telephoneNumber: '',
+        statusChanged: undefined,
+        ip: undefined,
+        port: undefined,
+        signalToNoiseRatio: undefined,
+        status: {id: 1, name: 'Ok'},
+        statusChangelog: [],
+        meterIds: [],
+        meterStatus: {id: 1, name: ''},
+        meterAlarm: '',
+        meterManufacturer: 'Elvaco',
+        address: {cityId: 1, id: 1, name: 'a'},
+        city: {id: 1, name: 'a'},
+        position: {latitude: 1, longitude: 1, confidence: 1},
+      });
+
+    const gateway = gateways[meter.gatewayId] === null ? fakeGateway : gateways[meter.gatewayId];
+
     const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},
       result: [gateway.id],
@@ -162,10 +198,18 @@ class MeterDetailsTabs extends React.Component<Props, State> {
 
     const statusChangelog = normalizedStatusChangelogFor(meter);
 
-    const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
+    const renderStatusCell = (item: MeterStatusChangelog) =>
+      (
+        <Status
+          {...{
+            id: item.statusId,
+            name: item.name,
+          }}
+        />
+      );
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
-    const renderDate = (item: any) => item.date;
+    const renderDate = (item: any) => item.start;
     const renderSerial = ({id}: Gateway) => id;
     const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) => signalToNoiseRatio || translate('n/a');
     const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(meter) ? true : false;
@@ -196,7 +240,11 @@ class MeterDetailsTabs extends React.Component<Props, State> {
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Row>
-              <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
+              <Checkbox
+                iconStyle={checkbox}
+                labelStyle={checkboxLabel}
+                label={translate('show only changes')}
+              />
             </Row>
             <Table {...statusChangelog}>
               <TableColumn
@@ -210,7 +258,10 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
+            <Content
+              hasContent={hasConfidentPosition}
+              noContentText={translate('no reliable position')}
+            >
               <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
               </Map>
