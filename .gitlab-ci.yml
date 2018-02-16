@@ -3,7 +3,7 @@ image:
 
 stages:
     - clean
-    - prep
+    - prepare
     - build
     - test
     - deploy
@@ -35,7 +35,7 @@ gradle-cache:
         - /^release-.*$/
 
 docker:postgresql:
-    stage: prep
+    stage: prepare
     tags:
       - shell
     script:
@@ -44,7 +44,7 @@ docker:postgresql:
       - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
 dotVersion:
-    stage: prep
+    stage: prepare
     image:
       name: alpine/git:latest
       entrypoint: ["/bin/sh", "-c"]
