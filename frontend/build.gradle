@@ -28,32 +28,5 @@ task yarn_test(type: YarnTask) {
   args = ['test']
 }
 
-task cleanMockup(type: Delete) {
-  delete 'mockup'
-}
-
-task assembleMockup(type: Tar) {
-  archiveName = 'elvaco-mvp-mockup-' + getVersion() +'.tar.gz'
-  destinationDir = file('mockup/')
-
-  into('/') {
-    from(buildDir)
-    include('**/*')
-  }
-
-  into('/') {
-    from('.')
-    include('routes.json')
-  }
-
-  compression = Compression.GZIP
-  extension 'tar'
-}
-
-clean.dependsOn(cleanMockup)
 check.dependsOn([yarn_install, yarn_test])
 bundle.dependsOn(yarn_install)
-assembleMockup.dependsOn(cleanMockup)
-assembleMockup.dependsOn(bundle)
-assemble.dependsOn(bundle)
-assemble.dependsOn(assembleMockup)

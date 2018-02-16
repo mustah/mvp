@@ -82,8 +82,6 @@ configurations {
   integrationTestRuntime.extendsFrom testRuntime
 }
 
-check.dependsOn integrationTest
-
 distributions {
   main {
     baseName = 'mvp'
@@ -102,4 +100,5 @@ jar {
     into 'static'
   }
 }
-jar.dependsOn(':frontend:assemble')
+jar.dependsOn(':frontend:bundle')
+check.dependsOn([integrationTest,systemTest])
