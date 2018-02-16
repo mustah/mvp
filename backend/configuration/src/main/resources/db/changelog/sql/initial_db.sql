@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS meter_definition_quantities (
 CREATE TABLE IF NOT EXISTS organisation (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255),
-  code VARCHAR(255)
+  code VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
