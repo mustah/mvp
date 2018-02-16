@@ -64,11 +64,12 @@ CREATE TABLE IF NOT EXISTS location (
 CREATE TABLE IF NOT EXISTS physical_meter (
   id BIGSERIAL PRIMARY KEY,
   organisation_id BIGINT REFERENCES organisation,
-  identity VARCHAR(255),
+  address VARCHAR(255) NOT NULL,
+  external_id TEXT NOT NULL,
   medium VARCHAR(255),
   manufacturer VARCHAR(255),
   logical_meter_id BIGINT REFERENCES logical_meter,
-  UNIQUE (organisation_id, identity)
+  UNIQUE (organisation_id, external_id, address)
 );
 
 CREATE TABLE IF NOT EXISTS gateway (

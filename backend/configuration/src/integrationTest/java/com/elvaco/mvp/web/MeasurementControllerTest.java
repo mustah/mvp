@@ -68,18 +68,21 @@ public class MeasurementControllerTest extends IntegrationTest {
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
       elvacoEntity,
       "test-butter-meter-1",
+      "butter-external-id",
       "Butter",
       "ELV"
     );
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
       wayneIndustriesEntity,
       "test-milk-meter-1",
+      "milk-external-id",
       "Milk",
       "ELV"
     );
     forceMeter = new PhysicalMeterEntity(
       wayneIndustriesEntity,
       String.valueOf(Math.random()),
+      "force-external-id",
       "vacum",
       "ELV"
     );

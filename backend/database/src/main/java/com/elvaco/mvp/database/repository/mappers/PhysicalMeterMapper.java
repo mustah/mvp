@@ -33,7 +33,8 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
     return new PhysicalMeter(
       entity.id,
       organisationMapper.toDomainModel(entity.organisation),
-      entity.identity,
+      entity.address,
+      entity.externalId,
       entity.medium,
       entity.manufacturer,
       entity.logicalMeterId,
@@ -46,7 +47,8 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
     return new PhysicalMeterEntity(
       domainModel.id,
       organisationMapper.toEntity(domainModel.organisation),
-      domainModel.identity,
+      domainModel.address,
+      domainModel.externalId,
       domainModel.medium,
       domainModel.manufacturer,
       domainModel.logicalMeterId

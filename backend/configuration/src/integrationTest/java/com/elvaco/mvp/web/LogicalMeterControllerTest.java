@@ -203,6 +203,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new PhysicalMeter(
         DomainModels.ELVACO,
         "111-222-333-444",
+        "external-id",
         "Some device specific medium name",
         "ELV",
         savedLogicalMeter.id,
@@ -297,6 +298,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new PhysicalMeter(
         DomainModels.ELVACO,
         "111-222-333-444-" + seed,
+        "external-id",
         "Some device specific medium name",
         "ELV",
         logicalMeterId,

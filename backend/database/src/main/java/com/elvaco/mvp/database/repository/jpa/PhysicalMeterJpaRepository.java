@@ -11,7 +11,11 @@ public interface PhysicalMeterJpaRepository
 
   Optional<PhysicalMeterEntity> findById(Long id);
 
-  Optional<PhysicalMeterEntity> findByIdentity(String identity);
-
   List<PhysicalMeterEntity> findByMedium(String medium);
+
+  Optional<PhysicalMeterEntity> findByOrganisationIdAndExternalIdAndAddress(
+    Long organisationId,
+    String externalId,
+    String address
+  );
 }
