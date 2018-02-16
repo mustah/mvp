@@ -3,7 +3,6 @@ package com.elvaco.mvp.core.spi.repository;
 import java.util.List;
 import java.util.Optional;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 
 public interface PhysicalMeters {
@@ -16,8 +15,8 @@ public interface PhysicalMeters {
 
   PhysicalMeter save(PhysicalMeter physicalMeter);
 
-  Optional<PhysicalMeter> findByOrganisationAndExternalIdAndAddress(
-    Organisation organisation,
+  Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+    Long organisationId,
     String externalId,
     String address
   );

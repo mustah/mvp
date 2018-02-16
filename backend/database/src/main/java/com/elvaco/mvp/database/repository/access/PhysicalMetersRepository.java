@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -54,11 +53,11 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  public Optional<PhysicalMeter> findByOrganisationAndExternalIdAndAddress(
-    Organisation organisation, String externalId, String address
+  public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+    Long organisationId, String externalId, String address
   ) {
     return jpaRepository.findByOrganisationIdAndExternalIdAndAddress(
-      organisation.id,
+      organisationId,
       externalId,
       address
     ).map(physicalMeterMapper::toDomainModel);

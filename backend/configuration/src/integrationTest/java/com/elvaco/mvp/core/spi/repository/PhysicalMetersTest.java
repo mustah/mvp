@@ -77,7 +77,7 @@ public class PhysicalMetersTest extends IntegrationTest {
     physicalMeters.save(new PhysicalMeter(ELVACO, "123456789", "12", "Heat", "ELV"));
 
     assertThat(
-      physicalMeters.findByOrganisationAndExternalIdAndAddress(ELVACO, "12", "123456789")
+      physicalMeters.findByOrganisationIdAndExternalIdAndAddress(ELVACO.id, "12", "123456789")
         .isPresent()).isTrue();
   }
 

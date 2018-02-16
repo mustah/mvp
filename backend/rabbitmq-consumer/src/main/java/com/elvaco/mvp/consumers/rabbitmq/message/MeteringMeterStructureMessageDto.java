@@ -13,7 +13,7 @@ public class MeteringMeterStructureMessageDto extends MeteringMessageDto {
   public final GatewayDto gateway;
   public final LocationDto location;
 
-  MeteringMeterStructureMessageDto(
+  public MeteringMeterStructureMessageDto(
     MessageType messageType,
     String meterId,
     String facilityId,
