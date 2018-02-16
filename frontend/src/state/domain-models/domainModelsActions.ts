@@ -212,12 +212,7 @@ export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewa
 export const fetchUsers = restGetIfNeeded<User>(EndPoints.users, userSchema, 'users');
 
 export const fetchOrganisations =
-  restGetIfNeeded<Organisation>(EndPoints.organisations, organisationSchema, 'organisations', {
-    afterSuccess: (
-      {result},
-      dispatch,
-    ) => dispatch(paginationUpdateMetaData({entityType: 'organisations', ...paginationMetaDataFromResult(result)})),
-  });
+  restGetIfNeeded<Organisation>(EndPoints.organisations, organisationSchema, 'organisations');
 
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');

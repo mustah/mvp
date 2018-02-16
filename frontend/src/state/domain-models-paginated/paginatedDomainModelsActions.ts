@@ -91,8 +91,9 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const isFetchingOrExistingOrError = (page: number, {result}: NormalizedPaginatedState<HasId>) =>
-  result[page] && (result[page].isSuccessfullyFetched || result[page].isFetching || result[page].error);
+const shouldFetch = (page: number, {result}: NormalizedPaginatedState<HasId>): boolean =>
+  !result[page]
+  || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
 const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
@@ -108,9 +109,7 @@ const restGetIfNeeded = <T extends HasId>(
     (dispatch: Dispatch<RootState>, getState: GetState) => {
 
       const {paginatedDomainModels} = getState();
-      const shouldFetch = !isFetchingOrExistingOrError(page, paginatedDomainModels[entityType]);
-
-      if (shouldFetch) {
+      if (shouldFetch(page, paginatedDomainModels[entityType])) {
         return asyncRequest<string, NormalizedPaginated<T>>({
           ...requestGet,
           formatData: (data) => ({...normalize(data, schema), page}),
