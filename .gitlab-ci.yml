@@ -2,7 +2,6 @@ image:
     name: gradle:jdk8
 
 stages:
-    - clean
     - prepare
     - build
     - test
@@ -23,9 +22,9 @@ before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
-gradle-cache:
+gradle:clean:
     <<: *cache_gradle
-    stage: clean
+    stage: prepare
     script:
         - gradle clean
     only:
