@@ -1,7 +1,7 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {HasId, uuid} from '../../../../types/Types';
 import {NormalizedState, ObjectsById} from '../../../domain-models/domainModels';
-import {Meter, SelectionTreeData} from '../meterModels';
+import {Meter, MeterDataSummary, SelectionTreeData} from '../meterModels';
 import {getMeterDataSummary, getSelectionTree} from '../meterSelectors';
 
 type PartialDomainModel = ObjectsById<Partial<Meter> & HasId>;
@@ -47,7 +47,7 @@ describe('meterSelectors', () => {
 
       const reduced = getMeterDataSummary(metersState as NormalizedState<Meter>);
 
-      expect(reduced.get()).toEqual({
+      const expected: MeterDataSummary = {
         flagged:
           {
             flagged: {name: 'flagged', value: 1, filterParam: true},
@@ -72,7 +72,8 @@ describe('meterSelectors', () => {
         alarm: {
           none: {name: 'none', value: 3, filterParam: 'none'},
         },
-      });
+      };
+      expect(reduced.get()).toEqual(expected);
     });
   });
 

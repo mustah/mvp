@@ -125,57 +125,59 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
   }
 };
 
-const addToCategory = (category: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
+const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
 
-  const categoryAdd =
+  const sliceUpdate =
     (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam, value: number): PieSlice => ({
       name: pieChartTranslation(fieldKey, idNamed),
       value,
       filterParam,
     });
 
-  const valueOf = (pieSlice: PieSlice): number => {
+  const initOrIncrease = (pieSlice: PieSlice): number => {
     return Maybe.maybe<PieSlice>(pieSlice)
       .map((pieSlice: PieSlice) => ++pieSlice.value)
       .orElse(1);
   };
 
   let label: uuid;
+  let sliceObject;
 
   switch (fieldKey) {
     case 'flagged':
       label = meter[fieldKey] ? 'flagged' : 'unFlagged';
       return {
-        ...category,
-        [label]: categoryAdd(fieldKey, {
+        ...pie,
+        [label]: sliceUpdate(fieldKey, {
           id: label,
           name: label,
-        }, meter[fieldKey], valueOf(category[label])),
+        }, meter[fieldKey], initOrIncrease(pie[label])),
       };
 
     case 'city':
     case 'status':
-      label = meter[fieldKey].id;
+      label = meter[fieldKey] && (meter[fieldKey].id || meter[fieldKey].id === 0) ? meter[fieldKey].id : 'unknown';
+      sliceObject = meter[fieldKey] ? meter[fieldKey] : {id: 'unknown', name: 'unknown'};
       return {
-        ...category,
-        [label]: categoryAdd(fieldKey, meter[fieldKey], label, valueOf(category[label])),
+        ...pie,
+        [label]: sliceUpdate(fieldKey, sliceObject as IdNamed, label, initOrIncrease(pie[label])),
       };
 
     default:
       label = meter[fieldKey];
       return {
-        ...category,
-        [label]: categoryAdd(fieldKey, {id: label, name: label}, label, valueOf(category[label])),
+        ...pie,
+        [label]: sliceUpdate(fieldKey, {id: label, name: label}, label, initOrIncrease(pie[label])),
       };
   }
 };
 
-const addMeterDataToSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Meter): MeterDataSummary => {
+const createDataSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Meter): MeterDataSummary => {
   const category: PieData = summary[fieldKey];
   return {
     ...summary,
     [fieldKey]: {
-      ...addToCategory(category, fieldKey, meter),
+      ...addToPie(category, fieldKey, meter),
     },
   };
 };
@@ -196,7 +198,7 @@ export const getMeterDataSummary =
             const meter = meters[meterId];
             return Object.keys(summaryTemplate)
               .reduce((summaryAggregated, fieldKey: MeterDataSummaryKey) =>
-                addMeterDataToSummary(summaryAggregated, fieldKey, meter), summary);
+                createDataSummary(summaryAggregated, fieldKey, meter), summary);
           }, summaryTemplate),
         ));
     },
