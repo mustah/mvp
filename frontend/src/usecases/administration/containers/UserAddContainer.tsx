@@ -12,7 +12,7 @@ import {translate} from '../../../services/translationService';
 import {RestGet} from '../../../state/domain-models/domainModels';
 import {addUser, fetchOrganisations} from '../../../state/domain-models/domainModelsActions';
 import {Organisation, Role} from '../../../state/domain-models/user/userModels';
-import {getOrganisations} from '../../../state/domain-models/user/userSelectors';
+import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
 import {OnClick} from '../../../types/Types';
 import {UserEditForm} from '../../../components/forms/UserEditForm';
 
@@ -63,12 +63,9 @@ class UserAdd extends React.Component<Props> {
 }
 
 // TODO get organisations and roles from backend
-const mapStateToProps = ({domainModels: {organisations}}: RootState): StateToProps => ({
+const mapStateToProps = ({domainModels: {organisations}, auth: {user}}: RootState): StateToProps => ({
   organisations: getOrganisations(organisations),
-  roles: [
-    Role.ADMIN,
-    Role.USER,
-  ],
+  roles: getRoles(user!),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

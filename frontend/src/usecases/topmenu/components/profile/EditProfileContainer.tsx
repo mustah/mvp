@@ -13,7 +13,7 @@ import {RestGet} from '../../../../state/domain-models/domainModels';
 import {fetchOrganisations, modifyProfile} from '../../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../../state/domain-models/user/userModels';
 import {UserEditForm} from '../../../../components/forms/UserEditForm';
-import {getOrganisations} from '../../../../state/domain-models/user/userSelectors';
+import {getOrganisations, getRoles} from '../../../../state/domain-models/user/userSelectors';
 
 interface StateToProps {
   user: User;
@@ -67,10 +67,7 @@ class EditProfile extends React.Component<Props> {
 const mapStateToProps = ({auth: {user}, domainModels: {organisations}}: RootState): StateToProps => ({
   user: user!,
   organisations: getOrganisations(organisations),
-  roles: [
-    Role.ADMIN,
-    Role.USER,
-  ],
+  roles: getRoles(user!),
 }); // TODO: Perhaps use a selector instead of using the "!" null protection for user.
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
