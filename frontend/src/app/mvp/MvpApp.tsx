@@ -15,6 +15,7 @@ import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
+import {SelectionTreeContainer} from '../../usecases/sidemenu/containers/selection-tree/SelectionTreeContainer';
 import {SideMenuContainer} from '../../usecases/sidemenu/containers/SideMenuContainer';
 import {toggleShowHideSideMenu} from '../../usecases/sidemenu/sideMenuActions';
 import {MvpPages} from './MvpPages';
@@ -31,7 +32,6 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 class MvpApp extends React.Component<Props> {
 
-// TODO fix so that SelectionTreeContainer don't break.
   render() {
     const {isSideMenuOpen, toggleShowHideSideMenu} = this.props;
 
@@ -47,7 +47,7 @@ class MvpApp extends React.Component<Props> {
               showMenuIconButton={false}
             />
             <SavedSelectionsContainer/>
-            {/*<SelectionTreeContainer topLevel={'cities'}/>*/}
+            <SelectionTreeContainer topLevel={'cities'}/>
           </SideMenuContainer>
         </Layout>
         <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
