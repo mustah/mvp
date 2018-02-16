@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.entity.meter;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -39,6 +40,9 @@ public class PhysicalMeterEntity implements Serializable {
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
+
+  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.EAGER)
+  public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public Long logicalMeterId;
 

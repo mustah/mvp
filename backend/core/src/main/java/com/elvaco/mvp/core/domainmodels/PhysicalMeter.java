@@ -1,11 +1,14 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
@@ -20,6 +23,7 @@ public class PhysicalMeter {
   public final Long logicalMeterId;
   public final String manufacturer;
   private final List<Measurement> measurements;
+  public final List<MeterStatusLog> meterStatusLogs;
 
   public PhysicalMeter(
     @Nullable Long id,
@@ -27,7 +31,8 @@ public class PhysicalMeter {
     String identity,
     String medium,
     String manufacturer,
-    @Nullable Long logicalMeterId
+    @Nullable Long logicalMeterId,
+    List<MeterStatusLog> meterStatusLogs
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -36,6 +41,7 @@ public class PhysicalMeter {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.measurements = new ArrayList<>();
+    this.meterStatusLogs = unmodifiableList(meterStatusLogs);
   }
 
   public PhysicalMeter(
@@ -44,7 +50,15 @@ public class PhysicalMeter {
     String medium,
     String manufacturer
   ) {
-    this(null, organisation, identity, medium, manufacturer, null);
+    this(
+      null,
+      organisation,
+      identity,
+      medium,
+      manufacturer,
+      null,
+      Collections.emptyList()
+    );
   }
 
   public PhysicalMeter(
@@ -54,7 +68,7 @@ public class PhysicalMeter {
     String medium,
     String manufacturer
   ) {
-    this(id, organisation, identity, medium, manufacturer, null);
+    this(id, organisation, identity, medium, manufacturer, null, Collections.emptyList());
   }
 
   public PhysicalMeter(
@@ -62,8 +76,17 @@ public class PhysicalMeter {
     String identity,
     String medium,
     String manufacturer,
-    Long logicalMeterId
+    Long logicalMeterId,
+    List<MeterStatusLog> meterStatusLogs
   ) {
-    this(null, organisation, identity, medium, manufacturer, logicalMeterId);
+    this(
+      null,
+      organisation,
+      identity,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      meterStatusLogs
+    );
   }
 }

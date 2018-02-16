@@ -19,7 +19,7 @@ public class LogicalMeterDto {
   public String medium;
   public String manufacturer;
   public String statusChanged;
-  public List<MeterStatusChangeLogDto> statusChangelog;
+  public List<MeterStatusLogDto> statusChangelog;
   public String created;
   public IdNamedDto status;
   public Long gatewayId;

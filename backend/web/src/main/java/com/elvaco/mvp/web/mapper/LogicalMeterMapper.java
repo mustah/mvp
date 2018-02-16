@@ -12,7 +12,15 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.util.Dates;
 
+import static java.util.stream.Collectors.toList;
+
 public class LogicalMeterMapper {
+
+  private final MeterStatusLogMapper meterStatusLogMapper;
+
+  public LogicalMeterMapper(MeterStatusLogMapper meterStatusLogMapper) {
+    this.meterStatusLogMapper = meterStatusLogMapper;
+  }
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
@@ -49,6 +57,10 @@ public class LogicalMeterMapper {
       meterDto.position.latitude = coordinate.getLatitude();
       meterDto.position.longitude = coordinate.getLongitude();
     }
+
+    meterDto.statusChangelog = logicalMeter.meterStatusLogs
+      .stream().map(meterStatusLogMapper::toDto).collect(toList());
+
     return meterDto;
   }
 }
