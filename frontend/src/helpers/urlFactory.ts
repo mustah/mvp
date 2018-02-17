@@ -43,6 +43,10 @@ export const encodedUriParametersForMeters = (pagination: Pagination, selectedId
   return encodedUriParametersFrom({pagination, selectedIds, parameterNames: meterParameterNames, parameterCallbacks});
 };
 
+export const encodedUriParametersForAllMeters = (selectedIds: SelectedParameters): string => {
+  return encodedUriParametersFrom({selectedIds, parameterNames: meterParameterNames, parameterCallbacks});
+};
+
 export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
   return encodedUriParametersFrom({selectedIds, parameterNames: gatewayParameterNames, parameterCallbacks});
 };

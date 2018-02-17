@@ -191,7 +191,7 @@ describe('domainModelsReducer', () => {
         gatewayStatuses: initialDomain(),
         manufacturers: initialDomain(),
         measurements: initialDomain(),
-        metersAll: initialDomain(),
+        allMeters: initialDomain(),
         meterStatuses: initialDomain(),
         productModels: initialDomain(),
         users: initialDomain(),

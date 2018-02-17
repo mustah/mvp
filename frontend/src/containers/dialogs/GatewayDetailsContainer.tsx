@@ -92,7 +92,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderManufacturer = (item: Meter) => item.manufacturer;
     const renderDate = (item: Meter) => item.date;
     const renderMedium = (item: Meter) => item.medium;
-    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(gateway) ? true : false;
+    const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(gateway);
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 

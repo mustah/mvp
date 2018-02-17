@@ -1,7 +1,10 @@
 import {createSelector, OutputSelector} from 'reselect';
 import {Period} from '../../../components/dates/dateModels';
 import {getTranslationOrName} from '../../../helpers/translations';
-import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../../../helpers/urlFactory';
+import {
+  encodedUriParametersForGateways, encodedUriParametersForMeters,
+  encodedUriParametersForAllMeters,
+} from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
@@ -102,6 +105,12 @@ export const getEncodedUriParametersForMeters =
     getPagination,
     getSelectedParameters,
     encodedUriParametersForMeters,
+  );
+
+export const getEncodedUriParametersForAllMeters =
+  createSelector<SearchParameterState, SelectedParameters, string>(
+    getSelectedParameters,
+    encodedUriParametersForAllMeters,
   );
 
 export const getEncodedUriParametersForGateways =

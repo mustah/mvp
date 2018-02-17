@@ -65,7 +65,7 @@ public class LogicalMeterController {
   }
 
   @GetMapping("/all")
-  public List<LogicalMeterDto> logicalMetersAll(
+  public List<LogicalMeterDto> logicalAllMeters(
     TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams

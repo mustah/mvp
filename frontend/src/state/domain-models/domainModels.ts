@@ -13,7 +13,7 @@ export interface Location {
 export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
-  metersAll = '/meters/all',
+  allMeters = '/meters/all',
   gateways = '/gateways',
   users = '/users',
   authenticate = '/authenticate',
@@ -68,7 +68,7 @@ export interface DomainModelsState {
   meterStatuses: SelectionEntityState;
   productModels: SelectionEntityState;
   measurements: MeasurementState;
-  metersAll: NormalizedState<Meter>;
+  allMeters: NormalizedState<Meter>;
   users: UserState;
   organisations: NormalizedState<Organisation>;
 }

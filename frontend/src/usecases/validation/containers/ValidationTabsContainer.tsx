@@ -16,10 +16,12 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {Meter, MeterDataSummary} from '../../../state/domain-models-paginated/meter/meterModels';
 import {getMeterDataSummary} from '../../../state/domain-models-paginated/meter/meterSelectors';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
+import {ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {fetchAllMeters} from '../../../state/domain-models/domainModelsActions';
 import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
+import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
@@ -35,77 +37,91 @@ interface StateToProps extends TabsContainerStateToProps {
   meterDataSummary: Maybe<MeterDataSummary>;
   meters: ObjectsById<Meter>;
   selectedMarker: Maybe<Meter>;
+  encodedUriParametersForAllMeters: string;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
+  fetchAllMeters: RestGet;
 }
 
 type Props = StateToProps & DispatchToProps;
 
-const ValidationTabs = (props: Props) => {
-  const {
-    selectedTab,
-    changeTab,
-    meters,
-    meterDataSummary,
-    setSelection,
-    selectedMarker,
-    closeClusterDialog,
-  } = props;
+class ValidationTabs extends React.Component<Props> {
 
-  const dialog = selectedMarker.isJust() && (
-    <Dialog isOpen={true} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={selectedMarker.get()}/>
-    </Dialog>
-  );
+  componentDidMount() {
+    const {fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
+    fetchAllMeters(encodedUriParametersForAllMeters);
+  }
 
-  const hasMeters: boolean = isMarkersWithinThreshold(meters);
+  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
+    fetchAllMeters(encodedUriParametersForAllMeters);
+  }
 
-  return (
-    <Tabs>
-      <TabTopBar>
-        <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-          <Tab tab={TabName.overview} title={translate('overview')}/>
-          <Tab tab={TabName.list} title={translate('list')}/>
-          <Tab tab={TabName.map} title={translate('map')}/>
-        </TabHeaders>
-        <TabSettings/>
-      </TabTopBar>
-      <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-        <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
-      </TabContent>
-      <TabContent tab={TabName.list} selectedTab={selectedTab}>
-        <MeterListContainer componentId={'validationMeterList'}/>
-      </TabContent>
-      <TabContent tab={TabName.map} selectedTab={selectedTab}>
-        <div>
-        <Content hasContent={hasMeters} noContentText={translate('no meters')}>
-        <Map>
-        <ClusterContainer markers={meters}/>
-        </Map>
-        </Content>
-        {dialog}
-        </div>
-      </TabContent>
-    </Tabs>
-  );
-};
+  render() {
+    const {
+      selectedTab,
+      changeTab,
+      meters,
+      meterDataSummary,
+      setSelection,
+      selectedMarker,
+      closeClusterDialog,
+    } = this.props;
 
-const mapStateToProps = ({ui, map, domainModels: {metersAll}}: RootState): StateToProps => {
-  return {
-    selectedTab: getSelectedTab(ui.tabs.validation),
-    meterDataSummary: getMeterDataSummary(metersAll),
-    meters: getEntitiesDomainModels(metersAll),
-    selectedMarker: getSelectedMeterMarker(map),
-  };
-};
+    const dialog = selectedMarker.isJust() && (
+      <Dialog isOpen={true} close={closeClusterDialog}>
+        <MeterDetailsContainer meter={selectedMarker.get()}/>
+      </Dialog>
+    );
+
+    const hasMeters: boolean = isMarkersWithinThreshold(meters);
+
+    return (
+      <Tabs>
+        <TabTopBar>
+          <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
+            <Tab tab={TabName.overview} title={translate('overview')}/>
+            <Tab tab={TabName.list} title={translate('list')}/>
+            <Tab tab={TabName.map} title={translate('map')}/>
+          </TabHeaders>
+          <TabSettings/>
+        </TabTopBar>
+        <TabContent tab={TabName.overview} selectedTab={selectedTab}>
+          <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
+        </TabContent>
+        <TabContent tab={TabName.list} selectedTab={selectedTab}>
+          <MeterListContainer componentId={'validationMeterList'}/>
+        </TabContent>
+        <TabContent tab={TabName.map} selectedTab={selectedTab}>
+          <div>
+            <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+              <Map>
+                <ClusterContainer markers={meters}/>
+              </Map>
+            </Content>
+            {dialog}
+          </div>
+        </TabContent>
+      </Tabs>
+    );
+  }
+}
+
+const mapStateToProps = ({ui, searchParameters, map, domainModels: {allMeters}}: RootState): StateToProps => ({
+  selectedTab: getSelectedTab(ui.tabs.validation),
+  meterDataSummary: getMeterDataSummary(allMeters),
+  meters: getEntitiesDomainModels(allMeters),
+  selectedMarker: getSelectedMeterMarker(map),
+  encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   setSelection,
   closeClusterDialog,
+  fetchAllMeters,
 }, dispatch);
 
 export const ValidationTabsContainer =

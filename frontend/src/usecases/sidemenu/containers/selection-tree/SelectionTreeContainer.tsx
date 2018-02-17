@@ -8,6 +8,9 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {SelectionTreeData} from '../../../../state/domain-models-paginated/meter/meterModels';
 import {getSelectionTree} from '../../../../state/domain-models-paginated/meter/meterSelectors';
+import {RestGet} from '../../../../state/domain-models/domainModels';
+import {fetchAllMeters} from '../../../../state/domain-models/domainModelsActions';
+import {getEncodedUriParametersForAllMeters} from '../../../../state/search/selection/selectionSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
 import {OnClickWithId, uuid} from '../../../../types/Types';
@@ -16,7 +19,7 @@ import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
 import './SelectionTreeContainer.scss';
 
-interface SelectionTreeProps {
+interface OwnProps {
   topLevel: string;
 }
 
@@ -24,56 +27,75 @@ interface StateToProps {
   selectionTree: SelectionTreeData;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
+  encodedUriParametersForAllMeters: string;
 }
 
 interface DispatchToProps {
   toggleExpand: OnClickWithId;
   toggleSelect: OnClickWithId;
+  fetchAllMeters: RestGet;
 }
 
-const SelectionTree = (props: SelectionTreeProps & StateToProps & DispatchToProps) => {
-  if (Object.keys(props.selectionTree.result).length === 0) {
-    return null;
+type Props = StateToProps & DispatchToProps & OwnProps;
+
+class SelectionTree extends React.Component<Props> {
+
+  componentDidMount() {
+    const {fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
+    fetchAllMeters(encodedUriParametersForAllMeters);
   }
-  const {topLevel, selectionTree, toggleExpand, openListItems, toggleSelect, selectedListItems} = props;
-  const renderSelectionOverview = (id: uuid) => renderSelectionTree({
-    id,
-    data: selectionTree,
-    level: topLevel,
-    toggleExpand,
-    openListItems,
-    toggleSelect,
-    selectedListItems,
-  });
 
-  const nestedItems = selectionTree.result[topLevel].sort().map(renderSelectionOverview);
-  return (
-    <List style={listStyle}>
-      <ListItem
-        className="ListItem"
-        primaryText={translate('selection overview')}
-        initiallyOpen={false}
-        style={sideBarHeaderStyle}
-        hoverColor={sideBarStyles.onHover.color}
-        nestedItems={nestedItems}
-        nestedListStyle={nestedListItemStyle}
-      />
-    </List>
-  );
-};
+  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
+    fetchAllMeters(encodedUriParametersForAllMeters);
+  }
 
-const mapStateToProps = ({report, domainModels: {metersAll}, ui: {selectionTree}}: RootState): StateToProps => {
-  return {
-    selectionTree: getSelectionTree(metersAll),
-    openListItems: getOpenListItems(selectionTree),
-    selectedListItems: getSelectedListItems(report),
+  render() {
+    if (Object.keys(this.props.selectionTree.result).length === 0) {
+      return null;
+    }
+    const {topLevel, selectionTree, toggleExpand, openListItems, toggleSelect, selectedListItems} = this.props;
+    const renderSelectionOverview = (id: uuid) => renderSelectionTree({
+      id,
+      data: selectionTree,
+      level: topLevel,
+      toggleExpand,
+      openListItems,
+      toggleSelect,
+      selectedListItems,
+    });
+
+    const nestedItems = selectionTree.result[topLevel].sort().map(renderSelectionOverview);
+    return (
+      <List style={listStyle}>
+        <ListItem
+          className="ListItem"
+          primaryText={translate('selection overview')}
+          initiallyOpen={false}
+          style={sideBarHeaderStyle}
+          hoverColor={sideBarStyles.onHover.color}
+          nestedItems={nestedItems}
+          nestedListStyle={nestedListItemStyle}
+        />
+      </List>
+    );
+  }
+}
+
+const mapStateToProps =
+  ({report, searchParameters, domainModels: {allMeters}, ui: {selectionTree}}: RootState): StateToProps => {
+    return {
+      selectionTree: getSelectionTree(allMeters),
+      openListItems: getOpenListItems(selectionTree),
+      selectedListItems: getSelectedListItems(report),
+      encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+    };
   };
-};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleExpand: selectionTreeToggleId,
   toggleSelect: selectEntryToggle,
+  fetchAllMeters,
 }, dispatch);
 
 export const SelectionTreeContainer =
-  connect<StateToProps, DispatchToProps, SelectionTreeProps>(mapStateToProps, mapDispatchToProps)(SelectionTree);
+  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(SelectionTree);
