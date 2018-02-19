@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 abstract class MockRepository<T> {
-  private List<T> entities;
+  private final List<T> entities;
 
   MockRepository() {
     this.entities = new ArrayList<>();

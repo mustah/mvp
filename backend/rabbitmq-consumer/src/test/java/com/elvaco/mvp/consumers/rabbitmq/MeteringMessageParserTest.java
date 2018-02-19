@@ -34,8 +34,10 @@ public class MeteringMessageParserTest {
       + "  \"expected_interval\": 15\n"
       + "}\n";
     MeteringMessageParser messageParser = new MeteringMessageParser();
+
     MeteringMeterStructureMessageDto parsedMessage =
       messageParser.parseStructureMessage(jsonMessage).orElse(null);
+
     assertThat(parsedMessage).isNotNull();
     assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_METER_STRUCTURE_V_1_0);
     assertThat(parsedMessage.facilityId).isEqualTo("ABC-123");

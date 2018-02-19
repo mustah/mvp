@@ -21,7 +21,9 @@ class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements com.el
       entity.address,
       entity.externalId,
       entity.medium,
-      entity.manufacturer
+      entity.manufacturer,
+      entity.logicalMeterId,
+      entity.meterStatusLogs
     );
   }
 
