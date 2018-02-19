@@ -17,9 +17,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.fixture.DomainModels;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -252,7 +250,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       null,
       new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
-      new PropertyCollection(new UserProperty("abc123", "Some project")),
       Collections.emptyList(),
       meterDefinition,
       Collections.emptyList()

@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import org.junit.Before;
@@ -78,7 +77,6 @@ public class LogicalMeterMapperTest {
         1L,
         expectedLocation,
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()
@@ -101,7 +99,6 @@ public class LogicalMeterMapperTest {
         1L,
         Location.UNKNOWN_LOCATION,
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()
@@ -132,7 +129,6 @@ public class LogicalMeterMapperTest {
           .confidence(1.0)
           .build(),
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()

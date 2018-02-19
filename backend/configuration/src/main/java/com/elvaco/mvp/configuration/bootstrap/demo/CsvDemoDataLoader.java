@@ -14,8 +14,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.PropertyCollection;
-import com.elvaco.mvp.core.domainmodels.UserProperty;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -100,7 +98,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               null,
               locationMap.get(csvData.address),
               new Date(),
-              new PropertyCollection(new UserProperty(csvData.facilityId)),
               emptyList(),
               meterDefinition,
               Collections.emptyList()

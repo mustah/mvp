@@ -25,11 +25,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import org.hibernate.annotations.Type;
 
 @ToString
 @EqualsAndHashCode
@@ -43,9 +41,6 @@ public class LogicalMeterEntity implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
-
-  @Type(type = "property-collection")
-  public PropertyCollection propertyCollection;
 
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   public Set<PhysicalMeterEntity> physicalMeters;
@@ -70,7 +65,6 @@ public class LogicalMeterEntity implements Serializable {
   private LocationEntity location;
 
   public LogicalMeterEntity() {
-    this.propertyCollection = new PropertyCollection();
     this.physicalMeters = Collections.emptySet();
     setLocation(new LocationEntity());
   }

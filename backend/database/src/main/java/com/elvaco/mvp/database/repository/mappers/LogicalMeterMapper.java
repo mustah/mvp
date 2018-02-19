@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -10,11 +9,8 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.UserProperty;
-import com.elvaco.mvp.database.dto.propertycollection.UserPropertyDto;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PropertyCollection;
 
 public class LogicalMeterMapper {
 
@@ -33,13 +29,6 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
-    PropertyCollection props = logicalMeterEntity.propertyCollection;
-
-    UserProperty userProperty = props
-      .asObject("user", UserPropertyDto.class)
-      .map(this::toUserProperty)
-      .orElse(new UserProperty());
-
     Location location = locationMapper.toDomainModel(logicalMeterEntity.getLocation());
 
     MeterDefinition meterDefinition = null;
@@ -59,7 +48,6 @@ public class LogicalMeterMapper {
       logicalMeterEntity.id,
       location,
       logicalMeterEntity.created,
-      new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty),
       physicalMeters,
       meterDefinition,
       meterStatusLogs
@@ -71,11 +59,6 @@ public class LogicalMeterMapper {
       logicalMeter.id,
       logicalMeter.created
     );
-
-    Optional.ofNullable(logicalMeter.propertyCollection.userProperty)
-      .map(this::toUserPropertyDto)
-      .map(userPropertyDto ->
-             logicalMeterEntity.propertyCollection.put("user", userPropertyDto));
 
     if (logicalMeter.hasMeterDefinition()) {
       logicalMeterEntity.meterDefinition =
@@ -91,13 +74,5 @@ public class LogicalMeterMapper {
     }
 
     return logicalMeterEntity;
-  }
-
-  private UserPropertyDto toUserPropertyDto(UserProperty userProperty) {
-    return new UserPropertyDto(userProperty.externalId, userProperty.project);
-  }
-
-  private UserProperty toUserProperty(UserPropertyDto userPropertyDto) {
-    return new UserProperty(userPropertyDto.externalId, userPropertyDto.project);
   }
 }

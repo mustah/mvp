@@ -17,7 +17,6 @@ public class LogicalMeter {
   @Nullable
   public final Long id;
   public final Location location;
-  public final PropertyCollection propertyCollection;
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
   @Nullable
@@ -39,7 +38,6 @@ public class LogicalMeter {
       null,
       Location.UNKNOWN_LOCATION,
       new Date(),
-      PropertyCollection.empty(),
       physicalMeters,
       meterDefinition,
       Collections.emptyList()
@@ -49,14 +47,12 @@ public class LogicalMeter {
   public LogicalMeter(
     @Nullable Long id,
     Location location,
-    Date created,
-    PropertyCollection propertyCollection
+    Date created
   ) {
     this(
       null,
       location,
       created,
-      propertyCollection,
       Collections.emptyList(),
       null,
       Collections.emptyList());
@@ -66,7 +62,6 @@ public class LogicalMeter {
     @Nullable Long id,
     Location location,
     Date created,
-    PropertyCollection propertyCollection,
     List<PhysicalMeter> physicalMeters,
     @Nullable MeterDefinition meterDefinition,
     List<MeterStatusLog> meterStatusLogs
@@ -74,7 +69,6 @@ public class LogicalMeter {
     this.id = id;
     this.location = location;
     this.created = new Date(created.getTime());
-    this.propertyCollection = propertyCollection;
     this.physicalMeters = Collections.unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.meterStatusLogs = meterStatusLogs;
@@ -85,7 +79,6 @@ public class LogicalMeter {
       id,
       location,
       creationTime,
-      propertyCollection,
       physicalMeters,
       meterDefinition,
       Collections.emptyList()
@@ -115,7 +108,6 @@ public class LogicalMeter {
       id,
       location,
       created,
-      propertyCollection,
       physicalMeters,
       meterDefinition,
       Collections.emptyList()

@@ -48,7 +48,6 @@ CREATE TABLE IF NOT EXISTS users_roles (
 CREATE TABLE IF NOT EXISTS logical_meter (
   id BIGSERIAL PRIMARY KEY,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-  property_collection JSONB,
   meter_definition_id BIGINT REFERENCES meter_definition
 );
 
