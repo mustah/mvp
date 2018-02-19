@@ -24,8 +24,6 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
 
     FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
 
-    FILTERABLE_PROPERTIES.put("status", Q.status::eq);
-
     FILTERABLE_PROPERTIES.put("before", (String before) -> Q.created.before(toDate(before)));
 
     FILTERABLE_PROPERTIES.put("after", (String after) -> Q.created.after(toDate(after)));

@@ -51,42 +51,42 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private final long statusLogStart = new Date().getTime();
   private final long statusLogStop = new Date().getTime();
-
+  MeterDefinition districtHeatingMeterDefinition;
+  MeterDefinition hotWaterMeterDefinition;
   @Autowired
   private LogicalMeters logicalMeterRepository;
-
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
   @Autowired
   private MeasurementJpaRepository measurementJpaRepository;
-
   @Autowired
   private MeasurementUseCases measurementUseCases;
-
   @Autowired
   private MeterDefinitions meterDefinitions;
-
   @Autowired
   private PhysicalMeters physicalMeters;
-
   @Autowired
   private MeterStatuses meterStatuses;
-
   @Autowired
   private MeterStatusLogs meterStatusLogs;
-
   @Autowired
   private MeterStatusJpaRepository meterStatusJpaRepository;
-
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
   @Before
   public void setUp() {
+    districtHeatingMeterDefinition = meterDefinitions.save(
+      MeterDefinition.DISTRICT_HEATING_METER
+    );
+    hotWaterMeterDefinition = meterDefinitions.save(
+      MeterDefinition.HOT_WATER_METER
+    );
+
     for (int seed = 1; seed <= 55; seed++) {
-      String status = seed % 10 == 0 ? "Warning" : "Ok";
-      saveLogicalMeter(seed, status);
+      MeterDefinition meterDefinition = seed % 10 == 0 ? hotWaterMeterDefinition :
+        districtHeatingMeterDefinition;
+      saveLogicalMeter(seed, meterDefinition);
     }
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
@@ -179,7 +179,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllWithPredicates() {
     Page<LogicalMeterDto> response = asElvacoUser()
-      .getPage("/meters?status=Warning", LogicalMeterDto.class);
+      .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(5);
     assertThat(response.getNumberOfElements()).isEqualTo(5);
@@ -197,9 +197,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findMeasurementsForLogicalMeter() {
-    MeterDefinition districtHeatingMeterDefinition =
-      meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
-
     LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
       new LogicalMeter(districtHeatingMeterDefinition)
     );
@@ -241,7 +238,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurement.unit).isEqualTo("m^3");
   }
 
-  private LogicalMeter saveLogicalMeter(int seed, String status) {
+  private LogicalMeter saveLogicalMeter(
+    int seed,
+    MeterDefinition meterDefinition
+  ) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(created);
@@ -250,10 +250,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       null,
-      status,
       new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
-      new PropertyCollection(new UserProperty("abc123", "Some project"))
+      new PropertyCollection(new UserProperty("abc123", "Some project")),
+      Collections.emptyList(),
+      meterDefinition,
+      Collections.emptyList()
     );
     return logicalMeterRepository.save(logicalMeter);
   }

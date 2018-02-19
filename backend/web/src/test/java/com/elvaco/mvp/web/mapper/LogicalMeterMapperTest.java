@@ -57,7 +57,6 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      "Ok",
       location,
       new Date(),
       null,
@@ -78,7 +77,6 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      "Ok",
       new LocationBuilder().city("Kungsbacka")
         .streetAddress("Kabelgatan 2T")
         .latitude(57.5052592)
@@ -108,7 +106,7 @@ public class LogicalMeterMapperTest {
   public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    LogicalMeter logicalMeter = new LogicalMeter(0L, "Ok",
+    LogicalMeter logicalMeter = new LogicalMeter(0L,
                                                  Location.UNKNOWN_LOCATION,
                                                  dateFormat.parse("2018-02-12T14:14:25"),
                                                  PropertyCollection.empty()

@@ -50,8 +50,6 @@ public class LogicalMeterEntity implements Serializable {
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   public Set<PhysicalMeterEntity> physicalMeters;
 
-  public String status;
-
   @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
   public Date created;
@@ -77,11 +75,10 @@ public class LogicalMeterEntity implements Serializable {
     setLocation(new LocationEntity());
   }
 
-  public LogicalMeterEntity(Long id, Date created, String status) {
+  public LogicalMeterEntity(Long id, Date created) {
     this();
     this.id = id;
     this.created = (Date) created.clone();
-    this.status = status;
   }
 
   public LocationEntity getLocation() {

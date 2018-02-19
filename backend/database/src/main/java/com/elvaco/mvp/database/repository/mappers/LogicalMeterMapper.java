@@ -57,7 +57,6 @@ public class LogicalMeterMapper {
 
     return new LogicalMeter(
       logicalMeterEntity.id,
-      logicalMeterEntity.status,
       location,
       logicalMeterEntity.created,
       new com.elvaco.mvp.core.domainmodels.PropertyCollection(userProperty),
@@ -70,8 +69,7 @@ public class LogicalMeterMapper {
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeter.id,
-      logicalMeter.created,
-      logicalMeter.status
+      logicalMeter.created
     );
 
     Optional.ofNullable(logicalMeter.propertyCollection.userProperty)
