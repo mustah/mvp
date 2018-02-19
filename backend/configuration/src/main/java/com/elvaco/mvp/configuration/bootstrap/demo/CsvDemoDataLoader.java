@@ -105,6 +105,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             PhysicalMeter physicalMeter = new PhysicalMeter(
               ELVACO,
               csvData.meterId,
+              csvData.facilityId,
               csvData.medium,
               csvData.meterManufacturer
             );
@@ -123,7 +124,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
           new PhysicalMeter(
             physicalMeter.id,
             physicalMeter.organisation,
-            physicalMeter.identity,
+            physicalMeter.address,
+            physicalMeter.externalId,
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,

@@ -32,12 +32,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  public Optional<PhysicalMeter> findByIdentity(String identity) {
-    return jpaRepository.findByIdentity(identity)
-      .map(physicalMeterMapper::toDomainModel);
-  }
-
-  @Override
   public List<PhysicalMeter> findByMedium(String medium) {
     return jpaRepository.findByMedium(medium)
       .stream()
@@ -56,5 +50,16 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
     PhysicalMeterEntity entity = jpaRepository.save(physicalMeterMapper.toEntity(physicalMeter));
     return physicalMeterMapper.toDomainModel(entity);
+  }
+
+  @Override
+  public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+    Long organisationId, String externalId, String address
+  ) {
+    return jpaRepository.findByOrganisationIdAndExternalIdAndAddress(
+      organisationId,
+      externalId,
+      address
+    ).map(physicalMeterMapper::toDomainModel);
   }
 }

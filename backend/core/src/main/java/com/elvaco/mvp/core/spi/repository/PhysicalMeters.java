@@ -9,11 +9,15 @@ public interface PhysicalMeters {
 
   Optional<PhysicalMeter> findById(Long id);
 
-  Optional<PhysicalMeter> findByIdentity(String identity);
-
   List<PhysicalMeter> findByMedium(String medium);
 
   List<PhysicalMeter> findAll();
 
   PhysicalMeter save(PhysicalMeter physicalMeter);
+
+  Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
+    Long organisationId,
+    String externalId,
+    String address
+  );
 }

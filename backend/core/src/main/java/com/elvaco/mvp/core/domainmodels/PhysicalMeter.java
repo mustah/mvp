@@ -17,18 +17,20 @@ public class PhysicalMeter {
   @Nullable
   public final Long id;
   public final Organisation organisation;
-  public final String identity;
+  public final String address;
+  public final String externalId;
   public final String medium;
   @Nullable
   public final Long logicalMeterId;
   public final String manufacturer;
-  private final List<Measurement> measurements;
   public final List<MeterStatusLog> meterStatusLogs;
+  private final List<Measurement> measurements;
 
   public PhysicalMeter(
     @Nullable Long id,
     Organisation organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer,
     @Nullable Long logicalMeterId,
@@ -36,7 +38,8 @@ public class PhysicalMeter {
   ) {
     this.id = id;
     this.organisation = organisation;
-    this.identity = identity;
+    this.address = address;
+    this.externalId = externalId;
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
@@ -46,14 +49,16 @@ public class PhysicalMeter {
 
   public PhysicalMeter(
     Organisation organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer
   ) {
     this(
       null,
       organisation,
-      identity,
+      address,
+      externalId,
       medium,
       manufacturer,
       null,
@@ -64,16 +69,27 @@ public class PhysicalMeter {
   public PhysicalMeter(
     @Nullable Long id,
     Organisation organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer
   ) {
-    this(id, organisation, identity, medium, manufacturer, null, Collections.emptyList());
+    this(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      null,
+      Collections.emptyList()
+    );
   }
 
   public PhysicalMeter(
     Organisation organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer,
     Long logicalMeterId,
@@ -82,7 +98,8 @@ public class PhysicalMeter {
     this(
       null,
       organisation,
-      identity,
+      address,
+      externalId,
       medium,
       manufacturer,
       logicalMeterId,

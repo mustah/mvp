@@ -82,7 +82,7 @@ public class LogicalMeterMapperTest {
         .build(),
       dateFormat.parse("2018-02-12T14:14:25"),
       Collections.singletonList(new PhysicalMeter(
-        ELVACO, "123123", "Some device specific medium", "ELV"
+        ELVACO, "123123", "an-external-id", "Some device specific medium", "ELV"
       )),
       MeterDefinition.HOT_WATER_METER,
       Collections.emptyList()

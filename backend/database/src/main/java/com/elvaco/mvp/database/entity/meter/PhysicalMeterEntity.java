@@ -33,7 +33,8 @@ public class PhysicalMeterEntity implements Serializable {
   @OneToOne
   public OrganisationEntity organisation;
 
-  public String identity;
+  public String address;
+  public String externalId;
   public String medium;
   public String manufacturer;
 
@@ -50,24 +51,27 @@ public class PhysicalMeterEntity implements Serializable {
 
   public PhysicalMeterEntity(
     OrganisationEntity organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer
   ) {
-    this(null, organisation, identity, medium, manufacturer, null);
+    this(null, organisation, address, externalId, medium, manufacturer, null);
   }
 
   public PhysicalMeterEntity(
     Long id,
     OrganisationEntity organisation,
-    String identity,
+    String address,
+    String externalId,
     String medium,
     String manufacturer,
     Long logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;
-    this.identity = identity;
+    this.address = address;
+    this.externalId = externalId;
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;

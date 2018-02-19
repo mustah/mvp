@@ -1,8 +1,10 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class Organisation {
 
   public final Long id;

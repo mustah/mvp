@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS meter_definition_quantities (
 CREATE TABLE IF NOT EXISTS organisation (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255),
-  code VARCHAR(255)
+  code VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
@@ -64,11 +64,12 @@ CREATE TABLE IF NOT EXISTS location (
 CREATE TABLE IF NOT EXISTS physical_meter (
   id BIGSERIAL PRIMARY KEY,
   organisation_id BIGINT REFERENCES organisation,
-  identity VARCHAR(255),
+  address VARCHAR(255) NOT NULL,
+  external_id TEXT NOT NULL,
   medium VARCHAR(255),
   manufacturer VARCHAR(255),
   logical_meter_id BIGINT REFERENCES logical_meter,
-  UNIQUE (organisation_id, identity)
+  UNIQUE (organisation_id, external_id, address)
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
@@ -111,49 +112,3 @@ CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   physical_meter_id BIGINT REFERENCES physical_meter (id)
 );
 
-CREATE OR REPLACE FUNCTION add_measurement(organisation_name    organisation.name%TYPE,
-                                           _identity            physical_meter.identity%TYPE,
-                                           _medium              physical_meter.medium%TYPE,
-                                           measurement_quantity measurement.quantity%TYPE,
-                                           measurement_unit     VARCHAR(255),
-                                           measurement_created  measurement.created%TYPE,
-                                           measurement_value    DOUBLE PRECISION)
-  RETURNS physical_meter.id%TYPE AS $$
-DECLARE
-  physical_meter_id physical_meter.id%TYPE;
-  organisation_id   organisation.id%TYPE;
-BEGIN
-
-  SELECT id
-  FROM organisation
-  WHERE name = organisation_name
-  INTO organisation_id;
-  IF organisation_id IS NULL
-  THEN
-    INSERT INTO organisation VALUES (default, organisation_name)
-    RETURNING id
-      INTO organisation_id;
-  END IF;
-
-  SELECT physical_meter.id
-  FROM organisation, physical_meter
-  WHERE
-    physical_meter.organisation_id = organisation_id
-    AND physical_meter.identity = _identity
-    AND physical_meter.medium = _medium
-  INTO physical_meter_id;
-
-  IF physical_meter_id IS NULL
-  THEN
-    -- New physical meter!
-    INSERT INTO physical_meter VALUES (default, organisation_id, _identity, _medium)
-    RETURNING id
-      INTO physical_meter_id;
-  END IF;
-  INSERT INTO measurement
-  VALUES (default, physical_meter_id, measurement_created, measurement_quantity,
-          (measurement_value || measurement_unit) :: UNIT);
-  RETURN physical_meter_id;
-END;
-$$
-LANGUAGE plpgsql;
