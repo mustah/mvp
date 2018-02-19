@@ -9,7 +9,9 @@ const icons = {
   3: 'assets/images/marker-icon-error.png',
 };
 
-const getStatusIcon = ({id}: IdNamed): string => icons[id] || 'assets/images/marker-icon.png';
+const getStatusIcon = (status: IdNamed): string => status ?
+  icons[status.id] || 'assets/images/marker-icon.png'
+  : 'assets/images/marker-icon.png';
 
 export const isMarkersWithinThreshold = (markers: {[key: string]: MapMarker}): boolean => {
   return markers && Object.keys(markers)

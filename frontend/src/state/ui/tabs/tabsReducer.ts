@@ -3,9 +3,8 @@ import {Action} from '../../../types/Types';
 import {CHANGE_TAB} from './tabsActions';
 import {SelectedTabs, TabName, TabSelection, TabsState} from './tabsModels';
 
-// TODO: Change this to overviewTab and set selectedTab to TabName.overview
 const listTab: SelectedTabs = {
-  selectedTab: TabName.list,
+  selectedTab: TabName.overview,
 };
 
 export const initialState: TabsState = {

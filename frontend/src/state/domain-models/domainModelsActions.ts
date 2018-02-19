@@ -8,7 +8,7 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {authSetUser} from '../../usecases/auth/authActions';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
-import {metersAllSchema} from '../domain-models-paginated/meter/meterSchema';
+import {allMetersSchema} from '../domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
@@ -39,7 +39,7 @@ const clearError = (endPoint: EndPoints) =>
   createEmptyAction<string>(DOMAIN_MODELS_CLEAR_ERROR(endPoint));
 
 export const clearErrorGateways = clearError(EndPoints.gateways);
-export const clearErrorMetersAll = clearError(EndPoints.metersAll);
+export const clearErrorAllMeters = clearError(EndPoints.allMeters);
 export const clearErrorUsers = clearError(EndPoints.users);
 export const clearErrorSelections = clearError(EndPoints.selections);
 
@@ -201,7 +201,7 @@ const paginationMetaDataFromResult = (result: uuid[]): NormalizedPaginatedResult
 // TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything
 // have been fetched from 'selections', should perhaps come up with a better way of doing this.
 export const fetchSelections = restGetIfNeeded<IdNamed>(EndPoints.selections, selectionsSchema, 'cities');
-export const fetchMetersAll = restGetIfNeeded<Meter>(EndPoints.metersAll, metersAllSchema, 'metersAll');
+export const fetchAllMeters = restGetIfNeeded<Meter>(EndPoints.allMeters, allMetersSchema, 'allMeters');
 
 export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewaySchema, 'gateways', {
   afterSuccess: (

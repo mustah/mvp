@@ -83,10 +83,10 @@ class MeterList extends React.Component<Props> {
     } = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-    const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : <Status id={0} name={'ok'}/>;
-    const renderCityName = ({city}: Meter) => city ? city.name : 'NAME';
-    const renderAddressName = ({address}: Meter) => address ? address.name : 'NAME';
-    const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : 'FLAGS';
+    const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : null;
+    const renderCityName = ({city}: Meter) => city ? city.name : null;
+    const renderAddressName = ({address}: Meter) => address ? address.name : null;
+    const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : null;
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewayId = ({gatewayId}: Meter) => gatewayId;
@@ -100,8 +100,6 @@ class MeterList extends React.Component<Props> {
       componentId,
       page,
     });
-
-    // TODO: Add pagination control
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
         <div>

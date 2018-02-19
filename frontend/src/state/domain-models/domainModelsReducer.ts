@@ -134,7 +134,7 @@ export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoi
 export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
 export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
 export const users = reducerFor<User>('users', EndPoints.users);
-export const metersAll = reducerFor<Meter>('metersAll', EndPoints.metersAll);
+export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters);
 export const organisations = reducerFor<Organisation>('organisations', EndPoints.organisations);
 
 export const domainModels = combineReducers<DomainModelsState>({
@@ -148,6 +148,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   productModels,
   users,
   measurements,
-  metersAll,
+  allMeters,
   organisations,
 });
