@@ -17,7 +17,7 @@ public class MeterDefinitionMapper
       entity.medium,
       entity.quantities.stream()
         .map(this::toQuantity)
-        .collect(Collectors.toList()),
+        .collect(Collectors.toSet()),
       entity.systemOwned
     );
   }
@@ -29,7 +29,7 @@ public class MeterDefinitionMapper
       domainModel.quantities
         .stream()
         .map(this::toQuantityEntity)
-        .collect(Collectors.toList()),
+        .collect(Collectors.toSet()),
       domainModel.medium,
       domainModel.systemOwned
     );

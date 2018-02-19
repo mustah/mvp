@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import org.junit.Before;
@@ -61,7 +60,6 @@ public class LogicalMeterMapperTest {
     locationEntity.confidence = 1.0;
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
     logicalMeterEntity.id = 1L;
-    logicalMeterEntity.status = "Ok";
     logicalMeterEntity.created = created;
     logicalMeterEntity.setLocation(locationEntity);
 
@@ -77,10 +75,8 @@ public class LogicalMeterMapperTest {
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
-        "Ok",
         expectedLocation,
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()
@@ -94,7 +90,6 @@ public class LogicalMeterMapperTest {
 
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
     logicalMeterEntity.id = 1L;
-    logicalMeterEntity.status = "Ok";
     logicalMeterEntity.created = created;
 
     LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
@@ -102,10 +97,8 @@ public class LogicalMeterMapperTest {
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
-        "Ok",
         Location.UNKNOWN_LOCATION,
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()
@@ -124,21 +117,18 @@ public class LogicalMeterMapperTest {
 
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity();
     logicalMeterEntityExpected.id = 1L;
-    logicalMeterEntityExpected.status = "Ok";
     logicalMeterEntityExpected.created = created;
     logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
       new LogicalMeter(
         1L,
-        "Ok",
         new LocationBuilder()
           .latitude(3.1)
           .longitude(2.1)
           .confidence(1.0)
           .build(),
         created,
-        PropertyCollection.empty(),
         Collections.emptyList(),
         null,
         Collections.emptyList()

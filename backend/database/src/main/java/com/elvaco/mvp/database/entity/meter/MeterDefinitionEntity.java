@@ -1,9 +1,10 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,13 +23,13 @@ public class MeterDefinitionEntity implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
     name = "meter_definition_quantities",
     joinColumns = @JoinColumn(name = "meter_definition_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "quantity_id", referencedColumnName = "id")
   )
-  public List<QuantityEntity> quantities;
+  public Set<QuantityEntity> quantities;
 
   public String medium;
 
@@ -38,7 +39,7 @@ public class MeterDefinitionEntity implements Serializable {
 
   public MeterDefinitionEntity(
     Long id,
-    List<QuantityEntity> quantities,
+    Set<QuantityEntity> quantities,
     String medium,
     boolean systemOwned
   ) {

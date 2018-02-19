@@ -27,8 +27,8 @@ public class LogicalMeterMapper {
     mapMarkerDto.id = logicalMeter.id;
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     //TODO how to handle statuses?
-    mapMarkerDto.status = new IdNamedDto(logicalMeter.status);
-    mapMarkerDto.status.name = logicalMeter.status;
+    mapMarkerDto.status = new IdNamedDto("Ok");
+    mapMarkerDto.status.name = "Ok";
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {

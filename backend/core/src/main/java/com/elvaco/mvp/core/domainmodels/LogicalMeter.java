@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -15,9 +16,7 @@ public class LogicalMeter {
 
   @Nullable
   public final Long id;
-  public final String status;
   public final Location location;
-  public final PropertyCollection propertyCollection;
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
   @Nullable
@@ -37,10 +36,8 @@ public class LogicalMeter {
   ) {
     this(
       null,
-      "Ok",
       Location.UNKNOWN_LOCATION,
       new Date(),
-      PropertyCollection.empty(),
       physicalMeters,
       meterDefinition,
       Collections.emptyList()
@@ -49,17 +46,13 @@ public class LogicalMeter {
 
   public LogicalMeter(
     @Nullable Long id,
-    String status,
     Location location,
-    Date created,
-    PropertyCollection propertyCollection
+    Date created
   ) {
     this(
       null,
-      status,
       location,
       created,
-      propertyCollection,
       Collections.emptyList(),
       null,
       Collections.emptyList());
@@ -67,19 +60,15 @@ public class LogicalMeter {
 
   public LogicalMeter(
     @Nullable Long id,
-    String status,
     Location location,
     Date created,
-    PropertyCollection propertyCollection,
     List<PhysicalMeter> physicalMeters,
     @Nullable MeterDefinition meterDefinition,
     List<MeterStatusLog> meterStatusLogs
   ) {
     this.id = id;
-    this.status = status;
     this.location = location;
     this.created = new Date(created.getTime());
-    this.propertyCollection = propertyCollection;
     this.physicalMeters = Collections.unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.meterStatusLogs = meterStatusLogs;
@@ -88,10 +77,8 @@ public class LogicalMeter {
   public LogicalMeter createdAt(Date creationTime) {
     return new LogicalMeter(
       id,
-      status,
       location,
       creationTime,
-      propertyCollection,
       physicalMeters,
       meterDefinition,
       Collections.emptyList()
@@ -102,8 +89,8 @@ public class LogicalMeter {
     return meterDefinition != null ? meterDefinition.medium : "Unknown medium";
   }
 
-  public List<Quantity> getQuantities() {
-    return meterDefinition != null ? meterDefinition.quantities : Collections.emptyList();
+  public Set<Quantity> getQuantities() {
+    return meterDefinition != null ? meterDefinition.quantities : Collections.emptySet();
   }
 
   public boolean hasMeterDefinition() {
@@ -119,10 +106,8 @@ public class LogicalMeter {
   public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
     return new LogicalMeter(
       id,
-      status,
       location,
       created,
-      propertyCollection,
       physicalMeters,
       meterDefinition,
       Collections.emptyList()

@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.PropertyCollection;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -57,10 +56,8 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      "Ok",
       location,
       new Date(),
-      null,
       Collections.emptyList(),
       null,
       Collections.emptyList()
@@ -78,14 +75,12 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      "Ok",
       new LocationBuilder().city("Kungsbacka")
         .streetAddress("Kabelgatan 2T")
         .latitude(57.5052592)
         .longitude(12.0683196)
         .build(),
       dateFormat.parse("2018-02-12T14:14:25"),
-      PropertyCollection.empty(),
       Collections.singletonList(new PhysicalMeter(
         ELVACO, "123123", "Some device specific medium", "ELV"
       )),
@@ -108,10 +103,9 @@ public class LogicalMeterMapperTest {
   public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    LogicalMeter logicalMeter = new LogicalMeter(0L, "Ok",
+    LogicalMeter logicalMeter = new LogicalMeter(0L,
                                                  Location.UNKNOWN_LOCATION,
-                                                 dateFormat.parse("2018-02-12T14:14:25"),
-                                                 PropertyCollection.empty()
+                                                 dateFormat.parse("2018-02-12T14:14:25")
     );
 
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created).isEqualTo(

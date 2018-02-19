@@ -55,7 +55,6 @@ public class MeasurementControllerTest extends IntegrationTest {
     locationEntity.longitude = 2.1;
     locationEntity.confidence = 1.0;
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.status = "Ok";
     logicalMeterEntity.created = new Date();
     logicalMeterEntity.setLocation(locationEntity);
 
