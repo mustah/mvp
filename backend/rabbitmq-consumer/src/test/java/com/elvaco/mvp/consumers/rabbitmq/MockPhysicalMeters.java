@@ -1,16 +1,28 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 
-class MockPhysicalMeters implements com.elvaco.mvp.core.spi.repository.PhysicalMeters {
-  private List<PhysicalMeter> physicalMeters;
+class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements com.elvaco.mvp.core.spi
+  .repository.PhysicalMeters {
 
-  MockPhysicalMeters() {
-    this.physicalMeters = new ArrayList<>();
+  @Override
+  Optional<Long> getId(PhysicalMeter entity) {
+    return Optional.ofNullable(entity.id);
+  }
+
+  @Override
+  PhysicalMeter copyWithId(Long id, PhysicalMeter entity) {
+    return new PhysicalMeter(
+      id,
+      entity.organisation,
+      entity.address,
+      entity.externalId,
+      entity.medium,
+      entity.manufacturer
+    );
   }
 
   @Override
@@ -25,33 +37,19 @@ class MockPhysicalMeters implements com.elvaco.mvp.core.spi.repository.PhysicalM
 
   @Override
   public List<PhysicalMeter> findAll() {
-    return physicalMeters;
+    return allMocks();
   }
 
   @Override
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    if (physicalMeter.id != null) {
-      physicalMeters.set(Math.toIntExact(physicalMeter.id), physicalMeter);
-    } else {
-      physicalMeter = new PhysicalMeter(
-        (long) physicalMeters.size(),
-        physicalMeter.organisation,
-        physicalMeter.address,
-        physicalMeter.externalId,
-        physicalMeter.medium,
-        physicalMeter.manufacturer
-      );
-      physicalMeters.add(physicalMeter);
-    }
-    return physicalMeter;
+    return saveMock(physicalMeter);
   }
 
   @Override
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
     Long organisationId, String externalId, String identity
   ) {
-    return physicalMeters.stream()
-      .filter(physicalMeter -> physicalMeter.organisation.id.equals(organisationId))
+    return filter(physicalMeter -> physicalMeter.organisation.id.equals(organisationId))
       .filter(physicalMeter -> physicalMeter.externalId.equals(externalId))
       .filter(physicalMeter -> physicalMeter.address.equals(identity))
       .findFirst();
