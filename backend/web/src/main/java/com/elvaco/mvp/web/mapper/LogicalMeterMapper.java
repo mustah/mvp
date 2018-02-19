@@ -59,8 +59,9 @@ public class LogicalMeterMapper {
     }
 
     meterDto.statusChangelog = logicalMeter.meterStatusLogs
-      .stream().map(meterStatusLogMapper::toDto).collect(toList());
-
+      .stream().map(
+        (meterStatusLog) -> meterStatusLogMapper.toDto(meterStatusLog, timeZone)
+      ).collect(toList());
     return meterDto;
   }
 }

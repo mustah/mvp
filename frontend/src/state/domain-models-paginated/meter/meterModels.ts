@@ -5,9 +5,9 @@ import {Flag} from '../../domain-models/flag/flagModels';
 
 export interface MeterStatusChangelog {
   id: uuid;
-  meterId: uuid;
-  status: IdNamed;
-  date: string;
+  statusId: uuid;
+  name: string;
+  start: string;
 }
 
 export interface Meter extends Location, HasId {
