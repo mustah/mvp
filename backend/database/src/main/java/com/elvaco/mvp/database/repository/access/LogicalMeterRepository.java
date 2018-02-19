@@ -2,12 +2,14 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
@@ -32,10 +34,14 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public LogicalMeter findById(Long id) {
-    return logicalMeterMapper.toDomainModel(
-      logicalMeterJpaRepository.findOne(id)
-    );
+  public Optional<LogicalMeter> findById(Long id) {
+    LogicalMeterEntity logicalMeterEntity = logicalMeterJpaRepository.findOne(id);
+    if (logicalMeterEntity == null) {
+      return Optional.empty();
+    }
+    return Optional.of(logicalMeterMapper.toDomainModel(
+      logicalMeterEntity
+    ));
   }
 
   @Override

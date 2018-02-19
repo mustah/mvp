@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.spi.repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -9,7 +10,7 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 
 public interface LogicalMeters {
 
-  LogicalMeter findById(Long id);
+  Optional<LogicalMeter> findById(Long id);
 
   List<LogicalMeter> findAll();
 

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -33,7 +34,7 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  public LogicalMeter findById(Long id) {
+  public Optional<LogicalMeter>  findById(Long id) {
     return logicalMeters.findById(id);
   }
 
