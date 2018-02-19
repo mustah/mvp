@@ -47,6 +47,7 @@ describe('domainModelsActions', () => {
     const initialState: Partial<DomainModelsState> = {
       cities: {...initialDomain()},
       gateways: {...initialDomain()},
+      users: {...initialDomain()},
     };
     store = configureMockStore({domainModels: initialState});
     mockRestClient = new MockAdapter(axios);
@@ -351,6 +352,13 @@ describe('domainModelsActions', () => {
         userEntityRequest.request(),
         userEntityRequest.failure(errorResponse),
       ]);
+    });
+    it('doesnt fetch if is already in cache', async () => {
+      store = configureMockStore({domainModels: {users: {...initialDomain(), entities: {[user.id]: user}}}});
+
+      await getUserEntityWithResponseOk(user);
+
+      expect(store.getActions()).toEqual([]);
     });
   });
 

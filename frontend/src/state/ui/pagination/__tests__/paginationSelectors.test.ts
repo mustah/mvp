@@ -97,6 +97,8 @@ describe('paginationSelectors', () => {
       const paginationData: PaginatedDomainModel = {
         page: 0,
         size: 1,
+        totalPages: 10,
+        totalElements: 100,
         result: [1, 2],
       };
 
@@ -107,6 +109,8 @@ describe('paginationSelectors', () => {
       const paginationData: PaginatedDomainModel = {
         page: 0,
         size: 0,
+        totalPages: 10,
+        totalElements: 100,
         result: [1],
       };
 
@@ -117,6 +121,8 @@ describe('paginationSelectors', () => {
       const paginationData: PaginatedDomainModel = {
         page: -1,
         size: 1,
+        totalPages: 10,
+        totalElements: 100,
         result: [1],
       };
 
@@ -126,6 +132,8 @@ describe('paginationSelectors', () => {
       const paginationData: PaginatedDomainModel = {
         page: 1,
         size: 1,
+        totalPages: 10,
+        totalElements: 100,
         result: [1],
       };
 

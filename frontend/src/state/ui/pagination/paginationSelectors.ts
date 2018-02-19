@@ -5,8 +5,7 @@ import {DomainModelsState} from '../../domain-models/domainModels';
 import {Pagination, PaginationLookupState, PaginationModel} from './paginationModels';
 import {initialPaginationModel} from './paginationReducer';
 
-export interface PaginatedDomainModel extends HasPageNumber {
-  size: number;
+export interface PaginatedDomainModel extends Pagination {
   result: uuid[];
 }
 

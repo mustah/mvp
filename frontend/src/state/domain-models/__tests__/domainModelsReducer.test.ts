@@ -195,6 +195,7 @@ describe('domainModelsReducer', () => {
         meterStatuses: initialDomain(),
         productModels: initialDomain(),
         users: initialDomain(),
+        organisations: initialDomain(),
       };
       const nonInitialState: DomainModelsState = {
         ...initialState,

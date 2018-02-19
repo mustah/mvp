@@ -9,9 +9,11 @@ import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {modifyProfile} from '../../../../state/domain-models/domainModelsActions';
+import {RestGet} from '../../../../state/domain-models/domainModels';
+import {fetchOrganisations, modifyProfile} from '../../../../state/domain-models/domainModelsActions';
 import {Organisation, Role, User} from '../../../../state/domain-models/user/userModels';
 import {UserEditForm} from '../../../../components/forms/UserEditForm';
+import {getOrganisations, getRoles} from '../../../../state/domain-models/user/userSelectors';
 
 interface StateToProps {
   user: User;
@@ -21,49 +23,56 @@ interface StateToProps {
 
 interface DispatchToProps {
   modifyProfile: (user: User) => void;
+  fetchOrganisations: RestGet;
 }
 
 type Props = StateToProps & DispatchToProps;
 
-const EditProfile = ({user, organisations, roles, modifyProfile}: Props) => {
+class EditProfile extends React.Component<Props> {
 
-  // TODO: Add validation for fields.
-  return (
-    <MvpPageContainer>
-      <Row className="space-between">
-        <MainTitle>
-          {translate('profile')}
-        </MainTitle>
-      </Row>
-      <Paper style={paperStyle}>
-        <Column className="EditProfileContainer">
-          <UserEditForm
-            onSubmit={modifyProfile}
-            organisations={organisations}
-            possibleRoles={roles}
-            isEditSelf={true}
-            user={user}
-          />
-        </Column>
-      </Paper>
-    </MvpPageContainer>
-  );
-};
+  componentDidMount() {
+    this.props.fetchOrganisations();
+  }
 
-const mapStateToProps = ({auth: {user}}: RootState): StateToProps => ({
+  componentWillReceiveProps({fetchOrganisations}: Props) {
+    fetchOrganisations();
+  }
+
+  render() {
+    const {user, organisations, roles, modifyProfile} = this.props;
+    // TODO: Add validation for fields.
+    return (
+      <MvpPageContainer>
+        <Row className="space-between">
+          <MainTitle>
+            {translate('profile')}
+          </MainTitle>
+        </Row>
+        <Paper style={paperStyle}>
+          <Column className="EditProfileContainer">
+            <UserEditForm
+              onSubmit={modifyProfile}
+              organisations={organisations}
+              possibleRoles={roles}
+              isEditSelf={true}
+              user={user}
+            />
+          </Column>
+        </Paper>
+      </MvpPageContainer>
+    );
+  }
+}
+
+const mapStateToProps = ({auth: {user}, domainModels: {organisations}}: RootState): StateToProps => ({
   user: user!,
-  organisations: [
-    {id: 1, code: 'elvaco', name: 'Elvaco'},
-    {id: 2, code: 'wayne-industries', name: 'Wayne Industries'},
-  ],
-  roles: [
-    Role.ADMIN,
-    Role.USER,
-  ],
+  organisations: getOrganisations(organisations),
+  roles: getRoles(user!),
 }); // TODO: Perhaps use a selector instead of using the "!" null protection for user.
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
+const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   modifyProfile,
+  fetchOrganisations,
 }, dispatch);
 
 export const EditProfileContainer =

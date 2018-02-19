@@ -27,7 +27,7 @@ import {
   getEncodedUriParametersForMeters,
   UriLookupStatePaginated,
 } from '../../state/search/selection/selectionSelectors';
-import {paginationChangePage} from '../../state/ui/pagination/paginationActions';
+import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
 import {ErrorResponse, OnClickWithId, uuid} from '../../types/Types';
@@ -45,7 +45,7 @@ interface StateToProps {
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchMeters: RestGetPaginated;
-  paginationChangePage: OnChangePage;
+  changePaginationPage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
 
@@ -77,7 +77,7 @@ class MeterList extends React.Component<Props> {
       selectEntryAdd,
       isFetching,
       pagination,
-      paginationChangePage,
+      changePaginationPage,
       componentId,
       error,
     } = this.props;
@@ -95,7 +95,7 @@ class MeterList extends React.Component<Props> {
       <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
 
-    const changePage = (page: number) => paginationChangePage({
+    const changePage = (page: number) => changePaginationPage({
       entityType: 'meters',
       componentId,
       page,
@@ -184,7 +184,7 @@ const mapStateToProps = (
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchMeters,
-  paginationChangePage,
+  changePaginationPage,
   clearError: clearErrorMeters,
 }, dispatch);
 

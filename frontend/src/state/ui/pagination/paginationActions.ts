@@ -10,4 +10,4 @@ export const paginationReset = createEmptyAction<string>(PAGINATION_RESET);
 export const paginationUpdateMetaData =
   createPayloadAction<string, PaginationMetadataPayload>(PAGINATION_UPDATE_METADATA);
 
-export const paginationChangePage = createPayloadAction<string, PaginationChangePayload>(PAGINATION_CHANGE_PAGE);
+export const changePaginationPage = createPayloadAction<string, PaginationChangePayload>(PAGINATION_CHANGE_PAGE);

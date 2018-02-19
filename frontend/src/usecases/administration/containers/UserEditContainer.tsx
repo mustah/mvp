@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {RouteComponentProps} from 'react-router';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
+import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {Loader} from '../../../components/loading/Loader';
@@ -12,13 +13,15 @@ import {PageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
-import {clearErrorUsers, fetchUser, modifyUser} from '../../../state/domain-models/domainModelsActions';
-import {getError} from '../../../state/domain-models/domainModelsSelectors';
+import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {
+  clearErrorUsers, fetchOrganisations, fetchUser,
+  modifyUser,
+} from '../../../state/domain-models/domainModelsActions';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
-import {getUserEntities} from '../../../state/domain-models/user/userSelectors';
+import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
 import {ErrorResponse, OnClick, uuid} from '../../../types/Types';
-import {UserEditForm} from '../../../components/forms/UserEditForm';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -30,6 +33,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchUser: (id: uuid) => void;
+  fetchOrganisations: RestGet;
   modifyUser: OnClick;
   clearError: ClearError;
 }
@@ -41,19 +45,20 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class UserEdit extends React.Component<Props, {}> {
 
   componentDidMount() {
-    const {users, match: {params: {userId}}, fetchUser} = this.props;
-    if (!users[userId]) {
-      fetchUser(userId);
-    }
+    const {match: {params: {userId}}, fetchUser, fetchOrganisations} = this.props;
+    fetchOrganisations();
+    fetchUser(userId);
+  }
+
+  componentWillReceiveProps({match: {params: {userId}}, fetchUser, fetchOrganisations}: Props) {
+    fetchOrganisations();
+    fetchUser(userId);
   }
 
   render() {
     const {
       modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching, error, clearError,
     } = this.props;
-    if (!users[userId] && !isFetching) {
-      return null;
-    }
 
     return (
       <PageComponent isSideMenuOpen={false}>
@@ -82,22 +87,17 @@ class UserEdit extends React.Component<Props, {}> {
 }
 
 // TODO get organisations and roles from backend
-const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
-  organisations: [
-    {id: 1, code: 'elvaco', name: 'Elvaco'},
-    {id: 2, code: 'wayne-industries', name: 'Wayne Industries'},
-  ],
-  roles: [
-    Role.ADMIN,
-    Role.USER,
-  ],
-  users: getUserEntities(users),
+const mapStateToProps = ({auth: {user}, domainModels: {users, organisations}}: RootState): StateToProps => ({
+  users: getEntitiesDomainModels(users),
   isFetching: users.isFetching,
   error: getError(users),
+  organisations: getOrganisations(organisations),
+  roles: getRoles(user!),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUser,
+  fetchOrganisations,
   modifyUser,
   clearError: clearErrorUsers,
 }, dispatch);

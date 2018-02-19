@@ -2,7 +2,7 @@ import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MeasurementState} from './measurement/measurementModels';
-import {UserState} from './user/userModels';
+import {Organisation, UserState} from './user/userModels';
 
 export interface Location {
   address: Address;
@@ -70,6 +70,7 @@ export interface DomainModelsState {
   measurements: MeasurementState;
   metersAll: NormalizedState<Meter>;
   users: UserState;
+  organisations: NormalizedState<Organisation>;
 }
 
 export enum HttpMethod {
