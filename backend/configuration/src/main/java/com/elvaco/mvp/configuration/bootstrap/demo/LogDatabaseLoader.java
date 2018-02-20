@@ -49,7 +49,6 @@ public class LogDatabaseLoader implements CommandLineRunner {
   private void createStatusMockData() {
     meterStatuses.save(asList(
       new MeterStatus("Active"),
-      new MeterStatus("Inactive"),
       new MeterStatus("Maintenance scheduled")
     ));
   }

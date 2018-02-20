@@ -1,8 +1,10 @@
 package com.elvaco.mvp.web.dto;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class MeterStatusLogDto {
   public Long statusId;
   public String name;
