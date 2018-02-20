@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.exception.InvalidToken;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -37,7 +38,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   )
     throws IOException, ServletException {
     String header = request.getHeader(AUTHORIZATION);
-    if (header == null || !header.startsWith(BEARER)) {
+    if (shouldNotAuthenticateRequest(request, header)) {
       chain.doFilter(request, response);
       return;
     }
@@ -49,6 +50,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       SecurityContextHolder.clearContext();
       response.sendError(HttpStatus.UNAUTHORIZED.value(), e.getMessage());
     }
+  }
+
+  private boolean shouldNotAuthenticateRequest(HttpServletRequest request, String header) {
+    return header == null
+           || HttpMethod.OPTIONS.matches(request.getMethod())
+           || !header.startsWith(BEARER);
   }
 
   private void setAuthentication(Authentication authentication) {
