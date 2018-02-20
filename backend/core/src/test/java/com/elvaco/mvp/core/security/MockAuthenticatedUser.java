@@ -2,15 +2,16 @@ package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
-
-import static java.util.UUID.randomUUID;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
 
 class MockAuthenticatedUser implements AuthenticatedUser {
 
   private final User user;
+  private final TokenFactory tokenFactory;
 
-  MockAuthenticatedUser(User user) {
+  MockAuthenticatedUser(User user, TokenFactory tokenFactory) {
     this.user = user;
+    this.tokenFactory = tokenFactory;
   }
 
   @Override
@@ -40,6 +41,6 @@ class MockAuthenticatedUser implements AuthenticatedUser {
 
   @Override
   public String getToken() {
-    return randomUUID().toString();
+    return tokenFactory.newToken();
   }
 }

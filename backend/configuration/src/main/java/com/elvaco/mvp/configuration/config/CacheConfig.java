@@ -5,6 +5,7 @@ import javax.annotation.PreDestroy;
 import com.elvaco.mvp.cache.EhTokenServiceCache;
 import com.elvaco.mvp.cache.EhUserCache;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.CacheManager;
@@ -16,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static com.elvaco.mvp.cache.EhUserCache.USER_CACHE_NAME;
+import static java.util.UUID.randomUUID;
 
 @Slf4j
 @Configuration
@@ -44,6 +46,11 @@ class CacheConfig {
       String.class,
       AuthenticatedUser.class
     ));
+  }
+
+  @Bean
+  TokenFactory tokenFactory() {
+    return () -> randomUUID().toString();
   }
 
   @PreDestroy

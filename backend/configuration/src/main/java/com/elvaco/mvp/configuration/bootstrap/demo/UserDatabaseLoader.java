@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -44,6 +45,7 @@ import static java.util.Collections.singletonList;
 public class UserDatabaseLoader implements CommandLineRunner {
 
   private final TokenService tokenService;
+  private final TokenFactory tokenFactory;
   private final Organisations organisations;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
@@ -51,11 +53,12 @@ public class UserDatabaseLoader implements CommandLineRunner {
   @Autowired
   public UserDatabaseLoader(
     TokenService tokenService,
-    Organisations organisations,
+    TokenFactory tokenFactory, Organisations organisations,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
     this.tokenService = tokenService;
+    this.tokenFactory = tokenFactory;
     this.organisations = organisations;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
@@ -74,7 +77,10 @@ public class UserDatabaseLoader implements CommandLineRunner {
       THE_BEATLES
     ).forEach(organisations::save);
 
-    AuthenticatedUser authenticatedUser = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
+    AuthenticatedUser authenticatedUser = new MvpUserDetails(
+      ELVACO_SUPER_ADMIN_USER,
+      tokenFactory.newToken()
+    );
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
     Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
     SecurityContextHolder.getContext().setAuthentication(authentication);

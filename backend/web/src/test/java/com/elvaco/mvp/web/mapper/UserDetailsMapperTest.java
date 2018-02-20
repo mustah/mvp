@@ -14,6 +14,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -30,7 +31,7 @@ public class UserDetailsMapperTest {
       emptyList()
     );
 
-    assertThatThrownBy(() -> new MvpUserDetails(user))
+    assertThatThrownBy(() -> new MvpUserDetails(user, randomUUID().toString()))
       .isInstanceOf(NullPointerException.class)
       .hasMessage("User must have a password.");
   }
@@ -78,6 +79,6 @@ public class UserDetailsMapperTest {
       "letmein",
       ELVACO,
       asList(ADMIN, USER)
-    ));
+    ), randomUUID().toString());
   }
 }

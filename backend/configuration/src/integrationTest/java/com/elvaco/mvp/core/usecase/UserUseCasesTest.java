@@ -2,11 +2,11 @@ package com.elvaco.mvp.core.usecase;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
-import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -27,10 +27,13 @@ public class UserUseCasesTest extends IntegrationTest {
   private TokenService tokenService;
 
   @Autowired
-  private UserUseCases userUseCases;
+  private TokenFactory tokenFactory;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
+
+  @Autowired
+  private UserUseCases userUseCases;
 
   @Test
   public void newlyCreatedUserShouldHaveEncodedPassword() {
@@ -86,7 +89,8 @@ public class UserUseCasesTest extends IntegrationTest {
         "nopass",
         ELVACO,
         singletonList(SUPER_ADMIN)
-      )
+      ),
+      tokenFactory.newToken()
     );
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
     Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
