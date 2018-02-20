@@ -16,6 +16,7 @@ import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
 import static java.util.Arrays.asList;
+import static java.util.UUID.randomUUID;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -182,7 +183,7 @@ public class OrganisationPermissionsTest {
 
   private boolean hasPermission(User currentUser, User targetUser, Permission permission) {
     return permissionEvaluator.isAllowed(
-      new MockAuthenticatedUser(currentUser),
+      new MockAuthenticatedUser(currentUser, randomUUID().toString()),
       targetUser,
       permission
     );

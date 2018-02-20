@@ -1,9 +1,10 @@
 package com.elvaco.mvp.web;
 
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserDto;
-import org.junit.After;
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +14,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
 
-  @After
-  public void tearDown() {
-    restClient().logout();
+  @Test
+  public void authenticate() {
+    User user = createUserIfNotPresent(ELVACO_SUPER_ADMIN_USER);
+
+    ResponseEntity<UserTokenDto> response = restClient()
+      .loginWith(user.email, user.password)
+      .get("/authenticate", UserTokenDto.class);
+
+    UserTokenDto body = response.getBody();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(body.user.email).isEqualTo(user.email);
+    assertThat(body.token).isNotNull();
   }
 
   @Test
-  public void authenticate() {
-    ResponseEntity<UserDto> response = asSuperAdmin()
-      .get("/authenticate", UserDto.class);
+  public void unAuthorized() {
+    ResponseEntity<UserDto> response = restClient()
+      .loginWith("nothing", "nothing")
+      .tokenAuthorization()
+      .get("/users/1", UserDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().email).isEqualTo(ELVACO_SUPER_ADMIN_USER.email);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   @Test

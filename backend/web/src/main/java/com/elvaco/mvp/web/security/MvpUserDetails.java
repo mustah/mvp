@@ -15,19 +15,30 @@ import static java.util.stream.Collectors.toList;
 
 public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
-  private static final long serialVersionUID = 1234L;
+  private static final long serialVersionUID = -7344530747327091472L;
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
 
   private final List<GrantedAuthority> authorities;
+  private final String token;
   private final transient User user;
 
-  public MvpUserDetails(User user) {
+  public MvpUserDetails(User user, String token) {
     Objects.requireNonNull(user.password, "User must have a password.");
     this.authorities = user.roles.stream()
       .map(r -> r.role)
       .map(role -> new SimpleGrantedAuthority(SPRING_ROLE_PREFIX + role))
       .collect(toList());
     this.user = user;
+    this.token = token;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  @Override
+  public String getToken() {
+    return token;
   }
 
   @Override

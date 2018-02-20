@@ -1,7 +1,7 @@
 import locationHelperBuilder from 'redux-auth-wrapper/history4/locationHelper';
 import {connectedRouterRedirect} from 'redux-auth-wrapper/history4/redirect';
-import {RootState} from '../reducers/rootReducer';
 import {routes} from '../app/routes';
+import {RootState} from '../reducers/rootReducer';
 import {Role} from '../state/domain-models/user/userModels';
 
 const isAuthenticatedSelector = (state: RootState): boolean => state.auth.isAuthenticated;
@@ -39,6 +39,5 @@ export const userIsNotAuthenticated = connectedRouterRedirect({
   allowRedirectBack: false,
 });
 
-export const makeToken = (username: string, password: string): string => {
-  return btoa(`${username}:${password}`);
-};
+export const makeToken = (username: string, password: string): string =>
+  btoa(`${username}:${password}`);

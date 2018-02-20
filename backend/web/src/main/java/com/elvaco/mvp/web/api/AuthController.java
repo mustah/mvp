@@ -1,9 +1,11 @@
 package com.elvaco.mvp.web.api;
 
-import com.elvaco.mvp.core.usecase.UserUseCases;
-import com.elvaco.mvp.web.dto.UserDto;
+import java.util.Optional;
+
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
 import com.elvaco.mvp.web.mapper.UserMapper;
+import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,20 +13,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RestApi("/v1/api/authenticate")
 public class AuthController {
 
-  private final UserUseCases userUseCases;
   private final UserMapper userMapper;
 
   @Autowired
-  public AuthController(UserUseCases userUseCases, UserMapper userMapper) {
-    this.userUseCases = userUseCases;
+  public AuthController(UserMapper userMapper) {
     this.userMapper = userMapper;
   }
 
   @GetMapping
-  public UserDto authenticate(Authentication authentication) {
+  public UserTokenDto authenticate(Authentication authentication) {
     String email = authentication.getName();
-    return userUseCases.findByEmail(email)
-      .map(userMapper::toDto)
+    return Optional.ofNullable(authentication.getPrincipal())
+      .map(principal -> ((MvpUserDetails) principal))
+      .map(this::toUserTokenDto)
       .orElseThrow(() -> new UserNotFound(email));
+  }
+
+  private UserTokenDto toUserTokenDto(MvpUserDetails mvpUserDetails) {
+    return new UserTokenDto(userMapper.toDto(mvpUserDetails.getUser()), mvpUserDetails.getToken());
   }
 }

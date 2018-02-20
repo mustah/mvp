@@ -5,16 +5,23 @@ const axiosConfig = config().axios;
 
 export let restClient: AxiosInstance = axios.create(axiosConfig);
 
-export const initRestClient = (token?: string): void => {
-  if (token) {
-    makeRestClient(token);
-  }
-};
+interface Headers {
+  Authorization: string;
+}
 
-export const makeRestClient = (token: string): AxiosInstance => {
+const makeRestClient = (headers: Headers): AxiosInstance => {
   restClient = axios.create({
     ...axiosConfig,
-    headers: {Authorization: `Basic ${token}`},
+    headers,
   });
   return restClient;
 };
+
+export const restClientWith = (token?: string): void => {
+  if (token) {
+    makeRestClient({Authorization: `Bearer ${token}`});
+  }
+};
+
+export const authenticate = (token: string): AxiosInstance =>
+  makeRestClient({Authorization: `Basic ${token}`});

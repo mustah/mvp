@@ -40,7 +40,6 @@ public class OrganisationControllerTest extends IntegrationTest {
       .forEach(
         (organisation) -> organisations.deleteById(organisation.id)
       );
-    restClient().logout();
   }
 
   @Before

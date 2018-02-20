@@ -101,8 +101,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     meterStatusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterRepository.deleteAll();
-
-    restClient().logout();
   }
 
   @Test
@@ -225,7 +223,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     Long meterId = savedLogicalMeter.id;
-
 
     ResponseEntity<List<MeasurementDto>> response = asElvacoUser()
       .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);

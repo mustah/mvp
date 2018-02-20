@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../i18n/i18n';
-import {makeRestClient} from '../../../services/restClient';
+import {authenticate} from '../../../services/restClient';
 import {IdNamed} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
@@ -51,7 +51,7 @@ describe('domainModelsActions', () => {
     };
     store = configureMockStore({domainModels: initialState});
     mockRestClient = new MockAdapter(axios);
-    makeRestClient('test');
+    authenticate('test');
   });
 
   afterEach(() => {

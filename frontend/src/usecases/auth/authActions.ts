@@ -2,7 +2,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {makeToken} from '../../services/authService';
-import {makeRestClient} from '../../services/restClient';
+import {authenticate, restClientWith} from '../../services/restClient';
 import {EndPoints} from '../../state/domain-models/domainModels';
 import {User} from '../../state/domain-models/user/userModels';
 import {uuid} from '../../types/Types';
@@ -28,8 +28,9 @@ export const login = (username: string, password: string) => {
   return async (dispatch) => {
     dispatch(loginRequest());
     try {
-      const token = makeToken(username, password);
-      const {data: user} = await makeRestClient(token).get(EndPoints.authenticate);
+      const basicToken = makeToken(username, password);
+      const {data: {user, token}} = await authenticate(basicToken).get(EndPoints.authenticate);
+      restClientWith(token);
       dispatch(loginSuccess({token, user}));
     } catch (error) {
       const {response: {data}} = error;

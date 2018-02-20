@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
+import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -41,16 +44,22 @@ import static java.util.Collections.singletonList;
 @Slf4j
 public class UserDatabaseLoader implements CommandLineRunner {
 
+  private final TokenService tokenService;
+  private final TokenFactory tokenFactory;
   private final Organisations organisations;
   private final UserUseCases userUseCases;
   private final SettingUseCases settingUseCases;
 
   @Autowired
   public UserDatabaseLoader(
+    TokenService tokenService,
+    TokenFactory tokenFactory,
     Organisations organisations,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
+    this.tokenService = tokenService;
+    this.tokenFactory = tokenFactory;
     this.organisations = organisations;
     this.userUseCases = userUseCases;
     this.settingUseCases = settingUseCases;
@@ -69,8 +78,13 @@ public class UserDatabaseLoader implements CommandLineRunner {
       THE_BEATLES
     ).forEach(organisations::save);
 
-    MvpUserDetails principal = new MvpUserDetails(ELVACO_SUPER_ADMIN_USER);
-    Authentication authentication = new UsernamePasswordAuthenticationToken(principal, null);
+    AuthenticatedUser authenticatedUser = new MvpUserDetails(
+      ELVACO_SUPER_ADMIN_USER,
+      tokenFactory.newToken()
+    );
+
+    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     List<User> users = asList(
@@ -124,6 +138,6 @@ public class UserDatabaseLoader implements CommandLineRunner {
       .forEach(userUseCases::create);
 
     settingUseCases.setDemoUsersLoaded();
-    SecurityContextHolder.getContext().setAuthentication(null);
+    SecurityContextHolder.clearContext();
   }
 }
