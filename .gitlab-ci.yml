@@ -123,13 +123,6 @@ test:unit_and_IT:
     dependencies:
       - gradle:build
 
-deploy_protected:
-  <<: *review_app
-  only:
-    - eon
-    - develop
-    - master
-
 deploy_review:
   <<: *review_app
   when: manual
