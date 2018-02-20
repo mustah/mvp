@@ -3,8 +3,10 @@ package com.elvaco.mvp.web.dto;
 import java.util.List;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class LogicalMeterDto {
   public Long id;
   public String facility;

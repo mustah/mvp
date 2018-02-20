@@ -51,6 +51,8 @@ public class LogicalMeterMapper {
     meterDto.city.name = logicalMeter.location.getCity().orElse("Unknown city");
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.position = new GeoPositionDto();
+    meterDto.facility = logicalMeter.externalId;
+
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coordinate = logicalMeter.location.getCoordinate();
       meterDto.position.confidence = coordinate.getConfidence();

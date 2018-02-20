@@ -3,14 +3,18 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
+import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import org.junit.Before;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
@@ -64,7 +68,9 @@ public class LogicalMeterMapperTest {
       1L,
       "an-external-id",
       0L,
-      created
+      created,
+      newMeterDefinitionEntity("Speed", "mps", "speed-o-meter")
+
     );
     logicalMeterEntity.setLocation(locationEntity);
 
@@ -85,7 +91,12 @@ public class LogicalMeterMapperTest {
         expectedLocation,
         created,
         Collections.emptyList(),
-        null,
+        new MeterDefinition(
+          1L,
+          "speed-o-meter",
+          new HashSet<>(Collections.singletonList(new Quantity(1L, "Speed", "mps"))),
+          false
+        ),
         Collections.emptyList()
       )
     );
@@ -100,7 +111,8 @@ public class LogicalMeterMapperTest {
         1L,
         "an-external-id",
         0L,
-        created
+        created,
+        newMeterDefinitionEntity("Energy", "kWh", "My energy meter")
       );
 
     LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
@@ -111,8 +123,16 @@ public class LogicalMeterMapperTest {
         "an-external-id", 0L, Location.UNKNOWN_LOCATION,
         created,
         Collections.emptyList(),
-        null,
-        Collections.emptyList()
+        new MeterDefinition(
+          1L,
+          "My energy meter",
+          new HashSet<>(Collections.singletonList(new Quantity(
+            1L,
+            "Energy",
+            "kWh"
+          ))),
+          false
+        ), Collections.emptyList()
       )
     );
   }
@@ -130,7 +150,8 @@ public class LogicalMeterMapperTest {
       1L,
       "an-external-id",
       0L,
-      created
+      created,
+      newMeterDefinitionEntity("Energy", "kWh", "Energy meter")
     );
     logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
@@ -146,11 +167,38 @@ public class LogicalMeterMapperTest {
           .build(),
         created,
         Collections.emptyList(),
-        null,
+        new MeterDefinition(
+          1L,
+          "Energy meter",
+          new HashSet<>(Collections.singletonList(new Quantity(
+            1L,
+            "Energy",
+            "kWh"
+          ))),
+          false
+        ),
         Collections.emptyList()
       ));
 
     assertThat(logicalMeterEntity.getLocation()).isEqualTo(locationEntityExpected);
     assertThat(logicalMeterEntity).isEqualTo(logicalMeterEntityExpected);
+  }
+
+  private MeterDefinitionEntity newMeterDefinitionEntity(
+    String quantityName,
+    String quantityUnit,
+    String name
+  ) {
+    return new MeterDefinitionEntity(
+      1L,
+      new HashSet<>(
+        Collections.singletonList(new QuantityEntity(
+          1L,
+          quantityName,
+          quantityUnit
+        ))),
+      name,
+      false
+    );
   }
 }

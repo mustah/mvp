@@ -60,27 +60,35 @@ public class LogicalMeterEntity implements Serializable {
   )
   public List<GatewayEntity> gateways;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   public MeterDefinitionEntity meterDefinition;
+
   @Column(nullable = false)
   public String externalId;
+
   @Column(nullable = false)
   public Long organisationId;
+
   @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
   private LocationEntity location;
 
-  public LogicalMeterEntity() {
-    this.physicalMeters = Collections.emptySet();
-    setLocation(new LocationEntity());
-  }
+  public LogicalMeterEntity() {}
 
-  public LogicalMeterEntity(Long id, String externalId, Long organisationId, Date created) {
-    this();
+  public LogicalMeterEntity(
+    Long id,
+    String externalId,
+    Long organisationId,
+    Date created,
+    MeterDefinitionEntity meterDefinition
+  ) {
     this.id = id;
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.created = (Date) created.clone();
+    this.physicalMeters = Collections.emptySet();
+    this.meterDefinition = meterDefinition;
+    setLocation(new LocationEntity());
   }
 
   public LocationEntity getLocation() {

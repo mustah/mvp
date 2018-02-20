@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
+import com.elvaco.mvp.web.dto.AddressDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -74,28 +75,13 @@ public class LogicalMeterMapperTest {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-    LogicalMeter logicalMeter = new LogicalMeter(
-      1L,
-      "an-external-id", ELVACO.id, new LocationBuilder().city("Kungsbacka")
-        .streetAddress("Kabelgatan 2T")
-        .latitude(57.5052592)
-        .longitude(12.0683196)
-        .build(),
-      dateFormat.parse("2018-02-12T14:14:25"),
-      Collections.singletonList(new PhysicalMeter(
-        ELVACO, "123123", "an-external-id", "Some device specific medium", "ELV"
-      )),
-      MeterDefinition.HOT_WATER_METER,
-      Collections.emptyList()
-    );
-
-    LogicalMeterDto actual = mapper.toDto(logicalMeter, TimeZone.getTimeZone("Europe/Stockholm"));
-
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.created = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
     expected.id = 1L;
+    expected.address = new AddressDto();
     expected.address.name = "Kabelgatan 2T";
+    expected.city = new IdNamedDto();
     expected.city.name = "Kungsbacka";
     expected.manufacturer = "ELV";
     GeoPositionDto expectedPosition = new GeoPositionDto();
@@ -104,8 +90,25 @@ public class LogicalMeterMapperTest {
     expectedPosition.longitude = 12.0683196;
     expected.position = expectedPosition;
     expected.facility = "an-external-id";
+    expected.statusChangelog = Collections.emptyList();
 
-    assertThat(actual).isEqualTo(expected);
+    assertThat(
+      mapper.toDto(
+        new LogicalMeter(
+          1L,
+          "an-external-id", ELVACO.id, new LocationBuilder().city("Kungsbacka")
+            .streetAddress("Kabelgatan 2T")
+            .latitude(57.5052592)
+            .longitude(12.0683196)
+            .build(),
+          dateFormat.parse("2018-02-12T14:14:25"),
+          Collections.singletonList(new PhysicalMeter(
+            ELVACO, "123123", "an-external-id", "Some device specific medium", "ELV"
+          )),
+          MeterDefinition.HOT_WATER_METER,
+          Collections.emptyList()
+        ), TimeZone.getTimeZone("Europe/Stockholm")))
+      .isEqualTo(expected);
   }
 
   @Test

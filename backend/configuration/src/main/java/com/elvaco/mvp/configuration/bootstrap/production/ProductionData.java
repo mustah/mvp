@@ -25,6 +25,7 @@ public class ProductionData {
 
   public List<MeterDefinition> meterDefinitions() {
     return unmodifiableList(asList(
+      MeterDefinition.UNKNOWN_METER,
       MeterDefinition.DISTRICT_HEATING_METER,
       MeterDefinition.HOT_WATER_METER,
       MeterDefinition.DISTRICT_COOLING_METER

@@ -21,15 +21,13 @@ public class LogicalMeter {
   public final Date created;
   public final String externalId;
   public final Long organisationId;
-
-  @Nullable
   public final MeterDefinition meterDefinition;
   public final List<MeterStatusLog> meterStatusLogs;
 
   public LogicalMeter(
     String externalId,
     Long organisationId,
-    @Nullable MeterDefinition meterDefinition
+    MeterDefinition meterDefinition
   ) {
     this(
       externalId, organisationId, meterDefinition,
@@ -38,7 +36,7 @@ public class LogicalMeter {
   }
 
   public LogicalMeter(
-    String externalId, Long organisationId, @Nullable MeterDefinition meterDefinition,
+    String externalId, Long organisationId, MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeters
   ) {
     this(
@@ -65,7 +63,7 @@ public class LogicalMeter {
       location,
       created,
       Collections.emptyList(),
-      null,
+      MeterDefinition.UNKNOWN_METER,
       Collections.emptyList()
     );
   }
@@ -75,7 +73,7 @@ public class LogicalMeter {
     String externalId, Long organisationId, Location location,
     Date created,
     List<PhysicalMeter> physicalMeters,
-    @Nullable MeterDefinition meterDefinition,
+    MeterDefinition meterDefinition,
     List<MeterStatusLog> meterStatusLogs
   ) {
     this.id = id;
@@ -100,7 +98,7 @@ public class LogicalMeter {
   }
 
   public String getMedium() {
-    return meterDefinition != null ? meterDefinition.medium : "Unknown medium";
+    return meterDefinition.medium;
   }
 
   public Set<Quantity> getQuantities() {

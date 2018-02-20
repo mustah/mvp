@@ -8,8 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "quantity")
+@EqualsAndHashCode
 public class QuantityEntity implements Serializable {
   private static final long serialVersionUID = -8628799320716504900L;
   @Id
