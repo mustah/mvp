@@ -81,4 +81,13 @@ public class LogicalMeterRepository implements LogicalMeters {
   public void deleteAll() {
     logicalMeterJpaRepository.deleteAll();
   }
+
+  @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
+    Long organisationId, String externalId
+  ) {
+    return logicalMeterJpaRepository
+      .findByOrganisationIdAndExternalId(organisationId, externalId)
+      .map(logicalMeterMapper::toDomainModel);
+  }
 }

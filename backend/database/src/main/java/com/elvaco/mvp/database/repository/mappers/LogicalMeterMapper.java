@@ -46,6 +46,8 @@ public class LogicalMeterMapper {
 
     return new LogicalMeter(
       logicalMeterEntity.id,
+      logicalMeterEntity.externalId,
+      logicalMeterEntity.organisationId,
       location,
       logicalMeterEntity.created,
       physicalMeters,
@@ -57,6 +59,8 @@ public class LogicalMeterMapper {
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeter.id,
+      logicalMeter.externalId,
+      logicalMeter.organisationId,
       logicalMeter.created
     );
 

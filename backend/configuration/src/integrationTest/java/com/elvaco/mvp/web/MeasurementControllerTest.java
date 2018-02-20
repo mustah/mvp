@@ -8,11 +8,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.meter.LocationEntity;
-import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
@@ -38,9 +35,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   private PhysicalMeterJpaRepository physicalMeterRepository;
 
   @Autowired
-  private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
-  @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
 
   private Map<String, MeasurementEntity> measurementQuantities;
@@ -50,17 +44,6 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    LocationEntity locationEntity = new LocationEntity();
-    locationEntity.latitude = 3.1;
-    locationEntity.longitude = 2.1;
-    locationEntity.confidence = 1.0;
-    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.created = new Date();
-    logicalMeterEntity.setLocation(locationEntity);
-
-    logicalMeterJpaRepository.save(logicalMeterEntity);
-
-
     elvacoEntity = organisationJpaRepository.findOne(1L);
     wayneIndustriesEntity = organisationJpaRepository.save(
       new OrganisationEntity("Wayne Industries", "wayne-industries")
@@ -136,7 +119,6 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void tearDown() {
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
-    logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(wayneIndustriesEntity);
   }
 

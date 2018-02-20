@@ -96,6 +96,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
           .map(csvData -> {
             LogicalMeter logicalMeter = new LogicalMeter(
               null,
+              csvData.facilityId,
+              ELVACO.id,
               locationMap.get(csvData.address),
               new Date(),
               emptyList(),

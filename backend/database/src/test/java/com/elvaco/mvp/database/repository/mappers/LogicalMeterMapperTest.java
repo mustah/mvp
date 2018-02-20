@@ -41,6 +41,8 @@ public class LogicalMeterMapperTest {
   @Test
   public void mapsPhysicalMeters() {
     LogicalMeter logicalMeter = new LogicalMeter(
+      "an-external-id",
+      0L,
       MeterDefinition.DISTRICT_HEATING_METER,
       Collections.singletonList(
         new PhysicalMeter(ELVACO, "1234", "an-external-ID", "My medium", "ELV")
@@ -58,9 +60,12 @@ public class LogicalMeterMapperTest {
     locationEntity.latitude = 3.1;
     locationEntity.longitude = 2.1;
     locationEntity.confidence = 1.0;
-    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.id = 1L;
-    logicalMeterEntity.created = created;
+    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
+      1L,
+      "an-external-id",
+      0L,
+      created
+    );
     logicalMeterEntity.setLocation(locationEntity);
 
     LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
@@ -75,6 +80,8 @@ public class LogicalMeterMapperTest {
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
+        "an-external-id",
+        0L,
         expectedLocation,
         created,
         Collections.emptyList(),
@@ -88,16 +95,20 @@ public class LogicalMeterMapperTest {
   public void mapLogicalMeterEntityToDomainModelOutPosition() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
-    LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity();
-    logicalMeterEntity.id = 1L;
-    logicalMeterEntity.created = created;
+    LogicalMeterEntity logicalMeterEntity =
+      new LogicalMeterEntity(
+        1L,
+        "an-external-id",
+        0L,
+        created
+      );
 
     LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
-        Location.UNKNOWN_LOCATION,
+        "an-external-id", 0L, Location.UNKNOWN_LOCATION,
         created,
         Collections.emptyList(),
         null,
@@ -115,14 +126,19 @@ public class LogicalMeterMapperTest {
     locationEntityExpected.longitude = 2.1;
     locationEntityExpected.latitude = 3.1;
 
-    LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity();
-    logicalMeterEntityExpected.id = 1L;
-    logicalMeterEntityExpected.created = created;
+    LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity(
+      1L,
+      "an-external-id",
+      0L,
+      created
+    );
     logicalMeterEntityExpected.setLocation(locationEntityExpected);
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
       new LogicalMeter(
         1L,
+        "an-external-id",
+        0L,
         new LocationBuilder()
           .latitude(3.1)
           .longitude(2.1)

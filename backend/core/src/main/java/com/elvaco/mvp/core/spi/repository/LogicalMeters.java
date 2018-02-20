@@ -21,4 +21,6 @@ public interface LogicalMeters {
   LogicalMeter save(LogicalMeter logicalMeter);
 
   void deleteAll();
+
+  Optional<LogicalMeter> findByOrganisationIdAndExternalId(Long organisationId, String externalId);
 }

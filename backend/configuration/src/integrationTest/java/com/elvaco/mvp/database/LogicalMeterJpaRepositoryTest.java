@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
@@ -31,8 +32,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    LogicalMeterEntity mp = new LogicalMeterEntity();
-    mp.created = new Date();
+    LogicalMeterEntity mp = new LogicalMeterEntity(null, "Some external ID", ELVACO.id, new Date());
     LocationEntity locationEntity = new LocationEntity();
     locationEntity.confidence = 1.0;
     locationEntity.latitude = 1.0;

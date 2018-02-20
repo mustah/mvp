@@ -23,6 +23,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -33,7 +34,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "logical_meter")
+@Table(name = "logical_meter",
+  uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
+)
 public class LogicalMeterEntity implements Serializable {
 
   private static final long serialVersionUID = 5528298891965340483L;
@@ -59,7 +62,10 @@ public class LogicalMeterEntity implements Serializable {
 
   @ManyToOne
   public MeterDefinitionEntity meterDefinition;
-
+  @Column(nullable = false)
+  public String externalId;
+  @Column(nullable = false)
+  public Long organisationId;
   @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
   private LocationEntity location;
@@ -69,9 +75,11 @@ public class LogicalMeterEntity implements Serializable {
     setLocation(new LocationEntity());
   }
 
-  public LogicalMeterEntity(Long id, Date created) {
+  public LogicalMeterEntity(Long id, String externalId, Long organisationId, Date created) {
     this();
     this.id = id;
+    this.externalId = externalId;
+    this.organisationId = organisationId;
     this.created = (Date) created.clone();
   }
 

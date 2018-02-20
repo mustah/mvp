@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
+import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
@@ -56,7 +57,7 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      location,
+      "some-external-id", ELVACO.id, location,
       new Date(),
       Collections.emptyList(),
       null,
@@ -75,7 +76,7 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      new LocationBuilder().city("Kungsbacka")
+      "an-external-id", ELVACO.id, new LocationBuilder().city("Kungsbacka")
         .streetAddress("Kabelgatan 2T")
         .latitude(57.5052592)
         .longitude(12.0683196)
@@ -87,24 +88,32 @@ public class LogicalMeterMapperTest {
       MeterDefinition.HOT_WATER_METER,
       Collections.emptyList()
     );
+
     LogicalMeterDto actual = mapper.toDto(logicalMeter, TimeZone.getTimeZone("Europe/Stockholm"));
-    assertThat(actual.created).isEqualTo("2018-02-12 15:14:25");
-    assertThat(actual.medium).isEqualTo("Hot water meter");
-    assertThat(actual.id).isEqualTo(1L);
-    assertThat(actual.address.name).isEqualTo("Kabelgatan 2T");
-    assertThat(actual.city.name).isEqualTo("Kungsbacka");
-    assertThat(actual.manufacturer).isEqualTo("ELV");
-    assertThat(actual.position.confidence).isEqualTo(1.0);
-    assertThat(actual.position.latitude).isEqualTo(57.5052592);
-    assertThat(actual.position.longitude).isEqualTo(12.0683196);
+
+    LogicalMeterDto expected = new LogicalMeterDto();
+    expected.created = "2018-02-12 15:14:25";
+    expected.medium = "Hot water meter";
+    expected.id = 1L;
+    expected.address.name = "Kabelgatan 2T";
+    expected.city.name = "Kungsbacka";
+    expected.manufacturer = "ELV";
+    GeoPositionDto expectedPosition = new GeoPositionDto();
+    expectedPosition.confidence = 1.0;
+    expectedPosition.latitude = 57.5052592;
+    expectedPosition.longitude = 12.0683196;
+    expected.position = expectedPosition;
+    expected.facility = "an-external-id";
+
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    LogicalMeter logicalMeter = new LogicalMeter(0L,
-                                                 Location.UNKNOWN_LOCATION,
+    LogicalMeter logicalMeter = new LogicalMeter(0L, "external-id",
+                                                 ELVACO.id, Location.UNKNOWN_LOCATION,
                                                  dateFormat.parse("2018-02-12T14:14:25")
     );
 

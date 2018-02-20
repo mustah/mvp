@@ -1,35 +1,22 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
 
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
-import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
-import org.springframework.stereotype.Repository;
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
-@Repository
-public class LogicalMeterJpaRepository extends QueryDslJpaRepository<LogicalMeterEntity, Long> {
+public interface LogicalMeterJpaRepository extends QueryDslPredicateExecutor<LogicalMeterEntity>,
+  JpaRepository<LogicalMeterEntity, Long> {
 
-  private final EntityManager entityManager;
 
-  @Autowired
-  LogicalMeterJpaRepository(EntityManager entityManager) {
-    this(
-      new JpaMetamodelEntityInformation<>(
-        LogicalMeterEntity.class,
-        entityManager.getMetamodel()
-      ),
-      entityManager
-    );
-  }
+  @Override
+  List<LogicalMeterEntity> findAll(Predicate predicate);
 
-  private LogicalMeterJpaRepository(
-    JpaEntityInformation<LogicalMeterEntity, Long> entityInformation,
-    EntityManager entityManager
-  ) {
-    super(entityInformation, entityManager);
-    this.entityManager = entityManager;
-  }
+  Optional<LogicalMeterEntity> findByOrganisationIdAndExternalId(
+    Long organisationId,
+    String externalId
+  );
 }
