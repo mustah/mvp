@@ -122,8 +122,12 @@ public final class RestClient {
   }
 
   public RestClient tokenAuthorization() {
-    ResponseEntity<UserTokenDto> response = get("/authenticate", UserTokenDto.class);
-    return addHeader(AUTHORIZATION, BEARER + response.getBody().token);
+    String token = get("/authenticate", UserTokenDto.class).getBody().token;
+    return withBearerToken(token);
+  }
+
+  public RestClient withBearerToken(String token) {
+    return addHeader(AUTHORIZATION, BEARER + token);
   }
 
   private RestClient addHeader(String headerName, String value) {

@@ -29,4 +29,10 @@ public class EhTokenServiceCache implements TokenService {
     log.info("saveToken: {}", token);
     cache.put(token, authenticatedUser);
   }
+
+  @Override
+  public void removeToken(String token) {
+    log.info("removeToken: {}", token);
+    cache.remove(token);
+  }
 }

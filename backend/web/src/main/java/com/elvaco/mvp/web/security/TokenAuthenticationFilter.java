@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.security;
 
 import java.io.IOException;
-import java.util.Optional;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
 import static com.elvaco.mvp.web.util.Constants.BEARER;
+import static com.elvaco.mvp.web.util.RequestHelper.bearerTokenFrom;
 
 @Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -63,8 +63,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private Authentication getAuthenticationTokenFrom(String requestHeader) {
-    return Optional.ofNullable(requestHeader)
-      .map(header -> header.replace(BEARER, ""))
+    return bearerTokenFrom(requestHeader)
       .flatMap(tokenService::getToken)
       .map(AuthenticatedUser::getToken)
       .map(AuthenticationToken::new)

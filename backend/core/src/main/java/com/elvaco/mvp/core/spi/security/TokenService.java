@@ -9,4 +9,6 @@ public interface TokenService {
   Optional<AuthenticatedUser> getToken(String key);
 
   void saveToken(String token, AuthenticatedUser authenticatedUser);
+
+  void removeToken(String token);
 }
