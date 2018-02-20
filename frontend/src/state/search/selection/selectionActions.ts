@@ -24,7 +24,7 @@ export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 const addSelection = createPayloadAction<string, SelectionParameter>(ADD_SELECTION);
 const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
-const saveSelectionAction = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
+export const saveSelection = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
 const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
 
 const updateSelectionAction = createPayloadAction<string, SelectionState>(UPDATE_SELECTION);
@@ -36,12 +36,6 @@ export const closeSelectionPage = () => (dispatch) => {
   dispatch(closeSelectionPageAction());
   dispatch(routerActions.goBack());
 };
-
-export const saveSelection = (selection: SelectionState) =>
-  (dispatch) => {
-    dispatch(saveSelectionAction(selection));
-    dispatch(selectSavedSelectionAction(selection));
-  };
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: GetState) => {
