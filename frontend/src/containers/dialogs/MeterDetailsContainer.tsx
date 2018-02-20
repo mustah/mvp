@@ -20,8 +20,8 @@ import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
+import {getEntitiesDomainModels} from '../../state/domain-models/domainModelsSelectors';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
-import {getGatewayEntities} from '../../state/domain-models/gateway/gatewaySelectors';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
@@ -260,7 +260,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <HasContent
               hasContent={hasConfidentPosition}
-              noContentText={translate('no reliable position')}
+              fallbackContent={<h2 style={{padding: 8}}>{translate('no reliable position')}</h2>}
             >
               <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
@@ -299,7 +299,7 @@ const MeterDetails = (props: Props) => {
 };
 
 const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps => ({
-  gateways: getGatewayEntities(gateways),
+  gateways: getEntitiesDomainModels(gateways),
 });
 
 export const MeterDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(MeterDetails);

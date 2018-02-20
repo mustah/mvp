@@ -11,15 +11,16 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {MissingDataTitle} from '../../../components/texts/Titles';
 import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
-import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/domainModelsActions';
-import {getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {getDomainModel, getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
-import {getGatewayDataSummary, getGatewayEntities} from '../../../state/domain-models/gateway/gatewaySelectors';
+import {getGatewayDataSummary} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
@@ -40,7 +41,7 @@ import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
 
 interface StateToProps extends TabsContainerStateToProps {
-  gateways: ObjectsById<Gateway>;
+  gateways: DomainModel<Gateway>;
   gatewayDataSummary: Maybe<GatewayDataSummary>;
   paginatedList: uuid[];
   pagination: Pagination;
@@ -97,13 +98,15 @@ class CollectionTabs extends React.Component<Props> {
       clearError,
     } = this.props;
 
-    const hasGateways: boolean = isMarkersWithinThreshold(gateways);
+    const hasGateways: boolean = isMarkersWithinThreshold(gateways.entities);
 
     const dialog = selectedMaker.isJust() && (
       <Dialog isOpen={true} close={closeClusterDialog}>
         <GatewayDetailsContainer gateway={selectedMaker.get()}/>
       </Dialog>
     );
+
+    const noGatewaysFallbackContent = <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
 
     return (
       <Tabs>
@@ -117,23 +120,27 @@ class CollectionTabs extends React.Component<Props> {
         </TabTopBar>
         <TabContent tab={TabName.overview} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
+            <HasContent hasContent={gatewayDataSummary.isJust()} fallbackContent={noGatewaysFallbackContent}>
+              <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
+            </HasContent>
           </Loader>
         </TabContent>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <div>
-              <GatewayList result={paginatedList} entities={gateways} selectEntryAdd={selectEntryAdd}/>
-              <PaginationControl pagination={pagination} changePage={this.changePage}/>
-            </div>
+            <HasContent hasContent={gateways.result.length > 0} fallbackContent={noGatewaysFallbackContent}>
+              <div>
+                <GatewayList result={paginatedList} entities={gateways.entities} selectEntryAdd={selectEntryAdd}/>
+                <PaginationControl pagination={pagination} changePage={this.changePage}/>
+              </div>
+            </HasContent>
           </Loader>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
-              <HasContent hasContent={hasGateways} noContentText={translate('no gateways')}>
+              <HasContent hasContent={hasGateways} fallbackContent={noGatewaysFallbackContent}>
                 <Map>
-                  <ClusterContainer markers={gateways}/>
+                  <ClusterContainer markers={gateways.entities}/>
                 </Map>
               </HasContent>
               {dialog}
@@ -156,7 +163,7 @@ const mapStateToProps = (
   const paginationData: Pagination = getPagination({pagination, componentId, entityType: 'gateways'});
   return {
     selectedTab: getSelectedTab(tabs.collection),
-    gateways: getGatewayEntities(gateways),
+    gateways: getDomainModel(gateways),
     gatewayDataSummary: getGatewayDataSummary(gateways),
     paginatedList: getPaginationList({
       ...paginationData,

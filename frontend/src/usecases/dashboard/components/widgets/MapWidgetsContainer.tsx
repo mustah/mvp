@@ -4,9 +4,10 @@ import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../../components/content/HasContent';
 import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
+import {MissingDataTitle} from '../../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
-import {translate} from '../../../../services/translationService';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
 import {GeoPosition} from '../../../../state/domain-models/domainModels';
 import {OnClick} from '../../../../types/Types';
@@ -71,7 +72,10 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   return (
     <Row className="MapWidgets">
       <Widget title="Perstorp">
-        <HasContent hasContent={hasMeters} noContentText={translate('no meters')}>
+        <HasContent
+          hasContent={hasMeters}
+          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
+        >
           <Map
             height={400}
             width={400}
