@@ -1,9 +1,9 @@
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {
-  PAGINATION_CHANGE_PAGE, PAGINATION_RESET,
+  PAGINATION_CHANGE_PAGE,
   PAGINATION_UPDATE_METADATA,
-  changePaginationPage, paginationReset,
+  changePaginationPage,
   paginationUpdateMetaData,
 } from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload} from '../paginationModels';
@@ -48,13 +48,6 @@ describe('paginationActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: PAGINATION_UPDATE_METADATA, payload},
-      ]);
-    });
-    it('dispatches a clear pagination action', () => {
-      store.dispatch(paginationReset());
-
-      expect(store.getActions()).toEqual([
-        {type: PAGINATION_RESET},
       ]);
     });
   });
