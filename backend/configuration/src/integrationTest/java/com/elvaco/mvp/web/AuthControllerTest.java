@@ -2,8 +2,7 @@ package com.elvaco.mvp.web;
 
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
-import com.elvaco.mvp.web.dto.UserDto;
-import org.junit.After;
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,18 +12,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
 
-  @After
-  public void tearDown() {
-    restClient().logout();
+  @Test
+  public void authenticate() {
+    ResponseEntity<UserTokenDto> response = restClient()
+      .loginWith(ELVACO_SUPER_ADMIN_USER.email, ELVACO_SUPER_ADMIN_USER.password)
+      .get("/authenticate", UserTokenDto.class);
+
+    UserTokenDto body = response.getBody();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(body.user.email).isEqualTo(ELVACO_SUPER_ADMIN_USER.email);
+    assertThat(body.token).isNotNull();
   }
 
   @Test
-  public void authenticate() {
-    ResponseEntity<UserDto> response = asSuperAdmin()
-      .get("/authenticate", UserDto.class);
+  public void authorize() {
+    ResponseEntity<String> response = asSuperAdmin()
+      .get("/authenticate/ping", String.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().email).isEqualTo(ELVACO_SUPER_ADMIN_USER.email);
+  }
+
+  @Test
+  public void unAuthorized() {
+    ResponseEntity<String> response = restClient()
+      .loginWith("nothing", "nothing")
+      .tokenAuthorization()
+      .get("/authenticate/ping", String.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   @Test

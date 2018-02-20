@@ -5,7 +5,7 @@ import thunk from 'redux-thunk';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../i18n/i18n';
 import {RootState} from '../../../reducers/rootReducer';
-import {makeRestClient} from '../../../services/restClient';
+import {authenticate} from '../../../services/restClient';
 import {ErrorResponse} from '../../../types/Types';
 import {EndPoints} from '../../domain-models/domainModels';
 import {showFailMessage} from '../../ui/message/messageActions';
@@ -39,7 +39,7 @@ describe('paginatedDomainModelsActions', () => {
   beforeEach(() => {
     store = configureMockStore(initialRootState);
     mockRestClient = new MockAdapter(axios);
-    makeRestClient('test');
+    authenticate('test');
   });
 
   afterEach(() => {

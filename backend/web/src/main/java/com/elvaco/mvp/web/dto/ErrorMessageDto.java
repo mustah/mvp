@@ -1,5 +1,8 @@
 package com.elvaco.mvp.web.dto;
 
+import lombok.ToString;
+
+@ToString
 public class ErrorMessageDto {
 
   public String message;

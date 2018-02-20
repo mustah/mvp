@@ -13,7 +13,7 @@ import {App} from './app/App';
 import {mvpTheme} from './app/themes';
 import {initLanguage} from './i18n/i18n';
 import {RootState} from './reducers/rootReducer';
-import {initRestClient} from './services/restClient';
+import {restClientWith} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
 
@@ -24,7 +24,7 @@ const appStore: Store<RootState> = configureStore(history);
 persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
   if (!error) {
     const {auth: {token}, language: {language}} = appStore.getState();
-    initRestClient(token);
+    restClientWith(token);
     initLanguage(language);
   }
 });

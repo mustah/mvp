@@ -1,18 +1,30 @@
 package com.elvaco.mvp.core.usecase;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.web.security.AuthenticationToken;
+import com.elvaco.mvp.web.security.MvpUserDetails;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
+import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserUseCasesTest extends IntegrationTest {
+
+  @Autowired
+  private TokenService tokenService;
 
   @Autowired
   private UserUseCases userUseCases;
@@ -22,6 +34,8 @@ public class UserUseCasesTest extends IntegrationTest {
 
   @Test
   public void newlyCreatedUserShouldHaveEncodedPassword() {
+    authenticateSuperAdminUser();
+
     String rawPassword = "test123";
 
     User user = userUseCases.create(newUser(rawPassword, "testing123@b.com")).get();
@@ -32,6 +46,8 @@ public class UserUseCasesTest extends IntegrationTest {
 
   @Test
   public void updateUserShouldNotUpdatePassword() {
+    authenticateSuperAdminUser();
+
     String rawPassword = "test123";
 
     User user = userUseCases.create(newUser(rawPassword, "me@me.com")).get();
@@ -60,5 +76,20 @@ public class UserUseCasesTest extends IntegrationTest {
       ELVACO,
       asList(ADMIN, USER)
     );
+  }
+
+  private void authenticateSuperAdminUser() {
+    AuthenticatedUser authenticatedUser = new MvpUserDetails(
+      new User(
+        "Integration test user",
+        "noone@nowhere",
+        "nopass",
+        ELVACO,
+        singletonList(SUPER_ADMIN)
+      )
+    );
+    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }

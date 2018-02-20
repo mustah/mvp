@@ -43,10 +43,10 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void findUserById() {
     ResponseEntity<UserDto> response = asSuperAdmin()
-      .get("/users/4", UserDto.class);
+      .get("/users/1", UserDto.class);
 
-    assertThat(response.getBody().id).isEqualTo(4);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().id).isEqualTo(1);
   }
 
   @Test
@@ -146,9 +146,9 @@ public class UserControllerTest extends IntegrationTest {
       asList(ADMIN, USER)
     ));
 
-    ResponseEntity<UserDto> response = asSuperAdmin().delete(
-      "/users/" + user.id, UserDto.class
-    );
+    ResponseEntity<UserDto> response = asSuperAdmin()
+      .delete("/users/" + user.id, UserDto.class);
+
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().id).isEqualTo(user.id);
   }
@@ -210,6 +210,7 @@ public class UserControllerTest extends IntegrationTest {
     statusCode = restClient()
       .logout()
       .loginWith(email, password)
+      .tokenAuthorization()
       .get("/users", List.class)
       .getStatusCode();
 

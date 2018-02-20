@@ -1,6 +1,9 @@
 package com.elvaco.mvp.configuration.config;
 
-import com.elvaco.mvp.web.security.MvpAuthenticationProvider;
+import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.web.security.TokenAuthenticationFilter;
+import com.elvaco.mvp.web.security.TokenAuthenticationProvider;
+import com.elvaco.mvp.web.security.UserDetailAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 
@@ -25,21 +29,38 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
   private final UserCache userCache;
+  private final TokenService tokenService;
 
   @Autowired
   WebSecurityConfig(
     UserDetailsService userDetailsService,
     PasswordEncoder passwordEncoder,
-    UserCache userCache
+    UserCache userCache,
+    TokenService tokenService
   ) {
     this.userDetailsService = userDetailsService;
     this.passwordEncoder = passwordEncoder;
     this.userCache = userCache;
+    this.tokenService = tokenService;
   }
 
   @Override
   public UserDetailsService userDetailsService() {
     return userDetailsService;
+  }
+
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) {
+    auth
+      .authenticationProvider(
+        new UserDetailAuthenticationProvider(
+          userDetailsService,
+          passwordEncoder,
+          userCache,
+          tokenService
+        )
+      )
+      .authenticationProvider(new TokenAuthenticationProvider());
   }
 
   @Override
@@ -51,21 +72,16 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.headers().frameOptions().disable();
 
     http
+      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+      .and()
       .authorizeRequests().antMatchers(API).fullyAuthenticated()
       .and()
       .httpBasic()
       .and()
-      .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+      .addFilterAfter(tokenAuthenticationFilter(), BasicAuthenticationFilter.class);
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) {
-    auth.authenticationProvider(
-      new MvpAuthenticationProvider(
-        userDetailsService,
-        passwordEncoder,
-        userCache
-      )
-    );
+  private TokenAuthenticationFilter tokenAuthenticationFilter() {
+    return new TokenAuthenticationFilter(tokenService);
   }
 }

@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -18,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 
 import static com.elvaco.mvp.web.util.Constants.API_V1;
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
+import static com.elvaco.mvp.web.util.Constants.BASIC;
+import static com.elvaco.mvp.web.util.Constants.BEARER;
 import static java.util.Collections.singletonList;
 
 public final class RestClient {
@@ -32,10 +35,6 @@ public final class RestClient {
 
   public static String apiPathOf(String url) {
     return API_V1 + url;
-  }
-
-  public String getBaseUrl() {
-    return baseUrl;
   }
 
   public <T> ResponseEntity<T> get(String url, Class<T> clazz) {
@@ -59,7 +58,8 @@ public final class RestClient {
   }
 
   public <T> ResponseEntity<T> delete(String url, Class<T> responseType) {
-    return template.exchange(baseUrl + url,
+    return template.exchange(
+      baseUrl + url,
       HttpMethod.DELETE,
       null,
       responseType
@@ -91,7 +91,7 @@ public final class RestClient {
     String authentication = email + ":" + password;
     byte[] authBytes = authentication.getBytes(StandardCharsets.UTF_8);
     String token = new String(Base64.getEncoder().encode(authBytes), StandardCharsets.UTF_8);
-    return authorization(token);
+    return basicAuthorization(token);
   }
 
   public RestClient logout() {
@@ -117,8 +117,13 @@ public final class RestClient {
     return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
   }
 
-  private RestClient authorization(String token) {
-    return addHeader(AUTHORIZATION, "Basic " + token);
+  private RestClient basicAuthorization(String token) {
+    return addHeader(AUTHORIZATION, BASIC + token);
+  }
+
+  public RestClient tokenAuthorization() {
+    ResponseEntity<UserTokenDto> response = get("/authenticate", UserTokenDto.class);
+    return addHeader(AUTHORIZATION, BEARER + response.getBody().token);
   }
 
   private RestClient addHeader(String headerName, String value) {

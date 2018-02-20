@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 public class MvpUserDetails implements UserDetails, AuthenticatedUser {
@@ -19,6 +20,7 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
 
   private final List<GrantedAuthority> authorities;
+  private final String token;
   private final transient User user;
 
   public MvpUserDetails(User user) {
@@ -28,6 +30,16 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
       .map(role -> new SimpleGrantedAuthority(SPRING_ROLE_PREFIX + role))
       .collect(toList());
     this.user = user;
+    this.token = randomUUID().toString();
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  @Override
+  public String getToken() {
+    return token;
   }
 
   @Override

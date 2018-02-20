@@ -2,9 +2,11 @@ package com.elvaco.mvp.configuration.config;
 
 import javax.annotation.PreDestroy;
 
+import com.elvaco.mvp.cache.EhTokenServiceCache;
 import com.elvaco.mvp.cache.EhUserCache;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
-import org.ehcache.Cache;
 import org.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static com.elvaco.mvp.cache.EhUserCache.USER_CACHE_NAME;
 
 @Slf4j
@@ -27,16 +30,25 @@ class CacheConfig {
 
   @Bean
   UserCache userCache() {
-    Cache<String, UserDetails> cacheDelegate = cacheManager.getCache(
+    return new EhUserCache(cacheManager.getCache(
       USER_CACHE_NAME,
       String.class,
       UserDetails.class
-    );
-    return new EhUserCache(cacheDelegate);
+    ));
+  }
+
+  @Bean
+  TokenService tokenService() {
+    return new EhTokenServiceCache(cacheManager.getCache(
+      TOKEN_SERVICE_CACHE_NAME,
+      String.class,
+      AuthenticatedUser.class
+    ));
   }
 
   @PreDestroy
   void removeCache() {
     cacheManager.removeCache(USER_CACHE_NAME);
+    cacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
   }
 }

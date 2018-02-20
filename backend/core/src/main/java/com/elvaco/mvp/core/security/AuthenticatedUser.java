@@ -1,8 +1,11 @@
 package com.elvaco.mvp.core.security;
 
+import java.io.Serializable;
+
 import com.elvaco.mvp.core.domainmodels.Organisation;
 
-public interface AuthenticatedUser {
+public interface AuthenticatedUser extends Serializable {
+
   boolean isSuperAdmin();
 
   boolean isAdmin();
@@ -12,4 +15,6 @@ public interface AuthenticatedUser {
   Organisation getOrganisation();
 
   String getUsername();
+
+  String getToken();
 }

@@ -33,7 +33,6 @@ describe('authActions', () => {
   };
   let mockRestClient;
   let store;
-  let token: string;
 
   beforeEach(() => {
     store = mockStore({});
@@ -42,14 +41,13 @@ describe('authActions', () => {
 
   describe('authorized users', () => {
 
-    const dispatchLogin = async () => {
+    const token = '123-123-123';
 
+    const dispatchLogin = async () => {
       const username = 'the.batman@dc.com';
       const password = 'test1234';
 
-      mockRestClient.onGet(EndPoints.authenticate).reply(200, user);
-
-      token = makeToken(username, password);
+      mockRestClient.onGet(EndPoints.authenticate).reply(200, {user, token});
 
       return store.dispatch(login(username, password));
     };

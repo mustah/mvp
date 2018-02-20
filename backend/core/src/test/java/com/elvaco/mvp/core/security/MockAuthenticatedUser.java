@@ -3,11 +3,13 @@ package com.elvaco.mvp.core.security;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
-public class MockAuthenticatedUser implements AuthenticatedUser {
+import static java.util.UUID.randomUUID;
+
+class MockAuthenticatedUser implements AuthenticatedUser {
 
   private final User user;
 
-  public MockAuthenticatedUser(User user) {
+  MockAuthenticatedUser(User user) {
     this.user = user;
   }
 
@@ -34,5 +36,10 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   @Override
   public String getUsername() {
     return user.email;
+  }
+
+  @Override
+  public String getToken() {
+    return randomUUID().toString();
   }
 }
