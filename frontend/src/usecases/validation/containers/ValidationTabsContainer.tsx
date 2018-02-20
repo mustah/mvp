@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Content} from '../../../components/content/Content';
+import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -96,11 +96,11 @@ class ValidationTabs extends React.Component<Props> {
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <div>
-            <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+            <HasContent hasContent={hasMeters} noContentText={translate('no meters')}>
               <Map>
                 <ClusterContainer markers={meters}/>
               </Map>
-            </Content>
+            </HasContent>
             {dialog}
           </div>
         </TabContent>

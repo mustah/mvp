@@ -2,7 +2,7 @@ import {Checkbox} from 'material-ui';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {checkbox, checkboxLabel} from '../../app/themes';
-import {Content} from '../../components/content/Content';
+import {HasContent} from '../../components/content/HasContent';
 import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
@@ -258,14 +258,14 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content
+            <HasContent
               hasContent={hasConfidentPosition}
               noContentText={translate('no reliable position')}
             >
               <Map height={400} viewCenter={meter.position}>
                 <ClusterContainer markers={meter}/>
               </Map>
-            </Content>
+            </HasContent>
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>

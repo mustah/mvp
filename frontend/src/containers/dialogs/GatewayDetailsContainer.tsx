@@ -26,7 +26,7 @@ import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
-import {Content} from '../../components/content/Content';
+import {HasContent} from '../../components/content/HasContent';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 
 interface OwnProps {
@@ -143,11 +143,11 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
+            <HasContent hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
             <Map height={400} viewCenter={gateway.position}>
               <ClusterContainer markers={gateway}/>
             </Map>
-            </Content>
+            </HasContent>
           </TabContent>
         </Tabs>
       </Row>

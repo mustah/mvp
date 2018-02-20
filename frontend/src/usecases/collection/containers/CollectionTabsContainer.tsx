@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Content} from '../../../components/content/Content';
+import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
@@ -131,11 +131,11 @@ class CollectionTabs extends React.Component<Props> {
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
-              <Content hasContent={hasGateways} noContentText={translate('no gateways')}>
+              <HasContent hasContent={hasGateways} noContentText={translate('no gateways')}>
                 <Map>
                   <ClusterContainer markers={gateways}/>
                 </Map>
-              </Content>
+              </HasContent>
               {dialog}
             </div>
           </Loader>

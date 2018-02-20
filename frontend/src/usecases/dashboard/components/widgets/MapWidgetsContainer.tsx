@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Content} from '../../../../components/content/Content';
+import {HasContent} from '../../../../components/content/HasContent';
 import {Dialog} from '../../../../components/dialog/Dialog';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
@@ -71,7 +71,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   return (
     <Row className="MapWidgets">
       <Widget title="Perstorp">
-        <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+        <HasContent hasContent={hasMeters} noContentText={translate('no meters')}>
           <Map
             height={400}
             width={400}
@@ -80,7 +80,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
           >
             <ClusterContainer markers={markers}/>
           </Map>
-        </Content>
+        </HasContent>
       </Widget>
       <Widget title="Fel">
         <Map
