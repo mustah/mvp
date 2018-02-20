@@ -4,8 +4,6 @@ import {Period} from '../../../components/dates/dateModels';
 import {Maybe} from '../../../helpers/Maybe';
 import {GetState} from '../../../reducers/rootReducer';
 import {uuid} from '../../../types/Types';
-import {paginatedDomainModelsClear} from '../../domain-models-paginated/paginatedDomainModelsActions';
-import {domainModelsClear} from '../../domain-models/domainModelsActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {getSelection} from './selectionSelectors';
 
@@ -41,8 +39,6 @@ export const selectSavedSelection = (selectedId: uuid) =>
     Maybe.maybe<SelectionState>(savedSelection)
       .map((selected: SelectionState) => {
         dispatch(selectSavedSelectionAction(selected));
-        dispatch(domainModelsClear());
-        dispatch(paginatedDomainModelsClear());
       });
   };
 
@@ -56,27 +52,17 @@ export const toggleSelection = (selectionParameter: SelectionParameter) =>
       .filter((value: Period | FilterParam[]) => Array.isArray(value) && value.includes(id as FilterParam))
       .map(() => dispatch(deselectSelection(selectionParameter)))
       .orElseGet(() => dispatch(addSelection(selectionParameter)));
-    dispatch(domainModelsClear());
-    dispatch(paginatedDomainModelsClear());
   };
 
 export const updateSelection = (payload: SelectionState) => (dispatch) => {
   dispatch(updateSelectionAction(payload));
-  dispatch(domainModelsClear());
-  dispatch(paginatedDomainModelsClear());
 };
 export const resetSelection = () => (dispatch) => {
   dispatch(resetSelectionAction());
-  dispatch(domainModelsClear());
-  dispatch(paginatedDomainModelsClear());
 };
 export const setSelection = (payload: SelectionParameter) => (dispatch) => {
   dispatch(setSelectionAction(payload));
-  dispatch(domainModelsClear());
-  dispatch(paginatedDomainModelsClear());
 };
 export const selectPeriod = (payload: Period) => (dispatch) => {
   dispatch(selectPeriodAction(payload));
-  dispatch(domainModelsClear());
-  dispatch(paginatedDomainModelsClear());
 };

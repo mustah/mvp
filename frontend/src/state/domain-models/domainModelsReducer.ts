@@ -2,9 +2,17 @@ import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
+import {
+  ADD_SELECTION,
+  DESELECT_SELECTION,
+  RESET_SELECTION,
+  SELECT_PERIOD,
+  SELECT_SAVED_SELECTION,
+  SET_SELECTION,
+  UPDATE_SELECTION,
+} from '../search/selection/selectionActions';
 import {DomainModelsState, EndPoints, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
-  DOMAIN_MODELS_CLEAR,
   DOMAIN_MODELS_CLEAR_ERROR,
   DOMAIN_MODELS_DELETE_SUCCESS,
   DOMAIN_MODELS_FAILURE,
@@ -117,7 +125,13 @@ const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: 
       case DOMAIN_MODELS_FAILURE(endPoint):
         return setError(state, action as Action<ErrorResponse>);
       case DOMAIN_MODELS_CLEAR_ERROR(endPoint):
-      case DOMAIN_MODELS_CLEAR:
+      case SELECT_SAVED_SELECTION:
+      case ADD_SELECTION:
+      case DESELECT_SELECTION:
+      case UPDATE_SELECTION:
+      case RESET_SELECTION:
+      case SET_SELECTION:
+      case SELECT_PERIOD:
         return {...initialDomain<T>()};
       default:
         return state;

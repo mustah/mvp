@@ -14,7 +14,7 @@ import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainMod
 import {
   addOrganisation,
   addUser, clearErrorGateways,
-  deleteUser, DOMAIN_MODELS_CLEAR, DOMAIN_MODELS_CLEAR_ERROR, domainModelsClear, fetchGateways,
+  deleteUser, DOMAIN_MODELS_CLEAR_ERROR, fetchGateways,
   fetchSelections,
   fetchUser,
   modifyProfile,
@@ -407,16 +407,6 @@ describe('domainModelsActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: DOMAIN_MODELS_CLEAR_ERROR(EndPoints.gateways)},
-      ]);
-    });
-  });
-
-  describe('clear domainModels', () => {
-    it('dispatches a clear action', () => {
-      store.dispatch(domainModelsClear());
-
-      expect(store.getActions()).toEqual([
-        {type: DOMAIN_MODELS_CLEAR},
       ]);
     });
   });

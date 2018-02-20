@@ -1,13 +1,24 @@
 import {combineReducers} from 'redux';
 import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from '../domain-models/domainModels';
+import {
+  ADD_SELECTION,
+  DESELECT_SELECTION,
+  RESET_SELECTION,
+  SELECT_PERIOD,
+  SELECT_SAVED_SELECTION,
+  SET_SELECTION,
+  UPDATE_SELECTION,
+} from '../search/selection/selectionActions';
 import {Meter} from './meter/meterModels';
 import {
-  HasPageNumber, NormalizedPaginated, NormalizedPaginatedState,
+  HasPageNumber,
+  NormalizedPaginated,
+  NormalizedPaginatedState,
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 import {
-  DOMAIN_MODELS_PAGINATED_CLEAR, DOMAIN_MODELS_PAGINATED_CLEAR_ERROR,
+  DOMAIN_MODELS_PAGINATED_CLEAR_ERROR,
   DOMAIN_MODELS_PAGINATED_FAILURE,
   DOMAIN_MODELS_PAGINATED_GET_SUCCESS,
   DOMAIN_MODELS_PAGINATED_REQUEST,
@@ -88,7 +99,13 @@ export const reducerFor = <T extends HasId>(entity: keyof PaginatedDomainModelsS
         return setError<T>(state, action as Action<ErrorResponse & HasPageNumber>);
       case DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint):
         return clearError(state, action as Action<HasPageNumber>);
-      case DOMAIN_MODELS_PAGINATED_CLEAR:
+      case SELECT_SAVED_SELECTION:
+      case ADD_SELECTION:
+      case DESELECT_SELECTION:
+      case UPDATE_SELECTION:
+      case RESET_SELECTION:
+      case SET_SELECTION:
+      case SELECT_PERIOD:
         return {...initialPaginatedDomain<T>()};
       default:
         return state;

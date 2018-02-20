@@ -14,8 +14,7 @@ import {Meter} from '../meter/meterModels';
 import {meterSchema} from '../meter/meterSchema';
 import {HasPageNumber, NormalizedPaginated} from '../paginatedDomainModels';
 import {
-  clearErrorMeters, DOMAIN_MODELS_PAGINATED_CLEAR, DOMAIN_MODELS_PAGINATED_CLEAR_ERROR, fetchMeters,
-  paginatedDomainModelsClear,
+  clearErrorMeters, DOMAIN_MODELS_PAGINATED_CLEAR_ERROR, fetchMeters,
   requestMethodPaginated,
 } from '../paginatedDomainModelsActions';
 import MockAdapter = require('axios-mock-adapter');
@@ -173,16 +172,6 @@ describe('paginatedDomainModelsActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(EndPoints.meters), payload},
-      ]);
-    });
-  });
-
-  describe('clear paginatedDomainModels', () => {
-    it('sends clear request', () => {
-      store.dispatch(paginatedDomainModelsClear());
-
-      expect(store.getActions()).toEqual([
-        {type: DOMAIN_MODELS_PAGINATED_CLEAR},
       ]);
     });
   });
