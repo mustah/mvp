@@ -2,16 +2,17 @@ package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.core.spi.security.TokenFactory;
 
 class MockAuthenticatedUser implements AuthenticatedUser {
 
-  private final User user;
-  private final TokenFactory tokenFactory;
+  private static final long serialVersionUID = -4347874617014900239L;
 
-  MockAuthenticatedUser(User user, TokenFactory tokenFactory) {
+  private final transient User user;
+  private final String token;
+
+  MockAuthenticatedUser(User user, String token) {
     this.user = user;
-    this.tokenFactory = tokenFactory;
+    this.token = token;
   }
 
   @Override
@@ -41,6 +42,6 @@ class MockAuthenticatedUser implements AuthenticatedUser {
 
   @Override
   public String getToken() {
-    return tokenFactory.newToken();
+    return token;
   }
 }

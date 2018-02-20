@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
-  private static final long serialVersionUID = 1234L;
+  private static final long serialVersionUID = -7344530747327091472L;
   private static final String SPRING_ROLE_PREFIX = "ROLE_";
 
   private final List<GrantedAuthority> authorities;

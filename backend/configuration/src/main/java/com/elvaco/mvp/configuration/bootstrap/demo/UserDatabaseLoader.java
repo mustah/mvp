@@ -53,7 +53,8 @@ public class UserDatabaseLoader implements CommandLineRunner {
   @Autowired
   public UserDatabaseLoader(
     TokenService tokenService,
-    TokenFactory tokenFactory, Organisations organisations,
+    TokenFactory tokenFactory,
+    Organisations organisations,
     UserUseCases userUseCases,
     SettingUseCases settingUseCases
   ) {
@@ -81,6 +82,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
       ELVACO_SUPER_ADMIN_USER,
       tokenFactory.newToken()
     );
+
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
     Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
     SecurityContextHolder.getContext().setAuthentication(authentication);

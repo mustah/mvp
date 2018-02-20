@@ -4,7 +4,6 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
-import {makeToken} from '../../../services/authService';
 import {EndPoints} from '../../../state/domain-models/domainModels';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {

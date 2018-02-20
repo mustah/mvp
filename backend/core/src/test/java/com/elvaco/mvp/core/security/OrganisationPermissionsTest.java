@@ -183,7 +183,7 @@ public class OrganisationPermissionsTest {
 
   private boolean hasPermission(User currentUser, User targetUser, Permission permission) {
     return permissionEvaluator.isAllowed(
-      new MockAuthenticatedUser(currentUser, () -> randomUUID().toString()),
+      new MockAuthenticatedUser(currentUser, randomUUID().toString()),
       targetUser,
       permission
     );

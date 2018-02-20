@@ -52,10 +52,15 @@ public abstract class IntegrationTest {
     return restAsUser(ELVACO_SUPER_ADMIN_USER);
   }
 
-  private RestClient restAsUser(User user) {
+  protected User createUserIfNotPresent(User user) {
     if (!users.findByEmail(user.email).isPresent()) {
       users.create(user);
     }
+    return user;
+  }
+
+  private RestClient restAsUser(User user) {
+    createUserIfNotPresent(user);
     return restClient()
       .loginWith(user.email, user.password)
       .tokenAuthorization();

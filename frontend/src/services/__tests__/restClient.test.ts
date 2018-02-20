@@ -1,4 +1,4 @@
-import {restClientWith, restClient, authenticate} from '../restClient';
+import {authenticate, restClient, restClientWith} from '../restClient';
 
 describe('restClient', () => {
 

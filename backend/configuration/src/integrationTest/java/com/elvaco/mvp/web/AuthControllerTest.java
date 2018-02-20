@@ -1,7 +1,9 @@
 package com.elvaco.mvp.web;
 
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
+import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
@@ -14,30 +16,24 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void authenticate() {
+    User user = createUserIfNotPresent(ELVACO_SUPER_ADMIN_USER);
+
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(ELVACO_SUPER_ADMIN_USER.email, ELVACO_SUPER_ADMIN_USER.password)
+      .loginWith(user.email, user.password)
       .get("/authenticate", UserTokenDto.class);
 
     UserTokenDto body = response.getBody();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(body.user.email).isEqualTo(ELVACO_SUPER_ADMIN_USER.email);
+    assertThat(body.user.email).isEqualTo(user.email);
     assertThat(body.token).isNotNull();
   }
 
   @Test
-  public void authorize() {
-    ResponseEntity<String> response = asSuperAdmin()
-      .get("/authenticate/ping", String.class);
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
-  @Test
   public void unAuthorized() {
-    ResponseEntity<String> response = restClient()
+    ResponseEntity<UserDto> response = restClient()
       .loginWith("nothing", "nothing")
       .tokenAuthorization()
-      .get("/authenticate/ping", String.class);
+      .get("/users/1", UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
