@@ -3,7 +3,6 @@ import {Period} from '../../../components/dates/dateModels';
 import {Action, uuid} from '../../../types/Types';
 import {
   ADD_SELECTION,
-  CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SAVE_SELECTION,
@@ -107,11 +106,6 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
     case SAVE_SELECTION:
     case SELECT_SAVED_SELECTION:
       return selectSaved(state, action as Action<SelectionState>);
-    case CLOSE_SELECTION_PAGE:
-      return {
-        ...state,
-        isChanged: false,
-      };
     default:
       return state;
   }

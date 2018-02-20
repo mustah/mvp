@@ -9,7 +9,6 @@ import {DOMAIN_MODELS_CLEAR} from '../../../domain-models/domainModelsActions';
 import {PAGINATION_RESET} from '../../../ui/pagination/paginationActions';
 import {
   ADD_SELECTION,
-  CLOSE_SELECTION_PAGE,
   closeSelectionPage, DESELECT_SELECTION, SELECT_PERIOD, SELECT_SAVED_SELECTION,
   selectPeriod,
   selectSavedSelection, SET_SELECTION,
@@ -54,7 +53,6 @@ describe('selectionActions', () => {
       store.dispatch(closeSelectionPage());
 
       expect(store.getActions()).toEqual([
-        {type: CLOSE_SELECTION_PAGE},
         routerActions.goBack(),
       ]);
     });

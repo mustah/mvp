@@ -10,7 +10,6 @@ import {paginationReset} from '../../ui/pagination/paginationActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 import {getSelection} from './selectionSelectors';
 
-export const CLOSE_SELECTION_PAGE = 'CLOSE_SELECTION_PAGE';
 export const SELECT_PERIOD = 'SELECT_PERIOD';
 
 export const ADD_SELECTION = 'ADD_SELECTION';
@@ -21,7 +20,6 @@ export const UPDATE_SELECTION = 'UPDATE_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
-const closeSelectionPageAction = createEmptyAction(CLOSE_SELECTION_PAGE);
 const addSelection = createPayloadAction<string, SelectionParameter>(ADD_SELECTION);
 const deselectSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
 export const saveSelection = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
@@ -33,7 +31,6 @@ const setSelectionAction = createPayloadAction<string, SelectionParameter>(SET_S
 const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
 
 export const closeSelectionPage = () => (dispatch) => {
-  dispatch(closeSelectionPageAction());
   dispatch(routerActions.goBack());
 };
 
