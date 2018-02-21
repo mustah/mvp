@@ -12,6 +12,8 @@ public interface LogicalMeterJpaRepository extends QueryDslPredicateExecutor<Log
   JpaRepository<LogicalMeterEntity, Long> {
 
 
+  Optional<LogicalMeterEntity> findById(Long id);
+
   @Override
   List<LogicalMeterEntity> findAll(Predicate predicate);
 
