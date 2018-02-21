@@ -1,11 +1,12 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
-import {combineReducers} from 'redux';
+import {AnyAction, combineReducers} from 'redux';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
+import {LOGOUT_USER} from '../usecases/auth/authActions';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
@@ -28,9 +29,11 @@ export interface RootState {
   map: MapState;
 }
 
+export type AppState = RootState | undefined;
+
 export type GetState = () => RootState;
 
-export const rootReducer = combineReducers<RootState>({
+const appReducer = combineReducers<AppState>({
   auth,
   domainModels,
   paginatedDomainModels,
@@ -42,3 +45,10 @@ export const rootReducer = combineReducers<RootState>({
   ui,
   map,
 });
+
+export const rootReducer = (state: AppState, action: AnyAction) => {
+  if (action.type === LOGOUT_USER) {
+    return appReducer(undefined, action);
+  }
+  return appReducer(state, action);
+};

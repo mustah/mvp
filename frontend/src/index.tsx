@@ -12,18 +12,18 @@ import {persistStore} from 'redux-persist';
 import {App} from './app/App';
 import {mvpTheme} from './app/themes';
 import {initLanguage} from './i18n/i18n';
-import {RootState} from './reducers/rootReducer';
+import {AppState, RootState} from './reducers/rootReducer';
 import {restClientWith} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {configureStore} from './store/configureStore';
 
 export const history: History = createHashHistory();
 
-const appStore: Store<RootState> = configureStore(history);
+const appStore: Store<AppState> = configureStore(history);
 
-persistStore<RootState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
+persistStore<AppState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
   if (!error) {
-    const {auth: {token}, language: {language}} = appStore.getState();
+    const {auth: {token}, language: {language}}: RootState = appStore.getState()!;
     restClientWith(token);
     initLanguage(language);
   }
