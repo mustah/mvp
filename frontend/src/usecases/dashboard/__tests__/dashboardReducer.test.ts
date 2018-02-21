@@ -2,7 +2,7 @@ import {IndicatorType, WidgetModel} from '../../../components/indicators/indicat
 import {Status} from '../../../types/Types';
 import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
-import {dashboard, DashboardState, initialState} from '../dashboardReducer';
+import {dashboard, DashboardState, initialDashboardState} from '../dashboardReducer';
 
 describe('dashboardReducer', () => {
 
@@ -33,7 +33,7 @@ describe('dashboardReducer', () => {
       widgets: [...widgets],
     };
 
-    const state: DashboardState = dashboard(initialState, dashboardSuccess(capturedApiResponse));
+    const state: DashboardState = dashboard(initialDashboardState, dashboardSuccess(capturedApiResponse));
 
     const expected = {
       isFetching: false,
@@ -48,13 +48,13 @@ describe('dashboardReducer', () => {
   });
 
   it('is fetching when dashboard request is dispatched', () => {
-    const state: DashboardState = dashboard(initialState, dashboardRequest());
+    const state: DashboardState = dashboard(initialDashboardState, dashboardRequest());
 
     expect(state).toEqual({isFetching: true});
   });
 
   it('fails with error response', () => {
-    const state: DashboardState = dashboard(initialState, dashboardFailure({message: 'error'}));
+    const state: DashboardState = dashboard(initialDashboardState, dashboardFailure({message: 'error'}));
 
     expect(state).toEqual({isFetching: false, error: {message: 'error'}});
   });

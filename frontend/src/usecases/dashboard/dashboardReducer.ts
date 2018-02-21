@@ -9,11 +9,11 @@ export interface DashboardState {
   error?: ErrorResponse;
 }
 
-export const initialState: DashboardState = {
+export const initialDashboardState: DashboardState = {
   isFetching: false,
 };
 
-const success = (state: DashboardState = initialState, action: Action<DashboardModel>): DashboardState => {
+const success = (state: DashboardState, action: Action<DashboardModel>): DashboardState => {
   const {payload} = action;
   return {
     ...state,
@@ -25,7 +25,7 @@ const success = (state: DashboardState = initialState, action: Action<DashboardM
   };
 };
 
-const failure = (state: DashboardState = initialState, action: Action<ErrorResponse>): DashboardState => {
+const failure = (state: DashboardState, action: Action<ErrorResponse>): DashboardState => {
   const {payload} = action;
   return {
     ...state,
@@ -36,7 +36,7 @@ const failure = (state: DashboardState = initialState, action: Action<ErrorRespo
 
 type ActionTypes = Action<DashboardModel> | Action<ErrorResponse> | EmptyAction<string>;
 
-export const dashboard = (state: DashboardState = initialState, action: ActionTypes): DashboardState => {
+export const dashboard = (state: DashboardState = initialDashboardState, action: ActionTypes): DashboardState => {
   switch (action.type) {
     case DASHBOARD_REQUEST:
       return {

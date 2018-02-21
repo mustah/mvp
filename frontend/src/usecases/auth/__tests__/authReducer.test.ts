@@ -2,11 +2,10 @@ import {makeToken} from '../../../services/authService';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {authSetUser, loginFailure, loginRequest, loginSuccess, logoutUser} from '../authActions';
 import {Authorized, AuthState, Unauthorized} from '../authModels';
-import {auth} from '../authReducer';
+import {auth, initialAuthState} from '../authReducer';
 
 describe('authReducer', () => {
 
-  const initialState: AuthState = {isAuthenticated: false};
   const requestState: AuthState = {isAuthenticated: false, isLoading: true};
   const password = '1234';
   const user: User = {
@@ -20,8 +19,8 @@ describe('authReducer', () => {
   const loggedInState: AuthState = {isLoading: false, isAuthenticated: true, token, user};
 
   it('sends a login request', () => {
-    expect(auth(initialState, loginRequest())).toEqual({
-      ...initialState,
+    expect(auth(initialAuthState, loginRequest())).toEqual({
+      ...initialAuthState,
       isLoading: true,
       isAuthenticated: false,
     });
@@ -59,8 +58,7 @@ describe('authReducer', () => {
 
   it('successfully logs out a user', () => {
     expect(auth({...loggedInState, isLoading: true}, logoutUser())).toEqual({
-      ...initialState,
-      isLoading: false,
+      ...initialAuthState,
     });
   });
 

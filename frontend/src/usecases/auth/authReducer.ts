@@ -7,7 +7,7 @@ import {
 } from './authActions';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
-const initialAuthState: AuthState = {isAuthenticated: false};
+export const initialAuthState: AuthState = {isAuthenticated: false};
 
 type ActionTypes =
   | Action<Authorized>
@@ -50,13 +50,7 @@ export const auth = (state: AuthState = initialAuthState, action: ActionTypes): 
     case LOGIN_FAILURE:
       return loginFailure(state, action as Action<Unauthorized>);
     case LOGOUT_USER:
-      return {
-        ...state,
-        isLoading: false,
-        isAuthenticated: false,
-        token: undefined,
-        user: undefined,
-      };
+      return {...initialAuthState};
     case AUTH_SET_USER_INFO:
       return setUserInfo(state, action as Action<User>);
     default:

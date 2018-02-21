@@ -4,10 +4,10 @@ import {rootReducer, RootState} from '../rootReducer';
 describe('rootReducer', () => {
 
   it('does not change the state reference when action type is unknown', () => {
-    const initialRootState: Partial<RootState> = {};
-    const initialState = rootReducer(initialRootState as RootState, {type: 'unknown'});
+    const initialState = rootReducer(undefined, {type: 'unknown'});
     const state = rootReducer(initialState, {type: 'unknown'});
 
+    expect(initialState).not.toEqual(undefined);
     expect(state).toBe(initialState);
   });
 
