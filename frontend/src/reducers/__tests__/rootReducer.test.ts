@@ -1,5 +1,5 @@
-import {loginRequest} from '../../usecases/auth/authActions';
-import {rootReducer, RootState} from '../rootReducer';
+import {loginRequest, logoutUser} from '../../usecases/auth/authActions';
+import {rootReducer} from '../rootReducer';
 
 describe('rootReducer', () => {
 
@@ -12,10 +12,17 @@ describe('rootReducer', () => {
   });
 
   it('changes state when a known action has been dispatched', () => {
-    const initialRootState: Partial<RootState> = {};
-    const initialState = rootReducer(initialRootState as RootState, {type: 'unknown'});
+    const initialState = rootReducer(undefined, {type: 'unknown'});
     const state = rootReducer(initialState, loginRequest());
 
     expect(state).not.toBe(initialState);
+  });
+
+  it('clears state on logout', () => {
+    const initialState = rootReducer(undefined, {type: 'unknown'});
+    const state = rootReducer(initialState, loginRequest());
+
+    expect(state).not.toEqual(initialState);
+    expect(rootReducer(state, logoutUser())).toEqual(initialState);
   });
 });
