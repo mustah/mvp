@@ -11,11 +11,8 @@ import org.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.UserCache;
-import org.springframework.security.core.userdetails.cache.NullUserCache;
 
 import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
-import static com.elvaco.mvp.cache.EhUserCache.USER_CACHE_NAME;
 import static java.util.UUID.randomUUID;
 
 @Slf4j
@@ -27,13 +24,6 @@ class CacheConfig {
   @Autowired
   CacheConfig(CacheManager cacheManager) {
     this.cacheManager = cacheManager;
-  }
-
-  @Bean
-  UserCache userCache() {
-    // TODO[!must!] use the null-cache for now, will remove the EhUserCache in another MR.
-    // this is in order for logout to work.
-    return new NullUserCache();
   }
 
   @Bean
@@ -52,7 +42,6 @@ class CacheConfig {
 
   @PreDestroy
   void removeCache() {
-    cacheManager.removeCache(USER_CACHE_NAME);
     cacheManager.removeCache(TOKEN_SERVICE_CACHE_NAME);
   }
 }
