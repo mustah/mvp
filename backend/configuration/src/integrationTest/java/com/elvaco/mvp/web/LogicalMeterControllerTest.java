@@ -408,15 +408,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   private void createAndConnectPhysicalMeters(List<LogicalMeter> logicalMeters) {
-    logicalMeters.forEach(logicalMeter -> createPhysicalMeter(logicalMeter.id, logicalMeter.id));
+    logicalMeters.forEach(logicalMeter -> createPhysicalMeter(
+      logicalMeter.id,
+      logicalMeter.id,
+      logicalMeter.externalId)
+    );
   }
 
-  private void createPhysicalMeter(long logicalMeterId, long seed) {
+  private void createPhysicalMeter(long logicalMeterId, long seed, String externalId) {
     physicalMeters.save(
       new PhysicalMeter(
         DomainModels.ELVACO,
         "111-222-333-444-" + seed,
-        "external-id-" + seed,
+        externalId,
         "Some device specific medium name",
         "ELV",
         logicalMeterId,
