@@ -47,6 +47,7 @@ describe('authActions', () => {
       const password = 'test1234';
 
       mockRestClient.onGet(EndPoints.authenticate).reply(200, {user, token});
+      mockRestClient.onGet(EndPoints.logout).reply(204);
 
       return store.dispatch(login(username, password));
     };
@@ -126,8 +127,13 @@ describe('authActions', () => {
 
       await store.dispatch(login(username, '123123'));
     });
+  });
 
-    it('logs out user without any side effect', async () => {
+  describe('Unauthorized user', () => {
+
+    it('can logout user without any side effect', async () => {
+      mockRestClient.onGet(EndPoints.logout).reply(204);
+
       await store.dispatch(logout(user.organisation.code));
 
       expect(store.getActions()).toEqual([
@@ -140,6 +146,7 @@ describe('authActions', () => {
   describe('set user info', () => {
     const newName = 'eva nilsson';
     const modifiedUser = {...user, name: newName};
+
     it('sets the user info to the provided user', async () => {
       await store.dispatch(authSetUser(modifiedUser));
 

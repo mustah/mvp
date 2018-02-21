@@ -3,7 +3,6 @@ package com.elvaco.mvp.configuration.config;
 import javax.annotation.PreDestroy;
 
 import com.elvaco.mvp.cache.EhTokenServiceCache;
-import com.elvaco.mvp.cache.EhUserCache;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
@@ -13,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserCache;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.cache.NullUserCache;
 
 import static com.elvaco.mvp.cache.EhTokenServiceCache.TOKEN_SERVICE_CACHE_NAME;
 import static com.elvaco.mvp.cache.EhUserCache.USER_CACHE_NAME;
@@ -32,11 +31,9 @@ class CacheConfig {
 
   @Bean
   UserCache userCache() {
-    return new EhUserCache(cacheManager.getCache(
-      USER_CACHE_NAME,
-      String.class,
-      UserDetails.class
-    ));
+    // TODO[!must!] use the null-cache for now, will remove the EhUserCache in another MR.
+    // this is in order for logout to work.
+    return new NullUserCache();
   }
 
   @Bean

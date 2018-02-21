@@ -17,6 +17,7 @@ export const enum EndPoints {
   gateways = '/gateways',
   users = '/users',
   authenticate = '/authenticate',
+  logout = '/logout',
   measurements = '/measurements',
   organisations = '/organisations',
 }

@@ -98,4 +98,12 @@ public class AuthControllerTest extends IntegrationTest {
     assertThat(logoutResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     assertThat(tokenService.getToken(token).isPresent()).isFalse();
   }
+
+  @Test
+  public void logoutUserWithoutAuthenticationHeaderShouldReturnNoContentStatus() {
+    ResponseEntity<Void> logoutResponse = restClient()
+      .get("/logout", Void.class);
+
+    assertThat(logoutResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+  }
 }
