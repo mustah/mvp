@@ -9,7 +9,6 @@ import org.springframework.security.authentication.InternalAuthenticationService
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserCache;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,20 +21,16 @@ public class UserDetailAuthenticationProvider extends AbstractUserDetailsAuthent
 
   private final UserDetailsService userDetailsService;
   private final PasswordEncoder passwordEncoder;
-  private final UserCache userCache;
   private final TokenService tokenService;
 
   public UserDetailAuthenticationProvider(
     UserDetailsService userDetailsService,
     PasswordEncoder passwordEncoder,
-    UserCache userCache,
     TokenService tokenService
   ) {
     this.userDetailsService = requireNonNull(userDetailsService);
     this.passwordEncoder = requireNonNull(passwordEncoder);
-    this.userCache = requireNonNull(userCache);
     this.tokenService = tokenService;
-    setUserCache(userCache);
   }
 
   @Override
@@ -59,19 +54,12 @@ public class UserDetailAuthenticationProvider extends AbstractUserDetailsAuthent
     UsernamePasswordAuthenticationToken authentication
   )
     throws AuthenticationException {
-    if (isNotAuthenticated(userDetails)) {
-      log.info("User '{}' is not in cache.", userDetails.getUsername());
-      Optional.ofNullable(authentication.getCredentials())
-        .map(Object::toString)
-        .filter(rawPassword -> passwordEncoder.matches(rawPassword, userDetails.getPassword()))
-        .orElseThrow(this::badCredentials);
-      MvpUserDetails authenticatedUser = (MvpUserDetails) userDetails;
-      tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    }
-  }
-
-  private boolean isNotAuthenticated(UserDetails userDetails) {
-    return userCache.getUserFromCache(userDetails.getUsername()) == null;
+    Optional.ofNullable(authentication.getCredentials())
+      .map(Object::toString)
+      .filter(rawPassword -> passwordEncoder.matches(rawPassword, userDetails.getPassword()))
+      .orElseThrow(this::badCredentials);
+    MvpUserDetails authenticatedUser = (MvpUserDetails) userDetails;
+    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
   }
 
   private BadCredentialsException badCredentials() {
