@@ -58,7 +58,9 @@ public class LogicalMeterMapperTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       1L,
-      "some-external-id", ELVACO.id, location,
+      "some-external-id",
+      ELVACO.id,
+      location,
       new Date(),
       Collections.emptyList(),
       null,
@@ -96,15 +98,22 @@ public class LogicalMeterMapperTest {
       mapper.toDto(
         new LogicalMeter(
           1L,
-          "an-external-id", ELVACO.id, new LocationBuilder().city("Kungsbacka")
+          "an-external-id",
+          ELVACO.id,
+          new LocationBuilder().city("Kungsbacka")
             .streetAddress("Kabelgatan 2T")
             .latitude(57.5052592)
             .longitude(12.0683196)
             .build(),
           dateFormat.parse("2018-02-12T14:14:25"),
-          Collections.singletonList(new PhysicalMeter(
-            ELVACO, "123123", "an-external-id", "Some device specific medium", "ELV"
-          )),
+          Collections.singletonList(
+            new PhysicalMeter(
+              ELVACO,
+              "123123",
+              "an-external-id",
+              "Some device specific medium",
+              "ELV"
+            )),
           MeterDefinition.HOT_WATER_METER,
           Collections.emptyList()
         ), TimeZone.getTimeZone("Europe/Stockholm")))
@@ -120,12 +129,10 @@ public class LogicalMeterMapperTest {
                                                  dateFormat.parse("2018-02-12T14:14:25")
     );
 
-    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created).isEqualTo(
-      "2018-02-12 14:14:25");
-    assertThat(mapper.toDto(
-      logicalMeter,
-      TimeZone.getTimeZone("America/Los_Angeles")
-    ).created).isEqualTo("2018-02-12 06:14:25");
+    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created)
+      .isEqualTo("2018-02-12 14:14:25");
+    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("America/Los_Angeles")).created)
+      .isEqualTo("2018-02-12 06:14:25");
 
   }
 }
