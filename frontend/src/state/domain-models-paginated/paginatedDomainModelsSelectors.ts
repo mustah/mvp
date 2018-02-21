@@ -7,7 +7,7 @@ export const getPageResult = <T extends HasId>({result}: NormalizedPaginatedStat
   result[page] && result[page].result ? result[page].result! : [];
 
 export const getPageIsFetching = <T extends HasId>({result}: NormalizedPaginatedState<T>, page): boolean =>
-  result[page] ? result[page].isFetching : true;
+  result[page] ? result[page].isFetching : false;
 
 export const getPageError = <T extends HasId>({result}: NormalizedPaginatedState<T>, page): Maybe<ErrorResponse> =>
   result[page] ? Maybe.maybe(result[page].error) : Maybe.nothing();

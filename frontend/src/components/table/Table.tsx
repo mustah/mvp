@@ -1,9 +1,9 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Children, uuid} from '../../types/Types';
 import './Table.scss';
 import {TableHeadProps} from './TableHead';
-import {ObjectsById} from '../../state/domain-models/domainModels';
 
 type RenderCellCallback = (value: any) => Children;
 
@@ -20,8 +20,7 @@ interface TableProps {
 
 export const TableColumn = (props: TableColumnProps) => <td/>;
 
-export const Table = (props: TableProps) => {
-  const {result, entities, children} = props;
+export const Table = ({result, entities, children}: TableProps) => {
 
   const columns = Array.isArray(children) ? children : [children];
 
@@ -31,25 +30,18 @@ export const Table = (props: TableProps) => {
     return React.cloneElement(header, headerProps);
   });
 
-  const rows = (() => {
-    if (!result.length) {
-      return null;
-    }
+  const cellRenderFunctions: RenderCellCallback[] = columns.map((column) => column.props.renderCell);
 
-    const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
-      const item = entities[id];
-      return <td key={`cell-${id}-${index}`}>{onRenderCell(item)}</td>;
-    };
+  const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
+    const item = entities[id];
+    return <td key={`cell-${id}-${index}`}>{onRenderCell(item)}</td>;
+  };
+  const renderRow = (id: uuid) => (
+    <tr key={id}>
+      {cellRenderFunctions.map((onRenderCell, index: number) => renderCell(onRenderCell, id, index))}
+    </tr>);
 
-    const cells: RenderCellCallback[] = columns.map((column) => column.props.renderCell);
-
-    const renderRows = (id: uuid) => (
-      <tr key={id}>
-        {cells.map((onRenderCell: RenderCellCallback, index: number) => renderCell(onRenderCell, id, index))}
-      </tr>);
-
-    return result.map(renderRows);
-  })();
+  const rows = result.length ? result.map(renderRow) : null;
 
   return (
     <table className={classNames('Table')} cellPadding={0} cellSpacing={0}>

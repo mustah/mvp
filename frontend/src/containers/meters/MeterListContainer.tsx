@@ -2,6 +2,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
+import {HasContent} from '../../components/content/HasContent';
 import {Loader} from '../../components/loading/Loader';
 import {MeterListItem} from '../../components/meters/MeterListItem';
 import {PaginationControl} from '../../components/pagination-control/PaginationControl';
@@ -9,9 +10,10 @@ import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
+import {MissingDataTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
-import {translate} from '../../services/translationService';
+import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ClearErrorPaginated, RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
 import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
@@ -102,51 +104,56 @@ class MeterList extends React.Component<Props> {
     });
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
-        <div>
-          <Table result={result} entities={entities}>
-            <TableColumn
-              header={<TableHead className="first">{translate('facility')}</TableHead>}
-              renderCell={renderMeterListItem}
-            />
-            <TableColumn
-              header={<TableHead>{translate('city')}</TableHead>}
-              renderCell={renderCityName}
-            />
-            <TableColumn
-              header={<TableHead>{translate('address')}</TableHead>}
-              renderCell={renderAddressName}
-            />
-            <TableColumn
-              header={<TableHead>{translate('manufacturer')}</TableHead>}
-              renderCell={renderManufacturer}
-            />
-            <TableColumn
-              header={<TableHead>{translate('medium')}</TableHead>}
-              renderCell={renderMedium}
-            />
-            <TableColumn
-              header={<TableHead>{translate('gateway')}</TableHead>}
-              renderCell={renderGatewayId}
-            />
-            <TableColumn
-              header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
-              renderCell={renderStatusCell}
-            />
-            <TableColumn
-              header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
-              renderCell={renderStatusChanged}
-            />
-            <TableColumn
-              header={<TableHead>{translate('flags')}</TableHead>}
-              renderCell={renderFlags}
-            />
-            <TableColumn
-              header={<TableHead className="actionDropdown">{' '}</TableHead>}
-              renderCell={renderActionDropdown}
-            />
-          </Table>
-          <PaginationControl pagination={pagination} changePage={changePage}/>
-        </div>
+        <HasContent
+          hasContent={result.length > 0}
+          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')} />}
+        >
+          <div>
+            <Table result={result} entities={entities}>
+              <TableColumn
+                header={<TableHead className="first">{translate('facility')}</TableHead>}
+                renderCell={renderMeterListItem}
+              />
+              <TableColumn
+                header={<TableHead>{translate('city')}</TableHead>}
+                renderCell={renderCityName}
+              />
+              <TableColumn
+                header={<TableHead>{translate('address')}</TableHead>}
+                renderCell={renderAddressName}
+              />
+              <TableColumn
+                header={<TableHead>{translate('manufacturer')}</TableHead>}
+                renderCell={renderManufacturer}
+              />
+              <TableColumn
+                header={<TableHead>{translate('medium')}</TableHead>}
+                renderCell={renderMedium}
+              />
+              <TableColumn
+                header={<TableHead>{translate('gateway')}</TableHead>}
+                renderCell={renderGatewayId}
+              />
+              <TableColumn
+                header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
+                renderCell={renderStatusCell}
+              />
+              <TableColumn
+                header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+                renderCell={renderStatusChanged}
+              />
+              <TableColumn
+                header={<TableHead>{translate('flags')}</TableHead>}
+                renderCell={renderFlags}
+              />
+              <TableColumn
+                header={<TableHead className="actionDropdown">{' '}</TableHead>}
+                renderCell={renderActionDropdown}
+              />
+            </Table>
+            <PaginationControl pagination={pagination} changePage={changePage}/>
+          </div>
+        </HasContent>
       </Loader>
     );
   }

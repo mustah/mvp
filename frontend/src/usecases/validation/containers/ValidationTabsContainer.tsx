@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Content} from '../../../components/content/Content';
+import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -9,16 +9,17 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
+import {MissingDataTitle} from '../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Meter, MeterDataSummary} from '../../../state/domain-models-paginated/meter/meterModels';
 import {getMeterDataSummary} from '../../../state/domain-models-paginated/meter/meterSelectors';
-import {ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {fetchAllMeters} from '../../../state/domain-models/domainModelsActions';
-import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {getDomainModel} from '../../../state/domain-models/domainModelsSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
@@ -35,7 +36,7 @@ import {ValidationOverview} from '../components/ValidationOverview';
 
 interface StateToProps extends TabsContainerStateToProps {
   meterDataSummary: Maybe<MeterDataSummary>;
-  meters: ObjectsById<Meter>;
+  meters: DomainModel<Meter>;
   selectedMarker: Maybe<Meter>;
   encodedUriParametersForAllMeters: string;
 }
@@ -76,7 +77,7 @@ class ValidationTabs extends React.Component<Props> {
       </Dialog>
     );
 
-    const hasMeters: boolean = isMarkersWithinThreshold(meters);
+    const noMetersFallbackContent = <MissingDataTitle title={firstUpperTranslated('no meters')}/>;
 
     return (
       <Tabs>
@@ -89,18 +90,23 @@ class ValidationTabs extends React.Component<Props> {
           <TabSettings/>
         </TabTopBar>
         <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-          <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
+          <HasContent hasContent={meterDataSummary.isJust()} fallbackContent={noMetersFallbackContent}>
+            <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
+          </HasContent>
         </TabContent>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <MeterListContainer componentId={'validationMeterList'}/>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <div>
-            <Content hasContent={hasMeters} noContentText={translate('no meters')}>
+            <HasContent
+              hasContent={isMarkersWithinThreshold(meters.entities) && meters.result.length > 0}
+              fallbackContent={noMetersFallbackContent}
+            >
               <Map>
-                <ClusterContainer markers={meters}/>
+                <ClusterContainer markers={meters.entities}/>
               </Map>
-            </Content>
+            </HasContent>
             {dialog}
           </div>
         </TabContent>
@@ -112,7 +118,7 @@ class ValidationTabs extends React.Component<Props> {
 const mapStateToProps = ({ui, searchParameters, map, domainModels: {allMeters}}: RootState): StateToProps => ({
   selectedTab: getSelectedTab(ui.tabs.validation),
   meterDataSummary: getMeterDataSummary(allMeters),
-  meters: getEntitiesDomainModels(allMeters),
+  meters: getDomainModel(allMeters),
   selectedMarker: getSelectedMeterMarker(map),
   encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
 });

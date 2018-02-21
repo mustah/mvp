@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Row} from '../layouts/row/Row';
-import {Bold, Small, Xlarge} from './Texts';
+import {Bold, Large, Small, Xlarge} from './Texts';
 import './Titles.scss';
 
 interface TitleProps {
@@ -21,3 +21,5 @@ export const Subtitle = (props: TitleProps) => (
     <Bold>{props.children}</Bold>
   </Row>
 );
+
+export const MissingDataTitle = ({title}: {title: string}) => <Large className="MissingDataTitle">{title}</Large>;

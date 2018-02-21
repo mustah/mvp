@@ -2,6 +2,7 @@ import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {checkbox, checkboxLabel} from '../../app/themes';
+import {HasContent} from '../../components/content/HasContent';
 import {Column, ColumnCenter} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -13,21 +14,20 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
-import {MainTitle} from '../../components/texts/Titles';
+import {MainTitle, MissingDataTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
-import {translate} from '../../services/translationService';
+import {firstUpperTranslated, translate} from '../../services/translationService';
+import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {getPaginatedEntities} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 import {Map} from '../../usecases/map/containers/Map';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
-import {Content} from '../../components/content/Content';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 
 interface OwnProps {
   gateway: Gateway;
@@ -143,11 +143,14 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            <Content hasContent={hasConfidentPosition} noContentText={translate('no reliable position')}>
-            <Map height={400} viewCenter={gateway.position}>
-              <ClusterContainer markers={gateway}/>
-            </Map>
-            </Content>
+            <HasContent
+              hasContent={hasConfidentPosition}
+              fallbackContent={<MissingDataTitle title={firstUpperTranslated('no reliable position')}/>}
+            >
+              <Map height={400} viewCenter={gateway.position}>
+                <ClusterContainer markers={gateway}/>
+              </Map>
+            </HasContent>
           </TabContent>
         </Tabs>
       </Row>
