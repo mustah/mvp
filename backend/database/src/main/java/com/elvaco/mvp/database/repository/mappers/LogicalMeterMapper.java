@@ -31,10 +31,8 @@ public class LogicalMeterMapper {
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
     Location location = locationMapper.toDomainModel(logicalMeterEntity.getLocation());
 
-    MeterDefinition meterDefinition = null;
-    if (logicalMeterEntity.meterDefinition != null) {
-      meterDefinition = meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition);
-    }
+    MeterDefinition meterDefinition = meterDefinitionMapper.toDomainModel(logicalMeterEntity
+                                                                            .meterDefinition);
 
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters.stream()
       .map(physicalMeterMapper::toDomainModel)
@@ -46,6 +44,8 @@ public class LogicalMeterMapper {
 
     return new LogicalMeter(
       logicalMeterEntity.id,
+      logicalMeterEntity.externalId,
+      logicalMeterEntity.organisationId,
       location,
       logicalMeterEntity.created,
       physicalMeters,
@@ -57,13 +57,12 @@ public class LogicalMeterMapper {
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeter.id,
-      logicalMeter.created
+      logicalMeter.externalId,
+      logicalMeter.organisationId,
+      logicalMeter.created,
+      meterDefinitionMapper.toEntity(logicalMeter.meterDefinition)
     );
 
-    if (logicalMeter.hasMeterDefinition()) {
-      logicalMeterEntity.meterDefinition =
-        meterDefinitionMapper.toEntity(logicalMeter.meterDefinition);
-    }
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters.stream()
       .map(physicalMeterMapper::toEntity)
       .collect(Collectors.toSet());

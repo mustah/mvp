@@ -1,41 +1,36 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 
-class MockOrganisations implements com.elvaco.mvp.core.spi.repository.Organisations {
-  private List<Organisation> organisations;
+class MockOrganisations extends MockRepository<Organisation> implements com.elvaco.mvp.core.spi
+  .repository.Organisations {
 
-  MockOrganisations() {
-    organisations = new ArrayList<>();
+  @Override
+  Optional<Long> getId(Organisation entity) {
+    return Optional.ofNullable(entity.id);
+  }
+
+  @Override
+  Organisation copyWithId(Long id, Organisation entity) {
+    return new Organisation(id, entity.name, entity.code);
   }
 
   @Override
   public List<Organisation> findAll() {
-    return organisations;
+    return allMocks();
   }
 
   @Override
   public Optional<Organisation> findById(Long id) {
-    return organisations.stream().filter(o -> o.id.equals(id)).findFirst();
+    return filter(o -> o.id.equals(id)).findFirst();
   }
 
   @Override
   public Organisation save(Organisation organisation) {
-    if (organisation.id != null) {
-      organisations.set(Math.toIntExact(organisation.id), organisation);
-    } else {
-      organisation = new Organisation(
-        (long) organisations.size(),
-        organisation.name,
-        organisation.code
-      );
-      organisations.add(organisation);
-    }
-    return organisation;
+    return saveMock(organisation);
   }
 
   @Override
@@ -45,8 +40,7 @@ class MockOrganisations implements com.elvaco.mvp.core.spi.repository.Organisati
 
   @Override
   public Optional<Organisation> findByCode(String code) {
-    return organisations.stream()
-      .filter(organisation -> organisation.code.equals(code))
+    return filter(organisation -> organisation.code.equals(code))
       .findFirst();
   }
 }

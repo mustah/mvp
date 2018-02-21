@@ -13,8 +13,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table(name = "meter_definition")
+@EqualsAndHashCode
 public class MeterDefinitionEntity implements Serializable {
 
   private static final long serialVersionUID = -8819531921424251045L;

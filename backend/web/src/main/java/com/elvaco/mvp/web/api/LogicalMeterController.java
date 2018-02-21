@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,10 @@ public class LogicalMeterController {
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable Long id) {
-    return logicalMeterMapper.toDto(logicalMeterUseCases.findById(id), timeZone);
+    return logicalMeterUseCases.findById(id).map(logicalMeter -> logicalMeterMapper.toDto(
+      logicalMeter,
+      timeZone
+    )).orElseThrow(() -> new MeterNotFound(id));
   }
 
   @GetMapping("/map-data")
@@ -57,7 +61,9 @@ public class LogicalMeterController {
 
   @GetMapping("{id}/measurements")
   public List<MeasurementDto> measurements(@PathVariable Long id) {
-    LogicalMeter logicalMeter = logicalMeterUseCases.findById(id);
+    LogicalMeter logicalMeter = logicalMeterUseCases
+      .findById(id)
+      .orElseThrow(() -> new MeterNotFound(id));
     return logicalMeterUseCases.measurements(logicalMeter)
       .stream()
       .map(m -> modelMapper.map(m, MeasurementDto.class))

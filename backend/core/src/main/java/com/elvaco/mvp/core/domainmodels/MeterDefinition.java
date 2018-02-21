@@ -5,12 +5,22 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
 
 @EqualsAndHashCode
+@ToString
 public class MeterDefinition {
+
+  public static final MeterDefinition UNKNOWN_METER = new MeterDefinition(
+    null,
+    "Unknown meter",
+    emptySet(),
+    true
+  );
 
   public static final MeterDefinition HOT_WATER_METER = new MeterDefinition(
     null,

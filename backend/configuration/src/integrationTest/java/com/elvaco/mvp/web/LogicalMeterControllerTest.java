@@ -194,7 +194,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findMeasurementsForLogicalMeter() {
     LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
-      new LogicalMeter(districtHeatingMeterDefinition)
+      new LogicalMeter("external-id", DomainModels.ELVACO.id, districtHeatingMeterDefinition)
     );
 
     PhysicalMeter physicalMeter = physicalMeters.save(
@@ -246,6 +246,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeter logicalMeter = new LogicalMeter(
       null,
+      "external-id-" + seed,
+      DomainModels.ELVACO.id,
       new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
       Collections.emptyList(),
@@ -295,7 +297,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new PhysicalMeter(
         DomainModels.ELVACO,
         "111-222-333-444-" + seed,
-        "external-id",
+        "external-id-" + seed,
         "Some device specific medium name",
         "ELV",
         logicalMeterId,

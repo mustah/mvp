@@ -19,24 +19,29 @@ public class LogicalMeter {
   public final Location location;
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
-  @Nullable
+  public final String externalId;
+  public final Long organisationId;
   public final MeterDefinition meterDefinition;
   public final List<MeterStatusLog> meterStatusLogs;
 
-  public LogicalMeter(@Nullable MeterDefinition meterDefinition) {
+  public LogicalMeter(
+    String externalId,
+    Long organisationId,
+    MeterDefinition meterDefinition
+  ) {
     this(
-      meterDefinition,
+      externalId, organisationId, meterDefinition,
       Collections.emptyList()
     );
   }
 
   public LogicalMeter(
-    @Nullable MeterDefinition meterDefinition,
+    String externalId, Long organisationId, MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeters
   ) {
     this(
       null,
-      Location.UNKNOWN_LOCATION,
+      externalId, organisationId, Location.UNKNOWN_LOCATION,
       new Date(),
       physicalMeters,
       meterDefinition,
@@ -46,27 +51,34 @@ public class LogicalMeter {
 
   public LogicalMeter(
     @Nullable Long id,
+    String externalId,
+    Long organisationId,
     Location location,
     Date created
   ) {
     this(
-      null,
+      id,
+      externalId,
+      organisationId,
       location,
       created,
       Collections.emptyList(),
-      null,
-      Collections.emptyList());
+      MeterDefinition.UNKNOWN_METER,
+      Collections.emptyList()
+    );
   }
 
   public LogicalMeter(
     @Nullable Long id,
-    Location location,
+    String externalId, Long organisationId, Location location,
     Date created,
     List<PhysicalMeter> physicalMeters,
-    @Nullable MeterDefinition meterDefinition,
+    MeterDefinition meterDefinition,
     List<MeterStatusLog> meterStatusLogs
   ) {
     this.id = id;
+    this.externalId = externalId;
+    this.organisationId = organisationId;
     this.location = location;
     this.created = new Date(created.getTime());
     this.physicalMeters = Collections.unmodifiableList(physicalMeters);
@@ -77,7 +89,7 @@ public class LogicalMeter {
   public LogicalMeter createdAt(Date creationTime) {
     return new LogicalMeter(
       id,
-      location,
+      externalId, organisationId, location,
       creationTime,
       physicalMeters,
       meterDefinition,
@@ -86,7 +98,7 @@ public class LogicalMeter {
   }
 
   public String getMedium() {
-    return meterDefinition != null ? meterDefinition.medium : "Unknown medium";
+    return meterDefinition.medium;
   }
 
   public Set<Quantity> getQuantities() {
@@ -106,7 +118,7 @@ public class LogicalMeter {
   public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
     return new LogicalMeter(
       id,
-      location,
+      externalId, organisationId, location,
       created,
       physicalMeters,
       meterDefinition,

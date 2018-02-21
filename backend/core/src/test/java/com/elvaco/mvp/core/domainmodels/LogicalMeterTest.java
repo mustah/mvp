@@ -10,17 +10,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LogicalMeterTest {
   @Test
   public void testMedium() {
-    LogicalMeter heatingMeter = new LogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
     assertThat(heatingMeter.getMedium()).isEqualTo("District heating meter");
 
-    LogicalMeter coolingMeter = heatingMeter.withMeterDefinition(MeterDefinition
-                                                                   .DISTRICT_COOLING_METER);
+    LogicalMeter coolingMeter = heatingMeter.withMeterDefinition(
+      MeterDefinition.DISTRICT_COOLING_METER
+    );
     assertThat(coolingMeter.getMedium()).isEqualTo("District cooling meter");
   }
 
   @Test
   public void testQuantities() {
-    LogicalMeter heatingMeter = new LogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
     assertThat(heatingMeter.getQuantities()).hasSameElementsAs(Arrays.asList(
       Quantity.ENERGY,
       Quantity.VOLUME,
@@ -43,10 +44,15 @@ public class LogicalMeterTest {
   public void logicalMeterEquality() {
     Date now = new Date();
     LogicalMeter logicalMeter =
-      new LogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+      newLogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+
     LogicalMeter otherLogicalMeter =
-      new LogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+      newLogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
+  }
+
+  private LogicalMeter newLogicalMeter(MeterDefinition meterDefinition) {
+    return new LogicalMeter("an-external-id", 0L, meterDefinition);
   }
 }

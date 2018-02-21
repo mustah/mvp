@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class OrganisationNotFound extends RuntimeException {
 
+  private static final long serialVersionUID = -3612670568377718769L;
+
   public OrganisationNotFound(Long id) {
     super("Unable to find organisation with ID '" + id + "'");
   }
