@@ -2,13 +2,15 @@ package com.elvaco.mvp.web.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
+import static java.util.Objects.requireNonNull;
+
 public class AuthenticationToken extends AbstractAuthenticationToken {
 
   private final String token;
 
   public AuthenticationToken(String token) {
     super(null);
-    this.token = token;
+    this.token = requireNonNull(token, "Token cannot be null");
   }
 
   public String getToken() {

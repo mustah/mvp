@@ -2,7 +2,7 @@ import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
 import {makeToken} from '../../services/authService';
-import {authenticate, restClientWith} from '../../services/restClient';
+import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {EndPoints} from '../../state/domain-models/domainModels';
 import {User} from '../../state/domain-models/user/userModels';
 import {uuid} from '../../types/Types';
@@ -41,6 +41,11 @@ export const login = (username: string, password: string) => {
 
 export const logout = (organisationId: uuid) => {
   return async (dispatch) => {
+    try {
+      await restClient.get(EndPoints.logout);
+    } catch (ignore) {
+      // tslint:disable
+    }
     dispatch(logoutUser());
     dispatch(routerActions.push(`${routes.login}/${organisationId}`));
   };

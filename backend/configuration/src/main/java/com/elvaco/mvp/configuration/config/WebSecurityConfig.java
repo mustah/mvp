@@ -67,6 +67,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
       .antMatchers(HttpMethod.OPTIONS, API).permitAll()
+      .antMatchers(API_V1 + "/logout").permitAll()
       .antMatchers(H2_CONSOLE).permitAll();
     http.csrf().disable();
     http.headers().frameOptions().disable();

@@ -87,5 +87,13 @@ public final class DomainModels {
     singletonList(SUPER_ADMIN)
   );
 
+  public static final User RANDOM_ELVACO_USER = new User(
+    "Random User",
+    "random@user.tld",
+    "yes-random",
+    ELVACO,
+    singletonList(ADMIN)
+  );
+
   private DomainModels() {}
 }
