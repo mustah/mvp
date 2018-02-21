@@ -5,7 +5,6 @@ import {IdNamed} from '../../../../types/Types';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {
   ADD_SELECTION,
-  CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
@@ -265,21 +264,4 @@ describe('selectionReducer', () => {
       });
     });
   });
-
-  describe('closeSelectionPage', () => {
-
-    it('will mark selection state as not changed when the page is closed', () => {
-      const state = selection({...mockPayload, isChanged: true}, {type: CLOSE_SELECTION_PAGE});
-
-      expect(state).toEqual({...mockPayload, isChanged: false});
-    });
-
-    it('will not toggle selection state is changed attribute when closing selection page', () => {
-      const state = selection({...mockPayload, isChanged: false}, {type: CLOSE_SELECTION_PAGE});
-
-      expect(state).toEqual({...mockPayload, isChanged: false});
-    });
-
-  });
-
 });

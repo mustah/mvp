@@ -1,4 +1,5 @@
-import {changePaginationPage, paginationReset, paginationUpdateMetaData} from '../paginationActions';
+import {SET_SELECTION} from '../../../search/selection/selectionActions';
+import {changePaginationPage, paginationUpdateMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
 import {initialPaginationState, limit, pagination} from '../paginationReducer';
 
@@ -92,7 +93,7 @@ describe('paginationReducer', () => {
         meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
       };
 
-      expect(pagination(paginatedState, paginationReset())).toEqual({
+      expect(pagination(paginatedState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({
         ...initialPaginationState,
       });
     });

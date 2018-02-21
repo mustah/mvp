@@ -43,9 +43,6 @@ export const clearErrorAllMeters = clearError(EndPoints.allMeters);
 export const clearErrorUsers = clearError(EndPoints.users);
 export const clearErrorSelections = clearError(EndPoints.selections);
 
-export const DOMAIN_MODELS_CLEAR = 'DOMAIN_MODELS_CLEAR';
-export const domainModelsClear = createEmptyAction<string>(DOMAIN_MODELS_CLEAR);
-
 interface RestRequestHandle<T> {
   request: () => EmptyAction<string>;
   success: (payload: T) => PayloadAction<string, T>;

@@ -3,7 +3,6 @@ import {Period} from '../../../components/dates/dateModels';
 import {Action, uuid} from '../../../types/Types';
 import {
   ADD_SELECTION,
-  CLOSE_SELECTION_PAGE,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SAVE_SELECTION,
@@ -30,11 +29,6 @@ export const initialState: SelectionState = {
   },
 };
 
-interface SelectionActionModel {
-  payload: SelectionState;
-  type: string;
-}
-
 const addSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
   const selectedIds = new Set<FilterParam>(state.selected[parameter] as FilterParam[]);
   Array.isArray(id) ? id.forEach((filterParam) => selectedIds.add(filterParam)) : selectedIds.add(id);
@@ -60,6 +54,12 @@ const setSelected = (state: SelectionState, {payload: {parameter, id}}: Action<S
     },
   };
 };
+
+const selectSaved = (state: SelectionState, {payload}: Action<SelectionState>): SelectionState => ({
+  ...state,
+  ...payload,
+  isChanged: false,
+});
 
 const updatePeriod = (state: SelectionState, {payload}: Action<Period>): SelectionState => (
   {
@@ -103,18 +103,9 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
     case SELECT_PERIOD:
       return updatePeriod(state, action as Action<Period>);
     case UPDATE_SELECTION:
-    case SELECT_SAVED_SELECTION:
-      return {
-        ...state,
-        ...(action as SelectionActionModel).payload,
-        isChanged: false,
-      };
     case SAVE_SELECTION:
-    case CLOSE_SELECTION_PAGE:
-      return {
-        ...state,
-        isChanged: false,
-      };
+    case SELECT_SAVED_SELECTION:
+      return selectSaved(state, action as Action<SelectionState>);
     default:
       return state;
   }

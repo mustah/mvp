@@ -1,6 +1,10 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {PAGINATION_CHANGE_PAGE, PAGINATION_RESET, PAGINATION_UPDATE_METADATA} from './paginationActions';
+import {
+  ADD_SELECTION, DESELECT_SELECTION, RESET_SELECTION, SELECT_PERIOD,
+  SELECT_SAVED_SELECTION, SET_SELECTION, UPDATE_SELECTION,
+} from '../../search/selection/selectionActions';
+import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
 
 export const limit = 20;
@@ -40,7 +44,13 @@ export const pagination = (state: PaginationState = initialPaginationState, acti
       return requestPage(state, action as Action<PaginationChangePayload>);
     case PAGINATION_UPDATE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
-    case PAGINATION_RESET:
+    case SELECT_SAVED_SELECTION:
+    case ADD_SELECTION:
+    case DESELECT_SELECTION:
+    case UPDATE_SELECTION:
+    case RESET_SELECTION:
+    case SET_SELECTION:
+    case SELECT_PERIOD:
       return {...initialPaginationState};
     default:
       return state;

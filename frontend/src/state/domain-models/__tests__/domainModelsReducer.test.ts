@@ -1,8 +1,9 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
+import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
-import {clearErrorGateways, domainModelsClear, requestMethod} from '../domainModelsActions';
+import {clearErrorGateways, requestMethod} from '../domainModelsActions';
 import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Gateway} from '../gateway/gatewayModels';
@@ -202,7 +203,7 @@ describe('domainModelsReducer', () => {
         gateways: {...initialState.gateways, isFetching: true},
       };
 
-      expect(domainModels(nonInitialState, domainModelsClear())).toEqual({
+      expect(domainModels(nonInitialState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({
         ...initialState,
       });
     });
