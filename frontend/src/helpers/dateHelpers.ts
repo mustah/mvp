@@ -52,8 +52,7 @@ export const dateRange = (now: Date, period: Period): DateRange => {
   }
 };
 
-const now = new Date();
-export const currentDateRange = (period: Period) => dateRange(now, period);
+export const currentDateRange = (period: Period) => dateRange(new Date(), period);
 
 const formatYyMmDd = (date: Date): string => {
   return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
