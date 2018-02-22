@@ -5,7 +5,6 @@ import java.util.TimeZone;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.web.dto.AddressDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -16,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
 
-  private static final IdNamedDto OK = new IdNamedDto(1L, "Ok");
+  private static final IdNamedDto OK = new IdNamedDto("Ok");
 
   private final MeterStatusLogMapper meterStatusLogMapper;
 
@@ -30,7 +29,6 @@ public class LogicalMeterMapper {
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     //TODO how to handle statuses?
     mapMarkerDto.status = OK;
-    mapMarkerDto.status.name = "Ok";
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {
@@ -47,10 +45,10 @@ public class LogicalMeterMapper {
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = Dates.formatTime(logicalMeter.created, timeZone);
     meterDto.id = logicalMeter.id;
-    meterDto.address = new AddressDto();
-    meterDto.address.name = logicalMeter.location.getStreetAddress().orElse("Unknown address");
-    meterDto.city = new IdNamedDto();
-    meterDto.city.name = logicalMeter.location.getCity().orElse("Unknown city");
+    String address = logicalMeter.location.getStreetAddress().orElse("Unknown address");
+    String city = logicalMeter.location.getCity().orElse("Unknown city");
+    meterDto.address = new IdNamedDto(address);
+    meterDto.city = new IdNamedDto(city);
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.position = new GeoPositionDto();
     meterDto.facility = logicalMeter.externalId;

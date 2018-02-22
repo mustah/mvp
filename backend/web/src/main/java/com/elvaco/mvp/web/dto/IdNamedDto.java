@@ -1,7 +1,5 @@
 package com.elvaco.mvp.web.dto;
 
-import javax.annotation.Nullable;
-
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -9,18 +7,17 @@ import lombok.ToString;
 @ToString
 public class IdNamedDto {
 
-  @Nullable
-  public Long id;
+  public String id;
   public String name;
 
   public IdNamedDto() {}
 
-  public IdNamedDto(@Nullable Long id, String name) {
+  private IdNamedDto(String id, String name) {
     this.id = id;
     this.name = name;
   }
 
   public IdNamedDto(String name) {
-    this(null, name);
+    this(name, name);
   }
 }

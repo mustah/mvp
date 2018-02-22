@@ -10,7 +10,7 @@ import lombok.ToString;
 public class LogicalMeterDto {
   public Long id;
   public String facility;
-  public AddressDto address;
+  public IdNamedDto address;
   public IdNamedDto city;
   public GeoPositionDto position;
   public String moid;

@@ -14,7 +14,6 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.web.dto.AddressDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
 
-  private static final IdNamedDto OK = new IdNamedDto(1L, "Ok");
+  private static final IdNamedDto OK = new IdNamedDto("Ok");
 
   private LogicalMeterMapper mapper;
 
@@ -86,7 +85,7 @@ public class LogicalMeterMapperTest {
     expected.created = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
     expected.id = 1L;
-    expected.address = new AddressDto();
+    expected.address = new IdNamedDto();
     expected.address.name = "Kabelgatan 2T";
     expected.city = new IdNamedDto();
     expected.city.name = "Kungsbacka";
