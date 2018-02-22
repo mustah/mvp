@@ -96,7 +96,10 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             Gateway gateway = new Gateway(
               null,
               csvData.gatewayId,
-              csvData.gatewayProductModel
+              csvData.gatewayProductModel,
+              csvData.phone,
+              csvData.port,
+              csvData.ip
             );
             LogicalMeter logicalMeter = new LogicalMeter(
               null,

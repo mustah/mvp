@@ -7,11 +7,25 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
 
   @Override
   public Gateway toDomainModel(GatewayEntity entity) {
-    return new Gateway(entity.id, entity.serial, entity.productModel);
+    return new Gateway(
+      entity.id,
+      entity.serial,
+      entity.productModel,
+      entity.phoneNumber,
+      entity.port,
+      entity.ip
+    );
   }
 
   @Override
   public GatewayEntity toEntity(Gateway domainModel) {
-    return new GatewayEntity(domainModel.id, domainModel.serial, domainModel.productModel);
+    return new GatewayEntity(
+      domainModel.id,
+      domainModel.serial,
+      domainModel.productModel,
+      domainModel.phoneNumber,
+      domainModel.port,
+      domainModel.ip
+    );
   }
 }

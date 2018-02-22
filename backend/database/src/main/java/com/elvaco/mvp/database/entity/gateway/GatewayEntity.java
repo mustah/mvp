@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.entity.gateway;
 
 import java.io.Serializable;
+import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -32,15 +33,25 @@ public class GatewayEntity implements Serializable {
   @Column(nullable = false)
   public String productModel;
 
+  public String phoneNumber;
+  public String port;
+  public String ip;
+
   public GatewayEntity() {}
 
-  public GatewayEntity(String serial, String productModel) {
-    this(null, serial, productModel);
-  }
-
-  public GatewayEntity(Long id, String serial, String productModel) {
+  public GatewayEntity(
+    @Nullable Long id,
+    String serial,
+    String productModel,
+    @Nullable String phoneNumber,
+    @Nullable String port,
+    @Nullable String ip
+  ) {
     this.id = id;
     this.serial = serial;
     this.productModel = productModel;
+    this.phoneNumber = phoneNumber;
+    this.port = port;
+    this.ip = ip;
   }
 }

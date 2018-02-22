@@ -124,7 +124,10 @@ public class LogicalMeterMapperTest {
           singletonList(new Gateway(
             expected.gatewayId,
             expected.gatewaySerial,
-            expected.gatewayProductModel
+            expected.gatewayProductModel,
+            null,
+            null,
+            null
           ))
         ), TimeZone.getTimeZone("Europe/Stockholm")))
       .isEqualTo(expected);
