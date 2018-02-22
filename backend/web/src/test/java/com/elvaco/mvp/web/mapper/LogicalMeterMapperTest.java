@@ -78,17 +78,13 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void toDto() throws ParseException {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.created = "2018-02-12 15:14:25";
+    expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
     expected.id = 1L;
-    expected.address = new IdNamedDto();
-    expected.address.name = "Kabelgatan 2T";
-    expected.city = new IdNamedDto();
-    expected.city.name = "Kungsbacka";
+    expected.address = new IdNamedDto("Kabelgatan 2T");
+    expected.city = new IdNamedDto("Kungsbacka");
     expected.manufacturer = "ELV";
     GeoPositionDto expectedPosition = new GeoPositionDto();
     expectedPosition.confidence = 1.0;
@@ -108,12 +104,13 @@ public class LogicalMeterMapperTest {
           1L,
           "an-external-id",
           ELVACO.id,
-          new LocationBuilder().city("Kungsbacka")
+          new LocationBuilder()
+            .city("Kungsbacka")
             .streetAddress("Kabelgatan 2T")
             .latitude(57.5052592)
             .longitude(12.0683196)
             .build(),
-          dateFormat.parse("2018-02-12T14:14:25"),
+          dateFormat().parse("2018-02-12T14:14:25"),
           singletonList(
             new PhysicalMeter(
               ELVACO,
@@ -135,16 +132,21 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    LogicalMeter logicalMeter = new LogicalMeter(0L, "external-id",
-                                                 ELVACO.id, Location.UNKNOWN_LOCATION,
-                                                 dateFormat.parse("2018-02-12T14:14:25")
+    LogicalMeter logicalMeter = new LogicalMeter(
+      0L, "external-id",
+      ELVACO.id, Location.UNKNOWN_LOCATION,
+      dateFormat().parse("2018-02-12T14:14:25")
     );
 
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created)
       .isEqualTo("2018-02-12 14:14:25");
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("America/Los_Angeles")).created)
       .isEqualTo("2018-02-12 06:14:25");
+  }
+
+  private static DateFormat dateFormat() {
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+    return dateFormat;
   }
 }

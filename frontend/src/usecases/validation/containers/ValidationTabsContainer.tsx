@@ -21,7 +21,7 @@ import {getMeterDataSummary} from '../../../state/domain-models-paginated/meter/
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {
   clearErrorAllMeters,
-  fetchAllMeters
+  fetchAllMeters,
 } from '../../../state/domain-models/domainModelsActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
@@ -31,7 +31,7 @@ import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {
   TabName,
   TabsContainerDispatchToProps,
-  TabsContainerStateToProps
+  TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ErrorResponse, OnClick} from '../../../types/Types';

@@ -41,15 +41,21 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeterDto toDto(LogicalMeter logicalMeter, TimeZone timeZone) {
+    String created = Dates.formatTime(logicalMeter.created, timeZone);
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
-    meterDto.created = Dates.formatTime(logicalMeter.created, timeZone);
+    meterDto.created = created;
     meterDto.id = logicalMeter.id;
     String address = logicalMeter.location.getStreetAddress().orElse("Unknown address");
     String city = logicalMeter.location.getCity().orElse("Unknown city");
     meterDto.address = new IdNamedDto(address);
     meterDto.city = new IdNamedDto(city);
     meterDto.manufacturer = logicalMeter.getManufacturer();
+    meterDto.statusChanged = logicalMeter.meterStatusLogs.stream()
+      .findAny()
+      .map(meterStatusLog -> meterStatusLog.start)
+      .map(date -> Dates.formatTime(date, timeZone))
+      .orElse(created);
     meterDto.position = new GeoPositionDto();
     meterDto.facility = logicalMeter.externalId;
     logicalMeter.gateways
