@@ -24,7 +24,7 @@ public class GatewayRepository implements Gateways {
   public List<Gateway> findAll() {
     return repository.findAll()
       .stream()
-      .map(e -> new Gateway(e.id, e.serial, e.productModel))
+      .map(gatewayMapper::toDomainModel)
       .collect(toList());
   }
 

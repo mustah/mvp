@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
@@ -20,15 +19,18 @@ public class LogicalMeterMapper {
   private final MeterDefinitionMapper meterDefinitionMapper;
   private final LocationMapper locationMapper;
   private final PhysicalMeterMapper physicalMeterMapper;
+  private final GatewayMapper gatewayMapper;
 
   public LogicalMeterMapper(
     MeterDefinitionMapper meterDefinitionMapper,
     LocationMapper locationMapper,
-    PhysicalMeterMapper physicalMeterMapper
+    PhysicalMeterMapper physicalMeterMapper,
+    GatewayMapper gatewayMapper
   ) {
     this.meterDefinitionMapper = meterDefinitionMapper;
     this.locationMapper = locationMapper;
     this.physicalMeterMapper = physicalMeterMapper;
+    this.gatewayMapper = gatewayMapper;
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
@@ -44,7 +46,7 @@ public class LogicalMeterMapper {
 
     List<Gateway> gateways = logicalMeterEntity.gateways
       .stream()
-      .map(gateway -> new Gateway(gateway.id, gateway.serial, gateway.productModel))
+      .map(gatewayMapper::toDomainModel)
       .collect(toList());
 
     return new LogicalMeter(
@@ -76,7 +78,7 @@ public class LogicalMeterMapper {
 
     logicalMeterEntity.gateways = logicalMeter.gateways
       .stream()
-      .map(gateway -> new GatewayEntity(gateway.id, gateway.serial, gateway.productModel))
+      .map(gatewayMapper::toEntity)
       .collect(toList());
 
     if (logicalMeter.location != null) {

@@ -176,7 +176,8 @@ class DataProviderConfig {
     return new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
-      newPhysicalMeterMapper()
+      newPhysicalMeterMapper(),
+      new GatewayMapper()
     );
   }
 
