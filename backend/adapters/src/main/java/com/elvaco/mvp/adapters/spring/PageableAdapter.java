@@ -28,7 +28,7 @@ public class PageableAdapter implements Pageable {
 
   @Override
   public Sort getSort() {
-    throw new UnsupportedOperationException("Not implemented yet!");
+    return new SortAdapter(delegate.getSort());
   }
 
   @Override

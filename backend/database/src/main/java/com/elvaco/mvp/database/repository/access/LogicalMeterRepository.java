@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
+import com.elvaco.mvp.adapters.spring.SortAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -59,7 +60,11 @@ public class LogicalMeterRepository implements LogicalMeters {
     return new PageAdapter<>(
       logicalMeterJpaRepository.findAll(
         filterMapper.map(filterParams),
-        new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+        new PageRequest(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          ((SortAdapter)pageable.getSort()).getAsSpringSort()
+        )
       ).map(logicalMeterMapper::toDomainModel)
     );
   }
