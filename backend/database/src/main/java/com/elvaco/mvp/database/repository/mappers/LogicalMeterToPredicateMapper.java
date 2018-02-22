@@ -27,6 +27,10 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
 
     FILTERABLE_PROPERTIES.put("manufacturer", Q.physicalMeters.any().manufacturer::eq);
+
+    FILTERABLE_PROPERTIES.put("city.id", Q.location.city::eq);
+
+    FILTERABLE_PROPERTIES.put("address.id", Q.location.streetAddress::eq);
   }
 
   private static Date toDate(String before) {
