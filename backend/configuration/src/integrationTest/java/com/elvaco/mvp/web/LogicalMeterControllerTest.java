@@ -47,8 +47,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ALL")
 public class LogicalMeterControllerTest extends IntegrationTest {
 
-  private final long statusLogStart = new Date().getTime();
-  private final long statusLogStop = new Date().getTime();
+  private final Date statusLogDate = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+
+  PhysicalMeter meter1;
+  PhysicalMeter meter2;
+  PhysicalMeter meter3;
+  PhysicalMeter meter4;
+
   MeterDefinition districtHeatingMeterDefinition;
   MeterDefinition hotWaterMeterDefinition;
   @Autowired
@@ -91,7 +96,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     createStatusMockData();
 
-    addLogToMeters();
+    List<PhysicalMeter> meters = physicalMeters.findAll();
+    meter1 = meters.get(0);
+    meter2 = meters.get(1);
+    meter3 = meters.get(2);
+    meter4 = meters.get(3);
+
+    MeterStatus meterStatus = meterStatuses.findAll().get(0);
+    prepareMeterLogsForStatusPeriodTest(meter1, meter2, meter3, meter4, meterStatus);
+
   }
 
   @After
@@ -105,24 +118,27 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findById() {
-    List<LogicalMeter> logicalMeters = logicalMeterRepository.findAll();
-
     ResponseEntity<LogicalMeterDto> response = asElvacoUser()
-      .get("/meters/" + logicalMeters.get(0).id, LogicalMeterDto.class);
+      .get("/meters/" + meter1.logicalMeterId, LogicalMeterDto.class);
 
     LogicalMeterDto logicalMeterDto = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(logicalMeterDto.id).isEqualTo(logicalMeters.get(0).id);
+    assertThat(logicalMeterDto.id)
+      .as("Unexpected meter id")
+      .isEqualTo(meter1.logicalMeterId);
 
-    assertThat(logicalMeterDto.statusChangelog.size()).isEqualTo(3);
+    assertThat(logicalMeterDto.statusChangelog.size())
+      .as("Unexpected number of log entries")
+      .isEqualTo(1);
 
-    assertThat(logicalMeterDto.statusChangelog.get(0).start).isEqualTo(
-      Dates.formatTime(new Date(statusLogStart), TimeZone.getDefault())
-    );
-    assertThat(logicalMeterDto.statusChangelog.get(0).stop).isEqualTo(
-      Dates.formatTime(new Date(statusLogStart), TimeZone.getDefault())
-    );
+    assertThat(logicalMeterDto.statusChangelog.get(0).start)
+      .as("Unexpected date format")
+      .isEqualTo(Dates.formatTime(statusLogDate, TimeZone.getDefault()));
+
+    assertThat(logicalMeterDto.statusChangelog.get(0).stop)
+      .as("Unexpected date format")
+      .isEqualTo(Dates.formatTime(statusLogDate, TimeZone.getDefault()));
   }
 
   @Test
@@ -159,17 +175,90 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getBody().get(0).id).isEqualTo(meterId);
   }
 
+  /**
+   * Test find all meters with a specific status entry,
+   * excluding meters where that status is logged at a later period.
+   */
   @Test
-  public void findAllWithinPeriod() {
+  public void findAllWithStatusUnderPeriodExcludeLate() {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
-        "/meters?before=2001-01-20T10:10:00.00Z&after=2001-01-10T10:10:00.00Z",
+        "/meters?after=2001-01-01T01:00:00.00Z"
+          + "&before=2001-01-01T23:00:00.00Z"
+          + "&status=Active",
         LogicalMeterDto.class
       );
 
-    assertThat(response.getTotalElements()).isEqualTo(10);
-    assertThat(response.getNumberOfElements()).isEqualTo(10);
+    assertThat(response.getTotalElements()).isEqualTo(2);
+    assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
+
+    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
+    assertThat(response.getContent().get(0).id)
+      .as("Unexpected meter id at position 0")
+      .isIn(meter1.logicalMeterId, meter2.logicalMeterId);
+    assertThat(response.getContent().get(1).id)
+      .as("Unexpected meter id at position 1")
+      .isIn(meter1.logicalMeterId, meter2.logicalMeterId);
+  }
+
+  /**
+   * Test find all meters with a specific status entry,
+   * excluding meters where that status ended before the period.
+   */
+  @Test
+  public void findAllWithStatusUnderPeriodExcludeEarly() {
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage(
+        "/meters?after=2001-01-10T01:00:00.00Z"
+          + "&before=2005-01-01T23:00:00.00Z"
+          + "&status=Active",
+        LogicalMeterDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getNumberOfElements()).isEqualTo(3);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
+    assertThat(response.getContent().get(0).id)
+      .as("Unexpected meter id at position 0 :" + response.getContent().get(0))
+      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+    assertThat(response.getContent().get(1).id)
+      .as("Unexpected meter id at position 1")
+      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+    assertThat(response.getContent().get(2).id)
+      .as("Unexpected meter id at position 2")
+      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+  }
+
+  /**
+   * Test find all meters with a specific status entry,
+   * and the status has no stop date.
+   */
+  @Test
+  public void findAllWithStatusThatIsWithoutStopDate() {
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage(
+        "/meters?after=2005-01-10T01:00:00.00Z"
+          + "&before=2015-01-01T23:00:00.00Z"
+          + "&status=Active",
+        LogicalMeterDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(2)
+      .as("Unexpected total count of elements");
+    ;
+    assertThat(response.getNumberOfElements()).isEqualTo(2);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
+    assertThat(response.getContent().get(0).id)
+      .as("Unexpected meter id at position 0")
+      .isIn(meter2.logicalMeterId, meter3.logicalMeterId);
+    assertThat(response.getContent().get(1).id)
+      .as("Unexpected meter id at position 1")
+      .isIn(meter2.logicalMeterId, meter3.logicalMeterId);
   }
 
   @Test
@@ -257,47 +346,81 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return logicalMeterRepository.save(logicalMeter);
   }
 
-  private void addLogToMeters() {
+  private void prepareMeterLogsForStatusPeriodTest(
+    PhysicalMeter meter1,
+    PhysicalMeter meter2,
+    PhysicalMeter meter3,
+    PhysicalMeter meter4,
+    MeterStatus meterStatus
+  ) {
     List<MeterStatusLog> statuses = new ArrayList<>();
 
-    physicalMeters.findAll().forEach(
-      physicalMeter ->
-        meterStatuses.findAll().forEach(
-          meterStatus ->
-            statuses.add(
-              new MeterStatusLog(
-                null,
-                physicalMeter.id,
-                meterStatus.id,
-                meterStatus.name,
-                new Date(statusLogStart),
-                new Date(statusLogStop)
-              )
-            )
-        )
-    );
+    statuses.add(new MeterStatusLog(
+      null,
+      meter1.id,
+      meterStatus.id,
+      meterStatus.name,
+      statusLogDate,
+      statusLogDate
+    ));
+
+    statuses.add(new MeterStatusLog(
+      null,
+      meter2.id,
+      meterStatus.id,
+      meterStatus.name,
+      statusLogDate,
+      null
+    ));
+
+    statuses.add(new MeterStatusLog(
+      null,
+      meter3.id,
+      meterStatus.id,
+      meterStatus.name,
+      addDays(statusLogDate, 100),
+      null
+    ));
+
+    statuses.add(new MeterStatusLog(
+      null,
+      meter4.id,
+      meterStatus.id,
+      meterStatus.name,
+      addDays(statusLogDate, 100),
+      addDays(statusLogDate, 1000)
+    ));
 
     meterStatusLogs.save(statuses);
   }
 
+  private Date addDays(Date date, int count) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.DATE, count);
+    return calendar.getTime();
+  }
+
   private void createStatusMockData() {
     meterStatuses.save(asList(
-      new MeterStatus("Active"),
-      new MeterStatus("Inactive"),
-      new MeterStatus("Maintenance scheduled")
+      new MeterStatus("Active")
     ));
   }
 
   private void createAndConnectPhysicalMeters(List<LogicalMeter> logicalMeters) {
-    logicalMeters.forEach(logicalMeter -> createPhysicalMeter(logicalMeter.id, logicalMeter.id));
+    logicalMeters.forEach(logicalMeter -> createPhysicalMeter(
+      logicalMeter.id,
+      logicalMeter.id,
+      logicalMeter.externalId)
+    );
   }
 
-  private void createPhysicalMeter(long logicalMeterId, long seed) {
+  private void createPhysicalMeter(long logicalMeterId, long seed, String externalId) {
     physicalMeters.save(
       new PhysicalMeter(
         DomainModels.ELVACO,
         "111-222-333-444-" + seed,
-        "external-id-" + seed,
+        externalId,
         "Some device specific medium name",
         "ELV",
         logicalMeterId,
