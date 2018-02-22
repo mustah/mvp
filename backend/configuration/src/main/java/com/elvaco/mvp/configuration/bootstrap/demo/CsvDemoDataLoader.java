@@ -19,7 +19,7 @@ import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
 
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
-  private final GatewayRepository gatewayRepository;
+  private final GatewayJpaRepository gatewayJpaRepository;
   private final MeterDefinitions meterDefinitions;
   private final SettingUseCases settingUseCases;
 
@@ -56,13 +56,13 @@ public class CsvDemoDataLoader implements CommandLineRunner {
   public CsvDemoDataLoader(
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
-    GatewayRepository gatewayRepository,
+    GatewayJpaRepository gatewayJpaRepository,
     MeterDefinitions meterDefinitions,
     SettingUseCases settingUseCases
   ) {
     this.logicalMeters = logicalMeters;
     this.physicalMeters = physicalMeters;
-    this.gatewayRepository = gatewayRepository;
+    this.gatewayJpaRepository = gatewayJpaRepository;
     this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
   }
@@ -122,7 +122,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
           })
       )
       .forEach(p -> {
-        GatewayEntity gatewayEntity = gatewayRepository.save(
+        GatewayEntity gatewayEntity = gatewayJpaRepository.save(
           new GatewayEntity(
             p.gateway.serial,
             p.gateway.productModel

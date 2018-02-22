@@ -1,5 +1,6 @@
 package com.elvaco.mvp.configuration.config;
 
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
@@ -9,6 +10,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.LogicalMeterRepository;
 import com.elvaco.mvp.database.repository.access.MeasurementRepository;
 import com.elvaco.mvp.database.repository.access.MeterDefinitionRepository;
@@ -18,6 +20,7 @@ import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
@@ -60,6 +63,7 @@ class DataProviderConfig {
   private final OrganisationJpaRepository organisationJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final MeterStatusJpaRepository meterStatusJpaRepository;
+  private final GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
   DataProviderConfig(
@@ -73,7 +77,8 @@ class DataProviderConfig {
     MeterDefinitionJpaRepository meterDefinitionJpaRepository,
     OrganisationJpaRepository organisationJpaRepository,
     PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
-    MeterStatusJpaRepository meterStatusJpaRepository
+    MeterStatusJpaRepository meterStatusJpaRepository,
+    GatewayJpaRepository gatewayJpaRepository
   ) {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
@@ -86,6 +91,7 @@ class DataProviderConfig {
     this.organisationJpaRepository = organisationJpaRepository;
     this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
     this.meterStatusJpaRepository = meterStatusJpaRepository;
+    this.gatewayJpaRepository = gatewayJpaRepository;
   }
 
   @Bean
@@ -103,7 +109,8 @@ class DataProviderConfig {
   MeterStatusLogs meterStatusLog() {
     return new MeterStatusLogsRepository(
       physicalMeterStatusLogJpaRepository,
-      new MeterStatusLogMapper());
+      new MeterStatusLogMapper()
+    );
   }
 
   @Bean
@@ -157,6 +164,11 @@ class DataProviderConfig {
   @Bean
   MeterDefinitions meterDefinitions() {
     return new MeterDefinitionRepository(meterDefinitionJpaRepository, new MeterDefinitionMapper());
+  }
+
+  @Bean
+  Gateways gateways() {
+    return new GatewayRepository(gatewayJpaRepository);
   }
 
   private LogicalMeterMapper newLogicalMeterMapper() {

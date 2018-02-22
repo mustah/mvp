@@ -2,11 +2,13 @@ package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
@@ -24,6 +26,7 @@ class UseCaseConfig {
   private final Settings settings;
   private final Measurements measurements;
   private final Organisations organisations;
+  private final Gateways gateways;
 
   @Autowired
   UseCaseConfig(
@@ -31,13 +34,15 @@ class UseCaseConfig {
     Settings settings,
     LogicalMeters logicalMeters,
     Measurements measurements,
-    Organisations organisations
+    Organisations organisations,
+    Gateways gateways
   ) {
     this.users = users;
     this.logicalMeters = logicalMeters;
     this.settings = settings;
     this.measurements = measurements;
     this.organisations = organisations;
+    this.gateways = gateways;
   }
 
   @Bean
@@ -66,5 +71,10 @@ class UseCaseConfig {
   @Bean
   MeasurementUseCases measurementUseCases(AuthenticatedUser currentUser) {
     return new MeasurementUseCases(currentUser, measurements);
+  }
+
+  @Bean
+  GatewayUseCases gatewayUseCases() {
+    return new GatewayUseCases(gateways);
   }
 }
