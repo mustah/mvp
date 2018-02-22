@@ -26,6 +26,7 @@ export interface Meter extends Location, HasId {
   status: IdNamed;
   gatewayId: uuid;
   gatewayStatus: IdNamed;
+  gatewaySerial: uuid;
   gatewayProductModel: string;
 }
 

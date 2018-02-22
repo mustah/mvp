@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -18,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.fixture.DomainModels;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -32,6 +30,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +40,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
@@ -87,8 +88,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     for (int seed = 1; seed <= 55; seed++) {
-      MeterDefinition meterDefinition = seed % 10 == 0 ? hotWaterMeterDefinition :
-        districtHeatingMeterDefinition;
+      MeterDefinition meterDefinition = seed % 10 == 0
+                                        ? hotWaterMeterDefinition
+                                        : districtHeatingMeterDefinition;
       saveLogicalMeter(seed, meterDefinition);
     }
 
@@ -132,13 +134,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .as("Unexpected number of log entries")
       .isEqualTo(1);
 
-    assertThat(logicalMeterDto.statusChangelog.get(0).start)
-      .as("Unexpected date format")
-      .isEqualTo(Dates.formatTime(statusLogDate, TimeZone.getDefault()));
+    MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
+    String formatTime = Dates.formatTime(statusLogDate, TimeZone.getDefault());
 
-    assertThat(logicalMeterDto.statusChangelog.get(0).stop)
-      .as("Unexpected date format")
-      .isEqualTo(Dates.formatTime(statusLogDate, TimeZone.getDefault()));
+    assertThat(meterStatusLogDto.start).as("Unexpected date format").isEqualTo(formatTime);
+    assertThat(meterStatusLogDto.stop).as("Unexpected date format").isEqualTo(formatTime);
   }
 
   @Test
@@ -283,18 +283,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findMeasurementsForLogicalMeter() {
     LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
-      new LogicalMeter("external-id", DomainModels.ELVACO.id, districtHeatingMeterDefinition)
+      new LogicalMeter("external-id", ELVACO.id, districtHeatingMeterDefinition)
     );
 
     PhysicalMeter physicalMeter = physicalMeters.save(
       new PhysicalMeter(
-        DomainModels.ELVACO,
+        ELVACO,
         "111-222-333-444",
         "external-id",
         "Some device specific medium name",
         "ELV",
         savedLogicalMeter.id,
-        Collections.emptyList()
+        emptyList()
       )
     );
 
@@ -319,7 +319,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     List<MeasurementDto> measurementDtos = response.getBody();
     assertThat(measurementDtos).hasSize(5);
     MeasurementDto measurement = measurementDtos.get(0);
-    assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.getName());
+    assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
     assertThat(measurement.unit).isEqualTo("m^3");
   }
 
@@ -336,12 +336,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = new LogicalMeter(
       null,
       "external-id-" + seed,
-      DomainModels.ELVACO.id,
+      ELVACO.id,
       new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
-      Collections.emptyList(),
+      emptyList(),
       meterDefinition,
-      Collections.emptyList()
+      emptyList(),
+      emptyList()
     );
     return logicalMeterRepository.save(logicalMeter);
   }
@@ -418,15 +419,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private void createPhysicalMeter(long logicalMeterId, long seed, String externalId) {
     physicalMeters.save(
       new PhysicalMeter(
-        DomainModels.ELVACO,
+        ELVACO,
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",
         "ELV",
         logicalMeterId,
-        Collections.emptyList()
+        emptyList()
       )
     );
   }
-
 }

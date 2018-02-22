@@ -165,31 +165,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
-    // TODO Remove fake gateway
-    const fakeGateway: Gateway =
-      ({
-        id: 1,
-        facility: 'a',
-        flags: [],
-        flagged: false,
-        productModel: 'cme2199',
-        telephoneNumber: '',
-        statusChanged: undefined,
-        ip: undefined,
-        port: undefined,
-        signalToNoiseRatio: undefined,
-        status: {id: 1, name: 'Ok'},
-        statusChangelog: [],
-        meterIds: [],
-        meterStatus: {id: 1, name: ''},
-        meterAlarm: '',
-        meterManufacturer: 'Elvaco',
-        address: {cityId: 1, id: 1, name: 'a'},
-        city: {id: 1, name: 'a'},
-        position: {latitude: 1, longitude: 1, confidence: 1},
-      });
-
-    const gateway = gateways[meter.gatewayId] === null ? fakeGateway : gateways[meter.gatewayId];
+    const gateway = gateways[meter.gatewaySerial];
 
     const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},

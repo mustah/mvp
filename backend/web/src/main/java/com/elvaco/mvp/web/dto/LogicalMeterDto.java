@@ -27,4 +27,5 @@ public class LogicalMeterDto {
   public Long gatewayId;
   public IdNamedDto gatewayStatus;
   public String gatewayProductModel;
+  public String gatewaySerial;
 }

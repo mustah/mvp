@@ -2,12 +2,15 @@ package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+
+import static java.util.Collections.emptyList;
 
 class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
   @Override
@@ -25,14 +28,15 @@ class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalM
       entity.created,
       entity.physicalMeters,
       entity.meterDefinition,
-      entity.meterStatusLogs
+      entity.meterStatusLogs,
+      emptyList()
     );
   }
 
   @Override
   public Optional<LogicalMeter> findById(Long id) {
     return filter(logicalMeter -> logicalMeter.id != null)
-      .filter(logicalMeter -> logicalMeter.id.equals(id))
+      .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
       .findFirst();
   }
 

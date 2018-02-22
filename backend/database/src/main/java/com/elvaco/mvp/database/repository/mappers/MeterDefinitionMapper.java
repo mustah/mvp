@@ -1,11 +1,11 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.stream.Collectors;
-
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
+
+import static java.util.stream.Collectors.toSet;
 
 public class MeterDefinitionMapper
   implements DomainEntityMapper<MeterDefinition, MeterDefinitionEntity> {
@@ -17,7 +17,7 @@ public class MeterDefinitionMapper
       entity.medium,
       entity.quantities.stream()
         .map(this::toQuantity)
-        .collect(Collectors.toSet()),
+        .collect(toSet()),
       entity.systemOwned
     );
   }
@@ -29,7 +29,7 @@ public class MeterDefinitionMapper
       domainModel.quantities
         .stream()
         .map(this::toQuantityEntity)
-        .collect(Collectors.toSet()),
+        .collect(toSet()),
       domainModel.medium,
       domainModel.systemOwned
     );
@@ -40,6 +40,6 @@ public class MeterDefinitionMapper
   }
 
   private QuantityEntity toQuantityEntity(Quantity quantity) {
-    return new QuantityEntity(quantity.getId(), quantity.getName(), quantity.getUnit());
+    return new QuantityEntity(quantity.id, quantity.name, quantity.unit);
   }
 }

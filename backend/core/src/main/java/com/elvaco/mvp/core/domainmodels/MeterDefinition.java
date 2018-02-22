@@ -70,10 +70,6 @@ public class MeterDefinition {
   public final Set<Quantity> quantities;
   public final boolean systemOwned;
 
-  private MeterDefinition(String medium, Set<Quantity> quantities) {
-    this(null, medium, quantities, false);
-  }
-
   public MeterDefinition(
     @Nullable Long id,
     String medium,

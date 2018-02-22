@@ -3,9 +3,17 @@ import {ErrorResponse, HasId} from '../../../types/Types';
 import {EndPoints} from '../../domain-models/domainModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Meter} from '../meter/meterModels';
-import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
+import {
+  HasPageNumber,
+  NormalizedPaginated,
+  NormalizedPaginatedState,
+} from '../paginatedDomainModels';
 import {clearErrorMeters, requestMethodPaginated} from '../paginatedDomainModelsActions';
-import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
+import {
+  initialPaginatedDomain,
+  meters,
+  paginatedDomainModels,
+} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
   const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
@@ -37,6 +45,7 @@ describe('paginatedDomainModelsReducer', () => {
             status: {id: 1, name: 'ok'},
             gatewayId: 1,
             gatewayStatus: {id: 1, name: 'ok'},
+            gatewaySerial: '123',
             gatewayProductModel: 'Elvaco',
           },
           2: {
@@ -55,6 +64,7 @@ describe('paginatedDomainModelsReducer', () => {
             status: {id: 1, name: 'ok'},
             gatewayId: 1,
             gatewayStatus: {id: 1, name: 'ok'},
+            gatewaySerial: '123-123',
             gatewayProductModel: 'Elvaco',
           },
         },
@@ -135,7 +145,11 @@ describe('paginatedDomainModelsReducer', () => {
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
-          [anotherPage]: {result: payload.result.content, isFetching: false, isSuccessfullyFetched: true},
+          [anotherPage]: {
+            result: payload.result.content,
+            isFetching: false,
+            isSuccessfullyFetched: true,
+          },
         },
       };
 

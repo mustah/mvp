@@ -1,6 +1,5 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringMessageHandlerTest {
@@ -67,13 +67,13 @@ public class MeteringMessageHandlerTest {
       "Hot water",
       "ELV",
       0L,
-      Collections.emptyList()
+      emptyList()
     );
 
     LogicalMeter actualLogicalMeter = logicalMeters.findByOrganisationIdAndExternalId(
       expectedOrganisation.id,
       "ABC-123"
-    ).orElse(null);
+    ).get();
 
     LogicalMeter expectedLogicalMeter = new LogicalMeter(
       0L,
@@ -81,9 +81,10 @@ public class MeteringMessageHandlerTest {
       expectedOrganisation.id,
       Location.UNKNOWN_LOCATION,
       actualLogicalMeter.created,
-      Collections.emptyList(),
+      emptyList(),
       MeterDefinition.HOT_WATER_METER,
-      Collections.emptyList()
+      emptyList(),
+      emptyList()
     );
 
     assertThat(actualLogicalMeter).isEqualTo(expectedLogicalMeter);

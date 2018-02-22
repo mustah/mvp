@@ -11,7 +11,7 @@ public class MeterStatus {
     this(null, name);
   }
 
-  public MeterStatus(Long id, String name) {
+  public MeterStatus(@Nullable Long id, String name) {
     this.id = id;
     this.name = name;
   }

@@ -3,7 +3,6 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.web.util.ParametersHelper.combineParams;
+import static java.util.stream.Collectors.toList;
 
 @RestApi("/v1/api/meters")
 public class LogicalMeterController {
@@ -56,7 +56,7 @@ public class LogicalMeterController {
     return logicalMeterUseCases.findAll()
       .stream()
       .map(logicalMeterMapper::toMapMarkerDto)
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @GetMapping("{id}/measurements")
@@ -67,7 +67,7 @@ public class LogicalMeterController {
     return logicalMeterUseCases.measurements(logicalMeter)
       .stream()
       .map(m -> modelMapper.map(m, MeasurementDto.class))
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @GetMapping("/all")
@@ -79,7 +79,7 @@ public class LogicalMeterController {
     return logicalMeterUseCases.findAll(combineParams(pathVars, requestParams))
       .stream()
       .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone))
-      .collect(Collectors.toList());
+      .collect(toList());
   }
 
   @GetMapping

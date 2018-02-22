@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -17,6 +15,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.addOrganisationIdToFilterParams;
+import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterUseCases {
 
@@ -34,7 +33,7 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  public Optional<LogicalMeter>  findById(Long id) {
+  public Optional<LogicalMeter> findById(Long id) {
     return logicalMeters.findById(id);
   }
 
@@ -74,13 +73,14 @@ public class LogicalMeterUseCases {
       logicalMeter.physicalMeters.stream()
         .filter(m -> m.id != null)
         .map(m -> m.id.toString())
-        .collect(Collectors.toList())
+        .collect(toList())
     );
 
     filter.put(
       "quantity",
       logicalMeter.getQuantities().stream()
-        .map(Quantity::getName).collect(Collectors.toList())
+        .map(quantity -> quantity.name)
+        .collect(toList())
     );
     return measurements.findAll(filter);
   }

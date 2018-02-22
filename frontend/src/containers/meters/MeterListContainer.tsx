@@ -88,7 +88,7 @@ class MeterList extends React.Component<Props> {
     const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : null;
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
-    const renderGatewayId = ({gatewayId}: Meter) => gatewayId;
+    const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged ||
       <Separator/>;
@@ -129,7 +129,7 @@ class MeterList extends React.Component<Props> {
               />
               <TableColumn
                 header={<TableHead>{translate('gateway')}</TableHead>}
-                renderCell={renderGatewayId}
+                renderCell={renderGatewaySerial}
               />
               <TableColumn
                 header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
