@@ -198,7 +198,12 @@ const paginationMetaDataFromResult = (result: uuid[]): NormalizedPaginatedResult
 // TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything
 // have been fetched from 'selections', should perhaps come up with a better way of doing this.
 export const fetchSelections = restGetIfNeeded<IdNamed>(EndPoints.selections, selectionsSchema, 'cities');
-export const fetchAllMeters = restGetIfNeeded<Meter>(EndPoints.allMeters, allMetersSchema, 'allMeters');
+export const fetchAllMeters = restGetIfNeeded<Meter>(EndPoints.allMeters, allMetersSchema, 'allMeters', {
+  afterSuccess: (
+    {result},
+    dispatch,
+  ) => dispatch(paginationUpdateMetaData({entityType: 'allMeters', ...paginationMetaDataFromResult(result)})),
+});
 
 export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewaySchema, 'gateways', {
   afterSuccess: (

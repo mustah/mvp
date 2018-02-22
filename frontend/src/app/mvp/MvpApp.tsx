@@ -10,6 +10,12 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
+import {RestGet} from '../../state/domain-models/domainModels';
+import {fetchAllMeters, fetchGateways} from '../../state/domain-models/domainModelsActions';
+import {
+  getEncodedUriParametersForAllMeters,
+  getEncodedUriParametersForGateways,
+} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
@@ -22,15 +28,41 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
+  encodedUriParametersForGateways: string;
+  encodedUriParametersForAllMeters: string;
 }
 
 interface DispatchToProps {
   toggleShowHideSideMenu: OnClick;
+  fetchGateways: RestGet;
+  fetchAllMeters: RestGet;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
 class MvpApp extends React.Component<Props> {
+
+  componentDidMount() {
+    const {
+      fetchGateways,
+      encodedUriParametersForGateways,
+      fetchAllMeters,
+      encodedUriParametersForAllMeters,
+    } = this.props;
+    fetchGateways(encodedUriParametersForGateways);
+    fetchAllMeters(encodedUriParametersForAllMeters);
+  }
+
+  componentWillReceiveProps(
+    {
+      fetchGateways,
+      encodedUriParametersForGateways,
+      fetchAllMeters,
+      encodedUriParametersForAllMeters,
+    }: Props) {
+    fetchGateways(encodedUriParametersForGateways);
+    fetchAllMeters(encodedUriParametersForAllMeters);
+  }
 
   render() {
     const {isSideMenuOpen, toggleShowHideSideMenu} = this.props;
@@ -59,12 +91,16 @@ class MvpApp extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({ui}: RootState): StateToProps => ({
+const mapStateToProps = ({ui, searchParameters}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
+  encodedUriParametersForGateways: getEncodedUriParametersForGateways(searchParameters),
+  encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleShowHideSideMenu,
+  fetchGateways,
+  fetchAllMeters,
 }, dispatch);
 
 export const MvpAppContainer =

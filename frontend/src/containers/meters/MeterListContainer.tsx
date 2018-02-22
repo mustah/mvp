@@ -15,38 +15,35 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {ClearErrorPaginated, RestGetPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
-import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {ClearErrorPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
+import {clearErrorMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
+import {ObjectsById, RestGet} from '../../state/domain-models/domainModels';
+import {fetchAllMeters} from '../../state/domain-models/domainModelsActions';
 import {
-  getPageError,
-  getPageIsFetching,
-  getPageResult,
-  getPaginatedEntities,
-} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
-import {ObjectsById} from '../../state/domain-models/domainModels';
+  getEntitiesDomainModels,
+  getError,
+  getResultDomainModels,
+} from '../../state/domain-models/domainModelsSelectors';
 import {Flag} from '../../state/domain-models/flag/flagModels';
-import {
-  getEncodedUriParametersForMeters,
-  UriLookupStatePaginated,
-} from '../../state/search/selection/selectionSelectors';
+import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
-import {getPagination} from '../../state/ui/pagination/paginationSelectors';
+import {getPagination, getPaginationList} from '../../state/ui/pagination/paginationSelectors';
 import {ErrorResponse, OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
 interface StateToProps {
-  result: uuid[];
+  paginatedList: uuid[];
   entities: ObjectsById<Meter>;
   isFetching: boolean;
-  encodedUriParametersForMeters: string;
+  encodedUriParametersForAllMeters: string;
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
-  fetchMeters: RestGetPaginated;
+  fetchAllMeters: RestGet;
   changePaginationPage: OnChangePage;
   clearError: ClearErrorPaginated;
 }
@@ -60,12 +57,12 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class MeterList extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchMeters, encodedUriParametersForMeters, pagination: {page}} = this.props;
-    fetchMeters(page, encodedUriParametersForMeters);
+    const {fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
+    fetchAllMeters(encodedUriParametersForAllMeters);
   }
 
-  componentWillReceiveProps({fetchMeters, encodedUriParametersForMeters, pagination: {page}}: Props) {
-    fetchMeters(page, encodedUriParametersForMeters);
+  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
+    fetchAllMeters(encodedUriParametersForAllMeters);
   }
 
   clearError = () => {
@@ -74,7 +71,7 @@ class MeterList extends React.Component<Props> {
 
   render() {
     const {
-      result,
+      paginatedList,
       entities,
       selectEntryAdd,
       isFetching,
@@ -105,11 +102,11 @@ class MeterList extends React.Component<Props> {
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
         <HasContent
-          hasContent={result.length > 0}
-          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')} />}
+          hasContent={paginatedList.length > 0}
+          fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
         >
           <div>
-            <Table result={result} entities={entities}>
+            <Table result={paginatedList} entities={entities}>
               <TableColumn
                 header={<TableHead className="first">{translate('facility')}</TableHead>}
                 renderCell={renderMeterListItem}
@@ -160,35 +157,28 @@ class MeterList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {
-    searchParameters,
-    paginatedDomainModels: {meters},
-    ui: {pagination},
-  }: RootState,
+  {searchParameters, domainModels: {allMeters}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
 
-  const uriLookupState: UriLookupStatePaginated = {
-    ...searchParameters,
-    componentId,
-    entityType: 'meters',
-    pagination,
-  };
-  const paginationData: Pagination = getPagination(uriLookupState);
+  const paginationData: Pagination = getPagination({componentId, entityType: 'allMeters', pagination});
 
   return ({
-    entities: getPaginatedEntities<Meter>(meters),
-    result: getPageResult<Meter>(meters, paginationData.page),
-    encodedUriParametersForMeters: getEncodedUriParametersForMeters(uriLookupState),
-    isFetching: getPageIsFetching(meters, paginationData.page),
+    entities: getEntitiesDomainModels<Meter>(allMeters),
+    paginatedList: getPaginationList({
+      ...paginationData,
+      result: getResultDomainModels<Meter>(allMeters),
+    }),
+    encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+    isFetching: allMeters.isFetching,
     pagination: paginationData,
-    error: getPageError(meters, paginationData.page),
+    error: getError<Meter>(allMeters),
   });
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
-  fetchMeters,
+  fetchAllMeters,
   changePaginationPage,
   clearError: clearErrorMeters,
 }, dispatch);
