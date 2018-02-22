@@ -95,7 +95,7 @@ class MeterList extends React.Component<Props> {
     const renderMedium = ({medium}: Meter) => medium;
 
     const changePage = (page: number) => changePaginationPage({
-      entityType: 'meters',
+      entityType: 'allMeters',
       componentId,
       page,
     });
