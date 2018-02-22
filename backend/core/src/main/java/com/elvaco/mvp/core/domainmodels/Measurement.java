@@ -22,7 +22,7 @@ public class Measurement {
     String unit,
     PhysicalMeter physicalMeter
   ) {
-    this(null, Date.from(Instant.now()), quantity.getName(), value, unit, physicalMeter);
+    this(null, Date.from(Instant.now()), quantity.name, value, unit, physicalMeter);
   }
 
   public Measurement(

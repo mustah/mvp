@@ -8,12 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SettingUseCasesTest {
 
-  SettingUseCases settingUseCases;
+  private SettingUseCases settingUseCases;
 
   @Before
   public void setUp() {
-    MockSettings mockSettings = new MockSettings();
-    settingUseCases = new SettingUseCases(mockSettings);
+    settingUseCases = new SettingUseCases(new MockSettings());
   }
 
   @Test

@@ -10,8 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@EqualsAndHashCode
 @ToString
 @Entity
 @Access(AccessType.FIELD)
@@ -33,6 +35,11 @@ public class GatewayEntity implements Serializable {
   public GatewayEntity() {}
 
   public GatewayEntity(String serial, String productModel) {
+    this(null, serial, productModel);
+  }
+
+  public GatewayEntity(Long id, String serial, String productModel) {
+    this.id = id;
     this.serial = serial;
     this.productModel = productModel;
   }

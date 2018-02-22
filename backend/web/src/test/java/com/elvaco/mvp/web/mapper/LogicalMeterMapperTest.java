@@ -3,10 +3,10 @@ package com.elvaco.mvp.web.mapper;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.TimeZone;
 
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -25,9 +25,13 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
+
+  private static final IdNamedDto OK = new IdNamedDto(1L, "Ok");
 
   private LogicalMeterMapper mapper;
 
@@ -49,7 +53,7 @@ public class LogicalMeterMapperTest {
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
-    mapMarkerDtoExpected.status = new IdNamedDto("Ok");
+    mapMarkerDtoExpected.status = OK;
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     Location location = new LocationBuilder()
@@ -62,9 +66,10 @@ public class LogicalMeterMapperTest {
       ELVACO.id,
       location,
       new Date(),
-      Collections.emptyList(),
+      emptyList(),
       null,
-      Collections.emptyList()
+      emptyList(),
+      emptyList()
     );
 
     MapMarkerDto mapMarkerDto = mapper.toMapMarkerDto(logicalMeter);
@@ -92,7 +97,11 @@ public class LogicalMeterMapperTest {
     expectedPosition.longitude = 12.0683196;
     expected.position = expectedPosition;
     expected.facility = "an-external-id";
-    expected.statusChangelog = Collections.emptyList();
+    expected.statusChangelog = emptyList();
+    expected.gatewayId = 3L;
+    expected.gatewaySerial = "123123";
+    expected.gatewayStatus = OK;
+    expected.gatewayProductModel = "CMi2110";
 
     assertThat(
       mapper.toDto(
@@ -106,7 +115,7 @@ public class LogicalMeterMapperTest {
             .longitude(12.0683196)
             .build(),
           dateFormat.parse("2018-02-12T14:14:25"),
-          Collections.singletonList(
+          singletonList(
             new PhysicalMeter(
               ELVACO,
               "123123",
@@ -115,7 +124,12 @@ public class LogicalMeterMapperTest {
               "ELV"
             )),
           MeterDefinition.HOT_WATER_METER,
-          Collections.emptyList()
+          emptyList(),
+          singletonList(new Gateway(
+            expected.gatewayId,
+            expected.gatewaySerial,
+            expected.gatewayProductModel
+          ))
         ), TimeZone.getTimeZone("Europe/Stockholm")))
       .isEqualTo(expected);
   }
@@ -133,6 +147,5 @@ public class LogicalMeterMapperTest {
       .isEqualTo("2018-02-12 14:14:25");
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("America/Los_Angeles")).created)
       .isEqualTo("2018-02-12 06:14:25");
-
   }
 }

@@ -16,6 +16,8 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
 
+  private static final IdNamedDto OK = new IdNamedDto(1L, "Ok");
+
   private final MeterStatusLogMapper meterStatusLogMapper;
 
   public LogicalMeterMapper(MeterStatusLogMapper meterStatusLogMapper) {
@@ -27,7 +29,7 @@ public class LogicalMeterMapper {
     mapMarkerDto.id = logicalMeter.id;
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     //TODO how to handle statuses?
-    mapMarkerDto.status = new IdNamedDto("Ok");
+    mapMarkerDto.status = OK;
     mapMarkerDto.status.name = "Ok";
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
@@ -52,6 +54,16 @@ public class LogicalMeterMapper {
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.position = new GeoPositionDto();
     meterDto.facility = logicalMeter.externalId;
+    logicalMeter.gateways
+      .stream()
+      .findFirst()
+      .map(gateway -> {
+        meterDto.gatewayId = gateway.id;
+        meterDto.gatewaySerial = gateway.serial;
+        meterDto.gatewayProductModel = gateway.productModel;
+        meterDto.gatewayStatus = OK;
+        return gateway;
+      });
 
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coordinate = logicalMeter.location.getCoordinate();
@@ -61,9 +73,9 @@ public class LogicalMeterMapper {
     }
 
     meterDto.statusChangelog = logicalMeter.meterStatusLogs
-      .stream().map(
-        (meterStatusLog) -> meterStatusLogMapper.toDto(meterStatusLog, timeZone)
-      ).collect(toList());
+      .stream()
+      .map((meterStatusLog) -> meterStatusLogMapper.toDto(meterStatusLog, timeZone))
+      .collect(toList());
     return meterDto;
   }
 }

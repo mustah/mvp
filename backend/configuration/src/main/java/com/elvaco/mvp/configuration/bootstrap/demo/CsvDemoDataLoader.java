@@ -3,11 +3,11 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -94,6 +94,11 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       .stream(getFile(filePath), stream ->
         stream
           .map(csvData -> {
+            Gateway gateway = new Gateway(
+              null,
+              csvData.gatewayId,
+              csvData.gatewayProductModel
+            );
             LogicalMeter logicalMeter = new LogicalMeter(
               null,
               csvData.facilityId,
@@ -102,7 +107,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               new Date(),
               emptyList(),
               meterDefinition,
-              Collections.emptyList()
+              emptyList(),
+              emptyList()
             );
             PhysicalMeter physicalMeter = new PhysicalMeter(
               ELVACO,
@@ -111,16 +117,22 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               csvData.medium,
               csvData.meterManufacturer
             );
-            GatewayEntity gateway = new GatewayEntity(
-              csvData.gatewayId,
-              csvData.gatewayProductModel
-            );
+
             return new Parameters(logicalMeter, physicalMeter, gateway);
           })
       )
       .forEach(p -> {
-        gatewayRepository.save(p.gateway);
-        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter);
+        GatewayEntity gatewayEntity = gatewayRepository.save(
+          new GatewayEntity(
+            p.gateway.serial,
+            p.gateway.productModel
+          ));
+        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter.withGateway(
+          new Gateway(
+            gatewayEntity.id,
+            gatewayEntity.serial,
+            gatewayEntity.productModel
+          )));
         PhysicalMeter physicalMeter = p.physicalMeter;
         physicalMeters.save(
           new PhysicalMeter(
@@ -131,7 +143,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,
-            Collections.emptyList()
+            emptyList()
           ));
       });
   }
@@ -182,12 +194,12 @@ public class CsvDemoDataLoader implements CommandLineRunner {
 
     private final LogicalMeter logicalMeter;
     private final PhysicalMeter physicalMeter;
-    private final GatewayEntity gateway;
+    private final Gateway gateway;
 
     private Parameters(
       LogicalMeter logicalMeter,
       PhysicalMeter physicalMeter,
-      GatewayEntity gateway
+      Gateway gateway
     ) {
       this.logicalMeter = logicalMeter;
       this.physicalMeter = physicalMeter;

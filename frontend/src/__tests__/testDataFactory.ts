@@ -139,6 +139,7 @@ export const makeMeter = (id: number, cityId: number, city: string, addressId: n
   status: {id: 0, name: 'ok'},
   gatewayId: 'a',
   gatewayProductModel: 'a',
+  gatewaySerial: '123',
   gatewayStatus: {id: 0, name: 'ok'},
   address: {
     cityId,

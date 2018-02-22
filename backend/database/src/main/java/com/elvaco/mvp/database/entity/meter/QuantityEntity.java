@@ -14,7 +14,9 @@ import lombok.EqualsAndHashCode;
 @Table(name = "quantity")
 @EqualsAndHashCode
 public class QuantityEntity implements Serializable {
+
   private static final long serialVersionUID = -8628799320716504900L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Nullable

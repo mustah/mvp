@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +8,11 @@ import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
@@ -23,29 +27,54 @@ public class LogicalMeter {
   public final Long organisationId;
   public final MeterDefinition meterDefinition;
   public final List<MeterStatusLog> meterStatusLogs;
+  public final List<Gateway> gateways;
+
+  public LogicalMeter(
+    @Nullable Long id,
+    String externalId,
+    Long organisationId,
+    Location location,
+    Date created,
+    List<PhysicalMeter> physicalMeters,
+    MeterDefinition meterDefinition,
+    List<MeterStatusLog> meterStatusLogs,
+    List<Gateway> gateways
+  ) {
+    this.id = id;
+    this.externalId = externalId;
+    this.organisationId = organisationId;
+    this.location = location;
+    this.created = new Date(created.getTime());
+    this.physicalMeters = unmodifiableList(physicalMeters);
+    this.meterDefinition = meterDefinition;
+    this.meterStatusLogs = meterStatusLogs;
+    this.gateways = unmodifiableList(gateways);
+  }
 
   public LogicalMeter(
     String externalId,
     Long organisationId,
     MeterDefinition meterDefinition
   ) {
-    this(
-      externalId, organisationId, meterDefinition,
-      Collections.emptyList()
-    );
+    this(externalId, organisationId, meterDefinition, emptyList());
   }
 
   public LogicalMeter(
-    String externalId, Long organisationId, MeterDefinition meterDefinition,
+    String externalId,
+    Long organisationId,
+    MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeters
   ) {
     this(
       null,
-      externalId, organisationId, Location.UNKNOWN_LOCATION,
+      externalId,
+      organisationId,
+      Location.UNKNOWN_LOCATION,
       new Date(),
       physicalMeters,
       meterDefinition,
-      Collections.emptyList()
+      emptyList(),
+      emptyList()
     );
   }
 
@@ -62,38 +91,52 @@ public class LogicalMeter {
       organisationId,
       location,
       created,
-      Collections.emptyList(),
+      emptyList(),
       MeterDefinition.UNKNOWN_METER,
-      Collections.emptyList()
+      emptyList(),
+      emptyList()
     );
-  }
-
-  public LogicalMeter(
-    @Nullable Long id,
-    String externalId, Long organisationId, Location location,
-    Date created,
-    List<PhysicalMeter> physicalMeters,
-    MeterDefinition meterDefinition,
-    List<MeterStatusLog> meterStatusLogs
-  ) {
-    this.id = id;
-    this.externalId = externalId;
-    this.organisationId = organisationId;
-    this.location = location;
-    this.created = new Date(created.getTime());
-    this.physicalMeters = Collections.unmodifiableList(physicalMeters);
-    this.meterDefinition = meterDefinition;
-    this.meterStatusLogs = meterStatusLogs;
   }
 
   public LogicalMeter createdAt(Date creationTime) {
     return new LogicalMeter(
       id,
-      externalId, organisationId, location,
+      externalId,
+      organisationId,
+      location,
       creationTime,
       physicalMeters,
       meterDefinition,
-      Collections.emptyList()
+      meterStatusLogs,
+      gateways
+    );
+  }
+
+  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
+    return new LogicalMeter(
+      id,
+      externalId,
+      organisationId,
+      location,
+      created,
+      physicalMeters,
+      meterDefinition,
+      meterStatusLogs,
+      gateways
+    );
+  }
+
+  public LogicalMeter withGateway(Gateway gateway) {
+    return new LogicalMeter(
+      id,
+      externalId,
+      organisationId,
+      location,
+      created,
+      physicalMeters,
+      meterDefinition,
+      meterStatusLogs,
+      singletonList(gateway)
     );
   }
 
@@ -102,7 +145,7 @@ public class LogicalMeter {
   }
 
   public Set<Quantity> getQuantities() {
-    return meterDefinition != null ? meterDefinition.quantities : Collections.emptySet();
+    return meterDefinition != null ? meterDefinition.quantities : emptySet();
   }
 
   public boolean hasMeterDefinition() {
@@ -113,17 +156,6 @@ public class LogicalMeter {
     return activePhysicalMeter()
       .map(physicalMeter -> physicalMeter.manufacturer)
       .orElse("Unknown manufacturer");
-  }
-
-  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
-    return new LogicalMeter(
-      id,
-      externalId, organisationId, location,
-      created,
-      physicalMeters,
-      meterDefinition,
-      Collections.emptyList()
-    );
   }
 
   private Optional<PhysicalMeter> activePhysicalMeter() {

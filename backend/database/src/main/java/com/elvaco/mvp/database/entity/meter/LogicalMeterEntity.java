@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +29,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+
 @ToString
 @EqualsAndHashCode
 @Entity
@@ -56,7 +58,7 @@ public class LogicalMeterEntity implements Serializable {
   @JoinTable(
     name = "gateways_meters",
     joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
+    inverseJoinColumns = @JoinColumn(name = "gateway_serial", referencedColumnName = "serial")
   )
   public List<GatewayEntity> gateways;
 
@@ -86,7 +88,8 @@ public class LogicalMeterEntity implements Serializable {
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.created = (Date) created.clone();
-    this.physicalMeters = Collections.emptySet();
+    this.physicalMeters = emptySet();
+    this.gateways = emptyList();
     this.meterDefinition = meterDefinition;
     setLocation(new LocationEntity());
   }

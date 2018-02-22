@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterTest {
+
   @Test
   public void testMedium() {
     LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
@@ -22,7 +22,7 @@ public class LogicalMeterTest {
   @Test
   public void testQuantities() {
     LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
-    assertThat(heatingMeter.getQuantities()).hasSameElementsAs(Arrays.asList(
+    assertThat(heatingMeter.getQuantities()).containsOnly(
       Quantity.ENERGY,
       Quantity.VOLUME,
       Quantity.POWER,
@@ -30,14 +30,14 @@ public class LogicalMeterTest {
       Quantity.FORWARD_TEMPERATURE,
       Quantity.RETURN_TEMPERATURE,
       Quantity.DIFFERENCE_TEMPERATURE
-    ));
+    );
 
     LogicalMeter hotWaterMeter = heatingMeter.withMeterDefinition(MeterDefinition.HOT_WATER_METER);
-    assertThat(hotWaterMeter.getQuantities()).hasSameElementsAs(Arrays.asList(
+    assertThat(hotWaterMeter.getQuantities()).containsOnly(
       Quantity.VOLUME,
       Quantity.FLOW,
       Quantity.TEMPERATURE
-    ));
+    );
   }
 
   @Test

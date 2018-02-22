@@ -17,13 +17,12 @@ public class Quantity {
     "Return temperature", "°C");
   public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity(
     "Difference temperature", "°K");
-  private final String name;
-  private final String unit;
+
+  public final String name;
+  public final String unit;
 
   @Nullable
-  private Long id;
-
-
+  public final Long id;
 
   public Quantity(@Nullable Long id, String name, String unit) {
     this.id = id;
@@ -33,18 +32,5 @@ public class Quantity {
 
   private Quantity(String name, String unit) {
     this(null, name, unit);
-  }
-
-  public String getUnit() {
-    return unit;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  @Nullable
-  public Long getId() {
-    return id;
   }
 }
