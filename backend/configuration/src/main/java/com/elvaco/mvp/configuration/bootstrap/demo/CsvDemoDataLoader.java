@@ -14,12 +14,11 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
-import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
@@ -48,21 +47,21 @@ public class CsvDemoDataLoader implements CommandLineRunner {
 
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
-  private final GatewayJpaRepository gatewayJpaRepository;
   private final MeterDefinitions meterDefinitions;
   private final SettingUseCases settingUseCases;
+  private final Gateways gateways;
 
   @Autowired
   public CsvDemoDataLoader(
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
-    GatewayJpaRepository gatewayJpaRepository,
     MeterDefinitions meterDefinitions,
-    SettingUseCases settingUseCases
+    SettingUseCases settingUseCases,
+    Gateways gateways
   ) {
     this.logicalMeters = logicalMeters;
     this.physicalMeters = physicalMeters;
-    this.gatewayJpaRepository = gatewayJpaRepository;
+    this.gateways = gateways;
     this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
   }
@@ -122,17 +121,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
           })
       )
       .forEach(p -> {
-        GatewayEntity gatewayEntity = gatewayJpaRepository.save(
-          new GatewayEntity(
-            p.gateway.serial,
-            p.gateway.productModel
-          ));
-        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter.withGateway(
-          new Gateway(
-            gatewayEntity.id,
-            gatewayEntity.serial,
-            gatewayEntity.productModel
-          )));
+        Gateway gateway = gateways.save(p.gateway);
+        LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter.withGateway(gateway));
         PhysicalMeter physicalMeter = p.physicalMeter;
         physicalMeters.save(
           new PhysicalMeter(
@@ -161,8 +151,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
   private static Map<String, GeoPositionDto> loadGeodata() throws IOException {
     return OBJECT_MAPPER.readValue(
       getFile("data/geodata.json"),
-      new TypeReference<Map<String, GeoPositionDto>>() {
-      }
+      new TypeReference<Map<String, GeoPositionDto>>() {}
     );
   }
 
