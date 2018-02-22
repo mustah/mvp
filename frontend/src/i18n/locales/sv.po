@@ -41,8 +41,8 @@ msgstr "bekräfta"
 msgid "cancel"
 msgstr "avbryt"
 
-msgid "are you sure you want to delete this user"
-msgstr "är du säker på att du vill ta bort den här användaren"
+msgid "are you sure you want to delete this item"
+msgstr "är du säker på att du vill ta bort den här entiteten"
 
 msgid "latest"
 msgstr "senaste"
@@ -224,6 +224,9 @@ msgstr "lägg till användare"
 msgid "name"
 msgstr "namn"
 
+msgid "code"
+msgstr "kod"
+
 msgid "email"
 msgstr "e-post"
 
@@ -241,6 +244,15 @@ msgstr "organisationsnamn"
 
 msgid "organisation code"
 msgstr "organisationskod"
+
+msgid "delete organisation"
+msgstr "ta bort organisation"
+
+msgid "successfully deleted the organisation {{name}}"
+msgstr "lyckades ta bort organisationen {{name}}"
+
+msgid "failed to delete the organisation: {{error}}"
+msgstr "misslyckades att skapa organisationen: {{error}}"
 
 msgid "successfully created the organisation {{name}} ({{code}})"
 msgstr "skapade organisationen {{name}} ({{code}})"

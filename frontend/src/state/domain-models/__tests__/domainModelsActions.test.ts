@@ -12,7 +12,6 @@ import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {limit} from '../../ui/pagination/paginationReducer';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../domainModels';
 import {
-  addOrganisation,
   addUser, clearErrorGateways,
   deleteUser, DOMAIN_MODELS_CLEAR_ERROR, fetchGateways,
   fetchSelections,
@@ -25,6 +24,7 @@ import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Gateway} from '../gateway/gatewayModels';
 import {gatewaySchema} from '../gateway/gatewaySchema';
+import {addOrganisation} from '../organisation/organisationsApiActions';
 import {Organisation, Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
 

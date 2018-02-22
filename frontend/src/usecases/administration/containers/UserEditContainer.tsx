@@ -15,10 +15,15 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorUsers, fetchOrganisations, fetchUser,
+  clearErrorUsers,
+  fetchUser,
   modifyUser,
 } from '../../../state/domain-models/domainModelsActions';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {
+  getEntitiesDomainModels,
+  getError,
+} from '../../../state/domain-models/domainModelsSelectors';
+import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
 import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
 import {ErrorResponse, OnClick, uuid} from '../../../types/Types';

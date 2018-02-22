@@ -1,6 +1,11 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {
+  createEmptyAction,
+  createPayloadAction,
+  EmptyAction,
+  PayloadAction,
+} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
@@ -13,14 +18,20 @@ import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDom
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
 import {limit} from '../ui/pagination/paginationReducer';
-import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState} from './domainModels';
+import {
+  DomainModelsState,
+  EndPoints,
+  HttpMethod,
+  Normalized,
+  NormalizedState,
+} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
 import {Measurement} from './measurement/measurementModels';
 import {measurementSchema} from './measurement/measurementSchema';
-import {Organisation, User} from './user/userModels';
-import {organisationSchema, userSchema} from './user/userSchema';
+import {User} from './user/userModels';
+import {userSchema} from './user/userSchema';
 
 export const DOMAIN_MODELS_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_REQUEST${endPoint}`;
 export const DOMAIN_MODELS_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_FAILURE${endPoint}`;
@@ -35,7 +46,7 @@ export const DOMAIN_MODELS_POST_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.POST)
 export const DOMAIN_MODELS_PUT_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.PUT);
 export const DOMAIN_MODELS_DELETE_SUCCESS = DOMAIN_MODELS_SUCCESS(HttpMethod.DELETE);
 
-const clearError = (endPoint: EndPoints) =>
+export const clearError = (endPoint: EndPoints) =>
   createEmptyAction<string>(DOMAIN_MODELS_CLEAR_ERROR(endPoint));
 
 export const clearErrorGateways = clearError(EndPoints.gateways);
@@ -54,7 +65,10 @@ interface RestCallbacks<T> {
   afterFailure?: (error: ErrorResponse, dispatch: Dispatch<RootState>) => void;
 }
 
-export const requestMethod = <T>(endPoint: EndPoints, requestType: HttpMethod): RestRequestHandle<T> => ({
+export const requestMethod = <T>(
+  endPoint: EndPoints,
+  requestType: HttpMethod,
+): RestRequestHandle<T> => ({
   request: createEmptyAction<string>(DOMAIN_MODELS_REQUEST(endPoint)),
   success: createPayloadAction<string, T>(DOMAIN_MODELS_SUCCESS(requestType)(endPoint)),
   failure: createPayloadAction<string, ErrorResponse>(DOMAIN_MODELS_FAILURE(endPoint)),
@@ -102,7 +116,7 @@ const asyncRequest = async <REQ, DAT>(
 const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>): boolean =>
   !isSuccessfullyFetched && !isFetching && !error;
 
-const restGetIfNeeded = <T extends HasId>(
+export const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
   schema: Schema,
   entityType: keyof DomainModelsState,
@@ -129,7 +143,10 @@ const restGetIfNeeded = <T extends HasId>(
   };
 };
 
-const shouldFetchEntity = (id: uuid, {isFetching, error, entities}: NormalizedState<HasId>): boolean =>
+const shouldFetchEntity = (
+  id: uuid,
+  {isFetching, error, entities}: NormalizedState<HasId>,
+): boolean =>
   !isFetching && !error && !entities[id];
 
 const restGetEntityIfNeeded = <T>(endPoint: EndPoints, entityType: keyof DomainModelsState) => {
@@ -152,7 +169,7 @@ const restGetEntityIfNeeded = <T>(endPoint: EndPoints, entityType: keyof DomainM
   };
 };
 
-const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+export const restPost = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   const requestPost = requestMethod<T>(endPoint, HttpMethod.POST);
   const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);
 
@@ -176,7 +193,7 @@ const restPut = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   });
 };
 
-const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
+export const restDelete = <T>(endPoint: EndPoints, restCallbacks: RestCallbacks<T>) => {
   const requestDelete = requestMethod<T>(endPoint, HttpMethod.DELETE);
   const requestFunc = (requestData: uuid) =>
     restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
@@ -197,56 +214,74 @@ const paginationMetaDataFromResult = (result: uuid[]): NormalizedPaginatedResult
 
 // TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything
 // have been fetched from 'selections', should perhaps come up with a better way of doing this.
-export const fetchSelections = restGetIfNeeded<IdNamed>(EndPoints.selections, selectionsSchema, 'cities');
-export const fetchAllMeters = restGetIfNeeded<Meter>(EndPoints.allMeters, allMetersSchema, 'allMeters', {
-  afterSuccess: (
-    {result},
-    dispatch,
-  ) => dispatch(paginationUpdateMetaData({entityType: 'allMeters', ...paginationMetaDataFromResult(result)})),
-});
+export const fetchSelections = restGetIfNeeded<IdNamed>(
+  EndPoints.selections,
+  selectionsSchema,
+  'cities',
+);
 
-export const fetchGateways = restGetIfNeeded<Gateway>(EndPoints.gateways, gatewaySchema, 'gateways', {
-  afterSuccess: (
-    {result},
-    dispatch,
-  ) => dispatch(paginationUpdateMetaData({entityType: 'gateways', ...paginationMetaDataFromResult(result)})),
-});
+export const fetchAllMeters = restGetIfNeeded<Meter>(
+  EndPoints.allMeters,
+  allMetersSchema,
+  'allMeters',
+  {
+    afterSuccess: (
+      {result},
+      dispatch,
+    ) => dispatch(paginationUpdateMetaData({
+      entityType: 'allMeters', ...paginationMetaDataFromResult(result),
+    })),
+  },
+);
+
+export const fetchGateways = restGetIfNeeded<Gateway>(
+  EndPoints.gateways,
+  gatewaySchema,
+  'gateways',
+  {
+    afterSuccess: (
+      {result},
+      dispatch,
+    ) => dispatch(paginationUpdateMetaData({
+      entityType: 'gateways', ...paginationMetaDataFromResult(result),
+    })),
+  },
+);
 export const fetchUsers = restGetIfNeeded<User>(EndPoints.users, userSchema, 'users');
-
-export const fetchOrganisations =
-  restGetIfNeeded<Organisation>(EndPoints.organisations, organisationSchema, 'organisations');
 
 export const fetchMeasurements =
   restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
+
 export const fetchUser = restGetEntityIfNeeded<User>(EndPoints.users, 'users');
 // TODO: Add tests ^
 
 export const addUser = restPost<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showSuccessMessage(firstUpperTranslated('successfully created the user {{name}} ({{email}})', {...user})));
+    dispatch(showSuccessMessage(firstUpperTranslated(
+      'successfully created the user {{name}} ({{email}})',
+      {...user},
+    )));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create user: {{error}}', {error: error.message})));
-  },
-});
-
-export const addOrganisation = restPost<Organisation>(EndPoints.organisations, {
-  afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
-    dispatch(showSuccessMessage(
-      firstUpperTranslated('successfully created the organisation {{name}} ({{code}})', {...organisation}),
-    ));
-  },
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to create organisation: {{error}}', {error: error.message})));
+    dispatch(showFailMessage(firstUpperTranslated(
+      'failed to create user: {{error}}',
+      {error: error.message},
+    )));
   },
 });
 
 export const modifyUser = restPut<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showSuccessMessage(firstUpperTranslated('successfully updated user {{name}} ({{email}})', {...user})));
+    dispatch(showSuccessMessage(firstUpperTranslated(
+      'successfully updated user {{name}} ({{email}})',
+      {...user},
+    )));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update user: {{error}}', {error: error.message})));
+    dispatch(showFailMessage(firstUpperTranslated(
+      'failed to update user: {{error}}',
+      {error: error.message},
+    )));
   },
 });
 
@@ -256,18 +291,27 @@ export const modifyProfile = restPut<User>(EndPoints.users, {
     dispatch(authSetUser(user));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-    dispatch(showFailMessage(firstUpperTranslated('failed to update profile: {{error}}', {error: error.message})));
+    dispatch(showFailMessage(firstUpperTranslated(
+      'failed to update profile: {{error}}',
+      {error: error.message},
+    )));
   },
 });
 
 export const deleteUser = restDelete<User>(EndPoints.users, {
     afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
       dispatch(
-        showSuccessMessage(firstUpperTranslated('successfully deleted the user {{name}} ({{email}})', {...user})),
+        showSuccessMessage(firstUpperTranslated(
+          'successfully deleted the user {{name}} ({{email}})',
+          {...user},
+        )),
       );
     },
     afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
-      dispatch(showFailMessage(firstUpperTranslated('failed to delete the user: {{error}}', {error: error.message})));
+      dispatch(showFailMessage(firstUpperTranslated(
+        'failed to delete the user: {{error}}',
+        {error: error.message},
+      )));
     },
   },
 );

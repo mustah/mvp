@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../../app/themes';
+import {UserEditForm} from '../../../../components/forms/UserEditForm';
 import {Column} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
 import {MainTitle} from '../../../../components/texts/Titles';
@@ -10,9 +11,9 @@ import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {RestGet} from '../../../../state/domain-models/domainModels';
-import {fetchOrganisations, modifyProfile} from '../../../../state/domain-models/domainModelsActions';
+import {modifyProfile} from '../../../../state/domain-models/domainModelsActions';
+import {fetchOrganisations} from '../../../../state/domain-models/organisation/organisationsApiActions';
 import {Organisation, Role, User} from '../../../../state/domain-models/user/userModels';
-import {UserEditForm} from '../../../../components/forms/UserEditForm';
 import {getOrganisations, getRoles} from '../../../../state/domain-models/user/userSelectors';
 
 interface StateToProps {

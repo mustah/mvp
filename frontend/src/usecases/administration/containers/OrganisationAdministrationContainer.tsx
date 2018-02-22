@@ -1,11 +1,11 @@
 import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {paperStyle} from '../../../app/themes';
-import {OrganisationsActionsDropdown} from '../../../components/actions-dropdown/OrganisationsActionsDropdown';
-import {Row, RowRight} from '../../../components/layouts/row/Row';
+import {Row} from '../../../components/layouts/row/Row';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
+import {OrganisationsContainer} from './OrganisationsContainer';
 
 export const OrganisationAdministrationContainer = () => (
   <PageComponent isSideMenuOpen={false}>
@@ -16,9 +16,7 @@ export const OrganisationAdministrationContainer = () => (
     </Row>
 
     <Paper style={paperStyle}>
-      <RowRight>
-        <OrganisationsActionsDropdown />
-      </RowRight>
+      <OrganisationsContainer/>
     </Paper>
   </PageComponent>
 );

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {UserActionsDropdown} from '../../../components/actions-dropdown/UserActionsDropdown';
-import {UsersActionsDropdown} from '../../../components/actions-dropdown/UsersActionsDropdown';
+import {OrganisationActionsDropdown} from '../../../components/actions-dropdown/OrganisationActionsDropdown';
+import {OrganisationsActionsDropdown} from '../../../components/actions-dropdown/OrganisationsActionsDropdown';
 import {ConfirmDialog} from '../../../components/dialog/DeleteConfirmDialog';
 import {Column} from '../../../components/layouts/column/Column';
 import {RowRight} from '../../../components/layouts/row/Row';
@@ -13,83 +13,73 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
-import {
-  clearErrorUsers,
-  deleteUser,
-  fetchUsers,
-} from '../../../state/domain-models/domainModelsActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {User} from '../../../state/domain-models/user/userModels';
+import {
+  clearOrganisationErrors,
+  deleteOrganisation,
+  fetchOrganisations,
+} from '../../../state/domain-models/organisation/organisationsApiActions';
+import {Organisation} from '../../../state/domain-models/user/userModels';
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {
-  users: DomainModel<User>;
+  organisations: DomainModel<Organisation>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
-  deleteUser: OnClickWithId;
-  fetchUsers: RestGet;
+  deleteOrganisation: OnClickWithId;
+  fetchOrganisations: RestGet;
   clearError: ClearError;
 }
 
 interface State {
   isDeleteDialogOpen: boolean;
-  userToDelete?: uuid;
+  organisationToDelete?: uuid;
 }
 
 type Props = StateToProps & DispatchToProps;
 
-class UserAdministration extends React.Component<Props, State> {
+class OrganisationsComponent extends React.Component<Props, State> {
 
   state: State = {isDeleteDialogOpen: false};
 
   componentDidMount() {
-    this.props.fetchUsers();
+    this.props.fetchOrganisations();
   }
 
-  componentWillReceiveProps({fetchUsers}: Props) {
-    fetchUsers();
+  componentWillReceiveProps({fetchOrganisations}: Props) {
+    fetchOrganisations();
   }
 
   render() {
     const {
-      users,
+      organisations,
       isFetching,
       error,
       clearError,
     } = this.props;
 
-    const renderName = ({name}: User) => name;
-    const renderEmail = ({email}: User) => email;
-    const renderOrganisation = ({organisation: {name}}: User) => name;
-    const renderRoles = ({roles}: User) => roles.join(', ');
-    const renderActionDropdown = ({id}: User) =>
-      <UserActionsDropdown confirmDelete={this.openDialog} id={id}/>;
+    const renderName = ({name}: Organisation) => name;
+    const renderCode = ({code}: Organisation) => code;
+    const renderActionDropdown = ({id}: Organisation) =>
+      <OrganisationActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
     return (
       <Loader isFetching={isFetching} error={error} clearError={clearError}>
         <Column>
           <RowRight>
-            <UsersActionsDropdown/>
+            <OrganisationsActionsDropdown/>
           </RowRight>
-          <Table result={users.result} entities={users.entities}>
+          <Table result={organisations.result} entities={organisations.entities}>
             <TableColumn
               header={<TableHead className="first">{translate('name')}</TableHead>}
               renderCell={renderName}
             />
             <TableColumn
-              header={<TableHead>{translate('email')}</TableHead>}
-              renderCell={renderEmail}
-            />
-            <TableColumn
-              header={<TableHead>{translate('organisation')}</TableHead>}
-              renderCell={renderOrganisation}
-            />
-            <TableColumn
-              header={<TableHead>{translate('roles')}</TableHead>}
-              renderCell={renderRoles}
+              header={<TableHead>{translate('code')}</TableHead>}
+              renderCell={renderCode}
             />
             <TableColumn
               header={<TableHead className="actionDropdown">{' '}</TableHead>}
@@ -99,31 +89,33 @@ class UserAdministration extends React.Component<Props, State> {
           <ConfirmDialog
             isOpen={this.state.isDeleteDialogOpen}
             close={this.closeDialog}
-            confirm={this.deleteSelectedUser}
+            confirm={this.deleteSelectedOrganisation}
           />
         </Column>
       </Loader>
     );
   }
 
-  openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, userToDelete: id});
+  openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, organisationToDelete: id});
 
   closeDialog = () => this.setState({isDeleteDialogOpen: false});
 
-  deleteSelectedUser = () => this.props.deleteUser(this.state.userToDelete!);
+  deleteSelectedOrganisation = () => this.props.deleteOrganisation(this.state.organisationToDelete!);
 }
 
-const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
-  users: getDomainModel(users),
-  isFetching: users.isFetching,
-  error: getError(users),
+const mapStateToProps = ({domainModels: {organisations}}: RootState): StateToProps => ({
+  organisations: getDomainModel(organisations),
+  isFetching: organisations.isFetching,
+  error: getError(organisations),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  deleteUser,
-  fetchUsers,
-  clearError: clearErrorUsers,
+  deleteOrganisation,
+  fetchOrganisations,
+  clearError: clearOrganisationErrors,
 }, dispatch);
 
-export const UserAdministrationContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(UserAdministration);
+export const OrganisationsContainer = connect<StateToProps, DispatchToProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(OrganisationsComponent);

@@ -3,6 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
+import {UserEditForm} from '../../../components/forms/UserEditForm';
 import {Row} from '../../../components/layouts/row/Row';
 import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {MainTitle} from '../../../components/texts/Titles';
@@ -10,11 +11,11 @@ import {PageComponent} from '../../../containers/PageComponent';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {RestGet} from '../../../state/domain-models/domainModels';
-import {addUser, fetchOrganisations} from '../../../state/domain-models/domainModelsActions';
+import {addUser} from '../../../state/domain-models/domainModelsActions';
+import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {Organisation, Role} from '../../../state/domain-models/user/userModels';
 import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
 import {OnClick} from '../../../types/Types';
-import {UserEditForm} from '../../../components/forms/UserEditForm';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -29,6 +30,7 @@ interface DispatchToProps {
 type Props = DispatchToProps & StateToProps;
 
 class UserAdd extends React.Component<Props> {
+
   componentDidMount() {
     this.props.fetchOrganisations();
   }
