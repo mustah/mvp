@@ -16,4 +16,8 @@ public class GatewayUseCases {
   public List<Gateway> findAll() {
     return gateways.findAll();
   }
+
+  public Gateway save(Gateway gateway) {
+    return gateways.save(gateway);
+  }
 }

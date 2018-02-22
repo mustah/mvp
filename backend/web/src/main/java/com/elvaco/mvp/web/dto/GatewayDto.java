@@ -1,10 +1,15 @@
 package com.elvaco.mvp.web.dto;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@ToString
+@EqualsAndHashCode
 public class GatewayDto {
 
-  private Long id;
-  private String serial;
-  private String productModel;
+  public Long id;
+  public String serial;
+  public String productModel;
 
   public GatewayDto() {}
 

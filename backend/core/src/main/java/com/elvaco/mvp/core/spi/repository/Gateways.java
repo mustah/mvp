@@ -7,4 +7,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 public interface Gateways {
 
   List<Gateway> findAll();
+
+  Gateway save(Gateway gateway);
 }
