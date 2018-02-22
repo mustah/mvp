@@ -1,4 +1,5 @@
 import {Meter} from '../state/domain-models-paginated/meter/meterModels';
+import {uuid} from '../types/Types';
 
 const selections = {
   cities: [
@@ -127,7 +128,7 @@ export const testData = {
   gateways,
 };
 
-export const makeMeter = (id: number, cityId: number, city: string, addressId: number, address: string): Meter => ({
+export const makeMeter = (id: number, cityId: uuid, city: string, addressId: uuid, address: string): Meter => ({
   id,
   moid: String(id),
   facility: '1',
@@ -142,7 +143,6 @@ export const makeMeter = (id: number, cityId: number, city: string, addressId: n
   gatewaySerial: '123',
   gatewayStatus: {id: 0, name: 'ok'},
   address: {
-    cityId,
     id: addressId,
     name: address,
   },

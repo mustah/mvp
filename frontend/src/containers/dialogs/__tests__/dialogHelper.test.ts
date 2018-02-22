@@ -31,7 +31,7 @@ describe('dialogSelectors', () => {
     const gateway: Gateway = {
       id: '12032010',
       facility: '005',
-      address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33', cityId: 'Perstorp'},
+      address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33'},
       city: {id: 'Perstorp', name: 'Perstorp'},
       flags: [],
       flagged: false,

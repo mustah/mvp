@@ -31,7 +31,7 @@ describe('paginatedDomainModelsReducer', () => {
         meters: {
           1: {
             id: 1,
-            address: {id: 1, name: 'Kungsgatan', cityId: 'got'},
+            address: {id: 1, name: 'Kungsgatan'},
             city: {id: 'got', name: 'Göteborg'},
             position: {latitude: 10, longitude: 10, confidence: 1},
             moid: 123,
@@ -50,7 +50,7 @@ describe('paginatedDomainModelsReducer', () => {
           },
           2: {
             id: 2,
-            address: {id: 1, name: 'Kungsgatan', cityId: 'got'},
+            address: {id: 1, name: 'Kungsgatan'},
             city: {id: 'got', name: 'Göteborg'},
             position: {latitude: 10, longitude: 10, confidence: 1},
             moid: 123,

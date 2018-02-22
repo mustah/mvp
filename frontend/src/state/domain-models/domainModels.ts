@@ -5,7 +5,7 @@ import {MeasurementState} from './measurement/measurementModels';
 import {Organisation, UserState} from './user/userModels';
 
 export interface Location {
-  address: Address;
+  address: IdNamed;
   city: IdNamed;
   position: GeoPosition;
 }

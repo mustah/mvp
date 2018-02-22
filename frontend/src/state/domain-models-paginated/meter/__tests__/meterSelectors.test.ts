@@ -108,9 +108,9 @@ describe('meterSelectors', () => {
         total: 4,
         result: [1, 2, 3],
         entities: {
-          1: makeMeter(1, 1, 'Helsingborg', 1, 'Storgatan 5'),
-          2: makeMeter(2, 1, 'Helsingborg', 2, 'Storgatan 6'),
-          3: makeMeter(3, 2, 'Luleå', 3, 'Ringvägen 7'),
+          1: makeMeter(1, 'city1', 'city1', 'address1', 'address1'),
+          2: makeMeter(2, 'city1', 'city1', 'address2', 'address2'),
+          3: makeMeter(3, 'city2', 'city2', 'address3', 'address3'),
         },
       };
       const actualTree: SelectionTreeData = getSelectionTree(metersState);
@@ -118,59 +118,59 @@ describe('meterSelectors', () => {
       const expected: SelectionTreeData = {
         entities: {
           addressClusters: {
-            'Helsingborg:S': {
+            'city1:A': {
               childNodes: {
-                ids: [1, 2],
+                ids: ['address1', 'address2'],
                 type: 'addresses',
               },
-              id: 'Helsingborg:S',
-              name: 'S...(2)',
-              parent: {id: 1, type: 'cities'},
+              id: 'city1:A',
+              name: 'A...(2)',
+              parent: {id: 'city1', type: 'cities'},
               selectable: false,
             },
-            'Luleå:R': {
-              childNodes: {ids: [3], type: 'addresses'},
-              id: 'Luleå:R',
-              name: 'R...(1)',
-              parent: {id: 2, type: 'cities'},
+            'city2:A': {
+              childNodes: {ids: ['address3'], type: 'addresses'},
+              id: 'city2:A',
+              name: 'A...(1)',
+              parent: {id: 'city2', type: 'cities'},
               selectable: false,
             },
           },
           addresses: {
-            1: {
+            address1: {
               childNodes: {ids: [1], type: 'meters'},
-              id: 1,
-              name: 'Storgatan 5',
-              parent: {id: 'Helsingborg:S', type: 'addressClusters'},
+              id: 'address1',
+              name: 'address1',
+              parent: {id: 'city1:A', type: 'addressClusters'},
               selectable: true,
             },
-            2: {
+            address2: {
               childNodes: {ids: [2], type: 'meters'},
-              id: 2,
-              name: 'Storgatan 6',
-              parent: {id: 'Helsingborg:S', type: 'addressClusters'},
+              id: 'address2',
+              name: 'address2',
+              parent: {id: 'city1:A', type: 'addressClusters'},
               selectable: true,
             },
-            3: {
+            address3: {
               childNodes: {ids: [3], type: 'meters'},
-              id: 3,
-              name: 'Ringvägen 7',
-              parent: {id: 'Luleå:R', type: 'addressClusters'},
+              id: 'address3',
+              name: 'address3',
+              parent: {id: 'city2:A', type: 'addressClusters'},
               selectable: true,
             },
           },
           cities: {
-            1: {
-              childNodes: {ids: ['Helsingborg:S'], type: 'addressClusters'},
-              id: 1,
-              name: 'Helsingborg',
+            city1: {
+              childNodes: {ids: ['city1:A'], type: 'addressClusters'},
+              id: 'city1',
+              name: 'city1',
               parent: {id: '', type: ''},
               selectable: true,
             },
-            2: {
-              childNodes: {ids: ['Luleå:R'], type: 'addressClusters'},
-              id: 2,
-              name: 'Luleå',
+            city2: {
+              childNodes: {ids: ['city2:A'], type: 'addressClusters'},
+              id: 'city2',
+              name: 'city2',
               parent: {id: '', type: ''},
               selectable: true,
             },
@@ -180,29 +180,29 @@ describe('meterSelectors', () => {
               childNodes: {ids: [], type: ''},
               id: 1,
               name: '1',
-              parent: {id: 1, type: 'addresses'},
+              parent: {id: 'address1', type: 'addresses'},
               selectable: true,
             },
             2: {
               childNodes: {ids: [], type: ''},
               id: 2,
               name: '1',
-              parent: {id: 2, type: 'addresses'},
+              parent: {id: 'address2', type: 'addresses'},
               selectable: true,
             },
             3: {
               childNodes: {ids: [], type: ''},
               id: 3,
               name: '1',
-              parent: {id: 3, type: 'addresses'},
+              parent: {id: 'address3', type: 'addresses'},
               selectable: true,
             },
           },
         },
         result: {
-          addressClusters: ['Helsingborg:S', 'Luleå:R'],
-          addresses: [1, 2, 3],
-          cities: [1, 2],
+          addressClusters: ['city1:A', 'city2:A'],
+          addresses: ['address1', 'address2', 'address3'],
+          cities: ['city1', 'city2'],
           meters: [1, 2, 3],
         },
       };

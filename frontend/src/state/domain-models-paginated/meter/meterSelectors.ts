@@ -33,19 +33,14 @@ export const getSelectionTree =
       const addresses = new Set<uuid>();
       const meters = new Set<uuid>();
 
-      meterIds.forEach((meterId: uuid) => {
-        const meterRelations = metersDict[meterId];
-        if (!meterRelations) {
-          // Since we cannot use types to assure that all results included
-          // in a normalized state, we must detect when a result is not in
-          // the included entities in runtime.
-          return;
-        }
-        const {city, address, facility} = meterRelations;
-        const clusterName = address.name[0];
+      meterIds.map((meterId: uuid) => metersDict[meterId]).filter((meter) => meter !== undefined).
+      forEach((meterEntity: Meter) => {
+
+        const {city, address, facility} = meterEntity;
+        const clusterName = address.name[0].toUpperCase();
         const clusterId = city.name + ':' + clusterName;
         const cluster: IdNamed = {id: clusterId, name: clusterName};
-        const meter: IdNamed = {id: meterId as string, name: facility as string};
+        const meter: IdNamed = {id: meterEntity.id as string, name: facility as string};
 
         selectionTreeItems(selectionTree, {
           category: ParameterName.cities,
