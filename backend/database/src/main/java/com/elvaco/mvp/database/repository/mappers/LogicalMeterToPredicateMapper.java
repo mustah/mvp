@@ -25,6 +25,8 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
 
     FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
+
+    FILTERABLE_PROPERTIES.put("manufacturer", Q.physicalMeters.any().manufacturer::eq);
   }
 
   private static Date toDate(String before) {
