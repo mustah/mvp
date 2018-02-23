@@ -17,7 +17,7 @@ public class MeterStatusLog {
   public final Date stop;
   public final long statusId;
 
-  public MeterStatusLog(long physicalMeterId, long statusId, String name, Date start) {
+  public MeterStatusLog(Long physicalMeterId, Long statusId, String name, Date start) {
     this(null, physicalMeterId, statusId, name, start, null);
   }
 

@@ -10,7 +10,7 @@ interface Props {
   close: OnClick;
 }
 
-export const DeleteUserAlert = ({isOpen, close, confirm}: Props) => {
+export const ConfirmDialog = ({isOpen, close, confirm}: Props) => {
   const confirmAndClose = () => {
     confirm();
     close();
@@ -27,7 +27,7 @@ export const DeleteUserAlert = ({isOpen, close, confirm}: Props) => {
       onRequestClose={close}
       open={isOpen}
     >
-      {`${firstUpperTranslated('are you sure you want to delete this user')}?`}
+      {`${firstUpperTranslated('are you sure you want to delete this item')}?`}
     </MaterialDialog>
   );
 };

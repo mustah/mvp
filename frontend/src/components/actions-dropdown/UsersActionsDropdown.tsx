@@ -17,5 +17,5 @@ export const UsersActionsDropdown = () => {
     ];
   };
 
-  return (<ActionsDropdown className="ActionsDropdown" renderPopoverContent={renderPopoverContent}/>);
+  return (<ActionsDropdown className="ActionsDropdown-Admin" renderPopoverContent={renderPopoverContent}/>);
 };

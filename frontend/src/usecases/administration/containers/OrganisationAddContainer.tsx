@@ -10,7 +10,7 @@ import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {MainTitle} from '../../../components/texts/Titles';
 import {PageComponent} from '../../../containers/PageComponent';
 import {translate} from '../../../services/translationService';
-import {addOrganisation} from '../../../state/domain-models/domainModelsActions';
+import {addOrganisation} from '../../../state/domain-models/organisation/organisationsApiActions';
 import {OnClick} from '../../../types/Types';
 
 interface DispatchToProps {

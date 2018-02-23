@@ -169,9 +169,9 @@ public class CsvDemoDataLoader implements CommandLineRunner {
   private static LocationBuilder parseKeyToLocation(String s) {
     String[] parts = s.split(DELIMITER);
     return new LocationBuilder()
-      .streetAddress(parts[0])
-      .city(parts[1])
-      .country(parts[2]);
+      .streetAddress(parts[0].trim())
+      .city(parts[1].trim())
+      .country(parts[2].trim());
   }
 
   private static <T> CsvMapper<T> csvMapper(Class<T> target) {

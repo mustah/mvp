@@ -1,8 +1,10 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
@@ -23,6 +25,8 @@ import static java.util.Arrays.asList;
 @Profile("demo")
 @Component
 public class LogDatabaseLoader implements CommandLineRunner {
+
+  private static final Random RANDOM = new Random(3);
 
   private final PhysicalMeters physicalMeters;
   private final MeterStatuses meterStatuses;
@@ -57,14 +61,27 @@ public class LogDatabaseLoader implements CommandLineRunner {
     List<MeterStatusLog> statuses = new ArrayList<>();
 
     meterStatuses.findAll().forEach(
-      meterStatus -> physicalMeters.findAll().forEach(
-        physicalMeter ->
-          statuses.add(
-            new MeterStatusLog(physicalMeter.id, meterStatus.id, meterStatus.name, new Date())
-          )
-      )
+      meterStatus -> physicalMeters.findAll()
+        .forEach(
+          physicalMeter ->
+            statuses.add(
+              new MeterStatusLog(
+                physicalMeter.id,
+                meterStatus.id,
+                meterStatus.name,
+                addDays()
+              )
+            )
+        )
     );
 
     meterStatusLogs.save(statuses);
+  }
+
+  private Date addDays() {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    calendar.add(Calendar.DATE, -RANDOM.nextInt(100));
+    return calendar.getTime();
   }
 }

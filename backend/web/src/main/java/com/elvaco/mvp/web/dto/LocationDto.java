@@ -4,7 +4,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 public class LocationDto {
-  public AddressDto address;
+  public IdNamedDto address;
   public IdNamedDto city;
   public GeoPositionDto position;
 }
