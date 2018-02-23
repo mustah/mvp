@@ -10,13 +10,12 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {Bold} from '../../../components/texts/Texts';
-import {currentDateRange, toApiParameters} from '../../../helpers/dateHelpers';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
+import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
-import {getMeasurements} from '../../../state/domain-models/measurement/measurementSelectors';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
@@ -72,27 +71,15 @@ class GraphComponent extends React.Component<Props> {
 
   onChangeTab = () => void(0);
 
-  fetchMeasurementDataByMeters = (meterIds: uuid[]): void => {
-    // TODO when proper ids are used in the left hand side selection tree, you can use:
-    // this.props.selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&');
-    const parameters: string[] = meterIds.map((id: uuid) => `meterId=${id.toString()}`);
-
-    toApiParameters(currentDateRange(this.props.period)).forEach((parameter: string) =>
-      parameters.push(parameter));
-
-    // TODO Spring uses 20 as a default page size, we need to think about how we request graph data
-    parameters.push('size=500');
-
-    this.props.fetchMeasurements(parameters.join('&'));
-  }
-
   componentDidMount() {
-    this.fetchMeasurementDataByMeters([1, 2, 3]);
+    // TODO: Need to add period to fetch request, create getEncodedUriParametersForMeasurements in selectionSelectors
+    const {selectedListItems, fetchMeasurements} = this.props;
+    fetchMeasurements(selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&'));
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (JSON.stringify(this.props.selectedListItems) !== JSON.stringify(nextProps.selectedListItems)) {
-      this.fetchMeasurementDataByMeters([1, 2, 3]);
+  componentWillReceiveProps({selectedListItems, fetchMeasurements}: Props) {
+    if (JSON.stringify(this.props.selectedListItems) !== JSON.stringify(selectedListItems)) {
+      fetchMeasurements(selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&'));
     }
   }
 
@@ -106,7 +93,7 @@ class GraphComponent extends React.Component<Props> {
 
     // TODO: [!Carl]
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
-    // it breaks. Setting width of ResponsiveContainer to 100% will case the menu to overlap when
+    // it breaks. Setting width of ResponsiveContainer to 100% will cause the menu to overlap when
     // toggled
     return (
       <div style={style}>
@@ -150,7 +137,7 @@ const mapStateToProps =
      searchParameters: {selection: {selected: {period}}},
    }: RootState): StateToProps =>
     ({
-      measurements: getMeasurements(measurements),
+      measurements: getEntitiesDomainModels(measurements),
       selectedListItems,
       period,
     });
