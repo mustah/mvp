@@ -1,12 +1,12 @@
 package com.elvaco.mvp.web.api;
 
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,12 +20,23 @@ public class ApiExceptionHandlerTest {
   }
 
   @Test
-  public void checkException() {
+  public void mappedException() {
+    Exception bandwidthException = new BandwidthExceededException("Oh no");
+
+    ResponseEntity<ErrorMessageDto> response =
+      apiExceptionHandler.handle(bandwidthException);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED);
+    assertThat(response.getBody().message).isEqualTo("Oh no");
+  }
+
+  @Test
+  public void internalError() {
     ResponseEntity<ErrorMessageDto> response =
       apiExceptionHandler.handle(new Exception("test"));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    assertThat(response.getBody().message).isEqualTo("test");
+    assertThat(response.getBody().message).isEqualTo(ApiExceptionHandler.INTERNAL_ERROR_MESSAGE);
   }
 
   @Test
@@ -37,5 +48,15 @@ public class ApiExceptionHandlerTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(response.getBody().message).isEqualTo(message);
+  }
+
+  @ResponseStatus(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
+  static class BandwidthExceededException extends Exception {
+
+    private static final long serialVersionUID = 1;
+
+    BandwidthExceededException(String message) {
+      super(message);
+    }
   }
 }
