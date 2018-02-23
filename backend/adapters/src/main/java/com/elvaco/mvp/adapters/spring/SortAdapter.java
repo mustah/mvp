@@ -6,9 +6,6 @@ import java.util.List;
 
 import com.elvaco.mvp.core.spi.data.Order;
 import com.elvaco.mvp.core.spi.data.Sort;
-import org.springframework.data.domain.Sort.Direction;
-
-import static java.util.stream.Collectors.toList;
 
 public class SortAdapter implements Sort {
   private final List<Order> orders;
@@ -32,29 +29,5 @@ public class SortAdapter implements Sort {
   @Override
   public List<Order> getOrders() {
     return orders;
-  }
-
-  public org.springframework.data.domain.Sort getAsSpringSort() {
-    if (orders.size() > 0) {
-      return new org.springframework.data.domain.Sort(
-        orders.stream().map(this::mapOrderToSprintOrder).collect(toList())
-      );
-    } else {
-      return null;
-    }
-  }
-
-  private org.springframework.data.domain.Sort.Order mapOrderToSprintOrder(Order order) {
-    org.springframework.data.domain.Sort.Order springOrder =
-      new org.springframework.data.domain.Sort.Order(
-        Direction.fromString(order.getDirection().name()),
-        order.getProperty()
-      );
-
-    if (order.isIgnoreCase()) {
-      return springOrder.ignoreCase();
-    } else {
-      return springOrder;
-    }
   }
 }
