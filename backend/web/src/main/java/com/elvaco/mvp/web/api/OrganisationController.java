@@ -68,10 +68,10 @@ public class OrganisationController {
 
   @DeleteMapping("{id}")
   public OrganisationDto deleteOrganisation(@PathVariable Long id) {
-    Organisation user = organisationUseCases.findById(id)
+    Organisation organisation = organisationUseCases.findById(id)
       .orElseThrow(() -> new OrganisationNotFound(id));
     // TODO delete should actually not remove the entity, just mark it as deleted.
-    organisationUseCases.delete(user);
-    return organisationMapper.toDto(user);
+    organisationUseCases.delete(organisation);
+    return organisationMapper.toDto(organisation);
   }
 }
