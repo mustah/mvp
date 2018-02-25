@@ -15,16 +15,21 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.Role;
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -43,6 +48,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
@@ -77,6 +83,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private MeterStatusJpaRepository meterStatusJpaRepository;
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+  @Autowired
+  private OrganisationJpaRepository organisationJpaRepository;
+
+  private OrganisationEntity anotherOrganisation;
 
   @Before
   public void setUp() {
@@ -87,10 +97,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       MeterDefinition.HOT_WATER_METER
     );
 
+    anotherOrganisation = organisationJpaRepository.save(new OrganisationEntity(
+      "Another Organisation",
+      "another-organisation"
+    ));
+
     for (int seed = 1; seed <= 55; seed++) {
       MeterDefinition meterDefinition = seed % 10 == 0
-                                        ? hotWaterMeterDefinition
-                                        : districtHeatingMeterDefinition;
+        ? hotWaterMeterDefinition
+        : districtHeatingMeterDefinition;
       saveLogicalMeter(seed, meterDefinition);
     }
 
@@ -116,6 +131,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     meterStatusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterRepository.deleteAll();
+    organisationJpaRepository.delete(anotherOrganisation.id);
   }
 
   @Test
@@ -272,6 +288,78 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findsOwnOrganisationsMetersByFilter() {
+    logicalMeterRepository.save(new LogicalMeter(
+      "my-meter",
+      ELVACO.id,
+      hotWaterMeterDefinition
+    ));
+
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage("/meters?organisation=" + ELVACO.id, LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isGreaterThanOrEqualTo(1L);
+  }
+
+  @Test
+  public void cantAccessOtherOrganisationsMetersByFilter() {
+
+    createUserIfNotPresent(new User(
+      "Me",
+      "me@myorg.com",
+      "secr3t",
+      new Organisation(anotherOrganisation.id, anotherOrganisation.name, anotherOrganisation.code),
+      singletonList(
+        Role.USER)
+    ));
+
+    logicalMeterRepository.save(new LogicalMeter(
+      "not-my-meter",
+      ELVACO.id,
+      hotWaterMeterDefinition
+    ));
+
+    Page<LogicalMeterDto> response = restClient()
+      .loginWith("me@myorg.com", "secr3t")
+      .tokenAuthorization()
+      .getPage("/meters?organisation=" + ELVACO.id, LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(0L);
+  }
+
+  @Test
+  public void doesntFindOtherOrganisationsMeters() {
+
+    createUserIfNotPresent(new User(
+      "Me",
+      "me@myorg.com",
+      "secr3t",
+      new Organisation(anotherOrganisation.id, anotherOrganisation.name, anotherOrganisation.code),
+      singletonList(
+        Role.USER)
+    ));
+    LogicalMeter myMeter = logicalMeterRepository.save(new LogicalMeter(
+      "my-own-meter",
+      anotherOrganisation.id,
+      hotWaterMeterDefinition
+    ));
+    logicalMeterRepository.save(new LogicalMeter(
+      "not-my-meter",
+      ELVACO.id,
+      hotWaterMeterDefinition
+    ));
+
+    Page<LogicalMeterDto> response = restClient()
+      .loginWith("me@myorg.com", "secr3t")
+      .tokenAuthorization()
+      .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(1L);
+    assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
+  }
+
+
+  @Test
   public void findAllMapDataForLogicalMeters() {
     ResponseEntity<List> response = asElvacoUser()
       .get("/meters/map-data", List.class);
@@ -412,7 +500,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeters.forEach(logicalMeter -> createPhysicalMeter(
       logicalMeter.id,
       logicalMeter.id,
-      logicalMeter.externalId)
+      logicalMeter.externalId
+                          )
     );
   }
 
