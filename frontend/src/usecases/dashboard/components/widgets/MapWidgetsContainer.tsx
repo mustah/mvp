@@ -38,7 +38,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   const markersFailing: {[key: string]: MapMarker} = {
     0: {
       status: {id: 3, name: 'Fel'},
-      address: {id: '', cityId: '', name: ''},
+      address: {id: '', name: ''},
       city: {id: '', name: ''},
       position: {
         confidence: 1,
@@ -48,7 +48,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
     },
     1: {
       status: {id: 3, name: 'Fel'},
-      address: {id: '', cityId: '', name: ''},
+      address: {id: '', name: ''},
       city: {id: '', name: ''},
       position: {
         confidence: 1,

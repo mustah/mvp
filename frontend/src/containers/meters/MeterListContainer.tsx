@@ -27,7 +27,7 @@ import {
 import {Flag} from '../../state/domain-models/flag/flagModels';
 import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
-import {OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
+import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../state/ui/pagination/paginationSelectors';
 import {ErrorResponse, OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
@@ -39,6 +39,7 @@ interface StateToProps {
   encodedUriParametersForAllMeters: string;
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
+  entityType: EntityTypes;
 }
 
 interface DispatchToProps {
@@ -79,6 +80,7 @@ class MeterList extends React.Component<Props> {
       changePaginationPage,
       componentId,
       error,
+      entityType,
     } = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
@@ -95,7 +97,7 @@ class MeterList extends React.Component<Props> {
     const renderMedium = ({medium}: Meter) => medium;
 
     const changePage = (page: number) => changePaginationPage({
-      entityType: 'allMeters',
+      entityType,
       componentId,
       page,
     });
@@ -161,7 +163,8 @@ const mapStateToProps = (
   {componentId}: OwnProps,
 ): StateToProps => {
 
-  const paginationData: Pagination = getPagination({componentId, entityType: 'allMeters', pagination});
+  const entityType: EntityTypes = 'allMeters';
+  const paginationData: Pagination = getPagination({componentId, entityType, pagination});
 
   return ({
     entities: getEntitiesDomainModels<Meter>(allMeters),
@@ -173,6 +176,7 @@ const mapStateToProps = (
     isFetching: allMeters.isFetching,
     pagination: paginationData,
     error: getError<Meter>(allMeters),
+    entityType,
   });
 };
 

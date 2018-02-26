@@ -62,5 +62,4 @@ const mapStateToProps = ({routing}: RootState): StateToProps => {
   };
 };
 
-export const MvpMainMenuContainer =
-  connect<StateToProps>(mapStateToProps)(MvpMainMenu);
+export const MvpMainMenuContainer = connect<StateToProps>(mapStateToProps)(MvpMainMenu);

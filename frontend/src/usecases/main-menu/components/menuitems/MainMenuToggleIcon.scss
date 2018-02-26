@@ -2,10 +2,10 @@
 
 .MainMenuToggleIcon {
   top: 400px;
-  left: 59px;
+  left: $main-menu-width - 5;
   position: absolute;
 
   &.isSideMenuOpen {
-    left: 314px;
+    left: $main-menu-width + 250;
   }
 }
