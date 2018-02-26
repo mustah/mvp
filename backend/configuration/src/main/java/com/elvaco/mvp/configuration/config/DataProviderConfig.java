@@ -29,6 +29,7 @@ import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LocationMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
@@ -126,6 +127,7 @@ class DataProviderConfig {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       new LogicalMeterToPredicateMapper(),
+      new LogicalMeterSortingMapper(),
       newLogicalMeterMapper()
     );
   }
