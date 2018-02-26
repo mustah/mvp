@@ -15,10 +15,8 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {ClearErrorPaginated} from '../../state/domain-models-paginated/paginatedDomainModels';
-import {clearErrorMeters} from '../../state/domain-models-paginated/paginatedDomainModelsActions';
-import {ObjectsById, RestGet} from '../../state/domain-models/domainModels';
-import {fetchAllMeters} from '../../state/domain-models/domainModelsActions';
+import {ClearError, ObjectsById, RestGet} from '../../state/domain-models/domainModels';
+import {clearErrorAllMeters, fetchAllMeters} from '../../state/domain-models/domainModelsActions';
 import {
   getEntitiesDomainModels,
   getError,
@@ -46,7 +44,7 @@ interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
   fetchAllMeters: RestGet;
   changePaginationPage: OnChangePage;
-  clearError: ClearErrorPaginated;
+  clearError: ClearError;
 }
 
 interface OwnProps {
@@ -66,9 +64,7 @@ class MeterList extends React.Component<Props> {
     fetchAllMeters(encodedUriParametersForAllMeters);
   }
 
-  clearError = () => {
-    this.props.clearError({page: this.props.pagination.page});
-  }
+  clearError = () => this.props.clearError();
 
   render() {
     const {
@@ -184,7 +180,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectEntryAdd,
   fetchAllMeters,
   changePaginationPage,
-  clearError: clearErrorMeters,
+  clearError: clearErrorAllMeters,
 }, dispatch);
 
 export const MeterListContainer =
