@@ -2,6 +2,7 @@ import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {IdNamed} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
+import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {clearErrorGateways, requestMethod} from '../domainModelsActions';
 import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
@@ -12,6 +13,32 @@ import {Role, User, UserState} from '../user/userModels';
 describe('domainModelsReducer', () => {
 
   const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
+
+  describe('/selections', () => {
+    it('does not clear on change in selections', () => {
+      const emptyState: Partial<DomainModelsState> = {};
+      const initialState = domainModels(emptyState as DomainModelsState, {type: 'undefined'});
+      const populatedCitiesState: Partial<DomainModelsState> = {
+        ...initialState,
+        cities: {
+          isFetching: false,
+          isSuccessfullyFetched: true,
+          total: 1,
+          result: [1],
+          entities: {1: {id: 1, name: '1'}},
+        },
+      };
+
+      expect(domainModels(populatedCitiesState as DomainModelsState, {
+        type: SET_SELECTION, payload: {
+          id: 1,
+          parameter: ParameterName.cities,
+        },
+      })).toEqual({
+        ...populatedCitiesState,
+      });
+    });
+  });
 
   describe('addresses', () => {
 
@@ -209,4 +236,5 @@ describe('domainModelsReducer', () => {
     });
   });
 
-});
+})
+;
