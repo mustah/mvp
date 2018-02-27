@@ -1,5 +1,7 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
+import javax.annotation.Nullable;
+
 import lombok.ToString;
 
 @ToString
@@ -13,6 +15,11 @@ public class MeterData {
   public final String medium;
   public final String meterManufacturer;
   public final String phone;
+  @Nullable
+  public final String ip;
+  @Nullable
+  public final String port;
+
   public final String gatewayId;
   public final String gatewayProductModel;
   public final String gatewayStatus;
@@ -27,6 +34,8 @@ public class MeterData {
     String gatewayId,
     String gatewayProductModel,
     String phone,
+    String ip,
+    String port,
     String meterStatus,
     String gatewayStatus
   ) {
@@ -39,8 +48,14 @@ public class MeterData {
     this.gatewayId = gatewayId;
     this.gatewayProductModel = gatewayProductModel;
     this.phone = phone;
+    this.ip = toNull(ip);
+    this.port = toNull(port);
     this.meterStatus = meterStatus;
     this.gatewayStatus = gatewayStatus;
   }
 
+  @Nullable
+  private static String toNull(String value) {
+    return value.equals("NULL") ? null : value;
+  }
 }
