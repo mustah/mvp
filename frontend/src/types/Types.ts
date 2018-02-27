@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {PayloadAction} from 'react-redux-typescript';
-import {isNullOrUndefined} from 'util';
 import {Maybe} from '../helpers/Maybe';
 
 export type uuid = string | number;
