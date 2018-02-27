@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.user;
 
-import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -10,17 +9,16 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
+import com.elvaco.mvp.database.entity.EntityType;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 
-@EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "role")
-public class RoleEntity implements Serializable {
+public class RoleEntity extends EntityType<String> {
 
   @Id
   public String role;
@@ -44,6 +42,11 @@ public class RoleEntity implements Serializable {
 
   public static RoleEntity superAdmin() {
     return new RoleEntity(SUPER_ADMIN.role);
+  }
+
+  @Override
+  public String getId() {
+    return role;
   }
 
   @Override

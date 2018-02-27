@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -13,15 +12,15 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import lombok.EqualsAndHashCode;
+import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
 
 @ToString
-@EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter_status_log")
-public class PhysicalMeterStatusLogEntity implements Serializable {
+public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
+
   private static final long serialVersionUID = -365050103321687201L;
 
   @Id
@@ -38,4 +37,9 @@ public class PhysicalMeterStatusLogEntity implements Serializable {
 
   @ManyToOne
   public MeterStatusEntity status;
+
+  @Override
+  public Long getId() {
+    return id;
+  }
 }

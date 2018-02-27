@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.user;
 
-import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -16,16 +15,15 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
+import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Email;
 
 @ToString
-@EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
-public class UserEntity implements Serializable {
+public class UserEntity extends EntityType<Long> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,5 +67,10 @@ public class UserEntity implements Serializable {
     this.password = password;
     this.organisation = organisation;
     this.roles = roles;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

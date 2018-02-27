@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Access;
@@ -14,16 +13,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.EqualsAndHashCode;
 
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
-@EqualsAndHashCode(exclude = {"measurements"})
-public class PhysicalMeterEntity implements Serializable {
+public class PhysicalMeterEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = 1100904291210178685L;
   @Id
@@ -75,5 +73,10 @@ public class PhysicalMeterEntity implements Serializable {
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

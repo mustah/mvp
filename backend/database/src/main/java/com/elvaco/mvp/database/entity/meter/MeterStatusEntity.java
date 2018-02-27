@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -10,10 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.EntityType;
+
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter_status")
-public class MeterStatusEntity implements Serializable {
+public class MeterStatusEntity extends EntityType<Long> {
+
   private static final long serialVersionUID = -124418354565237L;
 
   @Id
@@ -27,5 +29,10 @@ public class MeterStatusEntity implements Serializable {
   public MeterStatusEntity(@Nullable Long id, String name) {
     this.id = id;
     this.name = name;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

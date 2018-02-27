@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -9,14 +8,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.EntityType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "location")
 @Access(AccessType.FIELD)
-@EqualsAndHashCode(exclude = "logicalMeter")
-public class LocationEntity implements Serializable {
+public class LocationEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -6244183552379157552L;
 
@@ -35,5 +33,10 @@ public class LocationEntity implements Serializable {
 
   public boolean hasCoordinates() {
     return latitude != null && longitude != null && confidence != null;
+  }
+
+  @Override
+  public Long getId() {
+    return logicalMeter.getId();
   }
 }
