@@ -20,7 +20,8 @@ public class CustomSortDeserializer extends JsonDeserializer<Sort> {
     Order[] orders = new Order[node.size()];
     int i = 0;
     for (JsonNode obj : node) {
-      orders[i] = new Order(Direction.valueOf(obj.get("direction").asText()), obj.get("property").asText());
+      orders[i] = new Order(
+        Direction.valueOf(obj.get("direction").asText()), obj.get("property").asText());
       i++;
     }
     Sort sort = new Sort(orders);

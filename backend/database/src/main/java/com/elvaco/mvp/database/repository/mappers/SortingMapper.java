@@ -11,7 +11,9 @@ import static java.util.stream.Collectors.toList;
 public abstract class SortingMapper {
   abstract Map<String, String> getSortingMap();
 
-  public org.springframework.data.domain.Sort getAsSpringSort(com.elvaco.mvp.core.spi.data.Sort sort) {
+  public org.springframework.data.domain.Sort getAsSpringSort(
+    com.elvaco.mvp.core.spi.data.Sort sort
+  ) {
     if (sort.getOrders().size() > 0) {
       return new org.springframework.data.domain.Sort(
         sort.getOrders().stream().map(this::mapOrderToSprintOrder).collect(toList())

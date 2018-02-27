@@ -5,7 +5,7 @@ import com.elvaco.mvp.core.spi.data.Order;
 public class OrderAdapter implements Order {
   private final Direction direction;
   private final String property;
-  private boolean ignoreCase;
+  private final boolean ignoreCase;
 
   public OrderAdapter(String direction, String property) {
     //TODO handle invalid values

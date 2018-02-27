@@ -10,6 +10,7 @@ public class LogicalMeterSortingMapper extends SortingMapper {
   private static final Map<String, String> SORTABLE_PROPERTIES = new HashMap<>();
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
+
   static {
 
     SORTABLE_PROPERTIES.put("id",

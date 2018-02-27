@@ -120,7 +120,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return sort;
   }
 
-  @JsonDeserialize(using=CustomSortDeserializer.class)
+  @JsonDeserialize(using = CustomSortDeserializer.class)
   public void setSort(Sort sort) {
     this.sort = sort;
   }
