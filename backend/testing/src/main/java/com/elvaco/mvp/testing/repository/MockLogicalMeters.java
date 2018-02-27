@@ -15,6 +15,10 @@ import static java.util.stream.Collectors.toList;
 
 public class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
 
+  public MockLogicalMeters() {
+    super();
+  }
+
   public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
     super(logicalMeters);
   }

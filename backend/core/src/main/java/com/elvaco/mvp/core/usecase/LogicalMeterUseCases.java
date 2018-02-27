@@ -33,12 +33,12 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  public Optional<LogicalMeter> findById(Long id) {
-    return logicalMeters.findById(id);
-  }
-
   public List<LogicalMeter> findAll() {
-    return logicalMeters.findAll();
+    if (!currentUser.isSuperAdmin()) {
+      return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
+    } else {
+      return logicalMeters.findAll();
+    }
   }
 
   public Page<LogicalMeter> findAll(
@@ -58,12 +58,16 @@ public class LogicalMeterUseCases {
     ));
   }
 
-  public LogicalMeter save(LogicalMeter logicalMeter) {
-    return logicalMeters.save(logicalMeter);
+  public Optional<LogicalMeter> save(LogicalMeter logicalMeter) {
+    if (hasTenantAccess(logicalMeter)) {
+      return Optional.ofNullable(logicalMeters.save(logicalMeter));
+    }
+    return Optional.empty();
   }
 
   public List<Measurement> measurements(LogicalMeter logicalMeter) {
-    if (logicalMeter.physicalMeters.isEmpty() || logicalMeter.getQuantities().isEmpty()) {
+    if (logicalMeter.physicalMeters.isEmpty() || logicalMeter.getQuantities().isEmpty()
+      || !hasTenantAccess(logicalMeter)) {
       return Collections.emptyList();
     }
 
@@ -83,5 +87,18 @@ public class LogicalMeterUseCases {
         .collect(toList())
     );
     return measurements.findAll(filter);
+  }
+
+  public Optional<LogicalMeter> findById(Long id) {
+    if (currentUser.isSuperAdmin()) {
+      return logicalMeters.findById(id);
+    } else {
+      return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
+    }
+  }
+
+  private boolean hasTenantAccess(LogicalMeter logicalMeter) {
+    return currentUser.isSuperAdmin()
+      || logicalMeter.organisationId.equals(currentUser.getOrganisationId());
   }
 }

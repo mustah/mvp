@@ -43,6 +43,13 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id) {
+    return logicalMeterJpaRepository
+      .findByOrganisationIdAndId(organisationId, id)
+      .map(logicalMeterMapper::toDomainModel);
+  }
+
+  @Override
   public List<LogicalMeter> findAll() {
     return logicalMeterJpaRepository.findAll()
       .stream()
@@ -92,5 +99,13 @@ public class LogicalMeterRepository implements LogicalMeters {
     return logicalMeterJpaRepository
       .findByOrganisationIdAndExternalId(organisationId, externalId)
       .map(logicalMeterMapper::toDomainModel);
+  }
+
+  @Override
+  public List<LogicalMeter> findByOrganisationId(Long organisationId) {
+    return logicalMeterJpaRepository.findByOrganisationId(organisationId)
+      .stream()
+      .map(logicalMeterMapper::toDomainModel)
+      .collect(toList());
   }
 }
