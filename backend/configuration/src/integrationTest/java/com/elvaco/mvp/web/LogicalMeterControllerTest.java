@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -39,6 +40,7 @@ import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -106,7 +108,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       MeterDefinition meterDefinition = seed % 10 == 0
         ? hotWaterMeterDefinition
         : districtHeatingMeterDefinition;
-      saveLogicalMeter(seed, meterDefinition);
+
+      String city = seed % 2 == 0 ? "Varberg" : "Östersund";
+      String streetAddress = seed % 2 == 0 ? "Drottninggatan " + seed : "Kungsgatan " + seed;
+      saveLogicalMeter(seed, meterDefinition, streetAddress, city);
     }
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
@@ -172,6 +177,58 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(15);
     assertThat(response.getTotalPages()).isEqualTo(3);
+  }
+
+  @Ignore
+  @Test
+  public void findAllPagedAndSorted() {
+    // Address asc
+    testSorting("/meters?size=20&page=0&sort=address,asc",
+      "Unexpected address, sorting failed",
+      (LogicalMeterDto meter) -> meter.address.name,
+      "Drottninggatan 2");
+
+    // Address desc
+    testSorting("/meters?size=20&page=0&sort=address,desc",
+      "Unexpected address, sorting failed",
+      (LogicalMeterDto meter) -> meter.address.name,
+      "Kungsgatan 55");
+
+    // Manufacturer asc
+    testSorting("/meters?size=20&page=0&sort=manufacturer,asc",
+      "Unexpected manufacturer, sorting failed",
+      (LogicalMeterDto meter) -> meter.manufacturer,
+      "ELV1");
+
+    // Manufacturer desc
+    testSorting("/meters?size=20&page=0&sort=manufacturer,desc",
+      "Unexpected manufacturer, sorting failed",
+      (LogicalMeterDto meter) -> meter.manufacturer,
+      "ELV55");
+
+    testSorting("/meters?size=20&page=0&sort=city,asc",
+      "Unexpected city, sorting failed",
+      (LogicalMeterDto meter) -> meter.city.name,
+      "Varberg");
+
+    testSorting("/meters?size=20&page=0&sort=city,desc",
+      "Unexpected city, sorting failed",
+      (LogicalMeterDto meter) -> meter.city.name,
+      "Östersund");
+  }
+
+  private void testSorting(String url,
+                           String errorMessage,
+                           Function<LogicalMeterDto, String> actual,
+                           String expected) {
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage(url, LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(55);
+
+    assertThat(actual.apply(response.getContent().get(0)))
+      .as(errorMessage)
+      .isEqualTo(expected);
   }
 
   @Test
@@ -413,7 +470,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private LogicalMeter saveLogicalMeter(
     int seed,
-    MeterDefinition meterDefinition
+    MeterDefinition meterDefinition,
+    String streetAddress,
+    String city
   ) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
@@ -425,7 +484,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       null,
       "external-id-" + seed,
       ELVACO.id,
-      new LocationBuilder().coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
+      new LocationBuilder()
+        .city(city)
+        .streetAddress(streetAddress)
+        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
       created,
       emptyList(),
       meterDefinition,
@@ -512,7 +574,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",
-        "ELV",
+        "ELV" + seed,
         logicalMeterId,
         emptyList()
       )

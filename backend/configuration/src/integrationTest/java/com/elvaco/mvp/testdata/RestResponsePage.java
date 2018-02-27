@@ -3,6 +3,7 @@ package com.elvaco.mvp.testdata;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -119,6 +120,7 @@ public class RestResponsePage<T> extends PageImpl<T> {
     return sort;
   }
 
+  @JsonDeserialize(using = CustomSortDeserializer.class)
   public void setSort(Sort sort) {
     this.sort = sort;
   }

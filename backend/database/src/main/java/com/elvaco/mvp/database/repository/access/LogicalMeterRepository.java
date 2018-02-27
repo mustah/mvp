@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
+import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
 import org.springframework.data.domain.PageRequest;
 
@@ -22,14 +23,17 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final LogicalMeterMapper logicalMeterMapper;
   private final LogicalMeterToPredicateMapper filterMapper;
+  private final LogicalMeterSortingMapper sortingMapper;
 
   public LogicalMeterRepository(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     LogicalMeterToPredicateMapper filterMapper,
+    LogicalMeterSortingMapper sortingMapper,
     LogicalMeterMapper logicalMeterMapper
   ) {
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.filterMapper = filterMapper;
+    this.sortingMapper = sortingMapper;
     this.logicalMeterMapper = logicalMeterMapper;
   }
 
@@ -59,7 +63,11 @@ public class LogicalMeterRepository implements LogicalMeters {
     return new PageAdapter<>(
       logicalMeterJpaRepository.findAll(
         filterMapper.map(filterParams),
-        new PageRequest(pageable.getPageNumber(), pageable.getPageSize())
+        new PageRequest(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          sortingMapper.getAsSpringSort(pageable.getSort())
+        )
       ).map(logicalMeterMapper::toDomainModel)
     );
   }
