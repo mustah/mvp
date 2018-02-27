@@ -5,6 +5,7 @@ import com.elvaco.mvp.testing.repository.MockSettings;
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SettingUseCasesTest {
@@ -33,7 +34,7 @@ public class SettingUseCasesTest {
   @Test
   public void save() {
     int settingListPreAddSize = settingUseCases.findAll().size();
-    settingUseCases.save(new Setting("foo", "bar"));
+    settingUseCases.save(new Setting(randomUUID(), "foo", "bar"));
     assertThat(settingUseCases.findAll()).hasSize(settingListPreAddSize + 1);
   }
 }

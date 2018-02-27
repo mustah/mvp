@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.core.spi.repository.Settings;
 
+import static java.util.UUID.randomUUID;
+
 public class SettingUseCases {
 
   private static final String DEMO_DATA_LOADED = "Demo data loaded";
@@ -48,7 +50,7 @@ public class SettingUseCases {
   }
 
   private void setSettingTrue(String setting) {
-    save(new Setting(setting, TRUE));
+    save(new Setting(randomUUID(), setting, TRUE));
   }
 
   private Optional<String> valueOf(String name) {
