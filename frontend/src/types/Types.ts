@@ -64,14 +64,11 @@ export const enum UseCases {
 }
 
 const status = {
-  //TODO Status is dependent on the database id of MeterStatus
-  0: Status.ok,
-  1: Status.info,
-  2: Status.warning,
-  3: Status.critical,
-  4: Status.unknown,
-  10: Status.ok,
-  11: Status.warning,
+  ok: Status.ok,
+  info: Status.info,
+  warning: Status.warning,
+  critical: Status.critical,
+  unknown: Status.unknown,
 };
 
 export const statusFor = (statusCode: uuid): Status => {

@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 public class MeterStatusLogDto {
   public Long id;
-  public Long statusId;
+  public String statusId;
   public String name;
   public String start;
   public String stop;
