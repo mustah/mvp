@@ -1,30 +1,19 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {
-  createEmptyAction,
-  createPayloadAction,
-  EmptyAction,
-  PayloadAction,
-} from 'react-redux-typescript';
+import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
-import {restClient} from '../../services/restClient';
+import {InvalidToken, restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
-import {authSetUser} from '../../usecases/auth/authActions';
+import {authSetUser, logout} from '../../usecases/auth/authActions';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {allMetersSchema} from '../domain-models-paginated/meter/meterSchema';
 import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
 import {showFailMessage, showSuccessMessage} from '../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
 import {limit} from '../ui/pagination/paginationReducer';
-import {
-  DomainModelsState,
-  EndPoints,
-  HttpMethod,
-  Normalized,
-  NormalizedState,
-} from './domainModels';
+import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState} from './domainModels';
 import {selectionsSchema} from './domainModelsSchemas';
 import {Gateway} from './gateway/gatewayModels';
 import {gatewaySchema} from './gateway/gatewaySchema';
@@ -103,16 +92,19 @@ const asyncRequest = async <REQ, DAT>(
       afterSuccess(formattedData, dispatch);
     }
   } catch (error) {
-    const {response} = error;
-    const data: ErrorResponse = response && response.data ||
-      {message: firstUpperTranslated('an unexpected error occurred')};
-    dispatch(failure(data));
-    if (afterFailure) {
-      afterFailure(data, dispatch);
+    if (error instanceof InvalidToken) {
+      await dispatch(logout(error));
+    } else {
+      const {response} = error;
+      const data: ErrorResponse = response && response.data ||
+        {message: firstUpperTranslated('an unexpected error occurred')};
+      dispatch(failure(data));
+      if (afterFailure) {
+        afterFailure(data, dispatch);
+      }
     }
   }
 };
-
 const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>): boolean =>
   !isSuccessfullyFetched && !isFetching && !error;
 

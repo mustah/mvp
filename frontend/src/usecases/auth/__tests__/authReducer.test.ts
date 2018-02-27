@@ -57,7 +57,7 @@ describe('authReducer', () => {
   });
 
   it('successfully logs out a user', () => {
-    expect(auth({...loggedInState, isLoading: true}, logoutUser())).toEqual({
+    expect(auth({...loggedInState, isLoading: true}, logoutUser(undefined))).toEqual({
       ...initialAuthState,
     });
   });

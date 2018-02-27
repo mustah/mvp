@@ -11,7 +11,7 @@ export interface User {
   name: string;
   email: string;
   organisation: Organisation;
-  password?: string;
+  password?: string; // TODO: should this be here? Will that be of use in the future, ex: changing password?
   roles: Role[];
 }
 

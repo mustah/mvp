@@ -1,6 +1,10 @@
 import * as React from 'react';
 import {Redirect, Route, Switch, withRouter} from 'react-router';
-import {adminIsAuthenticated, userIsAuthenticated, userIsNotAuthenticated} from '../services/authService';
+import {
+  adminIsAuthenticated,
+  userIsAuthenticated,
+  userIsNotAuthenticated,
+} from '../services/authService';
 import {LoginContainer} from '../usecases/auth/containers/LoginContainer';
 import {AdminAppContainer} from './admin/AdminApp';
 import './App.scss';
@@ -16,6 +20,7 @@ const AdminPage = adminIsAuthenticated(AdminAppContainer);
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
+
 class AppComponent extends React.Component {
 
   render() {

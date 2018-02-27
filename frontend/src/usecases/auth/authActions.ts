@@ -1,11 +1,11 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {routes} from '../../app/routes';
+import {GetState} from '../../reducers/rootReducer';
 import {makeToken} from '../../services/authService';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {EndPoints} from '../../state/domain-models/domainModels';
 import {User} from '../../state/domain-models/user/userModels';
-import {uuid} from '../../types/Types';
 import {Authorized, Unauthorized} from './authModels';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
@@ -20,7 +20,7 @@ export const loginRequest = createEmptyAction(LOGIN_REQUEST);
 export const loginSuccess = createPayloadAction<string, Authorized>(LOGIN_SUCCESS);
 export const loginFailure = createPayloadAction<string, Unauthorized>(LOGIN_FAILURE);
 
-export const logoutUser = createEmptyAction(LOGOUT_USER);
+export const logoutUser = createPayloadAction<string, Unauthorized | undefined>(LOGOUT_USER);
 
 export const authSetUser = createPayloadAction<string, User>(AUTH_SET_USER_INFO);
 
@@ -39,14 +39,18 @@ export const login = (username: string, password: string) => {
   };
 };
 
-export const logout = (organisationId: uuid) => {
-  return async (dispatch) => {
+export const logout = (error?: Unauthorized) => {
+  return async (dispatch, getState: GetState) => {
     try {
       await restClient.get(EndPoints.logout);
     } catch (ignore) {
       // tslint:disable
+    } finally {
+      const {auth} = getState();
+      if (auth && auth.user && auth.isAuthenticated) {
+        dispatch(logoutUser(error));
+        dispatch(routerActions.push(`${routes.login}/${auth.user.organisation.code}`));
+      }
     }
-    dispatch(logoutUser());
-    dispatch(routerActions.push(`${routes.login}/${organisationId}`));
   };
 };

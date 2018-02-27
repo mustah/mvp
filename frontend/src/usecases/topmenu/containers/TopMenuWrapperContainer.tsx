@@ -8,8 +8,9 @@ import {Row, RowCenter} from '../../../components/layouts/row/Row';
 import {Logo} from '../../../components/logo/Logo';
 import {RootState} from '../../../reducers/rootReducer';
 import {User} from '../../../state/domain-models/user/userModels';
-import {ClassNamed, uuid} from '../../../types/Types';
+import {ClassNamed} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
+import {OnLogout} from '../../auth/authModels';
 import {getUser} from '../../auth/authSelectors';
 import {Profile} from '../components/profile/Profile';
 import './TopMenuWrapperContainer.scss';
@@ -20,7 +21,7 @@ interface StateToProps extends ClassNamed {
 }
 
 interface DispatchToProps {
-  logout: (organisationId: uuid) => void;
+  logout: OnLogout;
 }
 
 interface OwnProps {
