@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {PayloadAction} from 'react-redux-typescript';
+import {isNullOrUndefined} from 'util';
 
 export type uuid = string | number;
 
@@ -63,6 +64,7 @@ export const enum UseCases {
 }
 
 const status = {
+  //TODO Status is dependent on the database id of MeterStatus
   0: Status.ok,
   1: Status.info,
   2: Status.warning,
@@ -72,4 +74,6 @@ const status = {
   11: Status.warning,
 };
 
-export const statusFor = (statusCode: uuid): Status | null => status[statusCode];
+export const statusFor = (statusCode: uuid): Status => {
+  return isNullOrUndefined(status[statusCode]) ? Status.unknown : status[statusCode];
+};
