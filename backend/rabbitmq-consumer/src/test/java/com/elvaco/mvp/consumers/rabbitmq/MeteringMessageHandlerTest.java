@@ -15,6 +15,9 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.testing.repository.MockLogicalMeters;
+import com.elvaco.mvp.testing.repository.MockOrganisations;
+import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import org.junit.Before;
 import org.junit.Test;
 

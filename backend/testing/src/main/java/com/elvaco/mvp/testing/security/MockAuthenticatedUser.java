@@ -1,16 +1,17 @@
-package com.elvaco.mvp.core.security;
+package com.elvaco.mvp.testing.security;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 
-class MockAuthenticatedUser implements AuthenticatedUser {
+public class MockAuthenticatedUser implements AuthenticatedUser {
 
   private static final long serialVersionUID = -4347874617014900239L;
 
   private final transient User user;
   private final String token;
 
-  MockAuthenticatedUser(User user, String token) {
+  public MockAuthenticatedUser(User user, String token) {
     this.user = user;
     this.token = token;
   }
@@ -31,8 +32,8 @@ class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
-  public Organisation getOrganisation() {
-    return user.organisation;
+  public Long getOrganisationId() {
+    return user.organisation.id;
   }
 
   @Override

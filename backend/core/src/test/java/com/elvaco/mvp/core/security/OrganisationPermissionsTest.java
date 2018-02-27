@@ -2,6 +2,8 @@ package com.elvaco.mvp.core.security;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import com.elvaco.mvp.testing.repository.MockUsers;
 import org.junit.Before;
 import org.junit.Test;
 

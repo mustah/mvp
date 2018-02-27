@@ -1,6 +1,7 @@
 include 'frontend'
 include 'backend'
 include 'backend:core'
+include 'backend:testing'
 include 'backend:database'
 include 'backend:configuration'
 include 'backend:web'

@@ -1,11 +1,9 @@
-package com.elvaco.mvp.core.security;
+package com.elvaco.mvp.testing.repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -13,37 +11,52 @@ import com.elvaco.mvp.core.spi.repository.Users;
 
 import static java.util.stream.Collectors.toList;
 
-class MockUsers implements Users {
+public class MockUsers extends MockRepository<User> implements Users {
 
-  private final List<User> users;
+  public MockUsers(List<User> users) {
+    super(users);
+  }
 
-  MockUsers(List<User> users) {
-    this.users = new ArrayList<>(users);
+  @Override
+  protected Optional<Long> getId(User entity) {
+    return Optional.ofNullable(entity.id);
+  }
+
+  @Override
+  protected User copyWithId(Long id, User entity) {
+    return new User(
+      id,
+      entity.name,
+      entity.email,
+      entity.password,
+      entity.organisation,
+      entity.roles
+    );
   }
 
   @Override
   public List<User> findAll() {
-    return users;
+    return allMocks();
   }
 
   @Override
   public Optional<User> findByEmail(String email) {
-    return users.stream().filter(u -> u.email.equalsIgnoreCase(email)).findFirst();
+    return filter(u -> u.email.equalsIgnoreCase(email)).findFirst();
   }
 
   @Override
   public Optional<User> findById(Long id) {
-    return users.stream().filter(u -> Objects.requireNonNull(u.id).equals(id)).findFirst();
+    return filter(u -> Objects.requireNonNull(u.id).equals(id)).findFirst();
   }
 
   @Override
   public List<User> findByRole(Role role) {
-    return users.stream().filter(u -> u.roles.contains(role)).collect(toList());
+    return filter(u -> u.roles.contains(role)).collect(toList());
   }
 
   @Override
-  public List<User> findByOrganisation(Organisation organisation) {
-    return users.stream().filter(u -> u.organisation.id.equals(organisation.id)).collect(toList());
+  public List<User> findByOrganisationId(Long id) {
+    return filter(u -> u.organisation.id.equals(id)).collect(toList());
   }
 
   @Override

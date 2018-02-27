@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Map;
@@ -11,15 +11,21 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
-class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
+public class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
+
+  public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
+    super(logicalMeters);
+  }
+
   @Override
-  Optional<Long> getId(LogicalMeter entity) {
+  protected Optional<Long> getId(LogicalMeter entity) {
     return Optional.ofNullable(entity.id);
   }
 
   @Override
-  LogicalMeter copyWithId(Long id, LogicalMeter entity) {
+  protected LogicalMeter copyWithId(Long id, LogicalMeter entity) {
     return new LogicalMeter(
       id,
       entity.externalId,
@@ -37,6 +43,13 @@ class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalM
   public Optional<LogicalMeter> findById(Long id) {
     return filter(logicalMeter -> logicalMeter.id != null)
       .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
+      .findFirst();
+  }
+
+  @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id) {
+    return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId)).filter(
+      logicalMeter -> logicalMeter.id.equals(id))
       .findFirst();
   }
 
@@ -74,5 +87,11 @@ class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalM
     return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
       .filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId))
       .findFirst();
+  }
+
+  @Override
+  public List<LogicalMeter> findByOrganisationId(Long organisationId) {
+    return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId))
+      .collect(toList());
   }
 }
