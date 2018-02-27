@@ -10,7 +10,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {isAdminSelector} from '../../services/authService';
 import {translate} from '../../services/translationService';
 import {OnClick, RenderFunction} from '../../types/Types';
-import {RowCenter} from '../layouts/row/Row';
+import {ColumnCenter} from '../layouts/column/Column';
 import {PopoverMenu} from '../popover/PopoverMenu';
 import {Xsmall} from '../texts/Texts';
 import origin = __MaterialUI.propTypes.origin;
@@ -26,9 +26,10 @@ const AppSwitchDropdown = ({isAdmin}: StateToProps) => {
 
   const renderAdmin = () => translate('admin');
   const renderMetering = () => translate('metering');
+  const appSwitchIconStyle: React.CSSProperties = {width: '100%', alignItems: 'center'};
 
   const MenuIcon = ({onClick}) => (
-    <RowCenter onClick={onClick} className="MenuItem clickable">
+    <ColumnCenter onClick={onClick} className="MenuItem clickable" style={appSwitchIconStyle}>
       <NavigationMenu color={colors.white}/>
       <Xsmall className="Bold first-uppercase">
         <Switch>
@@ -36,7 +37,7 @@ const AppSwitchDropdown = ({isAdmin}: StateToProps) => {
           <Route path={routes.home} render={renderMetering}/>
         </Switch>
       </Xsmall>
-    </RowCenter>
+    </ColumnCenter>
   );
 
   const adminMenuItem = isAdmin ? (
