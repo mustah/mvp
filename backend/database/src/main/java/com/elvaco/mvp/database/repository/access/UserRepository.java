@@ -82,9 +82,9 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public List<User> findByOrganisation(Organisation organisation) {
+  public List<User> findByOrganisationId(Long organisationId) {
     return userJpaRepository
-      .findByOrganisation(organisationMapper.toEntity(organisation))
+      .findByOrganisationId(organisationId)
       .stream()
       .map(userMapper::toDomainModel)
       .collect(toList());

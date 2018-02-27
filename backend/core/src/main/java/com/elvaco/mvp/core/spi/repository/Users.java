@@ -26,5 +26,5 @@ public interface Users {
 
   List<User> findByRole(Role role);
 
-  List<User> findByOrganisation(Organisation organisation);
+  List<User> findByOrganisationId(Long id);
 }

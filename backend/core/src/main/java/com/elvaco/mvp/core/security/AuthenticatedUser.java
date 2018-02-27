@@ -12,7 +12,7 @@ public interface AuthenticatedUser extends Serializable {
 
   boolean isWithinOrganisation(Organisation organisation);
 
-  Organisation getOrganisation();
+  Long getOrganisationId();
 
   String getUsername();
 

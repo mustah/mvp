@@ -34,7 +34,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
       singletonList(RoleEntity.user())
     ));
 
-    assertThat(userJpaRepository.findByOrganisation(organisationEntity)).hasSize(1);
+    assertThat(userJpaRepository.findByOrganisationId(organisationEntity.id)).hasSize(1);
 
     organisationJpaRepository.delete(organisationEntity.id);
 
