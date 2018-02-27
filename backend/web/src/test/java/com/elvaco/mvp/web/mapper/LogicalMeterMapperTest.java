@@ -87,7 +87,7 @@ public class LogicalMeterMapperTest {
     expected.city = new IdNamedDto("Kungsbacka");
     expected.manufacturer = "ELV";
     expected.flags = emptyList();
-    expected.position = new GeoPositionDto(57.5052592, 57.5052592, 1);
+    expected.position = new GeoPositionDto(57.5052592, 56.123, 1);
     expected.facility = "an-external-id";
     expected.statusChangelog = emptyList();
     expected.gatewayId = 3L;
@@ -105,7 +105,7 @@ public class LogicalMeterMapperTest {
             .city("Kungsbacka")
             .streetAddress("Kabelgatan 2T")
             .latitude(57.5052592)
-            .longitude(57.5052592)
+            .longitude(56.123)
             .confidence(1.0)
             .build(),
           dateFormat().parse("2018-02-12T14:14:25"),
