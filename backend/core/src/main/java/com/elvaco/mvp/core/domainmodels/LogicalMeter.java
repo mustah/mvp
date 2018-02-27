@@ -154,10 +154,6 @@ public class LogicalMeter {
       .orElse("Unknown manufacturer");
   }
 
-  public String getAlarm() {
-    return "Alarm";
-  }
-
   private Optional<PhysicalMeter> activePhysicalMeter() {
     if (physicalMeters.size() == 1) {
       return Optional.of(physicalMeters.get(0));
