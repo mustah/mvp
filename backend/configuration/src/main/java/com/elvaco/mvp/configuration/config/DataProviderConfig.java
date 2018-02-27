@@ -31,6 +31,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
+import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LocationMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
@@ -169,7 +170,11 @@ class DataProviderConfig {
 
   @Bean
   Gateways gateways() {
-    return new GatewayRepository(gatewayJpaRepository, new GatewayMapper());
+    return new GatewayRepository(
+      gatewayJpaRepository,
+      new GatewayMapper(),
+      new GatewayWithMetersMapper(newLogicalMeterMapper())
+    );
   }
 
   private LogicalMeterMapper newLogicalMeterMapper() {

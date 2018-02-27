@@ -80,7 +80,7 @@ class MeterList extends React.Component<Props> {
     } = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-    const renderStatusCell = ({status}: Meter) => status ? <Status {...status}/> : null;
+    const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
     const renderCityName = ({city}: Meter) => city ? city.name : null;
     const renderAddressName = ({address}: Meter) => address ? address.name : null;
     const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : null;
@@ -88,8 +88,7 @@ class MeterList extends React.Component<Props> {
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-    const renderStatusChanged = ({statusChanged}: Meter) => statusChanged ||
-      <Separator/>;
+    const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
 
     const changePage = (page: number) => changePaginationPage({
@@ -97,6 +96,7 @@ class MeterList extends React.Component<Props> {
       componentId,
       page,
     });
+
     return (
       <Loader isFetching={isFetching} error={error} clearError={this.clearError}>
         <HasContent

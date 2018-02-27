@@ -18,14 +18,13 @@ public class MeterStatusEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Nullable
   public Long id;
 
   public String name;
 
   public MeterStatusEntity() {}
 
-  public MeterStatusEntity(Long id, String name) {
+  public MeterStatusEntity(@Nullable Long id, String name) {
     this.id = id;
     this.name = name;
   }

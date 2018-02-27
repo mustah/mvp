@@ -11,7 +11,14 @@ import {
   SET_SELECTION,
   UPDATE_SELECTION,
 } from '../search/selection/selectionActions';
-import {DomainModelsState, EndPoints, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
+import {
+  DomainModelsState,
+  EndPoints,
+  Normalized,
+  NormalizedState,
+  ObjectsById,
+  SelectionEntity,
+} from './domainModels';
 import {
   DOMAIN_MODELS_CLEAR_ERROR,
   DOMAIN_MODELS_DELETE_SUCCESS,

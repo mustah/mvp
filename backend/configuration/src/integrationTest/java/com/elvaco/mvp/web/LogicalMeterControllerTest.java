@@ -127,7 +127,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     MeterStatus meterStatus = meterStatuses.findAll().get(0);
     prepareMeterLogsForStatusPeriodTest(meter1, meter2, meter3, meter4, meterStatus);
-
   }
 
   @After
@@ -258,8 +257,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-01T01:00:00.00Z"
-          + "&before=2001-01-01T23:00:00.00Z"
-          + "&status=Active",
+        + "&before=2001-01-01T23:00:00.00Z"
+        + "&status=Active",
         LogicalMeterDto.class
       );
 
@@ -285,8 +284,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-          + "&before=2005-01-01T23:00:00.00Z"
-          + "&status=Active",
+        + "&before=2005-01-01T23:00:00.00Z"
+        + "&status=Active",
         LogicalMeterDto.class
       );
 
@@ -315,8 +314,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-          + "&before=2015-01-01T23:00:00.00Z"
-          + "&status=Active",
+        + "&before=2015-01-01T23:00:00.00Z"
+        + "&status=Active",
         LogicalMeterDto.class
       );
 
@@ -361,7 +360,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void cantAccessOtherOrganisationsMetersByFilter() {
-
     createUserIfNotPresent(new User(
       "Me",
       "me@myorg.com",
@@ -387,7 +385,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void doesntFindOtherOrganisationsMetersUsingFilter() {
-
     createUserIfNotPresent(new User(
       "Me",
       "me@myorg.com",

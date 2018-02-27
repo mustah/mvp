@@ -148,14 +148,14 @@ public class LogicalMeter {
     return meterDefinition != null ? meterDefinition.quantities : emptySet();
   }
 
-  public boolean hasMeterDefinition() {
-    return meterDefinition != null;
-  }
-
   public String getManufacturer() {
     return activePhysicalMeter()
       .map(physicalMeter -> physicalMeter.manufacturer)
       .orElse("Unknown manufacturer");
+  }
+
+  public String getAlarm() {
+    return "Alarm";
   }
 
   private Optional<PhysicalMeter> activePhysicalMeter() {

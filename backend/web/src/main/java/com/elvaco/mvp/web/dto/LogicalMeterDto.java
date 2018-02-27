@@ -13,7 +13,6 @@ public class LogicalMeterDto {
   public IdNamedDto address;
   public IdNamedDto city;
   public GeoPositionDto position;
-  public String moid;
   public String sapId;
   public String alarm;
   public List<FlagDto> flags;

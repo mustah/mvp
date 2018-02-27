@@ -25,12 +25,7 @@ public class MeterStatusLogMapper implements
     PhysicalMeterStatusLogEntity entity = new PhysicalMeterStatusLogEntity();
     entity.id = domainModel.id;
     entity.physicalMeterId = domainModel.physicalMeterId;
-
-    entity.status = new MeterStatusEntity(
-      domainModel.statusId,
-      domainModel.name
-    );
-
+    entity.status = new MeterStatusEntity(domainModel.statusId, domainModel.name);
     entity.start = domainModel.start;
     entity.stop = domainModel.stop;
 

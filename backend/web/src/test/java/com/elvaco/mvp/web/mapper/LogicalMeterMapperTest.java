@@ -24,13 +24,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration.AccessLevel;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
-
-  private static final IdNamedDto OK = new IdNamedDto("Ok");
 
   private LogicalMeterMapper mapper;
 
@@ -83,14 +82,12 @@ public class LogicalMeterMapperTest {
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
     expected.id = 1L;
+    expected.status = OK;
     expected.address = new IdNamedDto("Kabelgatan 2T");
     expected.city = new IdNamedDto("Kungsbacka");
     expected.manufacturer = "ELV";
-    GeoPositionDto expectedPosition = new GeoPositionDto();
-    expectedPosition.confidence = 1.0;
-    expectedPosition.latitude = 57.5052592;
-    expectedPosition.longitude = 12.0683196;
-    expected.position = expectedPosition;
+    expected.flags = emptyList();
+    expected.position = new GeoPositionDto(57.5052592, 57.5052592, 1);
     expected.facility = "an-external-id";
     expected.statusChangelog = emptyList();
     expected.gatewayId = 3L;
@@ -108,7 +105,8 @@ public class LogicalMeterMapperTest {
             .city("Kungsbacka")
             .streetAddress("Kabelgatan 2T")
             .latitude(57.5052592)
-            .longitude(12.0683196)
+            .longitude(57.5052592)
+            .confidence(1.0)
             .build(),
           dateFormat().parse("2018-02-12T14:14:25"),
           singletonList(

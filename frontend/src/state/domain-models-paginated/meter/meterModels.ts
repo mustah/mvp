@@ -10,7 +10,6 @@ export interface MeterStatusChangelog {
 }
 
 export interface Meter extends Location, HasId {
-  moid: uuid;
   sapId?: uuid;
   measurementId?: uuid;
   facility: string;

@@ -87,17 +87,12 @@ type Props = StateToProps & OwnProps;
 const MeterDetailsInfo = (props: Props) => {
   const {gateways, meter} = props;
 
-  const renderAlarm = () => meter.alarm !== ':Inget fel:' && (
-    <Info label={translate('alarm')} value={meter.alarm}/>);
+  const renderAlarm = () => meter.alarm
+    ? <Info label={translate('alarm')} value={meter.alarm}/>
+    : null;
 
-  // TODO Remove hard coded "gateway"
-  const gateway = gateways[meter.gatewayId] == null
-    ? {status: {id: 1, name: 'test'}, flags: []}
-    : gateways[meter.gatewayId];
-
-  // TODO Handle meter flags
-  const meterFlags = meter.flags == null ? [] : meter.flags;
-
+  const gateway = gateways[meter.gatewayId];
+  const meterFlags = meter.flags || [];
   const meterStatus = meter.statusChangelog[0];
 
   return (
@@ -165,7 +160,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
-    const gateway = gateways[meter.gatewaySerial];
+    const gateway = gateways[meter.id];
 
     const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},
@@ -187,7 +182,8 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const renderValue = (item: any) => item.value;
     const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({id}: Gateway) => id;
-    const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) => signalToNoiseRatio || translate('n/a');
+    const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) =>
+      signalToNoiseRatio || translate('n/a');
     const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(meter);
 
     return (
@@ -278,4 +274,5 @@ const mapStateToProps = ({domainModels: {gateways}}: RootState): StateToProps =>
   gateways: getEntitiesDomainModels(gateways),
 });
 
-export const MeterDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(MeterDetails);
+export const MeterDetailsContainer =
+  connect<StateToProps, null, OwnProps>(mapStateToProps)(MeterDetails);

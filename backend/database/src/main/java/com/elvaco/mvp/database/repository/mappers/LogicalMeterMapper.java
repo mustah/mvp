@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
@@ -34,8 +34,6 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
-    Location location = locationMapper.toDomainModel(logicalMeterEntity.getLocation());
-
     List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
 
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
@@ -44,21 +42,16 @@ public class LogicalMeterMapper {
       .peek(physicalMeter -> meterStatusLogs.addAll(physicalMeter.meterStatusLogs))
       .collect(toList());
 
-    List<Gateway> gateways = logicalMeterEntity.gateways
-      .stream()
-      .map(gatewayMapper::toDomainModel)
-      .collect(toList());
-
     return new LogicalMeter(
       logicalMeterEntity.id,
       logicalMeterEntity.externalId,
       logicalMeterEntity.organisationId,
-      location,
+      locationMapper.toDomainModel(logicalMeterEntity.getLocation()),
       logicalMeterEntity.created,
       physicalMeters,
       meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),
       meterStatusLogs,
-      gateways
+      toGateways(logicalMeterEntity.gateways)
     );
   }
 
@@ -87,5 +80,12 @@ public class LogicalMeterMapper {
     }
 
     return logicalMeterEntity;
+  }
+
+  private List<Gateway> toGateways(List<GatewayEntity> gateways) {
+    return gateways
+      .stream()
+      .map(gatewayMapper::toDomainModel)
+      .collect(toList());
   }
 }

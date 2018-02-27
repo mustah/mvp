@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.entity.gateway;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,10 +10,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import static java.util.Collections.emptyList;
 
 @EqualsAndHashCode
 @ToString
@@ -32,6 +37,9 @@ public class GatewayEntity implements Serializable {
 
   @Column(nullable = false)
   public String productModel;
+
+  @ManyToMany(mappedBy = "gateways")
+  public List<LogicalMeterEntity> meters;
 
   public String phoneNumber;
   public String port;
@@ -53,5 +61,6 @@ public class GatewayEntity implements Serializable {
     this.phoneNumber = phoneNumber;
     this.port = port;
     this.ip = ip;
+    this.meters = emptyList();
   }
 }

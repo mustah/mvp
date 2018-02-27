@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS gateway (
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
   meter_id BIGINT REFERENCES logical_meter,
-  gateway_serial TEXT REFERENCES gateway (serial)
+  gateway_id BIGINT REFERENCES gateway
 );
 
 CREATE TABLE IF NOT EXISTS measurement (

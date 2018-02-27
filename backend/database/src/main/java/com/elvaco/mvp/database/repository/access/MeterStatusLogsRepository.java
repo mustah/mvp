@@ -10,8 +10,8 @@ import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
 
 public class MeterStatusLogsRepository implements MeterStatusLogs {
 
-  public final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-  public final MeterStatusLogMapper meterStatusLogMapper;
+  private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+  private final MeterStatusLogMapper meterStatusLogMapper;
 
   public MeterStatusLogsRepository(
     PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
@@ -34,5 +34,4 @@ public class MeterStatusLogsRepository implements MeterStatusLogs {
       meterStatusLogs.stream().map(meterStatusLogMapper::toEntity).collect(Collectors.toList())
     );
   }
-
 }
