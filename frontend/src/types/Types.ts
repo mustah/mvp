@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {PayloadAction} from 'react-redux-typescript';
 import {isNullOrUndefined} from 'util';
+import {Maybe} from '../helpers/Maybe';
 
 export type uuid = string | number;
 
@@ -72,5 +73,5 @@ const status = {
 };
 
 export const statusFor = (statusCode: uuid): Status => {
-  return isNullOrUndefined(status[statusCode]) ? Status.unknown : status[statusCode];
+  return Maybe.maybe(status[statusCode]).orElse(Status.unknown);
 };
