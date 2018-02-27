@@ -12,40 +12,25 @@ public class Gateway {
   public final Long id;
   public final String serial;
   public final String productModel;
-  @Nullable
-  public final String phoneNumber;
-  @Nullable
-  public final String port;
-  @Nullable
-  public final String ip;
   public final List<LogicalMeter> meters;
 
   public Gateway(
     @Nullable Long id,
     String serial,
-    String productModel,
-    @Nullable String phoneNumber,
-    @Nullable String port,
-    @Nullable String ip
+    String productModel
   ) {
-    this(id, serial, productModel, phoneNumber, port, ip, emptyList());
+    this(id, serial, productModel, emptyList());
   }
 
   public Gateway(
     @Nullable Long id,
     String serial,
     String productModel,
-    @Nullable String phoneNumber,
-    @Nullable String port,
-    @Nullable String ip,
     List<LogicalMeter> meters
   ) {
     this.id = id;
     this.serial = serial;
     this.productModel = productModel;
-    this.phoneNumber = phoneNumber;
-    this.port = port;
-    this.ip = ip;
     this.meters = unmodifiableList(meters);
   }
 }

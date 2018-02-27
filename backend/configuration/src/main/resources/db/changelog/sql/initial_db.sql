@@ -79,9 +79,6 @@ CREATE TABLE IF NOT EXISTS gateway (
   id BIGSERIAL PRIMARY KEY,
   serial TEXT NOT NULL UNIQUE ,
   product_model TEXT NOT NULL,
-  phone_number TEXT,
-  port TEXT,
-  ip TEXT,
   UNIQUE (serial, product_model)
 );
 

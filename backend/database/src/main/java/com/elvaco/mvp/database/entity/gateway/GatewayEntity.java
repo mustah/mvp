@@ -41,26 +41,16 @@ public class GatewayEntity implements Serializable {
   @ManyToMany(mappedBy = "gateways")
   public List<LogicalMeterEntity> meters;
 
-  public String phoneNumber;
-  public String port;
-  public String ip;
-
   public GatewayEntity() {}
 
   public GatewayEntity(
     @Nullable Long id,
     String serial,
-    String productModel,
-    @Nullable String phoneNumber,
-    @Nullable String port,
-    @Nullable String ip
+    String productModel
   ) {
     this.id = id;
     this.serial = serial;
     this.productModel = productModel;
-    this.phoneNumber = phoneNumber;
-    this.port = port;
-    this.ip = ip;
     this.meters = emptyList();
   }
 }

@@ -123,9 +123,7 @@ public class LogicalMeterMapperTest {
             expected.gatewayId,
             expected.gatewaySerial,
             expected.gatewayProductModel,
-            null,
-            null,
-            null
+            emptyList()
           ))
         ), TimeZone.getTimeZone("Europe/Stockholm")))
       .isEqualTo(expected);

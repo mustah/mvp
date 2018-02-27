@@ -21,14 +21,11 @@ public class GatewayMapper {
       gateway.id,
       gateway.serial,
       gateway.productModel,
-      gateway.phoneNumber,
       IdNamedDto.OK,
       toCity(logicalMeter),
       toAddress(logicalMeter),
       toGeoPosition(logicalMeter),
       emptyList(),
-      gateway.port,
-      gateway.ip,
       logicalMeter.map(meter -> meter.id).orElse(null),
       null,
       logicalMeter.map(LogicalMeter::getManufacturer).orElse(null),
@@ -41,10 +38,7 @@ public class GatewayMapper {
     return new Gateway(
       gatewayDto.id,
       gatewayDto.serial,
-      gatewayDto.productModel,
-      gatewayDto.phoneNumber,
-      gatewayDto.port,
-      gatewayDto.ip
+      gatewayDto.productModel
     );
   }
 

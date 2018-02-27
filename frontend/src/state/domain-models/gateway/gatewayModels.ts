@@ -1,8 +1,7 @@
-import {Maybe} from '../../../helpers/Maybe';
-import {IdNamed, uuid} from '../../../types/Types';
-import {NormalizedState, Location} from '../domainModels';
-import {Flag} from '../flag/flagModels';
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
+import {IdNamed, uuid} from '../../../types/Types';
+import {Location, NormalizedState} from '../domainModels';
+import {Flag} from '../flag/flagModels';
 
 export interface GatewayStatusChangelog {
   id: uuid;
@@ -17,10 +16,7 @@ export interface Gateway extends Location {
   flags: Flag[];
   flagged: boolean;
   productModel: string;
-  telephoneNumber: string;
   statusChanged?: string;
-  ip?: Maybe<string>;
-  port?: Maybe<string>;
   signalToNoiseRatio?: number;
   status: IdNamed;
   statusChangelog: GatewayStatusChangelog[];

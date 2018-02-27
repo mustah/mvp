@@ -21,13 +21,6 @@ public class GatewayDto {
   public GeoPositionDto position;
   public List<FlagDto> flags;
 
-  @Nullable
-  public String phoneNumber;
-  @Nullable
-  public String port;
-  @Nullable
-  public String ip;
-
   public Long meterId;
   @Nullable
   public String meterAlarm;
@@ -41,14 +34,11 @@ public class GatewayDto {
     Long id,
     String serial,
     String productModel,
-    @Nullable String phoneNumber,
     IdNamedDto status,
     IdNamedDto city,
     IdNamedDto address,
     GeoPositionDto position,
     List<FlagDto> flags,
-    @Nullable String port,
-    @Nullable String ip,
     Long meterId,
     @Nullable String meterAlarm,
     String meterManufacturer,
@@ -58,14 +48,11 @@ public class GatewayDto {
     this.id = id;
     this.serial = serial;
     this.productModel = productModel;
-    this.phoneNumber = phoneNumber;
     this.status = status;
     this.city = city;
     this.address = address;
     this.position = position;
     this.flags = flags;
-    this.port = port;
-    this.ip = ip;
     this.meterId = meterId;
     this.meterAlarm = meterAlarm;
     this.meterManufacturer = meterManufacturer;
@@ -78,14 +65,11 @@ public class GatewayDto {
       id,
       serial,
       productModel,
-      null,
       IdNamedDto.OK,
       null,
       null,
       new GeoPositionDto(),
       emptyList(),
-      null,
-      null,
       null,
       null,
       null,

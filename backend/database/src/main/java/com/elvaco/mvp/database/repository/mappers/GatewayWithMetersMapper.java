@@ -22,9 +22,6 @@ public class GatewayWithMetersMapper {
       entity.id,
       entity.serial,
       entity.productModel,
-      entity.phoneNumber,
-      entity.port,
-      entity.ip,
       toLogicalMeters(entity.meters)
     );
   }

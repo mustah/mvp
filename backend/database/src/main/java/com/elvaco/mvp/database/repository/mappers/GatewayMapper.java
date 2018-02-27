@@ -10,10 +10,7 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
     return new Gateway(
       entity.id,
       entity.serial,
-      entity.productModel,
-      entity.phoneNumber,
-      entity.port,
-      entity.ip
+      entity.productModel
     );
   }
 
@@ -22,10 +19,7 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
     return new GatewayEntity(
       domainModel.id,
       domainModel.serial,
-      domainModel.productModel,
-      domainModel.phoneNumber,
-      domainModel.port,
-      domainModel.ip
+      domainModel.productModel
     );
   }
 }
