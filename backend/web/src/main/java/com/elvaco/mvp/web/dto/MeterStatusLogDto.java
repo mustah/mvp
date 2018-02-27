@@ -6,7 +6,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class MeterStatusLogDto {
-  public Long statusId;
+  public Long id;
+  public String statusId;
   public String name;
   public String start;
   public String stop;

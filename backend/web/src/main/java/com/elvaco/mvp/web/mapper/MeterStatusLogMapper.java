@@ -11,7 +11,8 @@ public class MeterStatusLogMapper {
 
   public MeterStatusLogDto toDto(MeterStatusLog meterStatusLog, TimeZone timeZone) {
     MeterStatusLogDto meterStatusLogDto = new MeterStatusLogDto();
-    meterStatusLogDto.statusId = meterStatusLog.statusId;
+    meterStatusLogDto.id = meterStatusLog.id;
+    meterStatusLogDto.statusId = meterStatusLog.name;
     meterStatusLogDto.start = Dates.formatTime(meterStatusLog.start, timeZone);
     meterStatusLogDto.name = meterStatusLog.name;
     meterStatusLogDto.stop = Optional.ofNullable(meterStatusLog.stop)

@@ -185,7 +185,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
       );
     const renderQuantity = (item: any) => item.quantity;
     const renderValue = (item: any) => item.value;
-    const renderDate = (item: any) => item.start;
+    const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({id}: Gateway) => id;
     const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) => signalToNoiseRatio || translate('n/a');
     const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(meter);

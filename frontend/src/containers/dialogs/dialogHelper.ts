@@ -18,6 +18,7 @@ type Changelogs = GatewayStatusChangelog | MeterStatusChangelog;
 
 export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Normalized<Changelogs> => {
   const {entities, result} = normalize(domainModel, statusChangelogSchema);
+
   return {
     entities: entities.statusChangelog,
     result: result.statusChangelog,
