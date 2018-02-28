@@ -1,20 +1,20 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 
-class MockOrganisations extends MockRepository<Organisation> implements com.elvaco.mvp.core.spi
-  .repository.Organisations {
+public class MockOrganisations extends MockRepository<Organisation> implements Organisations {
 
   @Override
-  Optional<Long> getId(Organisation entity) {
+  protected Optional<Long> getId(Organisation entity) {
     return Optional.ofNullable(entity.id);
   }
 
   @Override
-  Organisation copyWithId(Long id, Organisation entity) {
+  protected Organisation copyWithId(Long id, Organisation entity) {
     return new Organisation(id, entity.name, entity.code);
   }
 

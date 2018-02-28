@@ -34,6 +34,7 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
@@ -385,7 +386,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void doesntFindOtherOrganisationsMeters() {
+  public void doesntFindOtherOrganisationsMetersUsingFilter() {
 
     createUserIfNotPresent(new User(
       "Me",
@@ -415,6 +416,27 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
   }
 
+  @Test
+  public void cantAccessOtherOrganisationsMeterById() {
+    LogicalMeter theirMeter = logicalMeterRepository.save(new LogicalMeter(
+      "this-is-not-my-meter",
+      anotherOrganisation.id,
+      hotWaterMeterDefinition
+    ));
+
+    ResponseEntity<ErrorMessageDto> response = asElvacoUser()
+      .get("/meters/" + theirMeter.id, ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  @Test
+  public void meterNotFound() {
+    ResponseEntity<ErrorMessageDto> response = asElvacoUser()
+      .get("/meters/" + -999, ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 
   @Test
   public void findAllMapDataForLogicalMeters() {

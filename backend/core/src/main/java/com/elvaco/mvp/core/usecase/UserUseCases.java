@@ -33,7 +33,7 @@ public class UserUseCases {
     if (currentUser.isSuperAdmin()) {
       return users.findAll();
     }
-    return users.findByOrganisation(currentUser.getOrganisation());
+    return users.findByOrganisationId(currentUser.getOrganisationId());
   }
 
   public Optional<User> findByEmail(String email) {

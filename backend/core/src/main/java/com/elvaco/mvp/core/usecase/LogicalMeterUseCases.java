@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.exception.UnauthorizedException;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -33,12 +34,12 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  public Optional<LogicalMeter> findById(Long id) {
-    return logicalMeters.findById(id);
-  }
-
   public List<LogicalMeter> findAll() {
-    return logicalMeters.findAll();
+    if (!currentUser.isSuperAdmin()) {
+      return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
+    } else {
+      return logicalMeters.findAll();
+    }
   }
 
   public Page<LogicalMeter> findAll(
@@ -59,11 +60,16 @@ public class LogicalMeterUseCases {
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
-    return logicalMeters.save(logicalMeter);
+    if (hasTenantAccess(logicalMeter)) {
+      return logicalMeters.save(logicalMeter);
+    }
+    throw new UnauthorizedException("User '" + currentUser.getUsername() + "' is not allowed to "
+                                      + "create this meter.");
   }
 
   public List<Measurement> measurements(LogicalMeter logicalMeter) {
-    if (logicalMeter.physicalMeters.isEmpty() || logicalMeter.getQuantities().isEmpty()) {
+    if (logicalMeter.physicalMeters.isEmpty() || logicalMeter.getQuantities().isEmpty()
+      || !hasTenantAccess(logicalMeter)) {
       return Collections.emptyList();
     }
 
@@ -83,5 +89,18 @@ public class LogicalMeterUseCases {
         .collect(toList())
     );
     return measurements.findAll(filter);
+  }
+
+  public Optional<LogicalMeter> findById(Long id) {
+    if (currentUser.isSuperAdmin()) {
+      return logicalMeters.findById(id);
+    } else {
+      return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
+    }
+  }
+
+  private boolean hasTenantAccess(LogicalMeter logicalMeter) {
+    return currentUser.isSuperAdmin()
+      || logicalMeter.organisationId.equals(currentUser.getOrganisationId());
   }
 }

@@ -57,8 +57,8 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
-  public Organisation getOrganisation() {
-    return user.organisation;
+  public Long getOrganisationId() {
+    return user.organisation.id;
   }
 
   @Override

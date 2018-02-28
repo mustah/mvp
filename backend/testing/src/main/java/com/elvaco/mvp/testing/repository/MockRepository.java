@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.testing.repository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,16 +6,23 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-abstract class MockRepository<T> {
+import static java.util.Collections.emptyList;
+
+public abstract class MockRepository<T> {
+
   private final List<T> entities;
 
   MockRepository() {
-    this.entities = new ArrayList<>();
+    this(emptyList());
   }
 
-  abstract Optional<Long> getId(T entity);
+  MockRepository(List<T> initial) {
+    this.entities = new ArrayList<>(initial);
+  }
 
-  abstract T copyWithId(Long id, T entity);
+  protected abstract Optional<Long> getId(T entity);
+
+  protected abstract T copyWithId(Long id, T entity);
 
   final T saveMock(T entity) {
     if (getId(entity).isPresent()) {

@@ -1,20 +1,20 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 
-class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements com.elvaco.mvp.core.spi
-  .repository.PhysicalMeters {
+public class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements PhysicalMeters {
 
   @Override
-  Optional<Long> getId(PhysicalMeter entity) {
+  protected Optional<Long> getId(PhysicalMeter entity) {
     return Optional.ofNullable(entity.id);
   }
 
   @Override
-  PhysicalMeter copyWithId(Long id, PhysicalMeter entity) {
+  protected PhysicalMeter copyWithId(Long id, PhysicalMeter entity) {
     return new PhysicalMeter(
       id,
       entity.organisation,

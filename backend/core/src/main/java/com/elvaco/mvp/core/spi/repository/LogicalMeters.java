@@ -12,6 +12,8 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findById(Long id);
 
+  Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id);
+
   List<LogicalMeter> findAll();
 
   Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable);
@@ -23,4 +25,6 @@ public interface LogicalMeters {
   void deleteAll();
 
   Optional<LogicalMeter> findByOrganisationIdAndExternalId(Long organisationId, String externalId);
+
+  List<LogicalMeter> findByOrganisationId(Long organisationId);
 }

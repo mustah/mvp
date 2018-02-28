@@ -21,4 +21,8 @@ public interface LogicalMeterJpaRepository extends QueryDslPredicateExecutor<Log
     Long organisationId,
     String externalId
   );
+
+  Optional<LogicalMeterEntity> findByOrganisationIdAndId(Long organisationId, Long id);
+
+  List<LogicalMeterEntity> findByOrganisationId(Long organisationId);
 }
