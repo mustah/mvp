@@ -2,7 +2,8 @@ import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {MeasurementState} from './measurement/measurementModels';
-import {Organisation, UserState} from './user/userModels';
+import {Organisation} from './organisation/organisationModels';
+import {UserState} from './user/userModels';
 
 export interface Location {
   address: IdNamed;

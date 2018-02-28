@@ -1,10 +1,6 @@
-import {HasId, uuid} from '../../../types/Types';
+import {uuid} from '../../../types/Types';
 import {NormalizedState} from '../domainModels';
-
-export interface Organisation extends HasId {
-  code: uuid;
-  name: string;
-}
+import {Organisation} from '../organisation/organisationModels';
 
 export interface User {
   id: uuid;

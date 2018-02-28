@@ -12,9 +12,11 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {RestGet} from '../../../state/domain-models/domainModels';
 import {addUser} from '../../../state/domain-models/domainModelsActions';
+import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {Organisation, Role} from '../../../state/domain-models/user/userModels';
-import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
+import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
+import {Role} from '../../../state/domain-models/user/userModels';
+import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {OnClick} from '../../../types/Types';
 
 interface StateToProps {

@@ -5,8 +5,8 @@ import {ErrorResponse} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {EndPoints} from '../domainModels';
 import {clearError, restDelete, restGetIfNeeded, restPost} from '../domainModelsActions';
-import {Organisation} from '../user/userModels';
-import {organisationSchema} from '../user/userSchema';
+import {Organisation} from './organisationModels';
+import {organisationSchema} from './organisationSchema';
 
 export const clearOrganisationErrors = clearError(EndPoints.organisations);
 

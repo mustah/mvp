@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {firstUpperTranslated} from '../../services/translationService';
-import {Organisation, Role, User} from '../../state/domain-models/user/userModels';
+import {Organisation} from '../../state/domain-models/organisation/organisationModels';
+import {Role, User} from '../../state/domain-models/user/userModels';
 import {IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';

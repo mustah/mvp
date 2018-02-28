@@ -19,7 +19,7 @@ import {
   deleteOrganisation,
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
-import {Organisation} from '../../../state/domain-models/user/userModels';
+import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
 
 interface StateToProps {

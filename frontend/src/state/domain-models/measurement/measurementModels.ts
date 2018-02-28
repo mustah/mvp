@@ -1,6 +1,6 @@
 import {HasId} from '../../../types/Types';
 import {NormalizedState} from '../domainModels';
-import {Organisation} from '../user/userModels';
+import {Organisation} from '../organisation/organisationModels';
 
 interface PhysicalMeter extends HasId {
   organisation: Organisation;

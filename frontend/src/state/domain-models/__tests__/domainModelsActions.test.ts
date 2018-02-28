@@ -24,8 +24,9 @@ import {initialDomain} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {Gateway} from '../gateway/gatewayModels';
 import {gatewaySchema} from '../gateway/gatewaySchema';
+import {Organisation} from '../organisation/organisationModels';
 import {addOrganisation} from '../organisation/organisationsApiActions';
-import {Organisation, Role, User} from '../user/userModels';
+import {Role, User} from '../user/userModels';
 import MockAdapter = require('axios-mock-adapter');
 
 const configureMockStore = configureStore([thunk]);
