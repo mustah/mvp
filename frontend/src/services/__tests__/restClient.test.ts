@@ -1,16 +1,4 @@
-import {routerActions} from 'react-router-redux';
-import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
-import {routes} from '../../app/routes';
-import {initLanguage} from '../../i18n/i18n';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {EndPoints, HttpMethod, Normalized} from '../../state/domain-models/domainModels';
-import {requestMethod} from '../../state/domain-models/domainModelsActions';
-import {initialDomain} from '../../state/domain-models/domainModelsReducer';
-import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
-import {User} from '../../state/domain-models/user/userModels';
-import {logoutUser} from '../../usecases/auth/authActions';
-import {Unauthorized} from '../../usecases/auth/authModels';
+import {EndPoints} from '../../state/domain-models/domainModels';
 import {authenticate, InvalidToken, restClient, restClientWith} from '../restClient';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -37,43 +25,33 @@ describe('restClient', () => {
   });
 
   describe('token invalid', () => {
+    let mockRestClient;
 
-    const configureMockStore = configureStore([thunk]);
-    let store;
-
-    it('dispatches an action if token is invalid', async () => {
+    beforeEach(() => {
       restClientWith('123123123');
-      initLanguage({code: 'en', name: 'english'});
-      const meterRequest = requestMethod<Normalized<Meter>>(EndPoints.allMeters, HttpMethod.GET);
-      const mockRestClient = new MockAdapter(restClient);
-      const user: User = {
-        id: 1,
-        name: 'al',
-        email: 'al@la.se',
-        organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
-        roles: [],
+      mockRestClient = new MockAdapter(restClient);
+    });
+
+    it('throws a InvalidToken exception if token invalid from backend', async () => {
+
+      const getInvalidTokenError = async () => {
+        mockRestClient.onGet(EndPoints.allMeters).reply(401, {message: 'Token missing or invalid'});
+        return restClient.get(EndPoints.allMeters);
       };
-      const initialState = {
-        domainModels: {allMeters: initialDomain()}, auth: {
-          user,
-          isAuthenticated: true,
-        },
-      };
-      store = configureMockStore(initialState);
+
       const error = new InvalidToken('Token missing or invalid');
-      const getMetersInvalidToken = async () => {
-        mockRestClient.onGet(EndPoints.allMeters).reply(401, error);
-        mockRestClient.onGet(EndPoints.logout).reply(204);
-        return store.dispatch(fetchAllMeters());
+      await expect(getInvalidTokenError()).rejects.toEqual(error);
+    });
+
+    it('doesnt throws a InvalidToken exception for errors not related to token invalid', async () => {
+
+      const getErrorElseThanInvalidToken = async () => {
+        mockRestClient.onGet(EndPoints.allMeters).reply(401, {message: 'An other error'});
+        return restClient.get(EndPoints.allMeters);
       };
 
-      await getMetersInvalidToken();
-
-      expect(store.getActions()).toEqual([
-        meterRequest.request(),
-        logoutUser(error as Unauthorized),
-        routerActions.push(`${routes.login}/${initialState.auth.user.organisation.code}`),
-      ]);
+      const error = new InvalidToken('Token missing or invalid');
+      await expect(getErrorElseThanInvalidToken()).rejects.not.toEqual(error);
     });
   });
 });

@@ -44,7 +44,7 @@ const setResponseInterceptors = (): void => {
   restClient.interceptors.response.use((response) => response, (error) => {
     const {response} = error;
     if (response && response.data && response.data.message && response.data.message === 'Token missing or invalid') {
-      return Promise.reject(new InvalidToken(response.data.message));
+      return Promise.reject(new InvalidToken(response.data.message)); // TODO: Perhaps set a translated string here.
     } else {
       return Promise.reject(error);
     }
