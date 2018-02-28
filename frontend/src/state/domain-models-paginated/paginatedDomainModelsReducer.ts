@@ -18,10 +18,10 @@ import {
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 import {
-  DOMAIN_MODELS_PAGINATED_CLEAR_ERROR,
-  DOMAIN_MODELS_PAGINATED_FAILURE,
-  DOMAIN_MODELS_PAGINATED_GET_SUCCESS,
-  DOMAIN_MODELS_PAGINATED_REQUEST,
+  domainModelPaginatedClearError,
+  domainModelsPaginatedFailure,
+  domainModelsPaginatedGetSuccess,
+  domainModelsPaginatedRequest,
 } from './paginatedDomainModelsActions';
 
 export const initialPaginatedDomain = <T extends HasId>(): NormalizedPaginatedState<T> => ({
@@ -91,13 +91,13 @@ export const reducerFor = <T extends HasId>(entity: keyof PaginatedDomainModelsS
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> => {
     switch (action.type) {
-      case DOMAIN_MODELS_PAGINATED_REQUEST(endPoint):
+      case domainModelsPaginatedRequest(endPoint):
         return setRequest(state, action as Action<number>);
-      case DOMAIN_MODELS_PAGINATED_GET_SUCCESS(endPoint):
+      case domainModelsPaginatedGetSuccess(endPoint):
         return setEntities<T>(entity, state, action as Action<NormalizedPaginated<T>>);
-      case DOMAIN_MODELS_PAGINATED_FAILURE(endPoint):
+      case domainModelsPaginatedFailure(endPoint):
         return setError<T>(state, action as Action<ErrorResponse & HasPageNumber>);
-      case DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint):
+      case domainModelPaginatedClearError(endPoint):
         return clearError(state, action as Action<HasPageNumber>);
       case SELECT_SAVED_SELECTION:
       case ADD_SELECTION:

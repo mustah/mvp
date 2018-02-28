@@ -8,7 +8,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {SelectionTreeData} from '../../../../state/domain-models/meter-all/allMetersModels';
 import {RestGet} from '../../../../state/domain-models/domainModels';
-import {fetchAllMeters} from '../../../../state/domain-models/domainModelsActions';
+import {fetchAllMeters} from '../../../../state/domain-models/meter-all/allMetersApiActions';
 import {getSelectionTree} from '../../../../state/domain-models/meter-all/allMetersSelectors';
 import {getEncodedUriParametersForAllMeters} from '../../../../state/search/selection/selectionSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';

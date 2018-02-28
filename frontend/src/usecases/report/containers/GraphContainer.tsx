@@ -13,7 +13,7 @@ import {Bold} from '../../../components/texts/Texts';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {fetchMeasurements} from '../../../state/domain-models/domainModelsActions';
+import {fetchMeasurements} from '../../../state/domain-models/measurement/measurementApiActions';
 import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';

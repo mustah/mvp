@@ -11,7 +11,8 @@ import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {RestGet} from '../../state/domain-models/domainModels';
-import {fetchAllMeters, fetchGateways} from '../../state/domain-models/domainModelsActions';
+import {fetchGateways} from '../../state/domain-models/gateway/gatewayApiActions';
+import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {
   getEncodedUriParametersForAllMeters,
   getEncodedUriParametersForGateways,

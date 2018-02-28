@@ -19,9 +19,8 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorAllMeters,
-  fetchAllMeters,
-} from '../../../state/domain-models/domainModelsActions';
+  clearErrorAllMeters, fetchAllMeters,
+} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {MeterDataSummary} from '../../../state/domain-models/meter-all/allMetersModels';
 import {getMeterDataSummary} from '../../../state/domain-models/meter-all/allMetersSelectors';

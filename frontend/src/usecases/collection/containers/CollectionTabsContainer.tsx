@@ -17,7 +17,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
-import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/domainModelsActions';
+import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/gateway/gatewayApiActions';
 import {getDomainModel, getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayDataSummary} from '../../../state/domain-models/gateway/gatewaySelectors';

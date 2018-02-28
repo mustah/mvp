@@ -14,10 +14,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorUsers,
-  deleteUser,
-  fetchUsers,
-} from '../../../state/domain-models/domainModelsActions';
+  clearErrorUsers, deleteUser, fetchUsers,
+} from '../../../state/domain-models/user/userApiActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {User} from '../../../state/domain-models/user/userModels';
 import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';

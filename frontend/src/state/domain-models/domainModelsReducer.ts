@@ -20,14 +20,14 @@ import {
   SelectionEntity,
 } from './domainModels';
 import {
-  DOMAIN_MODELS_CLEAR_ERROR,
-  DOMAIN_MODELS_DELETE_SUCCESS,
-  DOMAIN_MODELS_FAILURE,
-  DOMAIN_MODELS_GET_ENTITY_SUCCESS,
-  DOMAIN_MODELS_GET_SUCCESS,
-  DOMAIN_MODELS_POST_SUCCESS,
-  DOMAIN_MODELS_PUT_SUCCESS,
-  DOMAIN_MODELS_REQUEST,
+  domainModelsClearError,
+  domainModelsDeleteSuccess,
+  domainModelsFailure,
+  domainModelsGetEntitySuccess,
+  domainModelsGetSuccess,
+  domainModelsPostSuccess,
+  domainModelsPutSuccess,
+  domainModelsRequest,
 } from './domainModelsActions';
 import {Gateway} from './gateway/gatewayModels';
 import {Measurement} from './measurement/measurementModels';
@@ -116,25 +116,25 @@ const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: 
     action: ActionTypes<T>,
   ): NormalizedState<T> => {
     switch (action.type) {
-      case DOMAIN_MODELS_REQUEST(endPoint):
+      case domainModelsRequest(endPoint):
         return {
           ...state,
           isFetching: true,
         };
-      case DOMAIN_MODELS_GET_SUCCESS(endPoint):
+      case domainModelsGetSuccess(endPoint):
         return setEntities<T>(entity, state, action as Action<Normalized<T>>);
       // TODO: Add tests
-      case DOMAIN_MODELS_GET_ENTITY_SUCCESS(endPoint):
+      case domainModelsGetEntitySuccess(endPoint):
         return addEntity<T>(state, action as Action<T>);
-      case DOMAIN_MODELS_POST_SUCCESS(endPoint):
+      case domainModelsPostSuccess(endPoint):
         return addEntity<T>(state, action as Action<T>);
-      case DOMAIN_MODELS_PUT_SUCCESS(endPoint):
+      case domainModelsPutSuccess(endPoint):
         return modifyEntity<T>(state, action as Action<T>);
-      case DOMAIN_MODELS_DELETE_SUCCESS(endPoint):
+      case domainModelsDeleteSuccess(endPoint):
         return removeEntity<T>(state, action as Action<T>);
-      case DOMAIN_MODELS_FAILURE(endPoint):
+      case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
-      case DOMAIN_MODELS_CLEAR_ERROR(endPoint):
+      case domainModelsClearError(endPoint):
         return {...initialDomain<T>()};
       default:
         return resetState(state, action, endPoint);
