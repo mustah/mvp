@@ -63,12 +63,12 @@ public class UserDetailsMapperTest {
 
   @Test
   public void userIsWithinOrganisation() {
-    assertThat(mvpUserDetails().isWithinOrganisation(ELVACO)).isTrue();
+    assertThat(mvpUserDetails().isWithinOrganisation(ELVACO.id)).isTrue();
   }
 
   @Test
   public void userIsNotWithingOrganisation() {
-    assertThat(mvpUserDetails().isWithinOrganisation(WAYNE_INDUSTRIES)).isFalse();
+    assertThat(mvpUserDetails().isWithinOrganisation(WAYNE_INDUSTRIES.id)).isFalse();
   }
 
   private static MvpUserDetails mvpUserDetails() {

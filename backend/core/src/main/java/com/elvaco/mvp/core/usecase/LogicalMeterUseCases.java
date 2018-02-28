@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.exception.UnauthorizedException;
+import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -63,8 +63,8 @@ public class LogicalMeterUseCases {
     if (hasTenantAccess(logicalMeter)) {
       return logicalMeters.save(logicalMeter);
     }
-    throw new UnauthorizedException("User '" + currentUser.getUsername() + "' is not allowed to "
-                                      + "create this meter.");
+    throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
+                           + "create this meter.");
   }
 
   public List<Measurement> measurements(LogicalMeter logicalMeter) {

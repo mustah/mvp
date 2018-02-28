@@ -8,6 +8,13 @@ import static java.util.Collections.singletonList;
 
 public final class UserTestData {
 
+  public static final Organisation MARVEL =
+    new Organisation(
+      4L,
+      "Marvel",
+      "marvel"
+    );
+
   public static final Organisation DAILY_PLANET =
     new Organisation(
       3L,

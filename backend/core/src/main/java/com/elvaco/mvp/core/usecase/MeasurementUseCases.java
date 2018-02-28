@@ -55,6 +55,6 @@ public class MeasurementUseCases {
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
-    return physicalMeter != null && currentUser.isWithinOrganisation(physicalMeter.organisation);
+    return physicalMeter != null && currentUser.isWithinOrganisation(physicalMeter.organisation.id);
   }
 }

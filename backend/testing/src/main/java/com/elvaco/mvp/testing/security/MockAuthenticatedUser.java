@@ -1,6 +1,5 @@
 package com.elvaco.mvp.testing.security;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
@@ -27,8 +26,8 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
-  public boolean isWithinOrganisation(Organisation organisation) {
-    return user.organisation.id.equals(organisation.id);
+  public boolean isWithinOrganisation(Long organisationId) {
+    return getOrganisationId().equals(organisationId);
   }
 
   @Override
