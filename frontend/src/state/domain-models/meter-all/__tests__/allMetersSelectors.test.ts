@@ -1,11 +1,12 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {HasId, uuid} from '../../../../types/Types';
-import {NormalizedState, ObjectsById} from '../../../domain-models/domainModels';
-import {Meter, MeterDataSummary, SelectionTreeData} from '../meterModels';
-import {getMeterDataSummary, getSelectionTree} from '../meterSelectors';
+import {Meter} from '../../../domain-models-paginated/meter/meterModels';
+import {NormalizedState, ObjectsById} from '../../domainModels';
+import {MeterDataSummary, SelectionTreeData} from '../allMetersModels';
+import {getMeterDataSummary, getSelectionTree} from '../allMetersSelectors';
 
 type PartialDomainModel = ObjectsById<Partial<Meter> & HasId>;
-describe('meterSelectors', () => {
+describe('allMetersSelectors', () => {
 
   describe('summary', () => {
     it('can group a list of meters with a tally each (like, 5 in NY, 3 in LA)', () => {

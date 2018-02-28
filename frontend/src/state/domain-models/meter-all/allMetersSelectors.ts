@@ -5,19 +5,19 @@ import {hasItems} from '../../../helpers/functionalHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, uuid} from '../../../types/Types';
-import {NormalizedState, ObjectsById} from '../../domain-models/domainModels';
-import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
+import {Meter} from '../../domain-models-paginated/meter/meterModels';
+import {selectionTreeSchema} from '../../domain-models-paginated/meter/meterSchema';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
+import {NormalizedState, ObjectsById} from '../domainModels';
+import {getEntitiesDomainModels, getResultDomainModels} from '../domainModelsSelectors';
 import {
-  Meter,
   MeterDataSummary,
   MeterDataSummaryKey,
   SelectionTreeData,
   SelectionTreeItem,
   SelectionTreeItemProps,
   SelectionTreeItemsProps,
-} from './meterModels';
-import {selectionTreeSchema} from './meterSchema';
+} from './allMetersModels';
 
 export const getSelectionTree =
   createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, SelectionTreeData>(
@@ -33,8 +33,8 @@ export const getSelectionTree =
       const addresses = new Set<uuid>();
       const meters = new Set<uuid>();
 
-      meterIds.map((meterId: uuid) => metersDict[meterId]).filter((meter) => meter !== undefined).
-      forEach((meterEntity: Meter) => {
+      meterIds.map((meterId: uuid) =>
+        metersDict[meterId]).filter((meter) => meter !== undefined).forEach((meterEntity: Meter) => {
 
         const {city, address, facility} = meterEntity;
         const clusterName = address.name[0].toUpperCase();

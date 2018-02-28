@@ -23,9 +23,11 @@ import {
   getEntitiesDomainModels,
   getError,
 } from '../../../state/domain-models/domainModelsSelectors';
+import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../state/domain-models/organisation/organisationsApiActions';
-import {Organisation, Role, User} from '../../../state/domain-models/user/userModels';
-import {getOrganisations, getRoles} from '../../../state/domain-models/user/userSelectors';
+import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
+import {Role, User} from '../../../state/domain-models/user/userModels';
+import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {ErrorResponse, OnClick, uuid} from '../../../types/Types';
 
 interface StateToProps {
