@@ -1,13 +1,9 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
-
-import static java.util.stream.Collectors.toList;
 
 public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, PhysicalMeterEntity> {
 
@@ -24,11 +20,11 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
 
   @Override
   public PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
-    List<MeterStatusLog> statusLogs = new ArrayList<>();
-    if (entity.statusLogs != null) {
-      statusLogs = entity.statusLogs.stream()
-        .map(meterStatusLogMapper::toDomainModel).collect(toList());
-    }
+//    List<MeterStatusLog> statusLogs = new ArrayList<>();
+//    if (entity.statusLogs != null) {
+//      statusLogs = entity.statusLogs.stream()
+//        .map(meterStatusLogMapper::toDomainModel).collect(toList());
+//    }
 
     return new PhysicalMeter(
       entity.id,
@@ -38,7 +34,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       entity.medium,
       entity.manufacturer,
       entity.logicalMeterId,
-      statusLogs
+      Collections.emptyList() //statusLogs
     );
   }
 

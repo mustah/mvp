@@ -96,13 +96,10 @@ public class LogicalMeterRepository implements LogicalMeters {
 
     return new PageAdapter<>(
       all.map(
-        logicalMeter -> {
-
-          return logicalMeterMapper.toDomainModel(
-            logicalMeter,
-            statusLogEntities
-          );
-        }
+        logicalMeter -> logicalMeterMapper.toDomainModel(
+          logicalMeter,
+          statusLogEntities
+        )
       )
     );
   }

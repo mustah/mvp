@@ -42,7 +42,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
   public List<MeasurementEntity> measurements;
 
   @OrderBy("stop desc, start desc")
-  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public UUID logicalMeterId;
