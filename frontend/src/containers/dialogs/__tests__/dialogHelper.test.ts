@@ -36,7 +36,6 @@ describe('dialogSelectors', () => {
       flags: [],
       flagged: false,
       productModel: 'CMi2110',
-      telephoneNumber: '07190000355051',
       status: {name: 'OK', id: 0},
       statusChangelog: [{
         date: '2017-11-22 09:34',

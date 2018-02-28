@@ -5,8 +5,6 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export const Separator = (props: Props) => {
-  return (
-    <div className="Separator" {...props}/>
-  );
-};
+export const Separator = (props: Props) => (
+  <div className="Separator" {...props}/>
+);

@@ -31,7 +31,7 @@ public class OrganisationPermissions {
     }
 
     Organisation organisation = targetDomainObject.organisation;
-    if (!authenticatedUser.isWithinOrganisation(organisation)) {
+    if (!authenticatedUser.isWithinOrganisation(organisation.id)) {
       return false;
     }
 

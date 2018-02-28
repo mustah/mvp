@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.usecase;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
+import com.elvaco.mvp.testing.repository.MockSettings;
 import org.junit.Before;
 import org.junit.Test;
 

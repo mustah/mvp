@@ -8,9 +8,10 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
-public interface LogicalMeterJpaRepository extends QueryDslPredicateExecutor<LogicalMeterEntity>,
+public interface LogicalMeterJpaRepository
+  extends
+  QueryDslPredicateExecutor<LogicalMeterEntity>,
   JpaRepository<LogicalMeterEntity, Long> {
-
 
   Optional<LogicalMeterEntity> findById(Long id);
 

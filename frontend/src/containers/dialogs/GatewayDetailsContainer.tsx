@@ -18,8 +18,8 @@ import {MainTitle, MissingDataTitle} from '../../components/texts/Titles';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {getPaginatedEntities} from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
+import {getEntitiesDomainModels} from '../../state/domain-models/domainModelsSelectors';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
@@ -69,7 +69,10 @@ const GatewayDetailsInfo = ({gateway}: OwnProps) => {
             <Info label={translate('product model')} value={productModel}/>
           </Row>
           <Row>
-            <Info label={translate('collection')} value={<Status id={status.id} name={status.name}/>}/>
+            <Info
+              label={translate('collection')}
+              value={<Status id={status.id} name={status.name}/>}
+            />
             <Info label={translate('interval')} value={'24h'}/>
             <Info label={translate('flagged for action')} value={titleOf(flags)}/>
           </Row>
@@ -88,10 +91,10 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const {gateway, meters} = this.props;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
-    const renderFacility = (item: Meter) => item.facility;
-    const renderManufacturer = (item: Meter) => item.manufacturer;
-    const renderDate = (item: Meter) => item.date;
-    const renderMedium = (item: Meter) => item.medium;
+    const renderFacility = ({facility}: Meter) => facility;
+    const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
+    const renderDate = ({date}: Meter) => date;
+    const renderMedium = ({medium}: Meter) => medium;
     const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(gateway);
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
@@ -129,7 +132,11 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
             <Row>
-              <Checkbox iconStyle={checkbox} labelStyle={checkboxLabel} label={translate('show only changes')}/>
+              <Checkbox
+                iconStyle={checkbox}
+                labelStyle={checkboxLabel}
+                label={translate('show only changes')}
+              />
             </Row>
             <Table {...statusChangelog}>
               <TableColumn
@@ -167,8 +174,9 @@ const GatewayDetails = (props: Props) => (
   </div>
 );
 
-const mapStateToProps = ({paginatedDomainModels: {meters}}: RootState): StateToProps => ({
-  meters: getPaginatedEntities(meters),
+const mapStateToProps = ({domainModels: {allMeters}}: RootState): StateToProps => ({
+  meters: getEntitiesDomainModels(allMeters),
 });
 
-export const GatewayDetailsContainer = connect<StateToProps, null, OwnProps>(mapStateToProps)(GatewayDetails);
+export const GatewayDetailsContainer =
+  connect<StateToProps, null, OwnProps>(mapStateToProps)(GatewayDetails);

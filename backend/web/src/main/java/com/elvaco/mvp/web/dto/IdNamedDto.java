@@ -7,17 +7,20 @@ import lombok.ToString;
 @ToString
 public class IdNamedDto {
 
-  public String id;
+  public static final IdNamedDto OK = new IdNamedDto(0L, "Ok");
+  public static final IdNamedDto UNKNOWN = new IdNamedDto(4L, "Unknown");
+
+  public Long id;
   public String name;
 
   public IdNamedDto() {}
 
-  private IdNamedDto(String id, String name) {
+  private IdNamedDto(Long id, String name) {
     this.id = id;
     this.name = name;
   }
 
   public IdNamedDto(String name) {
-    this(name, name);
+    this((long) name.hashCode(), name);
   }
 }

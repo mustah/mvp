@@ -58,7 +58,7 @@ public class LogicalMeterEntity implements Serializable {
   @JoinTable(
     name = "gateways_meters",
     joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
-    inverseJoinColumns = @JoinColumn(name = "gateway_serial", referencedColumnName = "serial")
+    inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
 

@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import org.springframework.security.core.GrantedAuthority;
@@ -52,8 +51,8 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
-  public boolean isWithinOrganisation(Organisation organisation) {
-    return user.organisation.id.equals(organisation.id);
+  public boolean isWithinOrganisation(Long organisationId) {
+    return getOrganisationId().equals(organisationId);
   }
 
   @Override

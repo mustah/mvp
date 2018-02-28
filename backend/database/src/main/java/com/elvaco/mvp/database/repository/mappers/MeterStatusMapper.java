@@ -13,9 +13,6 @@ public class MeterStatusMapper implements
 
   @Override
   public MeterStatusEntity toEntity(MeterStatus domainModel) {
-    return new MeterStatusEntity(
-      domainModel.id,
-      domainModel.name
-    );
+    return new MeterStatusEntity(domainModel.id, domainModel.name);
   }
 }

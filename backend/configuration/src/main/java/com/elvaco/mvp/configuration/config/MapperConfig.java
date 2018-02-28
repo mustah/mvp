@@ -1,5 +1,6 @@
 package com.elvaco.mvp.configuration.config;
 
+import com.elvaco.mvp.web.mapper.GatewayMapper;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
@@ -37,5 +38,10 @@ class MapperConfig {
   @Bean
   MeterStatusLogMapper meterStatusLogMapper() {
     return new MeterStatusLogMapper();
+  }
+
+  @Bean
+  GatewayMapper gatewayMapper() {
+    return new GatewayMapper();
   }
 }

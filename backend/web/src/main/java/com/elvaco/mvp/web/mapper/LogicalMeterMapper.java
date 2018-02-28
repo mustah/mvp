@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.Optional;
 import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
@@ -11,11 +12,11 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.util.Dates;
 
+import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
-
-  private static final IdNamedDto OK = new IdNamedDto("Ok");
 
   private final MeterStatusLogMapper meterStatusLogMapper;
 
@@ -50,13 +51,14 @@ public class LogicalMeterMapper {
     String city = logicalMeter.location.getCity().orElse("Unknown city");
     meterDto.address = new IdNamedDto(address);
     meterDto.city = new IdNamedDto(city);
+    meterDto.status = OK;
+    meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = logicalMeter.meterStatusLogs.stream()
       .findAny()
       .map(meterStatusLog -> meterStatusLog.start)
       .map(date -> Dates.formatTime(date, timeZone))
       .orElse(created);
-    meterDto.position = new GeoPositionDto();
     meterDto.facility = logicalMeter.externalId;
     logicalMeter.gateways
       .stream()
@@ -69,12 +71,13 @@ public class LogicalMeterMapper {
         return gateway;
       });
 
-    if (logicalMeter.location.hasCoordinates()) {
-      GeoCoordinate coordinate = logicalMeter.location.getCoordinate();
-      meterDto.position.confidence = coordinate.getConfidence();
-      meterDto.position.latitude = coordinate.getLatitude();
-      meterDto.position.longitude = coordinate.getLongitude();
-    }
+    meterDto.position = Optional.ofNullable(logicalMeter.location.getCoordinate())
+      .map(coordinate -> new GeoPositionDto(
+        coordinate.getLatitude(),
+        coordinate.getLongitude(),
+        coordinate.getConfidence()
+      ))
+      .orElse(new GeoPositionDto());
 
     meterDto.statusChangelog = logicalMeter.meterStatusLogs
       .stream()

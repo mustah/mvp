@@ -32,6 +32,7 @@ public class PhysicalMeterStatusLogEntity implements Serializable {
 
   @Temporal(value = TemporalType.TIMESTAMP)
   public Date start;
+
   @Temporal(value = TemporalType.TIMESTAMP)
   public Date stop;
 

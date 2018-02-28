@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 
-public abstract class MockRepository<T> {
+abstract class MockRepository<T> {
 
   private final List<T> entities;
 
@@ -32,7 +32,6 @@ public abstract class MockRepository<T> {
       entities.add(entity);
     }
     return entity;
-
   }
 
   final Stream<T> filter(Predicate<T> predicate) {
@@ -42,5 +41,4 @@ public abstract class MockRepository<T> {
   final List<T> allMocks() {
     return entities;
   }
-
 }

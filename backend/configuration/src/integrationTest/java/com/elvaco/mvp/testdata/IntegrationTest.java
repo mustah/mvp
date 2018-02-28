@@ -59,7 +59,7 @@ public abstract class IntegrationTest {
     return user;
   }
 
-  private RestClient restAsUser(User user) {
+  protected RestClient restAsUser(User user) {
     createUserIfNotPresent(user);
     return restClient()
       .loginWith(user.email, user.password)

@@ -130,7 +130,6 @@ export const testData = {
 
 export const makeMeter = (id: number, cityId: uuid, city: string, addressId: uuid, address: string): Meter => ({
   id,
-  moid: String(id),
   facility: '1',
   alarm: '1',
   flags: [],

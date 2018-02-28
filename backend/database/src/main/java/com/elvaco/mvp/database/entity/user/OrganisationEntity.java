@@ -25,6 +25,7 @@ import static java.util.Collections.emptySet;
 public class OrganisationEntity implements Serializable {
 
   private static final long serialVersionUID = -2369738291498443749L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
@@ -34,11 +35,10 @@ public class OrganisationEntity implements Serializable {
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   public Set<UserEntity> users;
 
-  public OrganisationEntity() {}
+  OrganisationEntity() {}
 
   public OrganisationEntity(String name, String code) {
-    this.name = name;
-    this.code = code;
+    this(null, name, code);
   }
 
   public OrganisationEntity(Long id, String name, String code) {
@@ -46,6 +46,5 @@ public class OrganisationEntity implements Serializable {
     this.name = name;
     this.code = code;
     this.users = emptySet();
-
   }
 }

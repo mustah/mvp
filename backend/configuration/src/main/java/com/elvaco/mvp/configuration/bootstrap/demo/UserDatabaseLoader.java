@@ -1,7 +1,6 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -32,8 +31,6 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.SECRET_SERVICE;
-import static com.elvaco.mvp.core.fixture.DomainModels.THE_BEATLES;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -72,11 +69,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
       return;
     }
 
-    Stream.of(
-      WAYNE_INDUSTRIES,
-      SECRET_SERVICE,
-      THE_BEATLES
-    ).forEach(organisations::save);
+    organisations.save(WAYNE_INDUSTRIES);
 
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
       ELVACO_SUPER_ADMIN_USER,
