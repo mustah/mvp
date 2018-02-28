@@ -24,31 +24,27 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void shouldFindOrganisationsMeterById() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      newAuthenticatedUser(singletonList(Role.USER)),
       singletonList(newMeter(1L, 1L))
     );
 
-    assertThat(
-      useCases.findById(1L)
-    ).isNotEmpty();
+    assertThat(useCases.findById(1L)).isNotEmpty();
   }
 
   @Test
   public void shouldNotFindOtherOrganisationsMeterById() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      newAuthenticatedUser(singletonList(Role.USER)),
       singletonList(newMeter(1L, 2L))
     );
 
-    assertThat(
-      useCases.findById(1L)
-    ).isEmpty();
+    assertThat(useCases.findById(1L)).isEmpty();
   }
 
   @Test
   public void superAdminShouldFindAllMeters() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.SUPER_ADMIN)),
+      newAuthenticatedUser(singletonList(Role.SUPER_ADMIN)),
       asList(
         newMeter(0L, 1L),
         newMeter(1L, 2L),
@@ -62,7 +58,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void shouldOnlyFindAllMetersBelongingToOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      newAuthenticatedUser(singletonList(Role.USER)),
       asList(
         newMeter(0L, 1L),
         newMeter(1L, 2L),
@@ -76,7 +72,7 @@ public class LogicalMeterUseCasesTest {
   @Test
   public void notAllowedToCreateMeterForOtherOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      newAuthenticatedUser(singletonList(Role.USER)),
       emptyList()
     );
 
@@ -84,11 +80,10 @@ public class LogicalMeterUseCasesTest {
       .hasMessageContaining("not allowed");
   }
 
-
   @Test
   public void allowedToCreateMeterForOwnOrganisation() {
     LogicalMeterUseCases useCases = newUseCases(
-      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      newAuthenticatedUser(singletonList(Role.USER)),
       emptyList()
     );
 
@@ -109,14 +104,14 @@ public class LogicalMeterUseCasesTest {
     );
   }
 
-  private AuthenticatedUser newAuthenticatedUser(Long organisationId, List<Role> roles) {
+  private AuthenticatedUser newAuthenticatedUser(List<Role> roles) {
     return new MockAuthenticatedUser(
       new User(
         0L,
         "mocked user",
         "mock@mock.net",
         "password",
-        new Organisation(organisationId, "some organisation", "some-org"),
+        new Organisation(1L, "some organisation", "some-org"),
         roles
       ),
       "some-token"

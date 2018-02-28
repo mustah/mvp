@@ -3,12 +3,14 @@ package com.elvaco.mvp.web;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
+import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,9 +34,17 @@ public class GatewayControllerTest extends IntegrationTest {
   @Autowired
   private Organisations organisations;
 
+  private Organisation dailyPlanet;
+
+  @Before
+  public void setUp() {
+    dailyPlanet = organisations.save(DAILY_PLANET);
+  }
+
   @After
   public void tearDown() {
     jpaRepository.deleteAll();
+    organisations.deleteById(dailyPlanet.id);
   }
 
   @Test
@@ -46,9 +57,8 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminsCanListAllGateways() {
-    organisations.save(DAILY_PLANET);
-    gateways.save(new Gateway(null, DAILY_PLANET.id, "1111", "serial-1"));
-    gateways.save(new Gateway(null, DAILY_PLANET.id, "2222", "serial-2"));
+    gateways.save(new Gateway(null, dailyPlanet.id, "1111", "serial-1"));
+    gateways.save(new Gateway(null, dailyPlanet.id, "2222", "serial-2"));
     gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
 
     ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
@@ -73,10 +83,10 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    organisations.save(DAILY_PLANET);
     gateways.save(new Gateway(null, ELVACO.id, "1111", "serial-1"));
 
-    ResponseEntity<List> gatewaysResponse = asClarkKent().get("/gateways", List.class);
+    ResponseEntity<List> gatewaysResponse = restAsUser(dailyPlanetUser(dailyPlanet))
+      .get("/gateways", List.class);
 
     assertThat(gatewaysResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(gatewaysResponse.getBody()).isEmpty();
@@ -84,13 +94,11 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
-    organisations.save(ELVACO);
-    organisations.save(DAILY_PLANET);
-    Gateway g1 = gateways.save(new Gateway(null, DAILY_PLANET.id, "1111", "serial-1"));
-    Gateway g2 = gateways.save(new Gateway(null, DAILY_PLANET.id, "2222", "serial-2"));
+    Gateway g1 = gateways.save(new Gateway(null, dailyPlanet.id, "1111", "serial-1"));
+    Gateway g2 = gateways.save(new Gateway(null, dailyPlanet.id, "2222", "serial-2"));
     gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
 
-    List<Long> gatewayIds = asClarkKent()
+    List<Long> gatewayIds = restAsUser(dailyPlanetUser(dailyPlanet))
       .getList("/gateways", GatewayDto.class)
       .getBody()
       .stream()

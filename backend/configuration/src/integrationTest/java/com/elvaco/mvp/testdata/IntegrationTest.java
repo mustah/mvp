@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
-import static com.elvaco.mvp.testing.fixture.UserTestData.CLARK_KENT;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -53,10 +52,6 @@ public abstract class IntegrationTest {
     return restAsUser(ELVACO_SUPER_ADMIN_USER);
   }
 
-  protected RestClient asClarkKent() {
-    return restAsUser(CLARK_KENT);
-  }
-
   protected User createUserIfNotPresent(User user) {
     if (!users.findByEmail(user.email).isPresent()) {
       users.create(user);
@@ -64,7 +59,7 @@ public abstract class IntegrationTest {
     return user;
   }
 
-  private RestClient restAsUser(User user) {
+  protected RestClient restAsUser(User user) {
     createUserIfNotPresent(user);
     return restClient()
       .loginWith(user.email, user.password)
