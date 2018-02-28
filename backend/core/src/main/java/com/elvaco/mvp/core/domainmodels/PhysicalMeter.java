@@ -106,4 +106,43 @@ public class PhysicalMeter {
       meterStatusLogs
     );
   }
+
+  public PhysicalMeter withMedium(String medium) {
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      meterStatusLogs
+    );
+  }
+
+  public PhysicalMeter withManufacturer(String manufacturer) {
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      meterStatusLogs
+    );
+  }
+
+  public PhysicalMeter withLogicalMeterId(Long logicalMeterId) {
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      meterStatusLogs
+    );
+  }
 }
