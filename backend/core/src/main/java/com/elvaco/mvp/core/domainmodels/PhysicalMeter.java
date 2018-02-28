@@ -12,7 +12,7 @@ import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
-public class PhysicalMeter {
+public class PhysicalMeter implements Identifiable<Long> {
 
   @Nullable
   public final Long id;
@@ -105,6 +105,11 @@ public class PhysicalMeter {
       logicalMeterId,
       meterStatusLogs
     );
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 
   public PhysicalMeter withMedium(String medium) {

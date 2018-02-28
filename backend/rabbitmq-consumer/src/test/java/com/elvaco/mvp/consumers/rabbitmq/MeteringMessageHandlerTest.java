@@ -1,6 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +53,7 @@ public class MeteringMessageHandlerTest {
   public void setUp() {
     this.physicalMeters = new MockPhysicalMeters();
     this.organisations = new MockOrganisations();
-    this.logicalMeters = new MockLogicalMeters();
+    this.logicalMeters = new MockLogicalMeters(new ArrayList<>());
     this.measurements = new MockMeasurements();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
       new User(
@@ -81,15 +81,15 @@ public class MeteringMessageHandlerTest {
 
     messageHandler.handle(structureMessage);
 
-    Organisation expectedOrganisation = new Organisation(0L, "", "Some organisation");
+    Organisation expectedOrganisation = new Organisation(1L, "", "Some organisation");
     PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
-      0L,
+      1L,
       expectedOrganisation,
       "1234",
       "ABC-123",
       "Hot water",
       "ELV",
-      0L,
+      1L,
       emptyList()
     );
 
@@ -99,7 +99,7 @@ public class MeteringMessageHandlerTest {
     ).get();
 
     LogicalMeter expectedLogicalMeter = new LogicalMeter(
-      0L,
+      actualLogicalMeter.id,
       "ABC-123",
       expectedOrganisation.id,
       Location.UNKNOWN_LOCATION,
@@ -111,6 +111,7 @@ public class MeteringMessageHandlerTest {
     );
 
     assertThat(actualLogicalMeter).isEqualTo(expectedLogicalMeter);
+
     assertThat(
       physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
         expectedOrganisation.id,
@@ -145,13 +146,13 @@ public class MeteringMessageHandlerTest {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "ELV");
     LogicalMeter expectedLogicalMeter = logicalMeters.save(
       new LogicalMeter(
-        null,
-        "ABC-123", 0L, Location.UNKNOWN_LOCATION,
+        1L,
+        "ABC-123",
+        0L,
+        Location.UNKNOWN_LOCATION,
         new Date()
       )
     );
-
-    messageHandler.handle(structureMessage);
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
@@ -167,7 +168,7 @@ public class MeteringMessageHandlerTest {
 
     messageHandler.handle(structureMessage);
 
-    LogicalMeter unmappableMeter = logicalMeters.findById(0L).get();
+    LogicalMeter unmappableMeter = logicalMeters.findById(1L).get();
     assertThat(unmappableMeter.getMedium()).isEqualTo("Unknown meter");
   }
 

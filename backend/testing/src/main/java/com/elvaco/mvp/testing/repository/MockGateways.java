@@ -1,17 +1,11 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 
-public class MockGateways extends MockRepository<Gateway> implements Gateways {
-
-  @Override
-  protected Optional<Long> getId(Gateway entity) {
-    return Optional.ofNullable(entity.id);
-  }
+public class MockGateways extends MockRepository<Long, Gateway> implements Gateways {
 
   @Override
   public List<Gateway> findAll() {
@@ -32,6 +26,11 @@ public class MockGateways extends MockRepository<Gateway> implements Gateways {
       entity.productModel,
       entity.meters
     );
+  }
+
+  @Override
+  protected Long generateId() {
+    return nextId();
   }
 
   @Override

@@ -12,6 +12,6 @@ public class SettingMapper implements DomainEntityMapper<Setting, SettingEntity>
 
   @Override
   public SettingEntity toEntity(Setting domainModel) {
-    return new SettingEntity(domainModel.id, domainModel.name, domainModel.value);
+    return new SettingEntity(domainModel.getId(), domainModel.name, domainModel.value);
   }
 }

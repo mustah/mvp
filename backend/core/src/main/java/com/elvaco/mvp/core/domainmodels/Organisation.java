@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class Organisation implements Serializable {
+public class Organisation implements Identifiable<Long>, Serializable {
 
   private static final long serialVersionUID = -375927914085016616L;
 
@@ -19,5 +19,10 @@ public class Organisation implements Serializable {
     this.id = id;
     this.name = name;
     this.code = code;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

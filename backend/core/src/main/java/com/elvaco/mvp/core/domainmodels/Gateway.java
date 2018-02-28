@@ -6,9 +6,8 @@ import javax.annotation.Nullable;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
-public class Gateway {
+public class Gateway implements Identifiable<Long> {
 
-  @Nullable
   public final Long id;
   public final Long organisationId;
   public final String serial;
@@ -36,5 +35,10 @@ public class Gateway {
     this.serial = serial;
     this.productModel = productModel;
     this.meters = unmodifiableList(meters);
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

@@ -5,9 +5,9 @@ import java.util.UUID;
 import lombok.ToString;
 
 @ToString
-public class Setting {
+public class Setting implements Identifiable<UUID> {
 
-  public final UUID id;
+  private final UUID id;
   public final String name;
   public final String value;
 
@@ -15,5 +15,10 @@ public class Setting {
     this.id = id;
     this.name = name;
     this.value = value;
+  }
+
+  @Override
+  public UUID getId() {
+    return id;
   }
 }

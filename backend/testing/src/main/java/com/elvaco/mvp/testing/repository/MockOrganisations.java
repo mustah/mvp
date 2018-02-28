@@ -6,16 +6,16 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
-public class MockOrganisations extends MockRepository<Organisation> implements Organisations {
-
-  @Override
-  protected Optional<Long> getId(Organisation entity) {
-    return Optional.ofNullable(entity.id);
-  }
+public class MockOrganisations extends MockRepository<Long, Organisation> implements Organisations {
 
   @Override
   protected Organisation copyWithId(Long id, Organisation entity) {
     return new Organisation(id, entity.name, entity.code);
+  }
+
+  @Override
+  protected Long generateId() {
+    return nextId();
   }
 
   @Override

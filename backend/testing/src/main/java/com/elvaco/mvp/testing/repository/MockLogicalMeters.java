@@ -13,19 +13,10 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-public class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
-
-  public MockLogicalMeters() {
-    super();
-  }
+public class MockLogicalMeters extends MockRepository<Long, LogicalMeter> implements LogicalMeters {
 
   public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
-    super(logicalMeters);
-  }
-
-  @Override
-  protected Optional<Long> getId(LogicalMeter entity) {
-    return Optional.ofNullable(entity.id);
+    logicalMeters.forEach(this::saveMock);
   }
 
   @Override
@@ -44,6 +35,11 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
   }
 
   @Override
+  protected Long generateId() {
+    return nextId();
+  }
+
+  @Override
   public Optional<LogicalMeter> findById(Long id) {
     return filter(logicalMeter -> logicalMeter.id != null)
       .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
@@ -53,7 +49,7 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id) {
     return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId)).filter(
-      logicalMeter -> logicalMeter.id.equals(id))
+      logicalMeter -> Objects.equals(logicalMeter.id, id))
       .findFirst();
   }
 
@@ -86,7 +82,8 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    Long organisationId, String externalId
+    Long organisationId,
+    String externalId
   ) {
     return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
       .filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId))

@@ -1,44 +1,42 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
+import com.elvaco.mvp.core.domainmodels.Identifiable;
 
-abstract class MockRepository<T> {
+abstract class MockRepository<K, V extends Identifiable<K>> {
 
-  private final List<T> entities;
+  private final Map<K, V> repository = new HashMap<>();
 
-  MockRepository() {
-    this(emptyList());
-  }
+  protected abstract V copyWithId(K id, V entity);
 
-  MockRepository(List<T> initial) {
-    this.entities = new ArrayList<>(initial);
-  }
+  protected abstract K generateId();
 
-  protected abstract Optional<Long> getId(T entity);
-
-  protected abstract T copyWithId(Long id, T entity);
-
-  final T saveMock(T entity) {
-    if (getId(entity).isPresent()) {
-      entities.set(Math.toIntExact(getId(entity).get()), entity);
+  final V saveMock(V entity) {
+    if (entity.getId() != null) {
+      return repository.put(entity.getId(), entity);
     } else {
-      entity = copyWithId((long) entities.size(), entity);
-      entities.add(entity);
+      K id = generateId();
+      V withId = copyWithId(id, entity);
+      repository.put(id, withId);
+      return withId;
     }
-    return entity;
   }
 
-  final Stream<T> filter(Predicate<T> predicate) {
-    return entities.stream().filter(predicate);
+  final Stream<V> filter(Predicate<V> predicate) {
+    return allMocks().stream().filter(predicate);
   }
 
-  final List<T> allMocks() {
-    return entities;
+  final List<V> allMocks() {
+    return new ArrayList<>(repository.values());
+  }
+
+  final long nextId() {
+    return (long) repository.size() + 1;
   }
 }

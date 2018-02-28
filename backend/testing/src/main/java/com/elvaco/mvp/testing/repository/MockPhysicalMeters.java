@@ -6,12 +6,8 @@ import java.util.Optional;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 
-public class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements PhysicalMeters {
-
-  @Override
-  protected Optional<Long> getId(PhysicalMeter entity) {
-    return Optional.ofNullable(entity.id);
-  }
+public class MockPhysicalMeters extends MockRepository<Long, PhysicalMeter>
+  implements PhysicalMeters {
 
   @Override
   protected PhysicalMeter copyWithId(Long id, PhysicalMeter entity) {
@@ -25,6 +21,11 @@ public class MockPhysicalMeters extends MockRepository<PhysicalMeter> implements
       entity.logicalMeterId,
       entity.meterStatusLogs
     );
+  }
+
+  @Override
+  protected Long generateId() {
+    return nextId();
   }
 
   @Override

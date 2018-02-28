@@ -87,7 +87,7 @@ public class LogicalMeterUseCasesTest {
       emptyList()
     );
 
-    assertThat(useCases.save(newUnsavedMeter(1L)).id).isEqualTo(0L);
+    assertThat(useCases.save(newUnsavedMeter(1L)).id).isEqualTo(1L);
   }
 
   private LogicalMeter newUnsavedMeter(long organisationId) {

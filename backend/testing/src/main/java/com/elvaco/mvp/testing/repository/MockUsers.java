@@ -11,15 +11,10 @@ import com.elvaco.mvp.core.spi.repository.Users;
 
 import static java.util.stream.Collectors.toList;
 
-public class MockUsers extends MockRepository<User> implements Users {
+public class MockUsers extends MockRepository<Long, User> implements Users {
 
   public MockUsers(List<User> users) {
-    super(users);
-  }
-
-  @Override
-  protected Optional<Long> getId(User entity) {
-    return Optional.ofNullable(entity.id);
+    users.forEach(this::saveMock);
   }
 
   @Override
@@ -32,6 +27,11 @@ public class MockUsers extends MockRepository<User> implements Users {
       entity.organisation,
       entity.roles
     );
+  }
+
+  @Override
+  protected Long generateId() {
+    return nextId();
   }
 
   @Override

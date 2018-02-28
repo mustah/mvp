@@ -2,20 +2,23 @@ package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.core.spi.repository.Settings;
 
-public class MockSettings extends MockRepository<Setting> implements Settings {
+import static java.util.UUID.randomUUID;
+
+public class MockSettings extends MockRepository<UUID, Setting> implements Settings {
 
   @Override
-  protected Optional<Long> getId(Setting entity) {
-    return Optional.ofNullable(entity.id);
+  protected Setting copyWithId(UUID id, Setting entity) {
+    return new Setting(id, entity.name, entity.value);
   }
 
   @Override
-  protected Setting copyWithId(Long id, Setting entity) {
-    return new Setting(id, entity.name, entity.value);
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override

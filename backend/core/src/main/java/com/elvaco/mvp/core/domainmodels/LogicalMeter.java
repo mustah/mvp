@@ -16,7 +16,7 @@ import static java.util.Collections.unmodifiableList;
 
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
-public class LogicalMeter {
+public class LogicalMeter implements Identifiable<Long>{
 
   @Nullable
   public final Long id;
@@ -96,6 +96,11 @@ public class LogicalMeter {
       emptyList(),
       emptyList()
     );
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 
   public LogicalMeter createdAt(Date creationTime) {
