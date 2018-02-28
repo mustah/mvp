@@ -14,8 +14,10 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterUseCasesTest {
 
@@ -71,7 +73,33 @@ public class LogicalMeterUseCasesTest {
     assertThat(useCases.findAll()).hasSize(2);
   }
 
-  private LogicalMeter newMeter(long meterId, long organisationId) {
+  @Test
+  public void notAllowedToCreateMeterForOtherOrganisation() {
+    LogicalMeterUseCases useCases = newUseCases(
+      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      emptyList()
+    );
+
+    assertThatThrownBy(() -> useCases.save(newUnsavedMeter(2L)))
+      .hasMessageContaining("not allowed");
+  }
+
+
+  @Test
+  public void allowedToCreateMeterForOwnOrganisation() {
+    LogicalMeterUseCases useCases = newUseCases(
+      newAuthenticatedUser(1L, singletonList(Role.USER)),
+      emptyList()
+    );
+
+    assertThat(useCases.save(newUnsavedMeter(1L)).id).isEqualTo(0L);
+  }
+
+  private LogicalMeter newUnsavedMeter(long organisationId) {
+    return newMeter(null, organisationId);
+  }
+
+  private LogicalMeter newMeter(Long meterId, long organisationId) {
     return new LogicalMeter(
       meterId,
       "meter-" + meterId,
