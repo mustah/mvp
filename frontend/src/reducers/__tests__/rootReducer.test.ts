@@ -23,6 +23,6 @@ describe('rootReducer', () => {
     const state = rootReducer(initialState, loginRequest());
 
     expect(state).not.toEqual(initialState);
-    expect(rootReducer(state, logoutUser())).toEqual(initialState);
+    expect(rootReducer(state, logoutUser(undefined))).toEqual(initialState);
   });
 });

@@ -10,17 +10,18 @@ import {PopoverMenu} from '../../../../components/popover/PopoverMenu';
 import {Xsmall} from '../../../../components/texts/Texts';
 import {translate} from '../../../../services/translationService';
 import {User} from '../../../../state/domain-models/user/userModels';
-import {Clickable, OnClick, RenderFunction, uuid} from '../../../../types/Types';
+import {Clickable, OnClick, RenderFunction} from '../../../../types/Types';
+import {OnLogout} from '../../../auth/authModels';
 import './Profile.scss';
 
 interface Props {
   user: User;
-  logout: (organisationId: uuid) => void;
+  logout: OnLogout;
 }
 
 export const Profile = (props: Props) => {
   const {user, logout} = props;
-  const logoutClick = () => logout(user.organisation.code);
+  const logoutClick = () => logout();
   const Icon = iconComponent({name: user.name});
   const renderPopoverContent: RenderFunction<OnClick> = () => ([(
       <Link to={routes.userProfile} className="link" key="goToProfile">

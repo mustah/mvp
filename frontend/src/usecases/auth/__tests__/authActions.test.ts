@@ -62,14 +62,12 @@ describe('authActions', () => {
     });
 
     it('logs out logged in user', async () => {
-      await dispatchLogin();
+      store =  mockStore({auth: {user, isAuthenticated: true}});
 
-      await store.dispatch(logout(user.organisation.code));
+      await store.dispatch(logout());
 
       expect(store.getActions()).toEqual([
-        loginRequest(),
-        loginSuccess({token, user}),
-        logoutUser(),
+        logoutUser(undefined),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });
@@ -133,11 +131,12 @@ describe('authActions', () => {
 
     it('can logout user without any side effect', async () => {
       mockRestClient.onGet(EndPoints.logout).reply(204);
+      store =  mockStore({auth: {user, isAuthenticated: true}});
 
-      await store.dispatch(logout(user.organisation.code));
+      await store.dispatch(logout());
 
       expect(store.getActions()).toEqual([
-        logoutUser(),
+        logoutUser(undefined),
         routerActions.push(`${routes.login}/${user.organisation.code}`),
       ]);
     });

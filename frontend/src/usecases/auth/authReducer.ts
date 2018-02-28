@@ -1,10 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {User} from '../../state/domain-models/user/userModels';
 import {Action} from '../../types/Types';
-import {
-  AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS,
-  LOGOUT_USER,
-} from './authActions';
+import {AUTH_SET_USER_INFO, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT_USER} from './authActions';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
 export const initialAuthState: AuthState = {isAuthenticated: false};
@@ -36,6 +33,11 @@ const setUserInfo = (state: AuthState, {payload}: Action<User>): AuthState => ({
   user: payload,
 });
 
+const logoutUser = (state: AuthState, {payload}: Action<Unauthorized>): AuthState => ({
+  ...initialAuthState,
+  error: payload,
+});
+
 export const auth = (state: AuthState = initialAuthState, action: ActionTypes): AuthState => {
 
   switch (action.type) {
@@ -50,7 +52,7 @@ export const auth = (state: AuthState = initialAuthState, action: ActionTypes): 
     case LOGIN_FAILURE:
       return loginFailure(state, action as Action<Unauthorized>);
     case LOGOUT_USER:
-      return {...initialAuthState};
+      return logoutUser(state, action as Action<Unauthorized>);
     case AUTH_SET_USER_INFO:
       return setUserInfo(state, action as Action<User>);
     default:
