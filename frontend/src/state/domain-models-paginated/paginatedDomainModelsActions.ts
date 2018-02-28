@@ -3,11 +3,11 @@ import {Dispatch} from 'react-redux';
 import {createPayloadAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
+import {EndPoints} from '../../services/endPoints';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, Identifiable} from '../../types/Types';
-import {EndPoints, RequestType} from '../domain-models/domainModels';
-import {RequestCallbacks} from '../domain-models/domainModelsActions';
+import {ErrorResponse, HasId} from '../../types/Types';
+import {EndPoints, HttpMethod} from '../domain-models/domainModels';
 import {
   HasPageNumber,
   NormalizedPaginated,

@@ -1,6 +1,6 @@
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
-import {EndPoints} from '../../domain-models/domainModels';
+import {EndPoints} from '../../../services/endPoints';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';

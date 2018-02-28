@@ -4,7 +4,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {EndPoints} from '../domainModels';
-import {clearError, deleteRequest, fetchIfNeeded, postRequest} from '../domainModelsActions';
+import {clearError, restDelete, restGetIfNeeded, restPost} from '../domainModelsActions';
 import {Organisation} from './organisationModels';
 import {organisationSchema} from './organisationSchema';
 

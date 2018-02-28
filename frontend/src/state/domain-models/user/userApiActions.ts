@@ -4,7 +4,7 @@ import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
-import {EndPoints} from '../domainModels';
+import {EndPoints} from '../../../services/endPoints';
 import {
   clearError,
   deleteRequest,

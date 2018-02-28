@@ -1,30 +1,12 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
+import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
-import {
-  DomainModelsState,
-  EndPoints,
-  Normalized,
-  NormalizedState,
-  SelectionEntity,
-} from '../domainModels';
-import {
-  deleteRequestOf,
-  getEntityRequestOf,
-  getRequestOf,
-  postRequestOf,
-  putRequestOf,
-} from '../domainModelsActions';
-import {
-  addresses,
-  cities,
-  domainModels,
-  gateways,
-  initialDomain,
-  users,
-} from '../domainModelsReducer';
+import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
+import {deleteRequestOf, getEntityRequestOf, getRequestOf, postRequestOf, putRequestOf} from '../domainModelsActions';
+import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
 import {clearErrorGateways} from '../gateway/gatewayApiActions';
 import {Gateway} from '../gateway/gatewayModels';

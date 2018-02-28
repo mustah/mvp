@@ -1,4 +1,4 @@
-import {EndPoints} from '../../state/domain-models/domainModels';
+import {EndPoints} from '../endPoints';
 import {authenticate, InvalidToken, restClient, restClientWith} from '../restClient';
 import MockAdapter = require('axios-mock-adapter');
 

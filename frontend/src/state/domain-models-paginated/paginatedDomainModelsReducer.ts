@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from '../domain-models/domainModels';
 import {
   ADD_SELECTION,

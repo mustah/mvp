@@ -1,6 +1,6 @@
 import {makeMeter} from '../../../__tests__/testDataFactory';
+import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
-import {EndPoints} from '../../domain-models/domainModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Meter} from '../meter/meterModels';
 import {

@@ -1,6 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
-import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {EndPoints} from '../../services/endPoints';
+import {Action, ErrorResponse, HasId, Identifiable, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {
   ADD_SELECTION,
@@ -13,7 +14,6 @@ import {
 } from '../search/selection/selectionActions';
 import {
   DomainModelsState,
-  EndPoints,
   Normalized,
   NormalizedState,
   ObjectsById,

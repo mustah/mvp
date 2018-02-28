@@ -1,11 +1,13 @@
 import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
+import {EndPoints} from '../../../../services/endPoints';
 import {IdNamed} from '../../../../types/Types';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {
   DomainModelsState,
   EndPoints,
+  HttpMethod,
   Normalized,
   NormalizedState,
   SelectionEntity,

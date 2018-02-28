@@ -2,16 +2,12 @@ import axios from 'axios';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {initLanguage} from '../../../../i18n/i18n';
+import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
-import {DomainModelsState, EndPoints} from '../../domainModels';
-import {
-  deleteRequestOf,
-  getEntityRequestOf,
-  postRequestOf,
-  putRequestOf,
-} from '../../domainModelsActions';
+import {DomainModelsState, EndPoints, HttpMethod} from '../../domainModels';
+import {requestMethod} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../userApiActions';
 import {Role, User} from '../userModels';

@@ -1,5 +1,5 @@
 import {EndPoints} from '../domainModels';
-import {fetchIfNeeded} from '../domainModelsActions';
+import {restGetIfNeeded} from '../domainModelsActions';
 import {Measurement} from './measurementModels';
 import {measurementSchema} from './measurementSchema';
 
