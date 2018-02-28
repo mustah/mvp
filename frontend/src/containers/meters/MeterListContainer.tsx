@@ -16,7 +16,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ClearError, ObjectsById, RestGet} from '../../state/domain-models/domainModels';
-import {clearErrorAllMeters, fetchAllMeters} from '../../state/domain-models/domainModelsActions';
+import {clearErrorAllMeters, fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {
   getEntitiesDomainModels,
   getError,

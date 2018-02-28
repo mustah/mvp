@@ -2,21 +2,21 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {makeMeter} from '../../../__tests__/testDataFactory';
-import {initLanguage} from '../../../i18n/i18n';
-import {RootState} from '../../../reducers/rootReducer';
-import {authenticate} from '../../../services/restClient';
-import {ErrorResponse} from '../../../types/Types';
-import {EndPoints} from '../../domain-models/domainModels';
-import {showFailMessage} from '../../ui/message/messageActions';
-import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
-import {Meter} from '../meter/meterModels';
-import {meterSchema} from '../meter/meterSchema';
-import {HasPageNumber, NormalizedPaginated} from '../paginatedDomainModels';
+import {makeMeter} from '../../../../__tests__/testDataFactory';
+import {initLanguage} from '../../../../i18n/i18n';
+import {RootState} from '../../../../reducers/rootReducer';
+import {authenticate} from '../../../../services/restClient';
+import {ErrorResponse} from '../../../../types/Types';
+import {EndPoints} from '../../../domain-models/domainModels';
+import {showFailMessage} from '../../../ui/message/messageActions';
+import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
+import {fetchMeters} from '../meterApiActions';
+import {Meter} from '../meterModels';
+import {meterSchema} from '../meterSchema';
+import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
 import {
-  clearErrorMeters, DOMAIN_MODELS_PAGINATED_CLEAR_ERROR, fetchMeters,
-  requestMethodPaginated,
-} from '../paginatedDomainModelsActions';
+  clearErrorMeters, domainModelPaginatedClearError, requestMethodPaginated,
+} from '../../paginatedDomainModelsActions';
 import MockAdapter = require('axios-mock-adapter');
 
 initLanguage({code: 'en', name: 'english'});
@@ -24,7 +24,7 @@ const configureMockStore = configureStore([thunk]);
 let store;
 let mockRestClient;
 
-describe('paginatedDomainModelsActions', () => {
+describe('meterApiActions', () => {
 
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
@@ -171,7 +171,7 @@ describe('paginatedDomainModelsActions', () => {
       store.dispatch(clearErrorMeters(payload));
 
       expect(store.getActions()).toEqual([
-        {type: DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(EndPoints.meters), payload},
+        {type: domainModelPaginatedClearError(EndPoints.meters), payload},
       ]);
     });
   });

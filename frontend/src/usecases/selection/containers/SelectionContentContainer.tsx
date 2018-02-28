@@ -12,7 +12,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
-import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/domainModelsActions';
+import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {

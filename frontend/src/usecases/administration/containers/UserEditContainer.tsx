@@ -15,10 +15,8 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorUsers,
-  fetchUser,
-  modifyUser,
-} from '../../../state/domain-models/domainModelsActions';
+  clearErrorUsers, fetchUser, modifyUser,
+} from '../../../state/domain-models/user/userApiActions';
 import {
   getEntitiesDomainModels,
   getError,

@@ -7,7 +7,7 @@ import '../components/summary/Summary.scss';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
 import {RestGet} from '../state/domain-models/domainModels';
-import {fetchAllMeters} from '../state/domain-models/domainModelsActions';
+import {fetchAllMeters} from '../state/domain-models/meter-all/allMetersApiActions';
 import {SelectionSummary} from '../state/search/selection/selectionModels';
 import {getEncodedUriParametersForAllMeters, getSelectionSummary} from '../state/search/selection/selectionSelectors';
 

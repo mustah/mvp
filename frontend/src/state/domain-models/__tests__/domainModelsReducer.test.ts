@@ -4,9 +4,10 @@ import {IdNamed} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
-import {clearErrorGateways, requestMethod} from '../domainModelsActions';
+import {requestMethod} from '../domainModelsActions';
 import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../domainModelsSchemas';
+import {clearErrorGateways} from '../gateway/gatewayApiActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';
 

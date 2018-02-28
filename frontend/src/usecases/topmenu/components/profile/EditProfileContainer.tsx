@@ -11,7 +11,7 @@ import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {RestGet} from '../../../../state/domain-models/domainModels';
-import {modifyProfile} from '../../../../state/domain-models/domainModelsActions';
+import {modifyProfile} from '../../../../state/domain-models/user/userApiActions';
 import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../../state/domain-models/organisation/organisationSelectors';

@@ -7,10 +7,6 @@ import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, HasId} from '../../types/Types';
 import {EndPoints, HttpMethod} from '../domain-models/domainModels';
-import {showFailMessage} from '../ui/message/messageActions';
-import {paginationUpdateMetaData} from '../ui/pagination/paginationActions';
-import {Meter} from './meter/meterModels';
-import {meterSchema} from './meter/meterSchema';
 import {
   HasPageNumber,
   NormalizedPaginated,
@@ -19,15 +15,15 @@ import {
   RestGetPaginated,
 } from './paginatedDomainModels';
 
-export const DOMAIN_MODELS_PAGINATED_REQUEST = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_REQUEST${endPoint}`;
-export const DOMAIN_MODELS_PAGINATED_GET_SUCCESS = (endPoint: EndPoints) =>
+export const domainModelsPaginatedRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_REQUEST${endPoint}`;
+export const domainModelsPaginatedGetSuccess = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_${HttpMethod.GET}_SUCCESS${endPoint}`;
-export const DOMAIN_MODELS_PAGINATED_FAILURE = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
-export const DOMAIN_MODELS_PAGINATED_CLEAR_ERROR = (endPoint: EndPoints) =>
+export const domainModelsPaginatedFailure = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_FAILURE${endPoint}`;
+export const domainModelPaginatedClearError = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 
 const clearError = (endPoint: EndPoints) =>
-  createPayloadAction<string, HasPageNumber>(DOMAIN_MODELS_PAGINATED_CLEAR_ERROR(endPoint));
+  createPayloadAction<string, HasPageNumber>(domainModelPaginatedClearError(endPoint));
 
 export const clearErrorMeters = clearError(EndPoints.meters);
 
@@ -38,9 +34,9 @@ interface RestRequestHandlePaginated<T> {
 }
 
 export const requestMethodPaginated = <T>(endPoint: EndPoints): RestRequestHandlePaginated<T> => ({
-  request: createPayloadAction<string, number>(DOMAIN_MODELS_PAGINATED_REQUEST(endPoint)),
-  success: createPayloadAction<string, T>(DOMAIN_MODELS_PAGINATED_GET_SUCCESS(endPoint)),
-  failure: createPayloadAction<string, ErrorResponse & HasPageNumber>(DOMAIN_MODELS_PAGINATED_FAILURE(endPoint)),
+  request: createPayloadAction<string, number>(domainModelsPaginatedRequest(endPoint)),
+  success: createPayloadAction<string, T>(domainModelsPaginatedGetSuccess(endPoint)),
+  failure: createPayloadAction<string, ErrorResponse & HasPageNumber>(domainModelsPaginatedFailure(endPoint)),
 });
 
 interface RestCallbacks<T> {
@@ -92,7 +88,7 @@ const shouldFetch = (page: number, {result}: NormalizedPaginatedState<HasId>): b
   !result[page]
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
-const restGetIfNeeded = <T extends HasId>(
+export const restGetIfNeeded = <T extends HasId>(
   endPoint: EndPoints,
   schema: Schema,
   entityType: keyof PaginatedDomainModelsState,
@@ -121,14 +117,3 @@ const restGetIfNeeded = <T extends HasId>(
       }
     };
 };
-
-export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
-  afterSuccess: (
-    {result}: NormalizedPaginated<Meter>,
-    dispatch,
-  ) => dispatch(paginationUpdateMetaData({entityType: 'meters', ...result})),
-  afterFailure: (
-    {message}: ErrorResponse,
-    dispatch,
-  ) => dispatch(showFailMessage(firstUpperTranslated('error: {{message}}', {message}))),
-});
