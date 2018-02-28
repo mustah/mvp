@@ -131,7 +131,8 @@ class DataProviderConfig {
       logicalMeterJpaRepository,
       new LogicalMeterToPredicateMapper(),
       new LogicalMeterSortingMapper(),
-      newLogicalMeterMapper()
+      newLogicalMeterMapper(),
+      physicalMeterStatusLogJpaRepository
     );
   }
 
@@ -176,7 +177,8 @@ class DataProviderConfig {
       new MeterDefinitionMapper(),
       new LocationMapper(),
       newPhysicalMeterMapper(),
-      new GatewayMapper()
+      new GatewayMapper(),
+      new MeterStatusLogMapper()
     );
   }
 
