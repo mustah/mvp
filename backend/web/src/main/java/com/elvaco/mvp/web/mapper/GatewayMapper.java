@@ -34,9 +34,10 @@ public class GatewayMapper {
     );
   }
 
-  public Gateway toDomainModel(GatewayDto gatewayDto) {
+  public Gateway toDomainModel(GatewayDto gatewayDto, Long organisationId) {
     return new Gateway(
       gatewayDto.id,
+      organisationId,
       gatewayDto.serial,
       gatewayDto.productModel
     );

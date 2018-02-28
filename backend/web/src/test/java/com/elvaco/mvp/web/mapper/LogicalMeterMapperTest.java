@@ -95,12 +95,14 @@ public class LogicalMeterMapperTest {
     expected.gatewayStatus = OK;
     expected.gatewayProductModel = "CMi2110";
 
+    Long organisationId = ELVACO.id;
+
     assertThat(
       mapper.toDto(
         new LogicalMeter(
           1L,
           "an-external-id",
-          ELVACO.id,
+          organisationId,
           new LocationBuilder()
             .city("Kungsbacka")
             .streetAddress("Kabelgatan 2T")
@@ -121,6 +123,7 @@ public class LogicalMeterMapperTest {
           emptyList(),
           singletonList(new Gateway(
             expected.gatewayId,
+            organisationId,
             expected.gatewaySerial,
             expected.gatewayProductModel,
             emptyList()

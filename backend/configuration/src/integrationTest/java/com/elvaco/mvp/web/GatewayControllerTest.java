@@ -2,6 +2,9 @@ package com.elvaco.mvp.web;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
@@ -11,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("rawtypes")
@@ -19,17 +25,36 @@ public class GatewayControllerTest extends IntegrationTest {
   @Autowired
   private GatewayJpaRepository jpaRepository;
 
+  @Autowired
+  private Gateways gateways;
+
+  @Autowired
+  private Organisations organisations;
+
   @After
   public void tearDown() {
     jpaRepository.deleteAll();
   }
 
   @Test
-  public void fetchAllGateways() {
+  public void fetchAllGatewaysShouldBeEmptyWhenNoGatewaysExists() {
     ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEmpty();
+  }
+
+  @Test
+  public void superAdminsCanListAllGateways() {
+    organisations.save(DAILY_PLANET);
+    gateways.save(new Gateway(null, DAILY_PLANET.id, "1111", "serial-1"));
+    gateways.save(new Gateway(null, DAILY_PLANET.id, "2222", "serial-2"));
+    gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
+
+    ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(3);
   }
 
   @Test
@@ -44,5 +69,34 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(created.id).isPositive();
     assertThat(created.serial).isEqualTo("123");
     assertThat(created.productModel).isEqualTo("2100");
+  }
+
+  @Test
+  public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
+    organisations.save(DAILY_PLANET);
+    gateways.save(new Gateway(null, ELVACO.id, "1111", "serial-1"));
+
+    ResponseEntity<List> gatewaysResponse = asClarkKent().get("/gateways", List.class);
+
+    assertThat(gatewaysResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(gatewaysResponse.getBody()).isEmpty();
+  }
+
+  @Test
+  public void userCanOnlyListGatewaysWithinSameOrganisation() {
+    organisations.save(ELVACO);
+    organisations.save(DAILY_PLANET);
+    Gateway g1 = gateways.save(new Gateway(null, DAILY_PLANET.id, "1111", "serial-1"));
+    Gateway g2 = gateways.save(new Gateway(null, DAILY_PLANET.id, "2222", "serial-2"));
+    gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
+
+    List<Long> gatewayIds = asClarkKent()
+      .getList("/gateways", GatewayDto.class)
+      .getBody()
+      .stream()
+      .map(g -> g.id)
+      .collect(toList());
+
+    assertThat(gatewayIds).containsOnly(g1.id, g2.id);
   }
 }

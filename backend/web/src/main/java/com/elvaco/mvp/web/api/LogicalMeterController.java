@@ -45,10 +45,9 @@ public class LogicalMeterController {
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable Long id) {
-    return logicalMeterUseCases.findById(id).map(logicalMeter -> logicalMeterMapper.toDto(
-      logicalMeter,
-      timeZone
-    )).orElseThrow(() -> new MeterNotFound(id));
+    return logicalMeterUseCases.findById(id)
+      .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, timeZone))
+      .orElseThrow(() -> new MeterNotFound(id));
   }
 
   @GetMapping("/map-data")

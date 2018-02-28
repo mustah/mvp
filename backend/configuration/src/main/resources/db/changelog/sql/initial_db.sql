@@ -79,7 +79,8 @@ CREATE TABLE IF NOT EXISTS gateway (
   id BIGSERIAL PRIMARY KEY,
   serial TEXT NOT NULL UNIQUE ,
   product_model TEXT NOT NULL,
-  UNIQUE (serial, product_model)
+  organisation_id BIGINT REFERENCES organisation,
+  UNIQUE (organisation_id, serial, product_model)
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (

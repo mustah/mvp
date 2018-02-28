@@ -36,6 +36,14 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
+  public List<Gateway> findAllByOrganisationId(Long organisationId) {
+    return repository.findAllByOrganisationId(organisationId)
+      .stream()
+      .map(gatewayWithMetersMapper::withLogicalMeters)
+      .collect(toList());
+  }
+
+  @Override
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = repository.save(mapper.toEntity(gateway));
     return gatewayWithMetersMapper.withLogicalMeters(entity);

@@ -74,7 +74,7 @@ class UseCaseConfig {
   }
 
   @Bean
-  GatewayUseCases gatewayUseCases() {
-    return new GatewayUseCases(gateways);
+  GatewayUseCases gatewayUseCases(AuthenticatedUser currentUser) {
+    return new GatewayUseCases(gateways, currentUser);
   }
 }

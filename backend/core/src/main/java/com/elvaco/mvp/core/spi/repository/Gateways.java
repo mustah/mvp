@@ -8,5 +8,7 @@ public interface Gateways {
 
   List<Gateway> findAll();
 
+  List<Gateway> findAllByOrganisationId(Long organisationId);
+
   Gateway save(Gateway gateway);
 }

@@ -9,6 +9,7 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
   public Gateway toDomainModel(GatewayEntity entity) {
     return new Gateway(
       entity.id,
+      entity.organisationId,
       entity.serial,
       entity.productModel
     );
@@ -18,6 +19,7 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
   public GatewayEntity toEntity(Gateway domainModel) {
     return new GatewayEntity(
       domainModel.id,
+      domainModel.organisationId,
       domainModel.serial,
       domainModel.productModel
     );

@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.mapper.GatewayMapper;
@@ -18,11 +19,17 @@ public class GatewayController {
 
   private final GatewayUseCases gatewayUseCases;
   private final GatewayMapper gatewayMapper;
+  private final AuthenticatedUser currentUser;
 
   @Autowired
-  GatewayController(GatewayUseCases gatewayUseCases, GatewayMapper gatewayMapper) {
+  GatewayController(
+    GatewayUseCases gatewayUseCases,
+    GatewayMapper gatewayMapper,
+    AuthenticatedUser currentUser
+  ) {
     this.gatewayUseCases = gatewayUseCases;
     this.gatewayMapper = gatewayMapper;
+    this.currentUser = currentUser;
   }
 
   @GetMapping
@@ -35,7 +42,7 @@ public class GatewayController {
 
   @PostMapping
   public GatewayDto createGateway(@RequestBody GatewayDto gateway) {
-    Gateway created = gatewayUseCases.save(gatewayMapper.toDomainModel(gateway));
-    return gatewayMapper.toDto(created);
+    Gateway requestModel = gatewayMapper.toDomainModel(gateway, currentUser.getOrganisationId());
+    return gatewayMapper.toDto(gatewayUseCases.save(requestModel));
   }
 }

@@ -20,6 +20,7 @@ public class GatewayWithMetersMapper {
   public Gateway withLogicalMeters(GatewayEntity entity) {
     return new Gateway(
       entity.id,
+      entity.organisationId,
       entity.serial,
       entity.productModel,
       toLogicalMeters(entity.meters)
