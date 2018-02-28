@@ -1,6 +1,5 @@
-import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {HasId, IdNamed, uuid} from '../../../types/Types';
-import {Location, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
+import {Location} from '../../domain-models/domainModels';
 import {Flag} from '../../domain-models/flag/flagModels';
 
 export interface MeterStatusChangelog {
@@ -30,47 +29,8 @@ export interface Meter extends Location, HasId {
   gatewayProductModel: string;
 }
 
-export interface SelectionTreeItem {
-  id: uuid;
-  name: string;
-  parent: {type: string; id: uuid};
-  selectable: boolean;
-  childNodes: {type: string; ids: uuid[]};
-}
-
-export interface SelectionTreeItemProps {
-  unit: SelectionEntity;
-  parentType: string;
-  parent: SelectionEntity;
-  selectable: boolean;
-  childrenType: string;
-}
-
-export interface SelectionTreeItemsProps extends SelectionTreeItemProps {
-  category: string;
-  set: Set<uuid>;
-}
-
-export type SelectionTreeModel = ObjectsById<SelectionTreeItem>;
-
-export interface SelectionTreeData {
-  result: {[key: string]: uuid[]};
-  entities: {[key: string]: SelectionTreeModel};
-}
-
 export const enum MeterStatus {
   ok = 0,
   alarm = 3,
   unknown = 4,
 }
-
-export interface MeterDataSummary {
-  flagged: PieData;
-  city: PieData;
-  manufacturer: PieData;
-  medium: PieData;
-  status: PieData;
-  alarm: PieData;
-}
-
-export type MeterDataSummaryKey = keyof MeterDataSummary;

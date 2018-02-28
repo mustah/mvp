@@ -16,14 +16,15 @@ import {MeterListContainer} from '../../../containers/meters/MeterListContainer'
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {Meter, MeterDataSummary} from '../../../state/domain-models-paginated/meter/meterModels';
-import {getMeterDataSummary} from '../../../state/domain-models-paginated/meter/meterSelectors';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
 import {
   clearErrorAllMeters,
   fetchAllMeters,
 } from '../../../state/domain-models/domainModelsActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {MeterDataSummary} from '../../../state/domain-models/meter-all/allMetersModels';
+import {getMeterDataSummary} from '../../../state/domain-models/meter-all/allMetersSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
