@@ -102,9 +102,11 @@ type ActionTypes<T extends HasId> =
   | Action<T>
   | Action<ErrorResponse>;
 
-// TODO: Add tests for PUT, POST, DELETE
-const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: EndPoints) =>
-  (state: NormalizedState<T> = initialDomain<T>(), action: ActionTypes<T>): NormalizedState<T> => {
+const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: EndPoints, resetState = identity) =>
+  (
+    state: NormalizedState<T> = initialDomain<T>(),
+    action: ActionTypes<T>,
+  ): NormalizedState<T> => {
     switch (action.type) {
       case DOMAIN_MODELS_REQUEST(endPoint):
         return {
@@ -125,31 +127,44 @@ const reducerFor = <T extends HasId>(entity: keyof DomainModelsState, endPoint: 
       case DOMAIN_MODELS_FAILURE(endPoint):
         return setError(state, action as Action<ErrorResponse>);
       case DOMAIN_MODELS_CLEAR_ERROR(endPoint):
-      case SELECT_SAVED_SELECTION:
-      case ADD_SELECTION:
-      case DESELECT_SELECTION:
-      case UPDATE_SELECTION:
-      case RESET_SELECTION:
-      case SET_SELECTION:
-      case SELECT_PERIOD:
         return {...initialDomain<T>()};
       default:
-        return state;
+        return resetState(state, action, endPoint);
     }
   };
+
+const identity = (state, action, endPoint) => state;
+
+const resetStateReducer = <T extends HasId>(
+  state: NormalizedState<T> = initialDomain<T>(),
+  action: ActionTypes<T>,
+): NormalizedState<T> => {
+  switch (action.type) {
+    case SELECT_SAVED_SELECTION:
+    case ADD_SELECTION:
+    case DESELECT_SELECTION:
+    case UPDATE_SELECTION:
+    case RESET_SELECTION:
+    case SET_SELECTION:
+    case SELECT_PERIOD:
+      return {...initialDomain<T>()};
+    default:
+      return state;
+  }
+};
 
 export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.selections);
 export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections);
 export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections);
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
-export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways);
 export const manufacturers = reducerFor<SelectionEntity>('manufacturers', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
-export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements);
-export const users = reducerFor<User>('users', EndPoints.users);
-export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters);
-export const organisations = reducerFor<Organisation>('organisations', EndPoints.organisations);
+export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways, resetStateReducer);
+export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements, resetStateReducer);
+export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
+export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
+export const organisations = reducerFor<Organisation>('organisations', EndPoints.organisations, resetStateReducer);
 
 export const domainModels = combineReducers<DomainModelsState>({
   addresses,
