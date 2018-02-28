@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.user;
 
-import java.io.Serializable;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -12,17 +11,16 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
+import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
 
 import static java.util.Collections.emptySet;
 
 @ToString
-@EqualsAndHashCode(exclude = "users")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "organisation")
-public class OrganisationEntity implements Serializable {
+public class OrganisationEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -2369738291498443749L;
 
@@ -46,5 +44,10 @@ public class OrganisationEntity implements Serializable {
     this.name = name;
     this.code = code;
     this.users = emptySet();
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

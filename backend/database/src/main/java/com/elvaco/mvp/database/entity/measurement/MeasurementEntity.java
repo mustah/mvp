@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.measurement;
 
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -14,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.Cascade;
@@ -23,7 +23,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "measurement")
-public class MeasurementEntity implements Serializable {
+public class MeasurementEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -3650501037709018061L;
   @Id
@@ -70,5 +70,10 @@ public class MeasurementEntity implements Serializable {
     PhysicalMeterEntity physicalMeter
   ) {
     this(null, created, quantity, new MeasurementUnit(unit, value), physicalMeter);
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

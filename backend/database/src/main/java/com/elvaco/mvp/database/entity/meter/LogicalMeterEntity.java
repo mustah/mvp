@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -24,22 +23,21 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 @ToString
-@EqualsAndHashCode
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "logical_meter",
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
-public class LogicalMeterEntity implements Serializable {
+public class LogicalMeterEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = 5528298891965340483L;
 
@@ -101,5 +99,10 @@ public class LogicalMeterEntity implements Serializable {
   public void setLocation(LocationEntity location) {
     this.location = location;
     this.location.logicalMeter = this;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

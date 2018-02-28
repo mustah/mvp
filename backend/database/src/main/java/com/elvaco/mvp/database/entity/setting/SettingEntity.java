@@ -9,10 +9,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.EntityType;
+
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "mvp_setting")
-public class SettingEntity {
+public class SettingEntity extends EntityType<Long> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,4 +27,9 @@ public class SettingEntity {
   public String value;
 
   public SettingEntity() {}
+
+  @Override
+  public Long getId() {
+    return id;
+  }
 }

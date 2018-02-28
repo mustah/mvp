@@ -1,7 +1,8 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.io.Serializable;
 import java.util.Set;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,12 +14,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
+import com.elvaco.mvp.database.entity.EntityType;
 
 @Entity
+@Access(AccessType.FIELD)
 @Table(name = "meter_definition")
-@EqualsAndHashCode
-public class MeterDefinitionEntity implements Serializable {
+public class MeterDefinitionEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -8819531921424251045L;
 
@@ -50,5 +51,10 @@ public class MeterDefinitionEntity implements Serializable {
     this.quantities = quantities;
     this.medium = medium;
     this.systemOwned = systemOwned;
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

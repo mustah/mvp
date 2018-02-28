@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.gateway;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.annotation.Nullable;
 import javax.persistence.Access;
@@ -13,18 +12,17 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 
-@EqualsAndHashCode
 @ToString
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
-public class GatewayEntity implements Serializable {
+public class GatewayEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -2132372383987246715L;
 
@@ -57,5 +55,10 @@ public class GatewayEntity implements Serializable {
     this.serial = serial;
     this.productModel = productModel;
     this.meters = emptyList();
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }
