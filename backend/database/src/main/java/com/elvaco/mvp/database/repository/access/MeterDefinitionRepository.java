@@ -26,7 +26,7 @@ public class MeterDefinitionRepository implements MeterDefinitions {
 
     if (meterDefinition.systemOwned) {
       meterDefinitionJpaRepository.findByMedium(meterDefinition.medium).ifPresent(
-        (existingSystemDefinition -> meterDefinitionEntity.id = existingSystemDefinition.id)
+        (existingSystemDefinition -> meterDefinitionEntity.type = existingSystemDefinition.type)
       );
     }
     return meterDefinitionMapper.toDomainModel(

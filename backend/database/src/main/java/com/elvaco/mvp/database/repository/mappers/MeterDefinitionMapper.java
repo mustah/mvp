@@ -13,7 +13,7 @@ public class MeterDefinitionMapper
   @Override
   public MeterDefinition toDomainModel(MeterDefinitionEntity entity) {
     return new MeterDefinition(
-      entity.id,
+      entity.type,
       entity.medium,
       entity.quantities.stream()
         .map(this::toQuantity)
@@ -25,7 +25,7 @@ public class MeterDefinitionMapper
   @Override
   public MeterDefinitionEntity toEntity(MeterDefinition domainModel) {
     return new MeterDefinitionEntity(
-      domainModel.id,
+      domainModel.type,
       domainModel.quantities
         .stream()
         .map(this::toQuantityEntity)

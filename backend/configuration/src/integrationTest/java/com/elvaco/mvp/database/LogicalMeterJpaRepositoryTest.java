@@ -2,6 +2,7 @@ package com.elvaco.mvp.database;
 
 import java.util.Date;
 
+import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -41,7 +42,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   public void setUp() {
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
       new MeterDefinitionEntity(
-        null,
+        MeterDefinitionType.UNKNOWN_METER_TYPE,
         singleton(new QuantityEntity(null, "Speed", "m/s")),
         "My meter definition",
         false
