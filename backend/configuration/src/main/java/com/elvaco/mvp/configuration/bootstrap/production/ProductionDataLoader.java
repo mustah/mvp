@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.bootstrap.production;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.repository.jpa.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,30 +25,38 @@ class ProductionDataLoader implements CommandLineRunner {
   private final MeterDefinitions meterDefinitions;
   private final Organisations organisations;
   private final Users users;
+  private final SettingUseCases settingUseCases;
 
   @Autowired
   ProductionDataLoader(
     RoleRepository roleRepository,
     MeterDefinitions meterDefinitions,
     Organisations organisations,
-    Users users
+    Users users,
+    SettingUseCases settingUseCases
   ) {
     this.roleRepository = roleRepository;
     this.meterDefinitions = meterDefinitions;
     this.organisations = organisations;
     this.users = users;
+    this.settingUseCases = settingUseCases;
   }
 
   @Override
   public void run(String... args) {
-    log.info("Seeding database with initial data ...");
+    if (settingUseCases.isProductionDataLoaded()) {
+      log.info("Production data seems to already be loaded - skipping production data loading!");
+      return;
+    }
 
+    log.info("Seeding database with initial data ...");
     createRoles();
     createElvacoOrganisation();
     createSuperAdministrator();
     createMeterDefinitions();
-
     log.info("Initial database seeding done.");
+
+    settingUseCases.setProductionDataLoaded();
   }
 
   private void createMeterDefinitions() {
