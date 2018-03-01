@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq.message;
+package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.lang.reflect.Field;
 
@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 public class MeteringMessageDto {
   public final MessageType messageType;
 
-  MeteringMessageDto(MessageType messageType) {
+  public MeteringMessageDto(MessageType messageType) {
     this.messageType = messageType;
   }
 

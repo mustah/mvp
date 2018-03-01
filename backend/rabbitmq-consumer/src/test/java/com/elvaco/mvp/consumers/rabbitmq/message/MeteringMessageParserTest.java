@@ -1,10 +1,11 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import com.elvaco.mvp.consumers.rabbitmq.message.AlarmDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.ValueDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.AlarmDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

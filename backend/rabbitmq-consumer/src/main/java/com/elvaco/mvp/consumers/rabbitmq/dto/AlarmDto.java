@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq.message;
+package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 public class AlarmDto {
   public final long timestamp;

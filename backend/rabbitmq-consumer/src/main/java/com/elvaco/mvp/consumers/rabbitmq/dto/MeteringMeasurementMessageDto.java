@@ -1,4 +1,4 @@
-package com.elvaco.mvp.consumers.rabbitmq.message;
+package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.util.List;
 
