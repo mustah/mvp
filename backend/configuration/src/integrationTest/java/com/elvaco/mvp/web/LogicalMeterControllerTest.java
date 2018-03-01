@@ -52,6 +52,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
@@ -100,10 +101,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       MeterDefinition.HOT_WATER_METER
     );
 
-    anotherOrganisation = organisationJpaRepository.save(new OrganisationEntity(
-      "Another Organisation",
-      "another-organisation"
-    ));
+    anotherOrganisation = organisationJpaRepository.save(
+      new OrganisationEntity(
+        randomUUID(),
+        "Another Organisation",
+        "another-organisation"
+      ));
 
     for (int seed = 1; seed <= 55; seed++) {
       MeterDefinition meterDefinition = seed % 10 == 0
@@ -183,44 +186,58 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllPagedAndSorted() {
     // Address asc
-    testSorting("/meters?size=20&page=0&sort=address,asc",
+    testSorting(
+      "/meters?size=20&page=0&sort=address,asc",
       "Unexpected address, sorting failed",
       (LogicalMeterDto meter) -> meter.address.name,
-      "Drottninggatan 2");
+      "Drottninggatan 2"
+    );
 
     // Address desc
-    testSorting("/meters?size=20&page=0&sort=address,desc",
+    testSorting(
+      "/meters?size=20&page=0&sort=address,desc",
       "Unexpected address, sorting failed",
       (LogicalMeterDto meter) -> meter.address.name,
-      "Kungsgatan 55");
+      "Kungsgatan 55"
+    );
 
     // Manufacturer asc
-    testSorting("/meters?size=20&page=0&sort=manufacturer,asc",
+    testSorting(
+      "/meters?size=20&page=0&sort=manufacturer,asc",
       "Unexpected manufacturer, sorting failed",
       (LogicalMeterDto meter) -> meter.manufacturer,
-      "ELV1");
+      "ELV1"
+    );
 
     // Manufacturer desc
-    testSorting("/meters?size=20&page=0&sort=manufacturer,desc",
+    testSorting(
+      "/meters?size=20&page=0&sort=manufacturer,desc",
       "Unexpected manufacturer, sorting failed",
       (LogicalMeterDto meter) -> meter.manufacturer,
-      "ELV55");
+      "ELV55"
+    );
 
-    testSorting("/meters?size=20&page=0&sort=city,asc",
+    testSorting(
+      "/meters?size=20&page=0&sort=city,asc",
       "Unexpected city, sorting failed",
       (LogicalMeterDto meter) -> meter.city.name,
-      "Varberg");
+      "Varberg"
+    );
 
-    testSorting("/meters?size=20&page=0&sort=city,desc",
+    testSorting(
+      "/meters?size=20&page=0&sort=city,desc",
       "Unexpected city, sorting failed",
       (LogicalMeterDto meter) -> meter.city.name,
-      "Östersund");
+      "Östersund"
+    );
   }
 
-  private void testSorting(String url,
-                           String errorMessage,
-                           Function<LogicalMeterDto, String> actual,
-                           String expected) {
+  private void testSorting(
+    String url,
+    String errorMessage,
+    Function<LogicalMeterDto, String> actual,
+    String expected
+  ) {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(url, LogicalMeterDto.class);
 

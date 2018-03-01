@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.security;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public interface AuthenticatedUser extends Serializable {
 
@@ -8,9 +9,9 @@ public interface AuthenticatedUser extends Serializable {
 
   boolean isAdmin();
 
-  boolean isWithinOrganisation(Long organisationId);
+  boolean isWithinOrganisation(UUID organisationId);
 
-  Long getOrganisationId();
+  UUID getOrganisationId();
 
   String getUsername();
 

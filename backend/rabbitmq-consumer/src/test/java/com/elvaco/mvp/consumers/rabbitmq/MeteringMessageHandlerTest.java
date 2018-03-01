@@ -1,9 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.message.GatewayDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.GatewayStatusDto;
@@ -39,9 +39,12 @@ import org.junit.Test;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringMessageHandlerTest {
+
+  private static final String ORGANISATION_CODE = "some-organisation";
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -53,7 +56,7 @@ public class MeteringMessageHandlerTest {
   public void setUp() {
     this.physicalMeters = new MockPhysicalMeters();
     this.organisations = new MockOrganisations();
-    this.logicalMeters = new MockLogicalMeters();
+    this.logicalMeters = new MockLogicalMeters(new ArrayList<>());
     this.measurements = new MockMeasurements();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
       new User(
@@ -61,10 +64,10 @@ public class MeteringMessageHandlerTest {
         "mock user",
         "mock@somemail.nu",
         "P@$$w0rD",
-        new Organisation(0L, "some organisation", "some-organisation"),
+        new Organisation(randomUUID(), "some organisation", ORGANISATION_CODE),
         singletonList(Role.USER)
       ),
-      UUID.randomUUID().toString()
+      randomUUID().toString()
     );
 
     this.messageHandler = new MeteringMessageHandler(
@@ -77,31 +80,30 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void createsMeterAndOrganisation() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "ELV");
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 
-    messageHandler.handle(structureMessage);
+    Organisation organisation = findOrganisation();
 
-    Organisation expectedOrganisation = new Organisation(0L, "", "Some organisation");
     PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
-      0L,
-      expectedOrganisation,
+      1L,
+      organisation,
       "1234",
       "ABC-123",
       "Hot water",
       "ELV",
-      0L,
+      1L,
       emptyList()
     );
 
     LogicalMeter actualLogicalMeter = logicalMeters.findByOrganisationIdAndExternalId(
-      expectedOrganisation.id,
+      organisation.id,
       "ABC-123"
     ).get();
 
     LogicalMeter expectedLogicalMeter = new LogicalMeter(
-      0L,
+      actualLogicalMeter.id,
       "ABC-123",
-      expectedOrganisation.id,
+      organisation.id,
       Location.UNKNOWN_LOCATION,
       actualLogicalMeter.created,
       emptyList(),
@@ -111,9 +113,10 @@ public class MeteringMessageHandlerTest {
     );
 
     assertThat(actualLogicalMeter).isEqualTo(expectedLogicalMeter);
+
     assertThat(
       physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-        expectedOrganisation.id,
+        organisation.id,
         "ABC-123",
         "1234"
       ).get()
@@ -122,12 +125,9 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void createsMeterForExistingOrganisation() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "ELV");
-    Organisation expectedOrganisation = organisations.save(
-      newOrganisation("An existing organisation", "Some organisation")
-    );
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 
-    messageHandler.handle(structureMessage);
+    Organisation expectedOrganisation = findOrganisation();
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
@@ -142,16 +142,17 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void addsPhysicalMeterToExistingLogicalMeter() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "ELV");
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
+
     LogicalMeter expectedLogicalMeter = logicalMeters.save(
       new LogicalMeter(
-        null,
-        "ABC-123", 0L, Location.UNKNOWN_LOCATION,
+        1L,
+        "ABC-123",
+        randomUUID(),
+        Location.UNKNOWN_LOCATION,
         new Date()
       )
     );
-
-    messageHandler.handle(structureMessage);
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
@@ -160,27 +161,22 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void setsNoMeterDefinitionForUnmappableMedium() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage(
-      "Unmappable medium",
-      "ELV"
-    );
+    messageHandler.handle(newStructureMessage("Unmappable medium", "ELV"));
 
-    messageHandler.handle(structureMessage);
-
-    LogicalMeter unmappableMeter = logicalMeters.findById(0L).get();
+    LogicalMeter unmappableMeter = logicalMeters.findById(1L).get();
     assertThat(unmappableMeter.getMedium()).isEqualTo("Unknown meter");
   }
 
   @Test
   @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-    + "ought to be considered a new physical meter.")
+          + "ought to be considered a new physical meter.")
   public void updatesExistingMeterForExistingOrganisation() {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
-    Organisation expectedOrganisation = organisations.save(
+    Organisation organisation = organisations.save(
       newOrganisation("An existing organisation", "Some organisation")
     );
     Long physicalMeterId = physicalMeters.save(new PhysicalMeter(
-      expectedOrganisation,
+      organisation,
       "1234",
       "ABC-123",
       "Hot water",
@@ -191,7 +187,7 @@ public class MeteringMessageHandlerTest {
 
     PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
       physicalMeterId,
-      expectedOrganisation,
+      organisation,
       "1234",
       "ABC-123",
       "Hot water",
@@ -202,13 +198,10 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "ELV");
-    Organisation organisation = organisations.save(
-      newOrganisation("An existing organisation")
-    );
+    Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
     physicalMeters.save(new PhysicalMeter(organisation, "1234", "ABC-123", "Hot water", "ELV"));
 
-    messageHandler.handle(structureMessage);
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 
     assertThat(organisations.findAll()).hasSize(2);
     assertThat(physicalMeters.findAll()).hasSize(2);
@@ -216,11 +209,11 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void addsMeasurementToExistingMeter() {
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage();
-    Organisation expectedOrganisation = organisations.save(newOrganisation("some-organisation"));
+    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_CODE));
+
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
       new PhysicalMeter(
-        expectedOrganisation,
+        organisation,
         "1234",
         "ABC-123",
         "Electricity",
@@ -228,38 +221,10 @@ public class MeteringMessageHandlerTest {
       )
     );
 
-    messageHandler.handle(measurementMessage);
+    messageHandler.handle(newMeasurementMessage());
 
     Measurement expectedMeasurement = new Measurement(
-      0L,
-      Date.from(Instant.ofEpochMilli(123456L)),
-      "Energy",
-      1.0,
-      "kWh",
-      expectedPhysicalMeter
-    );
-    List<Measurement> createdMeasurements = measurements.findAll(emptyMap());
-    assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
-  }
-
-  @Test
-  public void createsMeterForExistingOrganisationForMeasurement() {
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage();
-    Organisation expectedOrganisation = organisations.save(newOrganisation("some-organisation"));
-
-    messageHandler.handle(measurementMessage);
-
-    PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
-      0L,
-      expectedOrganisation,
-      "1234",
-      "ABC-123",
-      "Unknown",
-      "UNKNOWN"
-    );
-    Measurement expectedMeasurement = new Measurement(
-      0L,
+      1L,
       Date.from(Instant.ofEpochMilli(123456L)),
       "Energy",
       1.0,
@@ -273,30 +238,32 @@ public class MeteringMessageHandlerTest {
 
   @Test
   public void createsOrganisationAndMeterForMeasurement() {
-    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage();
+    messageHandler.handle(newMeasurementMessage());
 
-    messageHandler.handle(measurementMessage);
+    Organisation organisation = findOrganisation();
 
-    Organisation expectedOrganisation = new Organisation(0L, "", "some-organisation");
-    PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
-      0L,
-      expectedOrganisation,
-      "1234",
-      "ABC-123",
-      "Unknown",
-      "UNKNOWN"
-    );
     Measurement expectedMeasurement = new Measurement(
-      0L,
+      1L,
       Date.from(Instant.ofEpochMilli(123456L)),
       "Energy",
       1.0,
       "kWh",
-      expectedPhysicalMeter
+      new PhysicalMeter(
+        1L,
+        organisation,
+        "1234",
+        "ABC-123",
+        "Unknown",
+        "UNKNOWN"
+      )
     );
     List<Measurement> createdMeasurements = measurements.findAll(emptyMap());
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
+  }
+
+  private Organisation findOrganisation() {
+    return organisations.findByCode(ORGANISATION_CODE).get();
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage() {
@@ -305,7 +272,7 @@ public class MeteringMessageHandlerTest {
       new GatewayStatusDto("123", "Ok"),
       new MeterStatusDto("1234", "Ok"),
       "ABC-123",
-      "some-organisation",
+      ORGANISATION_CODE,
       "Elvaco Metering",
       singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy")),
       emptyList()
@@ -320,7 +287,7 @@ public class MeteringMessageHandlerTest {
       medium,
       15,
       "Test source system",
-      "Some organisation",
+      ORGANISATION_CODE,
       manufacturer,
       new GatewayDto("gateway-id", "CMi2110"),
       new LocationDto("Sweden", "Kungsbacka", "Kabelgatan 2T")
@@ -332,6 +299,6 @@ public class MeteringMessageHandlerTest {
   }
 
   private Organisation newOrganisation(String name, String code) {
-    return new Organisation(null, name, code);
+    return new Organisation(randomUUID(), name, code);
   }
 }

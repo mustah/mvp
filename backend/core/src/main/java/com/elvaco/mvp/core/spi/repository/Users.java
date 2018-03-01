@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.spi.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -25,5 +26,5 @@ public interface Users {
 
   List<User> findByRole(Role role);
 
-  List<User> findByOrganisationId(Long id);
+  List<User> findByOrganisationId(UUID organisationId);
 }

@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -33,7 +34,7 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  public Optional<Organisation> findById(Long id) {
+  public Optional<Organisation> findById(UUID id) {
     return Optional.ofNullable(organisationJpaRepository.findOne(id))
       .map(organisationMapper::toDomainModel);
   }
@@ -45,7 +46,7 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteById(UUID id) {
     organisationJpaRepository.delete(id);
   }
 

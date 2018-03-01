@@ -11,6 +11,7 @@ import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import static java.util.stream.Collectors.toList;
 
 public class SettingRepository implements Settings {
+
   private final SettingMapper settingMapper;
   private final SettingJpaRepository settingJpaRepository;
 

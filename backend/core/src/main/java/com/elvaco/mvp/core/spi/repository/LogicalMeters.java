@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.spi.repository;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -12,7 +13,7 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findById(Long id);
 
-  Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id);
+  Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id);
 
   List<LogicalMeter> findAll();
 
@@ -24,7 +25,7 @@ public interface LogicalMeters {
 
   void deleteAll();
 
-  Optional<LogicalMeter> findByOrganisationIdAndExternalId(Long organisationId, String externalId);
+  Optional<LogicalMeter> findByOrganisationIdAndExternalId(UUID organisationId, String externalId);
 
-  List<LogicalMeter> findByOrganisationId(Long organisationId);
+  List<LogicalMeter> findByOrganisationId(UUID organisationId);
 }

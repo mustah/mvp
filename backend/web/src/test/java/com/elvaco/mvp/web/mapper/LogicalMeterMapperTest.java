@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
@@ -95,7 +96,7 @@ public class LogicalMeterMapperTest {
     expected.gatewayStatus = OK;
     expected.gatewayProductModel = "CMi2110";
 
-    Long organisationId = ELVACO.id;
+    UUID organisationId = ELVACO.id;
 
     assertThat(
       mapper.toDto(

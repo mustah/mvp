@@ -98,11 +98,9 @@ class DataProviderConfig {
 
   @Bean
   Users users() {
-    OrganisationMapper organisationMapper = new OrganisationMapper();
     return new UserRepository(
       userJpaRepository,
-      new UserMapper(modelMapper, organisationMapper),
-      organisationMapper,
+      new UserMapper(modelMapper, new OrganisationMapper()),
       passwordEncoder::encode
     );
   }

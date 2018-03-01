@@ -11,8 +11,8 @@ import static java.util.stream.Collectors.toList;
 
 public class MeterStatusRepository implements MeterStatuses {
 
-  public final MeterStatusJpaRepository meterStatusJpaRepository;
-  public final MeterStatusMapper meterStatusMapper;
+  private final MeterStatusJpaRepository meterStatusJpaRepository;
+  private final MeterStatusMapper meterStatusMapper;
 
   public MeterStatusRepository(
     MeterStatusJpaRepository meterStatusJpaRepository,
@@ -22,6 +22,7 @@ public class MeterStatusRepository implements MeterStatuses {
     this.meterStatusMapper = meterStatusMapper;
   }
 
+  @Override
   public List<MeterStatus> findAll() {
     return meterStatusJpaRepository.findAll()
       .stream()
@@ -35,5 +36,4 @@ public class MeterStatusRepository implements MeterStatuses {
       meterStatus.stream().map(meterStatusMapper::toEntity).collect(toList())
     );
   }
-
 }

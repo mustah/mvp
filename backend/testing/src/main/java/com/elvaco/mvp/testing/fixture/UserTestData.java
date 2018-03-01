@@ -6,19 +6,20 @@ import com.elvaco.mvp.core.domainmodels.User;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 
 public final class UserTestData {
 
   public static final Organisation MARVEL =
     new Organisation(
-      10L,
+      randomUUID(),
       "Marvel",
       "marvel"
     );
 
   public static final Organisation DAILY_PLANET =
     new Organisation(
-      9L,
+      randomUUID(),
       "Daily Planet",
       "daily-planet"
     );

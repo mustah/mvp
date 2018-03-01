@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -13,19 +14,10 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-public class MockLogicalMeters extends MockRepository<LogicalMeter> implements LogicalMeters {
-
-  public MockLogicalMeters() {
-    super();
-  }
+public class MockLogicalMeters extends MockRepository<Long, LogicalMeter> implements LogicalMeters {
 
   public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
-    super(logicalMeters);
-  }
-
-  @Override
-  protected Optional<Long> getId(LogicalMeter entity) {
-    return Optional.ofNullable(entity.id);
+    logicalMeters.forEach(this::saveMock);
   }
 
   @Override
@@ -44,6 +36,11 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
   }
 
   @Override
+  protected Long generateId() {
+    return nextId();
+  }
+
+  @Override
   public Optional<LogicalMeter> findById(Long id) {
     return filter(logicalMeter -> logicalMeter.id != null)
       .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
@@ -51,9 +48,9 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id) {
+  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id) {
     return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId)).filter(
-      logicalMeter -> logicalMeter.id.equals(id))
+      logicalMeter -> Objects.equals(logicalMeter.id, id))
       .findFirst();
   }
 
@@ -86,16 +83,17 @@ public class MockLogicalMeters extends MockRepository<LogicalMeter> implements L
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    Long organisationId, String externalId
+    UUID organisationId,
+    String externalId
   ) {
     return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
-      .filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId))
+      .filter(logicalMeter -> logicalMeter.organisationId == organisationId)
       .findFirst();
   }
 
   @Override
-  public List<LogicalMeter> findByOrganisationId(Long organisationId) {
-    return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId))
+  public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
+    return filter(logicalMeter -> logicalMeter.organisationId == organisationId)
       .collect(toList());
   }
 }

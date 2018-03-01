@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.entity.gateway;
 
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -37,7 +38,7 @@ public class GatewayEntity extends EntityType<Long> {
   public String productModel;
 
   @Column(nullable = false)
-  public Long organisationId;
+  public UUID organisationId;
 
   @ManyToMany(mappedBy = "gateways")
   public List<LogicalMeterEntity> meters;
@@ -46,7 +47,7 @@ public class GatewayEntity extends EntityType<Long> {
 
   public GatewayEntity(
     @Nullable Long id,
-    Long organisationId,
+    UUID organisationId,
     String serial,
     String productModel
   ) {

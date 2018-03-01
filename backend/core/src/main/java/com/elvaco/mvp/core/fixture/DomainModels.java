@@ -7,14 +7,15 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 
 public final class DomainModels {
 
-  public static final Organisation ELVACO = new Organisation(1L, "Elvaco", "elvaco");
+  public static final Organisation ELVACO = new Organisation(randomUUID(), "Elvaco", "elvaco");
 
   public static final Organisation WAYNE_INDUSTRIES =
     new Organisation(
-      2L,
+      randomUUID(),
       "Wayne Industries",
       "wayne-industries"
     );

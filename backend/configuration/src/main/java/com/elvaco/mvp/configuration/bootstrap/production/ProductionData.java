@@ -13,9 +13,11 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
-public class ProductionData {
+final class ProductionData {
 
-  List<RoleEntity> users() {
+  private ProductionData() {}
+
+  static List<RoleEntity> users() {
     return unmodifiableList(asList(
       RoleEntity.user(),
       RoleEntity.admin(),
@@ -23,7 +25,7 @@ public class ProductionData {
     ));
   }
 
-  public List<MeterDefinition> meterDefinitions() {
+  static List<MeterDefinition> meterDefinitions() {
     return unmodifiableList(asList(
       MeterDefinition.UNKNOWN_METER,
       MeterDefinition.DISTRICT_HEATING_METER,
@@ -32,11 +34,11 @@ public class ProductionData {
     ));
   }
 
-  public List<Organisation> organisations() {
+  static List<Organisation> organisations() {
     return singletonList(ELVACO);
   }
 
-  public User superAdmin() {
+  static User superAdminUser() {
     return new User(
       "System Administrator",
       "mvpadmin@elvaco.se",

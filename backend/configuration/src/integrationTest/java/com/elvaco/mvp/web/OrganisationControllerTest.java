@@ -15,38 +15,36 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrganisationControllerTest extends IntegrationTest {
 
   @Autowired
-  Organisations organisations;
+  private Organisations organisations;
 
   private Organisation secretService =
-    new Organisation(null, "Secret Service", "secret-service");
+    new Organisation(randomUUID(), "Secret Service", "secret-service");
 
   private Organisation wayneIndustries =
-    new Organisation(null, "Wayne Industries", "wayne-industries");
+    new Organisation(randomUUID(), "Wayne Industries", "wayne-industries");
 
   private Organisation theBeatles =
-    new Organisation(null, "The Beatles", "the-beatles");
-
-
-  @After
-  public void tearDown() {
-    organisations.findAll()
-      .stream()
-      .filter(organisation -> !organisation.name.equals(ELVACO.name))
-      .forEach(
-        (organisation) -> organisations.deleteById(organisation.id)
-      );
-  }
+    new Organisation(randomUUID(), "The Beatles", "the-beatles");
 
   @Before
   public void setUp() {
     secretService = organisations.save(secretService);
     wayneIndustries = organisations.save(wayneIndustries);
     theBeatles = organisations.save(theBeatles);
+  }
+
+  @After
+  public void tearDown() {
+    organisations.findAll()
+      .stream()
+      .filter(organisation -> !organisation.name.equals(ELVACO.name))
+      .forEach(organisation -> organisations.deleteById(organisation.id));
   }
 
   @Test
@@ -58,7 +56,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     OrganisationDto body = request.getBody();
 
-    assertThat(body).hasFieldOrPropertyWithValue("id", secretService.id);
+    assertThat(body).hasFieldOrPropertyWithValue("id", secretService.id.toString());
     assertThat(body).hasFieldOrPropertyWithValue("name", "Secret Service");
     assertThat(body).hasFieldOrPropertyWithValue("code", "secret-service");
   }
@@ -116,7 +114,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto(null, "Something borrowed", "something-blue");
+    OrganisationDto input = new OrganisationDto("Something borrowed", "something-blue");
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -124,12 +122,12 @@ public class OrganisationControllerTest extends IntegrationTest {
     OrganisationDto output = response.getBody();
     assertThat(output.name).isEqualTo(input.name);
     assertThat(output.name).isEqualTo(input.name);
-    assertThat(output.id).isPositive();
+    assertThat(output.id).isNotNull();
   }
 
   @Test
   public void adminCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto(null, "ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
     ResponseEntity<OrganisationDto> created = asAdminOfElvaco()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -138,7 +136,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotCreateOrganisation() {
-    OrganisationDto input = new OrganisationDto(null, "ich bin wieder hier", "bei-dir");
+    OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
     ResponseEntity<OrganisationDto> created = asElvacoUser()
       .post("/organisations", input, OrganisationDto.class);
 
@@ -147,7 +145,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanUpdateOrganisation() {
-    OrganisationDto requestModel = new OrganisationDto(null, "OrganisationName", "org-code");
+    OrganisationDto requestModel = new OrganisationDto("OrganisationName", "org-code");
 
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", requestModel, OrganisationDto.class);
@@ -219,10 +217,12 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void superAdminCanDeleteOrganisation() {
     ResponseEntity<OrganisationDto> exists = asSuperAdmin()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
+
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> deleted = asSuperAdmin()
       .delete("/organisations/" + theBeatles.id, OrganisationDto.class);
+
     assertThat(deleted.getStatusCode()).isEqualTo(HttpStatus.OK);
 
     ResponseEntity<OrganisationDto> shouldBeDeleted = asSuperAdmin()

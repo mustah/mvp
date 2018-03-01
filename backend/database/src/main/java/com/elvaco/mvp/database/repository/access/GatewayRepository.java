@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -36,7 +37,7 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  public List<Gateway> findAllByOrganisationId(Long organisationId) {
+  public List<Gateway> findAllByOrganisationId(UUID organisationId) {
     return repository.findAllByOrganisationId(organisationId)
       .stream()
       .map(gatewayWithMetersMapper::withLogicalMeters)

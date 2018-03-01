@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -54,7 +55,9 @@ public class PhysicalMetersRepository implements PhysicalMeters {
 
   @Override
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
-    Long organisationId, String externalId, String address
+    UUID organisationId,
+    String externalId,
+    String address
   ) {
     return jpaRepository.findByOrganisationIdAndExternalIdAndAddress(
       organisationId,

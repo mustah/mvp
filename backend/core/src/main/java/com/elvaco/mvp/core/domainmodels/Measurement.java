@@ -9,7 +9,8 @@ import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
-public class Measurement {
+public class Measurement implements Identifiable<Long> {
+
   @Nullable
   public final Long id;
   public final Date created;
@@ -41,5 +42,11 @@ public class Measurement {
     this.value = value;
     this.unit = unit;
     this.physicalMeter = physicalMeter;
+  }
+
+  @Nullable
+  @Override
+  public Long getId() {
+    return id;
   }
 }

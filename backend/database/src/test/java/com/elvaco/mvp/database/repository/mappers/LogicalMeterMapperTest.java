@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -21,6 +22,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.modelmapper.config.Configuration.AccessLevel;
 
@@ -48,7 +50,7 @@ public class LogicalMeterMapperTest {
   public void mapsPhysicalMeters() {
     LogicalMeter logicalMeter = new LogicalMeter(
       "an-external-id",
-      0L,
+      randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER,
       singletonList(new PhysicalMeter(ELVACO, "1234", "an-external-ID", "My medium", "ELV"))
     );
@@ -66,10 +68,12 @@ public class LogicalMeterMapperTest {
     locationEntity.latitude = 3.1;
     locationEntity.longitude = 2.1;
     locationEntity.confidence = 1.0;
+    UUID organisationId = randomUUID();
+
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       1L,
       "an-external-id",
-      0L,
+      organisationId,
       created,
       newMeterDefinitionEntity("Speed", "mps", "speed-o-meter")
     );
@@ -82,13 +86,14 @@ public class LogicalMeterMapperTest {
       .longitude(2.1)
       .confidence(1.0)
       .build();
+
     assertThat(expectedLocation.getCoordinate()).isEqualTo(logicalMeter.location.getCoordinate());
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
         "an-external-id",
-        0L,
+        organisationId,
         expectedLocation,
         created,
         emptyList(),
@@ -108,11 +113,13 @@ public class LogicalMeterMapperTest {
   public void mapLogicalMeterEntityToDomainModelOutPosition() {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
+    UUID organisationId = randomUUID();
+
     LogicalMeterEntity logicalMeterEntity =
       new LogicalMeterEntity(
         1L,
         "an-external-id",
-        0L,
+        organisationId,
         created,
         newMeterDefinitionEntity("Energy", "kWh", "My energy meter")
       );
@@ -122,7 +129,9 @@ public class LogicalMeterMapperTest {
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
         1L,
-        "an-external-id", 0L, Location.UNKNOWN_LOCATION,
+        "an-external-id",
+        organisationId,
+        Location.UNKNOWN_LOCATION,
         created,
         emptyList(),
         new MeterDefinition(
@@ -149,7 +158,7 @@ public class LogicalMeterMapperTest {
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity(
       1L,
       "an-external-id",
-      0L,
+      randomUUID(),
       created,
       newMeterDefinitionEntity("Energy", "kWh", "Energy meter")
     );
@@ -159,7 +168,7 @@ public class LogicalMeterMapperTest {
       new LogicalMeter(
         1L,
         "an-external-id",
-        0L,
+        randomUUID(),
         new LocationBuilder()
           .latitude(3.1)
           .longitude(2.1)

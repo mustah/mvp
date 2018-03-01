@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -51,7 +52,7 @@ public class UserMapper {
   }
 
   private Organisation organisationOf(OrganisationDto organisation) {
-    return new Organisation(organisation.id, organisation.name, organisation.code);
+    return new Organisation(UUID.fromString(organisation.id), organisation.name, organisation.code);
   }
 
   private List<Role> rolesOf(List<String> roles) {

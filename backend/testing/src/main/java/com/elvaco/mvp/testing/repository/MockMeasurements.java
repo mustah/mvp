@@ -3,13 +3,14 @@ package com.elvaco.mvp.testing.repository;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
-public class MockMeasurements extends MockRepository<Measurement> implements Measurements {
+public class MockMeasurements extends MockRepository<Long, Measurement> implements Measurements {
 
   @Override
   public List<Measurement> findAllByScale(
@@ -28,7 +29,7 @@ public class MockMeasurements extends MockRepository<Measurement> implements Mea
 
   @Override
   public Optional<Measurement> findById(Long id) {
-    return filter(measurement -> measurement.id.equals(id)).findFirst();
+    return filter(measurement -> Objects.equals(measurement.id, id)).findFirst();
   }
 
   @Override
@@ -44,11 +45,6 @@ public class MockMeasurements extends MockRepository<Measurement> implements Mea
   }
 
   @Override
-  protected Optional<Long> getId(Measurement entity) {
-    return Optional.ofNullable(entity.id);
-  }
-
-  @Override
   protected Measurement copyWithId(Long id, Measurement entity) {
     return new Measurement(
       id,
@@ -58,5 +54,10 @@ public class MockMeasurements extends MockRepository<Measurement> implements Mea
       entity.unit,
       entity.physicalMeter
     );
+  }
+
+  @Override
+  protected Long generateId() {
+    return nextId();
   }
 }

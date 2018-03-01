@@ -1,12 +1,11 @@
 package com.elvaco.mvp.database.entity.user;
 
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -20,13 +19,12 @@ import static java.util.Collections.emptySet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "organisation")
-public class OrganisationEntity extends EntityType<Long> {
+public class OrganisationEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -2369738291498443749L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  public UUID id;
   public String name;
   public String code;
 
@@ -35,11 +33,7 @@ public class OrganisationEntity extends EntityType<Long> {
 
   OrganisationEntity() {}
 
-  public OrganisationEntity(String name, String code) {
-    this(null, name, code);
-  }
-
-  public OrganisationEntity(Long id, String name, String code) {
+  public OrganisationEntity(UUID id, String name, String code) {
     this.id = id;
     this.name = name;
     this.code = code;
@@ -47,7 +41,7 @@ public class OrganisationEntity extends EntityType<Long> {
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

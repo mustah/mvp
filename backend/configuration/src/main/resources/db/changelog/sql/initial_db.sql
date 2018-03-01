@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS meter_definition_quantities (
 );
 
 CREATE TABLE IF NOT EXISTS organisation (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   name VARCHAR(255),
   code VARCHAR(255) NOT NULL UNIQUE
 );
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS mvp_user (
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  organisation_id BIGINT REFERENCES organisation
+  organisation_id UUID REFERENCES organisation
 );
 
 CREATE TABLE IF NOT EXISTS role (
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS logical_meter (
   id BIGSERIAL PRIMARY KEY,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   meter_definition_id BIGINT REFERENCES meter_definition,
-  organisation_id BIGINT NOT NULL REFERENCES organisation,
+  organisation_id UUID NOT NULL REFERENCES organisation,
   external_id TEXT NOT NULL,
   UNIQUE (organisation_id, external_id)
 );
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS location (
 
 CREATE TABLE IF NOT EXISTS physical_meter (
   id BIGSERIAL PRIMARY KEY,
-  organisation_id BIGINT REFERENCES organisation,
+  organisation_id UUID REFERENCES organisation,
   address VARCHAR(255) NOT NULL,
   external_id TEXT NOT NULL,
   medium TEXT,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS gateway (
   id BIGSERIAL PRIMARY KEY,
   serial TEXT NOT NULL UNIQUE ,
   product_model TEXT NOT NULL,
-  organisation_id BIGINT REFERENCES organisation,
+  organisation_id UUID REFERENCES organisation,
   UNIQUE (organisation_id, serial, product_model)
 );
 
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS measurement (
 );
 
 CREATE TABLE IF NOT EXISTS mvp_setting (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
   value TEXT NOT NULL
 );
@@ -110,7 +110,6 @@ CREATE TABLE IF NOT EXISTS physical_meter_status (
 
 CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   id BIGSERIAL PRIMARY KEY,
-
   start TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   stop TIMESTAMP WITHOUT TIME ZONE,
   status_id BIGINT REFERENCES physical_meter_status (id),

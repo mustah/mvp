@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.api;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
@@ -43,7 +44,7 @@ public class OrganisationController {
   }
 
   @GetMapping("{id}")
-  public OrganisationDto organisationById(@PathVariable Long id) {
+  public OrganisationDto organisationById(@PathVariable UUID id) {
     return organisationUseCases.findById(id)
       .map(organisationMapper::toDto)
       .orElseThrow(() -> new OrganisationNotFound(id));
@@ -67,8 +68,8 @@ public class OrganisationController {
   }
 
   @DeleteMapping("{id}")
-  public OrganisationDto deleteOrganisation(@PathVariable Long id) {
-    Organisation organisation = organisationUseCases.findById(id)
+  public OrganisationDto deleteOrganisation(@PathVariable String id) {
+    Organisation organisation = organisationUseCases.findById(UUID.fromString(id))
       .orElseThrow(() -> new OrganisationNotFound(id));
     // TODO delete should actually not remove the entity, just mark it as deleted.
     organisationUseCases.delete(organisation);

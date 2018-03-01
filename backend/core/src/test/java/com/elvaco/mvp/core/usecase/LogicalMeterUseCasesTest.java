@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.usecase;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -11,21 +12,30 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterUseCasesTest {
 
+  private Organisation organisation;
+
+  @Before
+  public void setUp() {
+    organisation = new Organisation(randomUUID(), "some organisation", "some-org");
+  }
+
   @Test
   public void shouldFindOrganisationsMeterById() {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(newMeter(1L, 1L))
+      singletonList(newMeter(1L, organisation.id))
     );
 
     assertThat(useCases.findById(1L)).isNotEmpty();
@@ -35,7 +45,7 @@ public class LogicalMeterUseCasesTest {
   public void shouldNotFindOtherOrganisationsMeterById() {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(newMeter(1L, 2L))
+      singletonList(newMeter(1L, randomUUID()))
     );
 
     assertThat(useCases.findById(1L)).isEmpty();
@@ -46,9 +56,9 @@ public class LogicalMeterUseCasesTest {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.SUPER_ADMIN)),
       asList(
-        newMeter(0L, 1L),
-        newMeter(1L, 2L),
-        newMeter(2L, 1L)
+        newMeter(0L, organisation.id),
+        newMeter(1L, randomUUID()),
+        newMeter(2L, organisation.id)
       )
     );
 
@@ -60,9 +70,9 @@ public class LogicalMeterUseCasesTest {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
       asList(
-        newMeter(0L, 1L),
-        newMeter(1L, 2L),
-        newMeter(2L, 1L)
+        newMeter(0L, organisation.id),
+        newMeter(1L, randomUUID()),
+        newMeter(2L, organisation.id)
       )
     );
 
@@ -76,7 +86,7 @@ public class LogicalMeterUseCasesTest {
       emptyList()
     );
 
-    assertThatThrownBy(() -> useCases.save(newUnsavedMeter(2L)))
+    assertThatThrownBy(() -> useCases.save(newUnsavedMeter(randomUUID())))
       .hasMessageContaining("not allowed");
   }
 
@@ -87,14 +97,14 @@ public class LogicalMeterUseCasesTest {
       emptyList()
     );
 
-    assertThat(useCases.save(newUnsavedMeter(1L)).id).isEqualTo(0L);
+    assertThat(useCases.save(newUnsavedMeter(organisation.id)).id).isEqualTo(1L);
   }
 
-  private LogicalMeter newUnsavedMeter(long organisationId) {
+  private LogicalMeter newUnsavedMeter(UUID organisationId) {
     return newMeter(null, organisationId);
   }
 
-  private LogicalMeter newMeter(Long meterId, long organisationId) {
+  private LogicalMeter newMeter(Long meterId, UUID organisationId) {
     return new LogicalMeter(
       meterId,
       "meter-" + meterId,
@@ -111,7 +121,7 @@ public class LogicalMeterUseCasesTest {
         "mocked user",
         "mock@mock.net",
         "password",
-        new Organisation(1L, "some organisation", "some-org"),
+        organisation,
         roles
       ),
       "some-token"

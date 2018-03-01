@@ -2,17 +2,17 @@ package com.elvaco.mvp.adapters.spring;
 
 import com.elvaco.mvp.core.spi.data.Order;
 
-public class OrderAdapter implements Order {
+class OrderAdapter implements Order {
   private final Direction direction;
   private final String property;
   private final boolean ignoreCase;
 
-  public OrderAdapter(String direction, String property) {
+  OrderAdapter(String direction, String property) {
     //TODO handle invalid values
     this(Direction.valueOf(direction), property, false);
   }
 
-  public OrderAdapter(Direction direction, String property, boolean ignoreCase) {
+  private OrderAdapter(Direction direction, String property, boolean ignoreCase) {
     this.direction = direction;
     this.property = property;
     this.ignoreCase = ignoreCase;

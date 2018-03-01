@@ -5,9 +5,8 @@ import javax.annotation.Nullable;
 
 import static java.util.Collections.unmodifiableList;
 
-public class User {
+public class User implements Identifiable<Long> {
 
-  @Nullable
   public final Long id;
   public final String name;
   public final String email;
@@ -52,5 +51,10 @@ public class User {
 
   public User withPassword(Password password) {
     return new User(id, name, email, password.getPassword(), organisation, roles);
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

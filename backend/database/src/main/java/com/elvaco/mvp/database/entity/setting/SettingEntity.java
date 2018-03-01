@@ -1,11 +1,10 @@
 package com.elvaco.mvp.database.entity.setting;
 
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,11 +13,10 @@ import com.elvaco.mvp.database.entity.EntityType;
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "mvp_setting")
-public class SettingEntity extends EntityType<Long> {
+public class SettingEntity extends EntityType<UUID> {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  public UUID id;
 
   @Column(nullable = false, unique = true)
   public String name;
@@ -26,10 +24,16 @@ public class SettingEntity extends EntityType<Long> {
   @Column(nullable = false)
   public String value;
 
-  public SettingEntity() {}
+  SettingEntity() {}
+
+  public SettingEntity(UUID id, String name, String value) {
+    this.id = id;
+    this.name = name;
+    this.value = value;
+  }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

@@ -9,6 +9,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.meterDefinitions;
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.organisations;
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.users;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductionDataLoaderTest extends IntegrationTest {
@@ -36,13 +39,10 @@ public class ProductionDataLoaderTest extends IntegrationTest {
     } catch (Exception ex) {
       Assertions.fail("Running production data loader failed", ex);
     }
-    ProductionData productionData = productionDataLoader.getProductionData();
 
-    assertThat(roleRepository.findAll()).hasSize(productionData.users().size());
-    assertThat(meterDefinitionJpaRepository.findAll()).hasSize(
-      productionData.meterDefinitions().size());
-    assertThat(organisationJpaRepository.findAll()).hasSize(productionData.organisations().size());
-    assertThat(users.findAll())
-      .filteredOn("name", "System Administrator").hasSize(1);
+    assertThat(roleRepository.findAll()).hasSize(users().size());
+    assertThat(meterDefinitionJpaRepository.findAll()).hasSize(meterDefinitions().size());
+    assertThat(organisationJpaRepository.findAll()).hasSize(organisations().size());
+    assertThat(users.findAll()).filteredOn("name", "System Administrator").hasSize(1);
   }
 }

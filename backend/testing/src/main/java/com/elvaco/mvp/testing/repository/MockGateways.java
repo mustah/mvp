@@ -1,17 +1,12 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 
-public class MockGateways extends MockRepository<Gateway> implements Gateways {
-
-  @Override
-  protected Optional<Long> getId(Gateway entity) {
-    return Optional.ofNullable(entity.id);
-  }
+public class MockGateways extends MockRepository<Long, Gateway> implements Gateways {
 
   @Override
   public List<Gateway> findAll() {
@@ -35,7 +30,12 @@ public class MockGateways extends MockRepository<Gateway> implements Gateways {
   }
 
   @Override
-  public List<Gateway> findAllByOrganisationId(Long organisationId) {
+  protected Long generateId() {
+    return nextId();
+  }
+
+  @Override
+  public List<Gateway> findAllByOrganisationId(UUID organisationId) {
     throw new UnsupportedOperationException("Not implemented");
   }
 }

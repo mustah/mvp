@@ -64,7 +64,6 @@ class MeteringMessageHandler {
   }
 
   public void handle(MeteringMeasurementMessageDto measurementMessage) {
-
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
@@ -76,7 +75,8 @@ class MeteringMessageHandler {
       organisation
     );
 
-    List<Measurement> measurements = measurementMessage.values.stream()
+    List<Measurement> measurements = measurementMessage.values
+      .stream()
       .map(valueDto -> new Measurement(
         null,
         new Date(valueDto.timestamp),
@@ -84,7 +84,8 @@ class MeteringMessageHandler {
         valueDto.value,
         valueDto.unit,
         physicalMeter
-      )).collect(toList());
+      ))
+      .collect(toList());
     measurementUseCases.save(measurements);
   }
 
@@ -148,5 +149,4 @@ class MeteringMessageHandler {
     map.put("Hot water", MeterDefinition.HOT_WATER_METER);
     return map;
   }
-
 }

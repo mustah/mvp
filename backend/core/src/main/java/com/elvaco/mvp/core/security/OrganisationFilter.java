@@ -14,8 +14,7 @@ public final class OrganisationFilter {
     Map<String, List<String>> filterParams
   ) {
     if (!currentUser.isSuperAdmin()) {
-      Long organisationId = currentUser.getOrganisationId();
-      filterParams.put("organisation", singletonList(organisationId.toString()));
+      filterParams.put("organisation", singletonList(currentUser.getOrganisationId().toString()));
     }
     return filterParams;
   }

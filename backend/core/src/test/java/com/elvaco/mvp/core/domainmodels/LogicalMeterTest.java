@@ -1,16 +1,21 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.junit.Test;
 
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterTest {
 
   @Test
   public void testMedium() {
-    LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter heatingMeter = newLogicalMeter(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      randomUUID()
+    );
     assertThat(heatingMeter.getMedium()).isEqualTo("District heating meter");
 
     LogicalMeter coolingMeter = heatingMeter.withMeterDefinition(
@@ -21,7 +26,10 @@ public class LogicalMeterTest {
 
   @Test
   public void testQuantities() {
-    LogicalMeter heatingMeter = newLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter heatingMeter = newLogicalMeter(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      randomUUID()
+    );
     assertThat(heatingMeter.getQuantities()).containsOnly(
       Quantity.ENERGY,
       Quantity.VOLUME,
@@ -43,16 +51,22 @@ public class LogicalMeterTest {
   @Test
   public void logicalMeterEquality() {
     Date now = new Date();
-    LogicalMeter logicalMeter =
-      newLogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+    UUID organisationId = randomUUID();
 
-    LogicalMeter otherLogicalMeter =
-      newLogicalMeter(MeterDefinition.HOT_WATER_METER).createdAt(now);
+    LogicalMeter logicalMeter = newLogicalMeter(
+      MeterDefinition.HOT_WATER_METER,
+      organisationId
+    ).createdAt(now);
+
+    LogicalMeter otherLogicalMeter = newLogicalMeter(
+      MeterDefinition.HOT_WATER_METER,
+      organisationId
+    ).createdAt(now);
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 
-  private LogicalMeter newLogicalMeter(MeterDefinition meterDefinition) {
-    return new LogicalMeter("an-external-id", 0L, meterDefinition);
+  private LogicalMeter newLogicalMeter(MeterDefinition meterDefinition, UUID organisationId) {
+    return new LogicalMeter("an-external-id", organisationId, meterDefinition);
   }
 }

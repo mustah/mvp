@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.database.entity.user.UserEntity;
@@ -15,5 +16,5 @@ public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
 
   List<UserEntity> findByRoles_Role(String role);
 
-  List<UserEntity> findByOrganisationId(Long organisationId);
+  List<UserEntity> findByOrganisationId(UUID organisationId);
 }
