@@ -5,8 +5,10 @@ import java.util.Date;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class Measurement {
   @Nullable
   public final Long id;

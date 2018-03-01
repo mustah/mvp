@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   organisation_id BIGINT REFERENCES organisation,
   address VARCHAR(255) NOT NULL,
   external_id TEXT NOT NULL,
-  medium VARCHAR(255),
+  medium TEXT,
   manufacturer VARCHAR(255),
   logical_meter_id BIGINT REFERENCES logical_meter,
   UNIQUE (organisation_id, external_id, address)

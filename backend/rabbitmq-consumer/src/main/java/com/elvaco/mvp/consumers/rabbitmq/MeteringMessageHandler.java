@@ -1,17 +1,24 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 class MeteringMessageHandler {
 
@@ -19,61 +26,117 @@ class MeteringMessageHandler {
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final Organisations organisations;
+  private final MeasurementUseCases measurementUseCases;
 
   MeteringMessageHandler(
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
-    Organisations organisations
+    Organisations organisations,
+    MeasurementUseCases measurementUseCases
   ) {
     this.logicalMeters = logicalMeters;
     this.physicalMeters = physicalMeters;
     this.organisations = organisations;
+    this.measurementUseCases = measurementUseCases;
     mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
   }
 
   public void handle(MeteringMeterStructureMessageDto structureMessage) {
-    Organisation organisation = organisations.findByCode(structureMessage.organisationId)
-      .orElseGet(() -> organisations.save(
-        new Organisation(
-          null,
-          "",
-          structureMessage.organisationId
-        )));
+    Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
 
-    LogicalMeter logicalMeter = logicalMeters.findByOrganisationIdAndExternalId(
-      organisation.id,
-      structureMessage.facilityId
-    )
-      .orElseGet(() -> logicalMeters.save(
-        new LogicalMeter(
-          structureMessage.facilityId,
-          organisation.id,
-          selectMeterDefinition(structureMessage.medium)
-        )));
-
-    PhysicalMeter physicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-      organisation.id,
+    LogicalMeter logicalMeter = findOrCreateLogicalMeter(
       structureMessage.facilityId,
-      structureMessage.meterId
-    ).map(meter ->
-            new PhysicalMeter(
-              meter.id,
-              meter.organisation,
-              meter.address,
-              meter.externalId,
-              structureMessage.medium,
-              structureMessage.manufacturer
-            )
-    ).orElse(new PhysicalMeter(
-      null, organisation,
+      structureMessage.medium,
+      organisation
+    );
+
+    PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
+      structureMessage.facilityId,
       structureMessage.meterId,
-      structureMessage.facilityId,
       structureMessage.medium,
       structureMessage.manufacturer,
       logicalMeter.id,
-      Collections.emptyList()
-    ));
+      organisation
+    ).withMedium(structureMessage.medium)
+      .withManufacturer(structureMessage.manufacturer)
+      .withLogicalMeterId(logicalMeter.id);
     physicalMeters.save(physicalMeter);
+  }
+
+  public void handle(MeteringMeasurementMessageDto measurementMessage) {
+
+    Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
+
+    PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
+      measurementMessage.facilityId,
+      measurementMessage.meter.id,
+      "Unknown",
+      "UNKNOWN",
+      null,
+      organisation
+    );
+
+    List<Measurement> measurements = measurementMessage.values.stream()
+      .map(valueDto -> new Measurement(
+        null,
+        new Date(valueDto.timestamp),
+        valueDto.quantity,
+        valueDto.value,
+        valueDto.unit,
+        physicalMeter
+      )).collect(toList());
+    measurementUseCases.save(measurements);
+  }
+
+  private LogicalMeter findOrCreateLogicalMeter(
+    String facilityId,
+    String medium,
+    Organisation organisation
+  ) {
+    return logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      facilityId
+    ).orElseGet(() -> logicalMeters.save(
+      new LogicalMeter(
+        facilityId,
+        organisation.id,
+        selectMeterDefinition(medium)
+      )));
+  }
+
+  private Organisation findOrCreateOrganisation(String organisationCode) {
+    return organisations.findByCode(organisationCode)
+      .orElseGet(() ->
+                   organisations.save(
+                     new Organisation(
+                       null,
+                       "",
+                       organisationCode
+                     )));
+  }
+
+  private PhysicalMeter findOrCreatePhysicalMeter(
+    String facilityId,
+    String meterId,
+    String medium, String manufacturer, Long logicalMeterId, Organisation organisation
+  ) {
+    return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+      organisation.id,
+      facilityId,
+      meterId
+    ).orElseGet(
+      () -> physicalMeters.save(
+        new PhysicalMeter(
+          null,
+          organisation,
+          meterId,
+          facilityId,
+          medium,
+          manufacturer,
+          logicalMeterId,
+          emptyList()
+        ))
+    );
   }
 
   private MeterDefinition selectMeterDefinition(String medium) {
@@ -85,4 +148,5 @@ class MeteringMessageHandler {
     map.put("Hot water", MeterDefinition.HOT_WATER_METER);
     return map;
   }
+
 }
