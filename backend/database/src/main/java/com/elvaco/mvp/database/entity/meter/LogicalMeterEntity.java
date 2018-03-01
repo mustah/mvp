@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.entity.meter;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
@@ -67,7 +68,7 @@ public class LogicalMeterEntity extends EntityType<Long> {
   public String externalId;
 
   @Column(nullable = false)
-  public Long organisationId;
+  public UUID organisationId;
 
   @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
   @JsonManagedReference
@@ -78,7 +79,7 @@ public class LogicalMeterEntity extends EntityType<Long> {
   public LogicalMeterEntity(
     Long id,
     String externalId,
-    Long organisationId,
+    UUID organisationId,
     Date created,
     MeterDefinitionEntity meterDefinition
   ) {

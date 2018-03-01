@@ -10,18 +10,21 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class OrganisationRepositoryTest extends IntegrationTest {
 
   @Autowired
   private UserJpaRepository userJpaRepository;
+
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
 
   @Test
   public void deletingOrganisationDeletesUsers() {
     OrganisationEntity organisationEntity = organisationJpaRepository.save(new OrganisationEntity(
+      randomUUID(),
       "An organisation",
       "an-organisation"
     ));

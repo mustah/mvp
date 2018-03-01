@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -16,7 +17,7 @@ import static java.util.Collections.unmodifiableList;
 
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
-public class LogicalMeter implements Identifiable<Long>{
+public class LogicalMeter implements Identifiable<Long> {
 
   @Nullable
   public final Long id;
@@ -24,7 +25,7 @@ public class LogicalMeter implements Identifiable<Long>{
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
   public final String externalId;
-  public final Long organisationId;
+  public final UUID organisationId;
   public final MeterDefinition meterDefinition;
   public final List<MeterStatusLog> meterStatusLogs;
   public final List<Gateway> gateways;
@@ -32,7 +33,7 @@ public class LogicalMeter implements Identifiable<Long>{
   public LogicalMeter(
     @Nullable Long id,
     String externalId,
-    Long organisationId,
+    UUID organisationId,
     Location location,
     Date created,
     List<PhysicalMeter> physicalMeters,
@@ -53,7 +54,7 @@ public class LogicalMeter implements Identifiable<Long>{
 
   public LogicalMeter(
     String externalId,
-    Long organisationId,
+    UUID organisationId,
     MeterDefinition meterDefinition
   ) {
     this(externalId, organisationId, meterDefinition, emptyList());
@@ -61,7 +62,7 @@ public class LogicalMeter implements Identifiable<Long>{
 
   public LogicalMeter(
     String externalId,
-    Long organisationId,
+    UUID organisationId,
     MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeters
   ) {
@@ -81,7 +82,7 @@ public class LogicalMeter implements Identifiable<Long>{
   public LogicalMeter(
     @Nullable Long id,
     String externalId,
-    Long organisationId,
+    UUID organisationId,
     Location location,
     Date created
   ) {
@@ -98,6 +99,7 @@ public class LogicalMeter implements Identifiable<Long>{
     );
   }
 
+  @Nullable
   @Override
   public Long getId() {
     return id;

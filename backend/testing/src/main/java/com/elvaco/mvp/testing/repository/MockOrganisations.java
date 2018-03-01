@@ -2,20 +2,23 @@ package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 
-public class MockOrganisations extends MockRepository<Long, Organisation> implements Organisations {
+import static java.util.UUID.randomUUID;
+
+public class MockOrganisations extends MockRepository<UUID, Organisation> implements Organisations {
 
   @Override
-  protected Organisation copyWithId(Long id, Organisation entity) {
+  protected Organisation copyWithId(UUID id, Organisation entity) {
     return new Organisation(id, entity.name, entity.code);
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override
@@ -24,8 +27,9 @@ public class MockOrganisations extends MockRepository<Long, Organisation> implem
   }
 
   @Override
-  public Optional<Organisation> findById(Long id) {
-    return filter(o -> o.id.equals(id)).findFirst();
+  public Optional<Organisation> findById(UUID id) {
+    return filter(o -> o.id.equals(id))
+      .findFirst();
   }
 
   @Override
@@ -34,7 +38,7 @@ public class MockOrganisations extends MockRepository<Long, Organisation> implem
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteById(UUID id) {
 
   }
 

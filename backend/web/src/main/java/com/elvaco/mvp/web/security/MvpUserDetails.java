@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.security;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -51,12 +52,12 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
-  public boolean isWithinOrganisation(Long organisationId) {
+  public boolean isWithinOrganisation(UUID organisationId) {
     return getOrganisationId().equals(organisationId);
   }
 
   @Override
-  public Long getOrganisationId() {
+  public UUID getOrganisationId() {
     return user.organisation.id;
   }
 

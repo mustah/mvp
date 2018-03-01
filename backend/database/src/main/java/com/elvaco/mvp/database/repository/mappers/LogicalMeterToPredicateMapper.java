@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
@@ -12,7 +13,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.lang.Long.parseLong;
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
 
@@ -32,7 +33,10 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
 
     FILTERABLE_PROPERTIES.put("address.id", Q.location.streetAddress::eq);
 
-    FILTERABLE_PROPERTIES.put("organisation", (String id) -> Q.organisationId.eq(parseLong(id)));
+    FILTERABLE_PROPERTIES.put(
+      "organisation",
+      (String id) -> Q.organisationId.eq(UUID.fromString(id))
+    );
   }
 
   private static Date toDate(String before) {
@@ -46,18 +50,12 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
 
   @Override
   public BooleanExpression map(Map<String, List<String>> filter) {
-    Predicate predicate;
-
-    if (filter.containsKey("after")
-      && filter.containsKey("before")
     // TODO add constraint, filter must contain status
-    ) {
-      predicate = mapPeriodicStatusFilter(filter);
+    if (filter.containsKey("after") && filter.containsKey("before")) {
+      return (BooleanExpression) mapPeriodicStatusFilter(filter);
     } else {
-      predicate = super.map(filter);
+      return super.map(filter);
     }
-
-    return (BooleanExpression) predicate;
   }
 
   private Predicate mapPeriodicStatusFilter(Map<String, List<String>> filter) {
@@ -66,7 +64,7 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     Date stop = toDate(filter.get("before").get(0));
 
     // TODO get status from filter
-    List<String> status = asList("Active");
+    List<String> status = singletonList("Active");
 
     Predicate predicate = (
       // Status must have begun before period end

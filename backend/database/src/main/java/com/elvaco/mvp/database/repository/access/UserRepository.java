@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -81,7 +82,7 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public List<User> findByOrganisationId(Long organisationId) {
+  public List<User> findByOrganisationId(UUID organisationId) {
     return userJpaRepository
       .findByOrganisationId(organisationId)
       .stream()

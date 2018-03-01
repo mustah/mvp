@@ -19,7 +19,8 @@ abstract class MockRepository<K, V extends Identifiable<K>> {
 
   final V saveMock(V entity) {
     if (entity.getId() != null) {
-      return repository.put(entity.getId(), entity);
+      repository.put(entity.getId(), entity);
+      return entity;
     } else {
       K id = generateId();
       V withId = copyWithId(id, entity);

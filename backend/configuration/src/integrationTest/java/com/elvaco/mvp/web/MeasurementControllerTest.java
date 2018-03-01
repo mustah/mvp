@@ -21,7 +21,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,17 +41,18 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private Map<String, MeasurementEntity> measurementQuantities;
   private PhysicalMeterEntity forceMeter;
-  private OrganisationEntity elvacoEntity;
   private OrganisationEntity wayneIndustriesEntity;
 
   @Before
   public void setUp() {
-    elvacoEntity = organisationJpaRepository.findOne(1L);
+    OrganisationEntity elvaco = organisationJpaRepository.findOne(ELVACO.id);
+
     wayneIndustriesEntity = organisationJpaRepository.save(
-      new OrganisationEntity("Wayne Industries", "wayne-industries")
+      new OrganisationEntity(randomUUID(), "Wayne Industries", "wayne-industries")
     );
+
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
-      elvacoEntity,
+      elvaco,
       "test-butter-meter-1",
       "butter-external-id",
       "Butter",

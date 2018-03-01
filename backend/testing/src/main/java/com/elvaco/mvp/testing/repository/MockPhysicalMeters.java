@@ -2,6 +2,7 @@ package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -50,7 +51,9 @@ public class MockPhysicalMeters extends MockRepository<Long, PhysicalMeter>
 
   @Override
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(
-    Long organisationId, String externalId, String identity
+    UUID organisationId,
+    String externalId,
+    String identity
   ) {
     return filter(physicalMeter -> physicalMeter.organisation.id.equals(organisationId))
       .filter(physicalMeter -> physicalMeter.externalId.equals(externalId))

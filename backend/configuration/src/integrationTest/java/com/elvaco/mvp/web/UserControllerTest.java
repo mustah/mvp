@@ -2,13 +2,14 @@ package com.elvaco.mvp.web;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
+import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -27,18 +29,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
 
-  private static final OrganisationDto ELVACO_DTO = new OrganisationDto(1L, "Elvaco", "elvaco");
-  private static final OrganisationDto WAYNE_INDUSTRIES_DTO = new OrganisationDto(
-    2L,
-    "Wayne Industries",
-    "wayne-industries"
-  );
-
   @Autowired
   private Users users;
 
   @Autowired
   private UserMapper userMapper;
+
+  private final OrganisationMapper organisationMapper = new OrganisationMapper();
 
   @Test
   public void findUserById() {
@@ -245,7 +242,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateUserOfDifferentOrganisation() {
-    UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES_DTO);
+    UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES);
 
     ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
 
@@ -255,7 +252,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void adminCannotSeeUsersOfDifferentOrganisation() {
     UserDto batman = asSuperAdmin()
-      .post("/users", createUserDto("b@tm.an", WAYNE_INDUSTRIES_DTO), UserDto.class)
+      .post("/users", createUserDto("b@tm.an", WAYNE_INDUSTRIES), UserDto.class)
       .getBody();
 
     UserDto colleague = asSuperAdmin()
@@ -272,7 +269,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.password = "secret stuff";
-    user.organisation = ELVACO_DTO;
+    user.organisation = organisationMapper.toDto(ELVACO);
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -282,17 +279,17 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = password;
-    user.organisation = ELVACO_DTO;
+    user.organisation = organisationMapper.toDto(ELVACO);
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }
 
-  private UserWithPasswordDto createUserDto(String email, OrganisationDto organisation) {
+  private UserWithPasswordDto createUserDto(String email, Organisation organisation) {
     UserWithPasswordDto user = new UserWithPasswordDto();
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = "i am batman";
-    user.organisation = organisation;
+    user.organisation = organisationMapper.toDto(organisation);
     user.roles = singletonList(USER.role);
     return user;
   }

@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.access;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -43,7 +44,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(Long organisationId, Long id) {
+  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id) {
     return logicalMeterJpaRepository
       .findByOrganisationIdAndId(organisationId, id)
       .map(logicalMeterMapper::toDomainModel);
@@ -94,7 +95,8 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    Long organisationId, String externalId
+    UUID organisationId,
+    String externalId
   ) {
     return logicalMeterJpaRepository
       .findByOrganisationIdAndExternalId(organisationId, externalId)
@@ -102,7 +104,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findByOrganisationId(Long organisationId) {
+  public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
     return logicalMeterJpaRepository.findByOrganisationId(organisationId)
       .stream()
       .map(logicalMeterMapper::toDomainModel)

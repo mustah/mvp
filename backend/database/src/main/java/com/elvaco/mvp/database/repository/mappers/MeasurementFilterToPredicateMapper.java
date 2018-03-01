@@ -4,10 +4,10 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.lang.Long.parseLong;
@@ -34,7 +34,7 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
 
     FILTERABLE_PROPERTIES.put(
       "organisation",
-      (String orgId) -> Q.physicalMeter.organisation.id.eq(parseLong(orgId))
+      (String id) -> Q.physicalMeter.organisation.id.eq(UUID.fromString(id))
     );
   }
 

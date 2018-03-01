@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
@@ -19,11 +20,11 @@ public interface LogicalMeterJpaRepository
   List<LogicalMeterEntity> findAll(Predicate predicate);
 
   Optional<LogicalMeterEntity> findByOrganisationIdAndExternalId(
-    Long organisationId,
+    UUID organisationId,
     String externalId
   );
 
-  Optional<LogicalMeterEntity> findByOrganisationIdAndId(Long organisationId, Long id);
+  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, Long id);
 
-  List<LogicalMeterEntity> findByOrganisationId(Long organisationId);
+  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 }

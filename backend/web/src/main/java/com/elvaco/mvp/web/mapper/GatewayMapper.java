@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -34,7 +35,7 @@ public class GatewayMapper {
     );
   }
 
-  public Gateway toDomainModel(GatewayDto gatewayDto, Long organisationId) {
+  public Gateway toDomainModel(GatewayDto gatewayDto, UUID organisationId) {
     return new Gateway(
       gatewayDto.id,
       organisationId,

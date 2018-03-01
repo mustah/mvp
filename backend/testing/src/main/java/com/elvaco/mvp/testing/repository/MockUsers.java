@@ -3,6 +3,7 @@ package com.elvaco.mvp.testing.repository;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -55,8 +56,8 @@ public class MockUsers extends MockRepository<Long, User> implements Users {
   }
 
   @Override
-  public List<User> findByOrganisationId(Long id) {
-    return filter(u -> u.organisation.id.equals(id)).collect(toList());
+  public List<User> findByOrganisationId(UUID organisationId) {
+    return filter(u -> u.organisation.id.equals(organisationId)).collect(toList());
   }
 
   @Override

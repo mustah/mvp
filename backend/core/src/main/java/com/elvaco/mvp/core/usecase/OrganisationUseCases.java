@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.usecase;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -38,7 +39,7 @@ public class OrganisationUseCases {
     return Collections.emptyList();
   }
 
-  public Optional<Organisation> findById(Long id) {
+  public Optional<Organisation> findById(UUID id) {
     return organisations.findById(id)
       .filter(organisation -> organisationPermissions.isAllowed(currentUser, organisation, READ));
   }
