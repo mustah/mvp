@@ -8,9 +8,10 @@ import com.elvaco.mvp.core.spi.data.Order;
 import com.elvaco.mvp.core.spi.data.Sort;
 
 public class SortAdapter implements Sort {
+
   private final List<Order> orders;
 
-  public SortAdapter(org.springframework.data.domain.Sort sort) {
+  SortAdapter(org.springframework.data.domain.Sort sort) {
     orders = new ArrayList<>();
 
     if (sort != null) {

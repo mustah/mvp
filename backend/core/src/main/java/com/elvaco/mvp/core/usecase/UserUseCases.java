@@ -36,13 +36,6 @@ public class UserUseCases {
     return users.findByOrganisationId(currentUser.getOrganisationId());
   }
 
-  public Optional<User> findByEmail(String email) {
-    return users.findByEmail(email)
-      .filter(
-        user -> organisationPermissions.isAllowed(currentUser, user, READ)
-      );
-  }
-
   public Optional<User> findById(Long id) {
     return users.findById(id)
       .filter(

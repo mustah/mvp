@@ -107,6 +107,7 @@ public class PhysicalMeter implements Identifiable<Long> {
     );
   }
 
+  @Nullable
   @Override
   public Long getId() {
     return id;

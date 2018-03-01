@@ -10,12 +10,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.meterDefinitions;
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.organisations;
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.superAdminUser;
+import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.users;
+
 @Order(1)
 @Component
 @Slf4j
 class ProductionDataLoader implements CommandLineRunner {
+
   private final RoleRepository roleRepository;
-  private final ProductionData productionData;
   private final MeterDefinitions meterDefinitions;
   private final Organisations organisations;
   private final Users users;
@@ -30,45 +35,36 @@ class ProductionDataLoader implements CommandLineRunner {
     this.roleRepository = roleRepository;
     this.meterDefinitions = meterDefinitions;
     this.organisations = organisations;
-    this.productionData = new ProductionData();
     this.users = users;
   }
 
   @Override
-  public void run(String... args) throws Exception {
+  public void run(String... args) {
     log.info("Seeding database with initial data ...");
 
     createRoles();
     createElvacoOrganisation();
     createSuperAdministrator();
     createMeterDefinitions();
+
     log.info("Initial database seeding done.");
   }
 
-  public ProductionData getProductionData() {
-    return productionData;
-  }
-
   private void createMeterDefinitions() {
-    productionData.meterDefinitions().forEach(meterDefinitions::save);
+    meterDefinitions().forEach(meterDefinitions::save);
   }
 
   private void createElvacoOrganisation() {
-    productionData.organisations().forEach(organisations::save);
+    organisations().forEach(organisations::save);
   }
 
   private void createSuperAdministrator() {
     if (!users.findById(1L).isPresent()) {
-      users.create(
-        productionData.superAdmin()
-      );
+      users.create(superAdminUser());
     }
   }
 
   private void createRoles() {
-    roleRepository.save(
-      productionData.users()
-    );
+    roleRepository.save(users());
   }
-
 }

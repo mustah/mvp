@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 
 import static java.util.stream.Collectors.toList;
@@ -19,18 +18,15 @@ public class UserRepository implements Users {
 
   private final UserJpaRepository userJpaRepository;
   private final UserMapper userMapper;
-  private final OrganisationMapper organisationMapper;
   private final PasswordEncoder passwordEncoder;
 
   public UserRepository(
     UserJpaRepository userJpaRepository,
     UserMapper userMapper,
-    OrganisationMapper organisationMapper,
     PasswordEncoder passwordEncoder
   ) {
     this.userJpaRepository = userJpaRepository;
     this.userMapper = userMapper;
-    this.organisationMapper = organisationMapper;
     this.passwordEncoder = passwordEncoder;
   }
 

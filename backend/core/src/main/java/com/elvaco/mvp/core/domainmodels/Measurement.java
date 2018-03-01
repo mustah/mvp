@@ -44,6 +44,7 @@ public class Measurement implements Identifiable<Long> {
     this.physicalMeter = physicalMeter;
   }
 
+  @Nullable
   @Override
   public Long getId() {
     return id;
