@@ -34,7 +34,7 @@ public class AuthController {
     return Optional.ofNullable(authentication.getPrincipal())
       .map(principal -> ((MvpUserDetails) principal))
       .map(this::toUserTokenDto)
-      .orElseThrow(() -> new UserNotFound(email));
+      .orElseThrow(() -> UserNotFound.withUsername(email));
   }
 
   @GetMapping("/logout")

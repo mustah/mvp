@@ -1,58 +1,56 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
-import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
-import org.modelmapper.ModelMapper;
 
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
 public class UserMapper {
 
-  private final ModelMapper modelMapper;
+  private final OrganisationMapper organisationMapper;
 
-  public UserMapper(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
+  public UserMapper(OrganisationMapper organisationMapper) {
+    this.organisationMapper = organisationMapper;
   }
 
   public UserDto toDto(User user) {
-    UserDto userDto = modelMapper.map(user, UserDto.class);
-    userDto.roles = user.roles
-      .stream()
-      .map(r -> r.role)
-      .collect(toList());
-    return userDto;
+    return new UserDto(
+      user.id,
+      user.name,
+      user.email,
+      organisationMapper.toDto(user.organisation),
+      user.roles
+        .stream()
+        .map(r -> r.role)
+        .collect(toList())
+    );
   }
 
   public User toDomainModel(UserDto userDto) {
     return new User(
-      userDto.id,
+      uuidOf(userDto.id),
       userDto.name,
       userDto.email,
-      organisationOf(userDto.organisation),
+      null,
+      organisationMapper.toDomainModel(userDto.organisation),
       rolesOf(userDto.roles)
     );
   }
 
   public User toDomainModel(UserWithPasswordDto userDto) {
     return new User(
-      userDto.id,
+      uuidOf(userDto.id),
       userDto.name,
       userDto.email,
       userDto.password,
-      organisationOf(userDto.organisation),
+      organisationMapper.toDomainModel(userDto.organisation),
       rolesOf(userDto.roles)
     );
-  }
-
-  private Organisation organisationOf(OrganisationDto organisation) {
-    return new Organisation(UUID.fromString(organisation.id), organisation.name, organisation.code);
   }
 
   private List<Role> rolesOf(List<String> roles) {

@@ -117,7 +117,7 @@ public class LogicalMeterUseCasesTest {
   private AuthenticatedUser newAuthenticatedUser(List<Role> roles) {
     return new MockAuthenticatedUser(
       new User(
-        0L,
+        randomUUID(),
         "mocked user",
         "mock@mock.net",
         "password",

@@ -10,16 +10,17 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
-public class MockUsers extends MockRepository<Long, User> implements Users {
+public class MockUsers extends MockRepository<UUID, User> implements Users {
 
   public MockUsers(List<User> users) {
     users.forEach(this::saveMock);
   }
 
   @Override
-  protected User copyWithId(Long id, User entity) {
+  protected User copyWithId(UUID id, User entity) {
     return new User(
       id,
       entity.name,
@@ -31,8 +32,8 @@ public class MockUsers extends MockRepository<Long, User> implements Users {
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override
@@ -46,7 +47,7 @@ public class MockUsers extends MockRepository<Long, User> implements Users {
   }
 
   @Override
-  public Optional<User> findById(Long id) {
+  public Optional<User> findById(UUID id) {
     return filter(u -> Objects.requireNonNull(u.id).equals(id)).findFirst();
   }
 
@@ -61,7 +62,7 @@ public class MockUsers extends MockRepository<Long, User> implements Users {
   }
 
   @Override
-  public Optional<Password> findPasswordByUserId(Long userId) {
+  public Optional<Password> findPasswordByUserId(UUID userId) {
     throw new UnsupportedOperationException("Not implemented");
   }
 
@@ -76,7 +77,7 @@ public class MockUsers extends MockRepository<Long, User> implements Users {
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteById(UUID id) {
     throw new UnsupportedOperationException("Not implemented");
   }
 }

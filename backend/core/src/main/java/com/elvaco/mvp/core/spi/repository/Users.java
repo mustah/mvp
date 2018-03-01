@@ -14,15 +14,15 @@ public interface Users {
 
   Optional<User> findByEmail(String email);
 
-  Optional<User> findById(Long id);
+  Optional<User> findById(UUID id);
 
-  Optional<Password> findPasswordByUserId(Long userId);
+  Optional<Password> findPasswordByUserId(UUID userId);
 
   User create(User user);
 
   User update(User user);
 
-  void deleteById(Long id);
+  void deleteById(UUID id);
 
   List<User> findByRole(Role role);
 

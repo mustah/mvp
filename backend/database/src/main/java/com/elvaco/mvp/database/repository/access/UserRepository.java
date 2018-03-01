@@ -45,13 +45,13 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public Optional<User> findById(Long id) {
+  public Optional<User> findById(UUID id) {
     return Optional.ofNullable(userJpaRepository.findOne(id))
       .map(userMapper::toDomainModel);
   }
 
   @Override
-  public Optional<Password> findPasswordByUserId(Long userId) {
+  public Optional<Password> findPasswordByUserId(UUID userId) {
     return userJpaRepository.findPasswordById(userId);
   }
 
@@ -67,7 +67,7 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public void deleteById(Long id) {
+  public void deleteById(UUID id) {
     userJpaRepository.delete(id);
   }
 

@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.usecase.UserUseCases;
@@ -42,10 +43,10 @@ public class UserController {
   }
 
   @GetMapping("{id}")
-  public UserDto userById(@PathVariable Long id) {
-    return userUseCases.findById(id)
+  public UserDto userById(@PathVariable String id) {
+    return userUseCases.findById(UUID.fromString(id))
       .map(userMapper::toDto)
-      .orElseThrow(() -> new UserNotFound(id));
+      .orElseThrow(() -> UserNotFound.withId(id));
   }
 
   @PostMapping
@@ -66,13 +67,13 @@ public class UserController {
   public UserDto updateUser(@RequestBody UserDto user) {
     return userUseCases.update(userMapper.toDomainModel(user))
       .map(userMapper::toDto)
-      .orElseThrow(() -> new UserNotFound(user.id));
+      .orElseThrow(() -> UserNotFound.withId(user.id));
   }
 
   @DeleteMapping("{id}")
-  public UserDto deleteUser(@PathVariable Long id) {
-    User user = userUseCases.findById(id)
-      .orElseThrow(() -> new UserNotFound(id));
+  public UserDto deleteUser(@PathVariable String id) {
+    User user = userUseCases.findById(UUID.fromString(id))
+      .orElseThrow(() -> UserNotFound.withId(id));
     // TODO[!must!] delete should actually not remove the entity, just mark it as deleted.
     userUseCases.delete(user);
     return userMapper.toDto(user);

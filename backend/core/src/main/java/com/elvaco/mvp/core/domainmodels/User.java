@@ -1,13 +1,15 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.UUID.randomUUID;
 
-public class User implements Identifiable<Long> {
+public class User implements Identifiable<UUID> {
 
-  public final Long id;
+  public final UUID id;
   public final String name;
   public final String email;
   @Nullable
@@ -18,7 +20,7 @@ public class User implements Identifiable<Long> {
   public final boolean isSuperAdmin;
 
   public User(
-    @Nullable Long id,
+    UUID id,
     String name,
     String email,
     @Nullable String password,
@@ -35,10 +37,6 @@ public class User implements Identifiable<Long> {
     this.isAdmin = roles.contains(Role.ADMIN);
   }
 
-  public User(Long id, String name, String email, Organisation organisation, List<Role> roles) {
-    this(id, name, email, null, organisation, roles);
-  }
-
   public User(
     String name,
     String email,
@@ -46,7 +44,7 @@ public class User implements Identifiable<Long> {
     Organisation organisation,
     List<Role> roles
   ) {
-    this(null, name, email, password, organisation, roles);
+    this(randomUUID(), name, email, password, organisation, roles);
   }
 
   public User withPassword(Password password) {
@@ -54,7 +52,7 @@ public class User implements Identifiable<Long> {
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

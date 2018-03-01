@@ -29,7 +29,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
       "an-organisation"
     ));
     userJpaRepository.save(new UserEntity(
-      null,
+      randomUUID(),
       "user",
       "user@org.com",
       "asdf",
