@@ -14,11 +14,13 @@ dependencies {
   compile project(':backend:core')
   compile project(':backend:database')
   compile project(':backend:web')
+  compile project(':backend:rabbitmq-consumer')
 
   compile 'org.springframework.boot:spring-boot-devtools'
   compile 'org.springframework.cloud:spring-cloud-starter-zuul:1.4.0.RELEASE'
   compile 'org.springframework.security:spring-security-web'
   compile 'org.springframework.security:spring-security-config'
+  compile 'org.springframework.boot:spring-boot-starter-amqp'
   compile 'org.simpleflatmapper:sfm-csv:3.15.5'
   compile 'org.ehcache:ehcache:3.4.0'
 
