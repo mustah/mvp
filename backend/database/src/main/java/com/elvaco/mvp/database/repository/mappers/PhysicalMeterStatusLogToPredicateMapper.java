@@ -5,36 +5,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
-import static java.util.Collections.singletonList;
+public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMapper {
 
-public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
-
-  private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
+  private static final QPhysicalMeterStatusLogEntity Q =
+    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
   private static final Map<String, Function<String, BooleanExpression>>
     FILTERABLE_PROPERTIES = new HashMap<>();
 
   static {
-    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(UUID.fromString(id)));
-
-    FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
-
-    FILTERABLE_PROPERTIES.put("manufacturer", Q.physicalMeters.any().manufacturer::eq);
-
-    FILTERABLE_PROPERTIES.put("city.id", Q.location.city::eq);
-
-    FILTERABLE_PROPERTIES.put("address.id", Q.location.streetAddress::eq);
-
-    FILTERABLE_PROPERTIES.put(
-      "organisation",
-      (String id) -> Q.organisationId.eq(UUID.fromString(id))
+    FILTERABLE_PROPERTIES.put("physicalMeterId", (String id) -> Q.physicalMeterId.eq(
+      Long.parseLong(id))
     );
   }
 
@@ -47,9 +34,12 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     return FILTERABLE_PROPERTIES;
   }
 
+  public BooleanExpression map(List<Long> physicalMeterIds, Map<String, List<String>> filter) {
+    return (Q.physicalMeterId.in(physicalMeterIds)).and(map(filter));
+  }
+
   @Override
   public BooleanExpression map(Map<String, List<String>> filter) {
-    // TODO add constraint, filter must contain status
     if (filter.containsKey("after") && filter.containsKey("before")) {
       return (BooleanExpression) mapPeriodicStatusFilter(filter);
     } else {
@@ -62,20 +52,14 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     Date start = toDate(filter.get("after").get(0));
     Date stop = toDate(filter.get("before").get(0));
 
-    // TODO get status from filter
-    List<String> status = singletonList("active");
-
     Predicate predicate = (
       // Status must have begun before period end
-      Q.physicalMeters.any().statusLogs.any().start.before(stop)
+      Q.start.before(stop)
         .and(
           // Status must not have ended before period start
-          (Q.physicalMeters.any().statusLogs.any().stop.after(start))
+          (Q.stop.after(start))
             // Status may not have ended
-            .or(Q.physicalMeters.any().statusLogs.any().stop.isNull())
-        )
-        .and(
-          Q.physicalMeters.any().statusLogs.any().status.name.in(status)
+            .or(Q.stop.isNull())
         )
     ).and(
       super.map(filter)

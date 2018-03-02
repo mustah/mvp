@@ -40,8 +40,6 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
-    List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
-
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
       .map(physicalMeterMapper::toDomainModel)
@@ -61,10 +59,14 @@ public class LogicalMeterMapper {
       .stream()
       .map(physicalMeterMapper::toDomainModel)
       .peek(
-        physicalMeter -> meterStatusLogs.addAll(
-          map.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
-            .collect(toList())
-        )
+        physicalMeter -> {
+          if (map.containsKey(physicalMeter.id)) {
+            meterStatusLogs.addAll(
+              map.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
+                .collect(toList())
+            );
+          }
+        }
       )
       .collect(toList());
 

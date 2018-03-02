@@ -7,7 +7,7 @@ import lombok.ToString;
 @ToString
 public class IdNamedDto {
 
-  public static final IdNamedDto OK = new IdNamedDto(0L, "Ok");
+  public static final IdNamedDto OK = new IdNamedDto((long)"Ok".hashCode(), "Ok");
   public static final IdNamedDto UNKNOWN = new IdNamedDto(4L, "Unknown");
 
   public Long id;

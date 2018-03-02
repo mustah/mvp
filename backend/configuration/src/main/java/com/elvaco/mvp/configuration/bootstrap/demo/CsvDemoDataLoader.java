@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
@@ -105,7 +106,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               csvData.facilityId,
               ELVACO.id,
               locationMap.get(csvData.address),
-              new Date(),
+              addDays(),
               emptyList(),
               meterDefinition,
               emptyList(),
@@ -138,6 +139,18 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             logicalMeter.id
           ));
       });
+  }
+
+  private int daySeed = 1;
+
+  private Date addDays() {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(new Date());
+    calendar.add(Calendar.DATE, - daySeed);
+
+    daySeed++;
+
+    return calendar.getTime();
   }
 
   private static Map<String, Location> mapAddressToLocation() throws IOException {

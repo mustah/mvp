@@ -13,6 +13,7 @@ import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.util.Dates;
 
 import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
+import static com.elvaco.mvp.web.dto.IdNamedDto.UNKNOWN;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +30,10 @@ public class LogicalMeterMapper {
     mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     //TODO how to handle statuses?
-    mapMarkerDto.status = OK;
+    mapMarkerDto.status = logicalMeter.meterStatusLogs.stream()
+      .findFirst()
+      .map(meterStatusLog -> new IdNamedDto(meterStatusLog.name))
+      .orElse(UNKNOWN);
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {
@@ -51,11 +55,14 @@ public class LogicalMeterMapper {
     String city = logicalMeter.location.getCity().orElse("Unknown city");
     meterDto.address = new IdNamedDto(address);
     meterDto.city = new IdNamedDto(city);
-    meterDto.status = OK;
+    meterDto.status = logicalMeter.meterStatusLogs.stream()
+      .findFirst()
+      .map(meterStatusLog -> new IdNamedDto(meterStatusLog.name))
+      .orElse(UNKNOWN);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = logicalMeter.meterStatusLogs.stream()
-      .findAny()
+      .findFirst()
       .map(meterStatusLog -> meterStatusLog.start)
       .map(date -> Dates.formatTime(date, timeZone))
       .orElse(created);
