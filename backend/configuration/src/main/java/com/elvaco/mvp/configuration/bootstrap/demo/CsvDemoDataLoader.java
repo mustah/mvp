@@ -95,7 +95,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
         stream
           .map(csvData -> {
             Gateway gateway = new Gateway(
-              null,
+              randomUUID(),
               ELVACO.id,
               csvData.gatewayId,
               csvData.gatewayProductModel

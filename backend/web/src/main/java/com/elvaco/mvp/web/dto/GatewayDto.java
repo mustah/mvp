@@ -12,7 +12,7 @@ import static java.util.Collections.emptyList;
 @EqualsAndHashCode
 public class GatewayDto {
 
-  public Long id;
+  public String id;
   public String serial;
   public String productModel;
   public IdNamedDto status;
@@ -31,7 +31,7 @@ public class GatewayDto {
   public GatewayDto() {}
 
   public GatewayDto(
-    Long id,
+    String id,
     String serial,
     String productModel,
     IdNamedDto status,
@@ -60,7 +60,7 @@ public class GatewayDto {
     this.meterIds = meterIds;
   }
 
-  public GatewayDto(Long id, String serial, String productModel) {
+  public GatewayDto(String id, String serial, String productModel) {
     this(
       id,
       serial,

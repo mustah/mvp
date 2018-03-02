@@ -2,21 +2,20 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
-public class Gateway implements Identifiable<Long> {
+public class Gateway implements Identifiable<UUID> {
 
-  public final Long id;
+  public final UUID id;
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
   public final List<LogicalMeter> meters;
 
   public Gateway(
-    @Nullable Long id,
+    UUID id,
     UUID organisationId,
     String serial,
     String productModel
@@ -25,7 +24,7 @@ public class Gateway implements Identifiable<Long> {
   }
 
   public Gateway(
-    @Nullable Long id,
+    UUID id,
     UUID organisationId,
     String serial,
     String productModel,
@@ -39,7 +38,7 @@ public class Gateway implements Identifiable<Long> {
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

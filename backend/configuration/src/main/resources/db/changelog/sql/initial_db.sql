@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   serial TEXT NOT NULL UNIQUE,
   product_model TEXT NOT NULL,
   organisation_id UUID REFERENCES organisation,
@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS gateway (
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
   logical_meter_id UUID REFERENCES logical_meter,
-  gateway_id BIGINT REFERENCES gateway
+  gateway_id UUID REFERENCES gateway
 );
 
 CREATE TABLE IF NOT EXISTS measurement (

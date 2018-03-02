@@ -6,7 +6,9 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 
-public class MockGateways extends MockRepository<Long, Gateway> implements Gateways {
+import static java.util.UUID.randomUUID;
+
+public class MockGateways extends MockRepository<UUID, Gateway> implements Gateways {
 
   @Override
   public List<Gateway> findAll() {
@@ -19,7 +21,7 @@ public class MockGateways extends MockRepository<Long, Gateway> implements Gatew
   }
 
   @Override
-  protected Gateway copyWithId(Long id, Gateway entity) {
+  protected Gateway copyWithId(UUID id, Gateway entity) {
     return new Gateway(
       id,
       entity.organisationId,
@@ -30,8 +32,8 @@ public class MockGateways extends MockRepository<Long, Gateway> implements Gatew
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override

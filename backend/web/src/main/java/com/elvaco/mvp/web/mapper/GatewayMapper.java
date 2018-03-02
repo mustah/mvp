@@ -10,6 +10,7 @@ import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -19,7 +20,7 @@ public class GatewayMapper {
   public GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
     return new GatewayDto(
-      gateway.id,
+      gateway.id.toString(),
       gateway.serial,
       gateway.productModel,
       IdNamedDto.OK,
@@ -37,7 +38,7 @@ public class GatewayMapper {
 
   public Gateway toDomainModel(GatewayDto gatewayDto, UUID organisationId) {
     return new Gateway(
-      gatewayDto.id,
+      uuidOf(gatewayDto.id),
       organisationId,
       gatewayDto.serial,
       gatewayDto.productModel
