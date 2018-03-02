@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -51,19 +52,22 @@ public class LogicalMeterMapper {
 
   public LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
-    List<PhysicalMeterStatusLogEntity> physicalMeterStatusLogEntities
+    Map<Long, List<PhysicalMeterStatusLogEntity>> map
   ) {
 
-    //TODO status logs are still fetched by physcalMeters
+    List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
+
+    // TODO status logs are still fetched by physicalMeters
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
       .map(physicalMeterMapper::toDomainModel)
-      //.peek(physicalMeter -> meterStatusLogs.addAll(physicalMeter.meterStatusLogs))
+      .peek(
+        physicalMeter -> meterStatusLogs.addAll(
+          map.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
+            .collect(toList())
+        )
+      )
       .collect(toList());
-
-    List<MeterStatusLog> meterStatusLogs = physicalMeterStatusLogEntities.stream().map(
-      meterStatusLogMapper:: toDomainModel
-    ).collect(toList());
 
     return getLogicalMeter(logicalMeterEntity, meterStatusLogs, physicalMeters);
   }

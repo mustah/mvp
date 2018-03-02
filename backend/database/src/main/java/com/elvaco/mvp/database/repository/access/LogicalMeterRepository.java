@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,18 +59,15 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAll() {
-    return logicalMeterJpaRepository.findAll()
-      .stream()
-      .map(logicalMeterMapper::toDomainModel)
-      .collect(toList());
+    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll();
+    return mapAndCollect(all);
   }
 
   @Override
   public List<LogicalMeter> findAll(Map<String, List<String>> filterParams) {
-    return logicalMeterJpaRepository.findAll(filterMapper.map(filterParams))
-      .stream()
-      .map(logicalMeterMapper::toDomainModel)
-      .collect(toList());
+    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll(filterMapper.map(filterParams));
+
+    return mapAndCollect(all);
   }
 
   @Override
@@ -84,21 +82,11 @@ public class LogicalMeterRepository implements LogicalMeters {
       )
     );
 
-    List<Long> physicalMeterIds = new ArrayList<>();
-    all.getContent().forEach(
-      logicalMeterEntity -> logicalMeterEntity.physicalMeters.forEach(
-        physicalMeterEntity -> physicalMeterIds.add(physicalMeterEntity.id)
-      )
-    );
-
-    List<PhysicalMeterStatusLogEntity> statusLogEntities =
-      physicalMeterStatusLogJpaRepository.findAllByPhysicalMeterIdIn(physicalMeterIds);
-
     return new PageAdapter<>(
       all.map(
         logicalMeter -> logicalMeterMapper.toDomainModel(
           logicalMeter,
-          statusLogEntities
+          getLongListMap(all.getContent())
         )
       )
     );
@@ -133,5 +121,53 @@ public class LogicalMeterRepository implements LogicalMeters {
       .stream()
       .map(logicalMeterMapper::toDomainModel)
       .collect(toList());
+  }
+
+  private List<PhysicalMeterStatusLogEntity> getStatusesForMeters(
+    List<LogicalMeterEntity> logicalMeterEntities
+  ) {
+    List<Long> physicalMeterIds = new ArrayList<>();
+    logicalMeterEntities.forEach(
+      logicalMeterEntity -> logicalMeterEntity.physicalMeters.forEach(
+        physicalMeterEntity -> physicalMeterIds.add(physicalMeterEntity.id)
+      )
+    );
+
+    return physicalMeterStatusLogJpaRepository.findAllByPhysicalMeterIdIn(physicalMeterIds);
+  }
+
+  private List<LogicalMeter> mapAndCollect(List<LogicalMeterEntity> all) {
+    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses = getLongListMap(all);
+
+    return all
+      .stream()
+      .map(logicalMeterEntity -> logicalMeterMapper.toDomainModel(
+        logicalMeterEntity,
+        mappedStatuses
+        )
+      ).collect(toList());
+  }
+
+  private Map<Long, List<PhysicalMeterStatusLogEntity>> getLongListMap(
+    List<LogicalMeterEntity> all
+  ) {
+    List<PhysicalMeterStatusLogEntity> statusesForMeters = getStatusesForMeters(all);
+
+    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses = new HashMap<>();
+
+    long meterId;
+    PhysicalMeterStatusLogEntity logEntity;
+
+    for(int x = 0; x < statusesForMeters.size(); x++) {
+      logEntity = statusesForMeters.get(x);
+      meterId = logEntity.physicalMeterId;
+
+      if (!mappedStatuses.containsKey(meterId)) {
+        mappedStatuses.put(meterId, new ArrayList<>());
+      }
+
+      mappedStatuses.get(meterId).add(logEntity);
+    }
+    return mappedStatuses;
   }
 }
