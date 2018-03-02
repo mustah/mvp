@@ -12,14 +12,14 @@ CREATE TABLE IF NOT EXISTS quantity (
 );
 
 CREATE TABLE IF NOT EXISTS meter_definition (
-  id BIGSERIAL PRIMARY KEY,
+  type INTEGER PRIMARY KEY,
   medium TEXT NOT NULL,
   system_owned BOOLEAN NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS meter_definition_quantities (
   quantity_id BIGINT REFERENCES quantity NOT NULL,
-  meter_definition_id BIGINT REFERENCES meter_definition NOT NULL
+  meter_definition_type BIGINT REFERENCES meter_definition NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS organisation (
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS users_roles (
 CREATE TABLE IF NOT EXISTS logical_meter (
   id BIGSERIAL PRIMARY KEY,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-  meter_definition_id BIGINT REFERENCES meter_definition,
+  meter_definition_type BIGINT REFERENCES meter_definition,
   organisation_id UUID NOT NULL REFERENCES organisation,
   external_id TEXT NOT NULL,
   UNIQUE (organisation_id, external_id)

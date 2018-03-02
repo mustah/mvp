@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
@@ -98,7 +99,7 @@ public class LogicalMeterMapperTest {
         created,
         emptyList(),
         new MeterDefinition(
-          1L,
+          MeterDefinitionType.UNKNOWN_METER_TYPE,
           "speed-o-meter",
           singleton(new Quantity(1L, "Speed", "mps")),
           false
@@ -135,7 +136,7 @@ public class LogicalMeterMapperTest {
         created,
         emptyList(),
         new MeterDefinition(
-          1L,
+          MeterDefinitionType.UNKNOWN_METER_TYPE,
           "My energy meter",
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
@@ -177,7 +178,7 @@ public class LogicalMeterMapperTest {
         created,
         emptyList(),
         new MeterDefinition(
-          1L,
+          MeterDefinitionType.UNKNOWN_METER_TYPE,
           "Energy meter",
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
@@ -196,7 +197,7 @@ public class LogicalMeterMapperTest {
     String name
   ) {
     return new MeterDefinitionEntity(
-      1L,
+      MeterDefinitionType.UNKNOWN_METER_TYPE,
       singleton(new QuantityEntity(1L, quantityName, quantityUnit)),
       name,
       false

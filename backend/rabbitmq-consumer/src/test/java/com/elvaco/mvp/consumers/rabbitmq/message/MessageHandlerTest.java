@@ -1,18 +1,18 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.elvaco.mvp.consumers.rabbitmq.message.GatewayDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.LocationDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeterStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.ValueDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.LocationDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -42,7 +42,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringMessageHandlerTest {
+public class MessageHandlerTest {
 
   private static final String ORGANISATION_CODE = "some-organisation";
 
@@ -50,7 +50,7 @@ public class MeteringMessageHandlerTest {
   private Organisations organisations;
   private LogicalMeters logicalMeters;
   private Measurements measurements;
-  private MeteringMessageHandler messageHandler;
+  private MessageHandler messageHandler;
 
   @Before
   public void setUp() {

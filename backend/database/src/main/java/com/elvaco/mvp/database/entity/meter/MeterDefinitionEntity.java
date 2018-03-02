@@ -5,32 +5,33 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.EntityType;
 
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "meter_definition")
-public class MeterDefinitionEntity extends EntityType<Long> {
+public class MeterDefinitionEntity extends EntityType<MeterDefinitionType> {
 
   private static final long serialVersionUID = -8819531921424251045L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  @Enumerated(EnumType.ORDINAL)
+  public MeterDefinitionType type;
 
   @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinTable(
     name = "meter_definition_quantities",
-    joinColumns = @JoinColumn(name = "meter_definition_id", referencedColumnName = "id"),
+    joinColumns = @JoinColumn(name = "meter_definition_type", referencedColumnName = "type"),
     inverseJoinColumns = @JoinColumn(name = "quantity_id", referencedColumnName = "id")
   )
   public Set<QuantityEntity> quantities;
@@ -42,19 +43,19 @@ public class MeterDefinitionEntity extends EntityType<Long> {
   public MeterDefinitionEntity() {}
 
   public MeterDefinitionEntity(
-    Long id,
+    MeterDefinitionType type,
     Set<QuantityEntity> quantities,
     String medium,
     boolean systemOwned
   ) {
-    this.id = id;
+    this.type = type;
     this.quantities = quantities;
     this.medium = medium;
     this.systemOwned = systemOwned;
   }
 
   @Override
-  public Long getId() {
-    return id;
+  public MeterDefinitionType getId() {
+    return type;
   }
 }

@@ -1,12 +1,12 @@
-package com.elvaco.mvp.consumers.rabbitmq;
+package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -20,7 +20,7 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
-class MeteringMessageHandler {
+public class MeteringMessageHandler implements MessageHandler {
 
   private final Map<String, MeterDefinition> mediumToMeterDefinitionMap;
   private final LogicalMeters logicalMeters;
@@ -28,7 +28,7 @@ class MeteringMessageHandler {
   private final Organisations organisations;
   private final MeasurementUseCases measurementUseCases;
 
-  MeteringMessageHandler(
+  public MeteringMessageHandler(
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
     Organisations organisations,
@@ -41,6 +41,7 @@ class MeteringMessageHandler {
     mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
   }
 
+  @Override
   public void handle(MeteringMeterStructureMessageDto structureMessage) {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
 
@@ -63,6 +64,7 @@ class MeteringMessageHandler {
     physicalMeters.save(physicalMeter);
   }
 
+  @Override
   public void handle(MeteringMeasurementMessageDto measurementMessage) {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 

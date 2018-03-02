@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -16,14 +15,14 @@ import static java.util.Collections.unmodifiableSet;
 public class MeterDefinition {
 
   public static final MeterDefinition UNKNOWN_METER = new MeterDefinition(
-    null,
+    MeterDefinitionType.UNKNOWN_METER_TYPE,
     "Unknown meter",
     emptySet(),
     true
   );
 
   public static final MeterDefinition HOT_WATER_METER = new MeterDefinition(
-    null,
+    MeterDefinitionType.HOT_WATER_METER_TYPE,
     "Hot water meter",
     new HashSet<>(
       asList(
@@ -35,7 +34,7 @@ public class MeterDefinition {
   );
 
   public static final MeterDefinition DISTRICT_HEATING_METER = new MeterDefinition(
-    null,
+    MeterDefinitionType.DISTRICT_HEATING_METER_TYPE,
     "District heating meter",
     new HashSet<>(asList(
       Quantity.ENERGY,
@@ -50,7 +49,7 @@ public class MeterDefinition {
   );
 
   public static final MeterDefinition DISTRICT_COOLING_METER = new MeterDefinition(
-    null,
+    MeterDefinitionType.DISTRICT_COOLING_METER_TYPE,
     "District cooling meter",
     new HashSet<>(asList(
       Quantity.ENERGY,
@@ -64,19 +63,18 @@ public class MeterDefinition {
     true
   );
 
-  @Nullable
-  public final Long id;
+  public final MeterDefinitionType type;
   public final String medium;
   public final Set<Quantity> quantities;
   public final boolean systemOwned;
 
   public MeterDefinition(
-    @Nullable Long id,
+    MeterDefinitionType type,
     String medium,
     Set<Quantity> quantities,
     boolean systemOwned
   ) {
-    this.id = id;
+    this.type = type;
     this.medium = medium;
     this.quantities = unmodifiableSet(quantities);
     this.systemOwned = systemOwned;
