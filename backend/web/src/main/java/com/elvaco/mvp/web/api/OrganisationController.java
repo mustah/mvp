@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
@@ -54,17 +55,21 @@ public class OrganisationController {
   public ResponseEntity<OrganisationDto> createOrganisation(
     @RequestBody OrganisationDto organisation
   ) {
-    return organisationUseCases.create(organisationMapper.toDomainModel(organisation))
-      .map(organisationMapper::toDto)
-      .map(ResponseEntity.status(HttpStatus.CREATED)::body)
-      .orElse(ResponseEntity.status(HttpStatus.FORBIDDEN).build());
+    OrganisationDto dto = organisationMapper.toDto(
+      organisationUseCases.create(organisationMapper.toDomainModel(organisation))
+    );
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(dto);
   }
 
   @PutMapping
   public OrganisationDto updateOrganisation(@RequestBody OrganisationDto organisation) {
-    return organisationUseCases.update(organisationMapper.toDomainModel(organisation))
-      .map(organisationMapper::toDto)
-      .orElseThrow(() -> new OrganisationNotFound(organisation.id));
+    try {
+      return organisationMapper.toDto(organisationUseCases.update(organisationMapper.toDomainModel(
+        organisation)));
+    } catch (Unauthorized unauthorized) {
+      throw new OrganisationNotFound(organisation.id);
+    }
   }
 
   @DeleteMapping("{id}")

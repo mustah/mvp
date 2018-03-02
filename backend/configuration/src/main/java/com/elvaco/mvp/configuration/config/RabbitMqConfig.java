@@ -3,10 +3,11 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.consumers.rabbitmq.MeteringMessageReceiver;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -26,9 +27,9 @@ class RabbitMqConfig {
 
   @Bean
   MessageHandler meteringMessageHandler(
-    LogicalMeters logicalMeters,
-    PhysicalMeters physicalMeters,
-    Organisations organisations,
+    LogicalMeterUseCases logicalMeters,
+    PhysicalMeterUseCases physicalMeters,
+    OrganisationUseCases organisations,
     MeasurementUseCases measurementUseCases
   ) {
     return new MeteringMessageHandler(

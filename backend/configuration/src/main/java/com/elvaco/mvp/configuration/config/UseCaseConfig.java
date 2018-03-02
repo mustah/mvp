@@ -6,12 +6,14 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ class UseCaseConfig {
   private final Measurements measurements;
   private final Organisations organisations;
   private final Gateways gateways;
+  private final PhysicalMeters physicalMeters;
 
   @Autowired
   UseCaseConfig(
@@ -35,7 +38,8 @@ class UseCaseConfig {
     LogicalMeters logicalMeters,
     Measurements measurements,
     Organisations organisations,
-    Gateways gateways
+    Gateways gateways,
+    PhysicalMeters physicalMeters
   ) {
     this.users = users;
     this.logicalMeters = logicalMeters;
@@ -43,6 +47,7 @@ class UseCaseConfig {
     this.measurements = measurements;
     this.organisations = organisations;
     this.gateways = gateways;
+    this.physicalMeters = physicalMeters;
   }
 
   @Bean
@@ -76,5 +81,10 @@ class UseCaseConfig {
   @Bean
   GatewayUseCases gatewayUseCases(AuthenticatedUser currentUser) {
     return new GatewayUseCases(gateways, currentUser);
+  }
+
+  @Bean
+  PhysicalMeterUseCases physicalMeterUseCases(AuthenticatedUser currentUser) {
+    return new PhysicalMeterUseCases(currentUser, physicalMeters);
   }
 }

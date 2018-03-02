@@ -1,7 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -23,20 +22,26 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
+import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -58,9 +63,14 @@ public class MessageHandlerTest {
   @Before
   public void setUp() {
     this.physicalMeters = new MockPhysicalMeters();
-    this.organisations = new MockOrganisations();
-    this.logicalMeters = new MockLogicalMeters(new ArrayList<>());
-    this.measurements = new MockMeasurements();
+    User superAdmin = new User(
+      "super-admin",
+      "super@admin.io",
+      "password",
+      ELVACO,
+      singletonList(Role.SUPER_ADMIN)
+    );
+    organisations = new MockOrganisations();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
       new User(
         randomUUID(),
@@ -68,15 +78,26 @@ public class MessageHandlerTest {
         "mock@somemail.nu",
         "P@$$w0rD",
         new Organisation(randomUUID(), "some organisation", ORGANISATION_CODE),
-        singletonList(Role.USER)
+        singletonList(Role.SUPER_ADMIN)
       ),
       randomUUID().toString()
     );
+    OrganisationUseCases organisationUseCases = new OrganisationUseCases(
+      authenticatedUser,
+      organisations,
+      new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
+    );
+    this.measurements = new MockMeasurements();
+    this.logicalMeters = new MockLogicalMeters();
 
     this.messageHandler = new MeteringMessageHandler(
-      logicalMeters,
-      physicalMeters,
-      organisations,
+      new LogicalMeterUseCases(
+        authenticatedUser,
+        logicalMeters,
+        measurements
+      ),
+      new PhysicalMeterUseCases(authenticatedUser, physicalMeters),
+      organisationUseCases,
       new MeasurementUseCases(authenticatedUser, this.measurements)
     );
   }
@@ -194,7 +215,8 @@ public class MessageHandlerTest {
 
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
-    Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
+    Organisation organisation = organisations.save(newOrganisation("An existing "
+                                                                     + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",

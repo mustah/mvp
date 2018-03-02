@@ -13,10 +13,10 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -25,20 +25,20 @@ import static java.util.stream.Collectors.toList;
 public class MeteringMessageHandler implements MessageHandler {
 
   private final Map<String, MeterDefinition> mediumToMeterDefinitionMap;
-  private final LogicalMeters logicalMeters;
-  private final PhysicalMeters physicalMeters;
-  private final Organisations organisations;
+  private final LogicalMeterUseCases logicalMeterUseCases;
+  private final PhysicalMeterUseCases physicalMeterUseCases;
+  private final OrganisationUseCases organisationUseCases;
   private final MeasurementUseCases measurementUseCases;
 
   public MeteringMessageHandler(
-    LogicalMeters logicalMeters,
-    PhysicalMeters physicalMeters,
-    Organisations organisations,
+    LogicalMeterUseCases logicalMetersUseCases,
+    PhysicalMeterUseCases physicalMeterUseCases,
+    OrganisationUseCases organisationUseCases,
     MeasurementUseCases measurementUseCases
   ) {
-    this.logicalMeters = logicalMeters;
-    this.physicalMeters = physicalMeters;
-    this.organisations = organisations;
+    this.logicalMeterUseCases = logicalMetersUseCases;
+    this.physicalMeterUseCases = physicalMeterUseCases;
+    this.organisationUseCases = organisationUseCases;
     this.measurementUseCases = measurementUseCases;
     mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
   }
@@ -63,7 +63,7 @@ public class MeteringMessageHandler implements MessageHandler {
     ).withMedium(structureMessage.medium)
       .withManufacturer(structureMessage.manufacturer)
       .withLogicalMeterId(logicalMeter.id);
-    physicalMeters.save(physicalMeter);
+    physicalMeterUseCases.save(physicalMeter);
   }
 
   @Override
@@ -98,10 +98,10 @@ public class MeteringMessageHandler implements MessageHandler {
     String medium,
     Organisation organisation
   ) {
-    return logicalMeters.findByOrganisationIdAndExternalId(
+    return logicalMeterUseCases.findByOrganisationIdAndExternalId(
       organisation.id,
       facilityId
-    ).orElseGet(() -> logicalMeters.save(
+    ).orElseGet(() -> logicalMeterUseCases.save(
       new LogicalMeter(
         randomUUID(),
         facilityId,
@@ -111,9 +111,9 @@ public class MeteringMessageHandler implements MessageHandler {
   }
 
   private Organisation findOrCreateOrganisation(String organisationCode) {
-    return organisations.findByCode(organisationCode)
+    return organisationUseCases.findByCode(organisationCode)
       .orElseGet(() ->
-                   organisations.save(
+                   organisationUseCases.create(
                      new Organisation(
                        null,
                        "",
@@ -129,12 +129,12 @@ public class MeteringMessageHandler implements MessageHandler {
     UUID logicalMeterId,
     Organisation organisation
   ) {
-    return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+    return physicalMeterUseCases.findByOrganisationIdAndExternalIdAndAddress(
       organisation.id,
       facilityId,
       meterId
     ).orElseGet(
-      () -> physicalMeters.save(
+      () -> physicalMeterUseCases.save(
         new PhysicalMeter(
           null,
           organisation,

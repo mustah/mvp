@@ -65,7 +65,7 @@ public class LogicalMeterUseCases {
       return logicalMeters.save(logicalMeter);
     }
     throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
-                           + "create this meter.");
+                             + "create this meter.");
   }
 
   public List<Measurement> measurements(LogicalMeter logicalMeter) {
@@ -100,8 +100,21 @@ public class LogicalMeterUseCases {
     }
   }
 
+  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    if (currentUser.isWithinOrganisation(organisationId) || currentUser.isSuperAdmin()) {
+      return logicalMeters.findByOrganisationIdAndExternalId(
+        organisationId,
+        externalId
+      );
+    }
+    return Optional.empty();
+  }
+
   private boolean hasTenantAccess(LogicalMeter logicalMeter) {
     return currentUser.isSuperAdmin()
-      || logicalMeter.organisationId.equals(currentUser.getOrganisationId());
+      || currentUser.isWithinOrganisation(logicalMeter.organisationId);
   }
 }
