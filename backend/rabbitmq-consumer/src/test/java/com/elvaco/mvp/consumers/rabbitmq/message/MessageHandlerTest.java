@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
@@ -111,7 +112,7 @@ public class MessageHandlerTest {
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
     assertThat(savedPhysicalMeter).isEqualTo(new PhysicalMeter(
-      1L,
+      savedPhysicalMeter.id,
       organisation,
       "1234",
       EXTERNAL_ID,
@@ -167,13 +168,16 @@ public class MessageHandlerTest {
     Organisation organisation = organisations.save(
       newOrganisation("An existing organisation", "Some organisation")
     );
-    Long physicalMeterId = physicalMeters.save(new PhysicalMeter(
-      organisation,
+    UUID physicalMeterId = randomUUID();
+
+    physicalMeters.save(new PhysicalMeter(
+      physicalMeterId,
       "1234",
       EXTERNAL_ID,
       "Hot water",
-      "ELV"
-    )).id;
+      "ELV",
+      organisation
+    ));
 
     messageHandler.handle(structureMessage);
 
@@ -191,7 +195,14 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
-    physicalMeters.save(new PhysicalMeter(organisation, "1234", EXTERNAL_ID, "Hot water", "ELV"));
+    physicalMeters.save(new PhysicalMeter(
+      randomUUID(),
+      "1234",
+      EXTERNAL_ID,
+      "Hot water",
+      "ELV",
+      organisation
+    ));
 
     messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 
@@ -205,11 +216,12 @@ public class MessageHandlerTest {
 
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
       new PhysicalMeter(
-        organisation,
+        randomUUID(),
         "1234",
         EXTERNAL_ID,
         "Electricity",
-        "ELV"
+        "ELV",
+        organisation
       )
     );
 
@@ -234,6 +246,12 @@ public class MessageHandlerTest {
 
     Organisation organisation = findOrganisation();
 
+    PhysicalMeter physicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+      organisation.id,
+      EXTERNAL_ID,
+      "1234"
+    ).get();
+
     Measurement expectedMeasurement = new Measurement(
       1L,
       Date.from(Instant.ofEpochMilli(123456L)),
@@ -241,7 +259,7 @@ public class MessageHandlerTest {
       1.0,
       "kWh",
       new PhysicalMeter(
-        1L,
+        physicalMeter.id,
         organisation,
         "1234",
         EXTERNAL_ID,

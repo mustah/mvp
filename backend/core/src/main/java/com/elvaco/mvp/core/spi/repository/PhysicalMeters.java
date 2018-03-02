@@ -8,8 +8,6 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 
 public interface PhysicalMeters {
 
-  Optional<PhysicalMeter> findById(Long id);
-
   List<PhysicalMeter> findByMedium(String medium);
 
   List<PhysicalMeter> findAll();

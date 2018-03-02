@@ -21,7 +21,7 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
 
   static {
     FILTERABLE_PROPERTIES.put(
-      "meterId", (String meterId) -> Q.physicalMeter.id.eq(parseLong(meterId))
+      "meterId", (String meterId) -> Q.physicalMeter.id.eq(UUID.fromString(meterId))
     );
 
     FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));

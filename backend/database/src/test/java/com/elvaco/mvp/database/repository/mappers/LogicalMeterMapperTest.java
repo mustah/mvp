@@ -50,10 +50,18 @@ public class LogicalMeterMapperTest {
   @Test
   public void mapsPhysicalMeters() {
     LogicalMeter logicalMeter = new LogicalMeter(
-      randomUUID(), "an-external-id",
+      randomUUID(),
+      "an-external-id",
       randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER,
-      singletonList(new PhysicalMeter(ELVACO, "1234", "an-external-ID", "My medium", "ELV"))
+      singletonList(new PhysicalMeter(
+        randomUUID(),
+        "1234",
+        "an-external-ID",
+        "My medium",
+        "ELV",
+        ELVACO
+      ))
     );
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);

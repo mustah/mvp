@@ -27,12 +27,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
   }
 
   @Override
-  public Optional<PhysicalMeter> findById(Long id) {
-    return jpaRepository.findById(id)
-      .map(physicalMeterMapper::toDomainModel);
-  }
-
-  @Override
   public List<PhysicalMeter> findByMedium(String medium) {
     return jpaRepository.findByMedium(medium)
       .stream()

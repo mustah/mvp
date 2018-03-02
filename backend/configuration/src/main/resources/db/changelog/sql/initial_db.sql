@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS location (
 );
 
 CREATE TABLE IF NOT EXISTS physical_meter (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   organisation_id UUID REFERENCES organisation,
   address VARCHAR(255) NOT NULL,
   external_id TEXT NOT NULL,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS gateways_meters (
 
 CREATE TABLE IF NOT EXISTS measurement (
   id BIGSERIAL PRIMARY KEY,
-  physical_meter_id BIGINT NOT NULL REFERENCES physical_meter (id)
+  physical_meter_id UUID NOT NULL REFERENCES physical_meter (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
@@ -115,6 +115,6 @@ CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   start TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   stop TIMESTAMP WITHOUT TIME ZONE,
   status_id BIGINT REFERENCES physical_meter_status (id),
-  physical_meter_id BIGINT REFERENCES physical_meter (id)
+  physical_meter_id UUID REFERENCES physical_meter (id)
 );
 

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.util.Date;
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -27,7 +28,7 @@ public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  public Long physicalMeterId;
+  public UUID physicalMeterId;
 
   @Temporal(value = TemporalType.TIMESTAMP)
   public Date start;
