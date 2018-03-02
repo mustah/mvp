@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static com.elvaco.mvp.web.util.ParametersHelper.combineParams;
 import static java.util.stream.Collectors.toList;
 
@@ -44,8 +45,8 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}")
-  public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable Long id) {
-    return logicalMeterUseCases.findById(id)
+  public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable String id) {
+    return logicalMeterUseCases.findById(uuidOf(id))
       .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, timeZone))
       .orElseThrow(() -> new MeterNotFound(id));
   }
@@ -59,9 +60,9 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}/measurements")
-  public List<MeasurementDto> measurements(@PathVariable Long id) {
+  public List<MeasurementDto> measurements(@PathVariable String id) {
     LogicalMeter logicalMeter = logicalMeterUseCases
-      .findById(id)
+      .findById(uuidOf(id))
       .orElseThrow(() -> new MeterNotFound(id));
     return logicalMeterUseCases.measurements(logicalMeter)
       .stream()

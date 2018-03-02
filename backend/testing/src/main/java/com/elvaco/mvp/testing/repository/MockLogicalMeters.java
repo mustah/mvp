@@ -12,16 +12,17 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 
 import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
-public class MockLogicalMeters extends MockRepository<Long, LogicalMeter> implements LogicalMeters {
+public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implements LogicalMeters {
 
   public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
     logicalMeters.forEach(this::saveMock);
   }
 
   @Override
-  protected LogicalMeter copyWithId(Long id, LogicalMeter entity) {
+  protected LogicalMeter copyWithId(UUID id, LogicalMeter entity) {
     return new LogicalMeter(
       id,
       entity.externalId,
@@ -36,19 +37,19 @@ public class MockLogicalMeters extends MockRepository<Long, LogicalMeter> implem
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override
-  public Optional<LogicalMeter> findById(Long id) {
+  public Optional<LogicalMeter> findById(UUID id) {
     return filter(logicalMeter -> logicalMeter.id != null)
       .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
       .findFirst();
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id) {
+  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId)).filter(
       logicalMeter -> Objects.equals(logicalMeter.id, id))
       .findFirst();

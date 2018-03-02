@@ -9,7 +9,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class MapMarkerDto {
-  public Long id;
+
+  public String id;
   public MapMarkerType mapMarkerType;
   public IdNamedDto status;
   @Nullable

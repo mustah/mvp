@@ -12,7 +12,6 @@ import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
-import static java.lang.Long.parseLong;
 import static java.util.Collections.singletonList;
 
 public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
@@ -23,7 +22,7 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     FILTERABLE_PROPERTIES = new HashMap<>();
 
   static {
-    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
+    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(UUID.fromString(id)));
 
     FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
 

@@ -12,9 +12,9 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 public interface LogicalMeterJpaRepository
   extends
   QueryDslPredicateExecutor<LogicalMeterEntity>,
-  JpaRepository<LogicalMeterEntity, Long> {
+  JpaRepository<LogicalMeterEntity, UUID> {
 
-  Optional<LogicalMeterEntity> findById(Long id);
+  Optional<LogicalMeterEntity> findById(UUID id);
 
   @Override
   List<LogicalMeterEntity> findAll(Predicate predicate);
@@ -24,7 +24,7 @@ public interface LogicalMeterJpaRepository
     String externalId
   );
 
-  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, Long id);
+  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
   List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 }

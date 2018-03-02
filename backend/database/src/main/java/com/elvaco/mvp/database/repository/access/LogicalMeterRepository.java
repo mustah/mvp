@@ -39,12 +39,12 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Optional<LogicalMeter> findById(Long id) {
+  public Optional<LogicalMeter> findById(UUID id) {
     return logicalMeterJpaRepository.findById(id).map(logicalMeterMapper::toDomainModel);
   }
 
   @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id) {
+  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return logicalMeterJpaRepository
       .findByOrganisationIdAndId(organisationId, id)
       .map(logicalMeterMapper::toDomainModel);

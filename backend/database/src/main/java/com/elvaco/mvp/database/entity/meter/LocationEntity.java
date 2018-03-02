@@ -1,29 +1,25 @@
 package com.elvaco.mvp.database.entity.meter;
 
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "location")
 @Access(AccessType.FIELD)
-public class LocationEntity extends EntityType<Long> {
+public class LocationEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -6244183552379157552L;
 
   @Id
-  @OneToOne
-  @JoinColumn(name = "meter_id")
-  @JsonBackReference
-  public LogicalMeterEntity logicalMeter;
-
+  @Column(name = "logical_meter_id")
+  public UUID logicalMeterId;
   public String country;
   public String city;
   public String streetAddress;
@@ -31,12 +27,30 @@ public class LocationEntity extends EntityType<Long> {
   public Double longitude;
   public Double confidence;
 
+  public LocationEntity() {}
+
+  public LocationEntity(
+    UUID logicalMeterId,
+    Double latitude,
+    Double longitude,
+    Double confidence
+  ) {
+    this.logicalMeterId = logicalMeterId;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.confidence = confidence;
+  }
+
+  LocationEntity(UUID logicalMeterId) {
+    this.logicalMeterId = logicalMeterId;
+  }
+
   public boolean hasCoordinates() {
     return latitude != null && longitude != null && confidence != null;
   }
 
   @Override
-  public Long getId() {
-    return logicalMeter.getId();
+  public UUID getId() {
+    return logicalMeterId;
   }
 }

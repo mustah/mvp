@@ -75,8 +75,9 @@ public class LogicalMeterMapper {
       .collect(toList());
 
     if (logicalMeter.location != null) {
-      LocationEntity locationEntity = locationMapper.toEntity(logicalMeter.location);
-      logicalMeterEntity.setLocation(locationEntity);
+      LocationEntity location = locationMapper.toEntity(logicalMeter.location);
+      location.logicalMeterId = logicalMeterEntity.id;
+      logicalMeterEntity.setLocation(location);
     }
 
     return logicalMeterEntity;

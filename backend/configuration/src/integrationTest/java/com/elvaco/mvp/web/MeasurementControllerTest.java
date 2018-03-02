@@ -56,21 +56,24 @@ public class MeasurementControllerTest extends IntegrationTest {
       "test-butter-meter-1",
       "butter-external-id",
       "Butter",
-      "ELV"
+      "ELV",
+      null
     );
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
       wayneIndustriesEntity,
       "test-milk-meter-1",
       "milk-external-id",
       "Milk",
-      "ELV"
+      "ELV",
+      null
     );
     forceMeter = new PhysicalMeterEntity(
       wayneIndustriesEntity,
       String.valueOf(Math.random()),
       "force-external-id",
       "vacum",
-      "ELV"
+      "ELV",
+      null
     );
 
     physicalMeterRepository.save(asList(butterMeter, milkMeter, forceMeter));
@@ -130,7 +133,11 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<MeasurementDto> measurements = asElvacoUser()
       .getList("/measurements", MeasurementDto.class).getBody();
 
-    assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
+    List<String> quantities = measurements.stream()
+      .map(m -> m.quantity)
+      .collect(toList());
+
+    assertThat(quantities).contains("Butter temperature");
   }
 
   @Test

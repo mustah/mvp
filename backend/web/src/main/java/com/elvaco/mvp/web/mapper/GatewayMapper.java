@@ -27,11 +27,11 @@ public class GatewayMapper {
       toAddress(logicalMeter),
       toGeoPosition(logicalMeter),
       emptyList(),
-      logicalMeter.map(meter -> meter.id).orElse(null),
+      logicalMeter.map(meter -> meter.id.toString()).orElse(null),
       null,
       logicalMeter.map(LogicalMeter::getManufacturer).orElse(null),
       toMeterStatus(logicalMeter),
-      gateway.meters.stream().map(meter -> meter.id).collect(toList())
+      gateway.meters.stream().map(meter -> meter.id.toString()).collect(toList())
     );
   }
 

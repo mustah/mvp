@@ -35,6 +35,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
 @Slf4j
@@ -100,7 +101,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               csvData.gatewayProductModel
             );
             LogicalMeter logicalMeter = new LogicalMeter(
-              null,
+              randomUUID(),
               csvData.facilityId,
               ELVACO.id,
               locationMap.get(csvData.address),

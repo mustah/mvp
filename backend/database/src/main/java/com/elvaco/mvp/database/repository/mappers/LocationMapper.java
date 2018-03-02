@@ -7,16 +7,20 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+
 public class LocationMapper implements DomainEntityMapper<Location, LocationEntity> {
 
   @Override
   public Location toDomainModel(LocationEntity entity) {
-    return new LocationBuilder()
+    return entity != null
+      ? new LocationBuilder()
       .country(entity.country)
       .city(entity.city)
       .streetAddress(entity.streetAddress)
       .coordinate(toGeoCoordinate(entity))
-      .build();
+      .build()
+      : UNKNOWN_LOCATION;
   }
 
   @Override
@@ -37,7 +41,7 @@ public class LocationMapper implements DomainEntityMapper<Location, LocationEnti
   @Nullable
   private GeoCoordinate toGeoCoordinate(LocationEntity entity) {
     return entity.hasCoordinates()
-           ? new GeoCoordinate(entity.latitude, entity.longitude, entity.confidence)
-           : null;
+      ? new GeoCoordinate(entity.latitude, entity.longitude, entity.confidence)
+      : null;
   }
 }

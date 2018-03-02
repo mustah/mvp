@@ -26,7 +26,7 @@ public class LogicalMeterMapper {
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = logicalMeter.id;
+    mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     //TODO how to handle statuses?
     mapMarkerDto.status = OK;
@@ -46,7 +46,7 @@ public class LogicalMeterMapper {
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
-    meterDto.id = logicalMeter.id;
+    meterDto.id = logicalMeter.id.toString();
     String address = logicalMeter.location.getStreetAddress().orElse("Unknown address");
     String city = logicalMeter.location.getCity().orElse("Unknown city");
     meterDto.address = new IdNamedDto(address);

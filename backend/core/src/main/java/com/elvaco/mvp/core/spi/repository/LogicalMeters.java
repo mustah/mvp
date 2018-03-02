@@ -11,9 +11,9 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 
 public interface LogicalMeters {
 
-  Optional<LogicalMeter> findById(Long id);
+  Optional<LogicalMeter> findById(UUID id);
 
-  Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, Long id);
+  Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
   List<LogicalMeter> findAll();
 

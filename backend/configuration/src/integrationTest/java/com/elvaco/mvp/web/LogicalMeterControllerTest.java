@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
@@ -57,6 +58,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ALL")
 public class LogicalMeterControllerTest extends IntegrationTest {
+
+  private static int seed = 1;
 
   private final Date statusLogDate = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
@@ -152,7 +155,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(logicalMeterDto.id)
       .as("Unexpected meter id")
-      .isEqualTo(meter1.logicalMeterId);
+      .isEqualTo(meter1.logicalMeterId.toString());
 
     assertThat(logicalMeterDto.statusChangelog.size())
       .as("Unexpected number of log entries")
@@ -256,7 +259,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(55);
 
-    Long meterId = response.getBody().get(0).id;
+    String meterId = response.getBody().get(0).id;
 
     response = asElvacoUser()
       .getList("/meters/all?id=" + meterId, LogicalMeterDto.class);
@@ -286,10 +289,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isIn(meter1.logicalMeterId, meter2.logicalMeterId);
+      .isIn(meter1.logicalMeterId.toString(), meter2.logicalMeterId.toString());
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(meter1.logicalMeterId, meter2.logicalMeterId);
+      .isIn(meter1.logicalMeterId.toString(), meter2.logicalMeterId.toString());
   }
 
   /**
@@ -313,13 +316,25 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0 :" + response.getContent().get(0))
-      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+      .isIn(
+        meter2.logicalMeterId.toString(),
+        meter3.logicalMeterId.toString(),
+        meter4.logicalMeterId.toString()
+      );
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+      .isIn(
+        meter2.logicalMeterId.toString(),
+        meter3.logicalMeterId.toString(),
+        meter4.logicalMeterId.toString()
+      );
     assertThat(response.getContent().get(2).id)
       .as("Unexpected meter id at position 2")
-      .isIn(meter2.logicalMeterId, meter3.logicalMeterId, meter4.logicalMeterId);
+      .isIn(
+        meter2.logicalMeterId.toString(),
+        meter3.logicalMeterId.toString(),
+        meter4.logicalMeterId.toString()
+      );
   }
 
   /**
@@ -345,10 +360,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isIn(meter2.logicalMeterId, meter3.logicalMeterId);
+      .isIn(meter2.logicalMeterId.toString(), meter3.logicalMeterId.toString());
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(meter2.logicalMeterId, meter3.logicalMeterId);
+      .isIn(meter2.logicalMeterId.toString(), meter3.logicalMeterId.toString());
   }
 
   @Test
@@ -364,6 +379,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findsOwnOrganisationsMetersByFilter() {
     logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
       "my-meter",
       ELVACO.id,
       hotWaterMeterDefinition
@@ -387,6 +403,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
       "not-my-meter",
       ELVACO.id,
       hotWaterMeterDefinition
@@ -407,15 +424,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "me@myorg.com",
       "secr3t",
       new Organisation(anotherOrganisation.id, anotherOrganisation.name, anotherOrganisation.code),
-      singletonList(
-        Role.USER)
+      singletonList(Role.USER)
     ));
     LogicalMeter myMeter = logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
       "my-own-meter",
       anotherOrganisation.id,
       hotWaterMeterDefinition
     ));
     logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
       "not-my-meter",
       ELVACO.id,
       hotWaterMeterDefinition
@@ -427,12 +445,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1L);
-    assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
+    assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id.toString());
   }
 
   @Test
   public void cantAccessOtherOrganisationsMeterById() {
     LogicalMeter theirMeter = logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
       "this-is-not-my-meter",
       anotherOrganisation.id,
       hotWaterMeterDefinition
@@ -447,7 +466,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void meterNotFound() {
     ResponseEntity<ErrorMessageDto> response = asElvacoUser()
-      .get("/meters/" + -999, ErrorMessageDto.class);
+      .get("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -464,7 +483,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findMeasurementsForLogicalMeter() {
     LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
-      new LogicalMeter("external-id", ELVACO.id, districtHeatingMeterDefinition)
+      new LogicalMeter(randomUUID(), "external-id", ELVACO.id, districtHeatingMeterDefinition)
     );
 
     PhysicalMeter physicalMeter = physicalMeters.save(
@@ -492,7 +511,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new Measurement(Quantity.TEMPERATURE, 32, "°C", physicalMeter)
     ));
 
-    Long meterId = savedLogicalMeter.id;
+    UUID meterId = savedLogicalMeter.id;
 
     ResponseEntity<List<MeasurementDto>> response = asElvacoUser()
       .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);
@@ -517,13 +536,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     created = calendar.getTime();
 
     LogicalMeter logicalMeter = new LogicalMeter(
-      null,
+      randomUUID(),
       "external-id-" + seed,
       ELVACO.id,
       new LocationBuilder()
         .city(city)
         .streetAddress(streetAddress)
-        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0)).build(),
+        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0))
+        .build(),
       created,
       emptyList(),
       meterDefinition,
@@ -597,20 +617,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private void createAndConnectPhysicalMeters(List<LogicalMeter> logicalMeters) {
     logicalMeters.forEach(logicalMeter -> createPhysicalMeter(
       logicalMeter.id,
-      logicalMeter.id,
       logicalMeter.externalId
-                          )
-    );
+    ));
   }
 
-  private void createPhysicalMeter(long logicalMeterId, long seed, String externalId) {
+  private void createPhysicalMeter(UUID logicalMeterId, String externalId) {
     physicalMeters.save(
       new PhysicalMeter(
         ELVACO,
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",
-        "ELV" + seed,
+        "ELV" + seed++,
         logicalMeterId,
         emptyList()
       )
