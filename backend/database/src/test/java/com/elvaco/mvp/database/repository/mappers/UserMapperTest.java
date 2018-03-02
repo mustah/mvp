@@ -1,8 +1,5 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.List;
-
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
@@ -20,7 +17,7 @@ import static com.elvaco.mvp.database.entity.user.RoleEntity.superAdmin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.user;
 import static com.elvaco.mvp.database.fixture.Entities.ELVACO_ENTITY;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserMapperTest {
@@ -38,21 +35,11 @@ public class UserMapperTest {
   }
 
   @Test
-  public void userEntityMustHaveRoles() {
-    UserEntity userEntity = new UserEntity();
-    userEntity.organisation = ELVACO_ENTITY;
-    userEntity.roles = singletonList(user());
-
-    List<Role> roles = userMapper.toDomainModel(userEntity).roles;
-
-    assertThat(roles).containsExactly(USER);
-  }
-
-  @Test
   public void mapsUserEntityWithMoreThanOneRole() {
-    User user = userMapper.toDomainModel(createUserEntity());
+    UserEntity userEntity = createUserEntity();
+    User user = userMapper.toDomainModel(userEntity);
 
-    assertThat(user.id).isEqualTo(1);
+    assertThat(user.getId()).isEqualTo(userEntity.getId());
     assertThat(user.roles).containsExactly(USER, SUPER_ADMIN);
   }
 
@@ -85,7 +72,7 @@ public class UserMapperTest {
 
   private User createUser() {
     return new User(
-      1L,
+      randomUUID(),
       "john doh",
       "a@b.com",
       "letmein",
@@ -95,13 +82,13 @@ public class UserMapperTest {
   }
 
   private UserEntity createUserEntity() {
-    UserEntity userEntity = new UserEntity();
-    userEntity.id = 1L;
-    userEntity.name = "John Doh";
-    userEntity.password = "letmein";
-    userEntity.email = "a@b.com";
-    userEntity.organisation = ELVACO_ENTITY;
-    userEntity.roles = asList(user(), superAdmin());
-    return userEntity;
+    return new UserEntity(
+      randomUUID(),
+      "John Doh",
+      "a@b.com",
+      "letmein",
+      ELVACO_ENTITY,
+      asList(user(), superAdmin())
+    );
   }
 }

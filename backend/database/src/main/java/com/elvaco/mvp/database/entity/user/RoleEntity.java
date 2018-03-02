@@ -26,7 +26,7 @@ public class RoleEntity extends EntityType<String> {
   @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
   public Collection<UserEntity> users;
 
-  public RoleEntity() {}
+  RoleEntity() {}
 
   public RoleEntity(String role) {
     this.role = role;

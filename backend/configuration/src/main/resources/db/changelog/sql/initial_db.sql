@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS organisation (
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS role (
 );
 
 CREATE TABLE IF NOT EXISTS users_roles (
-  user_id BIGINT REFERENCES mvp_user,
+  user_id UUID REFERENCES mvp_user,
   role_id VARCHAR(255) REFERENCES role
 );
 

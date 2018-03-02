@@ -1,5 +1,6 @@
 package com.elvaco.mvp.configuration.bootstrap.production;
 
+import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -51,8 +52,8 @@ class ProductionDataLoader implements CommandLineRunner {
 
     log.info("Seeding database with initial data ...");
     createRoles();
-    createElvacoOrganisation();
-    createSuperAdministrator();
+    createOrganisations();
+    createSuperAdministratorIfNotPresent();
     createMeterDefinitions();
     log.info("Initial database seeding done.");
 
@@ -63,13 +64,14 @@ class ProductionDataLoader implements CommandLineRunner {
     meterDefinitions().forEach(meterDefinitions::save);
   }
 
-  private void createElvacoOrganisation() {
+  private void createOrganisations() {
     organisations().forEach(organisations::save);
   }
 
-  private void createSuperAdministrator() {
-    if (!users.findById(1L).isPresent()) {
-      users.create(superAdminUser());
+  private void createSuperAdministratorIfNotPresent() {
+    User user = superAdminUser();
+    if (!users.findByEmail(user.email).isPresent()) {
+      users.create(user);
     }
   }
 

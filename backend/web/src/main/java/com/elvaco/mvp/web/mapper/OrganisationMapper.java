@@ -1,11 +1,9 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.UUID;
-
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 
-import static java.util.UUID.randomUUID;
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 
 public class OrganisationMapper {
 
@@ -15,7 +13,7 @@ public class OrganisationMapper {
 
   public Organisation toDomainModel(OrganisationDto organisationDto) {
     return new Organisation(
-      organisationDto.id != null ? UUID.fromString(organisationDto.id) : randomUUID(),
+      uuidOf(organisationDto.id),
       organisationDto.name,
       organisationDto.code
     );

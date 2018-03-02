@@ -1,13 +1,12 @@
 package com.elvaco.mvp.database.entity.user;
 
 import java.util.Collection;
+import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -23,11 +22,10 @@ import org.hibernate.validator.constraints.Email;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
-public class UserEntity extends EntityType<Long> {
+public class UserEntity extends EntityType<UUID> {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  public UUID id;
 
   @Column(nullable = false)
   public String name;
@@ -51,10 +49,10 @@ public class UserEntity extends EntityType<Long> {
   )
   public Collection<RoleEntity> roles;
 
-  public UserEntity() {}
+  UserEntity() {}
 
   public UserEntity(
-    Long id,
+    UUID id,
     String name,
     String email,
     String password,
@@ -70,7 +68,7 @@ public class UserEntity extends EntityType<Long> {
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

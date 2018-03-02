@@ -20,11 +20,12 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_ELVACO_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
@@ -39,17 +40,19 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findUserById() {
+    String id = ELVACO_SUPER_ADMIN_USER.getId().toString();
+
     ResponseEntity<UserDto> response = asSuperAdmin()
-      .get("/users/1", UserDto.class);
+      .get("/users/" + id, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().id).isEqualTo(1);
+    assertThat(response.getBody().id).isEqualTo(id);
   }
 
   @Test
   public void unableToFindNoneExistingUser() {
     ResponseEntity<UserDto> response = asSuperAdmin()
-      .get("/users/-999", UserDto.class);
+      .get("/users/" + randomUUID(), UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -113,22 +116,28 @@ public class UserControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     UserDto savedUser = response.getBody();
-    assertThat(savedUser.id).isPositive();
+    assertThat(savedUser.id).isNotNull();
     assertThat(savedUser.name).isEqualTo(user.name);
   }
 
   @Test
   public void updateSavedUserName() {
-    String newName = "Eva Andersson";
+    String newName = "New name";
 
-    User otherElvacoUser = users.create(OTHER_ELVACO_USER);
-    UserDto userDto = userMapper.toDto(otherElvacoUser);
+    User user = users.create(new User(
+      "First Name",
+      "t@b.com",
+      "ttt123",
+      ELVACO,
+      singletonList(USER)
+    ));
+    UserDto userDto = userMapper.toDto(user);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
     asSuperAdmin().put("/users", userDto);
 
-    User updatedUser = users.findById(otherElvacoUser.id).get();
+    User updatedUser = users.findById(user.id).get();
 
     assertThat(updatedUser.name).isEqualTo(newName);
   }
@@ -147,7 +156,7 @@ public class UserControllerTest extends IntegrationTest {
       .delete("/users/" + user.id, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().id).isEqualTo(user.id);
+    assertThat(response.getBody().id).isEqualTo(user.id.toString());
   }
 
   @Test
@@ -220,10 +229,10 @@ public class UserControllerTest extends IntegrationTest {
 
     ResponseEntity<UserDto> response = asSuperAdmin().post("/users", user, UserDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
     UserDto savedUser = response.getBody();
-    assertThat(savedUser.id).isPositive();
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(savedUser.id).isNotNull();
     assertThat(savedUser.name).isEqualTo(user.name);
   }
 
@@ -236,7 +245,7 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     UserDto savedUser = response.getBody();
-    assertThat(savedUser.id).isPositive();
+    assertThat(savedUser.id).isNotNull();
     assertThat(savedUser.name).isEqualTo(user.name);
   }
 

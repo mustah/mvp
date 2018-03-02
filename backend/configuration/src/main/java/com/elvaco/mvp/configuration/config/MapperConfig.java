@@ -5,20 +5,11 @@ import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 class MapperConfig {
-
-  private final ModelMapper modelMapper;
-
-  @Autowired
-  MapperConfig(ModelMapper modelMapper) {
-    this.modelMapper = modelMapper;
-  }
 
   @Bean
   LogicalMeterMapper logicalMeterMapper() {
@@ -32,7 +23,7 @@ class MapperConfig {
 
   @Bean
   UserMapper userMapper() {
-    return new UserMapper(modelMapper);
+    return new UserMapper(new OrganisationMapper());
   }
 
   @Bean

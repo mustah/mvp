@@ -23,7 +23,7 @@ public class UserDetailsMapperTest {
   @Test
   public void throwsWhenPasswordIsNull() {
     User user = new User(
-      2L,
+      randomUUID(),
       "some name",
       "email@a.com",
       null,
@@ -73,7 +73,7 @@ public class UserDetailsMapperTest {
 
   private static MvpUserDetails mvpUserDetails() {
     return new MvpUserDetails(new User(
-      1L,
+      randomUUID(),
       "john doh",
       "a@b.com",
       "letmein",

@@ -60,7 +60,7 @@ public class MeteringMessageHandlerTest {
     this.measurements = new MockMeasurements();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
       new User(
-        0L,
+        randomUUID(),
         "mock user",
         "mock@somemail.nu",
         "P@$$w0rD",

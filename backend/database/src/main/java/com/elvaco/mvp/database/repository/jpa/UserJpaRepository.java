@@ -8,11 +8,11 @@ import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserJpaRepository extends JpaRepository<UserEntity, Long> {
+public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {
 
   Optional<UserEntity> findByEmail(String email);
 
-  Optional<Password> findPasswordById(Long id);
+  Optional<Password> findPasswordById(UUID id);
 
   List<UserEntity> findByRoles_Role(String role);
 
