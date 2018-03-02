@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database;
 
 import java.util.Date;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.singleton;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
@@ -36,10 +38,12 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
-  private Long logicalMeterId;
+  private UUID logicalMeterId;
 
   @Before
   public void setUp() {
+    logicalMeterId = randomUUID();
+
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
       new MeterDefinitionEntity(
         MeterDefinitionType.UNKNOWN_METER_TYPE,
@@ -49,29 +53,25 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       ));
 
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
-      null,
+      logicalMeterId,
       "Some external ID",
       ELVACO.id,
       new Date(),
       meterDefinitionEntity
     );
-    LocationEntity locationEntity = new LocationEntity();
-    locationEntity.confidence = 1.0;
-    locationEntity.latitude = 1.0;
-    locationEntity.longitude = 2.0;
-    logicalMeterEntity.setLocation(locationEntity);
+    logicalMeterEntity.setLocation(new LocationEntity(logicalMeterId, 1.0, 2.0, 1.0));
 
-    logicalMeterEntity = logicalMeterJpaRepository.save(logicalMeterEntity);
+    logicalMeterJpaRepository.save(logicalMeterEntity);
+
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       organisationRepository.findOne(ELVACO.id),
       "123123",
       "Some external ID",
       "Some medium",
-      "ELV"
+      "ELV",
+      logicalMeterId
     );
-    physicalMeterEntity.logicalMeterId = logicalMeterEntity.id;
     physicalMeterJpaRepository.save(physicalMeterEntity);
-    logicalMeterId = logicalMeterEntity.id;
   }
 
   @After

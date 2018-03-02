@@ -28,6 +28,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
@@ -47,8 +48,9 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterToMapMarkerDto() {
+    UUID meterId = randomUUID();
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
-    mapMarkerDtoExpected.id = 1L;
+    mapMarkerDtoExpected.id = meterId.toString();
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
@@ -60,7 +62,7 @@ public class LogicalMeterMapperTest {
       .build();
 
     LogicalMeter logicalMeter = new LogicalMeter(
-      1L,
+      meterId,
       "some-external-id",
       ELVACO.id,
       location,
@@ -78,11 +80,12 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void toDto() throws ParseException {
+    UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
+    expected.id = meterId.toString();
     expected.created = "2018-02-12 15:14:25";
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
-    expected.id = 1L;
     expected.status = OK;
     expected.address = new IdNamedDto("Kabelgatan 2T");
     expected.city = new IdNamedDto("Kungsbacka");
@@ -101,7 +104,7 @@ public class LogicalMeterMapperTest {
     assertThat(
       mapper.toDto(
         new LogicalMeter(
-          1L,
+          meterId,
           "an-external-id",
           organisationId,
           new LocationBuilder()
@@ -136,8 +139,10 @@ public class LogicalMeterMapperTest {
   @Test
   public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
     LogicalMeter logicalMeter = new LogicalMeter(
-      0L, "external-id",
-      ELVACO.id, Location.UNKNOWN_LOCATION,
+      randomUUID(),
+      "external-id",
+      ELVACO.id,
+      Location.UNKNOWN_LOCATION,
       dateFormat().parse("2018-02-12T14:14:25")
     );
 

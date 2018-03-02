@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS users_roles (
 );
 
 CREATE TABLE IF NOT EXISTS logical_meter (
-  id BIGSERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   meter_definition_type BIGINT REFERENCES meter_definition,
   organisation_id UUID NOT NULL REFERENCES organisation,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS logical_meter (
 );
 
 CREATE TABLE IF NOT EXISTS location (
-  meter_id BIGINT REFERENCES logical_meter ON DELETE CASCADE PRIMARY KEY,
+  logical_meter_id UUID REFERENCES logical_meter ON DELETE CASCADE PRIMARY KEY,
   country TEXT,
   city TEXT,
   street_address TEXT,
@@ -71,26 +71,28 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   external_id TEXT NOT NULL,
   medium TEXT,
   manufacturer VARCHAR(255),
-  logical_meter_id BIGINT REFERENCES logical_meter,
+  logical_meter_id UUID REFERENCES logical_meter,
   UNIQUE (organisation_id, external_id, address)
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
   id BIGSERIAL PRIMARY KEY,
-  serial TEXT NOT NULL UNIQUE ,
+  serial TEXT NOT NULL UNIQUE,
   product_model TEXT NOT NULL,
   organisation_id UUID REFERENCES organisation,
   UNIQUE (organisation_id, serial, product_model)
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
-  meter_id BIGINT REFERENCES logical_meter,
+  logical_meter_id UUID REFERENCES logical_meter,
   gateway_id BIGINT REFERENCES gateway
 );
 
 CREATE TABLE IF NOT EXISTS measurement (
   id BIGSERIAL PRIMARY KEY,
-  physical_meter_id BIGINT NOT NULL REFERENCES physical_meter (id) ON UPDATE CASCADE ON DELETE CASCADE,
+  physical_meter_id BIGINT NOT NULL REFERENCES physical_meter (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
   created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
   quantity VARCHAR(255) NOT NULL,
   value UNIT NOT NULL,

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class MeterNotFound extends RuntimeException {
   private static final long serialVersionUID = 7182504126222676279L;
 
-  public MeterNotFound(Long id) {
+  public MeterNotFound(String id) {
     super("Unable to find meter with ID '" + id + "'");
   }
 }

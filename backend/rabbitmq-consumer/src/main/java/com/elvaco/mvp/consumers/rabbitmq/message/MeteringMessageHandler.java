@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -18,6 +19,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 
 import static java.util.Collections.emptyList;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 public class MeteringMessageHandler implements MessageHandler {
@@ -101,6 +103,7 @@ public class MeteringMessageHandler implements MessageHandler {
       facilityId
     ).orElseGet(() -> logicalMeters.save(
       new LogicalMeter(
+        randomUUID(),
         facilityId,
         organisation.id,
         selectMeterDefinition(medium)
@@ -121,7 +124,10 @@ public class MeteringMessageHandler implements MessageHandler {
   private PhysicalMeter findOrCreatePhysicalMeter(
     String facilityId,
     String meterId,
-    String medium, String manufacturer, Long logicalMeterId, Organisation organisation
+    String medium,
+    String manufacturer,
+    UUID logicalMeterId,
+    Organisation organisation
   ) {
     return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
       organisation.id,

@@ -2,6 +2,8 @@ package com.elvaco.mvp.database.entity.meter;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
+import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -24,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 public class PhysicalMeterEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = 1100904291210178685L;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
@@ -43,7 +46,7 @@ public class PhysicalMeterEntity extends EntityType<Long> {
   @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.EAGER)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
-  public Long logicalMeterId;
+  public UUID logicalMeterId;
 
   public PhysicalMeterEntity() {}
 
@@ -52,9 +55,10 @@ public class PhysicalMeterEntity extends EntityType<Long> {
     String address,
     String externalId,
     String medium,
-    String manufacturer
+    String manufacturer,
+    UUID logicalMeterId
   ) {
-    this(null, organisation, address, externalId, medium, manufacturer, null);
+    this(null, organisation, address, externalId, medium, manufacturer, logicalMeterId);
   }
 
   public PhysicalMeterEntity(
@@ -64,7 +68,7 @@ public class PhysicalMeterEntity extends EntityType<Long> {
     String externalId,
     String medium,
     String manufacturer,
-    Long logicalMeterId
+    @Nullable UUID logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;

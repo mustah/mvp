@@ -33,22 +33,24 @@ public class LogicalMeterUseCasesTest {
 
   @Test
   public void shouldFindOrganisationsMeterById() {
+    LogicalMeter meter = newMeter(randomUUID(), organisation.id);
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(newMeter(1L, organisation.id))
+      singletonList(meter)
     );
 
-    assertThat(useCases.findById(1L)).isNotEmpty();
+    assertThat(useCases.findById(meter.id)).isNotEmpty();
   }
 
   @Test
   public void shouldNotFindOtherOrganisationsMeterById() {
+    LogicalMeter meter = newMeter(randomUUID(), randomUUID());
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
-      singletonList(newMeter(1L, randomUUID()))
+      singletonList(meter)
     );
 
-    assertThat(useCases.findById(1L)).isEmpty();
+    assertThat(useCases.findById(meter.id)).isEmpty();
   }
 
   @Test
@@ -56,9 +58,9 @@ public class LogicalMeterUseCasesTest {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.SUPER_ADMIN)),
       asList(
-        newMeter(0L, organisation.id),
-        newMeter(1L, randomUUID()),
-        newMeter(2L, organisation.id)
+        newMeter(randomUUID(), organisation.id),
+        newMeter(randomUUID(), randomUUID()),
+        newMeter(randomUUID(), organisation.id)
       )
     );
 
@@ -70,9 +72,9 @@ public class LogicalMeterUseCasesTest {
     LogicalMeterUseCases useCases = newUseCases(
       newAuthenticatedUser(singletonList(Role.USER)),
       asList(
-        newMeter(0L, organisation.id),
-        newMeter(1L, randomUUID()),
-        newMeter(2L, organisation.id)
+        newMeter(randomUUID(), organisation.id),
+        newMeter(randomUUID(), randomUUID()),
+        newMeter(randomUUID(), organisation.id)
       )
     );
 
@@ -86,7 +88,7 @@ public class LogicalMeterUseCasesTest {
       emptyList()
     );
 
-    assertThatThrownBy(() -> useCases.save(newUnsavedMeter(randomUUID())))
+    assertThatThrownBy(() -> useCases.save(newMeter(randomUUID(), randomUUID())))
       .hasMessageContaining("not allowed");
   }
 
@@ -96,15 +98,14 @@ public class LogicalMeterUseCasesTest {
       newAuthenticatedUser(singletonList(Role.USER)),
       emptyList()
     );
+    UUID meterId = randomUUID();
 
-    assertThat(useCases.save(newUnsavedMeter(organisation.id)).id).isEqualTo(1L);
+    LogicalMeter saved = useCases.save(newMeter(meterId, organisation.id));
+
+    assertThat(saved.id).isEqualTo(meterId);
   }
 
-  private LogicalMeter newUnsavedMeter(UUID organisationId) {
-    return newMeter(null, organisationId);
-  }
-
-  private LogicalMeter newMeter(Long meterId, UUID organisationId) {
+  private LogicalMeter newMeter(UUID meterId, UUID organisationId) {
     return new LogicalMeter(
       meterId,
       "meter-" + meterId,

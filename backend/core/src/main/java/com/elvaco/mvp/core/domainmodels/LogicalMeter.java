@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,10 +16,9 @@ import static java.util.Collections.unmodifiableList;
 
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
-public class LogicalMeter implements Identifiable<Long> {
+public class LogicalMeter implements Identifiable<UUID> {
 
-  @Nullable
-  public final Long id;
+  public final UUID id;
   public final Location location;
   public final List<PhysicalMeter> physicalMeters;
   public final Date created;
@@ -31,7 +29,7 @@ public class LogicalMeter implements Identifiable<Long> {
   public final List<Gateway> gateways;
 
   public LogicalMeter(
-    @Nullable Long id,
+    UUID id,
     String externalId,
     UUID organisationId,
     Location location,
@@ -53,21 +51,23 @@ public class LogicalMeter implements Identifiable<Long> {
   }
 
   public LogicalMeter(
+    UUID id,
     String externalId,
     UUID organisationId,
     MeterDefinition meterDefinition
   ) {
-    this(externalId, organisationId, meterDefinition, emptyList());
+    this(id, externalId, organisationId, meterDefinition, emptyList());
   }
 
   public LogicalMeter(
+    UUID id,
     String externalId,
     UUID organisationId,
     MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeters
   ) {
     this(
-      null,
+      id,
       externalId,
       organisationId,
       Location.UNKNOWN_LOCATION,
@@ -80,7 +80,7 @@ public class LogicalMeter implements Identifiable<Long> {
   }
 
   public LogicalMeter(
-    @Nullable Long id,
+    UUID id,
     String externalId,
     UUID organisationId,
     Location location,
@@ -99,9 +99,8 @@ public class LogicalMeter implements Identifiable<Long> {
     );
   }
 
-  @Nullable
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 

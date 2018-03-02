@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -91,7 +92,7 @@ public class LogicalMeterUseCases {
     return measurements.findAll(filter);
   }
 
-  public Optional<LogicalMeter> findById(Long id) {
+  public Optional<LogicalMeter> findById(UUID id) {
     if (currentUser.isSuperAdmin()) {
       return logicalMeters.findById(id);
     } else {

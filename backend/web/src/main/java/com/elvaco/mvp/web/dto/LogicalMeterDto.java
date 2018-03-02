@@ -8,7 +8,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class LogicalMeterDto {
-  public Long id;
+  public String id;
   public String facility;
   public IdNamedDto address;
   public IdNamedDto city;

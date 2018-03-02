@@ -6,12 +6,9 @@ import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -19,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,11 +24,11 @@ import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static javax.persistence.CascadeType.ALL;
 
 @ToString
 @Entity
@@ -38,13 +36,12 @@ import static java.util.Collections.emptySet;
 @Table(name = "logical_meter",
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
-public class LogicalMeterEntity extends EntityType<Long> {
+public class LogicalMeterEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = 5528298891965340483L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  public UUID id;
 
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   public Set<PhysicalMeterEntity> physicalMeters;
@@ -56,7 +53,7 @@ public class LogicalMeterEntity extends EntityType<Long> {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     name = "gateways_meters",
-    joinColumns = @JoinColumn(name = "meter_id", referencedColumnName = "id"),
+    joinColumns = @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
   public List<GatewayEntity> gateways;
@@ -70,14 +67,14 @@ public class LogicalMeterEntity extends EntityType<Long> {
   @Column(nullable = false)
   public UUID organisationId;
 
-  @OneToOne(mappedBy = "logicalMeter", cascade = CascadeType.ALL)
-  @JsonManagedReference
-  private LocationEntity location;
+  @OneToOne(cascade = ALL)
+  @PrimaryKeyJoinColumn
+  public LocationEntity location;
 
   public LogicalMeterEntity() {}
 
   public LogicalMeterEntity(
-    Long id,
+    UUID id,
     String externalId,
     UUID organisationId,
     Date created,
@@ -90,7 +87,7 @@ public class LogicalMeterEntity extends EntityType<Long> {
     this.physicalMeters = emptySet();
     this.gateways = emptyList();
     this.meterDefinition = meterDefinition;
-    setLocation(new LocationEntity());
+    setLocation(new LocationEntity(id));
   }
 
   public LocationEntity getLocation() {
@@ -99,11 +96,10 @@ public class LogicalMeterEntity extends EntityType<Long> {
 
   public void setLocation(LocationEntity location) {
     this.location = location;
-    this.location.logicalMeter = this;
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

@@ -13,8 +13,9 @@ public class LogicalMeterTest {
   @Test
   public void testMedium() {
     LogicalMeter heatingMeter = newLogicalMeter(
-      MeterDefinition.DISTRICT_HEATING_METER,
-      randomUUID()
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     assertThat(heatingMeter.getMedium()).isEqualTo("District heating meter");
 
@@ -27,9 +28,11 @@ public class LogicalMeterTest {
   @Test
   public void testQuantities() {
     LogicalMeter heatingMeter = newLogicalMeter(
-      MeterDefinition.DISTRICT_HEATING_METER,
-      randomUUID()
+      randomUUID(),
+      randomUUID(),
+      MeterDefinition.DISTRICT_HEATING_METER
     );
+
     assertThat(heatingMeter.getQuantities()).containsOnly(
       Quantity.ENERGY,
       Quantity.VOLUME,
@@ -52,21 +55,28 @@ public class LogicalMeterTest {
   public void logicalMeterEquality() {
     Date now = new Date();
     UUID organisationId = randomUUID();
+    UUID meterId = randomUUID();
 
     LogicalMeter logicalMeter = newLogicalMeter(
-      MeterDefinition.HOT_WATER_METER,
-      organisationId
+      meterId,
+      organisationId,
+      MeterDefinition.HOT_WATER_METER
     ).createdAt(now);
 
     LogicalMeter otherLogicalMeter = newLogicalMeter(
-      MeterDefinition.HOT_WATER_METER,
-      organisationId
+      meterId,
+      organisationId,
+      MeterDefinition.HOT_WATER_METER
     ).createdAt(now);
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 
-  private LogicalMeter newLogicalMeter(MeterDefinition meterDefinition, UUID organisationId) {
-    return new LogicalMeter("an-external-id", organisationId, meterDefinition);
+  private LogicalMeter newLogicalMeter(
+    UUID id,
+    UUID organisationId,
+    MeterDefinition meterDefinition
+  ) {
+    return new LogicalMeter(id, "an-external-id", organisationId, meterDefinition);
   }
 }

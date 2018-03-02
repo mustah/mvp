@@ -21,12 +21,12 @@ public class GatewayDto {
   public GeoPositionDto position;
   public List<FlagDto> flags;
 
-  public Long meterId;
+  public String meterId;
   @Nullable
   public String meterAlarm;
   public String meterManufacturer;
   public IdNamedDto meterStatus;
-  public List<Long> meterIds;
+  public List<String> meterIds;
 
   public GatewayDto() {}
 
@@ -39,11 +39,11 @@ public class GatewayDto {
     IdNamedDto address,
     GeoPositionDto position,
     List<FlagDto> flags,
-    Long meterId,
+    String meterId,
     @Nullable String meterAlarm,
     String meterManufacturer,
     IdNamedDto meterStatus,
-    List<Long> meterIds
+    List<String> meterIds
   ) {
     this.id = id;
     this.serial = serial;

@@ -1,13 +1,14 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
@@ -21,7 +22,7 @@ public class PhysicalMeter implements Identifiable<Long> {
   public final String externalId;
   public final String medium;
   @Nullable
-  public final Long logicalMeterId;
+  public final UUID logicalMeterId;
   public final String manufacturer;
   public final List<MeterStatusLog> meterStatusLogs;
   private final List<Measurement> measurements;
@@ -33,7 +34,7 @@ public class PhysicalMeter implements Identifiable<Long> {
     String externalId,
     String medium,
     String manufacturer,
-    @Nullable Long logicalMeterId,
+    @Nullable UUID logicalMeterId,
     List<MeterStatusLog> meterStatusLogs
   ) {
     this.id = id;
@@ -62,7 +63,7 @@ public class PhysicalMeter implements Identifiable<Long> {
       medium,
       manufacturer,
       null,
-      Collections.emptyList()
+      emptyList()
     );
   }
 
@@ -82,7 +83,7 @@ public class PhysicalMeter implements Identifiable<Long> {
       medium,
       manufacturer,
       null,
-      Collections.emptyList()
+      emptyList()
     );
   }
 
@@ -92,7 +93,7 @@ public class PhysicalMeter implements Identifiable<Long> {
     String externalId,
     String medium,
     String manufacturer,
-    Long logicalMeterId,
+    UUID logicalMeterId,
     List<MeterStatusLog> meterStatusLogs
   ) {
     this(
@@ -139,7 +140,7 @@ public class PhysicalMeter implements Identifiable<Long> {
     );
   }
 
-  public PhysicalMeter withLogicalMeterId(Long logicalMeterId) {
+  public PhysicalMeter withLogicalMeterId(UUID logicalMeterId) {
     return new PhysicalMeter(
       id,
       organisation,
