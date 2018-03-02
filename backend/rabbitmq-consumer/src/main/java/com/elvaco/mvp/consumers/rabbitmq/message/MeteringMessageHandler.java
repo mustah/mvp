@@ -115,7 +115,7 @@ public class MeteringMessageHandler implements MessageHandler {
       .orElseGet(() ->
                    organisationUseCases.create(
                      new Organisation(
-                       null,
+                       UUID.randomUUID(),
                        "",
                        organisationCode
                      )));
@@ -136,7 +136,7 @@ public class MeteringMessageHandler implements MessageHandler {
     ).orElseGet(
       () -> physicalMeterUseCases.save(
         new PhysicalMeter(
-          null,
+          UUID.randomUUID(),
           organisation,
           meterId,
           facilityId,

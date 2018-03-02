@@ -1,6 +1,5 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
-
 public class MeteringMeterStructureMessageDto extends MeteringMessageDto {
 
   public final String meterId;
