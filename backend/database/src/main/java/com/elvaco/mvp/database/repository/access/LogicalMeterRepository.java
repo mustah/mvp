@@ -60,7 +60,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   @Override
   public List<LogicalMeter> findAll() {
     List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll();
-    return mapAndCollect(all);
+    return mapAndCollectWithStatuses(all);
   }
 
   @Override
@@ -69,12 +69,12 @@ public class LogicalMeterRepository implements LogicalMeters {
       filterMapper.map(filterParams)
     );
 
-    return mapAndCollect(all);
+    return mapAndCollectWithStatuses(all);
   }
 
   @Override
   public Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
-    org.springframework.data.domain.Page<LogicalMeterEntity> all =
+    org.springframework.data.domain.Page<LogicalMeterEntity> logicalMeterEntities =
       logicalMeterJpaRepository.findAll(
         filterMapper.map(filterParams),
         new PageRequest(
@@ -85,10 +85,12 @@ public class LogicalMeterRepository implements LogicalMeters {
       );
 
     return new PageAdapter<>(
-      all.map(
+      logicalMeterEntities.map(
         logicalMeter -> logicalMeterMapper.toDomainModel(
           logicalMeter,
-          getLongListMap(all.getContent())
+          getStatusesGroupedByPhysicalMeterId(
+            getStatusesForMeters(logicalMeterEntities.getContent())
+          )
         )
       )
     );
@@ -138,10 +140,13 @@ public class LogicalMeterRepository implements LogicalMeters {
     return physicalMeterStatusLogJpaRepository.findAllByPhysicalMeterIdIn(physicalMeterIds);
   }
 
-  private List<LogicalMeter> mapAndCollect(List<LogicalMeterEntity> all) {
-    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses = getLongListMap(all);
+  private List<LogicalMeter> mapAndCollectWithStatuses(List<LogicalMeterEntity> meters) {
+    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
+      getStatusesGroupedByPhysicalMeterId(
+      getStatusesForMeters(meters)
+    );
 
-    return all
+    return meters
       .stream()
       .map(logicalMeterEntity -> logicalMeterMapper.toDomainModel(
         logicalMeterEntity,
@@ -150,25 +155,21 @@ public class LogicalMeterRepository implements LogicalMeters {
       ).collect(toList());
   }
 
-  private Map<Long, List<PhysicalMeterStatusLogEntity>> getLongListMap(
-    List<LogicalMeterEntity> all
+  private Map<Long, List<PhysicalMeterStatusLogEntity>> getStatusesGroupedByPhysicalMeterId(
+    List<PhysicalMeterStatusLogEntity> statuses
   ) {
-    List<PhysicalMeterStatusLogEntity> statusesForMeters = getStatusesForMeters(all);
-
     Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses = new HashMap<>();
 
-    long meterId;
     PhysicalMeterStatusLogEntity logEntity;
 
-    for (int x = 0; x < statusesForMeters.size(); x++) {
-      logEntity = statusesForMeters.get(x);
-      meterId = logEntity.physicalMeterId;
+    for (int x = 0; x < statuses.size(); x++) {
+      logEntity = statuses.get(x);
 
-      if (!mappedStatuses.containsKey(meterId)) {
-        mappedStatuses.put(meterId, new ArrayList<>());
+      if (!mappedStatuses.containsKey(logEntity.physicalMeterId)) {
+        mappedStatuses.put(logEntity.physicalMeterId, new ArrayList<>());
       }
 
-      mappedStatuses.get(meterId).add(logEntity);
+      mappedStatuses.get(logEntity.physicalMeterId).add(logEntity);
     }
     return mappedStatuses;
   }
