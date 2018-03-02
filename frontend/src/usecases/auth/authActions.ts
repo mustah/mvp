@@ -6,7 +6,7 @@ import {makeToken} from '../../services/authService';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {EndPoints} from '../../state/domain-models/domainModels';
 import {User} from '../../state/domain-models/user/userModels';
-import {Authorized, Unauthorized} from './authModels';
+import {Authorized, AuthState, Unauthorized} from './authModels';
 
 export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -39,18 +39,19 @@ export const login = (username: string, password: string) => {
   };
 };
 
+export const isAuthenticated = (auth: AuthState): boolean => !!auth.user && auth.isAuthenticated;
+
 export const logout = (error?: Unauthorized) => {
   return async (dispatch, getState: GetState) => {
-    try {
-      await restClient.get(EndPoints.logout);
-    } catch (ignore) {
-      // tslint:disable
-    } finally {
-      const {auth} = getState();
-      if (auth && auth.user && auth.isAuthenticated) {
+    const {auth} = getState();
+    if (isAuthenticated(auth)) {
+      try {
         dispatch(logoutUser(error));
-        dispatch(routerActions.push(`${routes.login}/${auth.user.organisation.code}`));
+        dispatch(routerActions.push(`${routes.login}/${auth.user!.organisation.code}`));
+        await restClient.get(EndPoints.logout);
+      } catch (ignore) {
+        // tslint:disable
       }
     }
-  };
+  }
 };

@@ -1,6 +1,7 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {restClient} from '../../services/restClient';
+import {InvalidToken, restClient} from '../../services/restClient';
 import {ErrorResponse} from '../../types/Types';
+import {logout} from '../auth/authActions';
 import {DashboardModel} from './dashboardModels';
 
 export const DASHBOARD_REQUEST = 'DASHBOARD_REQUEST';
@@ -18,7 +19,11 @@ export const fetchDashboard = () =>
       const {data: dashboard} = await restClient.get('/dashboards/current');
       dispatch(dashboardSuccess(dashboard));
     } catch (error) {
-      const {response: {data}} = error;
-      dispatch(dashboardFailure(data));
+      if (error instanceof InvalidToken) {
+        await dispatch(logout(error));
+      } else {
+        const {response: {data}} = error;
+        dispatch(dashboardFailure(data));
+      }
     }
   };
