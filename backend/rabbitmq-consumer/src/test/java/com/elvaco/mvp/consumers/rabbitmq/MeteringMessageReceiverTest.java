@@ -14,7 +14,7 @@ public class MeteringMessageReceiverTest {
 
   @Test
   public void receiveEmptyMessage() {
-    MockMessageHandler messageHandler = new MockMessageHandler();
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
 
     assertThatThrownBy(() -> meteringMessageReceiver.receiveMessage("".getBytes()))
@@ -26,7 +26,7 @@ public class MeteringMessageReceiverTest {
 
   @Test
   public void receiveLongMalformedMessage() {
-    MockMessageHandler messageHandler = new MockMessageHandler();
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
 
     byte[] longMessage = String.join("", Collections.nCopies(1000, "x")).getBytes();
@@ -39,7 +39,7 @@ public class MeteringMessageReceiverTest {
 
   @Test
   public void receiveStructureMessage() {
-    MockMessageHandler messageHandler = new MockMessageHandler();
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
 
     byte[] structureMessage = ("{\n"
@@ -70,7 +70,7 @@ public class MeteringMessageReceiverTest {
 
   @Test
   public void receiveMeasurementMessage() {
-    MockMessageHandler messageHandler = new MockMessageHandler();
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
     byte[] measurementMessage = ("{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
@@ -109,7 +109,7 @@ public class MeteringMessageReceiverTest {
 
   @Test
   public void receiveMessageOfUnknownType() {
-    MockMessageHandler messageHandler = new MockMessageHandler();
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
     byte[] measurementMessage = ("{\n"
       + "  \"message_type\": \"Some unknown, unsupported message type\",\n"
@@ -120,12 +120,12 @@ public class MeteringMessageReceiverTest {
         "Malformed metering message");
   }
 
-  static class MockMessageHandler implements MessageHandler {
+  static class MessageHandlerSpy implements MessageHandler {
 
     private boolean structureMessageReceived;
     private boolean measurementMessageReceived;
 
-    MockMessageHandler() {
+    MessageHandlerSpy() {
       structureMessageReceived = false;
       measurementMessageReceived = false;
     }

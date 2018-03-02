@@ -6,6 +6,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParseException;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,28 +30,26 @@ public class MeteringMessageReceiver {
     }
 
     log.debug("Received message from Rabbit: {}", messageStr);
+    MeteringMessageDto messageDto;
     try {
-      MeteringMessageDto messageDto = parser.parse(messageStr);
-      if (messageDto instanceof MeteringMeterStructureMessageDto) {
-        handler.handle((MeteringMeterStructureMessageDto) messageDto);
-      } else if (messageDto instanceof MeteringMeasurementMessageDto) {
-        handler.handle((MeteringMeasurementMessageDto) messageDto);
-      } else {
-        throw new RuntimeException("Unknown message type: " + messageDto.getClass().getName());
-      }
-    } catch (MeteringMessageParser.MeteringMessageParseException e) {
-      throw new RuntimeException(
-        "Malformed metering message: " + ellipsize(messageStr, 40), e);
+      messageDto = parser.parse(messageStr);
+    } catch (MeteringMessageParseException exception) {
+      throw new RuntimeException("Malformed metering message: " + ellipsize(messageStr, 40));
     }
 
-
+    if (messageDto instanceof MeteringMeterStructureMessageDto) {
+      handler.handle((MeteringMeterStructureMessageDto) messageDto);
+    } else if (messageDto instanceof MeteringMeasurementMessageDto) {
+      handler.handle((MeteringMeasurementMessageDto) messageDto);
+    } else {
+      throw new RuntimeException("Unknown message type: " + messageDto.getClass().getName());
+    }
   }
 
   private String ellipsize(String str, int maxLength) {
     if (str.length() <= maxLength) {
       return str;
     }
-
     return str.substring(0, maxLength - 3) + "...";
   }
 }

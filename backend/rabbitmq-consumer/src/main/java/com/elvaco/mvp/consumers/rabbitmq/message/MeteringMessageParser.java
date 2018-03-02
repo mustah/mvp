@@ -29,7 +29,7 @@ public class MeteringMessageParser {
     return parseMessage(message, MeteringMeasurementMessageDto.class);
   }
 
-  public MeteringMessageDto parse(String message) throws MeteringMessageParseException {
+  public MeteringMessageDto parse(String message) {
     MeteringMessageDto meteringMessageDto = parseMessage(
       message,
       MeteringMessageDto.class
@@ -73,15 +73,6 @@ public class MeteringMessageParser {
     } catch (JsonSyntaxException ex) {
       log.warn(String.format("Failed to parse message of type '%s'", classOfT.getName()), ex);
       return Optional.empty();
-    }
-  }
-
-  public static class MeteringMessageParseException extends Exception {
-
-    private static final long serialVersionUID = 7334788232403684436L;
-
-    MeteringMessageParseException(String message) {
-      super(message);
     }
   }
 }
