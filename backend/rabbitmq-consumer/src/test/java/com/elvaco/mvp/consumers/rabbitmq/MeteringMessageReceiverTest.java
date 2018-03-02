@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
+import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,7 +120,7 @@ public class MeteringMessageReceiverTest {
         "Malformed metering message");
   }
 
-  static class MockMessageHandler implements MeteringMessageHandler {
+  static class MockMessageHandler implements MessageHandler {
 
     private boolean structureMessageReceived;
     private boolean measurementMessageReceived;

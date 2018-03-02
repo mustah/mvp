@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
+import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 public class MeteringMessageReceiver {
 
   private final MeteringMessageParser parser;
-  private final MeteringMessageHandler handler;
+  private final MessageHandler handler;
 
-  public MeteringMessageReceiver(MeteringMessageHandler handler) {
+  public MeteringMessageReceiver(MessageHandler handler) {
     parser = new MeteringMessageParser();
     this.handler = handler;
   }

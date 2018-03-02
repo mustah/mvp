@@ -42,7 +42,7 @@ import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringMessageHandlerTest {
+public class MessageHandlerTest {
 
   private static final String ORGANISATION_CODE = "some-organisation";
 
@@ -50,7 +50,7 @@ public class MeteringMessageHandlerTest {
   private Organisations organisations;
   private LogicalMeters logicalMeters;
   private Measurements measurements;
-  private MeteringMessageHandler messageHandler;
+  private MessageHandler messageHandler;
 
   @Before
   public void setUp() {
@@ -70,7 +70,7 @@ public class MeteringMessageHandlerTest {
       randomUUID().toString()
     );
 
-    this.messageHandler = new DefaultMeteringMessageHandler(
+    this.messageHandler = new MeteringMessageHandler(
       logicalMeters,
       physicalMeters,
       organisations,
