@@ -21,8 +21,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
       entity.externalId,
       entity.medium,
       entity.manufacturer,
-      entity.logicalMeterId,
-      entity.meterStatusLogs
+      entity.logicalMeterId
     );
   }
 

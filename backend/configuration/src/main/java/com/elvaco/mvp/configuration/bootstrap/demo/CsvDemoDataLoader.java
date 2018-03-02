@@ -135,8 +135,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.externalId,
             physicalMeter.medium,
             physicalMeter.manufacturer,
-            logicalMeter.id,
-            emptyList()
+            logicalMeter.id
           ));
       });
   }

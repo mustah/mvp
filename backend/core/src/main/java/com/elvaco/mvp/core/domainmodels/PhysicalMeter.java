@@ -23,7 +23,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
   @Nullable
   public final UUID logicalMeterId;
   public final String manufacturer;
-  public final List<MeterStatusLog> meterStatusLogs;
   private final List<Measurement> measurements;
 
   public PhysicalMeter(
@@ -33,8 +32,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String externalId,
     String medium,
     String manufacturer,
-    @Nullable UUID logicalMeterId,
-    List<MeterStatusLog> meterStatusLogs
+    @Nullable UUID logicalMeterId
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -44,7 +42,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.measurements = new ArrayList<>();
-    this.meterStatusLogs = unmodifiableList(meterStatusLogs);
   }
 
   public PhysicalMeter(
@@ -62,8 +59,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      null,
-      emptyList()
+      null
     );
   }
 
@@ -91,8 +87,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId,
-      meterStatusLogs
+      logicalMeterId
     );
   }
 
@@ -104,8 +99,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId,
-      meterStatusLogs
+      logicalMeterId
     );
   }
 
@@ -117,8 +111,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId,
-      meterStatusLogs
+      logicalMeterId
     );
   }
 }

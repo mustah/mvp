@@ -494,8 +494,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "external-id",
         "Some device specific medium name",
         "ELV",
-        savedLogicalMeter.id,
-        emptyList()
+        savedLogicalMeter.id
       )
     );
 
@@ -632,9 +631,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",
-        "ELV" + seed++,
-        logicalMeterId,
-        emptyList()
+        "ELV" + seed,
+        logicalMeterId
       )
     );
   }

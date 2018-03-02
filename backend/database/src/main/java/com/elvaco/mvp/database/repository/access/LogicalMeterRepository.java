@@ -65,7 +65,9 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAll(Map<String, List<String>> filterParams) {
-    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll(filterMapper.map(filterParams));
+    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll(
+      filterMapper.map(filterParams)
+    );
 
     return mapAndCollect(all);
   }
@@ -74,13 +76,13 @@ public class LogicalMeterRepository implements LogicalMeters {
   public Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable) {
     org.springframework.data.domain.Page<LogicalMeterEntity> all =
       logicalMeterJpaRepository.findAll(
-      filterMapper.map(filterParams),
-      new PageRequest(
-        pageable.getPageNumber(),
-        pageable.getPageSize(),
-        sortingMapper.getAsSpringSort(pageable.getSort())
-      )
-    );
+        filterMapper.map(filterParams),
+        new PageRequest(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          sortingMapper.getAsSpringSort(pageable.getSort())
+        )
+      );
 
     return new PageAdapter<>(
       all.map(
@@ -158,7 +160,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     long meterId;
     PhysicalMeterStatusLogEntity logEntity;
 
-    for(int x = 0; x < statusesForMeters.size(); x++) {
+    for (int x = 0; x < statusesForMeters.size(); x++) {
       logEntity = statusesForMeters.get(x);
       meterId = logEntity.physicalMeterId;
 

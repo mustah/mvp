@@ -13,6 +13,7 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -44,10 +45,9 @@ public class LogicalMeterMapper {
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
       .map(physicalMeterMapper::toDomainModel)
-      .peek(physicalMeter -> meterStatusLogs.addAll(physicalMeter.meterStatusLogs))
       .collect(toList());
 
-    return getLogicalMeter(logicalMeterEntity, meterStatusLogs, physicalMeters);
+    return getLogicalMeter(logicalMeterEntity, emptyList(), physicalMeters);
   }
 
   public LogicalMeter toDomainModel(
@@ -57,7 +57,6 @@ public class LogicalMeterMapper {
 
     List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
 
-    // TODO status logs are still fetched by physicalMeters
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
       .map(physicalMeterMapper::toDomainModel)
