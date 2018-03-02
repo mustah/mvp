@@ -52,6 +52,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
 
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
+      randomUUID(),
       elvaco,
       "test-butter-meter-1",
       "butter-external-id",
@@ -60,6 +61,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       null
     );
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
+      randomUUID(),
       wayneIndustriesEntity,
       "test-milk-meter-1",
       "milk-external-id",
@@ -68,6 +70,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       null
     );
     forceMeter = new PhysicalMeterEntity(
+      randomUUID(),
       wayneIndustriesEntity,
       String.valueOf(Math.random()),
       "force-external-id",

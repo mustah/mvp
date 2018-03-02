@@ -488,6 +488,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     PhysicalMeter physicalMeter = physicalMeters.save(
       new PhysicalMeter(
+        randomUUID(),
         ELVACO,
         "111-222-333-444",
         "external-id",
@@ -515,10 +516,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     ResponseEntity<List<MeasurementDto>> response = asElvacoUser()
       .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
     List<MeasurementDto> measurementDtos = response.getBody();
-    assertThat(measurementDtos).hasSize(5);
     MeasurementDto measurement = measurementDtos.get(0);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(measurementDtos).hasSize(5);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
     assertThat(measurement.unit).isEqualTo("m^3");
   }
@@ -624,6 +627,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private void createPhysicalMeter(UUID logicalMeterId, String externalId) {
     physicalMeters.save(
       new PhysicalMeter(
+        randomUUID(),
         ELVACO,
         "111-222-333-444-" + seed,
         externalId,

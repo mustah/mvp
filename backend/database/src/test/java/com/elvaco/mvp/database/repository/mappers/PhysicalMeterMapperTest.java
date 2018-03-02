@@ -5,6 +5,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PhysicalMeterMapperTest {
@@ -17,11 +18,12 @@ public class PhysicalMeterMapperTest {
   @Test
   public void mapping() {
     PhysicalMeter physicalMeter = new PhysicalMeter(
-      ELVACO,
+      randomUUID(),
       "567890",
       "external-id",
       "My Medium",
-      "ELV"
+      "ELV",
+      ELVACO
     );
 
     PhysicalMeterEntity physicalMeterEntity = physicalMeterMapper.toEntity(physicalMeter);

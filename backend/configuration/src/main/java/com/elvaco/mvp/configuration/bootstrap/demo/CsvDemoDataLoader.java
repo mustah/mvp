@@ -112,11 +112,12 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               emptyList()
             );
             PhysicalMeter physicalMeter = new PhysicalMeter(
-              ELVACO,
+              randomUUID(),
               csvData.meterId,
               csvData.facilityId,
               csvData.medium,
-              csvData.meterManufacturer
+              csvData.meterManufacturer,
+              ELVACO
             );
 
             return new Parameters(logicalMeter, physicalMeter, gateway);

@@ -7,11 +7,13 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 
-public class MockPhysicalMeters extends MockRepository<Long, PhysicalMeter>
+import static java.util.UUID.randomUUID;
+
+public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
   implements PhysicalMeters {
 
   @Override
-  protected PhysicalMeter copyWithId(Long id, PhysicalMeter entity) {
+  protected PhysicalMeter copyWithId(UUID id, PhysicalMeter entity) {
     return new PhysicalMeter(
       id,
       entity.organisation,
@@ -25,13 +27,8 @@ public class MockPhysicalMeters extends MockRepository<Long, PhysicalMeter>
   }
 
   @Override
-  protected Long generateId() {
-    return nextId();
-  }
-
-  @Override
-  public Optional<PhysicalMeter> findById(Long id) {
-    return Optional.empty();
+  protected UUID generateId() {
+    return randomUUID();
   }
 
   @Override

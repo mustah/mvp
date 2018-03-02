@@ -64,6 +64,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     logicalMeterJpaRepository.save(logicalMeterEntity);
 
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
+      randomUUID(),
       organisationRepository.findOne(ELVACO.id),
       "123123",
       "Some external ID",

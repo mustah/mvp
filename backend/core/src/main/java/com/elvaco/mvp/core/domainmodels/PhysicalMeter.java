@@ -13,10 +13,9 @@ import static java.util.Collections.unmodifiableList;
 
 @EqualsAndHashCode
 @ToString
-public class PhysicalMeter implements Identifiable<Long> {
+public class PhysicalMeter implements Identifiable<UUID> {
 
-  @Nullable
-  public final Long id;
+  public final UUID id;
   public final Organisation organisation;
   public final String address;
   public final String externalId;
@@ -28,7 +27,7 @@ public class PhysicalMeter implements Identifiable<Long> {
   private final List<Measurement> measurements;
 
   public PhysicalMeter(
-    @Nullable Long id,
+    UUID id,
     Organisation organisation,
     String address,
     String externalId,
@@ -49,31 +48,12 @@ public class PhysicalMeter implements Identifiable<Long> {
   }
 
   public PhysicalMeter(
-    Organisation organisation,
+    UUID id,
     String address,
     String externalId,
     String medium,
-    String manufacturer
-  ) {
-    this(
-      null,
-      organisation,
-      address,
-      externalId,
-      medium,
-      manufacturer,
-      null,
-      emptyList()
-    );
-  }
-
-  public PhysicalMeter(
-    @Nullable Long id,
-    Organisation organisation,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer
+    String manufacturer,
+    Organisation organisation
   ) {
     this(
       id,
@@ -88,29 +68,18 @@ public class PhysicalMeter implements Identifiable<Long> {
   }
 
   public PhysicalMeter(
+    UUID id,
     Organisation organisation,
     String address,
     String externalId,
     String medium,
-    String manufacturer,
-    UUID logicalMeterId,
-    List<MeterStatusLog> meterStatusLogs
+    String manufacturer
   ) {
-    this(
-      null,
-      organisation,
-      address,
-      externalId,
-      medium,
-      manufacturer,
-      logicalMeterId,
-      meterStatusLogs
-    );
+    this(id, address, externalId, medium, manufacturer, organisation);
   }
 
-  @Nullable
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 

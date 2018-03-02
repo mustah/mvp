@@ -8,6 +8,7 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementMapperTest {
@@ -22,11 +23,12 @@ public class MeasurementMapperTest {
   @Test
   public void mapping() {
     PhysicalMeter physicalMeter = new PhysicalMeter(
-      ELVACO,
+      randomUUID(),
       "123-123",
       "external-id",
       "Some medium",
-      "ELV"
+      "ELV",
+      ELVACO
     );
     Measurement measurement = new Measurement(Quantity.VOLUME, 2.0, "m3", physicalMeter);
     MeasurementEntity entity = measurementMapper.toEntity(measurement);
