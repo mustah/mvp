@@ -23,7 +23,7 @@ public class LogicalMeterDto {
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
   public IdNamedDto status;
-  public Long gatewayId;
+  public String gatewayId;
   public IdNamedDto gatewayStatus;
   public String gatewayProductModel;
   public String gatewaySerial;

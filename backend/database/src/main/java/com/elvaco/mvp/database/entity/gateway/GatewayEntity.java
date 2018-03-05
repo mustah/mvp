@@ -2,13 +2,10 @@ package com.elvaco.mvp.database.entity.gateway;
 
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -23,13 +20,12 @@ import static java.util.Collections.emptyList;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
-public class GatewayEntity extends EntityType<Long> {
+public class GatewayEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -2132372383987246715L;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  public Long id;
+  public UUID id;
 
   @Column(nullable = false)
   public String serial;
@@ -46,7 +42,7 @@ public class GatewayEntity extends EntityType<Long> {
   GatewayEntity() {}
 
   public GatewayEntity(
-    @Nullable Long id,
+    UUID id,
     UUID organisationId,
     String serial,
     String productModel
@@ -59,7 +55,7 @@ public class GatewayEntity extends EntityType<Long> {
   }
 
   @Override
-  public Long getId() {
+  public UUID getId() {
     return id;
   }
 }

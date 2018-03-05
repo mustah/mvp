@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,9 +58,9 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminsCanListAllGateways() {
-    gateways.save(new Gateway(null, dailyPlanet.id, "1111", "serial-1"));
-    gateways.save(new Gateway(null, dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
+    gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
+    gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
+    gateways.save(new Gateway(randomUUID(), ELVACO.id, "3333", "serial-3"));
 
     ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
 
@@ -76,14 +77,14 @@ public class GatewayControllerTest extends IntegrationTest {
 
     GatewayDto created = response.getBody();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(created.id).isPositive();
+    assertThat(created.id).isNotNull();
     assertThat(created.serial).isEqualTo("123");
     assertThat(created.productModel).isEqualTo("2100");
   }
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    gateways.save(new Gateway(null, ELVACO.id, "1111", "serial-1"));
+    gateways.save(new Gateway(randomUUID(), ELVACO.id, "1111", "serial-1"));
 
     ResponseEntity<List> gatewaysResponse = restAsUser(dailyPlanetUser(dailyPlanet))
       .get("/gateways", List.class);
@@ -94,17 +95,17 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
-    Gateway g1 = gateways.save(new Gateway(null, dailyPlanet.id, "1111", "serial-1"));
-    Gateway g2 = gateways.save(new Gateway(null, dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(null, ELVACO.id, "3333", "serial-3"));
+    Gateway g1 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
+    Gateway g2 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
+    gateways.save(new Gateway(randomUUID(), ELVACO.id, "3333", "serial-3"));
 
-    List<Long> gatewayIds = restAsUser(dailyPlanetUser(dailyPlanet))
+    List<String> gatewayIds = restAsUser(dailyPlanetUser(dailyPlanet))
       .getList("/gateways", GatewayDto.class)
       .getBody()
       .stream()
       .map(g -> g.id)
       .collect(toList());
 
-    assertThat(gatewayIds).containsOnly(g1.id, g2.id);
+    assertThat(gatewayIds).containsOnly(g1.id.toString(), g2.id.toString());
   }
 }

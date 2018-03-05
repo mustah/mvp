@@ -20,7 +20,7 @@ public class GatewayUseCasesTest {
   public void saveGateway() {
     GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
 
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNegative();
+    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
   }
 
   @Test
@@ -36,8 +36,8 @@ public class GatewayUseCasesTest {
   public void superAdminCanSaveAllGateways() {
     GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
 
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNegative();
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNegative();
+    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
+    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
   }
 
   private GatewayUseCases useCasesWithCurrentUser(User currentUser) {

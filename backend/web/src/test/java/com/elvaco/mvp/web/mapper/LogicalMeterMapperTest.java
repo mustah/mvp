@@ -26,6 +26,7 @@ import org.modelmapper.config.Configuration.AccessLevel;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -94,7 +95,7 @@ public class LogicalMeterMapperTest {
     expected.position = new GeoPositionDto(57.5052592, 56.123, 1);
     expected.facility = "an-external-id";
     expected.statusChangelog = emptyList();
-    expected.gatewayId = 3L;
+    expected.gatewayId = randomUUID().toString();
     expected.gatewaySerial = "123123";
     expected.gatewayStatus = OK;
     expected.gatewayProductModel = "CMi2110";
@@ -127,7 +128,7 @@ public class LogicalMeterMapperTest {
           MeterDefinition.HOT_WATER_METER,
           emptyList(),
           singletonList(new Gateway(
-            expected.gatewayId,
+            uuidOf(expected.gatewayId),
             organisationId,
             expected.gatewaySerial,
             expected.gatewayProductModel,

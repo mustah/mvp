@@ -64,7 +64,7 @@ public class LogicalMeterMapper {
       .stream()
       .findFirst()
       .map(gateway -> {
-        meterDto.gatewayId = gateway.id;
+        meterDto.gatewayId = gateway.id.toString();
         meterDto.gatewaySerial = gateway.serial;
         meterDto.gatewayProductModel = gateway.productModel;
         meterDto.gatewayStatus = OK;
