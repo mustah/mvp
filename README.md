@@ -39,7 +39,11 @@ the database for the session.
 > that if that instance was launched using docker-compose, it will be destroyed along with all its
 > data at the end of the system tests.
 
-> TODO: make sure the system tests can be run without wiping the tables created in postgres DB.
+To debug a failing test case, it is sometimes useful to keep the postgresql instance running after its conclusion. This is currently supported by setting the environment variable 'MVP_SYSTEM_TEST_DO_CLEANUP' to false;
+
+`MVP_SYSTEM_TEST_DO_CLEANUP=false ./gradlew systemTest`
+
+Keep in mind that this requires you to clean up the remaining containers yourself when you're done with them.
 
 A handy tip: If you're only troubleshooting one, or a collection of, failing test cases you can specify to run only those tests by conveniently specifying which tests to run using the `--tests` option, like so:
 
@@ -50,7 +54,7 @@ or
 `./gradlew systemTest --tests com.elvaco.mvp.repository.LogicalMeterJpaRepositoryTest.containsInPropertyCollection`
 
 Look [here](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test) for more examples, and a more thorough explanation of test filters.
- 
+
 ### Backend only
 If the changes you're working on are isolated to the backend, and do not rely
 on any database changes, this is probably the mode you're looking for. It is

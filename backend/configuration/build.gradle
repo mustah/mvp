@@ -70,7 +70,11 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task cleanUpDockerCompose {
+task cleanUpDockerServices {
+  onlyIf {
+    final def doCleanup = System.getenv('MVP_SYSTEM_TEST_DO_CLEANUP');
+    return doCleanup == null || !doCleanup.equalsIgnoreCase('false');
+  }
   doLast {
     exec {
       executable "docker-compose"
@@ -78,7 +82,7 @@ task cleanUpDockerCompose {
     }
   }
 }
-systemTest.finalizedBy cleanUpDockerCompose
+systemTest.finalizedBy cleanUpDockerServices
 
 configurations {
   integrationTestCompile.extendsFrom testCompile
