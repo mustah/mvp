@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.util.Optional;
 
+import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,17 +37,18 @@ public class ApiExceptionHandler {
     return new ResponseEntity<>(exceptionInformation.dto, exceptionInformation.status);
   }
 
+  @ExceptionHandler(Unauthorized.class)
+  @ResponseBody
+  public ResponseEntity<ErrorMessageDto> handle(Unauthorized exception) {
+    log.info("Unauthorized", exception);
+    return forbidden(exception);
+  }
+
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseBody
   public ResponseEntity<ErrorMessageDto> handle(AccessDeniedException exception) {
     log.info("Access denied", exception);
-    HttpStatus responseHttpStatus = HttpStatus.FORBIDDEN;
-    ErrorMessageDto dto = new ErrorMessageDto(
-      exception.getMessage(),
-      responseHttpStatus.value()
-    );
-    return new ResponseEntity<>(dto, responseHttpStatus);
-
+    return forbidden(exception);
   }
 
   private ApiExceptionInformation resolveHttpStatus(Exception exception) {
@@ -62,6 +64,15 @@ public class ApiExceptionHandler {
           HttpStatus.INTERNAL_SERVER_ERROR
         )
       );
+  }
+
+  private ResponseEntity<ErrorMessageDto> forbidden(Exception exception) {
+    HttpStatus responseHttpStatus = HttpStatus.FORBIDDEN;
+    ErrorMessageDto dto = new ErrorMessageDto(
+      exception.getMessage(),
+      responseHttpStatus.value()
+    );
+    return new ResponseEntity<>(dto, responseHttpStatus);
   }
 
   private static class ApiExceptionInformation {

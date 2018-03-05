@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.security.Permission;
@@ -41,14 +42,14 @@ public class OrganisationUseCases {
 
   public Optional<Organisation> findById(UUID id) {
     return organisations.findById(id)
-      .filter(organisation -> organisationPermissions.isAllowed(currentUser, organisation, READ));
+      .filter(this::mayRead);
   }
 
-  public Optional<Organisation> create(Organisation organisation) {
+  public Organisation create(Organisation organisation) {
     return persist(organisation, CREATE);
   }
 
-  public Optional<Organisation> update(Organisation organisation) {
+  public Organisation update(Organisation organisation) {
     return persist(organisation, UPDATE);
   }
 
@@ -58,11 +59,22 @@ public class OrganisationUseCases {
     }
   }
 
-  private Optional<Organisation> persist(Organisation organisation, Permission permission) {
+  public Optional<Organisation> findByCode(String organisationCode) {
+    return organisations
+      .findByCode(organisationCode)
+      .filter(this::mayRead);
+  }
+
+  private boolean mayRead(Organisation organisation) {
+    return organisationPermissions.isAllowed(currentUser, organisation, READ);
+  }
+
+  private Organisation persist(Organisation organisation, Permission permission) {
     if (organisationPermissions.isAllowed(currentUser, organisation, permission)) {
-      return Optional.of(organisations.save(organisation));
+      return organisations.save(organisation);
     } else {
-      return Optional.empty();
+      throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to save "
+                               + "this organisation");
     }
   }
 }

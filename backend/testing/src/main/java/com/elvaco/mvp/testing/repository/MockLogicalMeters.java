@@ -17,6 +17,10 @@ import static java.util.stream.Collectors.toList;
 
 public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implements LogicalMeters {
 
+  public MockLogicalMeters() {
+    this(emptyList());
+  }
+
   public MockLogicalMeters(List<LogicalMeter> logicalMeters) {
     logicalMeters.forEach(this::saveMock);
   }

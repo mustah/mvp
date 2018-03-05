@@ -21,3 +21,8 @@ ehcache:
 
 liquibase:
   enabled: false
+
+mvp:
+  consumers:
+    rabbit:
+      queueName: MVP

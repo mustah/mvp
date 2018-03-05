@@ -3,32 +3,41 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.consumers.rabbitmq.MeteringMessageReceiver;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.OrganisationUseCases;
+import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableConfigurationProperties(RabbitConsumerProperties.class)
 class RabbitMqConfig {
 
-  private static final String QUEUE_NAME = "MVP";
+  private final String queueName;
+
+  RabbitMqConfig(
+    @Value("${mvp.consumers.rabbit.queueName}") String queueName
+  ) {
+    this.queueName = queueName;
+  }
 
   @Bean
   Queue queue() {
-    return new Queue(QUEUE_NAME, false);
+    return new Queue(queueName, false);
   }
 
   @Bean
   MessageHandler meteringMessageHandler(
-    LogicalMeters logicalMeters,
-    PhysicalMeters physicalMeters,
-    Organisations organisations,
+    LogicalMeterUseCases logicalMeters,
+    PhysicalMeterUseCases physicalMeters,
+    OrganisationUseCases organisations,
     MeasurementUseCases measurementUseCases
   ) {
     return new MeteringMessageHandler(
@@ -51,7 +60,7 @@ class RabbitMqConfig {
   ) {
     SimpleMessageListenerContainer container =
       new SimpleMessageListenerContainer(connectionFactory);
-    container.setQueueNames(QUEUE_NAME);
+    container.setQueueNames(queueName);
     container.setMessageListener(listenerAdapter);
     container.setDefaultRequeueRejected(false);
     return container;

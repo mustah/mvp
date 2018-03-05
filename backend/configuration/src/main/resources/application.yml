@@ -17,7 +17,13 @@ spring:
       hibernate.format_sql: true
       hibernate.type: trace
       hibernate.jdbc.batch_size: 30
-
+  rabbitmq:
+    host: localhost
+    username: guest
+    password: guest
+    listener:
+      simple:
+        default-requeue-rejected: false
 ehcache:
   heap-entries: 1000
   idle-time: 20
@@ -33,3 +39,8 @@ zuul:
 
 liquibase:
   enabled: false
+
+mvp:
+  consumers:
+    rabbit:
+      queueName: MVP
