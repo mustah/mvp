@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -46,12 +47,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -126,12 +130,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     createStatusMockData();
 
-    List<PhysicalMeter> meters = physicalMeters.findAll();
-    physicalMeter1 = meters.get(0);
-    physicalMeter2 = meters.get(1);
-    physicalMeter3 = meters.get(2);
-    physicalMeter4 = meters.get(3);
-    physicalMeter5 = meters.get(4);
+    com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
+      logicalMeterRepository.findAll(
+        emptyMap(),
+        new PageableAdapter(new PageRequest(0,5, Direction.ASC, "id"))
+      );
+
+    physicalMeter1 = meters.getContent().get(0).physicalMeters.get(0);
+    physicalMeter2 = meters.getContent().get(1).physicalMeters.get(0);
+    physicalMeter3 = meters.getContent().get(2).physicalMeters.get(0);
+    physicalMeter4 = meters.getContent().get(3).physicalMeters.get(0);
+    physicalMeter5 = meters.getContent().get(4).physicalMeters.get(0);
 
     MeterStatus meterStatus = meterStatuses.findAll().get(0);
     prepareMeterLogsForStatusPeriodTest(
@@ -173,8 +182,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
     String formatTime = Dates.formatTime(statusLogDate, TimeZone.getDefault());
 
-    assertThat(meterStatusLogDto.start).as("Unexpected date format").isEqualTo(formatTime);
-    assertThat(meterStatusLogDto.stop).as("Unexpected date format").isEqualTo(formatTime);
+    assertThat(meterStatusLogDto.start)
+      .as("Unexpected date format")
+      .isEqualTo(formatTime);
+
+    assertThat(meterStatusLogDto.stop)
+      .as("Unexpected date format")
+      .isEqualTo(formatTime);
   }
 
   @Test

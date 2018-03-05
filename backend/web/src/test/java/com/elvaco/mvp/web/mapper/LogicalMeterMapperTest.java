@@ -65,7 +65,7 @@ public class LogicalMeterMapperTest {
       emptyList(),
       null,
       singletonList(
-        new MeterStatusLog(null, 1, 1, "Ok", new Date(), new Date())
+        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
       ),
       emptyList()
     );
@@ -133,7 +133,7 @@ public class LogicalMeterMapperTest {
           singletonList(
             new MeterStatusLog(
               1L,
-              1,
+              randomUUID(),
               2,
               "Ok",
               dateFormat().parse("2018-02-12T14:14:25"),

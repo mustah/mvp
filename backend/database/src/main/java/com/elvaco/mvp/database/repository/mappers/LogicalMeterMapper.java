@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.repository.mappers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -50,7 +51,7 @@ public class LogicalMeterMapper {
 
   public LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
-    Map<Long, List<PhysicalMeterStatusLogEntity>> map
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap
   ) {
 
     List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
@@ -60,9 +61,9 @@ public class LogicalMeterMapper {
       .map(physicalMeterMapper::toDomainModel)
       .peek(
         physicalMeter -> {
-          if (map.containsKey(physicalMeter.id)) {
+          if (meterStatusMap.containsKey(physicalMeter.id)) {
             meterStatusLogs.addAll(
-              map.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
+              meterStatusMap.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
                 .collect(toList())
             );
           }

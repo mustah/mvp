@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -21,7 +22,8 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
 
   static {
     FILTERABLE_PROPERTIES.put("physicalMeterId", (String id) -> Q.physicalMeterId.eq(
-      Long.parseLong(id))
+      UUID.fromString(id)
+      )
     );
   }
 
@@ -34,7 +36,7 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
     return FILTERABLE_PROPERTIES;
   }
 
-  public BooleanExpression map(List<Long> physicalMeterIds, Map<String, List<String>> filter) {
+  public BooleanExpression map(List<UUID> physicalMeterIds, Map<String, List<String>> filter) {
     return (Q.physicalMeterId.in(physicalMeterIds)).and(map(filter));
   }
 

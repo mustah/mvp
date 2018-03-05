@@ -31,15 +31,15 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterRepository implements LogicalMeters {
 
+  private static final QPhysicalMeterStatusLogEntity Q =
+    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final LogicalMeterMapper logicalMeterMapper;
   private final LogicalMeterToPredicateMapper filterMapper;
   private final LogicalMeterSortingMapper sortingMapper;
   private final PhysicalMeterStatusLogToPredicateMapper statusFilterMapper;
-
-  private final static QPhysicalMeterStatusLogEntity Q =
-    QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
   public LogicalMeterRepository(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
@@ -141,7 +141,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   private Iterable<PhysicalMeterStatusLogEntity> getStatusesForMeters(
     List<LogicalMeterEntity> logicalMeterEntities,
     Map<String, List<String>> filterParams) {
-    List<Long> physicalMeterIds = new ArrayList<>();
+    List<UUID> physicalMeterIds = new ArrayList<>();
     logicalMeterEntities.forEach(
       logicalMeterEntity -> logicalMeterEntity.physicalMeters.forEach(
         physicalMeterEntity -> physicalMeterIds.add(physicalMeterEntity.id)
@@ -154,7 +154,7 @@ public class LogicalMeterRepository implements LogicalMeters {
         toSortString(Q.start),
         toSortString(Q.stop))
     );
- }
+  }
 
   private static String toSortString(Object sortProperty) {
     return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
@@ -163,17 +163,15 @@ public class LogicalMeterRepository implements LogicalMeters {
   private Optional<LogicalMeter> mapAndCollectWithStatuses(
     Optional<LogicalMeterEntity> logicalMeterEntity
   ) {
-    return logicalMeterEntity.isPresent()
-      ? Optional.of(
-        mapAndCollectWithStatuses(asList(logicalMeterEntity.get()), emptyMap()).get(0)
-      ) : Optional.ofNullable(null);
+    return logicalMeterEntity
+      .flatMap(meter -> mapAndCollectWithStatuses(asList(meter), emptyMap()).stream().findFirst());
   }
 
   private List<LogicalMeter> mapAndCollectWithStatuses(
     List<LogicalMeterEntity> meters,
     Map<String, List<String>> filterParams
   ) {
-    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
       getStatusesGroupedByPhysicalMeterId(
         getStatusesForMeters(meters, filterParams)
       );
@@ -187,10 +185,10 @@ public class LogicalMeterRepository implements LogicalMeters {
       ).collect(toList());
   }
 
-  private Map<Long, List<PhysicalMeterStatusLogEntity>> getStatusesGroupedByPhysicalMeterId(
+  private Map<UUID, List<PhysicalMeterStatusLogEntity>> getStatusesGroupedByPhysicalMeterId(
     Iterable<PhysicalMeterStatusLogEntity> statuses
   ) {
-    Map<Long, List<PhysicalMeterStatusLogEntity>> mappedStatuses = new HashMap<>();
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses = new HashMap<>();
 
     statuses.forEach(status -> {
       if (!mappedStatuses.containsKey(status.physicalMeterId)) {

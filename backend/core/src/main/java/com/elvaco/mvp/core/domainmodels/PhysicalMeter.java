@@ -8,9 +8,6 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
 @EqualsAndHashCode
 @ToString
 public class PhysicalMeter implements Identifiable<UUID> {
