@@ -45,7 +45,6 @@ import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +53,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 class DataProviderConfig {
 
-  private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
   private final UserJpaRepository userJpaRepository;
   private final SettingJpaRepository settingJpaRepository;
@@ -69,7 +67,6 @@ class DataProviderConfig {
 
   @Autowired
   DataProviderConfig(
-    ModelMapper modelMapper,
     PasswordEncoder passwordEncoder,
     UserJpaRepository userJpaRepository,
     SettingJpaRepository settingJpaRepository,
@@ -85,7 +82,6 @@ class DataProviderConfig {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
     this.measurementJpaRepository = measurementJpaRepository;
-    this.modelMapper = modelMapper;
     this.passwordEncoder = passwordEncoder;
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.physicalMeterJpaRepository = physicalMeterJpaRepository;
@@ -100,7 +96,7 @@ class DataProviderConfig {
   Users users() {
     return new UserRepository(
       userJpaRepository,
-      new UserMapper(modelMapper, new OrganisationMapper()),
+      new UserMapper(new OrganisationMapper()),
       passwordEncoder::encode
     );
   }

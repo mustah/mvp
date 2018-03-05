@@ -17,7 +17,6 @@ import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import org.junit.Before;
 import org.junit.Test;
-import org.modelmapper.ModelMapper;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.emptyList;
@@ -25,7 +24,6 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.modelmapper.config.Configuration.AccessLevel;
 
 public class LogicalMeterMapperTest {
 
@@ -33,12 +31,6 @@ public class LogicalMeterMapperTest {
 
   @Before
   public void setUp() {
-    ModelMapper modelMapper = new ModelMapper();
-    modelMapper
-      .getConfiguration()
-      .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(AccessLevel.PUBLIC);
-
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
