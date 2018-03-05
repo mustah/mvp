@@ -56,6 +56,9 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       connection = connectionFactory.createConnection();
       channel = connection.createChannel(false);
     } catch (AmqpConnectException ex) {
+      if (connection != null) {
+        connection.close();
+      }
       assumeNoException(ex);
     }
   }
