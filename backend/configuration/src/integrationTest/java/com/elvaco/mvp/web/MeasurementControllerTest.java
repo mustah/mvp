@@ -171,9 +171,9 @@ public class MeasurementControllerTest extends IntegrationTest {
       .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
       .getBody();
 
-    measurements.forEach(
-      measurementDto -> assertThat(measurementDto.quantity).isNotEqualTo("Milk temperature")
-    );
+    List<String> names = measurements.stream().map(m -> m.quantity).collect(toList());
+
+    assertThat(names).doesNotContain("Elvco");
   }
 
   @Test
@@ -224,7 +224,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("Heat");
 
-    // TODO[!must!] fix this when we have a PhysicalModelMapper in place!
+    // TODO[!must!] fix this when we have a PhysicalMeterMapper in place!
     /*String valueAndUnit = dto.value + " " + dto.unit;
     assertThat(toMeasurementUnit(valueAndUnit, "K").toString()).isEqualTo("423.15 K");*/
   }
