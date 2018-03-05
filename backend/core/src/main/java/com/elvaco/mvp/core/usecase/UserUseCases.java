@@ -71,8 +71,8 @@ public class UserUseCases {
   }
 
   private User removeTokenForUser(User user) {
-    if (!currentUser.getUsername().equals(user.email)) {
-      tokenService.removeTokenByEmail(user.email);
+    if (!currentUser.hasSameUsernameAs(user)) {
+      tokenService.removeTokenByUsername(user.getUsername());
     }
     return user;
   }

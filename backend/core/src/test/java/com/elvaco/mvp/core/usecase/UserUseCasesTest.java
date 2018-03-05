@@ -53,7 +53,7 @@ public class UserUseCasesTest {
 
     Optional<User> update = useCases.update(userToUpdate);
 
-    assertThat(update.get().email).isEqualTo("t3@email.com");
+    assertThat(update.get().getUsername()).isEqualTo("t3@email.com");
     assertThat(tokenService.getToken(token).isPresent()).isFalse();
   }
 

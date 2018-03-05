@@ -87,8 +87,8 @@ public final class RestClient {
     return template.exchange(baseUrl + url, HttpMethod.GET, null, responseType);
   }
 
-  public RestClient loginWith(String email, String password) {
-    String authentication = email + ":" + password;
+  public RestClient loginWith(String username, String password) {
+    String authentication = username + ":" + password;
     byte[] authBytes = authentication.getBytes(StandardCharsets.UTF_8);
     String token = new String(Base64.getEncoder().encode(authBytes), StandardCharsets.UTF_8);
     return basicAuthorization(token);

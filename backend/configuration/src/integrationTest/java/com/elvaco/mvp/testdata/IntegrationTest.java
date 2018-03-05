@@ -65,7 +65,7 @@ public abstract class IntegrationTest {
   protected RestClient restAsUser(User user) {
     createUserIfNotPresent(user);
     return restClient()
-      .loginWith(user.email, user.password)
+      .loginWith(user.getUsername(), user.password)
       .tokenAuthorization();
   }
 

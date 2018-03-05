@@ -42,7 +42,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
 
   @Override
   public Optional<User> findByEmail(String email) {
-    return filter(u -> u.email.equalsIgnoreCase(email)).findFirst();
+    return filter(u -> u.hasSameUsernameAs(() -> email)).findFirst();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   @Override
   public Optional<String> findPasswordByUserId(UUID userId) {
     return filter(user -> Objects.equals(user.id, user.id))
-      .map(u -> u.password)
+      .map(user -> user.password)
       .findFirst();
   }
 

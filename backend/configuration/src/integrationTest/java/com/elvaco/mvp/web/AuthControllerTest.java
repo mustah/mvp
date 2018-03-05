@@ -30,7 +30,7 @@ public class AuthControllerTest extends IntegrationTest {
     User user = createUserIfNotPresent(ELVACO_SUPER_ADMIN_USER);
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.email, user.password)
+      .loginWith(user.getUsername(), user.password)
       .get("/authenticate", UserTokenDto.class);
 
     UserTokenDto body = response.getBody();
@@ -75,7 +75,7 @@ public class AuthControllerTest extends IntegrationTest {
     User user = createUserIfNotPresent(RANDOM_ELVACO_USER);
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.email, user.password)
+      .loginWith(user.getUsername(), user.password)
       .get("/authenticate", UserTokenDto.class);
 
     String token = response.getBody().token;
@@ -127,7 +127,7 @@ public class AuthControllerTest extends IntegrationTest {
       singletonList(Role.USER)
     ));
 
-    ResponseEntity<?> response = restClient().loginWith(user.email, user.password)
+    ResponseEntity<?> response = restClient().loginWith(user.getUsername(), user.password)
       .get("/meters/", Object.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

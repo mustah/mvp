@@ -39,12 +39,12 @@ public class EhTokenServiceCache implements TokenService {
   }
 
   @Override
-  public void removeTokenByEmail(String email) {
-    log.info("removeTokenByEmail: {}", email);
+  public void removeTokenByUsername(String username) {
+    log.info("removeTokenByEmail: {}", username);
     Iterator<Entry<String, AuthenticatedUser>> it = cache.iterator();
     while (it.hasNext()) {
       Entry<String, AuthenticatedUser> entry = it.next();
-      if (entry.getValue().getUsername().equals(email)) {
+      if (entry.getValue().hasSameUsernameAs(() -> username)) {
         it.remove();
         break;
       }

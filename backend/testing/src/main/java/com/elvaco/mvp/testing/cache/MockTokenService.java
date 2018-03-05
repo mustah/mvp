@@ -27,10 +27,10 @@ public class MockTokenService implements TokenService {
   }
 
   @Override
-  public void removeTokenByEmail(String email) {
+  public void removeTokenByUsername(String username) {
     cache.values()
       .stream()
-      .filter(u -> u.getUsername().equals(email))
+      .filter(u -> u.hasSameUsernameAs(() -> username))
       .findFirst()
       .ifPresent(authenticatedUser -> cache.remove(authenticatedUser.getToken()));
   }

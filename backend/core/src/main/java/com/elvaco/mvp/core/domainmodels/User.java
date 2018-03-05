@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
-public class User implements Identifiable<UUID> {
+public class User implements Identifiable<UUID>, Usernamed {
 
   public final UUID id;
   public final String name;
@@ -55,12 +55,13 @@ public class User implements Identifiable<UUID> {
     return new User(id, name, email, password, organisation, roles);
   }
 
-  public Password getPassword() {
-    return () -> password;
-  }
-
   @Override
   public UUID getId() {
     return id;
+  }
+
+  @Override
+  public String getUsername() {
+    return email;
   }
 }

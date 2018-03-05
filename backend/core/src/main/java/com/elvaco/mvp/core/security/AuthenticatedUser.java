@@ -3,7 +3,9 @@ package com.elvaco.mvp.core.security;
 import java.io.Serializable;
 import java.util.UUID;
 
-public interface AuthenticatedUser extends Serializable {
+import com.elvaco.mvp.core.domainmodels.Usernamed;
+
+public interface AuthenticatedUser extends Usernamed, Serializable {
 
   boolean isSuperAdmin();
 
@@ -12,8 +14,6 @@ public interface AuthenticatedUser extends Serializable {
   boolean isWithinOrganisation(UUID organisationId);
 
   UUID getOrganisationId();
-
-  String getUsername();
 
   String getToken();
 }
