@@ -35,15 +35,15 @@ class RabbitMqConfig {
 
   @Bean
   MessageHandler meteringMessageHandler(
-    LogicalMeterUseCases logicalMeters,
-    PhysicalMeterUseCases physicalMeters,
-    OrganisationUseCases organisations,
+    LogicalMeterUseCases logicalMeterUseCases,
+    PhysicalMeterUseCases physicalMeterUseCases,
+    OrganisationUseCases organisationUseCases,
     MeasurementUseCases measurementUseCases
   ) {
     return new MeteringMessageHandler(
-      logicalMeters,
-      physicalMeters,
-      organisations,
+      logicalMeterUseCases,
+      physicalMeterUseCases,
+      organisationUseCases,
       measurementUseCases
     );
   }
@@ -68,6 +68,7 @@ class RabbitMqConfig {
 
   @Bean
   MessageListenerAdapter listenerAdapter(MeteringMessageReceiver meteringMessageReceiver) {
-    return new MessageListenerAdapter(meteringMessageReceiver, "receiveMessage");
+    return new MessageListenerAdapter(new AuthenticatingMeteringMessageReceiver(
+      meteringMessageReceiver), "receiveMessage");
   }
 }

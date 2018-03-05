@@ -5,20 +5,16 @@ import java.util.Optional;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MeteringMessageParser {
 
-  private final Gson gson;
+  private final MeteringMessageSerializer serializer;
 
   public MeteringMessageParser() {
-    gson = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-      .create();
+    serializer = new MeteringMessageSerializer();
   }
 
   Optional<MeteringMeterStructureMessageDto> parseStructureMessage(String message) {
@@ -58,7 +54,7 @@ public class MeteringMessageParser {
     Class<T> classOfT
   ) {
     try {
-      return Optional.ofNullable(gson.fromJson(message, classOfT))
+      return Optional.ofNullable(serializer.deserialize(message, classOfT))
         .filter((T m) -> {
           try {
             return m.validate();

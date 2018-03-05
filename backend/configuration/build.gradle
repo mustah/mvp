@@ -5,7 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 applicationName = 'mvp'
 
 dependencyManagement {
-  imports {mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"}
+  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
 }
 
 mainClassName = "com.elvaco.mvp.MvpApplication"
@@ -54,6 +54,9 @@ task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
   systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.datasource.username", "mvp"
   systemProperty "spring.datasource.password", "mvp"
+  systemProperty "spring.rabbitmq.host", "rabbit_host"
+  systemProperty "spring.rabbitmq.username", "guest"
+  systemProperty "spring.rabbitmq.password", "guest"
   testClassesDir = sourceSets.integrationTest.output.classesDir
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
@@ -62,7 +65,7 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   doFirst {
     exec {
       executable "docker-compose"
-      args "up", "-d", "postgresql"
+      args "up", "-d", "postgresql", "rabbitmq"
     }
   }
   systemProperty "spring.profiles.active", "postgresql"
@@ -70,7 +73,11 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task cleanupPostgresDocker {
+task cleanUpDockerServices {
+  onlyIf {
+    final def doCleanup = System.getenv('MVP_SYSTEM_TEST_DO_CLEANUP');
+    return doCleanup == null || !doCleanup.equalsIgnoreCase('false');
+  }
   doLast {
     exec {
       executable "docker-compose"
@@ -78,7 +85,7 @@ task cleanupPostgresDocker {
     }
   }
 }
-systemTest.finalizedBy cleanupPostgresDocker
+systemTest.finalizedBy cleanUpDockerServices
 
 configurations {
   integrationTestCompile.extendsFrom testCompile
@@ -104,4 +111,4 @@ jar {
   }
 }
 jar.dependsOn(':frontend:bundle')
-check.dependsOn([integrationTest,systemTest])
+check.dependsOn([integrationTest, systemTest])
