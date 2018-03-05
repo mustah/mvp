@@ -2,7 +2,7 @@ import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
-import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
+import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {
   ADD_SELECTION,
   DESELECT_SELECTION,

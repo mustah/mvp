@@ -25,7 +25,7 @@ import {
   productModels,
   users,
 } from '../../../domain-models/domainModelsReducer';
-import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
+import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';

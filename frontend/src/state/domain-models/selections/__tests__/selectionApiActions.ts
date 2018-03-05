@@ -10,7 +10,7 @@ import {IdNamed} from '../../../../types/Types';
 import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../../domainModels';
 import {requestMethod} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
-import {selectionsSchema} from '../../domainModelsSchemas';
+import {selectionsSchema} from '../selectionsSchemas';
 import {fetchSelections} from '../selectionsApiActions';
 import MockAdapter = require('axios-mock-adapter');
 

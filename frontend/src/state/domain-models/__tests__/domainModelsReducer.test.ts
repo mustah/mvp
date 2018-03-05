@@ -7,7 +7,7 @@ import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {deleteRequestOf, getEntityRequestOf, getRequestOf, postRequestOf, putRequestOf} from '../domainModelsActions';
 import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
-import {selectionsSchema} from '../domainModelsSchemas';
+import {selectionsSchema} from '../selections/selectionsSchemas';
 import {clearErrorGateways} from '../gateway/gatewayApiActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';

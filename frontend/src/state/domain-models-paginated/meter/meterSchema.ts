@@ -1,5 +1,5 @@
 import {schema} from 'normalizr';
-import {address, city, processStrategy} from '../../domain-models/domainModelsSchemas';
+import {address, city, processStrategy} from '../../domain-models/selections/selectionsSchemas';
 
 const meter = new schema.Entity('meters', {}, {processStrategy});
 const allMeters = new schema.Entity('allMeters', {}, {processStrategy});
