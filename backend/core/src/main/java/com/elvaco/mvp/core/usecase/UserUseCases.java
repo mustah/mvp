@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.security.TokenService;
 
 import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.DELETE;
@@ -19,15 +20,18 @@ public class UserUseCases {
   private final AuthenticatedUser currentUser;
   private final Users users;
   private final OrganisationPermissions organisationPermissions;
+  private final TokenService tokenService;
 
   public UserUseCases(
     AuthenticatedUser currentUser,
     Users users,
-    OrganisationPermissions organisationPermissions
+    OrganisationPermissions organisationPermissions,
+    TokenService tokenService
   ) {
     this.currentUser = currentUser;
     this.users = users;
     this.organisationPermissions = organisationPermissions;
+    this.tokenService = tokenService;
   }
 
   public List<User> findAll() {
@@ -53,7 +57,8 @@ public class UserUseCases {
     if (organisationPermissions.isAllowed(currentUser, user, UPDATE)) {
       return users.findPasswordByUserId(user.id)
         .map(user::withPassword)
-        .map(users::update);
+        .map(users::update)
+        .map(this::removeTokenForUser);
     }
     return Optional.empty();
   }
@@ -61,6 +66,14 @@ public class UserUseCases {
   public void delete(User user) {
     if (organisationPermissions.isAllowed(currentUser, user, DELETE)) {
       users.deleteById(user.id);
+      removeTokenForUser(user);
     }
+  }
+
+  private User removeTokenForUser(User user) {
+    if (!currentUser.getUsername().equals(user.email)) {
+      tokenService.removeTokenByEmail(user.email);
+    }
+    return user;
   }
 }

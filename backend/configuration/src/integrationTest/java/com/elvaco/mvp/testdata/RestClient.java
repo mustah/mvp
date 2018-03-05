@@ -51,7 +51,7 @@ public final class RestClient {
 
   public <T1, T2> ResponseEntity<T2> put(String url, T1 body, Class<T2> responseType) {
     RequestEntity<T1> request = RequestEntity
-      .post(URI.create(apiUrlOf(url)))
+      .put(URI.create(apiUrlOf(url)))
       .accept(MediaType.APPLICATION_JSON)
       .body(body);
     return template.exchange(request, responseType);

@@ -4,13 +4,18 @@ import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
+import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +28,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -36,7 +42,20 @@ public class UserControllerTest extends IntegrationTest {
   @Autowired
   private UserMapper userMapper;
 
+  @Autowired
+  private Organisations organisations;
+
   private final OrganisationMapper organisationMapper = new OrganisationMapper();
+
+  @Before
+  public void setUp() {
+    organisations.save(WAYNE_INDUSTRIES);
+  }
+
+  @After
+  public void tearDown() {
+    organisations.deleteById(WAYNE_INDUSTRIES.id);
+  }
 
   @Test
   public void findUserById() {
@@ -271,6 +290,46 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<List<UserDto>> responseList = asAdminOfElvaco().getList("/users", UserDto.class);
     assertThat(responseList.getBody()).doesNotContain(batman);
     assertThat(responseList.getBody()).contains(colleague);
+  }
+
+  @Test
+  public void invalidateUserWhenSuperAdminUpdatedThatUsersCredentials() {
+    UserWithPasswordDto userWithPassword = createUserDto("batman@batty.com", WAYNE_INDUSTRIES);
+
+    ResponseEntity<UserDto> postResponse = asSuperAdmin()
+      .post("/users", userWithPassword, UserDto.class);
+
+    assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    UserDto created = postResponse.getBody();
+    assertThat(created.id).isNotNull();
+
+    String token = restClient()
+      .loginWith(userWithPassword.email, userWithPassword.password)
+      .get("/authenticate", UserTokenDto.class)
+      .getBody()
+      .token;
+
+    assertThat(token).isNotNull();
+
+    UserDto user = new UserDto(
+      uuidOf(created.id),
+      "Wayne, Bruce",
+      created.email,
+      created.organisation,
+      created.roles
+    );
+
+    ResponseEntity<UserDto> putResponse = asSuperAdmin()
+      .put("/users", user, UserDto.class);
+
+    assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(putResponse.getBody().name).isEqualTo("Wayne, Bruce");
+
+    ResponseEntity<Unauthorized> logoutResponse = restClient()
+      .withBearerToken(token)
+      .get("/users/" + created.id, Unauthorized.class);
+
+    assertThat(logoutResponse.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
   }
 
   private UserWithPasswordDto createUserDto(String email) {

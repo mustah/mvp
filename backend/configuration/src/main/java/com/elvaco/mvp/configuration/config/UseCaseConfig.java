@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -30,6 +31,7 @@ class UseCaseConfig {
   private final Organisations organisations;
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
+  private final TokenService tokenService;
 
   @Autowired
   UseCaseConfig(
@@ -39,7 +41,8 @@ class UseCaseConfig {
     Measurements measurements,
     Organisations organisations,
     Gateways gateways,
-    PhysicalMeters physicalMeters
+    PhysicalMeters physicalMeters,
+    TokenService tokenService
   ) {
     this.users = users;
     this.logicalMeters = logicalMeters;
@@ -48,6 +51,7 @@ class UseCaseConfig {
     this.organisations = organisations;
     this.gateways = gateways;
     this.physicalMeters = physicalMeters;
+    this.tokenService = tokenService;
   }
 
   @Bean
@@ -57,7 +61,7 @@ class UseCaseConfig {
 
   @Bean
   UserUseCases userUseCases(AuthenticatedUser currentUser) {
-    return new UserUseCases(currentUser, users, new OrganisationPermissions(users));
+    return new UserUseCases(currentUser, users, new OrganisationPermissions(users), tokenService);
   }
 
   @Bean

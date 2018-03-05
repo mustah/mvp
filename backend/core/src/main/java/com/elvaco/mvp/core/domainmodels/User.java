@@ -51,6 +51,10 @@ public class User implements Identifiable<UUID> {
     return new User(id, name, email, password, organisation, roles);
   }
 
+  public User withName(String name) {
+    return new User(id, name, email, password, organisation, roles);
+  }
+
   public Password getPassword() {
     return () -> password;
   }

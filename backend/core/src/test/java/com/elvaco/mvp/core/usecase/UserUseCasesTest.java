@@ -1,13 +1,18 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.security.TokenService;
+import com.elvaco.mvp.testing.cache.MockTokenService;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
@@ -20,29 +25,36 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserUseCasesTest {
 
   private UserUseCases useCases;
+  private TokenService tokenService;
 
   @Test
-  public void canUpdateUserWithinSameOrganisation() {
+  public void adminCanUpdateUserWithinSameOrganisation() {
     User user = new User(
       randomUUID(),
       "t1",
       "t2@email.com",
       newPassword(),
       DAILY_PLANET,
-      singletonList(USER)
+      asList(USER, ADMIN)
     );
 
     User userToUpdate = new User(
-      user.getId(),
-      "test",
-      "t2@email.com",
+      randomUUID(),
+      "t3",
+      "t3@email.com",
       newPassword(),
       DAILY_PLANET,
       singletonList(USER)
     );
-    usersOf(authenticatedUser(user), user, userToUpdate);
+    usersOf(currentUser(user), user, userToUpdate);
 
-    assertThat(useCases.update(userToUpdate).get().name).isEqualTo("test");
+    String token = randomUUID().toString();
+    tokenService.saveToken(token, new MockAuthenticatedUser(userToUpdate, token));
+
+    Optional<User> update = useCases.update(userToUpdate);
+
+    assertThat(update.get().email).isEqualTo("t3@email.com");
+    assertThat(tokenService.getToken(token).isPresent()).isFalse();
   }
 
   @Test
@@ -63,7 +75,7 @@ public class UserUseCasesTest {
       MARVEL,
       singletonList(USER)
     );
-    usersOf(authenticatedUser(marvelUser), dailyPlanetUser, marvelUser);
+    usersOf(currentUser(marvelUser), dailyPlanetUser, marvelUser);
 
     assertThat(useCases.update(dailyPlanetUser).isPresent()).isFalse();
   }
@@ -86,19 +98,29 @@ public class UserUseCasesTest {
       MARVEL,
       singletonList(USER)
     );
-    usersOf(authenticatedUser(superAdmin), superAdmin, marvelUser);
+    usersOf(currentUser(superAdmin), superAdmin, marvelUser);
+
+    String token = randomUUID().toString();
+    tokenService.saveToken(token, new MockAuthenticatedUser(marvelUser, token));
 
     useCases.delete(marvelUser);
 
     assertThat(useCases.findById(marvelUser.id).isPresent()).isFalse();
+    assertThat(tokenService.getToken(token).isPresent()).isFalse();
   }
 
-  private void usersOf(AuthenticatedUser currentUser, User... newUsers) {
-    Users users = new MockUsers(asList(newUsers));
-    useCases = new UserUseCases(currentUser, users, new OrganisationPermissions(users));
+  private void usersOf(AuthenticatedUser currentUser, User... users) {
+    tokenService = new MockTokenService();
+    Users usersRepository = new MockUsers(asList(users));
+    useCases = new UserUseCases(
+      currentUser,
+      usersRepository,
+      new OrganisationPermissions(usersRepository),
+      tokenService
+    );
   }
 
-  private AuthenticatedUser authenticatedUser(User user) {
+  private AuthenticatedUser currentUser(User user) {
     return new MockAuthenticatedUser(user, newToken());
   }
 

@@ -1,11 +1,13 @@
 package com.elvaco.mvp.cache;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.ehcache.Cache;
+import org.ehcache.Cache.Entry;
 
 @Slf4j
 public class EhTokenServiceCache implements TokenService {
@@ -34,5 +36,18 @@ public class EhTokenServiceCache implements TokenService {
   public void removeToken(String token) {
     log.info("removeToken: {}", token);
     cache.remove(token);
+  }
+
+  @Override
+  public void removeTokenByEmail(String email) {
+    log.info("removeTokenByEmail: {}", email);
+    Iterator<Entry<String, AuthenticatedUser>> it = cache.iterator();
+    while (it.hasNext()) {
+      Entry<String, AuthenticatedUser> entry = it.next();
+      if (entry.getValue().getUsername().equals(email)) {
+        it.remove();
+        break;
+      }
+    }
   }
 }

@@ -11,4 +11,6 @@ public interface TokenService {
   void saveToken(String token, AuthenticatedUser authenticatedUser);
 
   void removeToken(String token);
+
+  void removeTokenByEmail(String email);
 }

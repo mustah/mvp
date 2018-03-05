@@ -6,6 +6,7 @@ import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+
 @EqualsAndHashCode
 @ToString
 public class UserDto {
