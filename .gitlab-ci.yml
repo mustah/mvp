@@ -75,6 +75,8 @@ test:system:
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
           alias: pg_host
+        - name: rabbitmq
+          alias: rabbit_host
     script:
         - gradle systemTestCI
     artifacts:

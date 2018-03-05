@@ -54,6 +54,9 @@ task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
   systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.datasource.username", "mvp"
   systemProperty "spring.datasource.password", "mvp"
+  systemProperty "spring.rabbitmq.host", "rabbit_host"
+  systemProperty "spring.rabbitmq.username", "guest"
+  systemProperty "spring.rabbitmq.password", "guest"
   testClassesDir = sourceSets.integrationTest.output.classesDir
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
