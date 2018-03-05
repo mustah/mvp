@@ -5,7 +5,7 @@ apply plugin: 'io.spring.dependency-management'
 applicationName = 'mvp'
 
 dependencyManagement {
-  imports {mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"}
+  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
 }
 
 mainClassName = "com.elvaco.mvp.MvpApplication"
@@ -62,7 +62,7 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   doFirst {
     exec {
       executable "docker-compose"
-      args "up", "-d", "postgresql"
+      args "up", "-d", "postgresql", "rabbitmq"
     }
   }
   systemProperty "spring.profiles.active", "postgresql"
@@ -70,7 +70,7 @@ task systemTest(type: Test, dependsOn: 'test', group: 'verification') {
   classpath = sourceSets.integrationTest.runtimeClasspath
 }
 
-task cleanupPostgresDocker {
+task cleanUpDockerCompose {
   doLast {
     exec {
       executable "docker-compose"
@@ -78,7 +78,7 @@ task cleanupPostgresDocker {
     }
   }
 }
-systemTest.finalizedBy cleanupPostgresDocker
+systemTest.finalizedBy cleanUpDockerCompose
 
 configurations {
   integrationTestCompile.extendsFrom testCompile
@@ -104,4 +104,4 @@ jar {
   }
 }
 jar.dependsOn(':frontend:bundle')
-check.dependsOn([integrationTest,systemTest])
+check.dependsOn([integrationTest, systemTest])
