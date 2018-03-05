@@ -6,8 +6,6 @@ import com.elvaco.mvp.database.repository.mappers.FilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.web.security.JpaUserDetailsService;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,15 +37,5 @@ class ApplicationConfig {
   @Bean
   LogicalMeterToPredicateMapper logicalMeterToPredicateMapper() {
     return new LogicalMeterToPredicateMapper();
-  }
-
-  @Bean
-  ModelMapper modelMapper() {
-    ModelMapper modelMapper = new ModelMapper();
-    modelMapper
-      .getConfiguration()
-      .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(AccessLevel.PUBLIC);
-    return modelMapper;
   }
 }

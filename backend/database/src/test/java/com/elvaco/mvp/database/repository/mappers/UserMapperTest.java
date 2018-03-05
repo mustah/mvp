@@ -5,8 +5,6 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import org.junit.Before;
 import org.junit.Test;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
@@ -26,12 +24,7 @@ public class UserMapperTest {
 
   @Before
   public void setUp() {
-    ModelMapper modelMapper = new ModelMapper();
-    modelMapper
-      .getConfiguration()
-      .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(AccessLevel.PUBLIC);
-    userMapper = new UserMapper(modelMapper, new OrganisationMapper());
+    userMapper = new UserMapper(new OrganisationMapper());
   }
 
   @Test

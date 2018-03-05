@@ -7,17 +7,14 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
-import org.modelmapper.ModelMapper;
 
 import static java.util.stream.Collectors.toList;
 
 public class UserMapper implements DomainEntityMapper<User, UserEntity> {
 
-  private final ModelMapper modelMapper;
   private final OrganisationMapper organisationMapper;
 
-  public UserMapper(ModelMapper modelMapper, OrganisationMapper organisationMapper) {
-    this.modelMapper = modelMapper;
+  public UserMapper(OrganisationMapper organisationMapper) {
     this.organisationMapper = organisationMapper;
   }
 
@@ -35,12 +32,21 @@ public class UserMapper implements DomainEntityMapper<User, UserEntity> {
 
   @Override
   public UserEntity toEntity(User user) {
-    UserEntity userEntity = modelMapper.map(user, UserEntity.class);
-    userEntity.roles = user.roles
+    return new UserEntity(
+      user.getId(),
+      user.name,
+      user.email,
+      user.password,
+      organisationMapper.toEntity(user.organisation),
+      rolesOf(user.roles)
+    );
+  }
+
+  private List<RoleEntity> rolesOf(List<Role> roles) {
+    return roles
       .stream()
       .map(r -> new RoleEntity(r.role))
       .collect(toList());
-    return userEntity;
   }
 
   private List<Role> rolesOf(Collection<RoleEntity> roles) {

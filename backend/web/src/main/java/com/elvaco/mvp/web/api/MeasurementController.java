@@ -3,11 +3,10 @@ package com.elvaco.mvp.web.api;
 import java.util.HashMap;
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
-import org.modelmapper.ModelMapper;
+import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,21 +19,21 @@ import static java.util.stream.Collectors.toList;
 public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
-  private final ModelMapper modelMapper;
+  private final MeasurementMapper measurementMapper;
 
   @Autowired
   MeasurementController(
     MeasurementUseCases measurementUseCases,
-    ModelMapper modelMapper
+    MeasurementMapper measurementMapper
   ) {
     this.measurementUseCases = measurementUseCases;
-    this.modelMapper = modelMapper;
+    this.measurementMapper = measurementMapper;
   }
 
   @GetMapping("{id}")
   public MeasurementDto measurement(@PathVariable("id") Long id) {
     return measurementUseCases.findById(id)
-      .map(this::toDto)
+      .map(measurementMapper::toDto)
       .orElseThrow(() -> new MeasurementNotFound(id));
   }
 
@@ -47,11 +46,7 @@ public class MeasurementController {
       scale,
       new HashMap<>(requestParams)
     ).stream()
-      .map(this::toDto)
+      .map(measurementMapper::toDto)
       .collect(toList());
-  }
-
-  private MeasurementDto toDto(Measurement measurement) {
-    return modelMapper.map(measurement, MeasurementDto.class);
   }
 }

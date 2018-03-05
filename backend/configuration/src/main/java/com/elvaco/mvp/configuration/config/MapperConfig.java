@@ -2,6 +2,7 @@ package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.web.mapper.GatewayMapper;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
+import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
@@ -34,5 +35,10 @@ class MapperConfig {
   @Bean
   GatewayMapper gatewayMapper() {
     return new GatewayMapper();
+  }
+
+  @Bean
+  MeasurementMapper measurementMapper() {
+    return new MeasurementMapper();
   }
 }

@@ -21,8 +21,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import org.junit.Before;
 import org.junit.Test;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.config.Configuration.AccessLevel;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
@@ -38,12 +36,6 @@ public class LogicalMeterMapperTest {
 
   @Before
   public void setUp() {
-    ModelMapper modelMapper = new ModelMapper();
-    modelMapper
-      .getConfiguration()
-      .setFieldMatchingEnabled(true)
-      .setFieldAccessLevel(AccessLevel.PUBLIC);
-
     mapper = new LogicalMeterMapper(new MeterStatusLogMapper());
   }
 
