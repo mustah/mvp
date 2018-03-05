@@ -127,7 +127,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
     );
 
     users.stream()
-      .map(u -> u.withPassword(() -> u.password))
+      .map(u -> u.withPassword(u.password))
       .forEach(userUseCases::create);
 
     settingUseCases.setDemoUsersLoaded();
