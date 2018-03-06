@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
@@ -25,8 +25,6 @@ import static java.util.Arrays.asList;
 @Profile("demo")
 @Component
 public class LogDatabaseLoader implements CommandLineRunner {
-
-  private static final Random RANDOM = new Random(3);
 
   private final PhysicalMeters physicalMeters;
   private final MeterStatuses meterStatuses;
@@ -52,40 +50,51 @@ public class LogDatabaseLoader implements CommandLineRunner {
 
   private void createStatusMockData() {
     meterStatuses.save(asList(
+      new MeterStatus("active"),
       new MeterStatus("ok"),
       new MeterStatus("warning"),
       new MeterStatus("critical"),
       new MeterStatus("info"),
-      new MeterStatus("active"),
       new MeterStatus("maintenance scheduled")
     ));
   }
 
   private void createStatusLogMockData() {
-    List<MeterStatusLog> statuses = new ArrayList<>();
+    List<MeterStatusLog> statusLogs = new ArrayList<>();
 
-    meterStatuses.findAll().forEach(
-      meterStatus -> physicalMeters.findAll()
-        .forEach(
-          physicalMeter ->
-            statuses.add(
-              new MeterStatusLog(
-                physicalMeter.id,
-                meterStatus.id,
-                meterStatus.name,
-                addDays()
-              )
-            )
-        )
-    );
+    List<MeterStatus> statuses = meterStatuses.findAll();
+    List<PhysicalMeter> meters = physicalMeters.findAll();
 
-    meterStatusLogs.save(statuses);
+    int daySeed = 10;
+    int hourSeed = 0;
+
+    for (PhysicalMeter meter : meters) {
+      daySeed++;
+      for (MeterStatus status : statuses) {
+        hourSeed++;
+        statusLogs.add(
+          new MeterStatusLog(
+            null,
+            meter.id,
+            status.id,
+            status.name,
+            addDays(daySeed, hourSeed),
+            addDays(daySeed - 10, hourSeed)
+          )
+        );
+      }
+      hourSeed = 0;
+    }
+
+    meterStatusLogs.save(statusLogs);
   }
 
-  private Date addDays() {
+  private Date addDays(int daySeed, int hourSeed) {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, -RANDOM.nextInt(100));
+    calendar.add(Calendar.DATE, -daySeed);
+    calendar.add(Calendar.HOUR, hourSeed);
+
     return calendar.getTime();
   }
 }

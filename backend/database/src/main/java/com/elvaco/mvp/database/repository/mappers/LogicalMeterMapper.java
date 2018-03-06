@@ -2,6 +2,8 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -10,7 +12,9 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -20,27 +24,61 @@ public class LogicalMeterMapper {
   private final LocationMapper locationMapper;
   private final PhysicalMeterMapper physicalMeterMapper;
   private final GatewayMapper gatewayMapper;
+  private final MeterStatusLogMapper meterStatusLogMapper;
 
   public LogicalMeterMapper(
     MeterDefinitionMapper meterDefinitionMapper,
     LocationMapper locationMapper,
     PhysicalMeterMapper physicalMeterMapper,
-    GatewayMapper gatewayMapper
+    GatewayMapper gatewayMapper,
+    MeterStatusLogMapper meterStatusLogMapper
   ) {
     this.meterDefinitionMapper = meterDefinitionMapper;
     this.locationMapper = locationMapper;
     this.physicalMeterMapper = physicalMeterMapper;
     this.gatewayMapper = gatewayMapper;
+    this.meterStatusLogMapper = meterStatusLogMapper;
   }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
+    List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
+      .stream()
+      .map(physicalMeterMapper::toDomainModel)
+      .collect(toList());
+
+    return getLogicalMeter(logicalMeterEntity, emptyList(), physicalMeters);
+  }
+
+  public LogicalMeter toDomainModel(
+    LogicalMeterEntity logicalMeterEntity,
+    Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap
+  ) {
+
     List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
 
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
       .stream()
       .map(physicalMeterMapper::toDomainModel)
-      .peek(physicalMeter -> meterStatusLogs.addAll(physicalMeter.meterStatusLogs))
+      .peek(
+        physicalMeter -> {
+          if (meterStatusMap.containsKey(physicalMeter.id)) {
+            meterStatusLogs.addAll(
+              meterStatusMap.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
+                .collect(toList())
+            );
+          }
+        }
+      )
       .collect(toList());
+
+    return getLogicalMeter(logicalMeterEntity, meterStatusLogs, physicalMeters);
+  }
+
+  private LogicalMeter getLogicalMeter(
+    LogicalMeterEntity logicalMeterEntity,
+    List<MeterStatusLog> meterStatusLogs,
+    List<PhysicalMeter> physicalMeters
+  ) {
 
     return new LogicalMeter(
       logicalMeterEntity.id,

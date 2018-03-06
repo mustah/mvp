@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -46,12 +47,15 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,10 +67,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private final Date statusLogDate = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
-  PhysicalMeter meter1;
-  PhysicalMeter meter2;
-  PhysicalMeter meter3;
-  PhysicalMeter meter4;
+  PhysicalMeter physicalMeter1;
+  PhysicalMeter physicalMeter2;
+  PhysicalMeter physicalMeter3;
+  PhysicalMeter physicalMeter4;
+  PhysicalMeter physicalMeter5;
 
   MeterDefinition districtHeatingMeterDefinition;
   MeterDefinition hotWaterMeterDefinition;
@@ -125,14 +130,27 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     createStatusMockData();
 
-    List<PhysicalMeter> meters = physicalMeters.findAll();
-    meter1 = meters.get(0);
-    meter2 = meters.get(1);
-    meter3 = meters.get(2);
-    meter4 = meters.get(3);
+    com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
+      logicalMeterRepository.findAll(
+        emptyMap(),
+        new PageableAdapter(new PageRequest(0,5, Direction.ASC, "id"))
+      );
+
+    physicalMeter1 = meters.getContent().get(0).physicalMeters.get(0);
+    physicalMeter2 = meters.getContent().get(1).physicalMeters.get(0);
+    physicalMeter3 = meters.getContent().get(2).physicalMeters.get(0);
+    physicalMeter4 = meters.getContent().get(3).physicalMeters.get(0);
+    physicalMeter5 = meters.getContent().get(4).physicalMeters.get(0);
 
     MeterStatus meterStatus = meterStatuses.findAll().get(0);
-    prepareMeterLogsForStatusPeriodTest(meter1, meter2, meter3, meter4, meterStatus);
+    prepareMeterLogsForStatusPeriodTest(
+      physicalMeter1,
+      physicalMeter2,
+      physicalMeter3,
+      physicalMeter4,
+      physicalMeter5,
+      meterStatus
+    );
   }
 
   @After
@@ -148,14 +166,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findById() {
     ResponseEntity<LogicalMeterDto> response = asElvacoUser()
-      .get("/meters/" + meter1.logicalMeterId, LogicalMeterDto.class);
+      .get("/meters/" + physicalMeter1.logicalMeterId, LogicalMeterDto.class);
 
     LogicalMeterDto logicalMeterDto = response.getBody();
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(logicalMeterDto.id)
       .as("Unexpected meter id")
-      .isEqualTo(meter1.logicalMeterId.toString());
+      .isEqualTo(physicalMeter1.logicalMeterId.toString());
 
     assertThat(logicalMeterDto.statusChangelog.size())
       .as("Unexpected number of log entries")
@@ -164,8 +182,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
     String formatTime = Dates.formatTime(statusLogDate, TimeZone.getDefault());
 
-    assertThat(meterStatusLogDto.start).as("Unexpected date format").isEqualTo(formatTime);
-    assertThat(meterStatusLogDto.stop).as("Unexpected date format").isEqualTo(formatTime);
+    assertThat(meterStatusLogDto.start)
+      .as("Unexpected date format")
+      .isEqualTo(formatTime);
+
+    assertThat(meterStatusLogDto.stop)
+      .as("Unexpected date format")
+      .isEqualTo(formatTime);
   }
 
   @Test
@@ -277,22 +300,38 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-01T01:00:00.00Z"
-        + "&before=2001-01-01T23:00:00.00Z"
-        + "&status=Active",
+          + "&before=2001-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
-    assertThat(response.getTotalElements()).isEqualTo(2);
-    assertThat(response.getNumberOfElements()).isEqualTo(2);
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getNumberOfElements()).isEqualTo(3);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isIn(meter1.logicalMeterId.toString(), meter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter1.logicalMeterId.toString());
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(meter1.logicalMeterId.toString(), meter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+
+    LogicalMeterDto actualMeter5 = response.getContent().get(2);
+
+    assertThat(actualMeter5.id)
+      .as("Unexpected meter id at position 2")
+      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+
+    assertThat(actualMeter5.statusChangelog.size())
+      .as("Unexpected number of log entries")
+      .isEqualTo(1);
+
+    assertThat(actualMeter5.statusChangelog.get(0).start)
+      .as("Unexpected date of first log entry")
+      .isEqualTo(timeZoneMagic("2001-01-01T10:14:00.00Z"));
   }
 
   /**
@@ -304,37 +343,69 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-        + "&before=2005-01-01T23:00:00.00Z"
-        + "&status=Active",
+          + "&before=2005-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
-    assertThat(response.getTotalElements()).isEqualTo(3);
-    assertThat(response.getNumberOfElements()).isEqualTo(3);
+    assertThat(response.getTotalElements()).isEqualTo(4);
+    assertThat(response.getNumberOfElements()).isEqualTo(4);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0 :" + response.getContent().get(0))
-      .isIn(
-        meter2.logicalMeterId.toString(),
-        meter3.logicalMeterId.toString(),
-        meter4.logicalMeterId.toString()
-      );
+      .isEqualTo(physicalMeter2.logicalMeterId.toString());
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(
-        meter2.logicalMeterId.toString(),
-        meter3.logicalMeterId.toString(),
-        meter4.logicalMeterId.toString()
-      );
+      .isEqualTo(physicalMeter3.logicalMeterId.toString());
     assertThat(response.getContent().get(2).id)
       .as("Unexpected meter id at position 2")
-      .isIn(
-        meter2.logicalMeterId.toString(),
-        meter3.logicalMeterId.toString(),
-        meter4.logicalMeterId.toString()
+      .isEqualTo(physicalMeter4.logicalMeterId.toString());
+    assertThat(response.getContent().get(3).id)
+      .as("Unexpected meter id at position 3")
+      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+  }
+
+  @Test
+  public void findAllWithStatusUnderPeriodExcludeEarlyAndLate() {
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage(
+        "/meters?after=2001-01-10T01:00:00.00Z"
+          + "&before=2001-01-20T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
+        LogicalMeterDto.class
       );
+
+    assertThat(response.getTotalElements()).isEqualTo(2);
+    assertThat(response.getNumberOfElements()).isEqualTo(2);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    LogicalMeterDto logicalMeter = response.getContent().get(1);
+
+    assertThat(logicalMeter.id)
+      .as("Unexpected meter id at position 3")
+      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+
+    assertThat(logicalMeter.statusChangelog.size())
+      .as("Unexpected number of log entries")
+      .isEqualTo(11);
+
+    assertThat(logicalMeter.statusChangelog.get(0).start)
+      .as("Unexpected date of first log entry")
+      .isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
+
+    assertThat(logicalMeter.statusChangelog.get(10).start)
+      .as("Unexpected date of last log entry")
+      .isEqualTo(timeZoneMagic("2001-01-10T10:14:00.00Z"));
+
+    assertThat(logicalMeter.status.name).isEqualTo("active");
+    assertThat(logicalMeter.statusChanged).isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
   }
 
   /**
@@ -346,8 +417,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-        + "&before=2015-01-01T23:00:00.00Z"
-        + "&status=Active",
+          + "&before=2015-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -357,13 +431,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
-    //TODO Meters are not sorted and order may differ. Improve assertion when meters are sorted
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isIn(meter2.logicalMeterId.toString(), meter3.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId.toString());
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isIn(meter2.logicalMeterId.toString(), meter3.logicalMeterId.toString());
+      .isEqualTo(physicalMeter3.logicalMeterId.toString());
   }
 
   @Test
@@ -494,8 +567,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "external-id",
         "Some device specific medium name",
         "ELV",
-        savedLogicalMeter.id,
-        emptyList()
+        savedLogicalMeter.id
       )
     );
 
@@ -561,6 +633,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter2,
     PhysicalMeter meter3,
     PhysicalMeter meter4,
+    PhysicalMeter meter5,
     MeterStatus meterStatus
   ) {
     List<MeterStatusLog> statuses = new ArrayList<>();
@@ -601,6 +674,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       addDays(statusLogDate, 1000)
     ));
 
+    for (int x = 0; x < 50; x++) {
+      statuses.add(new MeterStatusLog(
+        null,
+        meter5.id,
+        meterStatus.id,
+        meterStatus.name,
+        addDays(statusLogDate, x),
+        addDays(statusLogDate, x)
+      ));
+    }
+
     meterStatusLogs.save(statuses);
   }
 
@@ -613,7 +697,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private void createStatusMockData() {
     meterStatuses.save(asList(
-      new MeterStatus("Active")
+      new MeterStatus("active")
     ));
   }
 
@@ -632,10 +716,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",
-        "ELV" + seed++,
-        logicalMeterId,
-        emptyList()
+        "ELV" + seed,
+        logicalMeterId
       )
     );
+  }
+
+  private String timeZoneMagic(String date) {
+    return Dates.formatTime(Date.from(Instant.parse(date)), TimeZone.getDefault());
   }
 }

@@ -18,7 +18,6 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
@@ -142,8 +141,7 @@ public class MeteringMessageHandler implements MessageHandler {
           facilityId,
           medium,
           manufacturer,
-          logicalMeterId,
-          emptyList()
+          logicalMeterId
         ))
     );
   }

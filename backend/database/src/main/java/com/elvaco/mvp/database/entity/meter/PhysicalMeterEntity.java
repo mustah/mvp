@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
@@ -40,7 +41,8 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
   public List<MeasurementEntity> measurements;
 
-  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.EAGER)
+  @OrderBy("stop desc, start desc")
+  @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public UUID logicalMeterId;

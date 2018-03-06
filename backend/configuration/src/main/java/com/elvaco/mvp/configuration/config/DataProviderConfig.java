@@ -43,6 +43,7 @@ import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusMapper;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
+import com.elvaco.mvp.database.repository.mappers.PhysicalMeterStatusLogToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +132,9 @@ class DataProviderConfig {
       logicalMeterJpaRepository,
       new LogicalMeterToPredicateMapper(),
       new LogicalMeterSortingMapper(),
-      newLogicalMeterMapper()
+      newLogicalMeterMapper(),
+      physicalMeterStatusLogJpaRepository,
+      new PhysicalMeterStatusLogToPredicateMapper()
     );
   }
 
@@ -176,7 +179,8 @@ class DataProviderConfig {
       new MeterDefinitionMapper(),
       new LocationMapper(),
       newPhysicalMeterMapper(),
-      new GatewayMapper()
+      new GatewayMapper(),
+      new MeterStatusLogMapper()
     );
   }
 

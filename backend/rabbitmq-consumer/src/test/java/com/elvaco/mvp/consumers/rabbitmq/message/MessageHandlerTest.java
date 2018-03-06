@@ -139,8 +139,7 @@ public class MessageHandlerTest {
       EXTERNAL_ID,
       "Hot water",
       "ELV",
-      logicalMeter.id,
-      emptyList()
+      logicalMeter.id
     ));
   }
 

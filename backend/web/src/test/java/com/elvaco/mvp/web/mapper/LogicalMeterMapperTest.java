@@ -13,12 +13,14 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,7 +64,9 @@ public class LogicalMeterMapperTest {
       new Date(),
       emptyList(),
       null,
-      emptyList(),
+      singletonList(
+        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
+      ),
       emptyList()
     );
 
@@ -86,7 +90,15 @@ public class LogicalMeterMapperTest {
     expected.flags = emptyList();
     expected.position = new GeoPositionDto(57.5052592, 56.123, 1);
     expected.facility = "an-external-id";
-    expected.statusChangelog = emptyList();
+    expected.statusChangelog = singletonList(
+      new MeterStatusLogDto(
+        1L,
+        "Ok",
+        "Ok",
+        "2018-02-12 15:14:25",
+        "2018-02-13 15:14:25"
+      )
+    );
     expected.gatewayId = randomUUID().toString();
     expected.gatewaySerial = "123123";
     expected.gatewayStatus = OK;
@@ -118,7 +130,16 @@ public class LogicalMeterMapperTest {
               ELVACO
             )),
           MeterDefinition.HOT_WATER_METER,
-          emptyList(),
+          singletonList(
+            new MeterStatusLog(
+              1L,
+              randomUUID(),
+              2,
+              "Ok",
+              dateFormat().parse("2018-02-12T14:14:25"),
+              dateFormat().parse("2018-02-13T14:14:25")
+            )
+          ),
           singletonList(new Gateway(
             uuidOf(expected.gatewayId),
             organisationId,
