@@ -51,13 +51,13 @@ public class UserRepository implements Users {
   }
 
   @Override
-  public Optional<Password> findPasswordByUserId(UUID userId) {
-    return userJpaRepository.findPasswordById(userId);
+  public Optional<String> findPasswordByUserId(UUID userId) {
+    return userJpaRepository.findPasswordById(userId).map(Password::getPassword);
   }
 
   @Override
   public User create(User user) {
-    User userWithPassword = user.withPassword(() -> passwordEncoder.encode(user.password));
+    User userWithPassword = user.withPassword(passwordEncoder.encode(user.password));
     return userMapper.toDomainModel(userJpaRepository.save(userMapper.toEntity(userWithPassword)));
   }
 

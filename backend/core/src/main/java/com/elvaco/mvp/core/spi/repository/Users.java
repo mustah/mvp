@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 
@@ -16,7 +15,7 @@ public interface Users {
 
   Optional<User> findById(UUID id);
 
-  Optional<Password> findPasswordByUserId(UUID userId);
+  Optional<String> findPasswordByUserId(UUID userId);
 
   User create(User user);
 

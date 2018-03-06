@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
@@ -62,22 +61,24 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
-  public Optional<Password> findPasswordByUserId(UUID userId) {
-    throw new UnsupportedOperationException("Not implemented");
+  public Optional<String> findPasswordByUserId(UUID userId) {
+    return filter(user -> Objects.equals(user.id, user.id))
+      .map(u -> u.password)
+      .findFirst();
   }
 
   @Override
   public User create(User user) {
-    throw new UnsupportedOperationException("Not implemented");
+    return saveMock(user);
   }
 
   @Override
   public User update(User user) {
-    throw new UnsupportedOperationException("Not implemented");
+    return saveMock(user);
   }
 
   @Override
   public void deleteById(UUID id) {
-    throw new UnsupportedOperationException("Not implemented");
+    deleteMockById(id);
   }
 }

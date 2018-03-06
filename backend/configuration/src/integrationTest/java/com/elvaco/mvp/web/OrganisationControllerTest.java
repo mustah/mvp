@@ -167,26 +167,19 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotUpdateOrganisation() {
-    // arrange
-    ResponseEntity<OrganisationDto> original = asSuperAdmin()
-      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
-    assertThat(original.getStatusCode()).isEqualTo(HttpStatus.OK);
+    OrganisationDto organisation = new OrganisationDto(
+      wayneIndustries.id.toString(),
+      wayneIndustries.name,
+      "batcave"
+    );
 
-    OrganisationDto organisation = original.getBody();
-    String oldCode = "wayne-industries";
-    assertThat(organisation.code).isEqualTo(oldCode);
-
-    // act
-    organisation.code = "batcave";
-    ResponseEntity<UnauthorizedDto> put = asAdminOfElvaco()
+    ResponseEntity<UnauthorizedDto> putResponse = asAdminOfElvaco()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
-    // assert
-    assertThat(put.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
-    ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
-      .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
-    assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(updatedDto.getBody().code).isEqualTo(oldCode);
+    assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(putResponse.getBody().message).isEqualTo(
+      "User 'peteri@elvaco.se' is not allowed to save this organisation"
+    );
   }
 
   @Test
@@ -202,11 +195,11 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     // act
     organisation.code = "batcave";
-    ResponseEntity<UnauthorizedDto> put = asElvacoUser()
+    ResponseEntity<UnauthorizedDto> putResponse = asElvacoUser()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     // assert
-    assertThat(put.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
       .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);

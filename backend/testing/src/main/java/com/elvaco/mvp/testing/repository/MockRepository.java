@@ -17,16 +17,20 @@ abstract class MockRepository<K, V extends Identifiable<K>> {
 
   protected abstract K generateId();
 
-  final V saveMock(V entity) {
-    if (entity.getId() != null) {
-      repository.put(entity.getId(), entity);
-      return entity;
+  final V saveMock(V mock) {
+    if (mock.getId() != null) {
+      repository.put(mock.getId(), mock);
+      return mock;
     } else {
       K id = generateId();
-      V withId = copyWithId(id, entity);
+      V withId = copyWithId(id, mock);
       repository.put(id, withId);
       return withId;
     }
+  }
+
+  final V deleteMockById(K id) {
+    return repository.remove(id);
   }
 
   final Stream<V> filter(Predicate<V> predicate) {

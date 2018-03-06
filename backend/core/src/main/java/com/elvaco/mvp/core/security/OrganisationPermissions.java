@@ -15,7 +15,7 @@ public class OrganisationPermissions {
 
   public boolean isAllowed(
     AuthenticatedUser authenticatedUser,
-    Organisation targetDomainObject,
+    Organisation target,
     Permission permission
   ) {
     return authenticatedUser.isSuperAdmin();
@@ -23,14 +23,16 @@ public class OrganisationPermissions {
 
   public boolean isAllowed(
     AuthenticatedUser authenticatedUser,
-    User targetDomainObject,
+    User target,
     Permission permission
   ) {
     if (authenticatedUser.isSuperAdmin()) {
-      return cannotRemoveLastSuperAdminUser(permission);
+      return permission.isNotDelete()
+             || isNotSelf(authenticatedUser, target)
+             || isNotLastSuperAdminUser();
     }
 
-    Organisation organisation = targetDomainObject.organisation;
+    Organisation organisation = target.organisation;
     if (!authenticatedUser.isWithinOrganisation(organisation.id)) {
       return false;
     }
@@ -43,7 +45,7 @@ public class OrganisationPermissions {
       case READ:
         return true;
       case UPDATE:
-        return authenticatedUser.getUsername().equalsIgnoreCase(targetDomainObject.email);
+        return authenticatedUser.getUsername().equalsIgnoreCase(target.email);
       case DELETE:
       case CREATE:
       default:
@@ -51,7 +53,11 @@ public class OrganisationPermissions {
     }
   }
 
-  private boolean cannotRemoveLastSuperAdminUser(Permission permission) {
-    return !permission.equals(Permission.DELETE) || users.findByRole(Role.SUPER_ADMIN).size() != 1;
+  private boolean isNotSelf(AuthenticatedUser authenticatedUser, User target) {
+    return !authenticatedUser.getUsername().equals(target.email);
+  }
+
+  private boolean isNotLastSuperAdminUser() {
+    return users.findByRole(Role.SUPER_ADMIN).size() != 1;
   }
 }

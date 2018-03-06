@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserUseCasesTest extends IntegrationTest {
@@ -69,6 +71,26 @@ public class UserUseCasesTest extends IntegrationTest {
     assertThat(updateUser.name).isEqualTo("Clark Kent");
     assertThat(updateUser.password).isEqualTo(user.password);
     assertThat(passwordEncoder.matches(rawPassword, user.password)).isTrue();
+  }
+
+  @Test
+  public void removeUserTokenForOtherUpdatedUser() {
+    authenticateSuperAdminUser();
+
+    User user = newUser(randomUUID().toString(), "abc@123.com");
+    AuthenticatedUser authenticatedUser = userUseCases.create(user)
+      .map(this::saveUserToTokenService)
+      .orElseThrow(IllegalStateException::new);
+
+    userUseCases.update(user.withName("Coder Loader"));
+
+    assertThat(tokenService.getToken(authenticatedUser.getToken()).isPresent()).isFalse();
+  }
+
+  private AuthenticatedUser saveUserToTokenService(User user) {
+    AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(user, randomUUID().toString());
+    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    return authenticatedUser;
   }
 
   private User newUser(String rawPassword, String email) {

@@ -47,8 +47,16 @@ public class User implements Identifiable<UUID> {
     this(randomUUID(), name, email, password, organisation, roles);
   }
 
-  public User withPassword(Password password) {
-    return new User(id, name, email, password.getPassword(), organisation, roles);
+  public User withPassword(String password) {
+    return new User(id, name, email, password, organisation, roles);
+  }
+
+  public User withName(String name) {
+    return new User(id, name, email, password, organisation, roles);
+  }
+
+  public Password getPassword() {
+    return () -> password;
   }
 
   @Override

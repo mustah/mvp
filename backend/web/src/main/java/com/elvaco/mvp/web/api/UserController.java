@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.api;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
@@ -51,16 +50,10 @@ public class UserController {
 
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
-    Optional<UserDto> createdUser = userUseCases.create(
-      userMapper.toDomainModel(user)
-    ).map(userMapper::toDto);
-
-    return createdUser.map(
-      userDto ->
-        ResponseEntity.status(HttpStatus.CREATED).body(userDto))
-      .orElse(
-        ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-      );
+    return userUseCases.create(userMapper.toDomainModel(user))
+      .map(userMapper::toDto)
+      .map(userDto -> ResponseEntity.status(HttpStatus.CREATED).body(userDto))
+      .orElseGet(ResponseEntity.status(HttpStatus.FORBIDDEN)::build);
   }
 
   @PutMapping
