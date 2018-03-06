@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
@@ -32,6 +33,7 @@ import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
@@ -143,13 +145,15 @@ public class UserControllerTest extends IntegrationTest {
   public void updateSavedUserName() {
     String newName = "New name";
 
-    User user = users.create(new User(
-      "First Name",
-      "t@b.com",
-      "ttt123",
-      ELVACO,
-      singletonList(USER)
-    ));
+    User user = users.create(
+      new UserBuilder()
+        .name("First Name")
+        .email("t@b.com")
+        .password("ttt123")
+        .organisationElvaco()
+        .asUser()
+        .build()
+    );
     UserDto userDto = userMapper.toDto(user);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
@@ -163,13 +167,15 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void deleteUserWithId() {
-    User user = users.create(new User(
-      "john doh",
-      "noo@b.com",
-      "test123",
-      ELVACO,
-      asList(ADMIN, USER)
-    ));
+    User user = users.create(
+      new UserBuilder()
+        .name("john doh")
+        .email("noo@b.com")
+        .password("test123")
+        .organisationElvaco()
+        .roles(ADMIN, USER)
+        .build()
+    );
 
     ResponseEntity<UserDto> response = asSuperAdmin()
       .delete("/users/" + user.id, UserDto.class);
@@ -192,15 +198,19 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserCannotDeleteUser() {
-    User regularUser = users.create(new User(
-      "Someu Ser",
-      "thisguy@users.net",
-      "hunter2",
-      ELVACO,
-      singletonList(USER)
-    ));
-    asElvacoUser().delete("/users/" + regularUser.id);
-    assertThat(users.findById(regularUser.id).isPresent()).isTrue();
+    User user = users.create(
+      new UserBuilder()
+        .name("Someu Ser")
+        .email("thisguy@users.net")
+        .password("hunter2")
+        .organisationElvaco()
+        .asUser()
+        .build()
+    );
+
+    asElvacoUser().delete("/users/" + user.id);
+
+    assertThat(users.findById(user.id).isPresent()).isTrue();
   }
 
   @Test
@@ -216,8 +226,13 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
     ResponseEntity<List<UserDto>> response = asElvacoUser().getList("/users", UserDto.class);
-    response.getBody().forEach(u -> assertThat(u.organisation.code)
-      .isEqualTo("elvaco"));
+
+    List<String> organisationCodes = response.getBody().stream()
+      .map(u -> u.organisation.code)
+      .collect(toList());
+
+    assertThat(organisationCodes).isNotEmpty();
+    assertThat(organisationCodes).containsOnly("elvaco");
   }
 
   @Test

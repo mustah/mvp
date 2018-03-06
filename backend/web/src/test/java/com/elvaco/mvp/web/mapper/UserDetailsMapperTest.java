@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.mapper;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,8 +13,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -22,14 +21,11 @@ public class UserDetailsMapperTest {
 
   @Test
   public void throwsWhenPasswordIsNull() {
-    User user = new User(
-      randomUUID(),
-      "some name",
-      "email@a.com",
-      null,
-      ELVACO,
-      emptyList()
-    );
+    User user = new UserBuilder()
+      .name("some name")
+      .email("email@a.com")
+      .organisationElvaco()
+      .build();
 
     assertThatThrownBy(() -> new MvpUserDetails(user, randomUUID().toString()))
       .isInstanceOf(NullPointerException.class)
@@ -72,13 +68,15 @@ public class UserDetailsMapperTest {
   }
 
   private static MvpUserDetails mvpUserDetails() {
-    return new MvpUserDetails(new User(
-      randomUUID(),
-      "john doh",
-      "a@b.com",
-      "letmein",
-      ELVACO,
-      asList(ADMIN, USER)
-    ), randomUUID().toString());
+    return new MvpUserDetails(
+      new UserBuilder()
+        .name("john doh")
+        .email("a@b.com")
+        .password("letmein")
+        .organisationElvaco()
+        .roles(ADMIN, USER)
+        .build(),
+      randomUUID().toString()
+    );
   }
 }

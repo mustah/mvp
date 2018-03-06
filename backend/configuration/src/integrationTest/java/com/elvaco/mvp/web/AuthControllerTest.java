@@ -1,11 +1,9 @@
 package com.elvaco.mvp.web;
 
-import java.util.UUID;
-
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
@@ -14,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.RANDOM_ELVACO_USER;
-import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerTest extends IntegrationTest {
@@ -92,7 +89,7 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void logoutUserThatIsNotInTokenServiceCache() {
-    String token = UUID.randomUUID().toString();
+    String token = randomUUID().toString();
 
     ResponseEntity<Void> logoutResponse = restClient()
       .withBearerToken(token)
@@ -119,13 +116,15 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void basicAuthIsSufficientForEndpointAccess() {
-    User user = createUserIfNotPresent(new User(
-      "basic-auth-user",
-      "basic@auth.se",
-      "test",
-      ELVACO,
-      singletonList(Role.USER)
-    ));
+    User user = createUserIfNotPresent(
+      new UserBuilder()
+        .name("basic-auth-user")
+        .email("basic@auth.se")
+        .password("test")
+        .organisationElvaco()
+        .asUser()
+        .build()
+    );
 
     ResponseEntity<?> response = restClient().loginWith(user.getUsername(), user.password)
       .get("/meters/", Object.class);

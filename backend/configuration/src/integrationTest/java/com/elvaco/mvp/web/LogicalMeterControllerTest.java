@@ -21,8 +21,6 @@ import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.Role;
-import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -36,6 +34,7 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
@@ -56,7 +55,6 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -133,7 +131,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
       logicalMeterRepository.findAll(
         emptyMap(),
-        new PageableAdapter(new PageRequest(0,5, Direction.ASC, "id"))
+        new PageableAdapter(new PageRequest(0, 5, Direction.ASC, "id"))
       );
 
     physicalMeter1 = meters.getContent().get(0).physicalMeters.get(0);
@@ -258,22 +256,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
   }
 
-  private void testSorting(
-    String url,
-    String errorMessage,
-    Function<LogicalMeterDto, String> actual,
-    String expected
-  ) {
-    Page<LogicalMeterDto> response = asElvacoUser()
-      .getPage(url, LogicalMeterDto.class);
-
-    assertThat(response.getTotalElements()).isEqualTo(55);
-
-    assertThat(actual.apply(response.getContent().get(0)))
-      .as(errorMessage)
-      .isEqualTo(expected);
-  }
-
   @Test
   public void findAll() {
     ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
@@ -300,11 +282,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-01T01:00:00.00Z"
-          + "&before=2001-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2001-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -343,11 +325,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-          + "&before=2005-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2005-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -374,11 +356,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-          + "&before=2001-01-20T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2001-01-20T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -417,11 +399,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = asElvacoUser()
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-          + "&before=2015-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2015-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -466,14 +448,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void cantAccessOtherOrganisationsMetersByFilter() {
-    createUserIfNotPresent(new User(
-      "Me",
-      "me@myorg.com",
-      "secr3t",
-      new Organisation(anotherOrganisation.id, anotherOrganisation.name, anotherOrganisation.code),
-      singletonList(
-        Role.USER)
-    ));
+    createUserIfNotPresent(userBuilder().build());
 
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
@@ -492,13 +467,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void doesntFindOtherOrganisationsMetersUsingFilter() {
-    createUserIfNotPresent(new User(
-      "Me",
-      "me@myorg.com",
-      "secr3t",
-      new Organisation(anotherOrganisation.id, anotherOrganisation.name, anotherOrganisation.code),
-      singletonList(Role.USER)
-    ));
+    createUserIfNotPresent(userBuilder().build());
     LogicalMeter myMeter = logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-own-meter",
@@ -596,6 +565,35 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurementDtos).hasSize(5);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
     assertThat(measurement.unit).isEqualTo("m^3");
+  }
+
+  private UserBuilder userBuilder() {
+    return new UserBuilder()
+      .name("Me")
+      .email("me@myorg.com")
+      .password("secr3t")
+      .organisation(new Organisation(
+        anotherOrganisation.id,
+        anotherOrganisation.name,
+        anotherOrganisation.code
+      ))
+      .asUser();
+  }
+
+  private void testSorting(
+    String url,
+    String errorMessage,
+    Function<LogicalMeterDto, String> actual,
+    String expected
+  ) {
+    Page<LogicalMeterDto> response = asElvacoUser()
+      .getPage(url, LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(55);
+
+    assertThat(actual.apply(response.getContent().get(0)))
+      .as(errorMessage)
+      .isEqualTo(expected);
   }
 
   private LogicalMeter saveLogicalMeter(

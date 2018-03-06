@@ -8,8 +8,8 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
-import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
@@ -117,14 +117,13 @@ public class LogicalMeterUseCasesTest {
 
   private AuthenticatedUser newAuthenticatedUser(List<Role> roles) {
     return new MockAuthenticatedUser(
-      new User(
-        randomUUID(),
-        "mocked user",
-        "mock@mock.net",
-        "password",
-        organisation,
-        roles
-      ),
+      new UserBuilder()
+        .name("mocked user")
+        .email("mock@mock.net")
+        .password("password")
+        .organisation(organisation)
+        .roles(roles)
+        .build(),
       "some-token"
     );
   }

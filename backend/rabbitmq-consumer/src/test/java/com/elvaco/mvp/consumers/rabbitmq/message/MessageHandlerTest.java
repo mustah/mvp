@@ -19,7 +19,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
@@ -31,6 +30,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
@@ -41,7 +41,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -63,23 +62,22 @@ public class MessageHandlerTest {
   @Before
   public void setUp() {
     this.physicalMeters = new MockPhysicalMeters();
-    User superAdmin = new User(
-      "super-admin",
-      "super@admin.io",
-      "password",
-      ELVACO,
-      singletonList(Role.SUPER_ADMIN)
-    );
+    User superAdmin = new UserBuilder()
+      .name("super-admin")
+      .email("super@admin.io")
+      .password("password")
+      .organisationElvaco()
+      .asSuperAdmin()
+      .build();
     organisations = new MockOrganisations();
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(
-      new User(
-        randomUUID(),
-        "mock user",
-        "mock@somemail.nu",
-        "P@$$w0rD",
-        new Organisation(randomUUID(), "some organisation", ORGANISATION_CODE),
-        singletonList(Role.SUPER_ADMIN)
-      ),
+      new UserBuilder()
+        .name("mock user")
+        .email("mock@somemail.nu")
+        .password("P@$$w0rD")
+        .organisation(new Organisation(randomUUID(), "some organisation", ORGANISATION_CODE))
+        .asSuperAdmin()
+        .build(),
       randomUUID().toString()
     );
     OrganisationUseCases organisationUseCases = new OrganisationUseCases(
@@ -215,7 +213,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                     + "organisation"));
+                                                                   + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",

@@ -17,4 +17,5 @@ dependencies {
   testCompile 'com.google.guava:guava:24.0-jre'
   testCompile 'org.assertj:assertj-core:3.8.0'
   testCompile 'junit:junit:4.12'
+  testCompile project(':backend:testing')
 }
