@@ -14,7 +14,7 @@ fetch_mvp_archive:
 
 create_new_mvp_dir:
   file.directory:
-    - name: /opt/elvaco/mvp-{{ mvp_version }}
+    - name: /opt/elvaco/mvp-{{ mvp_version }}/config
     - user: mvp
     - group: mvp
     - mode: 755
@@ -40,6 +40,20 @@ create_mvp_symlink:
     - require:
       - deploy_mvp
 
+deploy_mvp_config:
+  file.managed:
+    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application.properties
+    - source: salt://mvp/app/files/application.properties
+    - require:
+        - deploy_mvp
+
+deploy_mvp_db_config:
+  file.managed:
+    - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
+    - source: salt://mvp/app/files/application-staging.properties
+    - require:
+        - deploy_mvp
+
 deploy_mvp_systemd:
   file.managed:
     - name: /lib/systemd/system/{{ mvp_systemd_unit }}
@@ -53,8 +67,12 @@ deploy_mvp_systemd:
     - enable: True
     - require:
       - create_mvp_symlink
+      - deploy_mvp_config
+      - deploy_mvp_db_config
     - watch:
       - file: /lib/systemd/system/{{ mvp_systemd_unit }}
+      - file: /opt/elvaco/mvp-{{ mvp_version }}/config/application.properties
+      - file: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
 
 remove_mvp_archive:
   file.absent:
