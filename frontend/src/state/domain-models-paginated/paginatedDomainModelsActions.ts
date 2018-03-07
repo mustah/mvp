@@ -6,8 +6,9 @@ import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, HasId} from '../../types/Types';
-import {EndPoints, HttpMethod} from '../domain-models/domainModels';
+import {ErrorResponse, Identifiable} from '../../types/Types';
+import {RequestType} from '../domain-models/domainModels';
+import {RequestCallbacks} from '../domain-models/domainModelsActions';
 import {
   HasPageNumber,
   NormalizedPaginated,

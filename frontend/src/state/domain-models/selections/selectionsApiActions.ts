@@ -1,6 +1,6 @@
+import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
-import {EndPoints} from '../domainModels';
-import {clearError, restGetIfNeeded} from '../domainModelsActions';
+import {clearError, fetchIfNeeded} from '../domainModelsActions';
 import {selectionsSchema} from './selectionsSchemas';
 
 // TODO: Since 'selections' isn't part of the DomainModelsState 'cities' is selected to check if anything

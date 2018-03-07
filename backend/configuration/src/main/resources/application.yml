@@ -30,9 +30,6 @@ ehcache:
 
 zuul:
   routes:
-    selections:
-      path: /v1/api/selections/**
-      url: http://localhost:4000/v1/api/selections/
     dashboards:
       path: /v1/api/dashboards/**
       url: http://localhost:4000/v1/api/dashboards/

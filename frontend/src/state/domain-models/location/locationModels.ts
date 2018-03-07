@@ -13,7 +13,7 @@ export interface GeoPosition {
 }
 
 export interface Address extends IdNamed {
-  cityId: uuid;
+  parentId: uuid;
 }
 
 export interface LocationHolder {

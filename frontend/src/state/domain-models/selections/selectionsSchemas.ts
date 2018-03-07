@@ -10,22 +10,42 @@ export const processStrategy = (entity): schema.StrategyFunction => {
   }
 };
 
-export const city = new schema.Entity('cities');
-export const address = new schema.Entity('addresses');
+// TODO: Add typing to these entities
+const createId: schema.SchemaFunction = (
+  {name: entityName},
+  {name: parentName, id: parentId},
+  key,
+): string => (parentId ?
+  `${parentId.toLowerCase()},${entityName.toLowerCase()}`
+  : `${parentName.toLowerCase()},${entityName.toLowerCase()}`);
+
+const processStrategyCityAddress: schema.StrategyFunction = (entity, parent, key) => {
+  const id = createId(entity, parent, key);
+  const {name} = entity;
+  return {...entity, id, name, parentId: parent.id};
+};
+
+const processStrategyCountry: schema.StrategyFunction = (entity, parent, key) => ({...entity, id: entity.name});
+
 const alarm = new schema.Entity('alarms');
-const manufacturer = new schema.Entity('manufacturers');
-const productModel = new schema.Entity('productModels');
 const meterStatus = new schema.Entity('meterStatuses');
 const gatewayStatus = new schema.Entity('gatewayStatuses');
-const meteringPoint = new schema.Entity('meteringPoints');
+const address = new schema.Entity('addresses', {}, {
+  idAttribute: createId,
+  processStrategy: processStrategyCityAddress,
+});
+const city = new schema.Entity('cities', {addresses: [address]}, {
+  idAttribute: createId,
+  processStrategy: processStrategyCityAddress,
+});
+const country = new schema.Entity('countries', {cities: [city]}, {
+  idAttribute: 'name',
+  processStrategy: processStrategyCountry,
+});
 
 export const selectionsSchema: Schema = {
-  cities: [city],
-  addresses: [address],
+  locations: {countries: [country]},
   alarms: [alarm],
-  manufacturers: [manufacturer],
-  productModels: [productModel],
   meterStatuses: [meterStatus],
   gatewayStatuses: [gatewayStatus],
-  meteringPoints: [meteringPoint],
 };

@@ -34,14 +34,13 @@ export type SelectionEntity = IdNamed | Address;
 export type SelectionEntityState = NormalizedState<SelectionEntity>;
 
 export interface DomainModelsState {
+  countries: SelectionEntityState;
+  cities: SelectionEntityState;
   addresses: SelectionEntityState;
   alarms: SelectionEntityState;
-  cities: SelectionEntityState;
   gatewayStatuses: SelectionEntityState;
-  gateways: GatewaysState;
-  manufacturers: SelectionEntityState;
   meterStatuses: SelectionEntityState;
-  productModels: SelectionEntityState;
+  gateways: GatewaysState;
   measurements: MeasurementState;
   allMeters: NormalizedState<Meter>;
   users: UserState;

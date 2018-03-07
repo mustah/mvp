@@ -3,9 +3,10 @@ import {IdNamed, ItemOrArray, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
 
 export const enum ParameterName {
+  countries = 'countries',
+  cities = 'cities',
   addresses = 'addresses',
   alarms = 'alarms',
-  cities = 'cities',
   gatewayStatuses = 'gatewayStatuses',
   manufacturers = 'manufacturers',
   meterStatuses = 'meterStatuses',

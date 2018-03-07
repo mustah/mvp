@@ -9,15 +9,15 @@ import lombok.ToString;
 @NoArgsConstructor
 public class IdNamedDto {
 
-  public Long id;
+  public String id;
   public String name;
 
-  private IdNamedDto(Long id, String name) {
+  public IdNamedDto(String id, String name) {
     this.id = id;
     this.name = name;
   }
 
   public IdNamedDto(String name) {
-    this((long) name.hashCode(), name);
+    this(name, name);
   }
 }

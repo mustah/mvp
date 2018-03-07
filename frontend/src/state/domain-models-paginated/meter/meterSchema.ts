@@ -1,7 +1,9 @@
 import {schema} from 'normalizr';
-import {address, city, processStrategy} from '../../domain-models/selections/selectionsSchemas';
+import {processStrategy} from '../../domain-models/selections/selectionsSchemas';
 
 const meter = new schema.Entity('meters', {}, {processStrategy});
+const address = new schema.Entity('addresses');
+const city = new schema.Entity('cities');
 const allMeters = new schema.Entity('allMeters', {}, {processStrategy});
 export const meterSchema = {content: [meter]};
 export const allMetersSchema = [allMeters];

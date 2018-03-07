@@ -4,14 +4,7 @@ import {Period} from '../../../../components/dates/dateModels';
 import {EndPoints} from '../../../../services/endPoints';
 import {IdNamed} from '../../../../types/Types';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
-import {
-  DomainModelsState,
-  EndPoints,
-  HttpMethod,
-  Normalized,
-  NormalizedState,
-  SelectionEntity,
-} from '../../../domain-models/domainModels';
+import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
 import {getRequestOf} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
@@ -20,13 +13,11 @@ import {
   gateways,
   gatewayStatuses,
   initialDomain,
-  manufacturers,
   meterStatuses,
-  productModels,
   users,
 } from '../../../domain-models/domainModelsReducer';
-import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
+import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
 import {ADD_SELECTION, SELECT_PERIOD} from '../selectionActions';
@@ -50,6 +41,12 @@ import {
 
 describe('selectionSelectors', () => {
 
+  const normalizedSelections = normalize(testData.selections, selectionsSchema);
+  const {cities: cityEntities} = normalizedSelections.entities;
+  const stockholm: IdNamed = cityEntities['sweden,stockholm'];
+  const gothenburg: IdNamed = cityEntities['sweden,göteborg'];
+  const vasa: IdNamed = cityEntities['finland,vasa'];
+
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
   const initialUriLookupState: UriLookupStatePaginated = {
@@ -59,35 +56,22 @@ describe('selectionSelectors', () => {
     pagination: initialPaginationState,
   };
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialUriLookupState);
-
   const initialDomainModelState = initialDomain<SelectionEntity>();
-
   const domainModels = (domainModelPayload): Partial<DomainModelsState> => ({
+    cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     gatewayStatuses: gatewayStatuses(
       initialDomainModelState,
       selectionsRequest.success(domainModelPayload),
     ),
     gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
-    manufacturers: manufacturers(
-      initialDomainModelState,
-      selectionsRequest.success(domainModelPayload),
-    ),
     meterStatuses: meterStatuses(
-      initialDomainModelState,
-      selectionsRequest.success(domainModelPayload),
-    ),
-    productModels: productModels(
       initialDomainModelState,
       selectionsRequest.success(domainModelPayload),
     ),
     users: users(initialDomain<User>(), {type: 'none'}),
   });
-
-  const gothenburg: IdNamed = {...testData.selections.cities[0]};
-  const stockholm: IdNamed = {...testData.selections.cities[1]};
 
   it('has entities', () => {
     expect(getSelection({...initialSearchParameterState})).toEqual(initialState);
@@ -98,21 +82,20 @@ describe('selectionSelectors', () => {
   });
 
   it('gets entities for type city', () => {
-    const domainModelPayload = normalize(testData.selections, selectionsSchema);
 
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
       selection: selection(initialState, {type: ADD_SELECTION, payload}),
-      domainModels: domainModels(domainModelPayload) as DomainModelsState,
+      domainModels: domainModels(normalizedSelections) as DomainModelsState,
     };
 
     const stockholmSelected: SelectionListItem[] = [
-      {selected: true, id: 'sto', name: 'Stockholm'},
-      {selected: false, id: 'got', name: 'Göteborg'},
-      {selected: false, id: 'kub', name: 'Kungsbacka'},
-      {selected: false, id: 'mmx', name: 'Malmö'},
+      {selected: true, ...stockholm},
+      {selected: false, ...gothenburg},
+      {selected: false, ...vasa},
     ];
+
     expect(getCities(state)).toEqual(stockholmSelected);
   });
 
@@ -145,7 +128,7 @@ describe('selectionSelectors', () => {
         pagination: initialPaginationState,
       });
 
-      expect(encodedUriParametersForMeters).toEqual(`size=${limit}&page=0&city.id=sto`);
+      expect(encodedUriParametersForMeters).toEqual(`size=${limit}&page=0&city=sweden%2Cstockholm`);
     });
 
     it('has two selected cities', () => {
@@ -167,7 +150,7 @@ describe('selectionSelectors', () => {
         componentId: 'test',
         pagination: initialPaginationState,
       }))
-        .toEqual(`size=${limit}&page=0&city.id=got&city.id=sto`);
+        .toEqual(`size=${limit}&page=0&city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm`);
     });
   });
 
@@ -192,18 +175,15 @@ describe('selectionSelectors', () => {
     it('can detect which the selected entities are', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
-      const domainModelPayload = normalize(testData.selections, selectionsSchema);
-
       const state: LookupState = {
         selection: selection(initialState, {type: ADD_SELECTION, payload}),
-        domainModels: domainModels(domainModelPayload) as DomainModelsState,
+        domainModels: domainModels(normalizedSelections) as DomainModelsState,
       };
 
       const stockholmSelected: SelectionListItem[] = [
-        {selected: true, id: 'sto', name: 'Stockholm'},
-        {selected: false, id: 'got', name: 'Göteborg'},
-        {selected: false, id: 'kub', name: 'Kungsbacka'},
-        {selected: false, id: 'mmx', name: 'Malmö'},
+        {selected: true, ...stockholm},
+        {selected: false, ...gothenburg},
+        {selected: false, ...vasa},
       ];
 
       expect(getCities(state)).toEqual(stockholmSelected);
