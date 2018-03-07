@@ -67,6 +67,3 @@ export enum HttpMethod {
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
-
-export type RestGet = (requestData?: string) => void;
-export type ClearError = () => void;

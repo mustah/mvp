@@ -72,7 +72,10 @@ const addEntity =
   };
 
 const modifyEntity =
-  <T extends Identifiable>(state: NormalizedState<T>, {payload}: Action<T>): NormalizedState<T> => ({
+  <T extends Identifiable>(
+    state: NormalizedState<T>,
+    {payload}: Action<T>,
+  ): NormalizedState<T> => ({
     ...state,
     isFetching: false,
     entities: {...state.entities, [payload.id]: payload},
@@ -110,7 +113,11 @@ type ActionTypes<T extends Identifiable> =
   | Action<T>
   | Action<ErrorResponse>;
 
-const reducerFor = <T extends Identifiable>(entity: keyof DomainModelsState, endPoint: EndPoints, resetState = identity) =>
+const reducerFor = <T extends Identifiable>(
+  entity: keyof DomainModelsState,
+  endPoint: EndPoints,
+  resetState = identity,
+) =>
   (
     state: NormalizedState<T> = initialDomain<T>(),
     action: ActionTypes<T>,
@@ -169,10 +176,18 @@ export const manufacturers = reducerFor<SelectionEntity>('manufacturers', EndPoi
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways, resetStateReducer);
-export const measurements = reducerFor<Measurement>('measurements', EndPoints.measurements, resetStateReducer);
+export const measurements = reducerFor<Measurement>(
+  'measurements',
+  EndPoints.measurements,
+  resetStateReducer,
+);
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
 export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
-export const organisations = reducerFor<Organisation>('organisations', EndPoints.organisations, resetStateReducer);
+export const organisations = reducerFor<Organisation>(
+  'organisations',
+  EndPoints.organisations,
+  resetStateReducer,
+);
 
 export const domainModels = combineReducers<DomainModelsState>({
   addresses,

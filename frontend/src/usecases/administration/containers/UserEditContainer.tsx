@@ -13,7 +13,7 @@ import {PageComponent} from '../../../containers/PageComponent';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, ObjectsById, RestGet} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {
   clearErrorUsers, fetchUser, modifyUser,
 } from '../../../state/domain-models/user/userApiActions';
@@ -26,7 +26,7 @@ import {fetchOrganisations} from '../../../state/domain-models/organisation/orga
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
-import {ErrorResponse, OnClick, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, RestGet, uuid} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];

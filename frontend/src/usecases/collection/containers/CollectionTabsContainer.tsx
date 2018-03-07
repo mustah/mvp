@@ -16,7 +16,7 @@ import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetail
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {
   getDomainModel,
   getError,
@@ -41,7 +41,14 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ErrorResponse, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  ErrorResponse,
+  OnClick,
+  OnClickWithId,
+  RestGet,
+  uuid,
+} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';

@@ -9,6 +9,9 @@ export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type RenderFunction<T> = (props: T) => Children;
 
+export type RestGet = (requestData?: string) => void;
+export type ClearError = () => void;
+
 export type Predicate<T> = (value: T) => boolean;
 
 export type ItemOrArray<T> = T | T[];

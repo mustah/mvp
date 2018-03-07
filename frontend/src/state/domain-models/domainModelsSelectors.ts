@@ -8,4 +8,5 @@ export const getEntitiesDomainModels = <T extends Identifiable>(state: Normalize
 export const getDomainModel = <T extends Identifiable>({entities, result}: NormalizedState<T>): DomainModel<T> =>
   ({result, entities});
 
-export const getError = <T extends Identifiable>({error}: NormalizedState<T>): Maybe<ErrorResponse> => Maybe.maybe(error);
+export const getError =
+  <T extends Identifiable>({error}: NormalizedState<T>): Maybe<ErrorResponse> => Maybe.maybe(error);
