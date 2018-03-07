@@ -101,8 +101,8 @@ msgstr "no"
 msgid "gateway details"
 msgstr "gateway"
 
-msgid "gateway id"
-msgstr "gateway id"
+msgid "gateway serial"
+msgstr "gateway serial"
 
 msgid "product model"
 msgstr "product model"

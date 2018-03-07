@@ -20,8 +20,8 @@ export const GatewayList = (props: DomainModel<Gateway> & Props) => {
 
   const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
   const renderStatusCell = ({status}: Gateway) => <Status {...status}/>;
-  const renderCity = ({city}: Gateway) => city.name;
-  const renderAddress = ({address}: Gateway) => address.name;
+  const renderCity = ({location: {city}}: Gateway) => city.name;
+  const renderAddress = ({location: {address}}: Gateway) => address.name;
   const renderFlags = ({flags}: Gateway) => flags.map((flag: Flag) => flag.title).join(', ');
   const renderActionDropdown = ({id, productModel}: Gateway) =>
     <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
@@ -51,7 +51,7 @@ export const GatewayList = (props: DomainModel<Gateway> & Props) => {
         renderCell={renderStatusCell}
       />
       <TableColumn
-        header={<TableHead sortable={true} currentSort={'desc'}>{translate('status change')}</TableHead>}
+        header={<TableHead>{translate('status change')}</TableHead>}
         renderCell={renderStatusChanged}
       />
       <TableColumn

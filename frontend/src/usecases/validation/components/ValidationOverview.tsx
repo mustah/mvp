@@ -34,7 +34,7 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
   if (meterDataSummary.isNothing()) {
     return null;
   } else {
-    const {status, flagged, alarm, city, manufacturer, medium} = meterDataSummary.get();
+    const {status, flagged, alarm, location, manufacturer, medium} = meterDataSummary.get();
     const pieCharts: PieChartSelectorProps[] = [
       {
         heading: translate('status'),
@@ -58,7 +58,7 @@ export const ValidationOverview = (props: ValidationOverviewProps) => {
       },
       {
         heading: translate('cities'),
-        data: city,
+        data: location,
         colors: colors[1],
         setSelection: selectCity,
         maxSlices: 4,

@@ -1,6 +1,5 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -12,13 +11,9 @@ public class Location {
 
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
 
-  @Nullable
   private final String streetAddress;
-  @Nullable
   private final String city;
-  @Nullable
   private final String country;
-  @Nullable
   private final GeoCoordinate coordinate;
 
   Location(
@@ -33,16 +28,19 @@ public class Location {
     this.streetAddress = streetAddress;
   }
 
-  public Optional<String> getStreetAddress() {
-    return Optional.ofNullable(streetAddress);
+  @Nullable
+  public String getStreetAddress() {
+    return streetAddress;
   }
 
-  public Optional<String> getCity() {
-    return Optional.ofNullable(city);
+  @Nullable
+  public String getCity() {
+    return city;
   }
 
-  public Optional<String> getCountry() {
-    return Optional.ofNullable(country);
+  @Nullable
+  public String getCountry() {
+    return country;
   }
 
   @Nullable

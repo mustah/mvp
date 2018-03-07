@@ -213,7 +213,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=address,asc",
       "Unexpected address, sorting failed",
-      (LogicalMeterDto meter) -> meter.address.name,
+      (LogicalMeterDto meter) -> meter.location.address.name,
       "Drottninggatan 2"
     );
 
@@ -221,7 +221,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=address,desc",
       "Unexpected address, sorting failed",
-      (LogicalMeterDto meter) -> meter.address.name,
+      (LogicalMeterDto meter) -> meter.location.address.name,
       "Kungsgatan 55"
     );
 
@@ -244,14 +244,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     testSorting(
       "/meters?size=20&page=0&sort=city,asc",
       "Unexpected city, sorting failed",
-      (LogicalMeterDto meter) -> meter.city.name,
+      (LogicalMeterDto meter) -> meter.location.city.name,
       "Varberg"
     );
 
     testSorting(
       "/meters?size=20&page=0&sort=city,desc",
       "Unexpected city, sorting failed",
-      (LogicalMeterDto meter) -> meter.city.name,
+      (LogicalMeterDto meter) -> meter.location.city.name,
       "Östersund"
     );
   }
@@ -615,7 +615,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new LocationBuilder()
         .city(city)
         .streetAddress(streetAddress)
-        .coordinate(new GeoCoordinate(1.1, 1.1, 1.0))
+        .coordinate(new GeoCoordinate(1.1, 123.12))
         .build(),
       created,
       emptyList(),

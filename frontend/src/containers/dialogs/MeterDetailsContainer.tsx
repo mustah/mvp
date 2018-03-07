@@ -22,6 +22,7 @@ import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/m
 import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
 import {getEntitiesDomainModels} from '../../state/domain-models/domainModelsSelectors';
 import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
+import {Measurement} from '../../state/domain-models/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
@@ -40,7 +41,6 @@ const measurements: Normalized<any> = {
     id1: {
       quantity: 'Energy',
       value: '170.97 MWh',
-      comment: '',
     },
     id2: {
       quantity: 'Volume',
@@ -107,8 +107,8 @@ const MeterDetailsInfo = (props: Props) => {
           <Info label={translate('meter id')} value={meter.id}/>
           <Info label={translate('product model')} value={meter.manufacturer}/>
           <Info label={translate('medium')} value={meter.medium}/>
-          <Info label={translate('city')} value={meter.city.name}/>
-          <Info label={translate('address')} value={meter.address.name}/>
+          <Info label={translate('city')} value={meter.location.city.name}/>
+          <Info label={translate('address')} value={meter.location.address.name}/>
         </Row>
         <Row>
           <Column>
@@ -160,7 +160,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
-    const gateway = gateways[meter.id];
+    const gateway = gateways[meter.gatewayId];
 
     const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},
@@ -178,13 +178,13 @@ class MeterDetailsTabs extends React.Component<Props, State> {
           }}
         />
       );
-    const renderQuantity = (item: any) => item.quantity;
-    const renderValue = (item: any) => item.value;
+    const renderQuantity = ({quantity}: Measurement) => quantity;
+    const renderValue = ({value}: Measurement) => value;
     const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({id}: Gateway) => id;
     const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) =>
       signalToNoiseRatio || translate('n/a');
-    const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(meter);
+    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(meter);
 
     return (
       <Row>
@@ -234,7 +234,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
               hasContent={hasConfidentPosition}
               fallbackContent={<h2 style={{padding: 8}}>{translate('no reliable position')}</h2>}
             >
-              <Map height={400} viewCenter={meter.position}>
+              <Map height={400} viewCenter={meter.location.position}>
                 <ClusterContainer markers={meter}/>
               </Map>
             </HasContent>
@@ -243,7 +243,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
             <Row>
               <Table result={normalizedGateways.result} entities={normalizedGateways.entities}>
                 <TableColumn
-                  header={<TableHead>{translate('gateway id')}</TableHead>}
+                  header={<TableHead>{translate('gateway serial')}</TableHead>}
                   renderCell={renderSerial}
                 />
                 <TableColumn

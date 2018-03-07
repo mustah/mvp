@@ -16,21 +16,33 @@ describe('gatewaySelectors', () => {
           id: 1,
           status: {id: 0, name: 'ok'},
           flagged: false,
-          city: {id: 'sto', name: 'stockholm'},
+          location: {
+            city: {id: 'sto', name: 'stockholm'},
+            address: {id: 'ad', name: 'ad'},
+            position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
+          },
           productModel: 'Ci2000',
         },
         2: {
           id: 1,
           status: {id: 0, name: 'ok'},
           flagged: false,
-          city: {id: 'sto', name: 'stockholm'},
+          location: {
+            city: {id: 'sto', name: 'stockholm'},
+            address: {id: 'kgatan', name: 'kgatan'},
+            position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
+          },
           productModel: 'Cm3000',
         },
         3: {
           id: 1,
           status: {id: 0, name: 'ok'},
           flagged: true,
-          city: {id: 'got', name: 'göteborg'},
+          location: {
+            city: {id: 'got', name: 'göteborg'},
+            address: {id: 'kgatan', name: 'kgatan'},
+            position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
+          },
           productModel: 'Cm2000',
         },
       };
@@ -50,7 +62,7 @@ describe('gatewaySelectors', () => {
             flagged: {name: 'flagged', value: 1, filterParam: true},
             unFlagged: {name: 'unFlagged', value: 2, filterParam: false},
           },
-        city:
+        location:
           {
             sto: {name: 'stockholm', value: 2, filterParam: 'sto'},
             got: {name: 'göteborg', value: 1, filterParam: 'got'},

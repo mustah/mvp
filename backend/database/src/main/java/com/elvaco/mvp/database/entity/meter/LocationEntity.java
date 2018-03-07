@@ -45,6 +45,12 @@ public class LocationEntity extends EntityType<UUID> {
     this.logicalMeterId = logicalMeterId;
   }
 
+  public LocationEntity(String country, String city, String streetAddress) {
+    this.country = country;
+    this.city = city;
+    this.streetAddress = streetAddress;
+  }
+
   public boolean hasCoordinates() {
     return latitude != null && longitude != null && confidence != null;
   }

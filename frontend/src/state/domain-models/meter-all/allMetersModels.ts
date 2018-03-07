@@ -32,7 +32,7 @@ export interface SelectionTreeData {
 
 export interface MeterDataSummary {
   flagged: PieData;
-  city: PieData;
+  location: PieData;
   manufacturer: PieData;
   medium: PieData;
   status: PieData;

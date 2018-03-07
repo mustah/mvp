@@ -4,21 +4,21 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 
 @ToString
 @EqualsAndHashCode
+@NoArgsConstructor
 public class GatewayDto {
 
   public String id;
   public String serial;
   public String productModel;
   public IdNamedDto status;
-  public IdNamedDto city;
-  public IdNamedDto address;
-  public GeoPositionDto position;
+  public LocationDto location;
   public List<FlagDto> flags;
 
   public String meterId;
@@ -28,16 +28,12 @@ public class GatewayDto {
   public IdNamedDto meterStatus;
   public List<String> meterIds;
 
-  public GatewayDto() {}
-
   public GatewayDto(
     String id,
     String serial,
     String productModel,
     IdNamedDto status,
-    IdNamedDto city,
-    IdNamedDto address,
-    GeoPositionDto position,
+    LocationDto location,
     List<FlagDto> flags,
     String meterId,
     @Nullable String meterAlarm,
@@ -49,9 +45,7 @@ public class GatewayDto {
     this.serial = serial;
     this.productModel = productModel;
     this.status = status;
-    this.city = city;
-    this.address = address;
-    this.position = position;
+    this.location = location;
     this.flags = flags;
     this.meterId = meterId;
     this.meterAlarm = meterAlarm;
@@ -66,9 +60,7 @@ public class GatewayDto {
       serial,
       productModel,
       IdNamedDto.OK,
-      null,
-      null,
-      new GeoPositionDto(),
+      new LocationDto(),
       emptyList(),
       null,
       null,

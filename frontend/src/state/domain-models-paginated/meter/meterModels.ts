@@ -1,18 +1,17 @@
 import {HasId, IdNamed, uuid} from '../../../types/Types';
-import {Location} from '../../domain-models/domainModels';
 import {Flag} from '../../domain-models/flag/flagModels';
+import {LocationHolder} from '../../domain-models/location/locationModels';
 
-export interface MeterStatusChangelog {
-  id: uuid;
+export interface MeterStatusChangelog extends HasId {
   statusId: uuid;
   name: string;
   start: string;
 }
 
-export interface Meter extends Location, HasId {
+export interface Meter extends HasId, LocationHolder {
   sapId?: uuid;
   measurementId?: uuid;
-  facility: string;
+  facility: uuid;
   alarm: string;
   flags: Flag[];
   flagged: boolean;

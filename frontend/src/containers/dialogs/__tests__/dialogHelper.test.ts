@@ -30,9 +30,12 @@ describe('dialogSelectors', () => {
 
     const gateway: Gateway = {
       id: '12032010',
-      facility: '005',
-      address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33'},
-      city: {id: 'Perstorp', name: 'Perstorp'},
+      serial: '005',
+      location: {
+        address: {id: 'Stockholmsv 33', name: 'Stockholmsv 33'},
+        city: {id: 'Perstorp', name: 'Perstorp'},
+        position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
+      },
       flags: [],
       flagged: false,
       productModel: 'CMi2110',
@@ -60,7 +63,6 @@ describe('dialogSelectors', () => {
       }],
       statusChanged: '2017-11-05 23:00',
       meterIds: ['67606228'],
-      position: {longitude: 14.205929, latitude: 59.666749, confidence: 0.6666666666666666},
       meterStatus: {name: 'OK', id: 0},
       meterAlarm: ':Inget fel:',
       meterManufacturer: 'ELV',

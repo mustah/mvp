@@ -1,10 +1,10 @@
 import {Icon, LatLngTuple, MarkerOptions} from 'leaflet';
-import {Location} from '../../state/domain-models/domainModels';
-import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
+import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
+import {LocationHolder} from '../../state/domain-models/location/locationModels';
 import {IdNamed} from '../../types/Types';
 
-export interface MapMarker extends Location {
+export interface MapMarker extends LocationHolder {
   status: IdNamed;
 }
 

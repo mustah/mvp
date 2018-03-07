@@ -7,11 +7,8 @@ interface Props {
   gateway: Gateway;
 }
 
-export const GatewayListItem = (props: Props) => {
-  const {gateway} = props;
-  return (
-    <OpenDialogInfoButton label={gateway.id}>
-      <GatewayDetailsContainer gateway={gateway}/>
-    </OpenDialogInfoButton>
-  );
-};
+export const GatewayListItem = ({gateway}: Props) => (
+  <OpenDialogInfoButton label={gateway.serial}>
+    <GatewayDetailsContainer gateway={gateway}/>
+  </OpenDialogInfoButton>
+);

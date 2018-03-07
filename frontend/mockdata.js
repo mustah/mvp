@@ -257,7 +257,7 @@ const parseMeterSeedData = (path, seedOptions = {
 
       r.gateways.push({
         id: gatewayId,
-        facility: row.facility,
+        serial: row.facility,
         address,
         city,
         flags: row.gateway_flags,
@@ -275,7 +275,7 @@ const parseMeterSeedData = (path, seedOptions = {
 
       r.meters.push({
         id: meterId,
-        facility: row.facility,
+        serial: row.facility,
         address,
         city,
         flags: row.meter_flags,

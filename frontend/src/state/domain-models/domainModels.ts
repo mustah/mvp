@@ -1,15 +1,10 @@
 import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
+import {Address} from './location/locationModels';
 import {MeasurementState} from './measurement/measurementModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
-
-export interface Location {
-  address: IdNamed;
-  city: IdNamed;
-  position: GeoPosition;
-}
 
 export const enum EndPoints {
   selections = '/selections',
@@ -21,16 +16,6 @@ export const enum EndPoints {
   logout = '/logout',
   measurements = '/measurements',
   organisations = '/organisations',
-}
-
-export interface GeoPosition {
-  latitude: number;
-  longitude: number;
-  confidence: number;
-}
-
-export interface Address extends IdNamed {
-  cityId: uuid;
 }
 
 export interface ObjectsById<T extends HasId> {
