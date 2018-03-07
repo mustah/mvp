@@ -39,7 +39,7 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
 
   @Override
   public String getUsername() {
-    return user.email;
+    return user.getUsername();
   }
 
   @Override

@@ -3,6 +3,7 @@ package com.elvaco.mvp.core.security;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.domainmodels.Usernamed;
 import com.elvaco.mvp.core.spi.repository.Users;
 
 public class OrganisationPermissions {
@@ -45,7 +46,7 @@ public class OrganisationPermissions {
       case READ:
         return true;
       case UPDATE:
-        return authenticatedUser.getUsername().equalsIgnoreCase(target.email);
+        return isSelf(authenticatedUser, target);
       case DELETE:
       case CREATE:
       default:
@@ -53,8 +54,12 @@ public class OrganisationPermissions {
     }
   }
 
-  private boolean isNotSelf(AuthenticatedUser authenticatedUser, User target) {
-    return !authenticatedUser.getUsername().equals(target.email);
+  private boolean isSelf(Usernamed authenticatedUser, Usernamed target) {
+    return authenticatedUser.hasSameUsernameAs(target);
+  }
+
+  private boolean isNotSelf(Usernamed authenticatedUser, Usernamed target) {
+    return !isSelf(authenticatedUser, target);
   }
 
   private boolean isNotLastSuperAdminUser() {

@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testing.cache.MockTokenService;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
@@ -18,7 +19,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.MARVEL;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,23 +29,13 @@ public class UserUseCasesTest {
 
   @Test
   public void adminCanUpdateUserWithinSameOrganisation() {
-    User user = new User(
-      randomUUID(),
-      "t1",
-      "t2@email.com",
-      newPassword(),
-      DAILY_PLANET,
-      asList(USER, ADMIN)
-    );
+    User user = userBuilder()
+      .name("t1")
+      .email("t2@email.com")
+      .roles(USER, ADMIN)
+      .build();
 
-    User userToUpdate = new User(
-      randomUUID(),
-      "t3",
-      "t3@email.com",
-      newPassword(),
-      DAILY_PLANET,
-      singletonList(USER)
-    );
+    User userToUpdate = userBuilder().build();
     usersOf(currentUser(user), user, userToUpdate);
 
     String token = randomUUID().toString();
@@ -53,28 +43,20 @@ public class UserUseCasesTest {
 
     Optional<User> update = useCases.update(userToUpdate);
 
-    assertThat(update.get().email).isEqualTo("t3@email.com");
+    assertThat(update.get().getUsername()).isEqualTo("random@random.com");
     assertThat(tokenService.getToken(token).isPresent()).isFalse();
   }
 
   @Test
   public void cannotUpdateUserOutsideTheOrganisation() {
-    User dailyPlanetUser = new User(
-      randomUUID(),
-      "t1",
-      "t2@email.com",
-      newPassword(),
-      DAILY_PLANET,
-      singletonList(USER)
-    );
-    User marvelUser = new User(
-      randomUUID(),
-      "Random Use",
-      "randomUser@email.com",
-      newPassword(),
-      MARVEL,
-      singletonList(USER)
-    );
+    User dailyPlanetUser = userBuilder()
+      .name("t1")
+      .email("t2@email.com")
+      .build();
+
+    User marvelUser = userBuilder()
+      .organisation(MARVEL)
+      .build();
     usersOf(currentUser(marvelUser), dailyPlanetUser, marvelUser);
 
     assertThat(useCases.update(dailyPlanetUser).isPresent()).isFalse();
@@ -82,22 +64,12 @@ public class UserUseCasesTest {
 
   @Test
   public void superAdminCanDeleteAnyUser() {
-    User superAdmin = new User(
-      randomUUID(),
-      "t1",
-      "t2@email.com",
-      newPassword(),
-      DAILY_PLANET,
-      asList(USER, SUPER_ADMIN)
-    );
-    User marvelUser = new User(
-      randomUUID(),
-      "Random Use",
-      "randomUser@email.com",
-      newPassword(),
-      MARVEL,
-      singletonList(USER)
-    );
+    User superAdmin = userBuilder()
+      .name("t1")
+      .email("t2@email.com")
+      .roles(USER, SUPER_ADMIN)
+      .build();
+    User marvelUser = userBuilder().build();
     usersOf(currentUser(superAdmin), superAdmin, marvelUser);
 
     String token = randomUUID().toString();
@@ -121,14 +93,15 @@ public class UserUseCasesTest {
   }
 
   private AuthenticatedUser currentUser(User user) {
-    return new MockAuthenticatedUser(user, newToken());
+    return new MockAuthenticatedUser(user, randomUUID().toString());
   }
 
-  private static String newToken() {
-    return randomUUID().toString();
-  }
-
-  private static String newPassword() {
-    return randomUUID().toString();
+  private static UserBuilder userBuilder() {
+    return new UserBuilder()
+      .name("Random User")
+      .email("random@random.com")
+      .password(randomUUID().toString())
+      .organisation(DAILY_PLANET)
+      .asUser();
   }
 }

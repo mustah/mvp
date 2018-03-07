@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -19,15 +20,8 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   }
 
   @Override
-  protected User copyWithId(UUID id, User entity) {
-    return new User(
-      id,
-      entity.name,
-      entity.email,
-      entity.password,
-      entity.organisation,
-      entity.roles
-    );
+  protected User copyWithId(UUID id, User user) {
+    return UserBuilder.from(user).id(id).build();
   }
 
   @Override
@@ -42,7 +36,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
 
   @Override
   public Optional<User> findByEmail(String email) {
-    return filter(u -> u.email.equalsIgnoreCase(email)).findFirst();
+    return filter(u -> u.hasSameUsernameAs(() -> email)).findFirst();
   }
 
   @Override
@@ -63,7 +57,7 @@ public class MockUsers extends MockRepository<UUID, User> implements Users {
   @Override
   public Optional<String> findPasswordByUserId(UUID userId) {
     return filter(user -> Objects.equals(user.id, user.id))
-      .map(u -> u.password)
+      .map(user -> user.password)
       .findFirst();
   }
 

@@ -73,7 +73,7 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
   @Override
   public String getUsername() {
-    return user.email;
+    return user.getUsername();
   }
 
   @Override

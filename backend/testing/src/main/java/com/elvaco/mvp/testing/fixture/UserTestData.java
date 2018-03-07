@@ -3,9 +3,6 @@ package com.elvaco.mvp.testing.fixture;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
-import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 
 public final class UserTestData {
@@ -24,23 +21,23 @@ public final class UserTestData {
       "daily-planet"
     );
 
-  public static final User CLARK_KENT = new User(
-    "Clark Kent",
-    "clark@dailyplanet.org",
-    "KalEl",
-    DAILY_PLANET,
-    singletonList(ADMIN)
-  );
+  public static final User CLARK_KENT = new UserBuilder()
+    .name("Clark Kent")
+    .email("clark@dailyplanet.org")
+    .password("KalEl")
+    .organisation(DAILY_PLANET)
+    .asAdmin()
+    .build();
 
   private UserTestData() {}
 
   public static User dailyPlanetUser(Organisation organisation) {
-    return new User(
-      "Jimmy Olsen",
-      "jimy@dailyplanet.org",
-      "jimols",
-      organisation,
-      singletonList(USER)
-    );
+    return new UserBuilder()
+      .name("Jimmy Olsen")
+      .email("jimy@dailyplanet.org")
+      .password("jimols")
+      .organisation(organisation)
+      .asUser()
+      .build();
   }
 }

@@ -3,13 +3,13 @@ package com.elvaco.mvp.database.repository.mappers;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.admin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.superAdmin;
 import static com.elvaco.mvp.database.entity.user.RoleEntity.user;
@@ -64,14 +64,13 @@ public class UserMapperTest {
   }
 
   private User createUser() {
-    return new User(
-      randomUUID(),
-      "john doh",
-      "a@b.com",
-      "letmein",
-      ELVACO,
-      asList(ADMIN, USER)
-    );
+    return new UserBuilder()
+      .name("john doh")
+      .email("a@b.com")
+      .password("letmein")
+      .organisationElvaco()
+      .roles(ADMIN, USER)
+      .build();
   }
 
   private UserEntity createUserEntity() {

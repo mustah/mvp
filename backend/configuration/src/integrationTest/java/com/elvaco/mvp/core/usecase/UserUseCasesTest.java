@@ -5,6 +5,7 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import com.elvaco.mvp.web.security.AuthenticationToken;
 import com.elvaco.mvp.web.security.MvpUserDetails;
@@ -15,11 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
-import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,14 +54,10 @@ public class UserUseCasesTest extends IntegrationTest {
 
     User user = userUseCases.create(newUser(rawPassword, "me@me.com")).get();
 
-    User userToUpdate = new User(
-      user.id,
-      "Clark Kent",
-      user.email,
-      "passwordShouldNotBeUsed",
-      user.organisation,
-      user.roles
-    );
+    User userToUpdate = UserBuilder.from(user)
+      .name("Clark Kent")
+      .password("passwordShouldNotBeUsed")
+      .build();
 
     User updateUser = userUseCases.update(userToUpdate).get();
 
@@ -94,24 +87,24 @@ public class UserUseCasesTest extends IntegrationTest {
   }
 
   private User newUser(String rawPassword, String email) {
-    return new User(
-      "john doh",
-      email,
-      rawPassword,
-      ELVACO,
-      asList(ADMIN, USER)
-    );
+    return new UserBuilder()
+      .name("john doh")
+      .email(email)
+      .password(rawPassword)
+      .organisationElvaco()
+      .roles(ADMIN, USER)
+      .build();
   }
 
   private void authenticateSuperAdminUser() {
     AuthenticatedUser authenticatedUser = new MvpUserDetails(
-      new User(
-        "Integration test user",
-        "noone@nowhere",
-        "nopass",
-        ELVACO,
-        singletonList(SUPER_ADMIN)
-      ),
+      new UserBuilder()
+        .name("Integration test user")
+        .email("noone@nowhere")
+        .password("nopass")
+        .organisationElvaco()
+        .asSuperAdmin()
+        .build(),
       tokenFactory.newToken()
     );
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
