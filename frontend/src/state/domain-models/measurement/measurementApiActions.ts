@@ -1,7 +1,7 @@
 import {EndPoints} from '../domainModels';
-import {restGetIfNeeded} from '../domainModelsActions';
+import {fetchIfNeeded} from '../domainModelsActions';
 import {Measurement} from './measurementModels';
 import {measurementSchema} from './measurementSchema';
 
 export const fetchMeasurements =
-  restGetIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');
+  fetchIfNeeded<Measurement>(EndPoints.measurements, measurementSchema, 'measurements');

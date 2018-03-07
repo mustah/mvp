@@ -60,7 +60,7 @@ export interface DomainModelsState {
   organisations: NormalizedState<Organisation>;
 }
 
-export enum HttpMethod {
+export const enum RequestType {
   GET = 'GET',
   GET_ENTITY = 'GET_ENTITY',
   POST = 'POST',

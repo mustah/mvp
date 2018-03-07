@@ -8,7 +8,7 @@ import {
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../paginatedDomainModels';
-import {clearErrorMeters, requestMethodPaginated} from '../paginatedDomainModelsActions';
+import {clearErrorMeters, paginatedRequestMethod} from '../paginatedDomainModelsActions';
 import {
   initialPaginatedDomain,
   meters,
@@ -20,8 +20,7 @@ describe('paginatedDomainModelsReducer', () => {
 
   describe('meters, paginated', () => {
 
-    const getRequest =
-      requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
+    const getRequest = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 
@@ -181,6 +180,7 @@ describe('paginatedDomainModelsReducer', () => {
       expect(stateAfterFailure).toEqual(failedState);
     });
   });
+
   describe('clear error', () => {
     it('clears error from a page', () => {
       const payload: HasPageNumber = {page: 1};
@@ -204,6 +204,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     });
   });
+
   describe('clear paginatedDomainModels', () => {
     it('clears a cached data', () => {
       expect(paginatedDomainModels(

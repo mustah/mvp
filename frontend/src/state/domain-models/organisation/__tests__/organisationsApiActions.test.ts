@@ -4,8 +4,8 @@ import thunk from 'redux-thunk';
 import {initLanguage} from '../../../../i18n/i18n';
 import {authenticate} from '../../../../services/restClient';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
-import {DomainModelsState, EndPoints, HttpMethod} from '../../domainModels';
-import {requestMethod} from '../../domainModelsActions';
+import {DomainModelsState, EndPoints} from '../../domainModels';
+import {postRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {Organisation} from '../organisationModels';
 import {addOrganisation} from '../organisationsApiActions';
@@ -15,8 +15,10 @@ const configureMockStore = configureStore([thunk]);
 
 describe('organisationsApiActions', () => {
 
-  const organisationPostRequest = requestMethod<Organisation>(EndPoints.organisations, HttpMethod.POST);
   initLanguage({code: 'en', name: 'english'});
+
+  const createOrganisation = postRequestOf<Organisation>(EndPoints.organisations);
+
   let mockRestClient: MockAdapter;
   let store;
 
@@ -55,18 +57,19 @@ describe('organisationsApiActions', () => {
       await postOrganisationWithResponseOk(newOrganisation);
 
       expect(store.getActions()).toEqual([
-        organisationPostRequest.request(),
-        organisationPostRequest.success(returnedOrganisation as Organisation),
+        createOrganisation.request(),
+        createOrganisation.success(returnedOrganisation as Organisation),
         showSuccessMessage('Successfully created the organisation ' +
-          `${returnedOrganisation.name} (${returnedOrganisation.code})`),
+                           `${returnedOrganisation.name} (${returnedOrganisation.code})`),
       ]);
     });
+
     it('send a post request to backend and get an error back', async () => {
       await postUserWithBadRequest(newOrganisation);
 
       expect(store.getActions()).toEqual([
-        organisationPostRequest.request(),
-        organisationPostRequest.failure({...errorResponse}),
+        createOrganisation.request(),
+        createOrganisation.failure({...errorResponse}),
         showFailMessage(`Failed to create organisation: ${errorResponse.message}`),
       ]);
     });

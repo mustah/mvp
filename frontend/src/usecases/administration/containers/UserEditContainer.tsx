@@ -15,7 +15,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorUsers, fetchUser, modifyUser,
+  clearUserError, fetchUser, modifyUser,
 } from '../../../state/domain-models/user/userApiActions';
 import {
   getEntitiesDomainModels,
@@ -26,7 +26,7 @@ import {fetchOrganisations} from '../../../state/domain-models/organisation/orga
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
-import {ClearError, ErrorResponse, OnClick, RestGet, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, Fetch, uuid} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -38,7 +38,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   fetchUser: (id: uuid) => void;
-  fetchOrganisations: RestGet;
+  fetchOrganisations: Fetch;
   modifyUser: OnClick;
   clearError: ClearError;
 }
@@ -104,7 +104,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchUser,
   fetchOrganisations,
   modifyUser,
-  clearError: clearErrorUsers,
+  clearError: clearUserError,
 }, dispatch);
 
 export const UserEditContainer =

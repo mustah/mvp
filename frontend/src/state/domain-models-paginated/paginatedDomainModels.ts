@@ -39,6 +39,3 @@ interface PaginatedResult {
   error?: ErrorResponse;
   result?: uuid[];
 }
-
-export type RestGetPaginated = (page: number, requestData?: string) => void;
-export type ClearErrorPaginated = (payload: HasPageNumber) => void;

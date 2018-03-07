@@ -9,7 +9,7 @@ export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type RenderFunction<T> = (props: T) => Children;
 
-export type RestGet = (requestData?: string) => void;
+export type Fetch = (requestModel?: string) => void;
 export type ClearError = () => void;
 
 export type Predicate<T> = (value: T) => boolean;

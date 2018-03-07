@@ -20,7 +20,7 @@ import {
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
-import {ClearError, ErrorResponse, OnClickWithId, RestGet, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../../types/Types';
 
 interface StateToProps {
   organisations: DomainModel<Organisation>;
@@ -30,7 +30,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   deleteOrganisation: OnClickWithId;
-  fetchOrganisations: RestGet;
+  fetchOrganisations: Fetch;
   clearError: ClearError;
 }
 

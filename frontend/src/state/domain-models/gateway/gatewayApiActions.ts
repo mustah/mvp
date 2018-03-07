@@ -1,11 +1,11 @@
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {EndPoints} from '../domainModels';
-import {clearError, paginationMetaDataFromResult, restGetIfNeeded} from '../domainModelsActions';
+import {clearError, paginationMetaDataOf, fetchIfNeeded} from '../domainModelsActions';
 import {Gateway} from './gatewayModels';
 import {gatewaySchema} from './gatewaySchema';
 
 export const clearErrorGateways = clearError(EndPoints.gateways);
-export const fetchGateways = restGetIfNeeded<Gateway>(
+export const fetchGateways = fetchIfNeeded<Gateway>(
   EndPoints.gateways,
   gatewaySchema,
   'gateways',
@@ -14,7 +14,7 @@ export const fetchGateways = restGetIfNeeded<Gateway>(
       {result},
       dispatch,
     ) => dispatch(paginationUpdateMetaData({
-      entityType: 'gateways', ...paginationMetaDataFromResult(result),
+      entityType: 'gateways', ...paginationMetaDataOf(result),
     })),
   },
 );

@@ -34,7 +34,7 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, ErrorResponse, OnClick, RestGet} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, Fetch} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -54,7 +54,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
   clearError: ClearError;
 }
 

@@ -5,8 +5,13 @@ import {initLanguage} from '../../../../i18n/i18n';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
-import {DomainModelsState, EndPoints, HttpMethod} from '../../domainModels';
-import {requestMethod} from '../../domainModelsActions';
+import {DomainModelsState, EndPoints} from '../../domainModels';
+import {
+  deleteRequestOf,
+  getEntityRequestOf,
+  postRequestOf,
+  putRequestOf,
+} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {addUser, deleteUser, fetchUser, modifyProfile, modifyUser} from '../userApiActions';
 import {Role, User} from '../userModels';
@@ -17,10 +22,11 @@ const configureMockStore = configureStore([thunk]);
 describe('userApiActions', () => {
 
   initLanguage({code: 'en', name: 'english'});
-  const userPostRequest = requestMethod<User>(EndPoints.users, HttpMethod.POST);
-  const userPutRequest = requestMethod<User>(EndPoints.users, HttpMethod.PUT);
-  const userDeleteRequest = requestMethod<User>(EndPoints.users, HttpMethod.DELETE);
-  const userEntityRequest = requestMethod<User>(EndPoints.users, HttpMethod.GET_ENTITY);
+
+  const createUser = postRequestOf<User>(EndPoints.users);
+  const updateUser = putRequestOf<User>(EndPoints.users);
+  const removeUser = deleteRequestOf<User>(EndPoints.users);
+  const fetchUserEntity = getEntityRequestOf<User>(EndPoints.users);
 
   let mockRestClient: MockAdapter;
   let store;
@@ -59,8 +65,8 @@ describe('userApiActions', () => {
       await postUserWithResponseOk(newUser);
 
       expect(store.getActions()).toEqual([
-        userPostRequest.request(),
-        userPostRequest.success(returnedUser as User),
+        createUser.request(),
+        createUser.success(returnedUser as User),
         showSuccessMessage(`Successfully created the user ${returnedUser.name} (${returnedUser.email})`),
       ]);
     });
@@ -68,8 +74,8 @@ describe('userApiActions', () => {
       await postUserWithBadRequest(newUser);
 
       expect(store.getActions()).toEqual([
-        userPostRequest.request(),
-        userPostRequest.failure({...errorResponse}),
+        createUser.request(),
+        createUser.failure({...errorResponse}),
         showFailMessage(`Failed to create user: ${errorResponse.message}`),
       ]);
     });
@@ -97,8 +103,8 @@ describe('userApiActions', () => {
       await putUserWithResponseOk(updatedUser);
 
       expect(store.getActions()).toEqual([
-        userPutRequest.request(),
-        userPutRequest.success(updatedUser),
+        updateUser.request(),
+        updateUser.success(updatedUser),
         showSuccessMessage(`Successfully updated user ${updatedUser.name} (${updatedUser.email})`),
       ]);
     });
@@ -106,8 +112,8 @@ describe('userApiActions', () => {
       await putUserWithBadRequest(updatedUser);
 
       expect(store.getActions()).toEqual([
-        userPutRequest.request(),
-        userPutRequest.failure(errorResponse),
+        updateUser.request(),
+        updateUser.failure(errorResponse),
         showFailMessage(`Failed to update user: ${errorResponse.message}`),
       ]);
     });
@@ -136,8 +142,8 @@ describe('userApiActions', () => {
       await putUserWithResponseOk(updatedUser);
 
       expect(store.getActions()).toEqual([
-        userPutRequest.request(),
-        userPutRequest.success(updatedUser),
+        updateUser.request(),
+        updateUser.success(updatedUser),
         showSuccessMessage(`Successfully updated profile`),
         authSetUser(updatedUser),
       ]);
@@ -146,8 +152,8 @@ describe('userApiActions', () => {
       await putUserWithBadRequest(updatedUser);
 
       expect(store.getActions()).toEqual([
-        userPutRequest.request(),
-        userPutRequest.failure(errorResponse),
+        updateUser.request(),
+        updateUser.failure(errorResponse),
         showFailMessage(`Failed to update profile: ${errorResponse.message}`),
       ]);
     });
@@ -175,8 +181,8 @@ describe('userApiActions', () => {
       await deleteUserWithResponseOk(user);
 
       expect(store.getActions()).toEqual([
-        userDeleteRequest.request(),
-        userDeleteRequest.success(user),
+        removeUser.request(),
+        removeUser.success(user),
         showSuccessMessage(`Successfully deleted the user ${user.name} (${user.email})`),
       ]);
     });
@@ -185,8 +191,8 @@ describe('userApiActions', () => {
       await deleteUserWithBadRequest(user);
 
       expect(store.getActions()).toEqual([
-        userDeleteRequest.request(),
-        userDeleteRequest.failure(errorResponse),
+        removeUser.request(),
+        removeUser.failure(errorResponse),
         showFailMessage(`Failed to delete the user: ${errorResponse.message}`),
       ]);
     });
@@ -214,8 +220,8 @@ describe('userApiActions', () => {
       await getUserEntityWithResponseOk(user);
 
       expect(store.getActions()).toEqual([
-        userEntityRequest.request(),
-        userEntityRequest.success(user),
+        fetchUserEntity.request(),
+        fetchUserEntity.success(user),
       ]);
     });
 
@@ -223,12 +229,19 @@ describe('userApiActions', () => {
       await getUserEntityWithBadRequest(user);
 
       expect(store.getActions()).toEqual([
-        userEntityRequest.request(),
-        userEntityRequest.failure(errorResponse),
+        fetchUserEntity.request(),
+        fetchUserEntity.failure(errorResponse),
       ]);
     });
     it('doesnt fetch if is already in cache', async () => {
-      store = configureMockStore({domainModels: {users: {...initialDomain(), entities: {[user.id]: user}}}});
+      store = configureMockStore({
+        domainModels: {
+          users: {
+            ...initialDomain(),
+            entities: {[user.id]: user},
+          },
+        },
+      });
 
       await getUserEntityWithResponseOk(user);
 

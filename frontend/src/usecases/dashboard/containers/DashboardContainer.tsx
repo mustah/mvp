@@ -17,7 +17,7 @@ import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {clearErrorAllMeters, fetchAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
-import {Callback, ClearError, ErrorResponse, RestGet} from '../../../types/Types';
+import {Callback, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
@@ -34,7 +34,7 @@ interface StateToProps {
 interface DispatchToProps {
   fetchDashboard: Callback;
   clearError: ClearError;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;

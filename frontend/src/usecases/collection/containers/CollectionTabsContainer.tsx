@@ -46,7 +46,7 @@ import {
   ErrorResponse,
   OnClick,
   OnClickWithId,
-  RestGet,
+  Fetch,
   uuid,
 } from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -74,7 +74,7 @@ interface DispatchToProps extends TabsContainerDispatchToProps {
   setSelection: OnSelectParameter;
   selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
-  fetchGateways: RestGet;
+  fetchGateways: Fetch;
   clearError: ClearError;
 }
 

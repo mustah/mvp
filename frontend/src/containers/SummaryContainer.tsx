@@ -6,7 +6,7 @@ import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
-import {RestGet} from '../types/Types';
+import {Fetch} from '../types/Types';
 import {fetchAllMeters} from '../state/domain-models/meter-all/allMetersApiActions';
 import {SelectionSummary} from '../state/search/selection/selectionModels';
 import {getEncodedUriParametersForAllMeters, getSelectionSummary} from '../state/search/selection/selectionSelectors';
@@ -17,7 +17,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps;

@@ -17,7 +17,7 @@ import {getSelectionTree} from '../../../../state/domain-models/meter-all/allMet
 import {getEncodedUriParametersForAllMeters} from '../../../../state/search/selection/selectionSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
-import {OnClickWithId, RestGet, uuid} from '../../../../types/Types';
+import {OnClickWithId, Fetch, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -37,7 +37,7 @@ interface StateToProps {
 interface DispatchToProps {
   toggleExpand: OnClickWithId;
   toggleSelect: OnClickWithId;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & OwnProps;

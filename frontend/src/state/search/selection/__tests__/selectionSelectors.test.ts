@@ -2,15 +2,15 @@ import {normalize} from 'normalizr';
 import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
+import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {
   DomainModelsState,
   EndPoints,
-  HttpMethod,
   Normalized,
   NormalizedState,
   SelectionEntity,
 } from '../../../domain-models/domainModels';
-import {requestMethod} from '../../../domain-models/domainModelsActions';
+import {getRequestOf} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
   alarms,
@@ -25,7 +25,6 @@ import {
 } from '../../../domain-models/domainModelsReducer';
 import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {Gateway} from '../../../domain-models/gateway/gatewayModels';
-import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
 import {ADD_SELECTION, SELECT_PERIOD} from '../selectionActions';
@@ -49,7 +48,7 @@ import {
 
 describe('selectionSelectors', () => {
 
-  const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
+  const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
@@ -65,11 +64,23 @@ describe('selectionSelectors', () => {
     addresses: addresses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     alarms: alarms(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
     cities: cities(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    gatewayStatuses: gatewayStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    gatewayStatuses: gatewayStatuses(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
     gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
-    manufacturers: manufacturers(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    meterStatuses: meterStatuses(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
-    productModels: productModels(initialDomainModelState, selectionsRequest.success(domainModelPayload)),
+    manufacturers: manufacturers(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
+    meterStatuses: meterStatuses(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
+    productModels: productModels(
+      initialDomainModelState,
+      selectionsRequest.success(domainModelPayload),
+    ),
     users: users(initialDomain<User>(), {type: 'none'}),
   });
 
@@ -138,8 +149,14 @@ describe('selectionSelectors', () => {
     it('has two selected cities', () => {
       const payloadGot: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
       const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const prevState: SelectionState = selection(initialState, {type: ADD_SELECTION, payload: payloadGot});
-      const state: SelectionState = selection(prevState, {type: ADD_SELECTION, payload: payloadSto});
+      const prevState: SelectionState = selection(
+        initialState,
+        {type: ADD_SELECTION, payload: payloadGot},
+      );
+      const state: SelectionState = selection(
+        prevState,
+        {type: ADD_SELECTION, payload: payloadSto},
+      );
 
       expect(getEncodedUriParametersForMeters({
         selection: state,
@@ -159,7 +176,10 @@ describe('selectionSelectors', () => {
     });
 
     it('get selected period', () => {
-      const state: SelectionState = selection(initialState, {type: SELECT_PERIOD, payload: Period.currentWeek});
+      const state: SelectionState = selection(
+        initialState,
+        {type: SELECT_PERIOD, payload: Period.currentWeek},
+      );
 
       expect(getSelectedPeriod(state)).toBe(Period.currentWeek);
     });

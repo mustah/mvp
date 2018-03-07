@@ -16,7 +16,7 @@ import {getOrganisations} from '../../../state/domain-models/organisation/organi
 import {addUser} from '../../../state/domain-models/user/userApiActions';
 import {Role} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
-import {OnClick, RestGet} from '../../../types/Types';
+import {OnClick, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -25,7 +25,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   addUser: OnClick;
-  fetchOrganisations: RestGet;
+  fetchOrganisations: Fetch;
 }
 
 type Props = DispatchToProps & StateToProps;

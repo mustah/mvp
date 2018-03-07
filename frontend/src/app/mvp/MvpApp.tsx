@@ -17,7 +17,7 @@ import {
   getEncodedUriParametersForGateways,
 } from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {OnClick, RestGet} from '../../types/Types';
+import {OnClick, Fetch} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -34,8 +34,8 @@ interface StateToProps {
 
 interface DispatchToProps {
   toggleShowHideSideMenu: OnClick;
-  fetchGateways: RestGet;
-  fetchAllMeters: RestGet;
+  fetchGateways: Fetch;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;

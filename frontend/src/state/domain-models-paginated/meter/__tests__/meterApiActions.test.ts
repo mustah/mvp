@@ -10,13 +10,15 @@ import {ErrorResponse} from '../../../../types/Types';
 import {EndPoints} from '../../../domain-models/domainModels';
 import {showFailMessage} from '../../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
+import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
+import {
+  clearErrorMeters,
+  domainModelPaginatedClearError,
+  paginatedRequestMethod,
+} from '../../paginatedDomainModelsActions';
 import {fetchMeters} from '../meterApiActions';
 import {Meter} from '../meterModels';
 import {meterSchema} from '../meterSchema';
-import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
-import {
-  clearErrorMeters, domainModelPaginatedClearError, requestMethodPaginated,
-} from '../../paginatedDomainModelsActions';
 import MockAdapter = require('axios-mock-adapter');
 
 initLanguage({code: 'en', name: 'english'});
@@ -32,8 +34,7 @@ describe('meterApiActions', () => {
     },
   };
 
-  const requestMeters =
-    requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
+  const requestMeters = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
 
   beforeEach(() => {
     store = configureMockStore(initialRootState);
@@ -153,7 +154,13 @@ describe('meterApiActions', () => {
         paginatedDomainModels: {
           meters: {
             entities: {},
-            result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: false, error: {message: 'an error'}}},
+            result: {
+              [existingPage]: {
+                isFetching: false,
+                isSuccessfullyFetched: false,
+                error: {message: 'an error'},
+              },
+            },
           },
         },
       };
@@ -165,6 +172,7 @@ describe('meterApiActions', () => {
     });
 
   });
+
   describe('clear error', () => {
     it('send a request to clear error of a specified page', () => {
       const payload: HasPageNumber = {page: 1};
