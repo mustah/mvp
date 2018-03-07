@@ -11,6 +11,7 @@ import org.hibernate.type.CustomType;
 public class MvpPostgreSqlDialect extends PostgreSQL94Dialect {
 
   public MvpPostgreSqlDialect() {
+    super();
     registerFunction(
       "unit_at",
       new SQLFunctionTemplate(
