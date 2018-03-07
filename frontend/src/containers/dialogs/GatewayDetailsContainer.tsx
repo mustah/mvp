@@ -45,7 +45,7 @@ interface StateToProps {
 type Props = OwnProps & StateToProps;
 
 const GatewayDetailsInfo = ({gateway}: OwnProps) => {
-  const {location: {city, address}, id, productModel, status, flags} = gateway;
+  const {location: {city, address}, serial, productModel, status, flags} = gateway;
 
   return (
     <div className="GatewayDetailsInfo">
@@ -66,7 +66,7 @@ const GatewayDetailsInfo = ({gateway}: OwnProps) => {
         </Column>
         <Column className="OverView">
           <Row>
-            <Info label={translate('gateway id')} value={id}/>
+            <Info label={translate('gateway serial')} value={serial}/>
             <Info label={translate('product model')} value={productModel}/>
           </Row>
           <Row>
@@ -98,7 +98,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderDate = ({date}: Meter) => date;
     const renderMedium = ({medium}: Meter) => medium;
     const markers: MapMarker = {status, location};
-    const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(markers);
+    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(markers);
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 

@@ -11,7 +11,7 @@ export interface MeterStatusChangelog extends HasId {
 export interface Meter extends HasId, LocationHolder {
   sapId?: uuid;
   measurementId?: uuid;
-  facility: string;
+  facility: uuid;
   alarm: string;
   flags: Flag[];
   flagged: boolean;
