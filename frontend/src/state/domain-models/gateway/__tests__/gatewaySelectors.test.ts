@@ -1,9 +1,9 @@
-import {HasId, uuid} from '../../../../types/Types';
+import {Identifiable, uuid} from '../../../../types/Types';
 import {ObjectsById} from '../../domainModels';
 import {Gateway, GatewaysState} from '../gatewayModels';
 import {getGatewayDataSummary} from '../gatewaySelectors';
 
-type PartialDomainModel = ObjectsById<Partial<Gateway> & HasId>;
+type PartialDomainModel = ObjectsById<Partial<Gateway> & Identifiable>;
 
 describe('gatewaySelectors', () => {
 

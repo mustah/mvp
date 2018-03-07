@@ -1,4 +1,4 @@
-import {ErrorResponse, HasId, uuid} from '../../types/Types';
+import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {SortingOptions} from '../ui/pagination/paginationModels';
 import {Meter} from './meter/meterModels';
@@ -23,12 +23,12 @@ export interface HasPageNumber {
   page: number;
 }
 
-export interface NormalizedPaginated<T extends HasId> extends HasPageNumber {
+export interface NormalizedPaginated<T extends Identifiable> extends HasPageNumber {
   entities: {[entityType: string]: ObjectsById<T>};
   result: NormalizedPaginatedResult;
 }
 
-export interface NormalizedPaginatedState<T extends HasId = HasId> {
+export interface NormalizedPaginatedState<T extends Identifiable = Identifiable> {
   entities: ObjectsById<T>;
   result: {[page: number]: PaginatedResult};
 }

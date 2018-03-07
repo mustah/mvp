@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import {Action, ErrorResponse, HasId, uuid} from '../../types/Types';
+import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {EndPoints, ObjectsById} from '../domain-models/domainModels';
 import {
   ADD_SELECTION,
@@ -24,11 +24,11 @@ import {
   domainModelsPaginatedRequest,
 } from './paginatedDomainModelsActions';
 
-export const initialPaginatedDomain = <T extends HasId>(): NormalizedPaginatedState<T> => ({
+export const initialPaginatedDomain = <T extends Identifiable>(): NormalizedPaginatedState<T> => ({
   result: {},
   entities: {},
 });
-const setRequest = <T extends HasId>(
+const setRequest = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   {payload: page}: Action<number>,
 ): NormalizedPaginatedState<T> => ({
@@ -39,7 +39,7 @@ const setRequest = <T extends HasId>(
   },
 });
 
-const setEntities = <T extends HasId>(
+const setEntities = <T extends Identifiable>(
   entity: string,
   state: NormalizedPaginatedState<T>,
   {payload}: Action<NormalizedPaginated<T>>,
@@ -57,7 +57,7 @@ const setEntities = <T extends HasId>(
   };
 };
 
-const setError = <T extends HasId>(
+const setError = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   {payload: {page, ...error}}: Action<ErrorResponse & HasPageNumber>,
 ): NormalizedPaginatedState<T> => ({
@@ -68,7 +68,7 @@ const setError = <T extends HasId>(
   },
 });
 
-const clearError = <T extends HasId>(
+const clearError = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   {payload: {page}}: Action<HasPageNumber>,
 ): NormalizedPaginatedState<T> => ({
@@ -79,13 +79,13 @@ const clearError = <T extends HasId>(
   },
 });
 
-type ActionTypes<T extends HasId> =
+type ActionTypes<T extends Identifiable> =
   | Action<NormalizedPaginated<T>>
   | Action<number>
   | Action<ErrorResponse & HasPageNumber>
   | Action<HasPageNumber>;
 
-export const reducerFor = <T extends HasId>(
+export const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
   endPoint: EndPoints,
 ) =>

@@ -5,7 +5,7 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, HasId} from '../../types/Types';
+import {ErrorResponse, Identifiable} from '../../types/Types';
 import {EndPoints, HttpMethod} from '../domain-models/domainModels';
 import {
   HasPageNumber,
@@ -84,11 +84,11 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-const shouldFetch = (page: number, {result}: NormalizedPaginatedState<HasId>): boolean =>
+const shouldFetch = (page: number, {result}: NormalizedPaginatedState<Identifiable>): boolean =>
   !result[page]
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
-export const restGetIfNeeded = <T extends HasId>(
+export const restGetIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   schema: Schema,
   entityType: keyof PaginatedDomainModelsState,

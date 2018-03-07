@@ -5,7 +5,7 @@ import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {InvalidToken, restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, HasId, uuid} from '../../types/Types';
+import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
 import {limit} from '../ui/pagination/paginationReducer';
@@ -91,12 +91,12 @@ const asyncRequest = async <REQ, DAT>(
     }
   }
 };
-const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<HasId>): boolean =>
+const shouldFetch = ({isSuccessfullyFetched, isFetching, error}: NormalizedState<Identifiable>): boolean =>
   !isSuccessfullyFetched && !isFetching && !error;
-const shouldFetchEntity = (id: uuid, {isFetching, error, entities}: NormalizedState<HasId>): boolean =>
+const shouldFetchEntity = (id: uuid, {isFetching, error, entities}: NormalizedState<Identifiable>): boolean =>
   !isFetching && !error && !entities[id];
 
-export const restGetIfNeeded = <T extends HasId>(
+export const restGetIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
   schema: Schema,
   entityType: keyof DomainModelsState,

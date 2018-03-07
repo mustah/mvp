@@ -1,5 +1,5 @@
 import {makeMeter} from '../../../__tests__/testDataFactory';
-import {ErrorResponse, HasId} from '../../../types/Types';
+import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {EndPoints} from '../../domain-models/domainModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Meter} from '../meter/meterModels';
@@ -121,7 +121,7 @@ describe('paginatedDomainModelsReducer', () => {
 
       const anotherPage = 2;
 
-      const payload: NormalizedPaginated<HasId> = {
+      const payload: NormalizedPaginated<Identifiable> = {
           page: anotherPage,
           result: {
             content: [1, 4],
@@ -143,7 +143,7 @@ describe('paginatedDomainModelsReducer', () => {
         }
       ;
 
-      const expectedState: NormalizedPaginatedState<HasId> = {
+      const expectedState: NormalizedPaginatedState<Identifiable> = {
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
@@ -168,7 +168,7 @@ describe('paginatedDomainModelsReducer', () => {
 
       const stateAfterFailure = meters(initialState, getRequest.failure(payload));
 
-      const failedState: NormalizedPaginatedState<HasId> = {
+      const failedState: NormalizedPaginatedState<Identifiable> = {
         ...initialState,
         result: {
           [page]: {

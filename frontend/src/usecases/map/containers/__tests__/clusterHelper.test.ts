@@ -1,4 +1,4 @@
-import {Dictionary, HasId} from '../../../../types/Types';
+import {Dictionary, Identifiable} from '../../../../types/Types';
 import {MapMarker, Marker} from '../../mapModels';
 import {
   isGeoPositionWithinThreshold,
@@ -8,7 +8,7 @@ import {
 
 describe('clusterHelper', () => {
 
-  const mapMarker1: Partial<MapMarker & HasId> = {
+  const mapMarker1: Partial<MapMarker & Identifiable> = {
     id: 1,
     status: {id: 1, name: 'Ok'},
     location: {
@@ -18,7 +18,7 @@ describe('clusterHelper', () => {
     },
   };
 
-  const mapMarker2: Partial<MapMarker & HasId> = {
+  const mapMarker2: Partial<MapMarker & Identifiable> = {
     id: 2,
     status: {id: 2, name: 'Warning'},
     location: {

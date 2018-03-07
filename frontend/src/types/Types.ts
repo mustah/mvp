@@ -41,7 +41,7 @@ export interface IdNamed {
   readonly name: string;
 }
 
-export interface HasId {
+export interface Identifiable {
   id: uuid;
 }
 

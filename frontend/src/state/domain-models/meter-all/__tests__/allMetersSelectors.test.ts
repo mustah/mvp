@@ -1,12 +1,12 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
-import {HasId, uuid} from '../../../../types/Types';
+import {Identifiable, uuid} from '../../../../types/Types';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {NormalizedState, ObjectsById} from '../../domainModels';
 import {Location} from '../../location/locationModels';
 import {MeterDataSummary, SelectionTreeData} from '../allMetersModels';
 import {getMeterDataSummary, getSelectionTree} from '../allMetersSelectors';
 
-type PartialDomainModel = ObjectsById<Partial<Meter> & HasId>;
+type PartialDomainModel = ObjectsById<Partial<Meter> & Identifiable>;
 describe('allMetersSelectors', () => {
 
   describe('summary', () => {
