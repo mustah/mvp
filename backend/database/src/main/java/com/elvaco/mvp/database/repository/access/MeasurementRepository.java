@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 
@@ -16,12 +16,12 @@ import static java.util.stream.Collectors.toList;
 
 public class MeasurementRepository implements Measurements {
 
-  private final MeasurementJpaRepository measurementJpaRepository;
+  private final MeasurementJpaRepositoryImpl measurementJpaRepository;
   private final QueryFilters queryFilters;
   private final MeasurementMapper measurementMapper;
 
   public MeasurementRepository(
-    MeasurementJpaRepository measurementJpaRepository,
+    MeasurementJpaRepositoryImpl measurementJpaRepository,
     QueryFilters queryFilters,
     MeasurementMapper measurementMapper
   ) {

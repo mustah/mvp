@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeasurementControllerTest extends IntegrationTest {
 
   @Autowired
-  private MeasurementJpaRepository measurementJpaRepository;
+  private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterRepository;

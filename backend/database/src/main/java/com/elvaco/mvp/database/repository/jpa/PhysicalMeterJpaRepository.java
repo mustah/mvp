@@ -8,9 +8,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface PhysicalMeterJpaRepository
-  extends PagingAndSortingRepository<PhysicalMeterEntity, Long> {
-
-  Optional<PhysicalMeterEntity> findById(Long id);
+  extends PagingAndSortingRepository<PhysicalMeterEntity, UUID> {
 
   List<PhysicalMeterEntity> findByMedium(String medium);
 

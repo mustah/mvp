@@ -1,113 +1,49 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.util.Date;
 import java.util.List;
-import javax.persistence.EntityManager;
+import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
-import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import com.querydsl.core.types.EntityPath;
-import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.support.JpaEntityInformation;
-import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
-import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
-import org.springframework.data.jpa.repository.support.Querydsl;
-import org.springframework.data.querydsl.EntityPathResolver;
-import org.springframework.data.querydsl.SimpleEntityPathResolver;
-import org.springframework.data.repository.support.PageableExecutionUtils;
-import org.springframework.stereotype.Repository;
+public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, Long> {
 
-@Repository
-public class MeasurementJpaRepository extends QueryDslJpaRepository<MeasurementEntity, Long> {
+  @Query(nativeQuery = true, value = "SELECT "
+    + "avg(value) as value,"
+    + "interval_start as when"
+    + " FROM ("
+    + "   SELECT generate_series(date_trunc(:resolution, cast(:from as timestamp)),"
+    + "                          date_trunc(:resolution, cast(:to as timestamp)),"
+    + "                          cast('1 ' || :resolution as interval)) as interval_start) x"
+    + " LEFT JOIN ("
+    + "   SELECT value(value), date_trunc(:resolution, created) as interval_start from "
+    + "measurement where physical_meter_id in :meter_ids and created >= :from and created <= :to) y"
+    + "   using (interval_start)"
+    + " GROUP BY interval_start"
+    + " ORDER BY interval_start")
+  List<MeasurementValueProjection> getAverageForPeriod(
+    @Param("meter_ids") List<UUID> meterIds,
+    @Param("resolution") String resolution,
+    @Param("from") Date from,
+    @Param("to") Date to
+  );
 
-  private final EntityManager entityManager;
-  private final EntityPath<MeasurementEntity> path;
-  private final Querydsl querydsl;
 
-  @Autowired
-  MeasurementJpaRepository(EntityManager entityManager) {
-    this(entityManager, SimpleEntityPathResolver.INSTANCE);
-  }
-
-  private MeasurementJpaRepository(EntityManager entityManager, EntityPathResolver resolver) {
-    this(
-      new JpaMetamodelEntityInformation<>(MeasurementEntity.class, entityManager.getMetamodel()),
-      entityManager,
-      resolver
-    );
-  }
-
-  private MeasurementJpaRepository(
-    JpaEntityInformation<MeasurementEntity, Long> entityInformation,
-    EntityManager entityManager,
-    EntityPathResolver resolver
-  ) {
-    super(entityInformation, entityManager);
-    this.entityManager = entityManager;
-    this.path = resolver.createPath(entityInformation.getJavaType());
-    PathBuilder<MeasurementEntity> builder = new PathBuilder<>(path.getType(), path.getMetadata());
-    this.querydsl = new Querydsl(entityManager, builder);
-  }
-
-  public List<MeasurementEntity> findAllScaled(
-    String scale,
-    Predicate predicate
-  ) {
-    JPQLQuery<MeasurementEntity> query = getMeasurementEntityJpqlQuery(scale, predicate);
-
-    // TODO: Implement and test sorting...
-    // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
-
-    return query.fetch();
-  }
-
-  public Page<MeasurementEntity> findAllScaled(
-    String scale,
-    Predicate predicate,
-    Pageable pageable
-  ) {
-    JPQLQuery<MeasurementEntity> query = getMeasurementEntityJpqlQuery(scale, predicate);
-
-    JPQLQuery<?> countQuery = createCountQuery(predicate);
-    // TODO: Implement and test sorting...
-    // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
-    query = querydsl.applyPagination(pageable, query);
-
-    return PageableExecutionUtils.getPage(query.fetch(), pageable, countQuery::fetchCount);
-  }
-
-  private JPQLQuery<MeasurementEntity> getMeasurementEntityJpqlQuery(
-    String scale,
-    Predicate predicate
-  ) {
-    JPQLQuery<MeasurementEntity> query = new JPAQuery<>(entityManager);
-    QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
-    query.select(
-      Projections.constructor(
-        MeasurementEntity.class,
-        queryMeasurement.id,
-        queryMeasurement.created,
-        queryMeasurement.quantity,
-        Expressions.simpleTemplate(
-          MeasurementUnit.class,
-          "unit_at({0}, {1})",
-          queryMeasurement.value,
-          scale
-        ),
-        queryMeasurement.physicalMeter
-      ))
-      .where(predicate)
-      .from(path);
-    return query;
-  }
+  @Query(nativeQuery = true, value = "SELECT "
+    + "avg(value) as value,"
+    + "interval_start as when"
+    + " FROM (SELECT value(value) as value, date_trunc('hour', created)  + cast(?2 || ' min' as "
+    + "interval) "
+    + "* ROUND(date_part('minute', created) / ?2) as interval_start"
+    + " FROM measurement where physical_meter_id in ?1 and created >= ?3) x GROUP BY "
+    + "interval_start, value")
+  List<MeasurementValueProjection> getAverageForPeriod(
+    List<UUID> meterIds,
+    int intervalInMinutes,
+    Date since,
+    String unit
+  );
 }
-
