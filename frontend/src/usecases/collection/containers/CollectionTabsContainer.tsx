@@ -17,8 +17,15 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
-import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/gateway/gatewayApiActions';
-import {getDomainModel, getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {
+  getDomainModel,
+  getError,
+  getResultDomainModels,
+} from '../../../state/domain-models/domainModelsSelectors';
+import {
+  clearErrorGateways,
+  fetchGateways,
+} from '../../../state/domain-models/gateway/gatewayApiActions';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayDataSummary} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
@@ -28,7 +35,11 @@ import {changePaginationPage} from '../../../state/ui/pagination/paginationActio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ErrorResponse, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -106,7 +117,8 @@ class CollectionTabs extends React.Component<Props> {
       </Dialog>
     );
 
-    const noGatewaysFallbackContent = <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
+    const noGatewaysFallbackContent =
+      <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
 
     return (
       <Tabs>
@@ -160,7 +172,11 @@ const mapStateToProps = (
     searchParameters,
   }: RootState,
 ): StateToProps => {
-  const paginationData: Pagination = getPagination({pagination, componentId, entityType: 'gateways'});
+  const paginationData: Pagination = getPagination({
+    pagination,
+    componentId,
+    entityType: 'gateways',
+  });
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gateways: getDomainModel(gateways),

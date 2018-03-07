@@ -20,6 +20,10 @@ export type Children = ItemOrArray<React.ReactNode>;
  */
 export type Action<P> = PayloadAction<string, P>;
 
+export interface Dictionary<T> {
+  [key: string]: T;
+}
+
 export interface ClassNamed {
   className?: string;
 }

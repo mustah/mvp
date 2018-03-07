@@ -85,7 +85,10 @@ type ActionTypes<T extends HasId> =
   | Action<ErrorResponse & HasPageNumber>
   | Action<HasPageNumber>;
 
-export const reducerFor = <T extends HasId>(entity: keyof PaginatedDomainModelsState, endPoint: EndPoints) =>
+export const reducerFor = <T extends HasId>(
+  entity: keyof PaginatedDomainModelsState,
+  endPoint: EndPoints,
+) =>
   (
     state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
     action: ActionTypes<T>,

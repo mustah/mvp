@@ -128,7 +128,13 @@ export const testData = {
   gateways,
 };
 
-export const makeMeter = (id: number, cityId: uuid, city: string, addressId: uuid, address: string): Meter => ({
+export const makeMeter = (
+  id: number,
+  cityId: uuid,
+  city: string,
+  addressId: uuid,
+  address: string,
+): Meter => ({
   id,
   facility: '1',
   alarm: '1',
@@ -141,18 +147,20 @@ export const makeMeter = (id: number, cityId: uuid, city: string, addressId: uui
   gatewayProductModel: 'a',
   gatewaySerial: '123',
   gatewayStatus: {id: 0, name: 'ok'},
-  address: {
-    id: addressId,
-    name: address,
-  },
-  city: {
-    id: cityId,
-    name: city,
-  },
-  position: {
-    latitude: 1,
-    longitude: 1,
-    confidence: 1,
+  location: {
+    address: {
+      id: addressId,
+      name: address,
+    },
+    city: {
+      id: cityId,
+      name: city,
+    },
+    position: {
+      latitude: 1,
+      longitude: 1,
+      confidence: 1,
+    },
   },
   statusChangelog: [],
 });

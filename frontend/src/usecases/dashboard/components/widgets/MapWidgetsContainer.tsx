@@ -9,8 +9,8 @@ import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetails
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
-import {GeoPosition} from '../../../../state/domain-models/domainModels';
-import {OnClick} from '../../../../types/Types';
+import {GeoPosition} from '../../../../state/domain-models/location/locationModels';
+import {Dictionary, OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
 import {Map} from '../../../map/containers/Map';
@@ -20,7 +20,7 @@ import {MapState} from '../../../map/mapReducer';
 import {Widget} from './Widget';
 
 interface OwnProps {
-  markers: {[key: string]: MapMarker};
+  markers: Dictionary<MapMarker>;
 }
 
 interface StateToProps {
@@ -35,32 +35,40 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
   // TODO retrieve real data
-  const markersFailing: {[key: string]: MapMarker} = {
+  const markersFailing: Dictionary<MapMarker> = {
     0: {
       status: {id: 3, name: 'Fel'},
-      address: {id: '', name: ''},
-      city: {id: '', name: ''},
-      position: {
-        confidence: 1,
-        latitude: 56.138288,
-        longitude: 13.394854,
+      location: {
+        address: {id: '', name: ''},
+        city: {id: '', name: ''},
+        position: {
+          confidence: 1,
+          latitude: 56.138288,
+          longitude: 13.394854,
+        },
       },
     },
     1: {
       status: {id: 3, name: 'Fel'},
-      address: {id: '', name: ''},
-      city: {id: '', name: ''},
-      position: {
-        confidence: 1,
-        latitude: 56.552119,
-        longitude: 14.137460,
+      location: {
+        address: {id: '', name: ''},
+        city: {id: '', name: ''},
+        position: {
+          confidence: 1,
+          latitude: 56.552119,
+          longitude: 14.137460,
+        },
       },
     },
   };
 
   const hasMeters: boolean = isMarkersWithinThreshold(markers);
 
-  const centerOfPerstorpMap: GeoPosition = {latitude: 56.138288, longitude: 13.394854, confidence: 1};
+  const centerOfPerstorpMap: GeoPosition = {
+    latitude: 56.138288,
+    longitude: 13.394854,
+    confidence: 1,
+  };
   const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (

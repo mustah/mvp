@@ -160,7 +160,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
       .map(entry -> parseKeyToLocation(entry.getKey())
         .coordinate(toGeoCoordinate(entry.getValue()))
         .build())
-      .collect(toMap(location -> location.getStreetAddress().get(), Function.identity()));
+      .collect(toMap(Location::getStreetAddress, Function.identity()));
   }
 
   private static Map<String, GeoPositionDto> loadGeodata() throws IOException {

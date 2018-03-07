@@ -6,7 +6,7 @@ import * as React from 'react';
 import {Map as LeafletMap, TileLayer} from 'react-leaflet';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
-import {GeoPosition} from '../../../state/domain-models/domainModels';
+import {GeoPosition} from '../../../state/domain-models/location/locationModels';
 import {Children} from '../../../types/Types';
 import './Map.scss';
 

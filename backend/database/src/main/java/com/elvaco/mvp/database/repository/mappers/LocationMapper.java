@@ -25,10 +25,11 @@ public class LocationMapper implements DomainEntityMapper<Location, LocationEnti
 
   @Override
   public LocationEntity toEntity(Location location) {
-    LocationEntity entity = new LocationEntity();
-    entity.country = location.getCountry().orElse(null);
-    entity.city = location.getCity().orElse(null);
-    entity.streetAddress = location.getStreetAddress().orElse(null);
+    LocationEntity entity = new LocationEntity(
+      location.getCountry(),
+      location.getCity(),
+      location.getStreetAddress()
+    );
     if (location.hasCoordinates()) {
       GeoCoordinate coordinate = location.getCoordinate();
       entity.latitude = coordinate.getLatitude();

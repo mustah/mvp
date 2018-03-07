@@ -10,11 +10,9 @@ import lombok.ToString;
 public class LogicalMeterDto {
   public String id;
   public String facility;
-  public IdNamedDto address;
-  public IdNamedDto city;
-  public GeoPositionDto position;
   public String sapId;
   public String alarm;
+  public LocationDto location;
   public List<FlagDto> flags;
   public boolean flagged;
   public String medium;

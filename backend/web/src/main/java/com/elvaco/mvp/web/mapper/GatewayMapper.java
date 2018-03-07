@@ -4,12 +4,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.LocationDto;
 
+import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
+import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -24,9 +26,7 @@ public class GatewayMapper {
       gateway.serial,
       gateway.productModel,
       IdNamedDto.OK,
-      toCity(logicalMeter),
-      toAddress(logicalMeter),
-      toGeoPosition(logicalMeter),
+      new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       emptyList(),
       logicalMeter.map(meter -> meter.id.toString()).orElse(null),
       null,
@@ -47,28 +47,20 @@ public class GatewayMapper {
 
   private IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(Location::getCity)
-      .map(IdNamedDto::new)
-      .orElse(new IdNamedDto("Unknown city"));
+      .flatMap(LocationMapper::toCity)
+      .orElse(UNKNOWN_CITY);
   }
 
   private IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(Location::getStreetAddress)
-      .map(IdNamedDto::new)
-      .orElse(new IdNamedDto("Unknown address"));
+      .flatMap(LocationMapper::toAddress)
+      .orElse(UNKNOWN_ADDRESS);
   }
 
   private GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .filter(Location::hasCoordinates)
-      .map(Location::getCoordinate)
-      .map(coordinate -> new GeoPositionDto(
-        coordinate.getLatitude(),
-        coordinate.getLongitude(),
-        coordinate.getConfidence()
-      ))
-      .orElse(new GeoPositionDto());
+      .flatMap(LocationMapper::toGeoPosition)
+      .orElseGet(GeoPositionDto::new);
   }
 
   private IdNamedDto toMeterStatus(Optional<LogicalMeter> logicalMeter) {

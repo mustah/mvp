@@ -7,11 +7,11 @@ public class GeoPositionDto {
 
   public Double latitude;
   public Double longitude;
-  public double confidence;
+  public Double confidence;
 
   public GeoPositionDto() {}
 
-  public GeoPositionDto(Double latitude, Double longitude, double confidence) {
+  public GeoPositionDto(Double latitude, Double longitude, Double confidence) {
     this.latitude = latitude;
     this.longitude = longitude;
     this.confidence = confidence;

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 public class LocationBuilder {
+
   private String country;
   private String city;
   private String streetAddress;

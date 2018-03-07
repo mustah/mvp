@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
@@ -53,7 +54,7 @@ public class LogicalMeterMapperTest {
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     Location location = new LocationBuilder()
-      .coordinate(new GeoCoordinate(3.1, 2.1, 1.0))
+      .coordinate(new GeoCoordinate(3.1, 2.1))
       .build();
 
     LogicalMeter logicalMeter = new LogicalMeter(
@@ -84,11 +85,13 @@ public class LogicalMeterMapperTest {
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
     expected.status = OK;
-    expected.address = new IdNamedDto("Kabelgatan 2T");
-    expected.city = new IdNamedDto("Kungsbacka");
+    expected.location = new LocationDto(
+      new IdNamedDto("Kungsbacka"),
+      new IdNamedDto("Kabelgatan 2T"),
+      new GeoPositionDto(57.5052592, 56.123, 1.0)
+    );
     expected.manufacturer = "ELV";
     expected.flags = emptyList();
-    expected.position = new GeoPositionDto(57.5052592, 56.123, 1);
     expected.facility = "an-external-id";
     expected.statusChangelog = singletonList(
       new MeterStatusLogDto(

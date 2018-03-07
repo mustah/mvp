@@ -36,14 +36,18 @@ const addToPie = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: G
           name: label,
         }, gateway[fieldKey], initOrIncrease(category[label])),
       };
-    case 'city':
+    case 'location':
+      label = gateway[fieldKey].city.id;
+      return {
+        ...category,
+        [label]: sliceUpdate(fieldKey, gateway[fieldKey].city, label, initOrIncrease(category[label])),
+      };
     case 'status':
       label = gateway[fieldKey].id;
       return {
         ...category,
         [label]: sliceUpdate(fieldKey, gateway[fieldKey], label, initOrIncrease(category[label])),
       };
-
     default:
       label = gateway[fieldKey];
       return {
@@ -74,7 +78,7 @@ export const getGatewayDataSummary =
     getEntitiesDomainModels,
     (gatewayIds: uuid[], gateways: ObjectsById<Gateway>): Maybe<GatewayDataSummary> => {
       const summaryTemplate: {[P in GatewayDataSummaryKey]: PieData} = {
-        status: {}, flagged: {}, city: {}, productModel: {},
+        status: {}, flagged: {}, location: {}, productModel: {},
       };
 
       return Maybe.just(gatewayIds)

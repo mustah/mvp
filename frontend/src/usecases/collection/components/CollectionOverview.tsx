@@ -31,7 +31,7 @@ export const CollectionOverview = ({gatewayDataSummary, setSelection}: Collectio
   if (gatewayDataSummary.isNothing()) {
     return null;
   } else {
-    const {status, flagged, city, productModel} = gatewayDataSummary.get();
+    const {status, flagged, location, productModel} = gatewayDataSummary.get();
     const pieCharts: PieChartSelectorProps[] = [
       {
         heading: translate('status'),
@@ -48,7 +48,7 @@ export const CollectionOverview = ({gatewayDataSummary, setSelection}: Collectio
       },
       {
         heading: translate('cities'),
-        data: city,
+        data: location,
         colors: colors[0],
         setSelection: selectCity,
         maxSlices: 4,

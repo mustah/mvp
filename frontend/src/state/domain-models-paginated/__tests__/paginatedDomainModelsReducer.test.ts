@@ -31,9 +31,11 @@ describe('paginatedDomainModelsReducer', () => {
         meters: {
           1: {
             id: 1,
-            address: {id: 1, name: 'Kungsgatan'},
-            city: {id: 'got', name: 'Göteborg'},
-            position: {latitude: 10, longitude: 10, confidence: 1},
+            location: {
+              address: {id: 1, name: 'Kungsgatan'},
+              city: {id: 'got', name: 'Göteborg'},
+              position: {latitude: 10, longitude: 10, confidence: 1},
+            },
             facility: 'torp',
             alarm: '',
             flags: [],
@@ -49,9 +51,11 @@ describe('paginatedDomainModelsReducer', () => {
           },
           2: {
             id: 2,
-            address: {id: 1, name: 'Kungsgatan'},
-            city: {id: 'got', name: 'Göteborg'},
-            position: {latitude: 10, longitude: 10, confidence: 1},
+            location: {
+              address: {id: 1, name: 'Kungsgatan'},
+              city: {id: 'got', name: 'Göteborg'},
+              position: {latitude: 10, longitude: 10, confidence: 1},
+            },
             facility: 'torp',
             alarm: '',
             flags: [],
@@ -151,7 +155,10 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
 
-      const newState = meters(populatedState, getRequest.success(payload as NormalizedPaginated<Meter>));
+      const newState = meters(
+        populatedState,
+        getRequest.success(payload as NormalizedPaginated<Meter>),
+      );
       expect(newState).toEqual(expectedState);
     });
 
@@ -199,13 +206,15 @@ describe('paginatedDomainModelsReducer', () => {
   });
   describe('clear paginatedDomainModels', () => {
     it('clears a cached data', () => {
-      expect(paginatedDomainModels({
+      expect(paginatedDomainModels(
+        {
           meters: {
             ...initialPaginatedDomain<Meter>(),
             entities: {1: {...makeMeter(1, 1, 'Mo', 1, 'b')}},
           },
         },
-        {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({meters: initialPaginatedDomain()});
+        {type: SET_SELECTION, payload: 'irrelevant'},
+      )).toEqual({meters: initialPaginatedDomain()});
     });
   });
 })

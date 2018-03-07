@@ -2,6 +2,7 @@ import {makeMeter} from '../../../../__tests__/testDataFactory';
 import {HasId, uuid} from '../../../../types/Types';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {NormalizedState, ObjectsById} from '../../domainModels';
+import {Location} from '../../location/locationModels';
 import {MeterDataSummary, SelectionTreeData} from '../allMetersModels';
 import {getMeterDataSummary, getSelectionTree} from '../allMetersSelectors';
 
@@ -9,13 +10,20 @@ type PartialDomainModel = ObjectsById<Partial<Meter> & HasId>;
 describe('allMetersSelectors', () => {
 
   describe('summary', () => {
+
     it('can group a list of meters with a tally each (like, 5 in NY, 3 in LA)', () => {
       const meterIds: uuid[] = [1, 2, 3];
+      const stockholm: Partial<Location> = {
+        city: {id: 'sto', name: 'stockholm'},
+      };
+      const gothenburg: Partial<Location> = {
+        city: {id: 'got', name: 'göteborg'},
+      };
       const meters: PartialDomainModel = {
         1: {
           id: 1,
           flagged: false,
-          city: {id: 'sto', name: 'stockholm'},
+          location: stockholm as Location,
           manufacturer: 'ELV',
           medium: 'water',
           status: {id: 0, name: 'ok'},
@@ -24,7 +32,7 @@ describe('allMetersSelectors', () => {
         2: {
           id: 2,
           flagged: false,
-          city: {id: 'sto', name: 'stockholm'},
+          location: stockholm as Location,
           manufacturer: 'ELV',
           medium: 'air',
           status: {id: 0, name: 'ok'},
@@ -33,7 +41,7 @@ describe('allMetersSelectors', () => {
         3: {
           id: 3,
           flagged: true,
-          city: {id: 'got', name: 'göteborg'},
+          location: gothenburg as Location,
           manufacturer: 'ELV',
           medium: 'air',
           status: {id: 0, name: 'ok'},
@@ -51,10 +59,10 @@ describe('allMetersSelectors', () => {
       const expected: MeterDataSummary = {
         flagged:
           {
-            flagged: {name: 'flagged', value: 1, filterParam: true},
             unFlagged: {name: 'unFlagged', value: 2, filterParam: false},
+            flagged: {name: 'flagged', value: 1, filterParam: true},
           },
-        city:
+        location:
           {
             sto: {name: 'stockholm', value: 2, filterParam: 'sto'},
             got: {name: 'göteborg', value: 1, filterParam: 'got'},

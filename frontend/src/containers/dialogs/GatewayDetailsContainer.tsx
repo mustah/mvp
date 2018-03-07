@@ -25,6 +25,7 @@ import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 import {Map} from '../../usecases/map/containers/Map';
+import {MapMarker} from '../../usecases/map/mapModels';
 import {normalizedStatusChangelogFor, titleOf} from './dialogHelper';
 import './GatewayDetailsContainer.scss';
 import {Info} from './Info';
@@ -44,7 +45,7 @@ interface StateToProps {
 type Props = OwnProps & StateToProps;
 
 const GatewayDetailsInfo = ({gateway}: OwnProps) => {
-  const {city, address, id, productModel, status, flags} = gateway;
+  const {location: {city, address}, id, productModel, status, flags} = gateway;
 
   return (
     <div className="GatewayDetailsInfo">
@@ -89,13 +90,15 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
   render() {
     const {selectedTab} = this.state;
     const {gateway, meters} = this.props;
+    const {status, location} = gateway;
 
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
     const renderFacility = ({facility}: Meter) => facility;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderDate = ({date}: Meter) => date;
     const renderMedium = ({medium}: Meter) => medium;
-    const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(gateway);
+    const markers: MapMarker = {status, location};
+    const hasConfidentPosition: boolean = !!isGeoPositionWithinThreshold(markers);
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 
@@ -154,8 +157,8 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               hasContent={hasConfidentPosition}
               fallbackContent={<MissingDataTitle title={firstUpperTranslated('no reliable position')}/>}
             >
-              <Map height={400} viewCenter={gateway.position}>
-                <ClusterContainer markers={gateway}/>
+              <Map height={400} viewCenter={gateway.location.position}>
+                <ClusterContainer markers={markers}/>
               </Map>
             </HasContent>
           </TabContent>

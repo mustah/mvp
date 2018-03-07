@@ -16,13 +16,16 @@ import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ClearError, ObjectsById, RestGet} from '../../state/domain-models/domainModels';
-import {clearErrorAllMeters, fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {
   getEntitiesDomainModels,
   getError,
   getResultDomainModels,
 } from '../../state/domain-models/domainModelsSelectors';
 import {Flag} from '../../state/domain-models/flag/flagModels';
+import {
+  clearErrorAllMeters,
+  fetchAllMeters,
+} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
@@ -81,9 +84,11 @@ class MeterList extends React.Component<Props> {
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
-    const renderCityName = ({city}: Meter) => city ? city.name : null;
-    const renderAddressName = ({address}: Meter) => address ? address.name : null;
-    const renderFlags = ({flags}: Meter) => flags ? flags.map((flag: Flag) => flag.title).join(', ') : null;
+    const renderCityName = ({location: {city}}: Meter) => city ? city.name : null;
+    const renderAddressName = ({location: {address}}: Meter) => address ? address.name : null;
+    const renderFlags = ({flags}: Meter) => flags
+      ? flags.map((flag: Flag) => flag.title).join(', ')
+      : null;
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
@@ -134,7 +139,7 @@ class MeterList extends React.Component<Props> {
                 renderCell={renderStatusCell}
               />
               <TableColumn
-                header={<TableHead sortable={true} currentSort="desc">{translate('status change')}</TableHead>}
+                header={<TableHead>{translate('status change')}</TableHead>}
                 renderCell={renderStatusChanged}
               />
               <TableColumn

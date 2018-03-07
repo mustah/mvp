@@ -1,12 +1,10 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.Optional;
 import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
@@ -14,6 +12,7 @@ import com.elvaco.mvp.web.util.Dates;
 
 import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
 import static com.elvaco.mvp.web.dto.IdNamedDto.UNKNOWN;
+import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -51,10 +50,6 @@ public class LogicalMeterMapper {
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id.toString();
-    String address = logicalMeter.location.getStreetAddress().orElse("Unknown address");
-    String city = logicalMeter.location.getCity().orElse("Unknown city");
-    meterDto.address = new IdNamedDto(address);
-    meterDto.city = new IdNamedDto(city);
     meterDto.status = logicalMeter.meterStatusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> new IdNamedDto(meterStatusLog.name))
@@ -67,6 +62,7 @@ public class LogicalMeterMapper {
       .map(date -> Dates.formatTime(date, timeZone))
       .orElse(created);
     meterDto.facility = logicalMeter.externalId;
+
     logicalMeter.gateways
       .stream()
       .findFirst()
@@ -78,13 +74,7 @@ public class LogicalMeterMapper {
         return gateway;
       });
 
-    meterDto.position = Optional.ofNullable(logicalMeter.location.getCoordinate())
-      .map(coordinate -> new GeoPositionDto(
-        coordinate.getLatitude(),
-        coordinate.getLongitude(),
-        coordinate.getConfidence()
-      ))
-      .orElse(new GeoPositionDto());
+    meterDto.location = toLocationDto(logicalMeter.location);
 
     meterDto.statusChangelog = logicalMeter.meterStatusLogs
       .stream()

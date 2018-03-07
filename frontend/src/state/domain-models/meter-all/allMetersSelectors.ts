@@ -4,7 +4,7 @@ import {PieData, PieSlice} from '../../../components/pie-chart-selector/PieChart
 import {hasItems} from '../../../helpers/functionalHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
-import {IdNamed, uuid} from '../../../types/Types';
+import {Dictionary, IdNamed, uuid} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {selectionTreeSchema} from '../../domain-models-paginated/meter/meterSchema';
 import {FilterParam, ParameterName} from '../../search/selection/selectionModels';
@@ -36,7 +36,7 @@ export const getSelectionTree =
       meterIds.map((meterId: uuid) =>
         metersDict[meterId]).filter((meter) => meter !== undefined).forEach((meterEntity: Meter) => {
 
-        const {city, address, facility} = meterEntity;
+        const {location: {city, address}, facility} = meterEntity;
         const clusterName = address.name[0].toUpperCase();
         const clusterId = city.name + ':' + clusterName;
         const cluster: IdNamed = {id: clusterId, name: clusterName};
@@ -102,7 +102,10 @@ const selectionTreeItem =
     };
   };
 
-const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]}, props: SelectionTreeItemsProps) => {
+const selectionTreeItems = (
+  selectionTree: Dictionary<SelectionTreeItem[]>,
+  props: SelectionTreeItemsProps,
+) => {
   const {category, set, ...selectionTreeItemProps} = props;
   const {unit, parent, parentType} = props;
   if (!set.has(unit.id)) {
@@ -123,7 +126,12 @@ const selectionTreeItems = (selectionTree: {[key: string]: SelectionTreeItem[]},
 const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): PieData => {
 
   const sliceUpdate =
-    (fieldKey: MeterDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam, value: number): PieSlice => ({
+    (
+      fieldKey: MeterDataSummaryKey,
+      idNamed: IdNamed,
+      filterParam: FilterParam,
+      value: number,
+    ): PieSlice => ({
       name: pieChartTranslation(fieldKey, idNamed),
       value,
       filterParam,
@@ -149,7 +157,13 @@ const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): Pi
         }, meter[fieldKey], initOrIncrease(pie[label])),
       };
 
-    case 'city':
+    case 'location':
+      label = (meter[fieldKey] && meter[fieldKey].city.id)  || 'unknown';
+      sliceObject = meter[fieldKey] ? meter[fieldKey].city : {id: 'unknown', name: 'unknown'};
+      return {
+        ...pie,
+        [label]: sliceUpdate(fieldKey, sliceObject as IdNamed, label, initOrIncrease(pie[label])),
+      };
     case 'status':
       label = meter[fieldKey] && (meter[fieldKey].id || meter[fieldKey].id === 0) ? meter[fieldKey].id : 'unknown';
       sliceObject = meter[fieldKey] ? meter[fieldKey] : {id: 'unknown', name: 'unknown'};
@@ -157,7 +171,6 @@ const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): Pi
         ...pie,
         [label]: sliceUpdate(fieldKey, sliceObject as IdNamed, label, initOrIncrease(pie[label])),
       };
-
     default:
       label = meter[fieldKey];
       return {
@@ -167,7 +180,11 @@ const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): Pi
   }
 };
 
-const createDataSummary = (summary, fieldKey: MeterDataSummaryKey, meter: Meter): MeterDataSummary => {
+const createDataSummary = (
+  summary,
+  fieldKey: MeterDataSummaryKey,
+  meter: Meter,
+): MeterDataSummary => {
   const category: PieData = summary[fieldKey];
   return {
     ...summary,
@@ -183,7 +200,7 @@ export const getMeterDataSummary =
     getEntitiesDomainModels,
     (metersIds: uuid[], meters: ObjectsById<Meter>): Maybe<MeterDataSummary> => {
       const summaryTemplate: {[P in MeterDataSummaryKey]: PieData} = {
-        flagged: {}, city: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
+        flagged: {}, location: {}, manufacturer: {}, medium: {}, status: {}, alarm: {},
       };
 
       return Maybe.just<uuid[]>(metersIds)

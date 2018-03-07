@@ -1,18 +1,17 @@
 import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
-import {IdNamed, uuid} from '../../../types/Types';
-import {Location, NormalizedState} from '../domainModels';
+import {HasId, IdNamed, uuid} from '../../../types/Types';
+import {NormalizedState} from '../domainModels';
 import {Flag} from '../flag/flagModels';
+import {LocationHolder} from '../location/locationModels';
 
-export interface GatewayStatusChangelog {
-  id: uuid;
+export interface GatewayStatusChangelog extends HasId {
   gatewayId: uuid;
   status: IdNamed;
   date: string;
 }
 
-export interface Gateway extends Location {
-  id: uuid;
-  facility: string;
+export interface Gateway extends LocationHolder, HasId {
+  serial: string;
   flags: Flag[];
   flagged: boolean;
   productModel: string;
@@ -31,7 +30,7 @@ export type GatewaysState = NormalizedState<Gateway>;
 export interface GatewayDataSummary {
   status: PieData;
   flagged: PieData;
-  city: PieData;
+  location: PieData;
   productModel: PieData;
 }
 

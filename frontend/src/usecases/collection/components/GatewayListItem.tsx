@@ -10,7 +10,7 @@ interface Props {
 export const GatewayListItem = (props: Props) => {
   const {gateway} = props;
   return (
-    <OpenDialogInfoButton label={gateway.id}>
+    <OpenDialogInfoButton label={gateway.serial}>
       <GatewayDetailsContainer gateway={gateway}/>
     </OpenDialogInfoButton>
   );

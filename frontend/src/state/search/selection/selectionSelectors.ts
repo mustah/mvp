@@ -2,14 +2,23 @@ import {createSelector, OutputSelector} from 'reselect';
 import {Period} from '../../../components/dates/dateModels';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {
-  encodedUriParametersForGateways, encodedUriParametersForMeters,
   encodedUriParametersForAllMeters,
+  encodedUriParametersForGateways,
+  encodedUriParametersForMeters,
 } from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
-import {DomainModel, NormalizedState, ObjectsById, SelectionEntity} from '../../domain-models/domainModels';
-import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
+import {
+  DomainModel,
+  NormalizedState,
+  ObjectsById,
+  SelectionEntity,
+} from '../../domain-models/domainModels';
+import {
+  getEntitiesDomainModels,
+  getResultDomainModels,
+} from '../../domain-models/domainModelsSelectors';
 import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
@@ -140,7 +149,7 @@ export const getSelectionSummary =
       const addresses = new Set<uuid>();
 
       metersIds.map((meterId: uuid) => {
-          const {city, address} = meters[meterId];
+          const {location: {city, address}} = meters[meterId];
           cities.add(city.id);
           addresses.add(address.id);
         },
