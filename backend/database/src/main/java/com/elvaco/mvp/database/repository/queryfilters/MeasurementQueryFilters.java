@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,24 +21,8 @@ public class MeasurementQueryFilters extends QueryFilters {
   private static final Map<String, Function<String, Predicate>>
     FILTERABLE_PROPERTIES = new HashMap<>();
 
-  static {
-    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
-
-    FILTERABLE_PROPERTIES.put(BEFORE, (String before) -> Q.created.before(toDate(before)));
-
-    FILTERABLE_PROPERTIES.put(AFTER, (String after) -> Q.created.after(toDate(after)));
-
-    FILTERABLE_PROPERTIES.put("quantity", Q.quantity::eq);
-
-    FILTERABLE_PROPERTIES.put(
-      "organisation",
-      (String id) -> Q.physicalMeter.organisation.id.eq(UUID.fromString(id))
-    );
-
-    FILTERABLE_PROPERTIES.put(
-      "meterId",
-      (String meterId) -> Q.physicalMeter.id.eq(UUID.fromString(meterId))
-    );
+  private static ZonedDateTime toZonedDateTime(String when) {
+    return ZonedDateTime.parse(when);
   }
 
   @Override
@@ -52,7 +35,23 @@ public class MeasurementQueryFilters extends QueryFilters {
     return propertiesExpression(parameters);
   }
 
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
+  static {
+    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
+
+    FILTERABLE_PROPERTIES.put(BEFORE, (String before) -> Q.created.before(toZonedDateTime(before)));
+
+    FILTERABLE_PROPERTIES.put(AFTER, (String after) -> Q.created.after(toZonedDateTime(after)));
+
+    FILTERABLE_PROPERTIES.put("quantity", Q.quantity::eq);
+
+    FILTERABLE_PROPERTIES.put(
+      "organisation",
+      (String id) -> Q.physicalMeter.organisation.id.eq(UUID.fromString(id))
+    );
+
+    FILTERABLE_PROPERTIES.put(
+      "meterId",
+      (String meterId) -> Q.physicalMeter.id.eq(UUID.fromString(meterId))
+    );
   }
 }

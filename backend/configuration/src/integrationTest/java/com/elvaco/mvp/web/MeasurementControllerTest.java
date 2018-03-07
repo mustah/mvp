@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web;
 
-import java.time.Instant;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -85,35 +84,35 @@ public class MeasurementControllerTest extends IntegrationTest {
     // https://scifi.stackexchange.com/a/28354
     measurementQuantities = Stream.of(
       new MeasurementEntity(
-        new Date(),
+        ZonedDateTime.now(),
         "Heat",
         150,
         "°C",
         forceMeter
       ),
       new MeasurementEntity(
-        Date.from(Instant.parse("1983-05-24T12:00:01Z")),
+        ZonedDateTime.parse("1983-05-24T12:00:01Z"),
         "LightsaberPower",
         0,
         "kW",
         forceMeter
       ),
       new MeasurementEntity(
-        new Date(),
+        ZonedDateTime.now(),
         "Butter temperature",
         12.44,
         "°C",
         butterMeter
       ),
       new MeasurementEntity(
-        new Date(),
+        ZonedDateTime.now(),
         "Left to walk",
         500,
         "mi",
         butterMeter
       ),
       new MeasurementEntity(
-        new Date(),
+        ZonedDateTime.now(),
         "Milk temperature",
         7.1,
         "°C",
@@ -233,8 +232,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getListAsSuperAdmin("/measurements?quantity?LightsaberPower&before=" + date);
+      getListAsSuperAdmin("/measurements?quantity=LightsaberPower&before=" + date);
 
+    assertThat(contents).hasSize(1);
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -15,8 +16,8 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     + "avg(value) as value,"
     + "interval_start as when"
     + " FROM ("
-    + "   SELECT generate_series(date_trunc(:resolution, cast(:from as timestamp)),"
-    + "                          date_trunc(:resolution, cast(:to as timestamp)),"
+    + "   SELECT generate_series(date_trunc(:resolution, cast(:from as timestamptz)),"
+    + "                          date_trunc(:resolution, cast(:to as timestamptz)),"
     + "                          cast('1 ' || :resolution as interval)) as interval_start) x"
     + " LEFT JOIN ("
     + "   SELECT value(value), date_trunc(:resolution, created) as interval_start from "
@@ -27,8 +28,8 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
   List<MeasurementValueProjection> getAverageForPeriod(
     @Param("meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
-    @Param("from") Date from,
-    @Param("to") Date to
+    @Param("from") ZonedDateTime from,
+    @Param("to") ZonedDateTime to
   );
 
 

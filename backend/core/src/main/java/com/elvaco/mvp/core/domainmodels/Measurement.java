@@ -1,6 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.annotation.Nullable;
 
@@ -13,7 +13,7 @@ public class Measurement implements Identifiable<Long> {
 
   @Nullable
   public final Long id;
-  public final Date created;
+  public final ZonedDateTime created;
   public final String quantity;
   public final double value;
   public final String unit;
@@ -25,19 +25,19 @@ public class Measurement implements Identifiable<Long> {
     String unit,
     PhysicalMeter physicalMeter
   ) {
-    this(null, Date.from(Instant.now()), quantity.name, value, unit, physicalMeter);
+    this(null, ZonedDateTime.now(), quantity.name, value, unit, physicalMeter);
   }
 
   public Measurement(
     @Nullable Long id,
-    Date created,
+    ZonedDateTime created,
     String quantity,
     double value,
     String unit,
     PhysicalMeter physicalMeter
   ) {
     this.id = id;
-    this.created = new Date(created.getTime());
+    this.created = ZonedDateTime.from(created);
     this.quantity = quantity;
     this.value = value;
     this.unit = unit;

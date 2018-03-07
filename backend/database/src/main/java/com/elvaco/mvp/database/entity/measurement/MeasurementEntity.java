@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.entity.measurement;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -30,9 +31,8 @@ public class MeasurementEntity extends EntityType<Long> {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  public Date created;
+  public ZonedDateTime created;
 
   @Column(nullable = false)
   public String quantity;
@@ -50,20 +50,20 @@ public class MeasurementEntity extends EntityType<Long> {
 
   public MeasurementEntity(
     Long id,
-    Date created,
+    ZonedDateTime created,
     String quantity,
     MeasurementUnit value,
     PhysicalMeterEntity physicalMeter
   ) {
     this.id = id;
-    this.created = new Date(created.getTime());
+    this.created = ZonedDateTime.from(created);
     this.quantity = quantity;
     this.value = value;
     this.physicalMeter = physicalMeter;
   }
 
   public MeasurementEntity(
-    Date created,
+    ZonedDateTime created,
     String quantity,
     double value,
     String unit,
