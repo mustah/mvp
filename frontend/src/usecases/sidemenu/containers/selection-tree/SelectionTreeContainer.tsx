@@ -3,17 +3,21 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {listStyle, nestedListItemStyle, sideBarHeaderStyle, sideBarStyles} from '../../../../app/themes';
+import {
+  listStyle,
+  nestedListItemStyle,
+  sideBarHeaderStyle,
+  sideBarStyles,
+} from '../../../../app/themes';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {SelectionTreeData} from '../../../../state/domain-models/meter-all/allMetersModels';
-import {RestGet} from '../../../../state/domain-models/domainModels';
 import {fetchAllMeters} from '../../../../state/domain-models/meter-all/allMetersApiActions';
+import {SelectionTreeData} from '../../../../state/domain-models/meter-all/allMetersModels';
 import {getSelectionTree} from '../../../../state/domain-models/meter-all/allMetersSelectors';
 import {getEncodedUriParametersForAllMeters} from '../../../../state/search/selection/selectionSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
-import {OnClickWithId, uuid} from '../../../../types/Types';
+import {OnClickWithId, Fetch, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -33,7 +37,7 @@ interface StateToProps {
 interface DispatchToProps {
   toggleExpand: OnClickWithId;
   toggleSelect: OnClickWithId;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & OwnProps;
@@ -98,4 +102,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const SelectionTreeContainer =
-  connect<StateToProps, DispatchToProps, OwnProps>(mapStateToProps, mapDispatchToProps)(SelectionTree);
+  connect<StateToProps, DispatchToProps, OwnProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(SelectionTree);

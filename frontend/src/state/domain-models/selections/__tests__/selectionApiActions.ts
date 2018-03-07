@@ -6,8 +6,8 @@ import {testData} from '../../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../../i18n/i18n';
 import {authenticate} from '../../../../services/restClient';
 import {IdNamed} from '../../../../types/Types';
-import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../../domainModels';
-import {requestMethod} from '../../domainModelsActions';
+import {DomainModelsState, EndPoints, Normalized} from '../../domainModels';
+import {getRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {selectionsSchema} from '../../domainModelsSchemas';
 import {fetchSelections} from '../selectionsApiActions';
@@ -19,7 +19,7 @@ describe('selectionApiActions', () => {
   initLanguage({code: 'en', name: 'english'});
   let mockRestClient: MockAdapter;
   let store;
-  const selectionsRequest = requestMethod<Normalized<IdNamed>>(EndPoints.selections, HttpMethod.GET);
+  const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
 
   beforeEach(() => {
     const initialState: Partial<DomainModelsState> = {
@@ -83,7 +83,13 @@ describe('selectionApiActions', () => {
     });
     it('does not fetch data if already fetching', async () => {
       const fetchedState: Partial<DomainModelsState> = {
-        cities: {isFetching: true, isSuccessfullyFetched: false, total: 0, entities: {}, result: [1, 2]},
+        cities: {
+          isFetching: true,
+          isSuccessfullyFetched: false,
+          total: 0,
+          entities: {},
+          result: [1, 2],
+        },
       };
 
       store = configureMockStore({domainModels: {...fetchedState}});

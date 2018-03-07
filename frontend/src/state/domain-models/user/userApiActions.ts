@@ -7,18 +7,20 @@ import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActio
 import {EndPoints} from '../domainModels';
 import {
   clearError,
-  restDelete,
-  restGetEntityIfNeeded,
-  restGetIfNeeded,
-  restPost,
-  restPut,
+  deleteRequest,
+  fetchEntityIfNeeded,
+  fetchIfNeeded,
+  postRequest,
+  putRequest,
 } from '../domainModelsActions';
 import {User} from './userModels';
 import {userSchema} from './userSchema';
 
-export const fetchUsers = restGetIfNeeded<User>(EndPoints.users, userSchema, 'users');
-export const fetchUser = restGetEntityIfNeeded<User>(EndPoints.users, 'users');
-export const addUser = restPost<User>(EndPoints.users, {
+export const fetchUsers = fetchIfNeeded<User>(EndPoints.users, userSchema, 'users');
+
+export const fetchUser = fetchEntityIfNeeded<User>(EndPoints.users, 'users');
+
+export const addUser = postRequest<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(firstUpperTranslated(
       'successfully created the user {{name}} ({{email}})',
@@ -32,7 +34,8 @@ export const addUser = restPost<User>(EndPoints.users, {
     )));
   },
 });
-export const modifyUser = restPut<User>(EndPoints.users, {
+
+export const modifyUser = putRequest<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(firstUpperTranslated(
       'successfully updated user {{name}} ({{email}})',
@@ -46,7 +49,8 @@ export const modifyUser = restPut<User>(EndPoints.users, {
     )));
   },
 });
-export const modifyProfile = restPut<User>(EndPoints.users, {
+
+export const modifyProfile = putRequest<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
     dispatch(authSetUser(user));
@@ -58,7 +62,8 @@ export const modifyProfile = restPut<User>(EndPoints.users, {
     )));
   },
 });
-export const deleteUser = restDelete<User>(EndPoints.users, {
+
+export const deleteUser = deleteRequest<User>(EndPoints.users, {
     afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
       dispatch(
         showSuccessMessage(firstUpperTranslated(
@@ -76,4 +81,4 @@ export const deleteUser = restDelete<User>(EndPoints.users, {
   },
 );
 
-export const clearErrorUsers = clearError(EndPoints.users);
+export const clearUserError = clearError(EndPoints.users);

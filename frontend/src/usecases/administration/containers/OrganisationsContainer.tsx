@@ -12,7 +12,7 @@ import {TableHead} from '../../../components/table/TableHead';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {
   clearOrganisationErrors,
@@ -20,7 +20,7 @@ import {
   fetchOrganisations,
 } from '../../../state/domain-models/organisation/organisationsApiActions';
 import {Organisation} from '../../../state/domain-models/organisation/organisationModels';
-import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../../types/Types';
 
 interface StateToProps {
   organisations: DomainModel<Organisation>;
@@ -30,7 +30,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   deleteOrganisation: OnClickWithId;
-  fetchOrganisations: RestGet;
+  fetchOrganisations: Fetch;
   clearError: ClearError;
 }
 

@@ -10,7 +10,7 @@ import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {RestGet} from '../../../../state/domain-models/domainModels';
+import {Fetch} from '../../../../types/Types';
 import {modifyProfile} from '../../../../state/domain-models/user/userApiActions';
 import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../../state/domain-models/organisation/organisationsApiActions';
@@ -26,7 +26,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   modifyProfile: (user: User) => void;
-  fetchOrganisations: RestGet;
+  fetchOrganisations: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps;

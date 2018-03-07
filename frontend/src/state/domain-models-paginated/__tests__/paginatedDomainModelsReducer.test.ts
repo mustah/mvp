@@ -1,5 +1,5 @@
 import {makeMeter} from '../../../__tests__/testDataFactory';
-import {ErrorResponse, HasId} from '../../../types/Types';
+import {ErrorResponse, Identifiable} from '../../../types/Types';
 import {EndPoints} from '../../domain-models/domainModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Meter} from '../meter/meterModels';
@@ -8,7 +8,7 @@ import {
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../paginatedDomainModels';
-import {clearErrorMeters, requestMethodPaginated} from '../paginatedDomainModelsActions';
+import {clearErrorMeters, paginatedRequestMethod} from '../paginatedDomainModelsActions';
 import {
   initialPaginatedDomain,
   meters,
@@ -20,8 +20,7 @@ describe('paginatedDomainModelsReducer', () => {
 
   describe('meters, paginated', () => {
 
-    const getRequest =
-      requestMethodPaginated<NormalizedPaginated<Meter>>(EndPoints.meters);
+    const getRequest = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 
@@ -121,7 +120,7 @@ describe('paginatedDomainModelsReducer', () => {
 
       const anotherPage = 2;
 
-      const payload: NormalizedPaginated<HasId> = {
+      const payload: NormalizedPaginated<Identifiable> = {
           page: anotherPage,
           result: {
             content: [1, 4],
@@ -143,7 +142,7 @@ describe('paginatedDomainModelsReducer', () => {
         }
       ;
 
-      const expectedState: NormalizedPaginatedState<HasId> = {
+      const expectedState: NormalizedPaginatedState<Identifiable> = {
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
@@ -168,7 +167,7 @@ describe('paginatedDomainModelsReducer', () => {
 
       const stateAfterFailure = meters(initialState, getRequest.failure(payload));
 
-      const failedState: NormalizedPaginatedState<HasId> = {
+      const failedState: NormalizedPaginatedState<Identifiable> = {
         ...initialState,
         result: {
           [page]: {
@@ -181,6 +180,7 @@ describe('paginatedDomainModelsReducer', () => {
       expect(stateAfterFailure).toEqual(failedState);
     });
   });
+
   describe('clear error', () => {
     it('clears error from a page', () => {
       const payload: HasPageNumber = {page: 1};
@@ -204,6 +204,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     });
   });
+
   describe('clear paginatedDomainModels', () => {
     it('clears a cached data', () => {
       expect(paginatedDomainModels(

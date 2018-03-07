@@ -7,8 +7,8 @@ import {initLanguage} from '../../../../i18n/i18n';
 import {authenticate} from '../../../../services/restClient';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {limit} from '../../../ui/pagination/paginationReducer';
-import {DomainModelsState, EndPoints, HttpMethod, Normalized} from '../../domainModels';
-import {domainModelsClearError, requestMethod} from '../../domainModelsActions';
+import {DomainModelsState, EndPoints, Normalized} from '../../domainModels';
+import {domainModelsClearError, getRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {clearErrorGateways, fetchGateways} from '../gatewayApiActions';
 import {Gateway} from '../gatewayModels';
@@ -20,9 +20,11 @@ const configureMockStore = configureStore([thunk]);
 describe('gatewayApiActions', () => {
 
   initLanguage({code: 'en', name: 'english'});
+
   let mockRestClient: MockAdapter;
   let store;
-  const gatewayRequest = requestMethod<Normalized<Gateway>>(EndPoints.gateways, HttpMethod.GET);
+
+  const getGateways = getRequestOf<Normalized<Gateway>>(EndPoints.gateways);
 
   beforeEach(() => {
     const initialState: Partial<DomainModelsState> = {
@@ -48,8 +50,8 @@ describe('gatewayApiActions', () => {
       await getGatewaysWithResponseOk();
 
       expect(store.getActions()).toEqual([
-        gatewayRequest.request(),
-        gatewayRequest.success(normalize(testData.gateways, gatewaySchema)),
+        getGateways.request(),
+        getGateways.success(normalize(testData.gateways, gatewaySchema)),
         paginationUpdateMetaData({
           entityType: 'gateways',
           content: ['g1', 'g2', 'g3', 'g4', 'g5'],

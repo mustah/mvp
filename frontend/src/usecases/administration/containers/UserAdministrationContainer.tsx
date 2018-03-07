@@ -12,13 +12,13 @@ import {TableHead} from '../../../components/table/TableHead';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {
-  clearErrorUsers, deleteUser, fetchUsers,
+  clearUserError, deleteUser, fetchUsers,
 } from '../../../state/domain-models/user/userApiActions';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {User} from '../../../state/domain-models/user/userModels';
-import {ErrorResponse, OnClickWithId, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../../types/Types';
 
 interface StateToProps {
   users: DomainModel<User>;
@@ -28,7 +28,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   deleteUser: OnClickWithId;
-  fetchUsers: RestGet;
+  fetchUsers: Fetch;
   clearError: ClearError;
 }
 
@@ -120,7 +120,7 @@ const mapStateToProps = ({domainModels: {users}}: RootState): StateToProps => ({
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   deleteUser,
   fetchUsers,
-  clearError: clearErrorUsers,
+  clearError: clearUserError,
 }, dispatch);
 
 export const UserAdministrationContainer =

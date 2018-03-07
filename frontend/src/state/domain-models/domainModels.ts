@@ -1,4 +1,4 @@
-import {ErrorResponse, HasId, IdNamed, uuid} from '../../types/Types';
+import {ErrorResponse, Identifiable, IdNamed, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {GatewaysState} from './gateway/gatewayModels';
 import {Address} from './location/locationModels';
@@ -18,23 +18,23 @@ export const enum EndPoints {
   organisations = '/organisations',
 }
 
-export interface ObjectsById<T extends HasId> {
+export interface ObjectsById<T extends Identifiable> {
   [id: string]: T;
 }
 
-export interface Normalized<T extends HasId> {
+export interface Normalized<T extends Identifiable> {
   result: uuid[];
   entities: {
     [entityType: string]: ObjectsById<T>,
   };
 }
 
-export interface DomainModel<T extends HasId> {
+export interface DomainModel<T extends Identifiable> {
   result: uuid[];
   entities: ObjectsById<T>;
 }
 
-export interface NormalizedState<T extends HasId> extends DomainModel<T> {
+export interface NormalizedState<T extends Identifiable> extends DomainModel<T> {
   isFetching: boolean;
   isSuccessfullyFetched: boolean;
   total: number;
@@ -60,13 +60,10 @@ export interface DomainModelsState {
   organisations: NormalizedState<Organisation>;
 }
 
-export enum HttpMethod {
+export const enum RequestType {
   GET = 'GET',
   GET_ENTITY = 'GET_ENTITY',
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
-
-export type RestGet = (requestData?: string) => void;
-export type ClearError = () => void;

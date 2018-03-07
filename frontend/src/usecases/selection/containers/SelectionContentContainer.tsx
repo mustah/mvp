@@ -11,7 +11,7 @@ import {Subtitle} from '../../../components/texts/Titles';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ClearError, ObjectsById} from '../../../state/domain-models/domainModels';
+import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
@@ -31,7 +31,7 @@ import {
   getMeterStatuses,
   getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
-import {Callback, ErrorResponse, IdNamed} from '../../../types/Types';
+import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
 import {SearchResultList} from '../components/SelectionResultList';
 

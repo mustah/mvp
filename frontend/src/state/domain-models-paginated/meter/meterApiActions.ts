@@ -4,11 +4,11 @@ import {EndPoints} from '../../domain-models/domainModels';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
-import {restGetIfNeeded} from '../paginatedDomainModelsActions';
+import {fetchIfNeeded} from '../paginatedDomainModelsActions';
 import {Meter} from './meterModels';
 import {meterSchema} from './meterSchema';
 
-export const fetchMeters = restGetIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
+export const fetchMeters = fetchIfNeeded<Meter>(EndPoints.meters, meterSchema, 'meters', {
   afterSuccess: (
     {result}: NormalizedPaginated<Meter>,
     dispatch,

@@ -17,7 +17,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
-import {ClearError, DomainModel, RestGet} from '../../../state/domain-models/domainModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
 import {
   clearErrorAllMeters, fetchAllMeters,
 } from '../../../state/domain-models/meter-all/allMetersApiActions';
@@ -34,7 +34,7 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ErrorResponse, OnClick} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, Fetch} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -54,7 +54,7 @@ interface StateToProps extends TabsContainerStateToProps {
 interface DispatchToProps extends TabsContainerDispatchToProps {
   setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
   clearError: ClearError;
 }
 

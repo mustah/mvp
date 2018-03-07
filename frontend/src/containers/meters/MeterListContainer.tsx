@@ -15,7 +15,7 @@ import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {ClearError, ObjectsById, RestGet} from '../../state/domain-models/domainModels';
+import {ObjectsById} from '../../state/domain-models/domainModels';
 import {
   getEntitiesDomainModels,
   getError,
@@ -30,7 +30,7 @@ import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../state/ui/pagination/paginationSelectors';
-import {ErrorResponse, OnClickWithId, uuid} from '../../types/Types';
+import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
 interface StateToProps {
@@ -45,7 +45,7 @@ interface StateToProps {
 
 interface DispatchToProps {
   selectEntryAdd: OnClickWithId;
-  fetchAllMeters: RestGet;
+  fetchAllMeters: Fetch;
   changePaginationPage: OnChangePage;
   clearError: ClearError;
 }

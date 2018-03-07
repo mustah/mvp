@@ -7,8 +7,8 @@ import {InvalidToken, restClient, restClientWith} from '../../../../services/res
 import {logoutUser} from '../../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../../usecases/auth/authModels';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
-import {EndPoints, HttpMethod, Normalized} from '../../domainModels';
-import {requestMethod} from '../../domainModelsActions';
+import {EndPoints, Normalized} from '../../domainModels';
+import {getRequestOf} from '../../domainModelsActions';
 import {initialDomain} from '../../domainModelsReducer';
 import {User} from '../../user/userModels';
 import {fetchAllMeters} from '../allMetersApiActions';
@@ -23,7 +23,7 @@ describe('allMeterApiActions', () => {
     it('dispatches an action if token is invalid', async () => {
       restClientWith('123123123');
       initLanguage({code: 'en', name: 'english'});
-      const meterRequest = requestMethod<Normalized<Meter>>(EndPoints.allMeters, HttpMethod.GET);
+      const meterRequest = getRequestOf<Normalized<Meter>>(EndPoints.allMeters);
       const mockRestClient = new MockAdapter(restClient);
       const user: User = {
         id: 1,

@@ -35,8 +35,8 @@ describe('reportActions', () => {
     ]);
   });
   it('test that selectEntryAdd adds "id" to selected if not there', () => {
-    const initalState: ReportState = {selectedListItems: [1, 2]};
-    const store = configureMockStore({report: {...initalState}});
+    const initialState: ReportState = {selectedListItems: [1, 2]};
+    const store = configureMockStore({report: {...initialState}});
 
     store.dispatch(selectEntryAdd(3));
 
@@ -48,8 +48,8 @@ describe('reportActions', () => {
     ]);
   });
   it('test that selectEntryAdd do nothing when "id" already exist in selected', () => {
-    const initalState: ReportState = {selectedListItems: [1, 2, 3]};
-    const store = configureMockStore({report: {...initalState}});
+    const initialState: ReportState = {selectedListItems: [1, 2, 3]};
+    const store = configureMockStore({report: {...initialState}});
 
     store.dispatch(selectEntryAdd(3));
 

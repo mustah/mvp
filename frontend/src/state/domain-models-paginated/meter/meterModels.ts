@@ -1,14 +1,14 @@
-import {HasId, IdNamed, uuid} from '../../../types/Types';
+import {Identifiable, IdNamed, uuid} from '../../../types/Types';
 import {Flag} from '../../domain-models/flag/flagModels';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 
-export interface MeterStatusChangelog extends HasId {
+export interface MeterStatusChangelog extends Identifiable {
   statusId: uuid;
   name: string;
   start: string;
 }
 
-export interface Meter extends HasId, LocationHolder {
+export interface Meter extends Identifiable, LocationHolder {
   sapId?: uuid;
   measurementId?: uuid;
   facility: uuid;

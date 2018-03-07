@@ -1,6 +1,6 @@
-import {HasId, uuid} from '../../../types/Types';
+import {Identifiable, uuid} from '../../../types/Types';
 
-export interface Organisation extends HasId {
+export interface Organisation extends Identifiable {
   code: uuid;
   name: string;
 }

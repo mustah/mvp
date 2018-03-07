@@ -10,7 +10,6 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {RestGet} from '../../state/domain-models/domainModels';
 import {fetchGateways} from '../../state/domain-models/gateway/gatewayApiActions';
 import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {
@@ -18,7 +17,7 @@ import {
   getEncodedUriParametersForGateways,
 } from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {OnClick} from '../../types/Types';
+import {OnClick, Fetch} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -35,8 +34,8 @@ interface StateToProps {
 
 interface DispatchToProps {
   toggleShowHideSideMenu: OnClick;
-  fetchGateways: RestGet;
-  fetchAllMeters: RestGet;
+  fetchGateways: Fetch;
+  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
