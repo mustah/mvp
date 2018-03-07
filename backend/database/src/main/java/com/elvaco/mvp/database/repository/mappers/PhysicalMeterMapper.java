@@ -1,23 +1,27 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 
 public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, PhysicalMeterEntity> {
 
   private final OrganisationMapper organisationMapper;
-  private final MeterStatusLogMapper meterStatusLogMapper;
 
   public PhysicalMeterMapper(
-    OrganisationMapper organisationMapper,
-    MeterStatusLogMapper meterStatusLogMapper
+    OrganisationMapper organisationMapper
   ) {
     this.organisationMapper = organisationMapper;
-    this.meterStatusLogMapper = meterStatusLogMapper;
   }
 
   @Override
   public PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
+    return toDomainModel(entity, Optional.empty());
+  }
+
+  public PhysicalMeter toDomainModel(
+    PhysicalMeterEntity entity, Optional<Long> measurementCount) {
     return new PhysicalMeter(
       entity.id,
       organisationMapper.toDomainModel(entity.organisation),
@@ -25,8 +29,9 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       entity.externalId,
       entity.medium,
       entity.manufacturer,
-      entity.logicalMeterId
-    );
+      entity.logicalMeterId,
+      entity.readInterval,
+      measurementCount.orElse(null));
   }
 
   @Override
@@ -38,7 +43,8 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       domainModel.externalId,
       domainModel.medium,
       domainModel.manufacturer,
-      domainModel.logicalMeterId
+      domainModel.logicalMeterId,
+      domainModel.readInterval
     );
   }
 }

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.access;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,10 +15,12 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
@@ -26,6 +29,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +44,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final LogicalMeterSortingMapper sortingMapper;
   private final QueryFilters meterQueryFilters;
   private final QueryFilters statusQueryFilters;
+  private final MeasurementJpaRepository measurementJpaRepository;
 
   public LogicalMeterRepository(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
@@ -47,7 +52,8 @@ public class LogicalMeterRepository implements LogicalMeters {
     LogicalMeterSortingMapper sortingMapper,
     LogicalMeterMapper logicalMeterMapper,
     QueryFilters meterQueryFilters,
-    QueryFilters statusQueryFilters
+    QueryFilters statusQueryFilters,
+    MeasurementJpaRepository measurementJpaRepository
   ) {
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
     this.sortingMapper = sortingMapper;
@@ -55,6 +61,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
     this.meterQueryFilters = meterQueryFilters;
     this.statusQueryFilters = statusQueryFilters;
+    this.measurementJpaRepository = measurementJpaRepository;
   }
 
   @Override
@@ -93,7 +100,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           logicalMeter,
           getStatusesGroupedByPhysicalMeterId(
             getStatusesForMeters(logicalMeterEntities.getContent(), parameters)
-          )
+          ), getCountForMetersWithinPeriod(logicalMeterEntities.getContent(), parameters)
         )
       )
     );
@@ -101,8 +108,12 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    List<LogicalMeterEntity> all =
-      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters));
+    List<LogicalMeterEntity> all = sortingMapper.getAsSpringSort(parameters).map(sort ->
+      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters), sort)
+    ).orElse(
+      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters))
+    );
+
     return mapAndCollectWithStatuses(all, parameters);
   }
 
@@ -165,10 +176,16 @@ public class LogicalMeterRepository implements LogicalMeters {
     Map<UUID, List<PhysicalMeterStatusLogEntity>> mappedStatuses =
       getStatusesGroupedByPhysicalMeterId(getStatusesForMeters(meters, parameters));
 
+    Map<UUID, Long> meterCounts = getCountForMetersWithinPeriod(meters, parameters);
+
     return meters
       .stream()
-      .map(entity -> logicalMeterMapper.toDomainModel(entity, mappedStatuses))
-      .collect(toList());
+      .map(logicalMeterEntity -> logicalMeterMapper.toDomainModel(
+        logicalMeterEntity,
+        mappedStatuses,
+        meterCounts
+        )
+      ).collect(toList());
   }
 
   private Map<UUID, List<PhysicalMeterStatusLogEntity>> getStatusesGroupedByPhysicalMeterId(
@@ -187,5 +204,54 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   private static String toSortString(Object sortProperty) {
     return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
+  }
+
+  private Map<UUID, Long> getCountForMetersWithinPeriod(
+    List<LogicalMeterEntity> logicalMeterEntities,
+    RequestParameters parameters
+  ) {
+    List<UUID> physicalMeterIds = new ArrayList<>();
+    logicalMeterEntities.forEach(
+      logicalMeterEntity -> logicalMeterEntity.physicalMeters.forEach(
+        physicalMeterEntity -> physicalMeterIds.add(physicalMeterEntity.id)
+      )
+    );
+
+    if (physicalMeterIds.size() != 0
+      && parameters.hasName("after")
+      && parameters.hasName("before")
+    ) {
+      //TODO handle multiple dates?
+      ZonedDateTime after =  ZonedDateTime.parse(parameters.getValues("after").get(0));
+      ZonedDateTime before = ZonedDateTime.parse(parameters.getValues("before").get(0));
+
+      Map<UUID, Long> meterMeasurementsCount = getCountForMetersWithinPeriod(
+        physicalMeterIds,
+        after,
+        before
+      );
+
+      return meterMeasurementsCount;
+    }
+
+    return emptyMap();
+  }
+
+  private Map<UUID, Long> getCountForMetersWithinPeriod(
+    List<UUID> physicalMeterIds,
+    ZonedDateTime after,
+    ZonedDateTime before
+  ) {
+    QMeasurementEntity q = QMeasurementEntity.measurementEntity;
+
+    // TODO check that all measurements matches interval pattern
+    Map<UUID, Long> result = measurementJpaRepository.countGroupedByPhysicalMeterId(
+      q.physicalMeter.id.in(physicalMeterIds)
+        //Roughly filter on date
+        .and(q.created.goe(after))
+        .and(q.created.before(before))
+    );
+
+    return result;
   }
 }

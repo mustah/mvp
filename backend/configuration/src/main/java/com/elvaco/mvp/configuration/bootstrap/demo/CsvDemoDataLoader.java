@@ -118,7 +118,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               csvData.facilityId,
               csvData.medium,
               csvData.meterManufacturer,
-              ELVACO
+              ELVACO,
+              15
             );
 
             return new Parameters(logicalMeter, physicalMeter, gateway);
@@ -136,7 +137,9 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.externalId,
             physicalMeter.medium,
             physicalMeter.manufacturer,
-            logicalMeter.id
+            logicalMeter.id,
+            physicalMeter.readInterval,
+            null
           ));
       });
   }

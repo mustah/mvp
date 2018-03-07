@@ -154,7 +154,9 @@ public class MessageHandlerTest {
       EXTERNAL_ID,
       "Hot water",
       "ELV",
-      logicalMeter.id
+      logicalMeter.id,
+      0,
+      null
     ));
   }
 
@@ -211,7 +213,8 @@ public class MessageHandlerTest {
       EXTERNAL_ID,
       "Hot water",
       "ELV",
-      organisation
+      organisation,
+      15
     ));
 
     messageHandler.handle(structureMessage);
@@ -222,7 +225,8 @@ public class MessageHandlerTest {
       "1234",
       EXTERNAL_ID,
       "Hot water",
-      "KAM"
+      "KAM",
+      15
     );
     assertThat(physicalMeters.findAll()).containsExactly(expectedPhysicalMeter);
   }
@@ -237,7 +241,8 @@ public class MessageHandlerTest {
       EXTERNAL_ID,
       "Hot water",
       "ELV",
-      organisation
+      organisation,
+      15
     ));
 
     messageHandler.handle(newStructureMessage("Hot water", "ELV"));
@@ -257,7 +262,8 @@ public class MessageHandlerTest {
         EXTERNAL_ID,
         "Electricity",
         "ELV",
-        organisation
+        organisation,
+        15
       )
     );
 
@@ -300,7 +306,8 @@ public class MessageHandlerTest {
         "1234",
         EXTERNAL_ID,
         "Unknown",
-        "UNKNOWN"
+        "UNKNOWN",
+        0
       )
     );
     List<Measurement> createdMeasurements = measurements.findAll(null);

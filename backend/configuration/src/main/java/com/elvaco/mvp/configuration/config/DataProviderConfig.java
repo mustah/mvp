@@ -134,7 +134,8 @@ class DataProviderConfig {
       new LogicalMeterSortingMapper(),
       newLogicalMeterMapper(),
       new LogicalMeterQueryFilters(),
-      new PhysicalMeterStatusLogQueryFilters()
+      new PhysicalMeterStatusLogQueryFilters(),
+      measurementJpaRepository
     );
   }
 
@@ -149,7 +150,10 @@ class DataProviderConfig {
 
   @Bean
   PhysicalMeters physicalMeters() {
-    return new PhysicalMetersRepository(physicalMeterJpaRepository, newPhysicalMeterMapper());
+    return new PhysicalMetersRepository(
+      physicalMeterJpaRepository,
+      newPhysicalMeterMapper()
+    );
   }
 
   @Bean
@@ -185,6 +189,6 @@ class DataProviderConfig {
   }
 
   private PhysicalMeterMapper newPhysicalMeterMapper() {
-    return new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper());
+    return new PhysicalMeterMapper(new OrganisationMapper());
   }
 }

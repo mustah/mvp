@@ -36,7 +36,8 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
       entity.physicalMeters,
       entity.meterDefinition,
       entity.meterStatusLogs,
-      emptyList()
+      emptyList(),
+      entity.getCollectionPercentage().orElse(null)
     );
   }
 

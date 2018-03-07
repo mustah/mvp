@@ -11,8 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PhysicalMeterMapperTest {
 
   private final PhysicalMeterMapper physicalMeterMapper = new PhysicalMeterMapper(
-    new OrganisationMapper(),
-    new MeterStatusLogMapper()
+    new OrganisationMapper()
   );
 
   @Test
@@ -23,7 +22,8 @@ public class PhysicalMeterMapperTest {
       "external-id",
       "My Medium",
       "ELV",
-      ELVACO
+      ELVACO,
+      15
     );
 
     PhysicalMeterEntity physicalMeterEntity = physicalMeterMapper.toEntity(physicalMeter);

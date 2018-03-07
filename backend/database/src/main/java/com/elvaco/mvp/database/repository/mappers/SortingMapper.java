@@ -1,8 +1,12 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.elvaco.mvp.core.spi.data.Order;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
@@ -21,6 +25,33 @@ public abstract class SortingMapper {
     } else {
       return null;
     }
+  }
+
+  public Optional<Sort> getAsSpringSort(RequestParameters parameters) {
+    if (parameters.hasName("sort")) {
+      List<Sort.Order> orders = new ArrayList<>();
+      List<String> sortParameters = parameters.getValues("sort");
+
+      sortParameters.forEach(s -> orders.add(new Sort.Order(getDirection(s), getProperty(s))));
+
+      return Optional.of(new org.springframework.data.domain.Sort(orders));
+    }
+
+    return Optional.empty();
+  }
+
+  private String getProperty(String s) {
+    return s.contains(",") ? s.substring(0, s.indexOf(",")) : s;
+  }
+
+  private Direction getDirection(String s) {
+    Direction direction = null;
+
+    if (s.contains(",")) {
+      direction = Direction.fromStringOrNull(s.substring(s.indexOf(",") + 1));
+    }
+
+    return direction == null ? Sort.DEFAULT_DIRECTION : direction;
   }
 
   private Sort.Order mapOrderToSprintOrder(Order order) {

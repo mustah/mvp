@@ -34,7 +34,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "an-external-id",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
 
     assertThat(saved.id).isEqualTo(id);
@@ -49,7 +50,8 @@ public class PhysicalMetersTest extends IntegrationTest {
         "an-external-id",
         "unknown",
         "ELV",
-        context().organisation()
+        context().organisation(),
+        15
       ));
 
     assertThat(saved.medium).isEqualTo("unknown");
@@ -60,7 +62,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       saved.address,
       "an-external-id",
       "Heat",
-      "ELV"
+      "ELV",
+      15
     ));
 
     assertThat(updated.id).isEqualTo(saved.id);
@@ -75,7 +78,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-1",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -83,7 +87,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-2",
       "Vacuum",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -91,7 +96,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-3",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
 
     assertThat(physicalMeters.findAll()).hasSize(3);
@@ -105,7 +111,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "12",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
 
     assertThat(
@@ -125,7 +132,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "AAA",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -133,7 +141,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "BBB",
       "Vacuum",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -141,7 +150,8 @@ public class PhysicalMetersTest extends IntegrationTest {
       "CCC",
       "Heat",
       "ELV",
-      context().organisation()
+      context().organisation(),
+      15
     ));
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);

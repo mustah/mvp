@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   medium TEXT,
   manufacturer VARCHAR(255),
   logical_meter_id UUID REFERENCES logical_meter,
+  read_interval BIGINT NOT NULL,
   UNIQUE (organisation_id, external_id, address)
 );
 

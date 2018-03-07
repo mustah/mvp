@@ -23,6 +23,7 @@ public class LogicalMeterDto {
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
   public Status status;
+  public String collectionStatus;
 
   @Nullable
   public GatewayMandatoryDto gateway;

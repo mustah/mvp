@@ -301,7 +301,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       uuid.toString(),
       "",
       "",
-      null
+      null,
+      0
     ));
   }
 

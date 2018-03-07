@@ -2,6 +2,7 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -21,6 +22,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final UUID logicalMeterId;
   public final String manufacturer;
   private final List<Measurement> measurements;
+  public final long readInterval;
+  private final Long measurementCount;
 
   public PhysicalMeter(
     UUID id,
@@ -29,7 +32,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String externalId,
     String medium,
     String manufacturer,
-    @Nullable UUID logicalMeterId
+    @Nullable UUID logicalMeterId,
+    long readInterval,
+    @Nullable Long measurementCount
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -39,6 +44,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.measurements = new ArrayList<>();
+    this.readInterval = readInterval;
+    this.measurementCount = measurementCount;
   }
 
   public PhysicalMeter(
@@ -47,7 +54,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String externalId,
     String medium,
     String manufacturer,
-    Organisation organisation
+    Organisation organisation,
+    long readInterval
   ) {
     this(
       id,
@@ -56,6 +64,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
+      null,
+      readInterval,
       null
     );
   }
@@ -66,14 +76,19 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String address,
     String externalId,
     String medium,
-    String manufacturer
+    String manufacturer,
+    long readInterval
   ) {
-    this(id, address, externalId, medium, manufacturer, organisation);
+    this(id, address, externalId, medium, manufacturer, organisation, readInterval);
   }
 
   @Override
   public UUID getId() {
     return id;
+  }
+
+  public Optional<Long> getMeasurementCount() {
+    return Optional.ofNullable(measurementCount);
   }
 
   public PhysicalMeter withMedium(String medium) {
@@ -84,7 +99,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId
+      logicalMeterId,
+      readInterval,
+      measurementCount
     );
   }
 
@@ -96,7 +113,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId
+      logicalMeterId,
+      readInterval,
+      measurementCount
     );
   }
 
@@ -108,7 +127,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
       externalId,
       medium,
       manufacturer,
-      logicalMeterId
+      logicalMeterId,
+      readInterval,
+      measurementCount
     );
   }
 }

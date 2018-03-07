@@ -51,7 +51,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "butter-external-id",
       "Butter",
       "ELV",
-      null
+      null,
+      15
     );
 
     wayneIndustriesEntity = organisationJpaRepository.save(
@@ -64,7 +65,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "milk-external-id",
       "Milk",
       "ELV",
-      null
+      null,
+      15
     );
     forceMeter = new PhysicalMeterEntity(
       randomUUID(),
@@ -73,7 +75,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "force-external-id",
       "vacum",
       "ELV",
-      null
+      null,
+      15
     );
 
     physicalMeterRepository.save(asList(butterMeter, milkMeter, forceMeter));
