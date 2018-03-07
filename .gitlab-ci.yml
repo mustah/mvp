@@ -5,6 +5,7 @@ stages:
     - prepare
     - build
     - test
+    - publish
     - deploy
 
 variables:
@@ -97,6 +98,19 @@ test:unit_and_IT:
         expire_in: 7 days
     script:
         - gradle check -x systemTest
+publish:artifactory:
+    image: ubuntu:16.04
+    stage: publish
+    dependencies:
+      - gradle:build
+    script:
+        - apt update
+        - apt install -y curl
+        - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+        - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
+        - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
+        - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
+        - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
 .review_app_job_template: &review_app
     stage: deploy
