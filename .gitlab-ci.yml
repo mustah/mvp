@@ -20,6 +20,16 @@ variables:
           - frontend/.fusebox/cache
           - .version
 
+.cache_gradle_ro: &cache_gradle_ro
+     cache:
+        key: "$CI_COMMIT_REF_NAME-gradle"
+        paths:
+          - .gradle/caches
+          - .yarn
+          - frontend/.fusebox/cache
+          - .version
+        policy: pull
+
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - export YARN_CACHE_FOLDER=`pwd`/.yarn
@@ -72,7 +82,7 @@ gradle:build:
         expire_in: 1 week
 
 test:system:
-    <<: *cache_gradle
+    <<: *cache_gradle_ro
     stage: test
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
@@ -89,7 +99,7 @@ test:system:
         expire_in: 7 days
 
 test:unit_and_IT:
-    <<: *cache_gradle
+    <<: *cache_gradle_ro
     stage: test
     artifacts:
         name: "${CI_COMMIT_REF_NAME}-integration"
