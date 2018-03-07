@@ -17,6 +17,7 @@ variables:
         paths:
           - .gradle/caches
           - .yarn
+          - frontend/.fusebox/cache
           - .version
 
 before_script:
