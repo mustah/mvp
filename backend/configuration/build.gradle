@@ -50,10 +50,11 @@ task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
 }
 
 task systemTestCI(type: Test, dependsOn: 'test', group: 'verification') {
+  systemProperty "liquibase.url", "jdbc:postgresql://pg_host:5432/mvp"
   systemProperty "spring.profiles.active", "postgresql"
   systemProperty "spring.datasource.url", "jdbc:postgresql://pg_host:5432/mvp"
-  systemProperty "spring.datasource.username", "mvp"
-  systemProperty "spring.datasource.password", "mvp"
+  systemProperty "spring.datasource.username", "appuser"
+  systemProperty "spring.datasource.password", "RWZ8tKUzDdbncg2J"
   systemProperty "spring.rabbitmq.host", "rabbit_host"
   systemProperty "spring.rabbitmq.username", "guest"
   systemProperty "spring.rabbitmq.password", "guest"

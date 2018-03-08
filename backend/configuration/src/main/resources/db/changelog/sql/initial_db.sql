@@ -1,5 +1,8 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "unit";
+
+CREATE USER ${application_user} WITH ENCRYPTED PASSWORD '${application_password}';
+GRANT CONNECT ON DATABASE mvp TO ${application_user};
 -- unit aliases, do we really need these? Could we change the units at the source (Metering) instead?
 INSERT INTO unit_units VALUES ('Celsius', '1 K' :: UNIT, 273.15, 'K');
 INSERT INTO unit_units VALUES ('Kelvin', '1 K' :: UNIT, default, 'K');
@@ -118,3 +121,5 @@ CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   physical_meter_id UUID REFERENCES physical_meter (id)
 );
 
+GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO ${application_user};
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${application_user};
