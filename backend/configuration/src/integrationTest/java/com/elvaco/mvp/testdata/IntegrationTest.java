@@ -1,9 +1,12 @@
 package com.elvaco.mvp.testdata;
 
 import java.util.function.BooleanSupplier;
+import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +28,34 @@ public abstract class IntegrationTest {
   @Autowired
   private Users users;
 
+  @Autowired
+  private EntityManagerFactory factory;
+
+  @Autowired
+  private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
+
   @LocalServerPort
   private int serverPort;
 
+
   private RestClient restClient;
+
+  protected boolean isPostgresDialect() {
+    return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
+      .getDialect()
+      .getClass()
+      .getName()
+      .toLowerCase()
+      .contains("postgres");
+  }
+
+  protected IntegrationTestFixtureContext newContext() {
+    return integrationTestFixtureContextFactory.create();
+  }
+
+  protected void destroyContext(IntegrationTestFixtureContext context) {
+    integrationTestFixtureContextFactory.destroy(context);
+  }
 
   @After
   public final void tearDownBase() {
@@ -53,6 +80,10 @@ public abstract class IntegrationTest {
 
   protected RestClient asSuperAdmin() {
     return restAsUser(ELVACO_SUPER_ADMIN_USER);
+  }
+
+  protected RestClient as(User user) {
+    return restAsUser(user);
   }
 
   protected User createUserIfNotPresent(User user) {

@@ -36,14 +36,11 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Autowired
   OrganisationJpaRepository organisationJpaRepository;
 
-  @Autowired
-  EntityManagerFactory factory;
-
   private OrganisationEntity organisationEntity;
 
   @Before
   public void setUp() {
-    Assume.assumeTrue(getDialectName().contains("postgres"));
+    Assume.assumeTrue(isPostgresDialect());
     organisationEntity = organisationJpaRepository.save(new OrganisationEntity(
       UUID.randomUUID(),
       "organisationen",
@@ -147,14 +144,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void correctScaleIsReturned() {
     assertThat(false).isTrue();
-  }
-
-  private String getDialectName() {
-    return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
-      .getDialect()
-      .getClass()
-      .getName()
-      .toLowerCase();
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {
