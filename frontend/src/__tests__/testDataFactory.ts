@@ -1,5 +1,7 @@
-import {Meter} from '../state/domain-models-paginated/meter/meterModels';
-import {uuid} from '../types/Types';
+import {Meter, MeterStatusChangelog} from '../state/domain-models-paginated/meter/meterModels';
+import {Flag} from '../state/domain-models/flag/flagModels';
+import {LocationHolder} from '../state/domain-models/location/locationModels';
+import {Identifiable, IdNamed, Status, uuid} from '../types/Types';
 
 const selections = {
   cities: [
@@ -104,7 +106,7 @@ const gateways = [
 const meterStatuses = [
   {
     id: 'ok',
-    name: 'Ok',
+    name: 'ok',
   },
   {
     id: 'warning',
@@ -128,39 +130,45 @@ export const testData = {
   gateways,
 };
 
-export const makeMeter = (
-  id: number,
-  cityId: uuid,
-  city: string,
-  addressId: uuid,
-  address: string,
-): Meter => ({
-  id,
-  facility: '1',
-  alarm: '1',
-  flags: [],
-  flagged: false,
-  medium: 'asdf',
-  manufacturer: 'asdf',
-  status: {id: 0, name: 'ok'},
-  gatewayId: 'a',
-  gatewayProductModel: 'a',
-  gatewaySerial: '123',
-  gatewayStatus: {id: 0, name: 'ok'},
-  location: {
-    address: {
-      id: addressId,
-      name: address,
+const okStatus: IdNamed = {id: Status.ok, name: Status.ok};
+
+export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter => (
+  {
+    id,
+    facility: '1',
+    alarm: '1',
+    flags: [],
+    flagged: false,
+    medium: 'asdf',
+    manufacturer: 'asdf',
+    status: okStatus,
+    gateway: {id: 'a', productModel: 'a', serial: '123', status: okStatus},
+    location: {
+      address,
+      city,
+      position: {
+        latitude: 1,
+        longitude: 1,
+        confidence: 1,
+      },
     },
-    city: {
-      id: cityId,
-      name: city,
-    },
-    position: {
-      latitude: 1,
-      longitude: 1,
-      confidence: 1,
-    },
-  },
-  statusChangelog: [],
-});
+    statusChangelog: [],
+  }
+);
+
+export interface MeterDto extends Identifiable, LocationHolder {
+  status: Status;
+  facility: uuid;
+  alarm: string;
+  flags: Flag[];
+  flagged: boolean;
+  statusChangelog: MeterStatusChangelog[];
+}
+
+export const makeMeterDto = (id: number, city: IdNamed, address: IdNamed): MeterDto => {
+  const meter: any = makeMeter(id, city, address);
+  return {
+    ...meter,
+    status: Status.ok,
+  };
+};

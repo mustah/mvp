@@ -30,7 +30,7 @@ import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../state/ui/pagination/paginationSelectors';
-import {ClearError, ErrorResponse, OnClickWithId, Fetch, uuid} from '../../types/Types';
+import {ClearError, ErrorResponse, Fetch, OnClickWithId, uuid} from '../../types/Types';
 import {selectEntryAdd} from '../../usecases/report/reportActions';
 
 interface StateToProps {
@@ -91,7 +91,7 @@ class MeterList extends React.Component<Props> {
       : null;
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
-    const renderGatewaySerial = ({gatewaySerial}: Meter) => gatewaySerial;
+    const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;

@@ -1,5 +1,5 @@
 import {makeMeter} from '../../../__tests__/testDataFactory';
-import {ErrorResponse, Identifiable} from '../../../types/Types';
+import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
 import {EndPoints} from '../../domain-models/domainModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Meter} from '../meter/meterModels';
@@ -24,6 +24,8 @@ describe('paginatedDomainModelsReducer', () => {
 
     const page = 0;
 
+    const status: IdNamed = {id: Status.ok, name: Status.ok};
+
     const normalizedMeters: NormalizedPaginated<Meter> = {
       page,
       entities: {
@@ -42,11 +44,8 @@ describe('paginatedDomainModelsReducer', () => {
             medium: 'Electricity',
             manufacturer: 'ABB',
             statusChangelog: [],
-            status: {id: 1, name: 'ok'},
-            gatewayId: 1,
-            gatewayStatus: {id: 1, name: 'ok'},
-            gatewaySerial: '123',
-            gatewayProductModel: 'Elvaco',
+            status,
+            gateway: {id: 1, serial: '123', productModel: 'Elvaco', status},
           },
           2: {
             id: 2,
@@ -62,11 +61,8 @@ describe('paginatedDomainModelsReducer', () => {
             medium: 'Electricity',
             manufacturer: 'ABB',
             statusChangelog: [],
-            status: {id: 1, name: 'ok'},
-            gatewayId: 1,
-            gatewayStatus: {id: 1, name: 'ok'},
-            gatewaySerial: '123-123',
-            gatewayProductModel: 'Elvaco',
+            status,
+            gateway: {id: 1, serial: '123-123', productModel: 'Elvaco', status},
           },
         },
       },
@@ -211,12 +207,11 @@ describe('paginatedDomainModelsReducer', () => {
         {
           meters: {
             ...initialPaginatedDomain<Meter>(),
-            entities: {1: {...makeMeter(1, 1, 'Mo', 1, 'b')}},
+            entities: {1: {...makeMeter(1, {id: 1, name: 'Mo'}, {id: 1, name: 'b'})}},
           },
         },
         {type: SET_SELECTION, payload: 'irrelevant'},
       )).toEqual({meters: initialPaginatedDomain()});
     });
   });
-})
-;
+});

@@ -1,7 +1,9 @@
 package com.elvaco.mvp.web.dto;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.Status;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -20,9 +22,8 @@ public class LogicalMeterDto {
   public String statusChanged;
   public List<MeterStatusLogDto> statusChangelog;
   public String created;
-  public IdNamedDto status;
-  public String gatewayId;
-  public IdNamedDto gatewayStatus;
-  public String gatewayProductModel;
-  public String gatewaySerial;
+  public Status status;
+
+  @Nullable
+  public GatewayMandatoryDto gateway;
 }

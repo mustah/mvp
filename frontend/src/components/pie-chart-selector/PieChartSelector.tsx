@@ -30,7 +30,6 @@ export interface PieChartSelectorProps {
 
 interface LegendPayload extends PieSlice {
   payload: PieSlice;
-
   [key: string]: any;
 }
 
@@ -38,19 +37,16 @@ interface Legend {
   color: any;
   value: string;
   payload: LegendPayload;
-
   [key: string]: any;
 }
 
 interface RenderLegendProps {
   payload: Legend[];
-
   [key: string]: any;
 }
 
 interface PieSliceCallback {
   payload: PieSlice;
-
   [key: string]: any;
 }
 

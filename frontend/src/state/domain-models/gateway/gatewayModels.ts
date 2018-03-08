@@ -10,14 +10,17 @@ export interface GatewayStatusChangelog extends Identifiable {
   date: string;
 }
 
-export interface Gateway extends LocationHolder, Identifiable {
+export interface GatewayMandatory extends Identifiable {
   serial: string;
+  productModel: string;
+  status: IdNamed;
+}
+
+export interface Gateway extends LocationHolder, GatewayMandatory {
   flags: Flag[];
   flagged: boolean;
-  productModel: string;
   statusChanged?: string;
   signalToNoiseRatio?: number;
-  status: IdNamed;
   statusChangelog: GatewayStatusChangelog[];
   meterIds: uuid[];
   meterStatus: IdNamed;

@@ -1,5 +1,6 @@
 import {Identifiable, IdNamed, uuid} from '../../../types/Types';
 import {Flag} from '../../domain-models/flag/flagModels';
+import {GatewayMandatory} from '../../domain-models/gateway/gatewayModels';
 import {LocationHolder} from '../../domain-models/location/locationModels';
 
 export interface MeterStatusChangelog extends Identifiable {
@@ -21,14 +22,5 @@ export interface Meter extends Identifiable, LocationHolder {
   statusChangelog: MeterStatusChangelog[];
   date?: string;
   status: IdNamed;
-  gatewayId: uuid;
-  gatewayStatus: IdNamed;
-  gatewaySerial: uuid;
-  gatewayProductModel: string;
-}
-
-export const enum MeterStatus {
-  ok = 0,
-  alarm = 3,
-  unknown = 4,
+  gateway: GatewayMandatory;
 }

@@ -1,27 +1,33 @@
 import {translate} from '../services/translationService';
 import {GatewayDataSummaryKey} from '../state/domain-models/gateway/gatewayModels';
-import {MeterStatus} from '../state/domain-models-paginated/meter/meterModels';
 import {MeterDataSummaryKey} from '../state/domain-models/meter-all/allMetersModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
-import {IdNamed} from '../types/Types';
+import {IdNamed, Status} from '../types/Types';
 
 // TODO: Write tests on this.
 export const getTranslationOrName = (idName: IdNamed, domainModelName: ParameterName): string => {
   switch (domainModelName) {
     case ParameterName.meterStatuses:
-      return meterStatusTranslation(idName);
+    case ParameterName.gatewayStatuses:
+      return statusTranslation(idName);
     default:
       return idName.name;
   }
 };
-export const meterStatusTranslation = ({id, name}: IdNamed): string => {
+
+export const statusTranslation = ({id}: IdNamed): string => {
   const statuses = {
-    [MeterStatus.ok]: translate('ok'),
-    [MeterStatus.alarm]: translate('alarm'),
-    [MeterStatus.unknown]: translate('unknown'),
+    [Status.ok]: translate('ok'),
+    [Status.alarm]: translate('alarm'),
+    [Status.active]: translate('active'),
+    [Status.info]: translate('info'),
+    [Status.unknown]: translate('unknown'),
+    [Status.warning]: translate('warning'),
+    [Status.maintenance_scheduled]: translate('maintenance scheduled'),
   };
-  return statuses[id] || name;
+  return statuses[id] || statuses[Status.unknown];
 };
+
 const flaggedTranslation = (text: string): string => {
   const texts = {
     flagged: translate('flagged'),
@@ -29,13 +35,15 @@ const flaggedTranslation = (text: string): string => {
   };
   return texts[text] || text;
 };
-type MeterGatewaySummaryKey = MeterDataSummaryKey | GatewayDataSummaryKey;
-export const pieChartTranslation = (fieldKey: MeterGatewaySummaryKey, toBeTranslated: IdNamed): string => {
+
+type FieldKey = MeterDataSummaryKey | GatewayDataSummaryKey;
+
+export const pieChartTranslation = (fieldKey: FieldKey, toBeTranslated: IdNamed): string => {
   switch (fieldKey) {
     case 'flagged':
       return flaggedTranslation(toBeTranslated.name);
     case 'status':
-      return meterStatusTranslation(toBeTranslated);
+      return statusTranslation(toBeTranslated);
     default:
       return toBeTranslated.name;
   }

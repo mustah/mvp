@@ -21,6 +21,7 @@ import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
@@ -386,7 +387,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .as("Unexpected date of last log entry")
       .isEqualTo(timeZoneMagic("2001-01-10T10:14:00.00Z"));
 
-    assertThat(logicalMeter.status.name).isEqualTo("active");
+    assertThat(logicalMeter.status).isEqualTo(Status.ACTIVE);
     assertThat(logicalMeter.statusChanged).isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
   }
 

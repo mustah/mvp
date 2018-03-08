@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.dto;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.Status;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -10,14 +11,10 @@ import lombok.ToString;
 import static java.util.Collections.emptyList;
 
 @ToString
-@EqualsAndHashCode
 @NoArgsConstructor
-public class GatewayDto {
+@EqualsAndHashCode(callSuper = true)
+public class GatewayDto extends GatewayMandatoryDto {
 
-  public String id;
-  public String serial;
-  public String productModel;
-  public IdNamedDto status;
   public LocationDto location;
   public List<FlagDto> flags;
 
@@ -25,26 +22,23 @@ public class GatewayDto {
   @Nullable
   public String meterAlarm;
   public String meterManufacturer;
-  public IdNamedDto meterStatus;
+  public Status meterStatus;
   public List<String> meterIds;
 
   public GatewayDto(
     String id,
     String serial,
     String productModel,
-    IdNamedDto status,
+    Status status,
     LocationDto location,
     List<FlagDto> flags,
     String meterId,
     @Nullable String meterAlarm,
     String meterManufacturer,
-    IdNamedDto meterStatus,
+    Status meterStatus,
     List<String> meterIds
   ) {
-    this.id = id;
-    this.serial = serial;
-    this.productModel = productModel;
-    this.status = status;
+    super(id, productModel, serial, status);
     this.location = location;
     this.flags = flags;
     this.meterId = meterId;
@@ -59,13 +53,13 @@ public class GatewayDto {
       id,
       serial,
       productModel,
-      IdNamedDto.OK,
+      Status.OK,
       new LocationDto(),
       emptyList(),
       null,
       null,
       null,
-      null,
+      Status.UNKNOWN,
       emptyList()
     );
   }

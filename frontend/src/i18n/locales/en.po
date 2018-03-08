@@ -182,6 +182,18 @@ msgstr "OK"
 msgid "unknown"
 msgstr "unknown"
 
+msgid "active"
+msgstr "active"
+
+msgid "info"
+msgstr "info"
+
+msgid "warning"
+msgstr "warning"
+
+msgid "maintenance scheduled"
+msgstr "maintenance scheduled"
+
 msgid "flagged"
 msgstr "flagged"
 

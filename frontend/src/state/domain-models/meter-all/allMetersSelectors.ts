@@ -158,7 +158,7 @@ const addToPie = (pie: PieData, fieldKey: MeterDataSummaryKey, meter: Meter): Pi
       };
 
     case 'location':
-      label = (meter[fieldKey] && meter[fieldKey].city.id)  || 'unknown';
+      label = (meter[fieldKey] && meter[fieldKey].city.id) || 'unknown';
       sliceObject = meter[fieldKey] ? meter[fieldKey].city : {id: 'unknown', name: 'unknown'};
       return {
         ...pie,
@@ -188,9 +188,7 @@ const createDataSummary = (
   const category: PieData = summary[fieldKey];
   return {
     ...summary,
-    [fieldKey]: {
-      ...addToPie(category, fieldKey, meter),
-    },
+    [fieldKey]: {...addToPie(category, fieldKey, meter)},
   };
 };
 

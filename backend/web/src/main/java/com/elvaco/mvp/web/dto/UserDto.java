@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 public class UserDto {
@@ -16,8 +17,6 @@ public class UserDto {
   public String email;
   public OrganisationDto organisation;
   public List<String> roles;
-
-  public UserDto() {}
 
   public UserDto(
     UUID id,
