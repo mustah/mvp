@@ -12,27 +12,21 @@ public class LogicalMeterSortingMapper extends SortingMapper {
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
   static {
+    SORTABLE_PROPERTIES.put("id", toSortString(Q.id));
 
-    SORTABLE_PROPERTIES.put("id",
-      toSortString(Q.id));
+    SORTABLE_PROPERTIES.put("address", toSortString(Q.location.streetAddress));
 
-    SORTABLE_PROPERTIES.put("address",
-      toSortString(Q.location.streetAddress));
+    SORTABLE_PROPERTIES.put("city", toSortString(Q.location.city));
 
-    SORTABLE_PROPERTIES.put("city",
-      toSortString(Q.location.city));
-
-    SORTABLE_PROPERTIES.put("manufacturer",
-      toSortString(Q.physicalMeters.any().manufacturer));
-
-  }
-
-  private static String toSortString(Object sortProperty) {
-    return sortProperty.toString().replaceAll("logicalMeterEntity.", "");
+    SORTABLE_PROPERTIES.put("manufacturer", toSortString(Q.physicalMeters.any().manufacturer));
   }
 
   @Override
   public Map<String, String> getSortingMap() {
     return SORTABLE_PROPERTIES;
+  }
+
+  private static String toSortString(Object sortProperty) {
+    return sortProperty.toString().replaceAll("logicalMeterEntity.", "");
   }
 }

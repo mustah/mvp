@@ -1,21 +1,17 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
-import static java.util.Collections.singletonList;
-
-public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
+public class LogicalMeterQueryFilters extends QueryFilters {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
@@ -39,32 +35,24 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
     );
   }
 
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
-  }
-
   @Override
   public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
     return FILTERABLE_PROPERTIES;
   }
 
   @Override
-  public BooleanExpression map(RequestParameters parameters) {
-    // TODO add constraint, filter must contain status
+  public BooleanExpression toExpression(RequestParameters parameters) {
     if (parameters.hasName("after") && parameters.hasName("before")) {
-      return (BooleanExpression) mapPeriodicStatusFilter(parameters);
+      return periodAndStatusQueryFilter(parameters);
     } else {
-      return super.map(parameters);
+      return super.toExpression(parameters);
     }
   }
 
-  private Predicate mapPeriodicStatusFilter(RequestParameters parameters) {
+  private BooleanExpression periodAndStatusQueryFilter(RequestParameters parameters) {
     // TODO Only one date is supported
     Date start = toDate(parameters.getFirst("after"));
     Date stop = toDate(parameters.getFirst("before"));
-
-    // TODO get status from filter
-    List<String> status = singletonList("active");
 
     return (
       // Status must have begun before period end
@@ -76,10 +64,14 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
             .or(Q.physicalMeters.any().statusLogs.any().stop.isNull())
         )
         .and(
-          Q.physicalMeters.any().statusLogs.any().status.name.in(status)
+          Q.physicalMeters.any().statusLogs.any().status.name.in(parameters.getValues("status"))
         )
     ).and(
-      super.map(parameters)
+      super.toExpression(parameters)
     );
+  }
+
+  private static Date toDate(String before) {
+    return Date.from(Instant.parse(before));
   }
 }

@@ -2,9 +2,6 @@ package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
-import com.elvaco.mvp.database.repository.mappers.FilterToPredicateMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
-import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.web.security.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,15 +24,5 @@ class ApplicationConfig {
   @Bean
   UserDetailsService userDetailsService() {
     return new JpaUserDetailsService(users, tokenFactory);
-  }
-
-  @Bean
-  FilterToPredicateMapper predicateMapper() {
-    return new MeasurementFilterToPredicateMapper();
-  }
-
-  @Bean
-  LogicalMeterToPredicateMapper logicalMeterToPredicateMapper() {
-    return new LogicalMeterToPredicateMapper();
   }
 }

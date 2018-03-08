@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.Instant;
 import java.util.Date;
@@ -12,7 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static java.lang.Long.parseLong;
 
-public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper {
+public class MeasurementQueryFilters extends QueryFilters {
 
   private static final QMeasurementEntity Q = QMeasurementEntity.measurementEntity;
 
@@ -21,7 +21,8 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
 
   static {
     FILTERABLE_PROPERTIES.put(
-      "meterId", (String meterId) -> Q.physicalMeter.id.eq(UUID.fromString(meterId))
+      "meterId",
+      (String meterId) -> Q.physicalMeter.id.eq(UUID.fromString(meterId))
     );
 
     FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(parseLong(id)));
@@ -38,12 +39,12 @@ public class MeasurementFilterToPredicateMapper extends FilterToPredicateMapper 
     );
   }
 
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
-  }
-
   @Override
   public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
     return FILTERABLE_PROPERTIES;
+  }
+
+  private static Date toDate(String before) {
+    return Date.from(Instant.parse(before));
   }
 }

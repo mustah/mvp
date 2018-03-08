@@ -9,30 +9,30 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
+import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 
 import static java.util.stream.Collectors.toList;
 
 public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
-  private final MeasurementFilterToPredicateMapper filterMapper;
+  private final QueryFilters queryFilters;
   private final MeasurementMapper measurementMapper;
 
   public MeasurementRepository(
     MeasurementJpaRepository measurementJpaRepository,
-    MeasurementFilterToPredicateMapper filterMapper,
+    QueryFilters queryFilters,
     MeasurementMapper measurementMapper
   ) {
     this.measurementJpaRepository = measurementJpaRepository;
-    this.filterMapper = filterMapper;
+    this.queryFilters = queryFilters;
     this.measurementMapper = measurementMapper;
   }
 
   @Override
   public List<Measurement> findAllByScale(String scale, RequestParameters parameters) {
-    return measurementJpaRepository.findAllScaled(scale, filterMapper.map(parameters))
+    return measurementJpaRepository.findAllScaled(scale, queryFilters.toExpression(parameters))
       .stream()
       .map(measurementMapper::toDomainModel)
       .collect(toList());
@@ -40,7 +40,7 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public List<Measurement> findAll(RequestParameters parameters) {
-    return measurementJpaRepository.findAll(filterMapper.map(parameters))
+    return measurementJpaRepository.findAll(queryFilters.toExpression(parameters))
       .stream()
       .map(measurementMapper::toDomainModel)
       .collect(toList());

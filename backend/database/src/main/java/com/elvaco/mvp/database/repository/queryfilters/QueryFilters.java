@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 /**
  * A mapper of property filters to QueryDsl predicates.
  */
-public abstract class FilterToPredicateMapper {
+public abstract class QueryFilters {
 
   /**
    * Returns a mapping of filterable property names to property filter functions.
@@ -42,7 +42,7 @@ public abstract class FilterToPredicateMapper {
    *   constructed.
    */
   @Nullable
-  public BooleanExpression map(@Nullable RequestParameters parameters) {
+  public BooleanExpression toExpression(@Nullable RequestParameters parameters) {
     if (parameters == null) {
       return null;
     }

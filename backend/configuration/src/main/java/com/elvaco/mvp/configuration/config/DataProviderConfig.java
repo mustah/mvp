@@ -35,17 +35,17 @@ import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.mappers.LocationMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
-import com.elvaco.mvp.database.repository.mappers.MeasurementFilterToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
 import com.elvaco.mvp.database.repository.mappers.MeterStatusMapper;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
-import com.elvaco.mvp.database.repository.mappers.PhysicalMeterStatusLogToPredicateMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
+import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -130,11 +130,11 @@ class DataProviderConfig {
   LogicalMeters logicalMeters() {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
-      new LogicalMeterToPredicateMapper(),
+      physicalMeterStatusLogJpaRepository,
       new LogicalMeterSortingMapper(),
       newLogicalMeterMapper(),
-      physicalMeterStatusLogJpaRepository,
-      new PhysicalMeterStatusLogToPredicateMapper()
+      new LogicalMeterQueryFilters(),
+      new PhysicalMeterStatusLogQueryFilters()
     );
   }
 
@@ -142,7 +142,7 @@ class DataProviderConfig {
   Measurements measurements() {
     return new MeasurementRepository(
       measurementJpaRepository,
-      new MeasurementFilterToPredicateMapper(),
+      new MeasurementQueryFilters(),
       new MeasurementMapper(newPhysicalMeterMapper())
     );
   }

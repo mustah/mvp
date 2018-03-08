@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.Instant;
 import java.util.Date;
@@ -10,10 +10,11 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
-public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMapper {
+import static java.util.stream.Collectors.toList;
+
+public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
@@ -34,19 +35,28 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
   }
 
   @Override
-  public BooleanExpression map(RequestParameters parameters) {
+  public BooleanExpression toExpression(RequestParameters parameters) {
+    return Q.physicalMeterId
+      .in(getPhysicalMeterIds(parameters))
+      .and(applyPeriodQueryFilter(parameters));
+  }
+
+  private List<UUID> getPhysicalMeterIds(RequestParameters parameters) {
+    return parameters.getValues("physicalMeterIds")
+      .stream()
+      .map(UUID::fromString)
+      .collect(toList());
+  }
+
+  private BooleanExpression applyPeriodQueryFilter(RequestParameters parameters) {
     if (parameters.hasName("after") && parameters.hasName("before")) {
-      return (BooleanExpression) mapPeriodicStatusFilter(parameters);
+      return periodQueryFilter(parameters);
     } else {
-      return super.map(parameters);
+      return super.toExpression(parameters);
     }
   }
 
-  public BooleanExpression map(List<UUID> physicalMeterIds, RequestParameters parameters) {
-    return Q.physicalMeterId.in(physicalMeterIds).and(map(parameters));
-  }
-
-  private Predicate mapPeriodicStatusFilter(RequestParameters parameters) {
+  private BooleanExpression periodQueryFilter(RequestParameters parameters) {
     // TODO Only one date is supported
     Date start = toDate(parameters.getFirst("after"));
     Date stop = toDate(parameters.getFirst("before"));
@@ -56,7 +66,7 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
           Q.stop.after(start).or(Q.stop.isNull())
         )
         .and(
-          super.map(parameters)
+          super.toExpression(parameters)
         );
   }
 

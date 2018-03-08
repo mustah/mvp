@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,7 @@ import org.junit.Test;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FilterToPredicateMapperTest {
+public class QueryFiltersTest {
 
   @Test
   public void mapNullFilters() {
@@ -23,21 +23,21 @@ public class FilterToPredicateMapperTest {
       .add("prop", "1")
       .add("prop", "2")
       .add("prop", "3");
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         return new HashMap<>();
       }
     };
 
-    assertThat(test.map(parameters)).isNull();
+    assertThat(test.toExpression(parameters)).isNull();
   }
 
   @Test
   public void mapEmptyFilter() {
     RequestParameters parameters = new RequestParametersAdapter().setAll("foo", emptyList());
 
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
@@ -46,12 +46,12 @@ public class FilterToPredicateMapperTest {
       }
     };
 
-    assertThat(test.map(parameters)).isNull();
+    assertThat(test.toExpression(parameters)).isNull();
   }
 
   @Test
   public void mapNullProperties() {
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
@@ -61,7 +61,7 @@ public class FilterToPredicateMapperTest {
       }
     };
 
-    assertThat(test.map(null)).isNull();
+    assertThat(test.toExpression(null)).isNull();
   }
 
   @Test
@@ -69,7 +69,7 @@ public class FilterToPredicateMapperTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .add("foo", "42");
 
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
@@ -79,7 +79,7 @@ public class FilterToPredicateMapperTest {
       }
     };
 
-    assertThat(test.map(parameters)).isNull();
+    assertThat(test.toExpression(parameters)).isNull();
   }
 
   @Test
@@ -87,7 +87,7 @@ public class FilterToPredicateMapperTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .add("foo", "42");
 
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
@@ -107,7 +107,7 @@ public class FilterToPredicateMapperTest {
       Expressions.constant(42)
     );
 
-    assertThat(test.map(parameters)).isEqualTo(expected);
+    assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
 
   @Test
@@ -117,7 +117,7 @@ public class FilterToPredicateMapperTest {
       .add("foo", "43")
       .add("foo", "44");
 
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
@@ -140,7 +140,7 @@ public class FilterToPredicateMapperTest {
       .or(createPredicate.apply(43))
       .or(createPredicate.apply(44));
 
-    assertThat(test.map(parameters)).isEqualTo(expected);
+    assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
 
   @Test
@@ -149,7 +149,7 @@ public class FilterToPredicateMapperTest {
       .add("bar", "Woop!")
       .add("foo", "42");
 
-    FilterToPredicateMapper test = new FilterToPredicateMapper() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
@@ -174,6 +174,6 @@ public class FilterToPredicateMapperTest {
           Ops.EQ, Expressions.constant(42), Expressions.constant(42)
         ));
 
-    assertThat(test.map(parameters)).isEqualTo(expected);
+    assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
 }
