@@ -3,7 +3,6 @@ const csvjson = require('csvjson');
 const glob = require('glob');
 const Bottleneck = require('bottleneck');
 const geocode = require('./geocode');
-const moment = require('moment');
 const {v4: generateId} = require('uuid');
 
 const fromDbJson = {
@@ -98,7 +97,7 @@ const parseMeasurementSeedData = (path) => {
         if (csv.length === 0) {
           return;
         }
-        const [facility, meterId, dateString, energy, volume, forwardTemp, returnTemp] = csv.split(';');
+        const [meterId, dateString] = csv.split(';');
         const year = dateString.substr(0, 4);
         const month = Number(dateString.substr(4, 2));
         const day = Number(dateString.substr(6, 2));
@@ -112,42 +111,8 @@ const parseMeasurementSeedData = (path) => {
         // this could be a complete lie, but hopefully the CSV is ordered by date in descending order
         // also, we don't know if the status changed, but at least there is 'a' timestamp.
         const createdAt = `${year}-${month}-${padZero(day)} ${hour}:${minute}`;
-        const created = moment(createdAt).valueOf();
 
         statusChanges[meterId] = createdAt;
-
-        measurements.push({
-          facility,
-          meterId,
-          created,
-          quantity: 'Energy',
-          value: energy,
-          unit: 'kWh',
-        });
-        measurements.push({
-          facility,
-          meterId,
-          created,
-          quantity: 'Volume',
-          value: volume,
-          unit: 'm^3',
-        });
-        measurements.push({
-          facility,
-          meterId,
-          created,
-          quantity: 'Forward Temp.',
-          value: forwardTemp,
-          unit: '°C',
-        });
-        measurements.push({
-          facility,
-          meterId,
-          created,
-          quantity: 'Volume',
-          value: returnTemp,
-          unit: '°C',
-        });
       });
   });
   return {measurements, statusChanges};
@@ -232,8 +197,6 @@ const parseMeterSeedData = (path, seedOptions = {
           ? status === 'OK'
           ? {name: 'ok', id: 'ok'} : {name: 'alarm', id: 'alarm'}
           : {name: 'unknown', id: 'unknown'};
-
-      const nullOr = (str) => str === 'NULL' ? null : str;
 
       const meterStatus = decorateMeterStatus(row.gateway_status, row.meter_status);
       const gatewayStatus = decorateGatewayStatus(row.gateway_status);
