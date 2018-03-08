@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.dto;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Status;
 import lombok.EqualsAndHashCode;
@@ -16,14 +15,8 @@ import static java.util.Collections.emptyList;
 public class GatewayDto extends GatewayMandatoryDto {
 
   public LocationDto location;
-  public List<FlagDto> flags;
-
-  public String meterId;
-  @Nullable
-  public String meterAlarm;
-  public String meterManufacturer;
-  public Status meterStatus;
   public List<String> meterIds;
+  public List<FlagDto> flags;
 
   public GatewayDto(
     String id,
@@ -31,21 +24,12 @@ public class GatewayDto extends GatewayMandatoryDto {
     String productModel,
     Status status,
     LocationDto location,
-    List<FlagDto> flags,
-    String meterId,
-    @Nullable String meterAlarm,
-    String meterManufacturer,
-    Status meterStatus,
     List<String> meterIds
   ) {
     super(id, productModel, serial, status);
     this.location = location;
-    this.flags = flags;
-    this.meterId = meterId;
-    this.meterAlarm = meterAlarm;
-    this.meterManufacturer = meterManufacturer;
-    this.meterStatus = meterStatus;
     this.meterIds = meterIds;
+    this.flags = emptyList();
   }
 
   public GatewayDto(String id, String serial, String productModel) {
@@ -55,11 +39,6 @@ public class GatewayDto extends GatewayMandatoryDto {
       productModel,
       Status.OK,
       new LocationDto(),
-      emptyList(),
-      null,
-      null,
-      null,
-      Status.UNKNOWN,
       emptyList()
     );
   }

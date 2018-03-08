@@ -1,15 +1,5 @@
 import {schema} from 'normalizr';
-import {address, city} from '../../domain-models/domainModelsSchemas';
-
-const processStrategy = (entity): schema.StrategyFunction => {
-  if (entity.status) {
-    const statusCode = entity.status.toLowerCase();
-    const status = {id: statusCode, name: statusCode};
-    return {...entity, status};
-  } else {
-    return entity;
-  }
-};
+import {address, city, processStrategy} from '../../domain-models/domainModelsSchemas';
 
 const meter = new schema.Entity('meters', {}, {processStrategy});
 const allMeters = new schema.Entity('allMeters', {}, {processStrategy});

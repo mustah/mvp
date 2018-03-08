@@ -63,9 +63,6 @@ describe('dialogSelectors', () => {
       }],
       statusChanged: '2017-11-05 23:00',
       meterIds: ['67606228'],
-      meterStatus: {name: 'OK', id: 0},
-      meterAlarm: ':Inget fel:',
-      meterManufacturer: 'ELV',
     };
 
     it('normalizes and uses only statusChangelog property', () => {

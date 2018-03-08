@@ -262,6 +262,7 @@ const parseMeterSeedData = (path, seedOptions = {
         serial: row.facility,
         address,
         city,
+        position: objPosition,
         flags: row.gateway_flags,
         flagged: row.gateway_flags.length !== 0,
         productModel: row.gateway_product_model,
@@ -269,10 +270,6 @@ const parseMeterSeedData = (path, seedOptions = {
         statusChangelog: gatewayStatusChangelog,
         statusChanged,
         meterIds: [meterId],
-        position: objPosition,
-        meterStatus,
-        meterAlarm: alarm,
-        meterManufacturer: row.meter_manufacturer,
       });
 
       r.meters.push({

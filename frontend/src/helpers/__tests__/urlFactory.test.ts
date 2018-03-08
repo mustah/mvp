@@ -57,7 +57,7 @@ describe('urlFactory', () => {
       const selection = selectedParameters({meterStatuses: [Status.ok, Status.warning]});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&status.id=ok&status.id=warning`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&status=ok&status=warning`);
     });
 
     it('returns all selected parameters', () => {
@@ -69,7 +69,7 @@ describe('urlFactory', () => {
 
       const expected =
         `size=${pagination.size}&page=${pagination.page}&address.id=address%202&address.id=storgatan%205` +
-        '&city.id=got&city.id=sto&city.id=mmx&status.id=ok&status.id=warning';
+        '&city.id=got&city.id=sto&city.id=mmx&status=ok&status=warning';
       expect(encodedUriParametersForMeters(pagination, selection)).toEqual(expected);
     });
   });

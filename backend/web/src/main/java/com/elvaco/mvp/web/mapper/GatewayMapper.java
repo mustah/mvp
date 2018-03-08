@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,7 +15,6 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -28,12 +28,7 @@ public class GatewayMapper {
       gateway.productModel,
       Status.OK,
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
-      emptyList(),
-      logicalMeter.map(meter -> meter.id.toString()).orElse(null),
-      null,
-      logicalMeter.map(LogicalMeter::getManufacturer).orElse(null),
-      toMeterStatus(logicalMeter),
-      gateway.meters.stream().map(meter -> meter.id.toString()).collect(toList())
+      connectedMeterIds(gateway)
     );
   }
 
@@ -44,6 +39,13 @@ public class GatewayMapper {
       gatewayDto.serial,
       gatewayDto.productModel
     );
+  }
+
+  private List<String> connectedMeterIds(Gateway gateway) {
+    return gateway.meters
+      .stream()
+      .map(meter -> meter.id.toString())
+      .collect(toList());
   }
 
   private IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
@@ -62,11 +64,5 @@ public class GatewayMapper {
     return logicalMeter.map(meter -> meter.location)
       .flatMap(LocationMapper::toGeoPosition)
       .orElseGet(GeoPositionDto::new);
-  }
-
-  private Status toMeterStatus(Optional<LogicalMeter> logicalMeter) {
-    return logicalMeter.flatMap(lg -> lg.meterStatusLogs.stream().findAny())
-      .map(status -> Status.from(status.name))
-      .orElse(Status.UNKNOWN);
   }
 }
