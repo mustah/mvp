@@ -19,36 +19,49 @@ const parameterCallbacks: ParameterCallbacks = {
 const baseParameterNames: ParameterNames = {
   cities: 'city.id',
   addresses: 'address.id',
+  alarms: 'alarm',
+  productModels: 'productModel',
+  manufacturers: 'manufacturer',
 };
 
 const gatewayParameterNames: ParameterNames = {
   ...baseParameterNames,
   gatewayStatuses: 'status',
-  productModels: 'productModel',
   meterStatuses: 'meterStatus',
-  alarms: 'meterAlarm',
-  manufacturers: 'meterManufacturer',
 };
 
 const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
-  alarms: 'alarm',
-  meterStatuses: 'status.id',
-  manufacturers: 'manufacturer',
+  meterStatuses: 'status',
   gatewayStatuses: 'gatewayStatus',
-  productModels: 'gatewayProductModel',
 };
 
-export const encodedUriParametersForMeters = (pagination: Pagination, selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({pagination, selectedIds, parameterNames: meterParameterNames, parameterCallbacks});
+export const encodedUriParametersForMeters = (
+  pagination: Pagination,
+  selectedIds: SelectedParameters,
+): string => {
+  return encodedUriParametersFrom({
+    pagination,
+    selectedIds,
+    parameterNames: meterParameterNames,
+    parameterCallbacks,
+  });
 };
 
 export const encodedUriParametersForAllMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({selectedIds, parameterNames: meterParameterNames, parameterCallbacks});
+  return encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: meterParameterNames,
+    parameterCallbacks,
+  });
 };
 
 export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({selectedIds, parameterNames: gatewayParameterNames, parameterCallbacks});
+  return encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: gatewayParameterNames,
+    parameterCallbacks,
+  });
 };
 
 interface UriParameters {
