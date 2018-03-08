@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -14,15 +15,16 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("postgresql")
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
   private static final ZonedDateTime START_TIME = ZonedDateTime.parse("2018-01-01T00:00:00+00:00");
@@ -33,10 +35,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   PhysicalMeterJpaRepository physicalMeterJpaRepository;
   @Autowired
   OrganisationJpaRepository organisationJpaRepository;
+
+  @Autowired
+  EntityManagerFactory factory;
+
   private OrganisationEntity organisationEntity;
 
   @Before
   public void setUp() {
+    Assume.assumeTrue(getDialectName().contains("postgres"));
     organisationEntity = organisationJpaRepository.save(new OrganisationEntity(
       UUID.randomUUID(),
       "organisationen",
@@ -47,7 +54,9 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(organisationEntity.id);
+    if (organisationEntity != null) {
+      organisationJpaRepository.delete(organisationEntity.id);
+    }
   }
 
   @Test
@@ -138,6 +147,14 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void correctScaleIsReturned() {
     assertThat(false).isTrue();
+  }
+
+  private String getDialectName() {
+    return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
+      .getDialect()
+      .getClass()
+      .getName()
+      .toLowerCase();
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {
