@@ -34,6 +34,12 @@ dependencies {
   testCompile project(':backend:testing')
 }
 
+idea {
+  module {
+    testSourceDirs += file('src/integrationTest/java')
+  }
+}
+
 sourceSets {
   integrationTest {
     java {
