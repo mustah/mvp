@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -21,14 +22,10 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
     FILTERABLE_PROPERTIES = new HashMap<>();
 
   static {
-    FILTERABLE_PROPERTIES.put("physicalMeterId", (String id) -> Q.physicalMeterId.eq(
-      UUID.fromString(id)
-      )
+    FILTERABLE_PROPERTIES.put(
+      "physicalMeterId",
+      (String id) -> Q.physicalMeterId.eq(UUID.fromString(id))
     );
-  }
-
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
   }
 
   @Override
@@ -36,37 +33,34 @@ public class PhysicalMeterStatusLogToPredicateMapper extends FilterToPredicateMa
     return FILTERABLE_PROPERTIES;
   }
 
-  public BooleanExpression map(List<UUID> physicalMeterIds, Map<String, List<String>> filter) {
-    return (Q.physicalMeterId.in(physicalMeterIds)).and(map(filter));
-  }
-
   @Override
-  public BooleanExpression map(Map<String, List<String>> filter) {
-    if (filter.containsKey("after") && filter.containsKey("before")) {
-      return (BooleanExpression) mapPeriodicStatusFilter(filter);
+  public BooleanExpression map(RequestParameters parameters) {
+    if (parameters.hasName("after") && parameters.hasName("before")) {
+      return (BooleanExpression) mapPeriodicStatusFilter(parameters);
     } else {
-      return super.map(filter);
+      return super.map(parameters);
     }
   }
 
-  private Predicate mapPeriodicStatusFilter(Map<String, List<String>> filter) {
-    // TODO Only one date is supported
-    Date start = toDate(filter.get("after").get(0));
-    Date stop = toDate(filter.get("before").get(0));
+  public BooleanExpression map(List<UUID> physicalMeterIds, RequestParameters parameters) {
+    return Q.physicalMeterId.in(physicalMeterIds).and(map(parameters));
+  }
 
-    Predicate predicate = (
-      // Status must have begun before period end
+  private Predicate mapPeriodicStatusFilter(RequestParameters parameters) {
+    // TODO Only one date is supported
+    Date start = toDate(parameters.getFirst("after"));
+    Date stop = toDate(parameters.getFirst("before"));
+    return
       Q.start.before(stop)
         .and(
-          // Status must not have ended before period start
-          (Q.stop.after(start))
-            // Status may not have ended
-            .or(Q.stop.isNull())
+          Q.stop.after(start).or(Q.stop.isNull())
         )
-    ).and(
-      super.map(filter)
-    );
+        .and(
+          super.map(parameters)
+        );
+  }
 
-    return predicate;
+  private static Date toDate(String before) {
+    return Date.from(Instant.parse(before));
   }
 }

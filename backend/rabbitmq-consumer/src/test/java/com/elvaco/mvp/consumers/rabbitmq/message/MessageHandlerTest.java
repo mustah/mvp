@@ -42,7 +42,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -254,7 +253,7 @@ public class MessageHandlerTest {
       "kWh",
       expectedPhysicalMeter
     );
-    List<Measurement> createdMeasurements = measurements.findAll(emptyMap());
+    List<Measurement> createdMeasurements = measurements.findAll(null);
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }
@@ -286,7 +285,7 @@ public class MessageHandlerTest {
         "UNKNOWN"
       )
     );
-    List<Measurement> createdMeasurements = measurements.findAll(emptyMap());
+    List<Measurement> createdMeasurements = measurements.findAll(null);
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }

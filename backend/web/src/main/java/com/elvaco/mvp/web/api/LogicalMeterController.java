@@ -3,10 +3,13 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Supplier;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
@@ -23,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
-import static com.elvaco.mvp.web.util.ParametersHelper.combineParams;
 import static java.util.stream.Collectors.toList;
 
 @RestApi("/v1/api/meters")
@@ -64,7 +66,7 @@ public class LogicalMeterController {
     LogicalMeter logicalMeter = logicalMeterUseCases
       .findById(uuidOf(id))
       .orElseThrow(() -> new MeterNotFound(id));
-    return logicalMeterUseCases.measurements(logicalMeter)
+    return logicalMeterUseCases.measurements(logicalMeter, lazyRequestParameters(logicalMeter))
       .stream()
       .map(measurementMapper::toDto)
       .collect(toList());
@@ -76,7 +78,8 @@ public class LogicalMeterController {
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return logicalMeterUseCases.findAll(combineParams(pathVars, requestParams))
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    return logicalMeterUseCases.findAll(parameters)
       .stream()
       .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone))
       .collect(toList());
@@ -89,16 +92,33 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    return filterLogicalMeterDtos(combineParams(pathVars, requestParams), pageable, timeZone);
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    return filterLogicalMeterDtos(parameters, pageable, timeZone);
+  }
+
+  private Supplier<RequestParameters> lazyRequestParameters(LogicalMeter logicalMeter) {
+    return () -> {
+      RequestParameters parameters = new RequestParametersAdapter();
+
+      logicalMeter.physicalMeters
+        .stream()
+        .filter(m -> m.id != null)
+        .forEach(m -> parameters.add("meterId", m.id.toString()));
+
+      logicalMeter.getQuantities()
+        .forEach(quantity -> parameters.add("quantity", quantity.name));
+
+      return parameters;
+    };
   }
 
   private org.springframework.data.domain.Page<LogicalMeterDto> filterLogicalMeterDtos(
-    Map<String, List<String>> filter,
+    RequestParameters parameters,
     Pageable pageable,
     TimeZone timeZone
   ) {
     PageableAdapter adapter = new PageableAdapter(pageable);
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(filter, adapter);
+    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone));
   }

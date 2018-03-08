@@ -2,10 +2,10 @@ package com.elvaco.mvp.database.repository.access;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
@@ -31,16 +31,16 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<Measurement> findAllByScale(String scale, Map<String, List<String>> filterParams) {
-    return measurementJpaRepository.findAllScaled(scale, filterMapper.map(filterParams))
+  public List<Measurement> findAllByScale(String scale, RequestParameters parameters) {
+    return measurementJpaRepository.findAllScaled(scale, filterMapper.map(parameters))
       .stream()
       .map(measurementMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
-  public List<Measurement> findAll(Map<String, List<String>> filterParams) {
-    return measurementJpaRepository.findAll(filterMapper.map(filterParams))
+  public List<Measurement> findAll(RequestParameters parameters) {
+    return measurementJpaRepository.findAll(filterMapper.map(parameters))
       .stream()
       .map(measurementMapper::toDomainModel)
       .collect(toList());

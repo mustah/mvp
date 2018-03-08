@@ -2,26 +2,26 @@ package com.elvaco.mvp.testing.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
 public class MockMeasurements extends MockRepository<Long, Measurement> implements Measurements {
 
   @Override
   public List<Measurement> findAllByScale(
-    String scale, Map<String, List<String>> filterParams
+    String scale, RequestParameters parameters
   ) {
     throw new UnsupportedOperationException("findAllByScale not implemented!");
   }
 
   @Override
-  public List<Measurement> findAll(Map<String, List<String>> filterParams) {
-    if (!filterParams.isEmpty()) {
+  public List<Measurement> findAll(RequestParameters parameters) {
+    if (parameters != null && !parameters.isEmpty()) {
       throw new UnsupportedOperationException("filter params not implemented!");
     }
     return allMocks();

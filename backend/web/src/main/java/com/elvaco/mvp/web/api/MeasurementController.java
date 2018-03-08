@@ -1,8 +1,8 @@
 package com.elvaco.mvp.web.api;
 
-import java.util.HashMap;
 import java.util.List;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
@@ -42,10 +42,8 @@ public class MeasurementController {
     @RequestParam(value = "scale", required = false) String scale,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    return measurementUseCases.findAll(
-      scale,
-      new HashMap<>(requestParams)
-    ).stream()
+    return measurementUseCases.findAll(scale, RequestParametersAdapter.of(requestParams))
+      .stream()
       .map(measurementMapper::toDto)
       .collect(toList());
   }

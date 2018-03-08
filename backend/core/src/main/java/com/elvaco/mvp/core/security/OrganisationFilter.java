@@ -1,21 +1,18 @@
 package com.elvaco.mvp.core.security;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public final class OrganisationFilter {
 
   private OrganisationFilter() {}
 
-  public static Map<String, List<String>> addOrganisationIdToFilterParams(
+  public static RequestParameters setCurrentUsersOrganisationId(
     AuthenticatedUser currentUser,
-    Map<String, List<String>> filterParams
+    RequestParameters parameters
   ) {
     if (!currentUser.isSuperAdmin()) {
-      filterParams.put("organisation", singletonList(currentUser.getOrganisationId().toString()));
+      parameters.replace("organisation", currentUser.getOrganisationId().toString());
     }
-    return filterParams;
+    return parameters;
   }
 }
