@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -55,7 +56,6 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -131,7 +131,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
       logicalMeterRepository.findAll(
-        emptyMap(),
+        new RequestParametersAdapter(),
         new PageableAdapter(new PageRequest(0, 5, Direction.ASC, "id"))
       );
 
@@ -448,7 +448,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void cantAccessOtherOrganisationsMetersByFilter() {
+  public void cannotAccessOtherOrganisationsMetersByFilter() {
     createUserIfNotPresent(userBuilder().build());
 
     logicalMeterRepository.save(new LogicalMeter(

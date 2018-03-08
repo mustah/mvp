@@ -1,13 +1,13 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface LogicalMeters {
 
@@ -17,9 +17,9 @@ public interface LogicalMeters {
 
   List<LogicalMeter> findAll();
 
-  Page<LogicalMeter> findAll(Map<String, List<String>> filterParams, Pageable pageable);
+  Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
-  List<LogicalMeter> findAll(Map<String, List<String>> filterParams);
+  List<LogicalMeter> findAll(RequestParameters parameters);
 
   LogicalMeter save(LogicalMeter logicalMeter);
 

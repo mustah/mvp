@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -48,29 +49,29 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
   }
 
   @Override
-  public BooleanExpression map(Map<String, List<String>> filter) {
+  public BooleanExpression map(RequestParameters parameters) {
     // TODO add constraint, filter must contain status
-    if (filter.containsKey("after") && filter.containsKey("before")) {
-      return (BooleanExpression) mapPeriodicStatusFilter(filter);
+    if (parameters.hasName("after") && parameters.hasName("before")) {
+      return (BooleanExpression) mapPeriodicStatusFilter(parameters);
     } else {
-      return super.map(filter);
+      return super.map(parameters);
     }
   }
 
-  private Predicate mapPeriodicStatusFilter(Map<String, List<String>> filter) {
+  private Predicate mapPeriodicStatusFilter(RequestParameters parameters) {
     // TODO Only one date is supported
-    Date start = toDate(filter.get("after").get(0));
-    Date stop = toDate(filter.get("before").get(0));
+    Date start = toDate(parameters.getFirst("after"));
+    Date stop = toDate(parameters.getFirst("before"));
 
     // TODO get status from filter
     List<String> status = singletonList("active");
 
-    Predicate predicate = (
+    return (
       // Status must have begun before period end
       Q.physicalMeters.any().statusLogs.any().start.before(stop)
         .and(
           // Status must not have ended before period start
-          (Q.physicalMeters.any().statusLogs.any().stop.after(start))
+          Q.physicalMeters.any().statusLogs.any().stop.after(start)
             // Status may not have ended
             .or(Q.physicalMeters.any().statusLogs.any().stop.isNull())
         )
@@ -78,9 +79,7 @@ public class LogicalMeterToPredicateMapper extends FilterToPredicateMapper {
           Q.physicalMeters.any().statusLogs.any().status.name.in(status)
         )
     ).and(
-      super.map(filter)
+      super.map(parameters)
     );
-
-    return predicate;
   }
 }

@@ -1,11 +1,13 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 /**
@@ -34,38 +36,36 @@ public abstract class FilterToPredicateMapper {
    * <p>Note that this method intentionally returns null in the case that no predicate could be
    * constructed, since {@link com.querydsl.core.FilteredClause} explicitly ignores null arguments.
    *
-   * @param filter The filter to map
+   * @param parameters The filter to map
    *
    * @return A QueryDsl Predicate representation of that filter, or null if no predicate could be
    *   constructed.
    */
-  public BooleanExpression map(Map<String, List<String>> filter) {
-    if (filter == null) {
+  @Nullable
+  public BooleanExpression map(@Nullable RequestParameters parameters) {
+    if (parameters == null) {
       return null;
     }
 
     List<BooleanExpression> predicates = new ArrayList<>();
-    for (Map.Entry<String, List<String>> propertyFilter : filter.entrySet()) {
+    for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
 
-      Map<String, Function<String, BooleanExpression>> filterableProperties = getPropertyFilters();
-      if (filterableProperties == null) {
-        filterableProperties = new HashMap<>();
-      }
+      Function<String, BooleanExpression> predicateFunction =
+        getPropertyFilters().get(propertyFilter.getKey());
 
-      Function<String, BooleanExpression> lambda =
-        filterableProperties.get(propertyFilter.getKey());
-      if (lambda == null || propertyValues.isEmpty()) {
+      if (predicateFunction == null || propertyValues.isEmpty()) {
         continue;
       }
-      String param = propertyValues.get(0);
-      BooleanExpression p = lambda.apply(param);
+
+      BooleanExpression expression = predicateFunction.apply(propertyValues.get(0));
       // Multiple filters for the same property are OR'ed together
       for (String val : propertyValues.subList(1, propertyValues.size())) {
-        p = p.or(lambda.apply(val));
+        expression = expression.or(predicateFunction.apply(val));
       }
-      predicates.add(p);
+      predicates.add(expression);
     }
+
     if (predicates.isEmpty()) {
       return null;
     }

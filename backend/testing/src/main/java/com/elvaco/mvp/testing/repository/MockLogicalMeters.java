@@ -1,7 +1,6 @@
 package com.elvaco.mvp.testing.repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -9,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 
 import static java.util.Collections.emptyList;
@@ -65,14 +65,12 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Page<LogicalMeter> findAll(
-    Map<String, List<String>> filterParams, Pageable pageable
-  ) {
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return null;
   }
 
   @Override
-  public List<LogicalMeter> findAll(Map<String, List<String>> filterParams) {
+  public List<LogicalMeter> findAll(RequestParameters parameters) {
     return null;
   }
 

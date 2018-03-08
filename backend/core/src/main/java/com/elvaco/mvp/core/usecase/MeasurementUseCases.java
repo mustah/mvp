@@ -2,15 +2,15 @@ package com.elvaco.mvp.core.usecase;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
-import static com.elvaco.mvp.core.security.OrganisationFilter.addOrganisationIdToFilterParams;
+import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 
 public class MeasurementUseCases {
 
@@ -22,19 +22,14 @@ public class MeasurementUseCases {
     this.measurements = measurements;
   }
 
-  public List<Measurement> findAll(
-    String scale,
-    Map<String, List<String>> filterParams
-  ) {
+  public List<Measurement> findAll(String scale, RequestParameters parameters) {
     if (scale != null) {
       return measurements.findAllByScale(
         scale,
-        addOrganisationIdToFilterParams(currentUser, filterParams)
+        setCurrentUsersOrganisationId(currentUser, parameters)
       );
     } else {
-      return measurements.findAll(
-        addOrganisationIdToFilterParams(currentUser, filterParams)
-      );
+      return measurements.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
     }
   }
 
@@ -51,7 +46,6 @@ public class MeasurementUseCases {
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {
     return measurements.save(measurementsCollection);
-
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
