@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
@@ -25,7 +26,7 @@ public class GatewayMapper {
       gateway.id.toString(),
       gateway.serial,
       gateway.productModel,
-      IdNamedDto.OK,
+      Status.OK,
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       emptyList(),
       logicalMeter.map(meter -> meter.id.toString()).orElse(null),
@@ -63,9 +64,9 @@ public class GatewayMapper {
       .orElseGet(GeoPositionDto::new);
   }
 
-  private IdNamedDto toMeterStatus(Optional<LogicalMeter> logicalMeter) {
+  private Status toMeterStatus(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.flatMap(lg -> lg.meterStatusLogs.stream().findAny())
-      .map(status -> new IdNamedDto(status.name))
-      .orElse(IdNamedDto.UNKNOWN);
+      .map(status -> Status.from(status.name))
+      .orElse(Status.UNKNOWN);
   }
 }

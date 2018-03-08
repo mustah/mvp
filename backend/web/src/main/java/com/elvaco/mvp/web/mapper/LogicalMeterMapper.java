@@ -4,14 +4,13 @@ import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.dto.MapMarkerType;
-import com.elvaco.mvp.web.dto.IdNamedDto;
+import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.util.Dates;
 
-import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
-import static com.elvaco.mvp.web.dto.IdNamedDto.UNKNOWN;
 import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -28,11 +27,11 @@ public class LogicalMeterMapper {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
-    //TODO how to handle statuses?
+    // TODO[!must!] meter status logs should be mapped as enum in db
     mapMarkerDto.status = logicalMeter.meterStatusLogs.stream()
       .findFirst()
-      .map(meterStatusLog -> new IdNamedDto(meterStatusLog.name))
-      .orElse(UNKNOWN);
+      .map(meterStatusLog -> Status.from(meterStatusLog.name))
+      .orElse(Status.UNKNOWN);
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {
@@ -52,8 +51,8 @@ public class LogicalMeterMapper {
     meterDto.id = logicalMeter.id.toString();
     meterDto.status = logicalMeter.meterStatusLogs.stream()
       .findFirst()
-      .map(meterStatusLog -> new IdNamedDto(meterStatusLog.name))
-      .orElse(UNKNOWN);
+      .map(meterStatusLog -> Status.from(meterStatusLog.name))
+      .orElse(Status.UNKNOWN);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = logicalMeter.meterStatusLogs.stream()
@@ -63,16 +62,16 @@ public class LogicalMeterMapper {
       .orElse(created);
     meterDto.facility = logicalMeter.externalId;
 
-    logicalMeter.gateways
+    meterDto.gateway = logicalMeter.gateways
       .stream()
       .findFirst()
-      .map(gateway -> {
-        meterDto.gatewayId = gateway.id.toString();
-        meterDto.gatewaySerial = gateway.serial;
-        meterDto.gatewayProductModel = gateway.productModel;
-        meterDto.gatewayStatus = OK;
-        return gateway;
-      });
+      .map(gateway -> new GatewayMandatoryDto(
+        gateway.id.toString(),
+        gateway.productModel,
+        gateway.serial,
+        Status.OK
+      ))
+      .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 

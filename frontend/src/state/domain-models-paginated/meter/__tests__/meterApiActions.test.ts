@@ -2,7 +2,7 @@ import axios from 'axios';
 import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {makeMeter} from '../../../../__tests__/testDataFactory';
+import {makeMeterDto, MeterDto} from '../../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../../i18n/i18n';
 import {RootState} from '../../../../reducers/rootReducer';
 import {authenticate} from '../../../../services/restClient';
@@ -48,8 +48,16 @@ describe('meterApiActions', () => {
 
   describe('fetch meters from /meters', () => {
     const page = 0;
-    const meter1: Meter = makeMeter(1, 1, 'gothenburg', 1, 'kungsgatan');
-    const meter2: Meter = makeMeter(2, 2, 'stockholm', 2, 'kungsgatan');
+    const meter1: MeterDto = makeMeterDto(
+      1,
+      {id: 1, name: 'gothenburg'},
+      {id: 1, name: 'kungsgatan'},
+    );
+    const meter2: MeterDto = makeMeterDto(
+      2,
+      {id: 2, name: 'stockholm'},
+      {id: 2, name: 'kungsgatan'},
+    );
 
     const meterResponse = {
       content: [

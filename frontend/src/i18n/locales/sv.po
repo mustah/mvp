@@ -182,6 +182,18 @@ msgstr "ok"
 msgid "unknown"
 msgstr "okända"
 
+msgid "active"
+msgstr "aktiv"
+
+msgid "info"
+msgstr "info"
+
+msgid "warning"
+msgstr "varning"
+
+msgid "maintenance scheduled"
+msgstr "underhåll bokat"
+
 msgid "flagged"
 msgstr "flaggad"
 

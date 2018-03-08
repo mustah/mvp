@@ -233,10 +233,10 @@ describe('selectionSelectors', () => {
         total: 4,
         result: ['1', '2', '3', '4'],
         entities: {
-          1: makeMeter(1, 1, 'Helsingborg', 1, 'Storgatan 5'),
-          2: makeMeter(2, 1, 'Helsingborg', 2, 'Storgatan 6'),
-          3: makeMeter(3, 2, 'Luleå', 3, 'Ringvägen 7'),
-          4: makeMeter(4, 2, 'Luleå', 3, 'Ringvägen 7'),
+          1: makeMeter(1, {id: 1, name: 'Helsingborg'}, {id: 1, name: 'Storgatan 5'}),
+          2: makeMeter(2, {id: 1, name: 'Helsingborg'}, {id: 2, name: 'Storgatan 6'}),
+          3: makeMeter(3, {id: 2, name: 'Luleå'}, {id: 3, name: 'Ringvägen 7'}),
+          4: makeMeter(4, {id: 2, name: 'Luleå'}, {id: 3, name: 'Ringvägen 7'}),
         },
       };
 

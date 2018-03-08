@@ -56,10 +56,13 @@ export interface ErrorResponse {
 
 export const enum Status {
   ok = 'ok',
+  alarm = 'alarm',
+  active = 'active',
+  info = 'info',
   warning = 'warning',
   critical = 'critical',
-  info = 'info',
   unknown = 'unknown',
+  maintenance_scheduled = 'maintenance_scheduled',
 }
 
 export const enum UseCases {
@@ -72,10 +75,12 @@ export const enum UseCases {
 
 const status = {
   ok: Status.ok,
+  active: Status.ok,
   info: Status.info,
   warning: Status.warning,
   critical: Status.critical,
   unknown: Status.unknown,
+  maintenance_scheduled: Status.info,
 };
 
 export const statusFor = (statusCode: uuid): Status => {

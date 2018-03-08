@@ -32,29 +32,29 @@ const statusChangelog = [
   {
     date: '2017-11-22 09:34',
     status: {
-      id: 0,
-      name: 'OK',
+      id: 'ok',
+      name: 'ok',
     },
   },
   {
     date: '2017-11-22 10:34',
     status: {
-      id: 0,
-      name: 'OK',
+      id: 'ok',
+      name: 'ok',
     },
   },
   {
     date: '2017-11-22 11:34',
     status: {
-      id: 3,
-      name: 'Fel',
+      id: 'warning',
+      name: 'warning',
     },
   },
   {
     date: '2017-11-22 12:34',
     status: {
-      id: 0,
-      name: 'OK',
+      id: 'ok',
+      name: 'ok',
     },
   },
 ];
@@ -78,7 +78,7 @@ const alarmsLookup = [
 ];
 
 const getRandomAlarm = (meterStatus) => {
-  if (meterStatus === 0 || meterStatus === 4) {
+  if (meterStatus === 'ok' || meterStatus === 'info') {
     return ':Inget fel:';
   }
   return alarmsLookup[Math.floor(Math.random() * alarmsLookup.length)];
@@ -224,12 +224,14 @@ const parseMeterSeedData = (path, seedOptions = {
       }
 
       const decorateGatewayStatus = (status) => status === 'OK'
-        ? {name: status, id: 0}
-        : {name: 'Fel', id: 3};
+        ? {name: 'ok', id: 'ok'}
+        : {name: 'warning', id: 'warning'};
 
-      const decorateMeterStatus = (gwStatus, status) =>
-        gwStatus === 'OK' ? status === 'OK' ? {name: 'ok', id: 0} : {name: 'alarm', id: 3}
-          : {name: 'unknown', id: 4};
+      const decorateMeterStatus = (gatewayStatus, status) =>
+        gatewayStatus === 'OK'
+          ? status === 'OK'
+          ? {name: 'ok', id: 'ok'} : {name: 'alarm', id: 'alarm'}
+          : {name: 'unknown', id: 'unknown'};
 
       const nullOr = (str) => str === 'NULL' ? null : str;
 
@@ -237,7 +239,7 @@ const parseMeterSeedData = (path, seedOptions = {
       const gatewayStatus = decorateGatewayStatus(row.gateway_status);
 
       row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
-      row.meter_flags = meterStatus.id === 0 ? [] : [];
+      row.meter_flags = [];
 
       const cityId = row.city;
       const addressId = row.address;

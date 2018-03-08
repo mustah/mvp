@@ -1,13 +1,17 @@
 import {makeMeter} from '../../../../__tests__/testDataFactory';
-import {Identifiable, uuid} from '../../../../types/Types';
+import {initLanguage} from '../../../../i18n/i18n';
+import {Identifiable, IdNamed, Status, uuid} from '../../../../types/Types';
 import {Meter} from '../../../domain-models-paginated/meter/meterModels';
 import {NormalizedState, ObjectsById} from '../../domainModels';
 import {Location} from '../../location/locationModels';
 import {MeterDataSummary, SelectionTreeData} from '../allMetersModels';
 import {getMeterDataSummary, getSelectionTree} from '../allMetersSelectors';
 
-type PartialDomainModel = ObjectsById<Partial<Meter> & Identifiable>;
 describe('allMetersSelectors', () => {
+
+  type PartialDomainModel = ObjectsById<Partial<Meter> & Identifiable>;
+
+  initLanguage({code: 'en', name: 'english'});
 
   describe('summary', () => {
 
@@ -19,6 +23,7 @@ describe('allMetersSelectors', () => {
       const gothenburg: Partial<Location> = {
         city: {id: 'got', name: 'göteborg'},
       };
+      const status: IdNamed = {id: Status.ok, name: Status.ok};
       const meters: PartialDomainModel = {
         1: {
           id: 1,
@@ -26,7 +31,7 @@ describe('allMetersSelectors', () => {
           location: stockholm as Location,
           manufacturer: 'ELV',
           medium: 'water',
-          status: {id: 0, name: 'ok'},
+          status,
           alarm: 'none',
         },
         2: {
@@ -35,7 +40,7 @@ describe('allMetersSelectors', () => {
           location: stockholm as Location,
           manufacturer: 'ELV',
           medium: 'air',
-          status: {id: 0, name: 'ok'},
+          status,
           alarm: 'none',
         },
         3: {
@@ -44,7 +49,7 @@ describe('allMetersSelectors', () => {
           location: gothenburg as Location,
           manufacturer: 'ELV',
           medium: 'air',
-          status: {id: 0, name: 'ok'},
+          status,
           alarm: 'none',
         },
       };
@@ -76,7 +81,7 @@ describe('allMetersSelectors', () => {
             air: {name: 'air', value: 2, filterParam: 'air'},
           },
         status: {
-          0: {name: 'ok', value: 3, filterParam: 0},
+          ok: {name: Status.ok, value: 3, filterParam: Status.ok},
         },
         alarm: {
           none: {name: 'none', value: 3, filterParam: 'none'},
@@ -117,9 +122,9 @@ describe('allMetersSelectors', () => {
         total: 4,
         result: [1, 2, 3],
         entities: {
-          1: makeMeter(1, 'city1', 'city1', 'address1', 'address1'),
-          2: makeMeter(2, 'city1', 'city1', 'address2', 'address2'),
-          3: makeMeter(3, 'city2', 'city2', 'address3', 'address3'),
+          1: makeMeter(1, {id: 'city1', name: 'city1'}, {id: 'address1', name: 'address1'}),
+          2: makeMeter(2, {id: 'city1', name: 'city1'}, {id: 'address2', name: 'address2'}),
+          3: makeMeter(3, {id: 'city2', name: 'city2'}, {id: 'address3', name: 'address3'}),
         },
       };
       const actualTree: SelectionTreeData = getSelectionTree(metersState);

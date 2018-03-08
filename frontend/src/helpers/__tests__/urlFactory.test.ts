@@ -110,7 +110,7 @@ describe('urlFactory', () => {
 
       const expected =
         `address.id=address%202&address.id=storgatan%205` +
-        '&city.id=got&city.id=sto&city.id=mmx&MeterStatus.id=ok&MeterStatus.id=warning';
+        '&city.id=got&city.id=sto&city.id=mmx&meterStatus=ok&meterStatus=warning';
       expect(encodedUriParametersForGateways(selection)).toEqual(expected);
     });
   });

@@ -9,10 +9,19 @@ import {ObjectsById} from '../domainModels';
 import {getEntitiesDomainModels, getResultDomainModels} from '../domainModelsSelectors';
 import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
 
-const addToPie = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: Gateway): PieData => {
+const addToPie = (
+  category: PieData,
+  fieldKey: GatewayDataSummaryKey,
+  gateway: Gateway,
+): PieData => {
 
-  const sliceUpdate =
-    (fieldKey: GatewayDataSummaryKey, idNamed: IdNamed, filterParam: FilterParam, value: number): PieSlice => ({
+  const makePieSlice =
+    (
+      fieldKey: GatewayDataSummaryKey,
+      idNamed: IdNamed,
+      filterParam: FilterParam,
+      value: number,
+    ): PieSlice => ({
       name: pieChartTranslation(fieldKey, idNamed),
       value,
       filterParam,
@@ -31,7 +40,7 @@ const addToPie = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: G
       label = gateway[fieldKey] ? 'flagged' : 'unFlagged';
       return {
         ...category,
-        [label]: sliceUpdate(fieldKey, {
+        [label]: makePieSlice(fieldKey, {
           id: label,
           name: label,
         }, gateway[fieldKey], initOrIncrease(category[label])),
@@ -40,19 +49,25 @@ const addToPie = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: G
       label = gateway[fieldKey].city.id;
       return {
         ...category,
-        [label]: sliceUpdate(fieldKey, gateway[fieldKey].city, label, initOrIncrease(category[label])),
+        [label]: makePieSlice(
+          fieldKey,
+          gateway[fieldKey].city,
+          label,
+          initOrIncrease(category[label]),
+        ),
       };
     case 'status':
-      label = gateway[fieldKey].id;
+      const status = gateway[fieldKey];
+      label = status.id;
       return {
         ...category,
-        [label]: sliceUpdate(fieldKey, gateway[fieldKey], label, initOrIncrease(category[label])),
+        [label]: makePieSlice(fieldKey, status, label, initOrIncrease(category[label])),
       };
     default:
       label = gateway[fieldKey];
       return {
         ...category,
-        [label]: sliceUpdate(fieldKey, {
+        [label]: makePieSlice(fieldKey, {
           id: label,
           name: label as string,
         }, label, initOrIncrease(category[label])),
@@ -60,7 +75,11 @@ const addToPie = (category: PieData, fieldKey: GatewayDataSummaryKey, gateway: G
   }
 };
 
-const createDataSummary = (summary, fieldKey: GatewayDataSummaryKey, gateway: Gateway): GatewayDataSummary => {
+const createDataSummary = (
+  summary,
+  fieldKey: GatewayDataSummaryKey,
+  gateway: Gateway,
+): GatewayDataSummary => {
   const category: PieData = summary[fieldKey];
   return {
     ...summary,
@@ -78,7 +97,10 @@ export const getGatewayDataSummary =
     getEntitiesDomainModels,
     (gatewayIds: uuid[], gateways: ObjectsById<Gateway>): Maybe<GatewayDataSummary> => {
       const summaryTemplate: {[P in GatewayDataSummaryKey]: PieData} = {
-        status: {}, flagged: {}, location: {}, productModel: {},
+        status: {},
+        flagged: {},
+        location: {},
+        productModel: {},
       };
 
       return Maybe.just(gatewayIds)

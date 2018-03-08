@@ -1,19 +1,16 @@
 package com.elvaco.mvp.web.dto;
 
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor
 public class IdNamedDto {
-
-  public static final IdNamedDto OK = new IdNamedDto((long)"Ok".hashCode(), "Ok");
-  public static final IdNamedDto UNKNOWN = new IdNamedDto(4L, "Unknown");
 
   public Long id;
   public String name;
-
-  public IdNamedDto() {}
 
   private IdNamedDto(Long id, String name) {
     this.id = id;

@@ -91,7 +91,7 @@ const MeterDetailsInfo = (props: Props) => {
     ? <Info label={translate('alarm')} value={meter.alarm}/>
     : null;
 
-  const gateway = gateways[meter.gatewayId];
+  const gateway = gateways[meter.gateway.id];
   const meterFlags = meter.flags || [];
   const meterStatus = meter.statusChangelog[0];
 
@@ -160,7 +160,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
     const {selectedTab} = this.state;
     const {meter, gateways} = this.props;
 
-    const gateway = gateways[meter.gatewayId];
+    const gateway = gateways[meter.gateway.id];
 
     const normalizedGateways: DomainModel<Gateway> = {
       entities: {[gateway.id]: gateway},

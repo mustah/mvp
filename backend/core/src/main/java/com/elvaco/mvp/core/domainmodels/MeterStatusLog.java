@@ -12,15 +12,11 @@ public class MeterStatusLog {
   @Nullable
   public final Long id;
   public final UUID physicalMeterId;
+  public final long statusId;
   public final String name;
   public final Date start;
   @Nullable
   public final Date stop;
-  public final long statusId;
-
-  public MeterStatusLog(UUID physicalMeterId, Long statusId, String name, Date start) {
-    this(null, physicalMeterId, statusId, name, start, null);
-  }
 
   public MeterStatusLog(
     @Nullable Long id,
@@ -32,9 +28,9 @@ public class MeterStatusLog {
   ) {
     this.id = id;
     this.physicalMeterId = physicalMeterId;
+    this.statusId = statusId;
     this.name = name;
     this.start = new Date(start.getTime());
     this.stop = stop != null ? new Date(stop.getTime()) : null;
-    this.statusId = statusId;
   }
 }

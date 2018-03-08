@@ -15,7 +15,9 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.dto.MapMarkerType;
+import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
@@ -26,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.web.dto.IdNamedDto.OK;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -50,7 +51,7 @@ public class LogicalMeterMapperTest {
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
-    mapMarkerDtoExpected.status = OK;
+    mapMarkerDtoExpected.status = Status.OK;
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     Location location = new LocationBuilder()
@@ -84,7 +85,7 @@ public class LogicalMeterMapperTest {
     expected.created = "2018-02-12 15:14:25";
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
-    expected.status = OK;
+    expected.status = Status.OK;
     expected.location = new LocationDto(
       new IdNamedDto("Kungsbacka"),
       new IdNamedDto("Kabelgatan 2T"),
@@ -102,10 +103,12 @@ public class LogicalMeterMapperTest {
         "2018-02-13 15:14:25"
       )
     );
-    expected.gatewayId = randomUUID().toString();
-    expected.gatewaySerial = "123123";
-    expected.gatewayStatus = OK;
-    expected.gatewayProductModel = "CMi2110";
+    expected.gateway = new GatewayMandatoryDto(
+      randomUUID().toString(),
+      "CMi2110",
+      "123123",
+      Status.OK
+    );
 
     UUID organisationId = ELVACO.id;
 
@@ -144,10 +147,10 @@ public class LogicalMeterMapperTest {
             )
           ),
           singletonList(new Gateway(
-            uuidOf(expected.gatewayId),
+            uuidOf(expected.gateway.id),
             organisationId,
-            expected.gatewaySerial,
-            expected.gatewayProductModel,
+            expected.gateway.serial,
+            expected.gateway.productModel,
             emptyList()
           ))
         ), TimeZone.getTimeZone("Europe/Stockholm")))
