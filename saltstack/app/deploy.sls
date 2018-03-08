@@ -1,16 +1,33 @@
-{% set mvp_version = "v0.0.1-1997-g1d4c116" %}
-{% set mvp_hash = "0deb796dcda77bd5072442d49437d59f" %}
 {% set mvp_systemd_unit = "elvaco-mvp.service" %}
 
 include:
   - mvp.openjdk-8-jre
   - mvp.app.user
 
+install_remote_git_describe:
+  file.managed:
+    - name: /usr/bin/remote-git-describe.sh
+    - user: root
+    - group: root
+    - mode: 755
+
+{% set mvp_version = salt['cmd.run']('/usr/bin/remote-git-describe.sh git@gitlab.elvaco.se:elvaco/mvp.git mr-salt-install-tar') %}
+
 fetch_mvp_archive:
   cmd.run:
     - name: curl -O http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar
     - cwd: /tmp
     - runas: mvp
+    - require:
+      - install_remote_git_describe
+
+fetch_mvp_sha1:
+  cmd.run:
+    - name: curl -O http://artifactory2.elvaco.local/artifactory/Elvaco/MVP/mvp-{{ mvp_version }}.tar.sha1
+    - cwd: /tmp
+    - runas: mvp
+    - require:
+      - install_remote_git_describe
 
 create_new_mvp_dir:
   file.directory:
@@ -21,13 +38,14 @@ create_new_mvp_dir:
     - makedirs: True
     - require:
       - fetch_mvp_archive
+      - fetch_mvp_sha1
 
 deploy_mvp:
   archive.extracted:
     - name: /opt/elvaco
     - archive_format: tar
     - source: /tmp/mvp-{{ mvp_version }}.tar
-    - source_hash: {{ mvp_hash }}
+    - source_hash: /tmp/mvp-{{ mvp_version }}.tar.sha1
     - user: mvp
     - group: mvp
     - require:
@@ -77,6 +95,12 @@ deploy_mvp_systemd:
 remove_mvp_archive:
   file.absent:
     - name: /tmp/mvp-{{ mvp_version }}.tar
+    - require:
+      - deploy_mvp_systemd
+
+remove_mvp_sha1:
+  file.absent:
+    - name: /tmp/mvp-{{ mvp_version }}.tar.sha1
     - require:
       - deploy_mvp_systemd
 
