@@ -80,11 +80,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public void deleteAll() {
-
-  }
-
-  @Override
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
     UUID organisationId,
     String externalId

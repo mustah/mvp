@@ -113,11 +113,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public void deleteAll() {
-    logicalMeterJpaRepository.deleteAll();
-  }
-
-  @Override
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
     UUID organisationId,
     String externalId

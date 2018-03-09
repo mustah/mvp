@@ -30,6 +30,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -76,6 +77,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   MeterDefinition hotWaterMeterDefinition;
   @Autowired
   private LogicalMeters logicalMeterRepository;
+  @Autowired
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
   @Autowired
@@ -158,7 +161,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeterStatusLogJpaRepository.deleteAll();
     meterStatusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
-    logicalMeterRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
   }
 
