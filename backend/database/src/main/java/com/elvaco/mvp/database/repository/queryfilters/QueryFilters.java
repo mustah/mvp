@@ -45,7 +45,7 @@ public abstract class QueryFilters {
    *   constructed.
    */
   @Nullable
-  protected final BooleanExpression propertiesExpression(RequestParameters parameters) {
+  final BooleanExpression propertiesExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
       return null;
     }
@@ -57,12 +57,9 @@ public abstract class QueryFilters {
       Function<String, BooleanExpression> predicateFunction =
         getPropertyFilters().get(propertyFilter.getKey());
 
-      if (predicateFunction == null || propertyValues.isEmpty()) {
-        continue;
+      if (predicateFunction != null && !propertyValues.isEmpty()) {
+        predicates.add(applyOrPredicates(predicateFunction, propertyValues));
       }
-
-      // Multiple filters for the same property are OR'ed together
-      predicates.add(applyOrPredicates(predicateFunction, propertyValues));
     }
 
     if (predicates.isEmpty()) {
@@ -76,6 +73,7 @@ public abstract class QueryFilters {
     Function<String, BooleanExpression> predicateFunction,
     List<String> propertyValues
   ) {
+    // Multiple filters for the same property are OR'ed together
     BooleanExpression predicate = predicateFunction.apply(propertyValues.get(0));
     for (String value : propertyValues.subList(1, propertyValues.size())) {
       BooleanExpression rightPredicate = predicateFunction.apply(value);
