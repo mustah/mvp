@@ -1,10 +1,14 @@
 package com.elvaco.mvp.database.repository.access;
 
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
@@ -72,4 +76,30 @@ public class MeasurementRepository implements Measurements {
         .map(measurementMapper::toDomainModel)
         .collect(toList());
   }
+
+  @Override
+  public List<MeasurementValue> getAverageForPeriod(
+    List<UUID> meterIds,
+    String quantity,
+    String unit,
+    ZonedDateTime from,
+    ZonedDateTime to,
+    String resolution
+  ) {
+
+    return measurementJpaRepository.getAverageForPeriod(
+      meterIds,
+      resolution,
+      quantity,
+      unit,
+      OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+      OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
+    ).stream()
+      .map(projection -> new MeasurementValue(
+        projection.getValueValue(),
+        projection.getInstant()
+      ))
+      .collect(toList());
+  }
+
 }

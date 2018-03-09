@@ -72,6 +72,19 @@ public class LogicalMeterTest {
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
 
+  @Test
+  public void getQuantity() {
+    LogicalMeter logicalMeter = newLogicalMeter(
+      UUID.randomUUID(),
+      UUID.randomUUID(),
+      MeterDefinition.HOT_WATER_METER
+    );
+
+    assertThat(logicalMeter.getQuantity(Quantity.TEMPERATURE.name)).isNotEmpty();
+    assertThat(logicalMeter.getQuantity("Bildäck")).isEmpty();
+  }
+
+
   private LogicalMeter newLogicalMeter(
     UUID id,
     UUID organisationId,

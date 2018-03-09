@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.jpa;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -10,20 +11,21 @@ public interface MeasurementValueProjection {
 
   Timestamp getWhen();
 
-  String getUnitValue();
+  String getValue();
 
   default Optional<MeasurementUnit> getMeasurementUnit() {
-    if (getUnitValue() == null) {
+    if (this.getValue() == null) {
       return Optional.empty();
     }
-    return Optional.of(new MeasurementUnit(getUnitValue()));
+    return Optional.of(new MeasurementUnit(this.getValue()));
   }
 
   default Instant getInstant() {
+    //return getWhen().toLocalDateTime().atZone(ZoneId.of("UTC")).toInstant();
     return getWhen().toInstant();
   }
 
-  default Double getValue() {
+  default Double getValueValue() {
     return getMeasurementUnit().map(MeasurementUnit::getValue).orElse(null);
   }
 

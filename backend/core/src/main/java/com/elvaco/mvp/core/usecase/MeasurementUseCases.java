@@ -1,10 +1,13 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -46,6 +49,17 @@ public class MeasurementUseCases {
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {
     return measurements.save(measurementsCollection);
+  }
+
+  public List<MeasurementValue> averageForPeriod(
+    List<UUID> meterIds,
+    String quantity,
+    String unit,
+    ZonedDateTime from,
+    ZonedDateTime to,
+    String resolution
+  ) {
+    return measurements.getAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {
