@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, Long> {
+public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, Long>,
+  MeasurementJpaRepositoryCustom {
 
   @Query(nativeQuery = true, value = "SELECT "
     + "avg(value) as value,"

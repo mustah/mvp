@@ -22,7 +22,7 @@ import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -58,7 +58,7 @@ class DataProviderConfig {
   private final UserJpaRepository userJpaRepository;
   private final SettingJpaRepository settingJpaRepository;
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
-  private final MeasurementJpaRepositoryImpl measurementJpaRepository;
+  private final MeasurementJpaRepository measurementJpaRepository;
   private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final MeterDefinitionJpaRepository meterDefinitionJpaRepository;
   private final OrganisationJpaRepository organisationJpaRepository;
@@ -71,7 +71,7 @@ class DataProviderConfig {
     PasswordEncoder passwordEncoder,
     UserJpaRepository userJpaRepository,
     SettingJpaRepository settingJpaRepository,
-    MeasurementJpaRepositoryImpl measurementJpaRepository,
+    MeasurementJpaRepository measurementJpaRepository,
     LogicalMeterJpaRepository logicalMeterJpaRepository,
     PhysicalMeterJpaRepository physicalMeterJpaRepository,
     MeterDefinitionJpaRepository meterDefinitionJpaRepository,

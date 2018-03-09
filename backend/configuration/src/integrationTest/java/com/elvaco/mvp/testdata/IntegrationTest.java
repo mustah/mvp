@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
@@ -25,13 +26,16 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 public abstract class IntegrationTest {
 
   private static final long MAX_WAIT_TIME = 2000;
+
+  @Autowired
+  private OrganisationJpaRepository organisationJpaRepository;
+
   @Autowired
   private Users users;
 
   @Autowired
   private EntityManagerFactory factory;
 
-  @Autowired
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
   @LocalServerPort
@@ -50,11 +54,11 @@ public abstract class IntegrationTest {
   }
 
   protected IntegrationTestFixtureContext newContext() {
-    return integrationTestFixtureContextFactory.create();
+    return getIntegrationTestFixtureContextFactory().create();
   }
 
   protected void destroyContext(IntegrationTestFixtureContext context) {
-    integrationTestFixtureContextFactory.destroy(context);
+    getIntegrationTestFixtureContextFactory().destroy(context);
   }
 
   @After
@@ -111,5 +115,15 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.currentTimeMillis() < startTime + MAX_WAIT_TIME);
     return false;
+  }
+
+  private IntegrationTestFixtureContextFactory getIntegrationTestFixtureContextFactory() {
+    if (integrationTestFixtureContextFactory == null) {
+      integrationTestFixtureContextFactory = new IntegrationTestFixtureContextFactory(
+        organisationJpaRepository,
+        users
+      );
+    }
+    return integrationTestFixtureContextFactory;
   }
 }

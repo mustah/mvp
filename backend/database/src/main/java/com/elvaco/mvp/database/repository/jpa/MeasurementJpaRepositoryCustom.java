@@ -6,10 +6,15 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
-public interface MeasurementJpaRepositoryCustom {
+public interface MeasurementJpaRepositoryCustom extends
+  QueryDslPredicateExecutor<MeasurementEntity> {
 
   List<MeasurementEntity> findAllScaled(String scale, Predicate predicate);
+
+  @Override
+  List<MeasurementEntity> findAll(Predicate predicate);
 
   Page<MeasurementEntity> findAllScaled(
     String scale,

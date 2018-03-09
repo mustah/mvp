@@ -8,17 +8,13 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
 class IntegrationTestFixtureContextFactory {
 
   private final OrganisationJpaRepository organisationJpaRepository;
   private final Users users;
   private final OrganisationMapper organisationMapper;
 
-  @Autowired
   IntegrationTestFixtureContextFactory(
     OrganisationJpaRepository organisationJpaRepository,
     Users users
@@ -45,6 +41,7 @@ class IntegrationTestFixtureContextFactory {
       .id(contextUuid)
       .asUser()
       .build();
+    users.create(user);
 
     return new IntegrationTestFixtureContext(organisation, user);
   }
