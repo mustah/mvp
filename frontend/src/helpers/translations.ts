@@ -20,6 +20,7 @@ export const statusTranslation = ({id}: IdNamed): string => {
     [Status.ok]: translate('ok'),
     [Status.alarm]: translate('alarm'),
     [Status.active]: translate('active'),
+    [Status.critical]: translate('critical'),
     [Status.info]: translate('info'),
     [Status.unknown]: translate('unknown'),
     [Status.warning]: translate('warning'),

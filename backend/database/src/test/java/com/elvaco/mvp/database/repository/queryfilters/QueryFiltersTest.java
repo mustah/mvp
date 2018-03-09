@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class QueryFiltersTest {
 
     QueryFilters test = new AbstractQueryFilters() {
       @Override
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
         return new HashMap<>();
       }
     };
@@ -41,8 +42,8 @@ public class QueryFiltersTest {
 
     QueryFilters test = new AbstractQueryFilters() {
       @Override
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.FALSE);
         return map;
       }
@@ -55,8 +56,8 @@ public class QueryFiltersTest {
   public void mapEmptyProperties() {
     QueryFilters test = new AbstractQueryFilters() {
       @Override
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.FALSE);
         return map;
       }
@@ -73,8 +74,8 @@ public class QueryFiltersTest {
     QueryFilters test = new AbstractQueryFilters() {
       @Override
       @NotNull
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("bar", (String v) -> Expressions.FALSE);
         return map;
       }
@@ -91,8 +92,8 @@ public class QueryFiltersTest {
     QueryFilters test = new AbstractQueryFilters() {
       @Override
       @NotNull
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
           Expressions.constant(42),
@@ -102,7 +103,7 @@ public class QueryFiltersTest {
       }
     };
 
-    BooleanExpression expected = Expressions.predicate(
+    Predicate expected = Expressions.predicate(
       Ops.EQ,
       Expressions.constant(42),
       Expressions.constant(42)
@@ -120,8 +121,8 @@ public class QueryFiltersTest {
 
     QueryFilters test = new AbstractQueryFilters() {
       @Override
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
           Expressions.constant(55),
@@ -137,7 +138,7 @@ public class QueryFiltersTest {
         Expressions.constant(i)
       );
 
-    BooleanExpression expected = createPredicate.apply(55)
+    Predicate expected = createPredicate.apply(55)
       .or(createPredicate.apply(56))
       .or(createPredicate.apply(57));
 
@@ -152,8 +153,8 @@ public class QueryFiltersTest {
 
     QueryFilters test = new AbstractQueryFilters() {
       @Override
-      public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
-        Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
+      public Map<String, Function<String, Predicate>> getPropertyFilters() {
+        Map<String, Function<String, Predicate>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
           Expressions.constant(42),
@@ -168,7 +169,7 @@ public class QueryFiltersTest {
       }
     };
 
-    BooleanExpression expected =
+    Predicate expected =
       Expressions.predicate(
         Ops.EQ, Expressions.constant("Whazoom!"), Expressions.constant("Woop!"))
         .and(Expressions.predicate(
@@ -180,9 +181,9 @@ public class QueryFiltersTest {
     assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
 
-  private static abstract class AbstractQueryFilters extends QueryFilters {
+  private abstract static class AbstractQueryFilters extends QueryFilters {
     @Override
-    public BooleanExpression toExpression(RequestParameters parameters) {
+    public Predicate toExpression(RequestParameters parameters) {
       return propertiesExpression(parameters);
     }
   }

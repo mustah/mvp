@@ -45,15 +45,13 @@ public class LogicalMeterMapper {
       .stream()
       .map(physicalMeterMapper::toDomainModel)
       .collect(toList());
-
-    return getLogicalMeter(logicalMeterEntity, emptyList(), physicalMeters);
+    return toLogicalMeter(logicalMeterEntity, emptyList(), physicalMeters);
   }
 
   public LogicalMeter toDomainModel(
     LogicalMeterEntity logicalMeterEntity,
     Map<UUID, List<PhysicalMeterStatusLogEntity>> meterStatusMap
   ) {
-
     List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
 
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
@@ -63,7 +61,9 @@ public class LogicalMeterMapper {
         physicalMeter -> {
           if (meterStatusMap.containsKey(physicalMeter.id)) {
             meterStatusLogs.addAll(
-              meterStatusMap.get(physicalMeter.id).stream().map(meterStatusLogMapper::toDomainModel)
+              meterStatusMap.get(physicalMeter.id)
+                .stream()
+                .map(meterStatusLogMapper::toDomainModel)
                 .collect(toList())
             );
           }
@@ -71,15 +71,14 @@ public class LogicalMeterMapper {
       )
       .collect(toList());
 
-    return getLogicalMeter(logicalMeterEntity, meterStatusLogs, physicalMeters);
+    return toLogicalMeter(logicalMeterEntity, meterStatusLogs, physicalMeters);
   }
 
-  private LogicalMeter getLogicalMeter(
+  private LogicalMeter toLogicalMeter(
     LogicalMeterEntity logicalMeterEntity,
     List<MeterStatusLog> meterStatusLogs,
     List<PhysicalMeter> physicalMeters
   ) {
-
     return new LogicalMeter(
       logicalMeterEntity.id,
       logicalMeterEntity.externalId,

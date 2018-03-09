@@ -180,10 +180,8 @@ public class LogicalMeterRepository implements LogicalMeters {
       if (!mappedStatuses.containsKey(status.physicalMeterId)) {
         mappedStatuses.put(status.physicalMeterId, new ArrayList<>());
       }
-
       mappedStatuses.get(status.physicalMeterId).add(status);
     });
-
     return mappedStatuses;
   }
 

@@ -182,6 +182,9 @@ msgstr "ok"
 msgid "unknown"
 msgstr "okända"
 
+msgid "critical"
+msgstr "kritisk"
+
 msgid "active"
 msgstr "aktiv"
 

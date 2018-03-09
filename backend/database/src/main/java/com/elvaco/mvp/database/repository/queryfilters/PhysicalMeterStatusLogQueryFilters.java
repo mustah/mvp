@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,8 +10,11 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.Predicate;
 
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
+import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toDate;
 import static java.util.stream.Collectors.toList;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
@@ -20,7 +22,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  private static final Map<String, Function<String, BooleanExpression>>
+  private static final Map<String, Function<String, Predicate>>
     FILTERABLE_PROPERTIES = new HashMap<>();
 
   static {
@@ -31,13 +33,13 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   }
 
   @Override
-  public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
+  public Map<String, Function<String, Predicate>> getPropertyFilters() {
     return FILTERABLE_PROPERTIES;
   }
 
   @Nullable
   @Override
-  public BooleanExpression toExpression(@Nullable RequestParameters parameters) {
+  public Predicate toExpression(@Nullable RequestParameters parameters) {
     if (parameters != null) {
       return Q.physicalMeterId
         .in(getPhysicalMeterIds(parameters))
@@ -53,29 +55,20 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
       .collect(toList());
   }
 
-  private BooleanExpression applyPeriodQueryFilter(RequestParameters parameters) {
-    if (parameters.hasName("after") && parameters.hasName("before")) {
+  private Predicate applyPeriodQueryFilter(RequestParameters parameters) {
+    if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
       return periodQueryFilter(parameters);
     } else {
       return propertiesExpression(parameters);
     }
   }
 
-  private BooleanExpression periodQueryFilter(RequestParameters parameters) {
-    // TODO Only one date is supported
-    Date start = toDate(parameters.getFirst("after"));
-    Date stop = toDate(parameters.getFirst("before"));
+  private Predicate periodQueryFilter(RequestParameters parameters) {
+    Date start = toDate(parameters.getFirst(AFTER));
+    Date stop = toDate(parameters.getFirst(BEFORE));
     return
       Q.start.before(stop)
-        .and(
-          Q.stop.after(start).or(Q.stop.isNull())
-        )
-        .and(
-          propertiesExpression(parameters)
-        );
-  }
-
-  private static Date toDate(String before) {
-    return Date.from(Instant.parse(before));
+        .and(Q.stop.after(start).or(Q.stop.isNull()))
+        .and(propertiesExpression(parameters));
   }
 }

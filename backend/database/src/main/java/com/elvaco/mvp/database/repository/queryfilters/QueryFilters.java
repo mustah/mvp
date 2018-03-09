@@ -8,6 +8,7 @@ import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 /**
@@ -20,10 +21,10 @@ public abstract class QueryFilters {
    *
    * @return A mapping of property names to property filter functions
    */
-  public abstract Map<String, Function<String, BooleanExpression>> getPropertyFilters();
+  public abstract Map<String, Function<String, Predicate>> getPropertyFilters();
 
   @Nullable
-  public abstract BooleanExpression toExpression(RequestParameters parameters);
+  public abstract Predicate toExpression(RequestParameters parameters);
 
   /**
    * Maps a property filter to a QueryDsl Predicate.
@@ -45,16 +46,16 @@ public abstract class QueryFilters {
    *   constructed.
    */
   @Nullable
-  final BooleanExpression propertiesExpression(RequestParameters parameters) {
+  final Predicate propertiesExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
       return null;
     }
 
-    List<BooleanExpression> predicates = new ArrayList<>();
+    List<Predicate> predicates = new ArrayList<>();
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
 
-      Function<String, BooleanExpression> predicateFunction =
+      Function<String, Predicate> predicateFunction =
         getPropertyFilters().get(propertyFilter.getKey());
 
       if (predicateFunction != null && !propertyValues.isEmpty()) {
@@ -66,26 +67,26 @@ public abstract class QueryFilters {
       return null;
     }
 
-    return applyAnd(predicates);
+    return applyAndPredicates(predicates);
   }
 
-  private BooleanExpression applyOrPredicates(
-    Function<String, BooleanExpression> predicateFunction,
+  private Predicate applyOrPredicates(
+    Function<String, Predicate> predicateFunction,
     List<String> propertyValues
   ) {
     // Multiple filters for the same property are OR'ed together
-    BooleanExpression predicate = predicateFunction.apply(propertyValues.get(0));
+    BooleanExpression predicate =
+      (BooleanExpression) predicateFunction.apply(propertyValues.get(0));
     for (String value : propertyValues.subList(1, propertyValues.size())) {
-      BooleanExpression rightPredicate = predicateFunction.apply(value);
-      predicate = predicate.or(rightPredicate);
+      predicate = predicate.or(predicateFunction.apply(value));
     }
     return predicate;
   }
 
-  private BooleanExpression applyAnd(List<BooleanExpression> predicates) {
-    BooleanExpression predicate = predicates.remove(0);
-    for (BooleanExpression rightPredicate : predicates) {
-      predicate = predicate.and(rightPredicate);
+  private Predicate applyAndPredicates(List<Predicate> predicates) {
+    BooleanExpression predicate = (BooleanExpression) predicates.remove(0);
+    for (Predicate right : predicates) {
+      predicate = predicate.and(right);
     }
     return predicate;
   }
