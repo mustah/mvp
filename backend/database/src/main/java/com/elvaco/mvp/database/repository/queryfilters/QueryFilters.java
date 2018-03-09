@@ -22,6 +22,9 @@ public abstract class QueryFilters {
    */
   public abstract Map<String, Function<String, BooleanExpression>> getPropertyFilters();
 
+  @Nullable
+  public abstract BooleanExpression toExpression(RequestParameters parameters);
+
   /**
    * Maps a property filter to a QueryDsl Predicate.
    *
@@ -42,8 +45,8 @@ public abstract class QueryFilters {
    *   constructed.
    */
   @Nullable
-  public BooleanExpression toExpression(@Nullable RequestParameters parameters) {
-    if (parameters == null) {
+  protected final BooleanExpression propertiesExpression(RequestParameters parameters) {
+    if (parameters.isEmpty()) {
       return null;
     }
 
@@ -58,22 +61,33 @@ public abstract class QueryFilters {
         continue;
       }
 
-      BooleanExpression expression = predicateFunction.apply(propertyValues.get(0));
       // Multiple filters for the same property are OR'ed together
-      for (String val : propertyValues.subList(1, propertyValues.size())) {
-        expression = expression.or(predicateFunction.apply(val));
-      }
-      predicates.add(expression);
+      predicates.add(applyOrPredicates(predicateFunction, propertyValues));
     }
 
     if (predicates.isEmpty()) {
       return null;
     }
 
+    return applyAnd(predicates);
+  }
+
+  private BooleanExpression applyOrPredicates(
+    Function<String, BooleanExpression> predicateFunction,
+    List<String> propertyValues
+  ) {
+    BooleanExpression predicate = predicateFunction.apply(propertyValues.get(0));
+    for (String value : propertyValues.subList(1, propertyValues.size())) {
+      BooleanExpression rightPredicate = predicateFunction.apply(value);
+      predicate = predicate.or(rightPredicate);
+    }
+    return predicate;
+  }
+
+  private BooleanExpression applyAnd(List<BooleanExpression> predicates) {
     BooleanExpression predicate = predicates.remove(0);
-    // Filters for different properties are AND'ed
-    for (BooleanExpression p : predicates) {
-      predicate = predicate.and(p);
+    for (BooleanExpression rightPredicate : predicates) {
+      predicate = predicate.and(rightPredicate);
     }
     return predicate;
   }

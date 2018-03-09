@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
@@ -40,12 +41,13 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     return FILTERABLE_PROPERTIES;
   }
 
+  @Nullable
   @Override
   public BooleanExpression toExpression(RequestParameters parameters) {
     if (parameters.hasName("after") && parameters.hasName("before")) {
       return periodAndStatusQueryFilter(parameters);
     } else {
-      return super.toExpression(parameters);
+      return propertiesExpression(parameters);
     }
   }
 
@@ -54,21 +56,17 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     Date start = toDate(parameters.getFirst("after"));
     Date stop = toDate(parameters.getFirst("before"));
 
-    return (
-      // Status must have begun before period end
-      Q.physicalMeters.any().statusLogs.any().start.before(stop)
-        .and(
-          // Status must not have ended before period start
-          Q.physicalMeters.any().statusLogs.any().stop.after(start)
-            // Status may not have ended
-            .or(Q.physicalMeters.any().statusLogs.any().stop.isNull())
-        )
-        .and(
-          Q.physicalMeters.any().statusLogs.any().status.name.in(parameters.getValues("status"))
-        )
-    ).and(
-      super.toExpression(parameters)
-    );
+    return Q.physicalMeters.any().statusLogs.any().start.before(stop)
+      .and(
+        // Status must not have ended before period start
+        Q.physicalMeters.any().statusLogs.any().stop.after(start)
+          // Status may not have ended
+          .or(Q.physicalMeters.any().statusLogs.any().stop.isNull())
+      )
+      .and(
+        Q.physicalMeters.any().statusLogs.any().status.name.in(parameters.getValues("status"))
+      )
+      .and(propertiesExpression(parameters));
   }
 
   private static Date toDate(String before) {

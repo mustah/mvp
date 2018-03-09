@@ -23,7 +23,8 @@ public class QueryFiltersTest {
       .add("prop", "1")
       .add("prop", "2")
       .add("prop", "3");
-    QueryFilters test = new QueryFilters() {
+
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         return new HashMap<>();
@@ -35,9 +36,10 @@ public class QueryFiltersTest {
 
   @Test
   public void mapEmptyFilter() {
-    RequestParameters parameters = new RequestParametersAdapter().setAll("foo", emptyList());
+    RequestParameters parameters = new RequestParametersAdapter()
+      .setAll("foo", emptyList());
 
-    QueryFilters test = new QueryFilters() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
@@ -50,10 +52,9 @@ public class QueryFiltersTest {
   }
 
   @Test
-  public void mapNullProperties() {
-    QueryFilters test = new QueryFilters() {
+  public void mapEmptyProperties() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
-      @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.FALSE);
@@ -61,7 +62,7 @@ public class QueryFiltersTest {
       }
     };
 
-    assertThat(test.toExpression(null)).isNull();
+    assertThat(test.toExpression(new RequestParametersAdapter())).isNull();
   }
 
   @Test
@@ -69,7 +70,7 @@ public class QueryFiltersTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .add("foo", "42");
 
-    QueryFilters test = new QueryFilters() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
@@ -87,7 +88,7 @@ public class QueryFiltersTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .add("foo", "42");
 
-    QueryFilters test = new QueryFilters() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       @NotNull
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
@@ -96,11 +97,11 @@ public class QueryFiltersTest {
           Ops.EQ,
           Expressions.constant(42),
           Expressions.constant(Integer.parseInt(v))
-                )
-        );
+        ));
         return map;
       }
     };
+
     BooleanExpression expected = Expressions.predicate(
       Ops.EQ,
       Expressions.constant(42),
@@ -113,17 +114,17 @@ public class QueryFiltersTest {
   @Test
   public void mapOredProperties() {
     RequestParameters parameters = new RequestParametersAdapter()
-      .add("foo", "42")
-      .add("foo", "43")
-      .add("foo", "44");
+      .add("foo", "55")
+      .add("foo", "56")
+      .add("foo", "57");
 
-    QueryFilters test = new QueryFilters() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
         map.put("foo", (String v) -> Expressions.predicate(
           Ops.EQ,
-          Expressions.constant(42),
+          Expressions.constant(55),
           Expressions.constant(Integer.parseInt(v))
         ));
         return map;
@@ -132,13 +133,13 @@ public class QueryFiltersTest {
     Function<Integer, BooleanExpression> createPredicate =
       (i) -> Expressions.predicate(
         Ops.EQ,
-        Expressions.constant(42),
+        Expressions.constant(55),
         Expressions.constant(i)
       );
 
-    BooleanExpression expected = createPredicate.apply(42)
-      .or(createPredicate.apply(43))
-      .or(createPredicate.apply(44));
+    BooleanExpression expected = createPredicate.apply(55)
+      .or(createPredicate.apply(56))
+      .or(createPredicate.apply(57));
 
     assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
@@ -149,7 +150,7 @@ public class QueryFiltersTest {
       .add("bar", "Woop!")
       .add("foo", "42");
 
-    QueryFilters test = new QueryFilters() {
+    QueryFilters test = new AbstractQueryFilters() {
       @Override
       public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
         Map<String, Function<String, BooleanExpression>> map = new HashMap<>();
@@ -171,9 +172,18 @@ public class QueryFiltersTest {
       Expressions.predicate(
         Ops.EQ, Expressions.constant("Whazoom!"), Expressions.constant("Woop!"))
         .and(Expressions.predicate(
-          Ops.EQ, Expressions.constant(42), Expressions.constant(42)
+          Ops.EQ,
+          Expressions.constant(42),
+          Expressions.constant(42)
         ));
 
     assertThat(test.toExpression(parameters)).isEqualTo(expected);
+  }
+
+  private static abstract class AbstractQueryFilters extends QueryFilters {
+    @Override
+    public BooleanExpression toExpression(RequestParameters parameters) {
+      return propertiesExpression(parameters);
+    }
   }
 }

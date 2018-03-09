@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -42,6 +43,11 @@ public class MeasurementQueryFilters extends QueryFilters {
   @Override
   public Map<String, Function<String, BooleanExpression>> getPropertyFilters() {
     return FILTERABLE_PROPERTIES;
+  }
+
+  @Override
+  public BooleanExpression toExpression(RequestParameters parameters) {
+    return propertiesExpression(parameters);
   }
 
   private static Date toDate(String before) {

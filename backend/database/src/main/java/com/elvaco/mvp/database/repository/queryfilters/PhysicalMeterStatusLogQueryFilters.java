@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -34,11 +35,15 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     return FILTERABLE_PROPERTIES;
   }
 
+  @Nullable
   @Override
-  public BooleanExpression toExpression(RequestParameters parameters) {
-    return Q.physicalMeterId
-      .in(getPhysicalMeterIds(parameters))
-      .and(applyPeriodQueryFilter(parameters));
+  public BooleanExpression toExpression(@Nullable RequestParameters parameters) {
+    if (parameters != null) {
+      return Q.physicalMeterId
+        .in(getPhysicalMeterIds(parameters))
+        .and(applyPeriodQueryFilter(parameters));
+    }
+    return null;
   }
 
   private List<UUID> getPhysicalMeterIds(RequestParameters parameters) {
@@ -52,7 +57,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
     if (parameters.hasName("after") && parameters.hasName("before")) {
       return periodQueryFilter(parameters);
     } else {
-      return super.toExpression(parameters);
+      return propertiesExpression(parameters);
     }
   }
 
@@ -66,7 +71,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
           Q.stop.after(start).or(Q.stop.isNull())
         )
         .and(
-          super.toExpression(parameters)
+          propertiesExpression(parameters)
         );
   }
 
