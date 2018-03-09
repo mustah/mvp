@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.repository.jpa;
 
-import java.time.ZonedDateTime;
-import java.util.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,38 +13,33 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
   MeasurementJpaRepositoryCustom {
 
   @Query(nativeQuery = true, value = "SELECT "
-    + "avg(value) as value,"
-    + "interval_start as when"
+    + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
+    + "interval_start AS when"
     + " FROM ("
-    + "   SELECT generate_series(date_trunc(:resolution, cast(:from as timestamptz)),"
-    + "                          date_trunc(:resolution, cast(:to as timestamptz)),"
-    + "                          cast('1 ' || :resolution as interval)) as interval_start) x"
+    + "   SELECT generate_series("
+    + "     date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "     date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+    + "     cast('1 ' || :resolution AS INTERVAL)) at time zone 'UTC' AS interval_start"
+    + " ) x"
     + " LEFT JOIN ("
-    + "   SELECT value(value), date_trunc(:resolution, created) as interval_start from "
-    + "measurement where physical_meter_id in :meter_ids and created >= :from and created <= :to) y"
-    + "   using (interval_start)"
+    + "   SELECT"
+    + "     value,"
+    + "     date_trunc(:resolution, created AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' AS interval_start FROM "
+    + "measurement WHERE"
+    + "     physical_meter_id IN :meter_ids"
+    + "     AND quantity = :quantity"
+    + "     AND created >= cast(:from AS TIMESTAMPTZ)"
+    + "     AND created <= cast(:to AS TIMESTAMPTZ)"
+    + ") y"
+    + "   USING (interval_start)"
     + " GROUP BY interval_start"
     + " ORDER BY interval_start")
   List<MeasurementValueProjection> getAverageForPeriod(
     @Param("meter_ids") List<UUID> meterIds,
     @Param("resolution") String resolution,
-    @Param("from") ZonedDateTime from,
-    @Param("to") ZonedDateTime to
-  );
-
-
-  @Query(nativeQuery = true, value = "SELECT "
-    + "avg(value) as value,"
-    + "interval_start as when"
-    + " FROM (SELECT value(value) as value, date_trunc('hour', created)  + cast(?2 || ' min' as "
-    + "interval) "
-    + "* ROUND(date_part('minute', created) / ?2) as interval_start"
-    + " FROM measurement where physical_meter_id in ?1 and created >= ?3) x GROUP BY "
-    + "interval_start, value")
-  List<MeasurementValueProjection> getAverageForPeriod(
-    List<UUID> meterIds,
-    int intervalInMinutes,
-    Date since,
-    String unit
+    @Param("quantity") String quantity,
+    @Param("unit") String unit,
+    @Param("from") OffsetDateTime from,
+    @Param("to") OffsetDateTime to
   );
 }
