@@ -1,15 +1,21 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.AlarmDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.LocationDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -37,6 +43,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -179,7 +186,7 @@ public class MessageHandlerTest {
 
   @Test
   @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-          + "ought to be considered a new physical meter.")
+    + "ought to be considered a new physical meter.")
   public void updatesExistingMeterForExistingOrganisation() {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
     Organisation organisation = organisations.save(
@@ -212,7 +219,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                   + "organisation"));
+      + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -290,6 +297,12 @@ public class MessageHandlerTest {
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }
 
+  @Test
+  public void ignoresAlarmsWithoutCrashing() {
+    messageHandler.handle(newAlarmMessageWithoutAlarms());
+    messageHandler.handle(newAlarmMessageWithTwoAlarms());
+  }
+
   private LogicalMeter findLogicalMeter() {
     Organisation organisation = findOrganisation();
     return logicalMeters.findByOrganisationIdAndExternalId(organisation.id, EXTERNAL_ID).get();
@@ -302,28 +315,50 @@ public class MessageHandlerTest {
   private MeteringMeasurementMessageDto newMeasurementMessage() {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
-      new GatewayStatusDto("123", "Ok"),
-      new MeterStatusDto("1234", "Ok"),
-      EXTERNAL_ID,
+      new GatewayIdDto("123"),
+      new MeterIdDto("1234"),
+      new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_CODE,
       "Elvaco Metering",
-      singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy")),
-      emptyList()
+      singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy"))
     );
   }
 
   private MeteringMeterStructureMessageDto newStructureMessage(String medium, String manufacturer) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
-      "1234",
-      EXTERNAL_ID,
-      medium,
-      15,
+      new MeterDto("1234", medium, "OK", manufacturer, 15),
+      new FacilityDto(EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
       ORGANISATION_CODE,
-      manufacturer,
-      new GatewayDto("gateway-id", "CMi2110"),
-      new LocationDto("Sweden", "Kungsbacka", "Kabelgatan 2T")
+      new GatewayStatusDto("gateway-id", "CMi2110", "OK")
+    );
+  }
+
+  private MeteringAlarmMessageDto newAlarmMessageWithoutAlarms() {
+    return new MeteringAlarmMessageDto(
+      MessageType.METERING_ALARM_V_1_0,
+      new GatewayIdDto("351"),
+      new MeterIdDto("sdf"),
+      new FacilityIdDto("asdfg2"),
+      "ICA Maxi",
+      "Elvaco Metering",
+      Collections.emptyList()
+    );
+  }
+
+  private MeteringAlarmMessageDto newAlarmMessageWithTwoAlarms() {
+    List<AlarmDto> alarms = new ArrayList<>();
+    alarms.add(new AlarmDto(1234, 88));
+    alarms.add(new AlarmDto(1235, 99));
+    return new MeteringAlarmMessageDto(
+      MessageType.METERING_ALARM_V_1_0,
+      new GatewayIdDto("351"),
+      new MeterIdDto("sdf"),
+      new FacilityIdDto("asdfg2"),
+      "ICA Maxi",
+      "Elvaco Metering",
+      alarms
     );
   }
 

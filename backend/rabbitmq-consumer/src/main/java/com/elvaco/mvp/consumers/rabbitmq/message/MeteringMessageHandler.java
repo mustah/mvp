@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -47,20 +48,20 @@ public class MeteringMessageHandler implements MessageHandler {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
-      structureMessage.facilityId,
-      structureMessage.medium,
+      structureMessage.facility.id,
+      structureMessage.meter.medium,
       organisation
     );
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      structureMessage.facilityId,
-      structureMessage.meterId,
-      structureMessage.medium,
-      structureMessage.manufacturer,
+      structureMessage.facility.id,
+      structureMessage.meter.id,
+      structureMessage.meter.medium,
+      structureMessage.meter.manufacturer,
       logicalMeter.id,
       organisation
-    ).withMedium(structureMessage.medium)
-      .withManufacturer(structureMessage.manufacturer)
+    ).withMedium(structureMessage.meter.medium)
+      .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id);
     physicalMeterUseCases.save(physicalMeter);
   }
@@ -70,7 +71,7 @@ public class MeteringMessageHandler implements MessageHandler {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      measurementMessage.facilityId,
+      measurementMessage.facility.id,
       measurementMessage.meter.id,
       "Unknown",
       "UNKNOWN",
@@ -90,6 +91,11 @@ public class MeteringMessageHandler implements MessageHandler {
       ))
       .collect(toList());
     measurementUseCases.save(measurements);
+  }
+
+  @Override
+  public void handle(MeteringAlarmMessageDto alarmMessage) {
+     // TODO we should handle incoming alarms
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
@@ -112,12 +118,12 @@ public class MeteringMessageHandler implements MessageHandler {
   private Organisation findOrCreateOrganisation(String organisationCode) {
     return organisationUseCases.findByCode(organisationCode)
       .orElseGet(() ->
-                   organisationUseCases.create(
-                     new Organisation(
-                       UUID.randomUUID(),
-                       "",
-                       organisationCode
-                     )));
+        organisationUseCases.create(
+          new Organisation(
+            UUID.randomUUID(),
+            "",
+            organisationCode
+          )));
   }
 
   private PhysicalMeter findOrCreatePhysicalMeter(

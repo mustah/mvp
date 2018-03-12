@@ -2,6 +2,7 @@ package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.io.UnsupportedEncodingException;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -37,10 +38,12 @@ public class MeteringMessageReceiver {
       throw new RuntimeException("Malformed metering message: " + ellipsize(messageStr, 40));
     }
 
-    if (messageDto instanceof MeteringMeterStructureMessageDto) {
-      handler.handle((MeteringMeterStructureMessageDto) messageDto);
+    if (messageDto instanceof MeteringAlarmMessageDto) {
+      handler.handle((MeteringAlarmMessageDto) messageDto);
     } else if (messageDto instanceof MeteringMeasurementMessageDto) {
       handler.handle((MeteringMeasurementMessageDto) messageDto);
+    } else if (messageDto instanceof MeteringMeterStructureMessageDto) {
+      handler.handle((MeteringMeterStructureMessageDto) messageDto);
     } else {
       throw new RuntimeException("Unknown message type: " + messageDto.getClass().getName());
     }

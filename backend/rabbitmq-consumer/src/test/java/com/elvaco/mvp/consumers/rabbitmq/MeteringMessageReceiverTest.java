@@ -2,9 +2,11 @@ package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.util.Collections;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
+
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,28 +45,33 @@ public class MeteringMessageReceiverTest {
     MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
 
     byte[] structureMessage = ("{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Structure Message 1.0\",\n"
-      + "  \"facility_id\": \"ABC-123\",\n"
+      + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"ABC-123\",\n"
+      + "    \"country\": \"Zimbabwe\",\n"
+      + "    \"city\": \"Harare\",\n"
+      + "    \"address\": \"Duv\"\n"
+      + "  },\n"
       + "  \"gateway\": {\n"
       + "    \"id\": \"12031925\",\n"
-      + "    \"product_model\": \"CMi2110\"\n"
+      + "    \"product_model\": \"CMi2110\",\n"
+      + "    \"status\": \"OK\"\n"
       + "  },\n"
-      + "  \"meter_id\": \"1\",\n"
-      + "  \"medium\": \"Heat, Return temp\",\n"
-      + "  \"location\": {\n"
-      + "    \"country\": \"Sweden\",\n"
-      + "    \"city\": \"Perstorp\",\n"
-      + "    \"address\": \"Duvstigen 8C\"\n"
+      + "  \"meter\": {\n"
+      + "    \"id\": \"1\",\n"
+      + "    \"medium\": \"Heat, Return temp\",\n"
+      + "    \"status\": \"ERROR\",\n"
+      + "    \"manufacturer\": \"ELV\",\n"
+      + "    \"expectedInterval\": 15\n"
       + "  },\n"
-      + "  \"manufacturer\": \"ELV\",\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-      + "  \"source_system_id\": \"The Source System\",\n"
-      + "  \"expected_interval\": 15\n"
+      + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n").getBytes();
     meteringMessageReceiver.receiveMessage(structureMessage);
 
     assertThat(messageHandler.structureMessageReceived).isTrue();
     assertThat(messageHandler.measurementMessageReceived).isFalse();
+    assertThat(messageHandler.alarmMessageReceived).isFalse();
   }
 
 
@@ -75,14 +82,14 @@ public class MeteringMessageReceiverTest {
     byte[] measurementMessage = ("{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
       + "  \"gateway\": {\n"
-      + "    \"id\": \"GW-CME3100-XXYYZZ\",\n"
-      + "    \"status\": \"OK\"\n"
+      + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
       + "  },\n"
       + "  \"meter\": {\n"
-      + "    \"id\": \"123456789\",\n"
-      + "    \"status\": \"ERROR\"\n"
+      + "    \"id\": \"123456789\"\n"
       + "  },\n"
-      + "  \"facility_id\": \"42402519\",\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"42402519\"\n"
+      + "  },\n"
       + "  \"organisation_id\": \"Elvaco AB\",\n"
       + "  \"source_system_id\": \"Elvaco Metering\",\n"
       + "  \"values\": [\n"
@@ -92,19 +99,13 @@ public class MeteringMessageReceiverTest {
       + "      \"unit\": \"wH\",\n"
       + "      \"quantity\": \"power\"\n"
       + "    }\n"
-      + "  ],\n"
-      + "  \"alarms\": [\n"
-      + "    {\n"
-      + "      \"timestamp\": 1506069947,\n"
-      + "      \"code\": 42,\n"
-      + "      \"description\": \"Low battery\"\n"
-      + "    }\n"
       + "  ]\n"
       + "}").getBytes();
     meteringMessageReceiver.receiveMessage(measurementMessage);
 
     assertThat(messageHandler.measurementMessageReceived).isTrue();
     assertThat(messageHandler.structureMessageReceived).isFalse();
+    assertThat(messageHandler.alarmMessageReceived).isFalse();
   }
 
   @Test
@@ -124,10 +125,12 @@ public class MeteringMessageReceiverTest {
 
     private boolean structureMessageReceived;
     private boolean measurementMessageReceived;
+    private boolean alarmMessageReceived;
 
     MessageHandlerSpy() {
       structureMessageReceived = false;
       measurementMessageReceived = false;
+      alarmMessageReceived = false;
     }
 
     @Override
@@ -140,8 +143,13 @@ public class MeteringMessageReceiverTest {
       measurementMessageReceived = true;
     }
 
+    @Override
+    public void handle(MeteringAlarmMessageDto alarmMessage) {
+      alarmMessageReceived = true;
+    }
+
     boolean nothingReceived() {
-      return !(structureMessageReceived || measurementMessageReceived);
+      return !(structureMessageReceived || measurementMessageReceived || alarmMessageReceived);
     }
   }
 

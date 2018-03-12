@@ -14,7 +14,8 @@ public class MeteringMessageDto {
   public final boolean validate() throws IllegalAccessException {
     for (Field field : getClass().getDeclaredFields()) {
       if (field.get(this) == null) {
-        throw new JsonSyntaxException("Field " + field.getName() + " was not initialized");
+        throw new JsonSyntaxException("Field '" + getClass() + "." + field.getName() + "' was not"
+          + " initialized");
       }
     }
     return true;

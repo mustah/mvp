@@ -2,14 +2,16 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.util.Optional;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MeteringMessageParser {
+public final class MeteringMessageParser {
 
   private final MeteringMessageSerializer serializer;
 
@@ -25,6 +27,10 @@ public class MeteringMessageParser {
     return parseMessage(message, MeteringMeasurementMessageDto.class);
   }
 
+  Optional<MeteringAlarmMessageDto> parseAlarmMessage(String message) {
+    return parseMessage(message, MeteringAlarmMessageDto.class);
+  }
+
   public MeteringMessageDto parse(String message) {
     MeteringMessageDto meteringMessageDto = parseMessage(
       message,
@@ -33,6 +39,9 @@ public class MeteringMessageParser {
 
     Class<? extends MeteringMessageDto> classOfT;
     switch (meteringMessageDto.messageType) {
+      case METERING_ALARM_V_1_0:
+        classOfT = MeteringAlarmMessageDto.class;
+        break;
       case METERING_MEASUREMENT_V_1_0:
         classOfT = MeteringMeasurementMessageDto.class;
         break;
