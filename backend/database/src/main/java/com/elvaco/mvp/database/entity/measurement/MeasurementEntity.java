@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.entity.measurement;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -11,8 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;

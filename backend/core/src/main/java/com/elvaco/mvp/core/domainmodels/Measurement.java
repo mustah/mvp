@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;

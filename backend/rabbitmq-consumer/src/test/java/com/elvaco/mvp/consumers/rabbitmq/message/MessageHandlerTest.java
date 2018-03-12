@@ -1,9 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +43,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -231,7 +230,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-      + "organisation"));
+                                                                     + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -267,7 +266,6 @@ public class MessageHandlerTest {
     Measurement expectedMeasurement = new Measurement(
       1L,
       EXPECTED_DATETIME,
-//Instant.ofEpochMilli(123456L)),
       "Energy",
       1.0,
       "kWh",

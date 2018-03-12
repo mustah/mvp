@@ -11,10 +11,10 @@ import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 public interface MeasurementJpaRepositoryCustom extends
   QueryDslPredicateExecutor<MeasurementEntity> {
 
-  List<MeasurementEntity> findAllScaled(String scale, Predicate predicate);
-
   @Override
   List<MeasurementEntity> findAll(Predicate predicate);
+
+  List<MeasurementEntity> findAllScaled(String scale, Predicate predicate);
 
   Page<MeasurementEntity> findAllScaled(
     String scale,

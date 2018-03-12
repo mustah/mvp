@@ -64,7 +64,7 @@ public class MeasurementController {
     RequestParametersAdapter requestParams = new RequestParametersAdapter();
     meters.forEach(meterId -> requestParams.add("id", meterId.toString()));
     List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAll(requestParams);
-    List<UUID> physicalMeterUUIDs = new ArrayList<>();
+    List<UUID> physicalMeterUuids = new ArrayList<>();
     for (LogicalMeter logicalMeter : logicalMeters) {
       Quantity quantity = logicalMeter.getQuantity(quantityName)
         .orElseThrow(() -> new LogicalMeterMissingQuantityException(logicalMeter.id, quantityName));
@@ -72,15 +72,15 @@ public class MeasurementController {
       if (unit == null) {
         unit = quantity.unit;
       }
-      physicalMeterUUIDs.addAll(logicalMeter.physicalMeters.stream()
+      physicalMeterUuids.addAll(logicalMeter.physicalMeters.stream()
                                   .map(physicalMeter -> physicalMeter.id)
                                   .collect(toList()));
     }
-    if (physicalMeterUUIDs.isEmpty()) {
+    if (physicalMeterUuids.isEmpty()) {
       throw new NoPhysicalMetersException();
     }
     List<MeasurementValueDto> measurementValueDtos = measurementUseCases.averageForPeriod(
-      physicalMeterUUIDs,
+      physicalMeterUuids,
       quantityName,
       unit,
       from,
