@@ -54,6 +54,15 @@ docker:postgresql:
       - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
       - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
+docker:ci-utils:
+    stage: prepare
+    tags:
+      - shell
+    script:
+      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest -f Dockerfile-ci-utils .
+      - docker push gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+
 prepare:version:
     stage: prepare
     image:
@@ -109,14 +118,13 @@ test:unit_and_IT:
         expire_in: 7 days
     script:
         - gradle check -x systemTest
+
 publish:artifactory:
-    image: ubuntu:16.04
+    image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
     stage: publish
     dependencies:
       - gradle:build
     script:
-        - apt update
-        - apt install -y curl
         - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
         - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
         - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
@@ -124,8 +132,8 @@ publish:artifactory:
         - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
 
-deploy_real_staging:
-  image: ubuntu:16.04
+deploy:staging:
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   variables:
     SALTAPI_URL: "https://salt-master:8000"
@@ -133,7 +141,4 @@ deploy_real_staging:
     SALTAPI_USER: "administrator"
     SALTAPI_PASS: "password2"
   script:
-    - apt update
-    - apt install -y python-pip
-    - pip install salt-pepper
     - pepper -G 'roles:mvp-staging-app' state.apply
