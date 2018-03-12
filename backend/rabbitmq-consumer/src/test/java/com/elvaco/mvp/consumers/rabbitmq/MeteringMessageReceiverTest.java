@@ -2,6 +2,7 @@ package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.util.Collections;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
@@ -70,6 +71,7 @@ public class MeteringMessageReceiverTest {
 
     assertThat(messageHandler.structureMessageReceived).isTrue();
     assertThat(messageHandler.measurementMessageReceived).isFalse();
+    assertThat(messageHandler.alarmMessageReceived).isFalse();
   }
 
 
@@ -103,6 +105,7 @@ public class MeteringMessageReceiverTest {
 
     assertThat(messageHandler.measurementMessageReceived).isTrue();
     assertThat(messageHandler.structureMessageReceived).isFalse();
+    assertThat(messageHandler.alarmMessageReceived).isFalse();
   }
 
   @Test
@@ -122,10 +125,12 @@ public class MeteringMessageReceiverTest {
 
     private boolean structureMessageReceived;
     private boolean measurementMessageReceived;
+    private boolean alarmMessageReceived;
 
     MessageHandlerSpy() {
       structureMessageReceived = false;
       measurementMessageReceived = false;
+      alarmMessageReceived = false;
     }
 
     @Override
@@ -138,8 +143,13 @@ public class MeteringMessageReceiverTest {
       measurementMessageReceived = true;
     }
 
+    @Override
+    public void handle(MeteringAlarmMessageDto alarmMessage) {
+      alarmMessageReceived = true;
+    }
+
     boolean nothingReceived() {
-      return !(structureMessageReceived || measurementMessageReceived);
+      return !(structureMessageReceived || measurementMessageReceived || alarmMessageReceived);
     }
   }
 

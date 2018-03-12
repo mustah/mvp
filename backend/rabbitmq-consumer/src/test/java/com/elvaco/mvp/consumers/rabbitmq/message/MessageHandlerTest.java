@@ -1,10 +1,13 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.AlarmDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
@@ -12,6 +15,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -293,6 +297,12 @@ public class MessageHandlerTest {
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }
 
+  @Test
+  public void ignoresAlarmsWithoutCrashing() {
+    messageHandler.handle(newAlarmMessageWithoutAlarms());
+    messageHandler.handle(newAlarmMessageWithTwoAlarms());
+  }
+
   private LogicalMeter findLogicalMeter() {
     Organisation organisation = findOrganisation();
     return logicalMeters.findByOrganisationIdAndExternalId(organisation.id, EXTERNAL_ID).get();
@@ -322,6 +332,33 @@ public class MessageHandlerTest {
       "Test source system",
       ORGANISATION_CODE,
       new GatewayStatusDto("gateway-id", "CMi2110", "OK")
+    );
+  }
+
+  private MeteringAlarmMessageDto newAlarmMessageWithoutAlarms() {
+    return new MeteringAlarmMessageDto(
+      MessageType.METERING_ALARM_V_1_0,
+      new GatewayIdDto("351"),
+      new MeterIdDto("sdf"),
+      new FacilityIdDto("asdfg2"),
+      "ICA Maxi",
+      "Elvaco Metering",
+      Collections.emptyList()
+    );
+  }
+
+  private MeteringAlarmMessageDto newAlarmMessageWithTwoAlarms() {
+    List<AlarmDto> alarms = new ArrayList<>();
+    alarms.add(new AlarmDto(1234, 88));
+    alarms.add(new AlarmDto(1235, 99));
+    return new MeteringAlarmMessageDto(
+      MessageType.METERING_ALARM_V_1_0,
+      new GatewayIdDto("351"),
+      new MeterIdDto("sdf"),
+      new FacilityIdDto("asdfg2"),
+      "ICA Maxi",
+      "Elvaco Metering",
+      alarms
     );
   }
 
