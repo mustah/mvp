@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import org.junit.After;
@@ -412,6 +413,58 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
         )
       )
     );
+  }
+
+  @Test
+  public void invalidParameterValuesReturnsHttp400() {
+
+    ResponseEntity<ErrorMessageDto> response = as(context.user).get(
+      String.format(
+        "/measurements/average"
+          + "?from=thisIsNotAValidTimestamp"
+          + "&to=2018-03-07T12:32:05.999Z"
+          + "&quantity=" + Quantity.POWER.name
+          + "&meters=%s"
+          + "&resolution=month"
+          + "&unit=W",
+        UUID.randomUUID().toString()
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Invalid 'from' timestamp: 'thisIsNotAValidTimestamp'.");
+
+    response = as(context.user).get(
+      String.format(
+        "/measurements/average"
+          + "?from=2018-03-07T12:32:05.999Z"
+          + "&to=thisIsNotAValidTimestamp"
+          + "&quantity=" + Quantity.POWER.name
+          + "&meters=%s"
+          + "&resolution=month"
+          + "&unit=W",
+        UUID.randomUUID().toString()
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Invalid 'to' timestamp: 'thisIsNotAValidTimestamp'.");
+
+
+    response = as(context.user).get(
+      String.format(
+        "/measurements/average"
+          + "?from=2018-03-07T12:32:05.999Z"
+          + "&to=2018-03-07T12:32:05.999Z"
+          + "&quantity=" + Quantity.POWER.name
+          + "&meters=%s"
+          + "&resolution=month"
+          + "&unit=W",
+        "NotAValidUUID"
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
   }
 
   private void newMeasurement(
