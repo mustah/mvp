@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.repository.mappers;
+package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,19 +8,23 @@ import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 /**
  * A mapper of property filters to QueryDsl predicates.
  */
-public abstract class FilterToPredicateMapper {
+public abstract class QueryFilters {
 
   /**
    * Returns a mapping of filterable property names to property filter functions.
    *
    * @return A mapping of property names to property filter functions
    */
-  public abstract Map<String, Function<String, BooleanExpression>> getPropertyFilters();
+  public abstract Map<String, Function<String, Predicate>> getPropertyFilters();
+
+  @Nullable
+  public abstract Predicate toExpression(RequestParameters parameters);
 
   /**
    * Maps a property filter to a QueryDsl Predicate.
@@ -42,38 +46,47 @@ public abstract class FilterToPredicateMapper {
    *   constructed.
    */
   @Nullable
-  public BooleanExpression map(@Nullable RequestParameters parameters) {
-    if (parameters == null) {
+  final Predicate propertiesExpression(RequestParameters parameters) {
+    if (parameters.isEmpty()) {
       return null;
     }
 
-    List<BooleanExpression> predicates = new ArrayList<>();
+    List<Predicate> predicates = new ArrayList<>();
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
 
-      Function<String, BooleanExpression> predicateFunction =
+      Function<String, Predicate> predicateFunction =
         getPropertyFilters().get(propertyFilter.getKey());
 
-      if (predicateFunction == null || propertyValues.isEmpty()) {
-        continue;
+      if (predicateFunction != null && !propertyValues.isEmpty()) {
+        predicates.add(applyOrPredicates(predicateFunction, propertyValues));
       }
-
-      BooleanExpression expression = predicateFunction.apply(propertyValues.get(0));
-      // Multiple filters for the same property are OR'ed together
-      for (String val : propertyValues.subList(1, propertyValues.size())) {
-        expression = expression.or(predicateFunction.apply(val));
-      }
-      predicates.add(expression);
     }
 
     if (predicates.isEmpty()) {
       return null;
     }
 
-    BooleanExpression predicate = predicates.remove(0);
-    // Filters for different properties are AND'ed
-    for (BooleanExpression p : predicates) {
-      predicate = predicate.and(p);
+    return applyAndPredicates(predicates);
+  }
+
+  private Predicate applyOrPredicates(
+    Function<String, Predicate> predicateFunction,
+    List<String> propertyValues
+  ) {
+    // Multiple filters for the same property are OR'ed together
+    BooleanExpression predicate =
+      (BooleanExpression) predicateFunction.apply(propertyValues.get(0));
+    for (String value : propertyValues.subList(1, propertyValues.size())) {
+      predicate = predicate.or(predicateFunction.apply(value));
+    }
+    return predicate;
+  }
+
+  private Predicate applyAndPredicates(List<Predicate> predicates) {
+    BooleanExpression predicate = (BooleanExpression) predicates.remove(0);
+    for (Predicate right : predicates) {
+      predicate = predicate.and(right);
     }
     return predicate;
   }

@@ -19,6 +19,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Order(4)
@@ -60,15 +61,16 @@ public class LogDatabaseLoader implements CommandLineRunner {
   }
 
   private void createStatusLogMockData() {
-    List<MeterStatusLog> statusLogs = new ArrayList<>();
-
-    List<MeterStatus> statuses = meterStatuses.findAll();
-    List<PhysicalMeter> meters = physicalMeters.findAll();
+    List<MeterStatus> statuses = meterStatuses.findAll()
+      .stream()
+      .filter(this::onStatus)
+      .collect(toList());
 
     int daySeed = 10;
     int hourSeed = 0;
 
-    for (PhysicalMeter meter : meters) {
+    List<MeterStatusLog> statusLogs = new ArrayList<>();
+    for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
       for (MeterStatus status : statuses) {
         hourSeed++;
@@ -85,8 +87,13 @@ public class LogDatabaseLoader implements CommandLineRunner {
       }
       hourSeed = 0;
     }
-
     meterStatusLogs.save(statusLogs);
+  }
+
+  private boolean onStatus(MeterStatus meterStatus) {
+    return meterStatus.name.equalsIgnoreCase("info")
+           || meterStatus.name.equalsIgnoreCase("ok")
+           || meterStatus.name.equalsIgnoreCase("warning");
   }
 
   private Date addDays(int daySeed, int hourSeed) {

@@ -15,15 +15,13 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
-import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterToPredicateMapper;
-import com.elvaco.mvp.database.repository.mappers.PhysicalMeterStatusLogToPredicateMapper;
+import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -39,24 +37,24 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final LogicalMeterMapper logicalMeterMapper;
-  private final LogicalMeterToPredicateMapper filterMapper;
   private final LogicalMeterSortingMapper sortingMapper;
-  private final PhysicalMeterStatusLogToPredicateMapper statusFilterMapper;
+  private final QueryFilters meterQueryFilters;
+  private final QueryFilters statusQueryFilters;
 
   public LogicalMeterRepository(
     LogicalMeterJpaRepository logicalMeterJpaRepository,
-    LogicalMeterToPredicateMapper filterMapper,
+    PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
     LogicalMeterSortingMapper sortingMapper,
     LogicalMeterMapper logicalMeterMapper,
-    PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
-    PhysicalMeterStatusLogToPredicateMapper statusFilterMapper
+    QueryFilters meterQueryFilters,
+    QueryFilters statusQueryFilters
   ) {
     this.logicalMeterJpaRepository = logicalMeterJpaRepository;
-    this.filterMapper = filterMapper;
     this.sortingMapper = sortingMapper;
     this.logicalMeterMapper = logicalMeterMapper;
     this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
-    this.statusFilterMapper = statusFilterMapper;
+    this.meterQueryFilters = meterQueryFilters;
+    this.statusQueryFilters = statusQueryFilters;
   }
 
   @Override
@@ -81,7 +79,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<LogicalMeterEntity> logicalMeterEntities =
       logicalMeterJpaRepository.findAll(
-        filterMapper.map(parameters),
+        meterQueryFilters.toExpression(parameters),
         new PageRequest(
           pageable.getPageNumber(),
           pageable.getPageSize(),
@@ -103,19 +101,15 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll(filterMapper.map(parameters));
+    List<LogicalMeterEntity> all =
+      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters));
     return mapAndCollectWithStatuses(all, parameters);
   }
 
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
-    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);
-    return logicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(logicalMeterEntity));
-  }
-
-  @Override
-  public void deleteAll() {
-    logicalMeterJpaRepository.deleteAll();
+    LogicalMeterEntity entity = logicalMeterMapper.toEntity(logicalMeter);
+    return logicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
   }
 
   @Override
@@ -140,14 +134,16 @@ public class LogicalMeterRepository implements LogicalMeters {
     List<LogicalMeterEntity> logicalMeterEntities,
     RequestParameters parameters
   ) {
-    List<UUID> physicalMeterIds = logicalMeterEntities
+    List<String> physicalMeterIds = logicalMeterEntities
       .stream()
       .flatMap(logicalMeterEntity -> logicalMeterEntity.physicalMeters.stream())
-      .map(PhysicalMeterEntity::getId)
+      .map(entity -> entity.getId().toString())
       .collect(toList());
 
+    parameters.setAll("physicalMeterIds", physicalMeterIds);
+
     return physicalMeterStatusLogJpaRepository.findAll(
-      statusFilterMapper.map(physicalMeterIds, parameters),
+      statusQueryFilters.toExpression(parameters),
       new Sort(
         Direction.DESC,
         toSortString(Q.start),
@@ -184,10 +180,8 @@ public class LogicalMeterRepository implements LogicalMeters {
       if (!mappedStatuses.containsKey(status.physicalMeterId)) {
         mappedStatuses.put(status.physicalMeterId, new ArrayList<>());
       }
-
       mappedStatuses.get(status.physicalMeterId).add(status);
     });
-
     return mappedStatuses;
   }
 

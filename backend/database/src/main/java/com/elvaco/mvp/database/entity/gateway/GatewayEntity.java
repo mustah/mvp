@@ -12,10 +12,12 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 
+@NoArgsConstructor
 @ToString
 @Entity
 @Access(AccessType.FIELD)
@@ -38,8 +40,6 @@ public class GatewayEntity extends EntityType<UUID> {
 
   @ManyToMany(mappedBy = "gateways")
   public List<LogicalMeterEntity> meters;
-
-  GatewayEntity() {}
 
   public GatewayEntity(
     UUID id,

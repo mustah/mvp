@@ -30,6 +30,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
@@ -76,6 +77,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   MeterDefinition hotWaterMeterDefinition;
   @Autowired
   private LogicalMeters logicalMeterRepository;
+  @Autowired
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
   @Autowired
@@ -127,7 +130,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
 
-    createStatusMockData();
+    saveMeterStatuses();
 
     com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
       logicalMeterRepository.findAll(
@@ -141,14 +144,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeter4 = meters.getContent().get(3).physicalMeters.get(0);
     physicalMeter5 = meters.getContent().get(4).physicalMeters.get(0);
 
-    MeterStatus meterStatus = meterStatuses.findAll().get(0);
     prepareMeterLogsForStatusPeriodTest(
       physicalMeter1,
       physicalMeter2,
       physicalMeter3,
       physicalMeter4,
       physicalMeter5,
-      meterStatus
+      meterStatuses.findAll()
     );
   }
 
@@ -158,7 +160,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeterStatusLogJpaRepository.deleteAll();
     meterStatusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
-    logicalMeterRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
   }
 
@@ -169,14 +171,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     LogicalMeterDto logicalMeterDto = response.getBody();
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThatStatusIsOk(response);
     assertThat(logicalMeterDto.id)
       .as("Unexpected meter id")
       .isEqualTo(physicalMeter1.logicalMeterId.toString());
 
     assertThat(logicalMeterDto.statusChangelog.size())
       .as("Unexpected number of log entries")
-      .isEqualTo(1);
+      .isEqualTo(2);
 
     MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
     String formatTime = Dates.formatTime(statusLogDate, TimeZone.getDefault());
@@ -262,16 +264,42 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
       .getList("/meters/all", LogicalMeterDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThatStatusIsOk(response);
     assertThat(response.getBody()).hasSize(55);
+  }
 
-    String meterId = response.getBody().get(0).id;
+  @Test
+  public void findAll_FilterOnMeterId() {
+    LogicalMeterDto meter = asElvacoUser()
+      .getList("/meters/all", LogicalMeterDto.class)
+      .getBody()
+      .stream()
+      .findFirst()
+      .orElseThrow(() -> new RuntimeException("No meters found"));
 
-    response = asElvacoUser()
-      .getList("/meters/all?id=" + meterId, LogicalMeterDto.class);
+    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+      .getList("/meters/all?id=" + meter.id, LogicalMeterDto.class);
 
     assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0).id).isEqualTo(meterId);
+    assertThat(response.getBody().get(0).id).isEqualTo(meter.id);
+  }
+
+  @Test
+  public void findAll_FilterOnStatusInfo() {
+    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+      .getList("/meters/all?status=info", LogicalMeterDto.class);
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(1);
+  }
+
+  @Test
+  public void findAll_FilterOnStatusInfoAndWarning() {
+    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+      .getList("/meters/all?status=info&status=warning", LogicalMeterDto.class);
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(2);
   }
 
   /**
@@ -410,7 +438,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getTotalElements()).isEqualTo(2)
       .as("Unexpected total count of elements");
-    ;
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
@@ -503,7 +530,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asElvacoUser()
       .get("/meters/" + theirMeter.id, ErrorMessageDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThatStatusIsNotFound(response);
   }
 
   @Test
@@ -511,7 +538,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = asElvacoUser()
       .get("/meters/" + randomUUID(), ErrorMessageDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThatStatusIsNotFound(response);
   }
 
   @Test
@@ -519,8 +546,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<List> response = asElvacoUser()
       .get("/meters/map-data", List.class);
 
+    assertThatStatusIsOk(response);
     assertThat(response.getBody().size()).isEqualTo(55);
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
@@ -562,10 +589,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     List<MeasurementDto> measurementDtos = response.getBody();
     MeasurementDto measurement = measurementDtos.get(0);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThatStatusIsOk(response);
     assertThat(measurementDtos).hasSize(5);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
     assertThat(measurement.unit).isEqualTo("m^3");
+  }
+
+  private void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
+
+  private void assertThatStatusIsOk(ResponseEntity<?> response) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   private UserBuilder userBuilder() {
@@ -633,15 +668,28 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter3,
     PhysicalMeter meter4,
     PhysicalMeter meter5,
-    MeterStatus meterStatus
+    List<MeterStatus> meterStatuses
   ) {
+    MeterStatus active = meterStatuses.get(0);
+    MeterStatus info = meterStatuses.get(1);
+    MeterStatus warning = meterStatuses.get(2);
+
     List<MeterStatusLog> statuses = new ArrayList<>();
 
     statuses.add(new MeterStatusLog(
       null,
       meter1.id,
-      meterStatus.id,
-      meterStatus.name,
+      active.id,
+      active.name,
+      statusLogDate,
+      statusLogDate
+    ));
+
+    statuses.add(new MeterStatusLog(
+      null,
+      meter1.id,
+      info.id,
+      info.name,
       statusLogDate,
       statusLogDate
     ));
@@ -649,8 +697,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     statuses.add(new MeterStatusLog(
       null,
       meter2.id,
-      meterStatus.id,
-      meterStatus.name,
+      active.id,
+      active.name,
       statusLogDate,
       null
     ));
@@ -658,8 +706,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     statuses.add(new MeterStatusLog(
       null,
       meter3.id,
-      meterStatus.id,
-      meterStatus.name,
+      active.id,
+      active.name,
       addDays(statusLogDate, 100),
       null
     ));
@@ -667,8 +715,17 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     statuses.add(new MeterStatusLog(
       null,
       meter4.id,
-      meterStatus.id,
-      meterStatus.name,
+      active.id,
+      active.name,
+      addDays(statusLogDate, 100),
+      addDays(statusLogDate, 1000)
+    ));
+
+    statuses.add(new MeterStatusLog(
+      null,
+      meter4.id,
+      warning.id,
+      warning.name,
       addDays(statusLogDate, 100),
       addDays(statusLogDate, 1000)
     ));
@@ -677,8 +734,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       statuses.add(new MeterStatusLog(
         null,
         meter5.id,
-        meterStatus.id,
-        meterStatus.name,
+        active.id,
+        active.name,
         addDays(statusLogDate, x),
         addDays(statusLogDate, x)
       ));
@@ -694,9 +751,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return calendar.getTime();
   }
 
-  private void createStatusMockData() {
+  private void saveMeterStatuses() {
     meterStatuses.save(asList(
-      new MeterStatus("active")
+      new MeterStatus("active"),
+      new MeterStatus("info"),
+      new MeterStatus("warning")
     ));
   }
 

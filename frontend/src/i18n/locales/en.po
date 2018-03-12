@@ -191,6 +191,9 @@ msgstr "info"
 msgid "warning"
 msgstr "warning"
 
+msgid "critical"
+msgstr "critical"
+
 msgid "maintenance scheduled"
 msgstr "maintenance scheduled"
 

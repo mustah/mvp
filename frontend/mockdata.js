@@ -123,12 +123,22 @@ const parseMeterSeedData = (path, seedOptions = {
 }) => {
   const {geocodeCacheFile, doGeocoding, statusChanges} = seedOptions;
   const r = {
-    meters: [],
-    gateways: [],
     selections: {
       meteringPoints: [],
-      meterStatuses: [],
-      gatewayStatuses: [],
+      meterStatuses: [
+        {id: 'ok', name: 'ok'},
+        {id: 'active', name: 'active'},
+        {id: 'warning', name: 'warning'},
+        {id: 'critical', name: 'critical'},
+        {id: 'maintenance_scheduled', name: 'maintenance scheduled'},
+        {id: 'info', name: 'info'},
+        {id: 'unknown', name: 'unknown'},
+      ],
+      gatewayStatuses: [
+        {id: 'ok', name: 'ok'},
+        {id: 'alarm', name: 'alarm'},
+        {id: 'unknown', name: 'unknown'},
+      ],
       cities: [],
       addresses: [],
       alarms: [],
@@ -153,8 +163,6 @@ const parseMeterSeedData = (path, seedOptions = {
   const cities = new Set();
   const addresses = new Set();
   const meteringPoints = new Set();
-  const meterStatuses = new Set();
-  const gatewayStatuses = new Set();
   const alarms = new Set();
   const manufacturers = new Set();
   const productModels = new Set();
@@ -188,18 +196,13 @@ const parseMeterSeedData = (path, seedOptions = {
         }
       }
 
-      const decorateGatewayStatus = (status) => status === 'OK'
-        ? {name: 'ok', id: 'ok'}
-        : {name: 'warning', id: 'warning'};
-
       const decorateMeterStatus = (gatewayStatus, status) =>
         gatewayStatus === 'OK'
           ? status === 'OK'
-          ? {name: 'ok', id: 'ok'} : {name: 'alarm', id: 'alarm'}
+          ? {name: 'ok', id: 'ok'} : {name: 'active', id: 'active'}
           : {name: 'unknown', id: 'unknown'};
 
       const meterStatus = decorateMeterStatus(row.gateway_status, row.meter_status);
-      const gatewayStatus = decorateGatewayStatus(row.gateway_status);
 
       row.gateway_flags = row.gateway_status === 'OK' ? [] : [{title: 'Åtgärd'}];
       row.meter_flags = [];
@@ -209,69 +212,20 @@ const parseMeterSeedData = (path, seedOptions = {
       const city = {id: cityId, name: row.city};
       const address = {id: addressId, name: row.address, cityId};
 
-      const gatewayId = row.gateway_id;
       const meterId = row.meter_id;
-      const statusChanged = statusChanges[meterId];
       const alarm = getRandomAlarm(meterStatus.id);
 
-      const gatewayStatusChangelog = statusChangelog
-        .map(changelog => Object.assign({}, changelog, {id: generateId(), gatewayId}));
-
-      const meterStatusChangelog = statusChangelog
-        .map(changelog => Object.assign({}, changelog, {id: generateId(), meterId}));
-
-      r.gateways.push({
-        id: gatewayId,
-        serial: row.facility,
-        address,
-        city,
-        position: objPosition,
-        flags: row.gateway_flags,
-        flagged: row.gateway_flags.length !== 0,
-        productModel: row.gateway_product_model,
-        status: gatewayStatus,
-        statusChangelog: gatewayStatusChangelog,
-        statusChanged,
-        meterIds: [meterId],
-      });
-
-      r.meters.push({
-        id: meterId,
-        serial: row.facility,
-        address,
-        city,
-        flags: row.meter_flags,
-        flagged: row.meter_flags.length !== 0,
-        medium: row.medium,
-        manufacturer: row.meter_manufacturer,
-        status: meterStatus,
-        statusChangelog: meterStatusChangelog,
-        statusChanged,
-        position: objPosition,
-        alarm,
-        gatewayId,
-        gatewayStatus,
-        gatewayProductModel: row.gateway_product_model,
-      });
       if (!cities.has(cityId)) {
-        r.selections.cities.push({id: cityId, name: row.city});
+        r.selections.cities.push(city);
         cities.add(cityId);
       }
       if (!addresses.has(addressId)) {
-        r.selections.addresses.push({id: addressId, name: row.address, cityId});
+        r.selections.addresses.push(address);
         addresses.add(addressId);
       }
       if (!meteringPoints.has(meterId)) {
         r.selections.meteringPoints.push({id: meterId, name: meterId});
         meteringPoints.add(meterId);
-      }
-      if (!meterStatuses.has(meterStatus.id)) {
-        r.selections.meterStatuses.push(meterStatus);
-        meterStatuses.add(meterStatus.id);
-      }
-      if (!gatewayStatuses.has(gatewayStatus.id)) {
-        r.selections.gatewayStatuses.push(gatewayStatus);
-        gatewayStatuses.add(gatewayStatus.id);
       }
       if (!alarms.has(alarm)) {
         r.selections.alarms.push({id: alarm, name: alarm});
@@ -294,6 +248,7 @@ const parseMeterSeedData = (path, seedOptions = {
       fs.writeFileSync(geocodeCacheFile, JSON.stringify(geocodeData));
     }
   });
+
   return r;
 };
 

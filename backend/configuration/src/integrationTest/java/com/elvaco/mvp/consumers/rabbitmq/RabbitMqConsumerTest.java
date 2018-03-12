@@ -12,6 +12,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.rabbitmq.client.Channel;
@@ -41,6 +42,9 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Autowired
   PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
+  @Autowired
+  LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
   LogicalMeters logicalMeters;
@@ -73,7 +77,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     }
 
     physicalMeterJpaRepository.deleteAll();
-    logicalMeters.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
     organisations.findByCode("Some organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));
   }
