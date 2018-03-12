@@ -47,20 +47,20 @@ public class MeteringMessageHandler implements MessageHandler {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
-      structureMessage.facilityId,
-      structureMessage.medium,
+      structureMessage.facility.id,
+      structureMessage.meter.medium,
       organisation
     );
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      structureMessage.facilityId,
-      structureMessage.meterId,
-      structureMessage.medium,
-      structureMessage.manufacturer,
+      structureMessage.facility.id,
+      structureMessage.meter.id,
+      structureMessage.meter.medium,
+      structureMessage.meter.manufacturer,
       logicalMeter.id,
       organisation
-    ).withMedium(structureMessage.medium)
-      .withManufacturer(structureMessage.manufacturer)
+    ).withMedium(structureMessage.meter.medium)
+      .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id);
     physicalMeterUseCases.save(physicalMeter);
   }

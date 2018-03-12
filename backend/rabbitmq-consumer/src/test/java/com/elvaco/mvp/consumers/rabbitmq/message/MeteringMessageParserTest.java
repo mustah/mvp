@@ -1,6 +1,5 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.AlarmDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -16,23 +15,27 @@ public class MeteringMessageParserTest {
   @Test
   public void meteringStructureMessageIsParsedCorrectly() {
     String jsonMessage = "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Structure Message 1.0\",\n"
-      + "  \"facility_id\": \"ABC-123\",\n"
-      + "  \"gateway\": {\n"
-      + "    \"id\": \"12031925\",\n"
-      + "    \"product_model\": \"CMi2110\"\n"
-      + "  },\n"
-      + "  \"meter_id\": \"1\",\n"
-      + "  \"medium\": \"Heat, Return temp\",\n"
-      + "  \"location\": {\n"
+      + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"ABC-123\",\n"
       + "    \"country\": \"Sweden\",\n"
       + "    \"city\": \"Perstorp\",\n"
       + "    \"address\": \"Duvstigen 8C\"\n"
       + "  },\n"
-      + "  \"manufacturer\": \"ELV\",\n"
+      + "  \"gateway\": {\n"
+      + "    \"id\": \"12031925\",\n"
+      + "    \"product_model\": \"CMi2110\",\n"
+      + "    \"status\": \"OK\"\n"
+      + "  },\n"
+      + "  \"meter\": {\n"
+      + "    \"id\": \"1\",\n"
+      + "    \"medium\": \"Heat, Return temp\",\n"
+      + "    \"manufacturer\": \"ELV\",\n"
+      + "    \"status\": \"OK\",\n"
+      + "    \"expected_interval\": 15\n"
+      + "  },\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-      + "  \"source_system_id\": \"The Source System\",\n"
-      + "  \"expected_interval\": 15\n"
+      + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n";
     MeteringMessageParser messageParser = new MeteringMessageParser();
 
@@ -41,20 +44,19 @@ public class MeteringMessageParserTest {
 
     assertThat(parsedMessage).isNotNull();
     assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_METER_STRUCTURE_V_1_0);
-    assertThat(parsedMessage.facilityId).isEqualTo("ABC-123");
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-123");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Perstorp");
+    assertThat(parsedMessage.facility.address).isEqualTo("Duvstigen 8C");
     assertThat(parsedMessage.gateway).isNotNull();
     assertThat(parsedMessage.gateway.id).isEqualTo("12031925");
     assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
-    assertThat(parsedMessage.meterId).isEqualTo("1");
-    assertThat(parsedMessage.medium).isEqualTo("Heat, Return temp");
-    assertThat(parsedMessage.location).isNotNull();
-    assertThat(parsedMessage.location.country).isEqualTo("Sweden");
-    assertThat(parsedMessage.location.city).isEqualTo("Perstorp");
-    assertThat(parsedMessage.location.address).isEqualTo("Duvstigen 8C");
-    assertThat(parsedMessage.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.id).isEqualTo("1");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Heat, Return temp");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.expectedInterval).isEqualTo(15);
     assertThat(parsedMessage.organisationId).isEqualTo("Organisation, Incorporated");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("The Source System");
-    assertThat(parsedMessage.expectedInterval).isEqualTo(15);
   }
 
   @Test
@@ -62,14 +64,14 @@ public class MeteringMessageParserTest {
     String jsonMessage = "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
       + "  \"gateway\": {\n"
-      + "    \"id\": \"GW-CME3100-XXYYZZ\",\n"
-      + "    \"status\": \"OK\"\n"
+      + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
       + "  },\n"
       + "  \"meter\": {\n"
-      + "    \"id\": \"123456789\",\n"
-      + "    \"status\": \"ERROR\"\n"
+      + "    \"id\": \"123456789\"\n"
       + "  },\n"
-      + "  \"facility_id\": \"42402519\",\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"42402519\"\n"
+      + "  },\n"
       + "  \"organisation_id\": \"Elvaco AB\",\n"
       + "  \"source_system_id\": \"Elvaco Metering\",\n"
       + "  \"values\": [\n"
@@ -77,14 +79,8 @@ public class MeteringMessageParserTest {
       + "      \"timestamp\": 1506069947,\n"
       + "      \"value\": 0.659,\n"
       + "      \"unit\": \"wH\",\n"
-      + "      \"quantity\": \"power\"\n"
-      + "    }\n"
-      + "  ],\n"
-      + "  \"alarms\": [\n"
-      + "    {\n"
-      + "      \"timestamp\": 1506069947,\n"
-      + "      \"code\": 42,\n"
-      + "      \"description\": \"Low battery\"\n"
+      + "      \"quantity\": \"power\",\n"
+      + "      \"status\": \"OK\"\n"
       + "    }\n"
       + "  ]\n"
       + "}";
@@ -98,7 +94,8 @@ public class MeteringMessageParserTest {
     assertThat(parsedMessage.gateway.id).isEqualTo("GW-CME3100-XXYYZZ");
     assertThat(parsedMessage.meter).isNotNull();
     assertThat(parsedMessage.meter.id).isEqualTo("123456789");
-    assertThat(parsedMessage.facility).isEqualTo("42402519");
+    assertThat(parsedMessage.facility).isNotNull();
+    assertThat(parsedMessage.facility.id).isEqualTo("42402519");
     assertThat(parsedMessage.organisationId).isEqualTo("Elvaco AB");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("Elvaco Metering");
     assertThat(parsedMessage.values).isNotNull();
@@ -117,7 +114,7 @@ public class MeteringMessageParserTest {
     assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
     String jsonMessageMissingGateway = "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Structure Message 1.0\",\n"
+      + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
       + "  \"facility_id\": \"ABC-123\",\n"
       + "  \"meter_id\": \"1\",\n"
       + "  \"medium\": \"Heat, Return temp\",\n"
@@ -129,7 +126,7 @@ public class MeteringMessageParserTest {
       + "  \"manufacturer\": \"ELV\",\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
       + "  \"source_system_id\": \"The Source System\",\n"
-      + "  \"expected_interval\": 15\n"
+      + "  \"expectedInterval\": 15\n"
       + "}\n";
     assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
   }

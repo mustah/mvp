@@ -5,11 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.LocationDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -38,6 +39,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -180,7 +182,7 @@ public class MessageHandlerTest {
 
   @Test
   @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-          + "ought to be considered a new physical meter.")
+    + "ought to be considered a new physical meter.")
   public void updatesExistingMeterForExistingOrganisation() {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
     Organisation organisation = organisations.save(
@@ -213,7 +215,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                   + "organisation"));
+      + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -315,15 +317,11 @@ public class MessageHandlerTest {
   private MeteringMeterStructureMessageDto newStructureMessage(String medium, String manufacturer) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
-      "1234",
-      EXTERNAL_ID,
-      medium,
-      15,
+      new MeterDto("1234", medium, "OK", manufacturer, 15),
+      new FacilityDto(EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
       ORGANISATION_CODE,
-      manufacturer,
-      new GatewayDto("gateway-id", "CMi2110"),
-      new LocationDto("Sweden", "Kungsbacka", "Kabelgatan 2T")
+      new GatewayStatusDto("gateway-id", "CMi2110", "OK")
     );
   }
 
