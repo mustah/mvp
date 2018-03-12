@@ -5,11 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.LocationDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -302,13 +303,12 @@ public class MessageHandlerTest {
   private MeteringMeasurementMessageDto newMeasurementMessage() {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
-      new GatewayStatusDto("123", "Ok"),
-      new MeterStatusDto("1234", "Ok"),
-      EXTERNAL_ID,
+      new GatewayIdDto("123"),
+      new MeterIdDto("1234"),
+      new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_CODE,
       "Elvaco Metering",
-      singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy")),
-      emptyList()
+      singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy"))
     );
   }
 

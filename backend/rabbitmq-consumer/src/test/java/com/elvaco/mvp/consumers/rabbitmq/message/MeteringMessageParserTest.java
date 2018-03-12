@@ -5,7 +5,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
+
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,11 +96,9 @@ public class MeteringMessageParserTest {
     assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_MEASUREMENT_V_1_0);
     assertThat(parsedMessage.gateway).isNotNull();
     assertThat(parsedMessage.gateway.id).isEqualTo("GW-CME3100-XXYYZZ");
-    assertThat(parsedMessage.gateway.status).isEqualTo("OK");
     assertThat(parsedMessage.meter).isNotNull();
     assertThat(parsedMessage.meter.id).isEqualTo("123456789");
-    assertThat(parsedMessage.meter.status).isEqualTo("ERROR");
-    assertThat(parsedMessage.facilityId).isEqualTo("42402519");
+    assertThat(parsedMessage.facility).isEqualTo("42402519");
     assertThat(parsedMessage.organisationId).isEqualTo("Elvaco AB");
     assertThat(parsedMessage.sourceSystemId).isEqualTo("Elvaco Metering");
     assertThat(parsedMessage.values).isNotNull();
@@ -110,13 +108,6 @@ public class MeteringMessageParserTest {
     assertThat(value.value).isEqualTo(0.659);
     assertThat(value.unit).isEqualTo("wH");
     assertThat(value.quantity).isEqualTo("power");
-
-    assertThat(parsedMessage.alarms).isNotNull();
-    assertThat(parsedMessage.alarms).hasSize(1);
-    AlarmDto alarmDto = parsedMessage.alarms.get(0);
-    assertThat(alarmDto.timestamp).isEqualTo(1506069947);
-    assertThat(alarmDto.code).isEqualTo(42);
-    assertThat(alarmDto.description).isEqualTo("Low battery");
   }
 
   @Test

@@ -70,7 +70,7 @@ public class MeteringMessageHandler implements MessageHandler {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      measurementMessage.facilityId,
+      measurementMessage.facility.id,
       measurementMessage.meter.id,
       "Unknown",
       "UNKNOWN",
