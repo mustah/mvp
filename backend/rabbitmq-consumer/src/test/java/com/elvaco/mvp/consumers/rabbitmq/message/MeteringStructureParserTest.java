@@ -67,18 +67,21 @@ public class MeteringStructureParserTest {
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
     String jsonMessageMissingGateway = "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
-      + "  \"facility_id\": \"ABC-123\",\n"
-      + "  \"meter_id\": \"1\",\n"
-      + "  \"medium\": \"Heat, Return temp\",\n"
-      + "  \"location\": {\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"ABC-123\",\n"
       + "    \"country\": \"Sweden\",\n"
       + "    \"city\": \"Perstorp\",\n"
       + "    \"address\": \"Duvstigen 8C\"\n"
       + "  },\n"
-      + "  \"manufacturer\": \"ELV\",\n"
+      + "  \"meter\": {\n"
+      + "    \"id\": \"1\",\n"
+      + "    \"medium\": \"Heat, Return temp\",\n"
+      + "    \"manufacturer\": \"ELV\",\n"
+      + "    \"status\": \"OK\",\n"
+      + "    \"expected_interval\": 15\n"
+      + "  },\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-      + "  \"source_system_id\": \"The Source System\",\n"
-      + "  \"expectedInterval\": 15\n"
+      + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n";
     assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
   }
