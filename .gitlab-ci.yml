@@ -150,6 +150,20 @@ publish:artifactory:
     dependencies:
       - gradle:build
 
+deploy_real_staging:
+  image: ubuntu:16.04
+  stage: deploy
+  variables:
+    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_EAUTH: "pam"
+    SALTAPI_USER: "administrator"
+    SALTAPI_PASS: "password2"
+  script:
+    - apt update
+    - apt install -y python-pip
+    - pip install salt-pepper
+    - pepper -G 'roles:mvp-staging-app' state.apply
+
 deploy_review:
   <<: *review_app
   when: manual
