@@ -3,7 +3,6 @@
 include:
   - mvp.openjdk-8-jre
   - mvp.app.user
-  - mvp.app.remote-git-describe
 
 {% set mvp_version = salt['cmd.run']('/usr/bin/remote-git-describe.sh git@gitlab.elvaco.se:elvaco/mvp.git mr-salt-install-tar') %}
 
