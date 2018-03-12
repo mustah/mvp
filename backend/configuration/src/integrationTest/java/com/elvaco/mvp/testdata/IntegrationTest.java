@@ -58,7 +58,9 @@ public abstract class IntegrationTest {
   }
 
   protected void destroyContext(IntegrationTestFixtureContext context) {
-    getIntegrationTestFixtureContextFactory().destroy(context);
+    if (context != null) {
+      getIntegrationTestFixtureContextFactory().destroy(context);
+    }
   }
 
   @After
