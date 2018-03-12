@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.LocationDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
@@ -18,6 +16,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import com.rabbitmq.client.Channel;
 import org.junit.After;
 import org.junit.Before;
@@ -90,8 +89,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     IOException {
     MeteringMeterStructureMessageDto messageDto = new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
-      new MeterDto("1234","Some medium", "OK", "A manufacturer", 15),
-      new FacilityDto("facility-id","Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
       "Some organisation",
       new GatewayStatusDto("GW-1234", "Gateway 2000", "OK")
