@@ -1,0 +1,4 @@
+server.port=8080
+spring.datasource.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
+spring.datasource.username=mvp-user
+spring.datasource.password=mvp-password

@@ -50,7 +50,8 @@ deploy_mvp_config:
 deploy_mvp_db_config:
   file.managed:
     - name: /opt/elvaco/mvp-{{ mvp_version }}/config/application-postgresql.properties
-    - source: salt://mvp/app/files/application-staging.properties
+    - source: salt://mvp/app/files/application-postgresql.properties.jinja
+    - template: jinja
     - require:
         - deploy_mvp
 
