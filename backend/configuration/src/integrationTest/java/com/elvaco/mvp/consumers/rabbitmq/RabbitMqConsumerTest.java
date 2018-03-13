@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
@@ -16,7 +17,6 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import com.rabbitmq.client.Channel;
 import org.junit.After;
 import org.junit.Before;
@@ -98,6 +98,10 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     publishMessage(serializeDto(messageDto));
     assertOrganisationWithCodeWasCreated("Some organisation");
+    assertLogicalMeterWasCreated(
+      organisations.findByCode("Some organisation").get().id,
+      "facility-id"
+    );
   }
 
   private byte[] serializeDto(MeteringMessageDto dto) {
@@ -106,6 +110,16 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   private void publishMessage(byte[] message) throws IOException {
     channel.basicPublish("", queueName, null, message);
+  }
+
+  private void assertLogicalMeterWasCreated(
+    UUID organisationId,
+    String externalId
+  ) throws InterruptedException {
+    assertThat(waitForCondition(() -> logicalMeterJpaRepository.findByOrganisationIdAndExternalId(
+      organisationId,
+      externalId
+    ).isPresent())).as("Logical meter '" + externalId + "' was created").isTrue();
   }
 
   private void assertOrganisationWithCodeWasCreated(String code) throws InterruptedException {

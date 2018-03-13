@@ -1,14 +1,20 @@
 package com.elvaco.mvp.testing.repository;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+
+import static java.util.Collections.emptyList;
 
 public class MockMeasurements extends MockRepository<Long, Measurement> implements Measurements {
 
@@ -42,6 +48,18 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     return measurements.stream()
       .map(this::saveMock)
       .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<MeasurementValue> getAverageForPeriod(
+    List<UUID> meterIds,
+    String quantity,
+    String unit,
+    ZonedDateTime from,
+    ZonedDateTime to,
+    TemporalResolution resolution
+  ) {
+    return emptyList();
   }
 
   @Override

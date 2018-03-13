@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS measurement (
   physical_meter_id UUID NOT NULL REFERENCES physical_meter (id)
     ON UPDATE CASCADE
     ON DELETE CASCADE,
-  created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+  created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   quantity VARCHAR(255) NOT NULL,
   value UNIT NOT NULL,
   UNIQUE (physical_meter_id, created, quantity, value)

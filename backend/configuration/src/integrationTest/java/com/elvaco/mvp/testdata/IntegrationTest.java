@@ -1,9 +1,13 @@
 package com.elvaco.mvp.testdata;
 
 import java.util.function.BooleanSupplier;
+import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +25,43 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class IntegrationTest {
 
-  private static final long MAX_WAIT_TIME = 2000;
+  private static final long MAX_WAIT_TIME = 60000;
+
+  @Autowired
+  private OrganisationJpaRepository organisationJpaRepository;
+
   @Autowired
   private Users users;
+
+  @Autowired
+  private EntityManagerFactory factory;
+
+  private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
   @LocalServerPort
   private int serverPort;
 
+
   private RestClient restClient;
+
+  protected boolean isPostgresDialect() {
+    return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
+      .getDialect()
+      .getClass()
+      .getName()
+      .toLowerCase()
+      .contains("postgres");
+  }
+
+  protected IntegrationTestFixtureContext newContext() {
+    return getIntegrationTestFixtureContextFactory().create();
+  }
+
+  protected void destroyContext(IntegrationTestFixtureContext context) {
+    if (context != null) {
+      getIntegrationTestFixtureContextFactory().destroy(context);
+    }
+  }
 
   @After
   public final void tearDownBase() {
@@ -53,6 +86,10 @@ public abstract class IntegrationTest {
 
   protected RestClient asSuperAdmin() {
     return restAsUser(ELVACO_SUPER_ADMIN_USER);
+  }
+
+  protected RestClient as(User user) {
+    return restAsUser(user);
   }
 
   protected User createUserIfNotPresent(User user) {
@@ -80,5 +117,15 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.currentTimeMillis() < startTime + MAX_WAIT_TIME);
     return false;
+  }
+
+  private IntegrationTestFixtureContextFactory getIntegrationTestFixtureContextFactory() {
+    if (integrationTestFixtureContextFactory == null) {
+      integrationTestFixtureContextFactory = new IntegrationTestFixtureContextFactory(
+        organisationJpaRepository,
+        users
+      );
+    }
+    return integrationTestFixtureContextFactory;
   }
 }

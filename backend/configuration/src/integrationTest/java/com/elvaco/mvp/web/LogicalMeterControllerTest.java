@@ -31,7 +31,7 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
@@ -82,7 +82,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
   @Autowired
-  private MeasurementJpaRepository measurementJpaRepository;
+  private MeasurementJpaRepositoryImpl measurementJpaRepository;
   @Autowired
   private MeasurementUseCases measurementUseCases;
   @Autowired
@@ -436,8 +436,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       );
 
-    assertThat(response.getTotalElements()).isEqualTo(2)
-      .as("Unexpected total count of elements");
+    assertThat(response.getTotalElements())
+      .as("Unexpected total count of elements")
+      .isEqualTo(2);
     assertThat(response.getNumberOfElements()).isEqualTo(2);
     assertThat(response.getTotalPages()).isEqualTo(1);
 

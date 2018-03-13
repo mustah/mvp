@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,8 @@ public class MeteringMessageHandler implements MessageHandler {
       .stream()
       .map(valueDto -> new Measurement(
         null,
-        new Date(valueDto.timestamp),
+        // Note: Metering stores and treats all values as CET - at least it's consistent!
+        Instant.ofEpochMilli(valueDto.timestamp).atZone(ZoneId.of("CET")),
         valueDto.quantity,
         valueDto.value,
         valueDto.unit,

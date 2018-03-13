@@ -1,9 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +43,6 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -58,6 +57,18 @@ public class MessageHandlerTest {
 
   private static final String ORGANISATION_CODE = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
+  private static final ZonedDateTime EXPECTED_DATETIME = ZonedDateTime.of(
+    2018,
+    3,
+    7,
+    16,
+    13,
+    9,
+    0,
+    ZoneId
+      .of("CET")
+  );
+  private static final long MEASUREMENT_TIMESTAMP = 1520435589000L;
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -219,7 +230,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-      + "organisation"));
+                                                                     + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -254,7 +265,7 @@ public class MessageHandlerTest {
 
     Measurement expectedMeasurement = new Measurement(
       1L,
-      Date.from(Instant.ofEpochMilli(123456L)),
+      EXPECTED_DATETIME,
       "Energy",
       1.0,
       "kWh",
@@ -279,7 +290,7 @@ public class MessageHandlerTest {
 
     Measurement expectedMeasurement = new Measurement(
       1L,
-      Date.from(Instant.ofEpochMilli(123456L)),
+      EXPECTED_DATETIME,
       "Energy",
       1.0,
       "kWh",
@@ -320,7 +331,7 @@ public class MessageHandlerTest {
       new FacilityIdDto(EXTERNAL_ID),
       ORGANISATION_CODE,
       "Elvaco Metering",
-      singletonList(new ValueDto(123456L, 1.0, "kWh", "Energy"))
+      singletonList(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", "Energy"))
     );
   }
 

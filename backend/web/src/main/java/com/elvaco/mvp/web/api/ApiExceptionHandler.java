@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web.api;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import static org.springframework.core.annotation.AnnotatedElementUtils.findMergedAnnotation;
 
@@ -21,6 +24,7 @@ public class ApiExceptionHandler {
 
   static final String INTERNAL_ERROR_MESSAGE =
     "Internal server error, please contact support.";
+  private static final Map<String, String> TYPE_TO_HUMAN_TYPE_MAP = new HashMap<String, String>();
 
   /**
    * Handler for REST API exceptions.
@@ -51,6 +55,11 @@ public class ApiExceptionHandler {
     return forbidden(exception);
   }
 
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  public ResponseEntity<ErrorMessageDto> handle(MethodArgumentTypeMismatchException exception) {
+    return badRequest(exception);
+  }
+
   private ApiExceptionInformation resolveHttpStatus(Exception exception) {
     return Optional.ofNullable(findMergedAnnotation(exception.getClass(), ResponseStatus.class))
       .map(responseStatus ->
@@ -64,6 +73,29 @@ public class ApiExceptionHandler {
           HttpStatus.INTERNAL_SERVER_ERROR
         )
       );
+  }
+
+  private String humanTypeName(String javaType) {
+    return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType, "parameter");
+  }
+
+  private ResponseEntity<ErrorMessageDto> badRequest(
+    MethodArgumentTypeMismatchException
+      exception
+  ) {
+    HttpStatus responseHttpStatus = HttpStatus.BAD_REQUEST;
+    String message = String.format(
+      "Invalid '%s' %s: '%s'.",
+      exception.getName(),
+      humanTypeName(exception.getRequiredType().getName()),
+      exception.getValue().toString()
+    );
+
+    ErrorMessageDto dto = new ErrorMessageDto(
+      message,
+      responseHttpStatus.value()
+    );
+    return new ResponseEntity<>(dto, responseHttpStatus);
   }
 
   private ResponseEntity<ErrorMessageDto> forbidden(Exception exception) {
@@ -84,6 +116,12 @@ public class ApiExceptionHandler {
       this.dto = dto;
       this.status = status;
     }
+  }
+
+  static {
+    TYPE_TO_HUMAN_TYPE_MAP.put("java.time.ZonedDateTime", "timestamp");
+    TYPE_TO_HUMAN_TYPE_MAP.put("java.util.UUID", "ID");
+    TYPE_TO_HUMAN_TYPE_MAP.put("java.util.List", "list");
   }
 
 }

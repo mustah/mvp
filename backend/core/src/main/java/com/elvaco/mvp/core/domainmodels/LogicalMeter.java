@@ -160,6 +160,12 @@ public class LogicalMeter implements Identifiable<UUID> {
       .orElse("Unknown manufacturer");
   }
 
+  public Optional<Quantity> getQuantity(String quantityName) {
+    return getQuantities().stream()
+      .filter(quantity -> quantity.name.equals(quantityName))
+      .findAny();
+  }
+
   private Optional<PhysicalMeter> activePhysicalMeter() {
     if (physicalMeters.size() == 1) {
       return Optional.of(physicalMeters.get(0));
