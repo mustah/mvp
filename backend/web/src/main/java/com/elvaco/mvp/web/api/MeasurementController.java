@@ -1,13 +1,17 @@
 package com.elvaco.mvp.web.api;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -23,12 +27,12 @@ import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
 @RestApi("/v1/api/measurements")
@@ -65,17 +69,12 @@ public class MeasurementController {
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
     @RequestParam TemporalResolution resolution
   ) {
-    RequestParameters requestParams = new RequestParametersAdapter()
-      .setAll("id", meters.stream()
-        .map(UUID::toString)
-        .collect(toList())
-      );
-    List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAll(requestParams);
+    List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
 
     Map.Entry<Quantity, List<UUID>> entry =
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         logicalMeters,
-        Collections.singletonList(new Quantity(
+        Collections.singleton(new Quantity(
           quantityName,
           unit
         ))
@@ -103,14 +102,72 @@ public class MeasurementController {
     return new MeasurementAggregateDto(quantity.name, quantity.unit, measurementValueDtos);
   }
 
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementDto> measurements(
-    @RequestParam(value = "scale", required = false) String scale,
-    @RequestParam MultiValueMap<String, String> requestParams
+    @RequestParam(name = "quantities") Optional<List<String>> quantityUnits,
+    @RequestParam Optional<List<UUID>> meters,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before
+
   ) {
-    return measurementUseCases.findAll(scale, RequestParametersAdapter.of(requestParams))
+    List<LogicalMeter> logicalMeters =
+      meters.map(this::getLogicalMetersByIdList).orElseGet(logicalMeterUseCases::findAll);
+
+    Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
+      .orElseGet(() -> logicalMeters
+        .stream()
+        .flatMap(
+          logicalMeter -> logicalMeter.getQuantities().stream()
+        )
+        .collect(toSet()));
+
+    Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
+      .mapMeterQuantitiesToPhysicalMeterUuids(
+        logicalMeters,
+        quantities
+      );
+
+    List<Measurement> foundMeasurements = new ArrayList<>();
+    for (Map.Entry<Quantity, List<UUID>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
+      RequestParameters requestParams = new RequestParametersAdapter();
+      requestParams.setAll(
+        "meterId",
+        entry.getValue()
+          .stream()
+          .map(UUID::toString)
+          .collect(toList())
+      );
+      requestParams.add("quantity", entry.getKey().name);
+      if (after != null) {
+        requestParams.add("after", after.toString());
+      }
+
+      if (before != null) {
+        requestParams.add("before", before.toString());
+      }
+
+      foundMeasurements.addAll(
+        measurementUseCases.findAll(entry.getKey().unit, requestParams)
+      );
+    }
+
+    return foundMeasurements
       .stream()
       .map(measurementMapper::toDto)
       .collect(toList());
+  }
+
+  private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {
+    return quantityAndUnitList.stream().map(Quantity::of).collect(toSet());
+  }
+
+  private List<LogicalMeter> getLogicalMetersByIdList(@RequestParam List<UUID> meters) {
+    RequestParameters requestParams = new RequestParametersAdapter()
+      .setAll("id", meters.stream()
+        .map(UUID::toString)
+        .collect(toList())
+      );
+    return logicalMeterUseCases.findAll(requestParams);
   }
 }

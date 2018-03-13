@@ -22,6 +22,8 @@ public class Quantity {
   public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity(
     "Difference temperature", "°K");
 
+  private static final String QUANTITY_UNIT_DELIMITER = ":";
+
   public final String name;
 
   @Nullable
@@ -45,7 +47,7 @@ public class Quantity {
   }
 
   public static Quantity of(String quantityUnitPair) {
-    String[] parts = quantityUnitPair.split(",");
+    String[] parts = quantityUnitPair.split(QUANTITY_UNIT_DELIMITER);
     String quantityName = parts[0];
     if (quantityName.isEmpty() || parts.length > 2) {
       throw new RuntimeException("Invalid quantity/unit pair: '" + quantityUnitPair + "'");

@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.util;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -16,6 +17,8 @@ import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.UUID.randomUUID;
@@ -26,20 +29,20 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeterUuids_emptyParams() {
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(emptyList(), emptyList()))
+      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(emptyList(), emptySet()))
       .isEqualTo(emptyMap());
 
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(singletonList(newMeter(
         randomUUID(),
         DISTRICT_HEATING_METER
-      )), emptyList()))
+      )), emptySet()))
       .isEqualTo(emptyMap());
 
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         emptyList(),
-        singletonList(Quantity.ENERGY)
+        singleton(Quantity.ENERGY)
       )).isEqualTo(singletonMap(Quantity.ENERGY, emptyList()));
   }
 
@@ -49,7 +52,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
-        singletonList(Quantity.ENERGY)
+        singleton(Quantity.ENERGY)
       )).isEqualTo(
       singletonMap(Quantity.ENERGY, singletonList(meter.physicalMeters.get(0).id))
     );
@@ -62,7 +65,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
-        singletonList(Quantity.ENERGY)
+        singleton(Quantity.ENERGY)
       )).isEqualTo(
       singletonMap(
         Quantity.ENERGY,
@@ -89,7 +92,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
-        asList(Quantity.ENERGY, Quantity.VOLUME)
+        new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
       )).isEqualTo(
       expected
     );
@@ -113,7 +116,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
-        asList(Quantity.TEMPERATURE, Quantity.VOLUME)
+        new HashSet<>(asList(Quantity.TEMPERATURE, Quantity.VOLUME))
       )).isEqualTo(
       expected
     );
@@ -133,7 +136,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
-        singletonList(volumeInSquareKilometers)
+        singleton(volumeInSquareKilometers)
       )).isEqualTo(
       expected
     );
@@ -153,7 +156,7 @@ public class LogicalMeterHelperTest {
     assertThat(
       LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
-        singletonList(volumeWithNoUnit)
+        singleton(volumeWithNoUnit)
       )).isEqualTo(
       expected
     );

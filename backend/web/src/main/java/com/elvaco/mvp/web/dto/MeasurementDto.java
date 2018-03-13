@@ -3,8 +3,10 @@ package com.elvaco.mvp.web.dto;
 import java.time.ZonedDateTime;
 
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
+@ToString
 public class MeasurementDto {
 
   public Long id;
