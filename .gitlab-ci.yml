@@ -143,4 +143,16 @@ deploy:staging:
   script:
     - pepper -G 'roles:salt-master'  event.fire_master update salt/fileserver/gitfs/update
     - sleep 10
-    - pepper -G 'roles:mvp-staging-app' state.apply
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply
+
+deploy:production:
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
+  when: manual
+  variables:
+    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_EAUTH: "pam"
+    SALTAPI_USER: "administrator"
+    SALTAPI_PASS: "password2"
+  script:
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply
