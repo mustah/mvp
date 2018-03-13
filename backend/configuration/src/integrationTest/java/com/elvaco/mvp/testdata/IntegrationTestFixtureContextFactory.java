@@ -8,6 +8,8 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 
 class IntegrationTestFixtureContextFactory {
 
@@ -24,6 +26,7 @@ class IntegrationTestFixtureContextFactory {
     this.users = users;
   }
 
+  @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
     UUID contextUuid = UUID.randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
@@ -55,7 +58,12 @@ class IntegrationTestFixtureContextFactory {
     return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin);
   }
 
+  @Transactional
   public void destroy(IntegrationTestFixtureContext context) {
-    organisationJpaRepository.delete(context.organisationEntity.id);
+    try {
+      organisationJpaRepository.delete(context.organisationEntity.id);
+    } catch (EmptyResultDataAccessException ignore) {
+      // The test case probably removed it already
+    }
   }
 }

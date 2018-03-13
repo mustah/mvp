@@ -12,7 +12,7 @@ public class IntegrationTestFixtureContext {
   public final User admin;
   private final OrganisationMapper organisationMapper;
 
-  public IntegrationTestFixtureContext(
+  IntegrationTestFixtureContext(
     OrganisationEntity organisation,
     OrganisationMapper organisationMapper,
     User user,

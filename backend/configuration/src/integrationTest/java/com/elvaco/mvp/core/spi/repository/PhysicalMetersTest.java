@@ -5,9 +5,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,17 +19,10 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-  private IntegrationTestFixtureContext context;
 
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
-    destroyContext(context);
-  }
-
-  @Before
-  public void setUp() {
-    context = newContext();
   }
 
   @Test
@@ -43,7 +34,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "an-external-id",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
 
     assertThat(saved.id).isEqualTo(id);
@@ -58,7 +49,7 @@ public class PhysicalMetersTest extends IntegrationTest {
         "an-external-id",
         "unknown",
         "ELV",
-        context.organisation()
+        context().organisation()
       ));
 
     assertThat(saved.medium).isEqualTo("unknown");
@@ -84,7 +75,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-1",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -92,7 +83,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-2",
       "Vacuum",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -100,7 +91,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "external-id-3",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
 
     assertThat(physicalMeters.findAll()).hasSize(3);
@@ -114,12 +105,12 @@ public class PhysicalMetersTest extends IntegrationTest {
       "12",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
 
     assertThat(
       physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-        context.organisation().id,
+        context().organisation().id,
         "12",
         "123456789"
       )
@@ -134,7 +125,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "AAA",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -142,7 +133,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "BBB",
       "Vacuum",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
@@ -150,7 +141,7 @@ public class PhysicalMetersTest extends IntegrationTest {
       "CCC",
       "Heat",
       "ELV",
-      context.organisation()
+      context().organisation()
     ));
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);

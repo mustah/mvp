@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import org.junit.After;
 import org.junit.Before;
@@ -36,11 +35,9 @@ public class GatewayControllerTest extends IntegrationTest {
   private Organisations organisations;
 
   private Organisation dailyPlanet;
-  private IntegrationTestFixtureContext context;
 
   @Before
   public void setUp() {
-    context = newContext();
     dailyPlanet = organisations.save(DAILY_PLANET);
   }
 
@@ -48,7 +45,6 @@ public class GatewayControllerTest extends IntegrationTest {
   public void tearDown() {
     jpaRepository.deleteAll();
     organisations.deleteById(dailyPlanet.id);
-    destroyContext(context);
   }
 
   @Test
@@ -63,7 +59,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void superAdminsCanListAllGateways() {
     gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
     gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(randomUUID(), context.organisation().id, "3333", "serial-3"));
+    gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
 
     ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
 
@@ -87,7 +83,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    gateways.save(new Gateway(randomUUID(), context.organisation().id, "1111", "serial-1"));
+    gateways.save(new Gateway(randomUUID(), context().organisation().id, "1111", "serial-1"));
 
     ResponseEntity<List> gatewaysResponse = restAsUser(dailyPlanetUser(dailyPlanet))
       .get("/gateways", List.class);
@@ -100,7 +96,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
     Gateway g1 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
     Gateway g2 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(randomUUID(), context.organisation().id, "3333", "serial-3"));
+    gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
 
     List<String> gatewayIds = restAsUser(dailyPlanetUser(dailyPlanet))
       .getList("/gateways", GatewayDto.class)

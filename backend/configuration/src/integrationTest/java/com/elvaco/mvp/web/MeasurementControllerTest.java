@@ -13,7 +13,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
@@ -42,15 +41,12 @@ public class MeasurementControllerTest extends IntegrationTest {
   private PhysicalMeterEntity forceMeter;
   private OrganisationEntity wayneIndustriesEntity;
 
-  private IntegrationTestFixtureContext context;
-
   @Before
   public void setUp() {
-    context = newContext();
 
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
       randomUUID(),
-      context.organisationEntity,
+      context().organisationEntity,
       "test-butter-meter-1",
       "butter-external-id",
       "Butter",
@@ -130,12 +126,11 @@ public class MeasurementControllerTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
     organisationJpaRepository.delete(wayneIndustriesEntity);
-    destroyContext(context);
   }
 
   @Test
   public void measurementsRetrievableAtEndpoint() {
-    List<MeasurementDto> measurements = as(context.user)
+    List<MeasurementDto> measurements = as(context().user)
       .getList("/measurements", MeasurementDto.class).getBody();
 
     List<String> quantities = measurements.stream()
@@ -148,7 +143,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementRetrievableById() {
     Long butterTemperatureId = idOf("Butter temperature");
-    MeasurementDto measurement = as(context.user)
+    MeasurementDto measurement = as(context().user)
       .get("/measurements/" + butterTemperatureId, MeasurementDto.class)
       .getBody();
 
@@ -158,7 +153,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementUnitScaled() {
-    List<MeasurementDto> measurements = as(context.user)
+    List<MeasurementDto> measurements = as(context().user)
       .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
       .getBody();
 
@@ -169,7 +164,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
-    List<MeasurementDto> measurements = as(context.user)
+    List<MeasurementDto> measurements = as(context().user)
       .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
       .getBody();
 
@@ -180,7 +175,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void cannotAccessMeasurementIdOfOtherOrganisationDirectly() {
-    HttpStatus statusCode = as(context.user)
+    HttpStatus statusCode = as(context().user)
       .get("/measurements/" + idOf("Milk temperature"), MeasurementDto.class)
       .getStatusCode();
 
