@@ -6,8 +6,8 @@ spring:
     name: MVP
   datasource:
     url: jdbc:postgresql://postgresql:5432/mvp
-    username: mvp
-    password: mvp
+    username: appuser
+    password: 'RWZ8tKUzDdbncg2J'
   jpa:
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpPostgreSqlDialect
@@ -33,3 +33,12 @@ zuul:
 liquibase:
   enabled: true
   change-log: classpath:/db/changelog/db.changelog.json
+  # super user credentials
+  user: mvp
+  password: mvp
+  parameters:
+    application_user: appuser
+    application_password: 'RWZ8tKUzDdbncg2J'
+  # Not specifying this causes liquibase's autoconfiguration
+  #  to use the datasource configured for JPA (with the corresponding user)
+  url: jdbc:postgresql://localhost:5432/mvp
