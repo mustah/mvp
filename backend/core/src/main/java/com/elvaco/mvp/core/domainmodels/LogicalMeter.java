@@ -120,7 +120,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       emptyList(),
       MeterDefinition.UNKNOWN_METER,
       emptyList(),
-      emptyList(),
       null
     );
   }

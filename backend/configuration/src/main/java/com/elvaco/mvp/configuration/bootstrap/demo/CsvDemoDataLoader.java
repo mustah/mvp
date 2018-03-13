@@ -137,7 +137,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,
-            physicalMeter.readInterval,
+            physicalMeter.readIntervalMinutes,
             null
           ));
       });

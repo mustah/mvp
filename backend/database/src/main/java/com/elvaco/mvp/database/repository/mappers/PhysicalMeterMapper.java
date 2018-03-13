@@ -46,7 +46,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       entity.medium,
       entity.manufacturer,
       entity.logicalMeterId,
-      entity.readInterval,
+      entity.readIntervalMinutes,
       measurementCount.orElse(null),
       statuses.stream().map(meterStatusLogMapper::toDomainModel).collect(toList())
     );
@@ -62,7 +62,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       domainModel.medium,
       domainModel.manufacturer,
       domainModel.logicalMeterId,
-      domainModel.readInterval
+      domainModel.readIntervalMinutes
     );
   }
 }

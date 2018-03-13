@@ -22,7 +22,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
       entity.medium,
       entity.manufacturer,
       entity.logicalMeterId,
-      entity.readInterval,
+      entity.readIntervalMinutes,
       entity.getMeasurementCount().orElse(null)
     );
   }

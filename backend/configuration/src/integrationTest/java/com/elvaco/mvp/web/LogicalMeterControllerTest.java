@@ -68,8 +68,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private static int seed = 1;
 
-  private final ZonedDateTime measurementDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-  private final Date statusLogDate = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+  private final ZonedDateTime meter1ActiveDate =
+    ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
+
+  private final ZonedDateTime meter1FirstMeasurement =
+    ZonedDateTime.parse("2001-01-01T11:00:00.00Z");
+
+  private final ZonedDateTime meter2ActiveDate =
+    ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
+
+  private final ZonedDateTime meter2FirstMeasurement =
+    ZonedDateTime.parse("2001-01-01T10:15:00.00Z");
+
+  private final ZonedDateTime statusLogDate = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
 
   PhysicalMeter physicalMeter1;
   PhysicalMeter physicalMeter2;
@@ -171,8 +182,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatus() {
+    //Change to hourly measurements
+    PhysicalMeter physicalMeter1Hourly = physicalMeters.save(new PhysicalMeter(
+      physicalMeter1.id,
+      physicalMeter1.organisation,
+      physicalMeter1.address,
+      physicalMeter1.externalId,
+      physicalMeter1.medium,
+      physicalMeter1.manufacturer,
+      physicalMeter1.logicalMeterId,
+      60,
+      null
+    ));
+
     addMeasurements(
-      physicalMeter1,
+      physicalMeter1Hourly,
       physicalMeter2);
 
     ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
@@ -190,8 +214,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatusPaged() {
+    //Change to hourly measurements
+    PhysicalMeter physicalMeter1Hourly = physicalMeters.save(new PhysicalMeter(
+      physicalMeter1.id,
+      physicalMeter1.organisation,
+      physicalMeter1.address,
+      physicalMeter1.externalId,
+      physicalMeter1.medium,
+      physicalMeter1.manufacturer,
+      physicalMeter1.logicalMeterId,
+      60,
+      null
+    ));
+
     addMeasurements(
-      physicalMeter1,
+      physicalMeter1Hourly,
       physicalMeter2);
 
     Page<LogicalMeterDto> response = as(context().user)
@@ -219,8 +256,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter1.collectionStatus)
       .as("Unexpected collection status")
-      // TODO should be "90.0" when calculation takes meter status in consideration
-      .isEqualTo("0.25402443201278685");
+      .isEqualTo("91.59663865546219");
 
     assertThat(logicalMeter2.id)
       .as("Unexpected meter id")
@@ -812,8 +848,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meter1.id,
       active.id,
       active.name,
-      statusLogDate,
-      statusLogDate
+      meter1ActiveDate,
+      meter1ActiveDate.plusDays(5L)
     ));
 
     statuses.add(new MeterStatusLog(
@@ -839,7 +875,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meter3.id,
       active.id,
       active.name,
-      addDays(statusLogDate, 100),
+      statusLogDate.plusDays(100L),
       null
     ));
 
@@ -848,8 +884,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meter4.id,
       active.id,
       active.name,
-      addDays(statusLogDate, 100),
-      addDays(statusLogDate, 1000)
+      statusLogDate.plusDays(100),
+      statusLogDate.plusDays(1000)
     ));
 
     statuses.add(new MeterStatusLog(
@@ -857,8 +893,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meter4.id,
       warning.id,
       warning.name,
-      addDays(statusLogDate, 100),
-      addDays(statusLogDate, 1000)
+      statusLogDate.plusDays(100),
+      statusLogDate.plusDays(1000)
     ));
 
     for (int x = 0; x < 50; x++) {
@@ -867,8 +903,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         meter5.id,
         active.id,
         active.name,
-        addDays(statusLogDate, x),
-        addDays(statusLogDate, x)
+        statusLogDate.plusDays(x),
+        statusLogDate.plusDays(x)
       ));
     }
 
@@ -881,8 +917,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   ) {
     MeasurementUnit measurementUnit = new MeasurementUnit("2.0 m3");
 
-    List<MeasurementEntity> meter1Measurements =
-      createMeasureMents(meter1, measurementUnit, 60, 100);
+    List<MeasurementEntity> meter1Measurements = createMeasureMents(
+      meter1,
+      measurementUnit,
+      meter1FirstMeasurement,
+      meter1.readIntervalMinutes,
+      119);
 
     // Simulate lost measurements
     meter1Measurements.remove(40);
@@ -899,7 +939,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     List<MeasurementEntity> measurements = new ArrayList<>();
     measurements.addAll(meter1Measurements);
-    measurements.addAll(createMeasureMents(meter2, measurementUnit, 15, 36000));
+    measurements.addAll(
+      createMeasureMents(
+        meter2,
+        measurementUnit,
+        meter2FirstMeasurement,
+        meter2.readIntervalMinutes,
+        36000
+      )
+    );
 
     measurementJpaRepository.save(measurements);
   }
@@ -916,8 +964,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private List<MeasurementEntity> createMeasureMents(
     PhysicalMeter physicalMeter,
     MeasurementUnit measurementUnit,
-    int interval,
-    int values
+    ZonedDateTime measurementDate,
+    long interval,
+    long values
   ) {
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
 
@@ -927,7 +976,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     for (int x = 0; x < values; x++) {
       measurementEntities.add(new MeasurementEntity(
         null,
-        measurementDate.plusMinutes((long)x * interval),
+        measurementDate.plusMinutes(x * interval),
         String.valueOf(x),
         measurementUnit,
         meter
@@ -935,20 +984,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     }
 
     return measurementEntities;
-  }
-
-  private Date addMinutes(Date date, int count) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.MINUTE, count);
-    return calendar.getTime();
-  }
-
-  private Date addDays(Date date, int count) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(date);
-    calendar.add(Calendar.DATE, count);
-    return calendar.getTime();
   }
 
   private void saveMeterStatuses() {
