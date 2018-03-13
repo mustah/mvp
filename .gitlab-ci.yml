@@ -141,4 +141,6 @@ deploy:staging:
     SALTAPI_USER: "administrator"
     SALTAPI_PASS: "password2"
   script:
+    - pepper -G 'roles:salt-master'  event.fire_master update salt/fileserver/gitfs/update
+    - sleep 10
     - pepper -G 'roles:mvp-staging-app' state.apply
