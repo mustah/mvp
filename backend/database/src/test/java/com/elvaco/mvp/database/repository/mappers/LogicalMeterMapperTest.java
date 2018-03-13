@@ -34,9 +34,8 @@ public class LogicalMeterMapperTest {
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
-      new PhysicalMeterMapper(new OrganisationMapper()),
-      new GatewayMapper(),
-      new MeterStatusLogMapper()
+      new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper()),
+      new GatewayMapper()
     );
   }
 
@@ -103,7 +102,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Speed", "mps")),
           false
         ),
-        emptyList(),
         emptyList()
       )
     );
@@ -141,7 +139,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
         ),
-        emptyList(),
         emptyList()
       )
     );
@@ -179,7 +176,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
         ),
-        emptyList(),
         emptyList()
       ));
 

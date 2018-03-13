@@ -22,7 +22,7 @@ import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrg
 import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
- 
+
 public class LogicalMeterUseCases {
 
   private final LogicalMeters logicalMeters;

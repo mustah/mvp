@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static java.util.Collections.emptyList;
+
 @EqualsAndHashCode
 @ToString
 public class PhysicalMeter implements Identifiable<UUID> {
@@ -24,6 +26,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
   private final List<Measurement> measurements;
   public final long readInterval;
   private final Long measurementCount;
+  public final List<MeterStatusLog> statuses;
 
   public PhysicalMeter(
     UUID id,
@@ -34,7 +37,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String manufacturer,
     @Nullable UUID logicalMeterId,
     long readInterval,
-    @Nullable Long measurementCount
+    @Nullable Long measurementCount,
+    List<MeterStatusLog> statuses
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -46,6 +50,32 @@ public class PhysicalMeter implements Identifiable<UUID> {
     this.measurements = new ArrayList<>();
     this.readInterval = readInterval;
     this.measurementCount = measurementCount;
+    this.statuses = statuses;
+  }
+
+  public PhysicalMeter(
+    UUID id,
+    Organisation organisation,
+    String address,
+    String externalId,
+    String medium,
+    String manufacturer,
+    @Nullable UUID logicalMeterId,
+    long readInterval,
+    Long measurementCount
+  ) {
+    this(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      readInterval,
+      measurementCount,
+      emptyList()
+    );
   }
 
   public PhysicalMeter(

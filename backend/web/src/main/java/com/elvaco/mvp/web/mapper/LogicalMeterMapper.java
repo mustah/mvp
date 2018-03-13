@@ -1,9 +1,12 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
@@ -26,11 +29,13 @@ public class LogicalMeterMapper {
   }
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
+    List<MeterStatusLog> statusLogs = getMeterStatusLogs(logicalMeter);
+
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     // TODO[!must!] meter status logs should be mapped as enum in db
-    mapMarkerDto.status = logicalMeter.meterStatusLogs.stream()
+    mapMarkerDto.status = statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> Status.from(meterStatusLog.name))
       .orElse(Status.UNKNOWN);
@@ -46,18 +51,20 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeterDto toDto(LogicalMeter logicalMeter, TimeZone timeZone) {
+    List<MeterStatusLog> statusLogs = getMeterStatusLogs(logicalMeter);
+
     String created = Dates.formatTime(logicalMeter.created, timeZone);
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id.toString();
-    meterDto.status = logicalMeter.meterStatusLogs.stream()
+    meterDto.status = statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> Status.from(meterStatusLog.name))
       .orElse(Status.UNKNOWN);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
-    meterDto.statusChanged = logicalMeter.meterStatusLogs.stream()
+    meterDto.statusChanged = statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> meterStatusLog.start)
       .map(date -> Dates.formatTime(date, timeZone))
@@ -81,10 +88,18 @@ public class LogicalMeterMapper {
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
-    meterDto.statusChangelog = logicalMeter.meterStatusLogs
+    meterDto.statusChangelog = statusLogs
       .stream()
       .map((meterStatusLog) -> meterStatusLogMapper.toDto(meterStatusLog, timeZone))
       .collect(toList());
     return meterDto;
+  }
+
+  private List<MeterStatusLog> getMeterStatusLogs(LogicalMeter logicalMeter) {
+    List<MeterStatusLog> statusLogs = new ArrayList<>();
+
+    logicalMeter.physicalMeters.forEach(physicalMeter -> statusLogs.addAll(physicalMeter.statuses));
+
+    return statusLogs;
   }
 }

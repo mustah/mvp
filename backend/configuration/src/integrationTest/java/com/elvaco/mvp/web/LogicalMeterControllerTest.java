@@ -788,7 +788,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       created,
       emptyList(),
       meterDefinition,
-      emptyList(),
       emptyList()
     );
     return logicalMeterRepository.save(logicalMeter);

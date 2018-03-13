@@ -58,17 +58,29 @@ public class LogicalMeterMapperTest {
       .coordinate(new GeoCoordinate(3.1, 2.1))
       .build();
 
+    PhysicalMeter physicalMeter = new PhysicalMeter(
+      null,
+      ELVACO,
+      "",
+      "",
+      "",
+      "",
+      meterId,
+      0,
+      null,
+      singletonList(
+        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
+      )
+    );
+
     LogicalMeter logicalMeter = new LogicalMeter(
       meterId,
       "some-external-id",
       ELVACO.id,
       location,
       new Date(),
-      emptyList(),
+      singletonList(physicalMeter),
       null,
-      singletonList(
-        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
-      ),
       emptyList()
     );
 
@@ -130,24 +142,26 @@ public class LogicalMeterMapperTest {
           singletonList(
             new PhysicalMeter(
               randomUUID(),
+              ELVACO,
               "123123",
               "an-external-id",
               "Some device specific medium",
               "ELV",
-              ELVACO,
-              15
+              meterId,
+              15,
+              null,
+              singletonList(
+                new MeterStatusLog(
+                  1L,
+                  randomUUID(),
+                  2,
+                  "Ok",
+                  dateFormat().parse("2018-02-12T14:14:25"),
+                  dateFormat().parse("2018-02-13T14:14:25")
+                )
+              )
             )),
           MeterDefinition.HOT_WATER_METER,
-          singletonList(
-            new MeterStatusLog(
-              1L,
-              randomUUID(),
-              2,
-              "Ok",
-              dateFormat().parse("2018-02-12T14:14:25"),
-              dateFormat().parse("2018-02-13T14:14:25")
-            )
-          ),
           singletonList(new Gateway(
             uuidOf(expected.gateway.id),
             organisationId,

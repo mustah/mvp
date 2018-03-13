@@ -27,7 +27,6 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final String externalId;
   public final UUID organisationId;
   public final MeterDefinition meterDefinition;
-  public final List<MeterStatusLog> meterStatusLogs;
   public final List<Gateway> gateways;
   public final Double collectionPercentage;
 
@@ -39,7 +38,6 @@ public class LogicalMeter implements Identifiable<UUID> {
     Date created,
     List<PhysicalMeter> physicalMeters,
     MeterDefinition meterDefinition,
-    List<MeterStatusLog> meterStatusLogs,
     List<Gateway> gateways,
     @Nullable Double collectionPercentage
   ) {
@@ -50,7 +48,6 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.created = new Date(created.getTime());
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
-    this.meterStatusLogs = meterStatusLogs;
     this.gateways = unmodifiableList(gateways);
     this.collectionPercentage = collectionPercentage;
   }
@@ -63,7 +60,6 @@ public class LogicalMeter implements Identifiable<UUID> {
     Date created,
     List<PhysicalMeter> physicalMeters,
     MeterDefinition meterDefinition,
-    List<MeterStatusLog> meterStatusLogs,
     List<Gateway> gateways
   ) {
     this(
@@ -74,7 +70,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       created,
       physicalMeters,
       meterDefinition,
-      meterStatusLogs,
       gateways,
       null
     );
@@ -104,7 +99,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       new Date(),
       physicalMeters,
       meterDefinition,
-      emptyList(),
       emptyList(),
       null
     );
@@ -145,7 +139,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       creationTime,
       physicalMeters,
       meterDefinition,
-      meterStatusLogs,
       gateways,
       collectionPercentage
     );
@@ -160,7 +153,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       created,
       physicalMeters,
       meterDefinition,
-      meterStatusLogs,
       gateways,
       collectionPercentage
     );
@@ -175,7 +167,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       created,
       physicalMeters,
       meterDefinition,
-      meterStatusLogs,
       singletonList(gateway),
       collectionPercentage
     );
@@ -192,7 +183,6 @@ public class LogicalMeter implements Identifiable<UUID> {
       created,
       physicalMeters,
       meterDefinition,
-      meterStatusLogs,
       gateways,
       collectionPercentage
     );

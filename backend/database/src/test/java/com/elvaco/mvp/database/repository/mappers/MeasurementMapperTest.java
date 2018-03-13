@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MeasurementMapperTest {
 
   private final MeasurementMapper measurementMapper = new MeasurementMapper(
-    new PhysicalMeterMapper(new OrganisationMapper())
+    new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper())
   );
 
   @Test

@@ -109,7 +109,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               addDays(),
               emptyList(),
               meterDefinition,
-              emptyList(),
               emptyList()
             );
             PhysicalMeter physicalMeter = new PhysicalMeter(
