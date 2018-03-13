@@ -8,6 +8,7 @@ import java.util.UUID;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
@@ -59,7 +60,7 @@ public class MeasurementController {
     @RequestParam(required = false) String unit,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime from,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
-    @RequestParam String resolution
+    @RequestParam TemporalResolution resolution
   ) {
     RequestParametersAdapter requestParams = new RequestParametersAdapter();
     meters.forEach(meterId -> requestParams.add("id", meterId.toString()));

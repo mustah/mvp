@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -57,7 +58,7 @@ public class MeasurementUseCases {
     String unit,
     ZonedDateTime from,
     ZonedDateTime to,
-    String resolution
+    TemporalResolution resolution
   ) {
     return measurements.getAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
   }

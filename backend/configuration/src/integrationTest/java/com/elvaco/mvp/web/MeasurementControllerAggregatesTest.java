@@ -416,7 +416,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
   }
 
   @Test
-  public void invalidParameterValuesReturnsHttp400() {
+  public void invalidAverageParameterValuesReturnsHttp400() {
 
     ResponseEntity<ErrorMessageDto> response = as(context.user).get(
       String.format(
@@ -465,6 +465,23 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
+
+
+    response = as(context.user).get(
+      String.format(
+        "/measurements/average"
+          + "?from=2018-03-07T12:32:05.999Z"
+          + "&to=2018-03-07T12:32:05.999Z"
+          + "&quantity=" + Quantity.POWER.name
+          + "&meters=%s"
+          + "&resolution=NotAValidResolution"
+          + "&unit=W",
+        UUID.randomUUID().toString()
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Invalid 'resolution' parameter: 'NotAValidResolution'.");
   }
 
   private void newMeasurement(

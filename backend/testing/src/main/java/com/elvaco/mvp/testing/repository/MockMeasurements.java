@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
@@ -56,7 +57,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     String unit,
     ZonedDateTime from,
     ZonedDateTime to,
-    String resolution
+    TemporalResolution resolution
   ) {
     return emptyList();
   }

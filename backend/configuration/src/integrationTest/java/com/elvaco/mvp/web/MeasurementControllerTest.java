@@ -262,4 +262,5 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeasurementEntity measurementOf(String measurementQuantity) {
     return measurementQuantities.get(measurementQuantity);
   }
+
 }

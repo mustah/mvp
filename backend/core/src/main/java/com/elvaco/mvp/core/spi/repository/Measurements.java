@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Measurements {
@@ -28,6 +29,6 @@ public interface Measurements {
     String unit,
     ZonedDateTime from,
     ZonedDateTime to,
-    String resolution
+    TemporalResolution resolution
   );
 }
