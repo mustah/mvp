@@ -24,12 +24,12 @@ class IntegrationTestFixtureContextFactory {
     this.users = users;
   }
 
-  public IntegrationTestFixtureContext create() {
+  public IntegrationTestFixtureContext create(String callSiteIdentifier) {
     UUID contextUuid = UUID.randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
       new OrganisationEntity(
         contextUuid,
-        contextUuid.toString().substring(0, 10) + "-organisation",
+        callSiteIdentifier + "-organisation",
         contextUuid.toString()
       )
     );

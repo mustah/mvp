@@ -53,8 +53,12 @@ public abstract class IntegrationTest {
       .contains("postgres");
   }
 
+  protected IntegrationTestFixtureContext newContext(String identifier) {
+    return getIntegrationTestFixtureContextFactory().create(identifier);
+  }
+
   protected IntegrationTestFixtureContext newContext() {
-    return getIntegrationTestFixtureContextFactory().create();
+    return newContext(getCallerClassName());
   }
 
   protected void destroyContext(IntegrationTestFixtureContext context) {
@@ -117,6 +121,11 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.currentTimeMillis() < startTime + MAX_WAIT_TIME);
     return false;
+  }
+
+  public String getCallerClassName() {
+    StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+    return stackTraceElements[2].getClassName();
   }
 
   private IntegrationTestFixtureContextFactory getIntegrationTestFixtureContextFactory() {
