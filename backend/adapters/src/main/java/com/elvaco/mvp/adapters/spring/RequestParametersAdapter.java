@@ -10,13 +10,14 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class RequestParametersAdapter implements RequestParameters {
 
   private final MultiValueMap<String, String> delegate;
 
-  private RequestParametersAdapter(MultiValueMap<String, String> multiValueMap) {
+  private RequestParametersAdapter(@Nullable MultiValueMap<String, String> multiValueMap) {
     this.delegate = multiValueMap != null ? multiValueMap : new LinkedMultiValueMap<>();
   }
 
@@ -24,12 +25,14 @@ public class RequestParametersAdapter implements RequestParameters {
     this(new LinkedMultiValueMap<>());
   }
 
-  public static RequestParameters of(MultiValueMap<String, String> multiValueMap) {
+  public static RequestParameters of(@Nullable MultiValueMap<String, String> multiValueMap) {
     return new RequestParametersAdapter(multiValueMap);
   }
 
   public static RequestParameters of(Map<String, List<String>> multiValueMap) {
-    return of(new LinkedMultiValueMap<>(multiValueMap));
+    return of(multiValueMap != null
+                ? new LinkedMultiValueMap<>(multiValueMap)
+                : new LinkedMultiValueMap<>());
   }
 
   @Override
@@ -58,7 +61,8 @@ public class RequestParametersAdapter implements RequestParameters {
 
   @Override
   public List<String> getValues(String name) {
-    return delegate.get(name);
+    List<String> values = delegate.get(name);
+    return values != null ? values : emptyList();
   }
 
   @Nullable
