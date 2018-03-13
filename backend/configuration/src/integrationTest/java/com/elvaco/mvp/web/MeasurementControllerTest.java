@@ -13,6 +13,7 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +21,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -42,22 +42,24 @@ public class MeasurementControllerTest extends IntegrationTest {
   private PhysicalMeterEntity forceMeter;
   private OrganisationEntity wayneIndustriesEntity;
 
+  private IntegrationTestFixtureContext context;
+
   @Before
   public void setUp() {
-    OrganisationEntity elvaco = organisationJpaRepository.findOne(ELVACO.id);
-
-    wayneIndustriesEntity = organisationJpaRepository.save(
-      new OrganisationEntity(randomUUID(), "Wayne Industries", "wayne-industries")
-    );
+    context = newContext();
 
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
       randomUUID(),
-      elvaco,
+      context.organisationEntity,
       "test-butter-meter-1",
       "butter-external-id",
       "Butter",
       "ELV",
       null
+    );
+
+    wayneIndustriesEntity = organisationJpaRepository.save(
+      new OrganisationEntity(randomUUID(), "Wayne Industries", "wayne-industries")
     );
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
       randomUUID(),
@@ -128,11 +130,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
     organisationJpaRepository.delete(wayneIndustriesEntity);
+    destroyContext(context);
   }
 
   @Test
   public void measurementsRetrievableAtEndpoint() {
-    List<MeasurementDto> measurements = asElvacoUser()
+    List<MeasurementDto> measurements = as(context.user)
       .getList("/measurements", MeasurementDto.class).getBody();
 
     List<String> quantities = measurements.stream()
@@ -145,7 +148,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementRetrievableById() {
     Long butterTemperatureId = idOf("Butter temperature");
-    MeasurementDto measurement = asElvacoUser()
+    MeasurementDto measurement = as(context.user)
       .get("/measurements/" + butterTemperatureId, MeasurementDto.class)
       .getBody();
 
@@ -155,7 +158,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementUnitScaled() {
-    List<MeasurementDto> measurements = asElvacoUser()
+    List<MeasurementDto> measurements = as(context.user)
       .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
       .getBody();
 
@@ -166,7 +169,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
-    List<MeasurementDto> measurements = asElvacoUser()
+    List<MeasurementDto> measurements = as(context.user)
       .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
       .getBody();
 
@@ -177,7 +180,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void cannotAccessMeasurementIdOfOtherOrganisationDirectly() {
-    HttpStatus statusCode = asElvacoUser()
+    HttpStatus statusCode = as(context.user)
       .get("/measurements/" + idOf("Milk temperature"), MeasurementDto.class)
       .getStatusCode();
 

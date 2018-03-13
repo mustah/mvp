@@ -5,6 +5,7 @@ import java.util.List;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import org.junit.After;
@@ -32,8 +33,11 @@ public class OrganisationControllerTest extends IntegrationTest {
   private Organisation theBeatles =
     new Organisation(randomUUID(), "The Beatles", "the-beatles");
 
+  private IntegrationTestFixtureContext context;
+
   @Before
   public void setUp() {
+    context = newContext();
     secretService = organisations.save(secretService);
     wayneIndustries = organisations.save(wayneIndustries);
     theBeatles = organisations.save(theBeatles);
@@ -41,9 +45,10 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    destroyContext(context);
     organisations.findAll()
       .stream()
-      .filter(organisation -> !organisation.name.equals(ELVACO.name))
+      .filter(organisation -> !organisation.id.equals(ELVACO.id))
       .forEach(organisation -> organisations.deleteById(organisation.id));
   }
 
@@ -64,7 +69,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asAdminOfElvaco()
-      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
+      .get("/organisations/" + context.organisation().id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -80,7 +85,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
     ResponseEntity<OrganisationDto> request = asElvacoUser()
-      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
+      .get("/organisations/" + context.organisation().id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }

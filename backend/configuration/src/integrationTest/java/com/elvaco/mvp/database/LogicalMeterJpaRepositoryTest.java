@@ -14,12 +14,12 @@ import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,8 +40,11 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
   private UUID logicalMeterId;
 
+  private IntegrationTestFixtureContext context;
+
   @Before
   public void setUp() {
+    context = newContext();
     logicalMeterId = randomUUID();
 
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
@@ -55,7 +58,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeterId,
       "Some external ID",
-      ELVACO.id,
+      context.organisation().id,
       new Date(),
       meterDefinitionEntity
     );
@@ -65,7 +68,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       randomUUID(),
-      organisationRepository.findOne(ELVACO.id),
+      organisationRepository.findOne(context.organisation().id),
       "123123",
       "Some external ID",
       "Some medium",
@@ -79,6 +82,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    destroyContext(context);
   }
 
   @Test

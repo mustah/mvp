@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
@@ -25,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
@@ -49,14 +49,18 @@ public class UserControllerTest extends IntegrationTest {
 
   private final OrganisationMapper organisationMapper = new OrganisationMapper();
 
+  private IntegrationTestFixtureContext context;
+
   @Before
   public void setUp() {
+    context = newContext();
     organisations.save(WAYNE_INDUSTRIES);
   }
 
   @After
   public void tearDown() {
     organisations.deleteById(WAYNE_INDUSTRIES.id);
+    destroyContext(context);
   }
 
   @Test
@@ -188,7 +192,7 @@ public class UserControllerTest extends IntegrationTest {
   public void regularUserCannotCreateUser() {
     UserWithPasswordDto user = createUserDto("simple@user.com", "test123");
 
-    ResponseEntity<UnauthorizedDto> response = asElvacoUser().post(
+    ResponseEntity<UnauthorizedDto> response = as(context.user).post(
       "/users",
       user,
       UnauthorizedDto.class
@@ -208,7 +212,7 @@ public class UserControllerTest extends IntegrationTest {
         .build()
     );
 
-    asElvacoUser().delete("/users/" + user.id);
+    as(context.user).delete("/users/" + user.id);
 
     assertThat(users.findById(user.id).isPresent()).isTrue();
   }
@@ -218,21 +222,21 @@ public class UserControllerTest extends IntegrationTest {
     String email = "another@user.com";
     UserDto user = createUserDto(email);
 
-    asElvacoUser().put("/users", user);
+    as(context.user).put("/users", user);
 
     assertThat(users.findByEmail(email).isPresent()).isFalse();
   }
 
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
-    ResponseEntity<List<UserDto>> response = asElvacoUser().getList("/users", UserDto.class);
+    ResponseEntity<List<UserDto>> response = as(context.user).getList("/users", UserDto.class);
 
     List<String> organisationCodes = response.getBody().stream()
       .map(u -> u.organisation.code)
       .collect(toList());
 
     assertThat(organisationCodes).isNotEmpty();
-    assertThat(organisationCodes).containsOnly("elvaco");
+    assertThat(organisationCodes).containsOnly(context.organisation().code);
   }
 
   @Test
@@ -274,7 +278,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCanCreateUserOfSameOrganisation() {
     UserWithPasswordDto user = createUserDto("stranger@danger.us", "hello");
 
-    ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = as(context.admin).post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -287,7 +291,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCannotCreateUserOfDifferentOrganisation() {
     UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES);
 
-    ResponseEntity<UserDto> response = asAdminOfElvaco().post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = as(context.admin).post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -302,7 +306,7 @@ public class UserControllerTest extends IntegrationTest {
       .post("/users", createUserDto("my.colleague@elvaco.se"), UserDto.class)
       .getBody();
 
-    ResponseEntity<List<UserDto>> responseList = asAdminOfElvaco().getList("/users", UserDto.class);
+    ResponseEntity<List<UserDto>> responseList = as(context.admin).getList("/users", UserDto.class);
     assertThat(responseList.getBody()).doesNotContain(batman);
     assertThat(responseList.getBody()).contains(colleague);
   }
@@ -352,7 +356,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.password = "secret stuff";
-    user.organisation = organisationMapper.toDto(ELVACO);
+    user.organisation = organisationMapper.toDto(context.organisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -362,7 +366,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = password;
-    user.organisation = organisationMapper.toDto(ELVACO);
+    user.organisation = organisationMapper.toDto(context.organisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }

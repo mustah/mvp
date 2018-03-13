@@ -38,12 +38,21 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "@test.com")
       .password("password")
       .organisation(organisationMapper.toDomainModel(organisation))
-      .id(contextUuid)
+      .id(UUID.randomUUID())
       .asUser()
       .build();
+
     users.create(user);
 
-    return new IntegrationTestFixtureContext(organisation, user);
+    User admin = new UserBuilder().name("integration-test-admin")
+      .email(contextUuid.toString() + "-admin@test.com")
+      .password("password")
+      .organisation(organisationMapper.toDomainModel(organisation))
+      .id(UUID.randomUUID())
+      .asAdmin()
+      .build();
+    users.create(admin);
+    return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin);
   }
 
   public void destroy(IntegrationTestFixtureContext context) {
