@@ -79,7 +79,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   private Predicate whereStatusesIn(List<String> statuses) {
-    if (statuses != null && !statuses.isEmpty()) {
+    if (!statuses.isEmpty()) {
       return Q.physicalMeters.any().statusLogs.any().status.name.in(statuses);
     }
     return null;

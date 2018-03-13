@@ -149,4 +149,18 @@ public class RequestParametersTest {
 
     assertThat(parameters.getValues("organisation")).containsExactly("6");
   }
+
+  @Test
+  public void getNonExistingValuesShouldReturnEmptyList() {
+    assertThat(new RequestParametersAdapter().getValues("nothing")).isEmpty();
+  }
+
+  @Test
+  public void entrySetShouldBeEmptyWhenThereAreNoParameters() {
+    assertThat(new RequestParametersAdapter().entrySet()).isEmpty();
+    assertThat(RequestParametersAdapter.of(null).entrySet()).isEmpty();
+
+    Map<String, List<String>> multiValueMap = null;
+    assertThat(RequestParametersAdapter.of(multiValueMap).entrySet()).isEmpty();
+  }
 }
