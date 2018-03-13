@@ -28,6 +28,7 @@ liquibase:
   user: mvp
   password: mvp
   parameters:
+    application_database: mvp
     application_user: appuser
     application_password: 'RWZ8tKUzDdbncg2J'
   # Not specifying this causes liquibase's autoconfiguration
