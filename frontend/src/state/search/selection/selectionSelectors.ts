@@ -102,8 +102,6 @@ const getSelectedParameters = (state: SearchParameterState): SelectedParameters 
 export const getCities = getList(ParameterName.cities);
 export const getAddresses = getList(ParameterName.addresses);
 export const getAlarms = getList(ParameterName.alarms);
-export const getManufacturers = getList(ParameterName.manufacturers);
-export const getProductModels = getList(ParameterName.productModels);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 

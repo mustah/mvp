@@ -1,6 +1,6 @@
+import {EndPoints} from '../../../services/endPoints';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
-import {EndPoints} from '../domainModels';
-import {clearError, paginationMetaDataOf, fetchIfNeeded} from '../domainModelsActions';
+import {clearError, fetchIfNeeded, paginationMetaDataOf} from '../domainModelsActions';
 import {Gateway} from './gatewayModels';
 import {gatewaySchema} from './gatewaySchema';
 

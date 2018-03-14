@@ -29,28 +29,28 @@ describe('urlFactory', () => {
       const selection = selectedParameters({cities: ['got']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&city.id=got`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got`);
     });
 
     it('returns selected cities', () => {
       const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&city.id=got&city.id=sto&city.id=mmx`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got&city=sto&city=mmx`);
     });
 
     it('returns selected address', () => {
       const selection = selectedParameters({addresses: ['address 2']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&address.id=address%202`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202`);
     });
 
     it('returns selected addresses', () => {
       const selection = selectedParameters({addresses: ['address 2', 'storgatan 5']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&address.id=address%202&address.id=storgatan%205`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202&address=storgatan%205`);
     });
 
     it('returns selected statuses', () => {
@@ -68,8 +68,8 @@ describe('urlFactory', () => {
       });
 
       const expected =
-        `size=${pagination.size}&page=${pagination.page}&address.id=address%202&address.id=storgatan%205` +
-        '&city.id=got&city.id=sto&city.id=mmx&status=ok&status=warning';
+        `size=${pagination.size}&page=${pagination.page}&address=address%202&address=storgatan%205` +
+        '&city=got&city=sto&city=mmx&status=ok&status=warning';
       expect(encodedUriParametersForMeters(pagination, selection)).toEqual(expected);
     });
   });
@@ -91,14 +91,14 @@ describe('urlFactory', () => {
       const selection = selectedParameters({cities: ['got']});
 
       expect(encodedUriParametersForGateways(selection))
-        .toEqual('city.id=got');
+        .toEqual('city=got');
     });
 
     it('returns selected cities', () => {
       const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
 
       expect(encodedUriParametersForGateways(selection))
-        .toEqual('city.id=got&city.id=sto&city.id=mmx');
+        .toEqual('city=got&city=sto&city=mmx');
     });
 
     it('returns all selected parameters', () => {
@@ -109,8 +109,8 @@ describe('urlFactory', () => {
       });
 
       const expected =
-        `address.id=address%202&address.id=storgatan%205` +
-        '&city.id=got&city.id=sto&city.id=mmx&meterStatus=ok&meterStatus=warning';
+        `address=address%202&address=storgatan%205` +
+        '&city=got&city=sto&city=mmx&meterStatus=ok&meterStatus=warning';
       expect(encodedUriParametersForGateways(selection)).toEqual(expected);
     });
   });

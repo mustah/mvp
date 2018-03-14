@@ -1,4 +1,5 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
+import {EndPoints} from '../../services/endPoints';
 import {InvalidToken, restClient} from '../../services/restClient';
 import {ErrorResponse} from '../../types/Types';
 import {logout} from '../auth/authActions';
@@ -16,7 +17,7 @@ export const fetchDashboard = () =>
   async (dispatch) => {
     try {
       dispatch(dashboardRequest());
-      const {data: dashboard} = await restClient.get('/dashboards/current');
+      const {data: dashboard} = await restClient.get(EndPoints.dashboard);
       dispatch(dashboardSuccess(dashboard));
     } catch (error) {
       if (error instanceof InvalidToken) {

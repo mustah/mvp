@@ -6,9 +6,13 @@ import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {
   ADD_SELECTION,
-  closeSelectionPage, DESELECT_SELECTION, SELECT_PERIOD, SELECT_SAVED_SELECTION,
+  closeSelectionPage,
+  DESELECT_SELECTION,
+  SELECT_PERIOD,
+  SELECT_SAVED_SELECTION,
   selectPeriod,
-  selectSavedSelection, SET_SELECTION,
+  selectSavedSelection,
+  SET_SELECTION,
   setSelection,
   toggleSelection,
 } from '../selectionActions';
@@ -19,8 +23,9 @@ const configureMockStore = configureStore([thunk]);
 
 describe('selectionActions', () => {
 
-  const gothenburg: IdNamed = {...testData.selections.cities[0]};
-  const stockholm: IdNamed = {...testData.selections.cities[1]};
+  const country = testData.selections.locations.countries[0];
+  const gothenburg: IdNamed = {name: country.cities[0].name, id: 'got'};
+  const stockholm: IdNamed = {name: country.cities[1].name, id: 'sto'};
 
   let store;
 
@@ -42,7 +47,10 @@ describe('selectionActions', () => {
     savedSelection21,
   ];
   const rootState = {searchParameters: {selection: {...initialState}, saved}};
-  const rootStateNoSaved = {...rootState, searchParameters: {...rootState.searchParameters, saved: []}};
+  const rootStateNoSaved = {
+    ...rootState,
+    searchParameters: {...rootState.searchParameters, saved: []},
+  };
 
   describe('close selection page', () => {
 

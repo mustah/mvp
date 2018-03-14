@@ -1,8 +1,10 @@
+import {EndPoints} from '../../../services/endPoints';
 import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {allMetersSchema} from '../../domain-models-paginated/meter/meterSchema';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
-import {EndPoints} from '../domainModels';
-import {clearError, paginationMetaDataOf, fetchIfNeeded} from '../domainModelsActions';
+import {
+  clearError, fetchIfNeeded, paginationMetaDataOf,
+} from '../domainModelsActions';
 
 export const fetchAllMeters = fetchIfNeeded<Meter>(
   EndPoints.allMeters,

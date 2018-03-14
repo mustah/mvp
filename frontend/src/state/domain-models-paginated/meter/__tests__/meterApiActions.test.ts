@@ -7,7 +7,7 @@ import {initLanguage} from '../../../../i18n/i18n';
 import {RootState} from '../../../../reducers/rootReducer';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse} from '../../../../types/Types';
-import {EndPoints} from '../../../domain-models/domainModels';
+import {EndPoints} from '../../../../services/endPoints';
 import {showFailMessage} from '../../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';

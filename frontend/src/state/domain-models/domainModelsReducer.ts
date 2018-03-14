@@ -1,5 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
+import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {
@@ -13,7 +14,6 @@ import {
 } from '../search/selection/selectionActions';
 import {
   DomainModelsState,
-  EndPoints,
   Normalized,
   NormalizedState,
   ObjectsById,
@@ -47,16 +47,28 @@ const setEntities = <T extends Identifiable>(
   state: NormalizedState<T>,
   {payload}: Action<Normalized<T>>,
 ): NormalizedState<T> => {
-  const result: uuid[] = Array.isArray(payload.result) ? payload.result : payload.result[entity];
   const entities: ObjectsById<T> = payload.entities[entity];
-  return {
-    ...state,
-    isFetching: false,
-    isSuccessfullyFetched: true,
-    entities,
-    result,
-    total: result.length,
-  };
+  if (Array.isArray(payload.result)) {
+    const {result} = payload;
+    return {
+      ...state,
+      isFetching: false,
+      isSuccessfullyFetched: true,
+      entities,
+      result,
+      total: result.length,
+    };
+  } else {
+    const result = entities ? Object.keys(entities) : [];
+    return {
+      ...state,
+      isFetching: false,
+      isSuccessfullyFetched: true,
+      entities,
+      result,
+      total: result.length,
+    };
+  }
 };
 
 const addEntity =
@@ -168,13 +180,12 @@ const resetStateReducer = <T extends Identifiable>(
   }
 };
 
+export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);
+export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections);
 export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.selections);
 export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections);
-export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections);
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
-export const manufacturers = reducerFor<SelectionEntity>('manufacturers', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
-export const productModels = reducerFor<SelectionEntity>('productModels', EndPoints.selections);
 export const gateways = reducerFor<Gateway>('gateways', EndPoints.gateways, resetStateReducer);
 export const measurements = reducerFor<Measurement>(
   'measurements',
@@ -190,14 +201,13 @@ export const organisations = reducerFor<Organisation>(
 );
 
 export const domainModels = combineReducers<DomainModelsState>({
+  countries,
+  cities,
   addresses,
   alarms,
-  cities,
   gatewayStatuses,
   gateways,
-  manufacturers,
   meterStatuses,
-  productModels,
   users,
   measurements,
   allMeters,

@@ -1,31 +1,13 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
+import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
-import {
-  DomainModelsState,
-  EndPoints,
-  Normalized,
-  NormalizedState,
-  SelectionEntity,
-} from '../domainModels';
-import {
-  deleteRequestOf,
-  getEntityRequestOf,
-  getRequestOf,
-  postRequestOf,
-  putRequestOf,
-} from '../domainModelsActions';
-import {
-  addresses,
-  cities,
-  domainModels,
-  gateways,
-  initialDomain,
-  users,
-} from '../domainModelsReducer';
-import {selectionsSchema} from '../domainModelsSchemas';
+import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
+import {deleteRequestOf, getEntityRequestOf, getRequestOf, postRequestOf, putRequestOf} from '../domainModelsActions';
+import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
+import {selectionsSchema} from '../selections/selectionsSchemas';
 import {clearErrorGateways} from '../gateway/gatewayApiActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';
@@ -33,6 +15,7 @@ import {Role, User, UserState} from '../user/userModels';
 describe('domainModelsReducer', () => {
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
+  const normalizedSelections = normalize(testData.selections, selectionsSchema);
 
   describe('/selections', () => {
     it('does not clear on change in selections', () => {
@@ -75,20 +58,35 @@ describe('domainModelsReducer', () => {
     });
 
     it('has fetched selections successfully ', () => {
-      const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(addresses(initialState, selectionsRequest.success(payload))).toEqual({
+      expect(addresses(initialState, selectionsRequest.success(normalizedSelections))).toEqual({
         ...initialState,
         isSuccessfullyFetched: true,
         entities: {
-          1: {id: 1, name: 'Stampgatan 46', cityId: 'got'},
-          2: {id: 2, name: 'Stampgatan 33', cityId: 'got'},
-          3: {id: 3, name: 'Kungsgatan 44', cityId: 'sto'},
-          4: {id: 4, name: 'Drottninggatan 1', cityId: 'mmx'},
-          5: {id: 5, name: 'Åvägen 9', cityId: 'kub'},
+          'sweden,göteborg,kungsgatan': {
+            id: 'sweden,göteborg,kungsgatan',
+            name: 'kungsgatan',
+            parentId: 'sweden,göteborg',
+          },
+          'sweden,stockholm,drottninggatan': {
+            id: 'sweden,stockholm,drottninggatan',
+            name: 'drottninggatan',
+            parentId: 'sweden,stockholm',
+          },
+          'sweden,stockholm,kungsgatan': {
+            id: 'sweden,stockholm,kungsgatan',
+            name: 'kungsgatan',
+            parentId: 'sweden,stockholm',
+          },
+          'finland,vasa,kungsgatan': {id: 'finland,vasa,kungsgatan', name: 'kungsgatan', parentId: 'finland,vasa'},
         },
-        result: [1, 2, 3, 4, 5],
-        total: 5,
+        result: [
+          'sweden,göteborg,kungsgatan',
+          'sweden,stockholm,kungsgatan',
+          'sweden,stockholm,drottninggatan',
+          'finland,vasa,kungsgatan',
+        ],
+        total: 4,
       });
     });
 
@@ -117,19 +115,33 @@ describe('domainModelsReducer', () => {
     });
 
     it('has fetched selections successfully', () => {
-      const payload = normalize(testData.selections, selectionsSchema);
 
-      expect(cities(initialState, selectionsRequest.success(payload))).toEqual({
+      expect(cities(initialState, selectionsRequest.success(normalizedSelections))).toEqual({
         ...initialState,
         isSuccessfullyFetched: true,
         entities: {
-          got: {id: 'got', name: 'Göteborg'},
-          sto: {id: 'sto', name: 'Stockholm'},
-          mmx: {id: 'mmx', name: 'Malmö'},
-          kub: {id: 'kub', name: 'Kungsbacka'},
+          'sweden,göteborg': {
+            id: 'sweden,göteborg',
+            name: 'göteborg',
+            parentId: 'sweden',
+            addresses: ['sweden,göteborg,kungsgatan'],
+          },
+          'sweden,stockholm': {
+            id: 'sweden,stockholm',
+            name: 'stockholm',
+            parentId: 'sweden',
+            addresses: ['sweden,stockholm,kungsgatan', 'sweden,stockholm,drottninggatan'],
+          },
+          'finland,vasa': {
+            id: 'finland,vasa',
+            name: 'vasa',
+            parentId: 'finland',
+            addresses: ['finland,vasa,kungsgatan'],
+          },
+
         },
-        result: ['got', 'sto', 'mmx', 'kub'],
-        total: 4,
+        result: ['sweden,göteborg', 'sweden,stockholm', 'finland,vasa'],
+        total: 3,
       });
     });
 
@@ -245,16 +257,15 @@ describe('domainModelsReducer', () => {
   describe('clear domainModels', () => {
     it('resets all domain models', () => {
       const initialState: DomainModelsState = {
+        countries: initialDomain(),
+        cities: initialDomain(),
         addresses: initialDomain(),
         gateways: initialDomain(),
-        cities: initialDomain(),
         alarms: initialDomain(),
         gatewayStatuses: initialDomain(),
-        manufacturers: initialDomain(),
         measurements: initialDomain(),
         allMeters: initialDomain(),
         meterStatuses: initialDomain(),
-        productModels: initialDomain(),
         users: initialDomain(),
         organisations: initialDomain(),
       };

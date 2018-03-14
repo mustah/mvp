@@ -4,7 +4,7 @@ import {routes} from '../../app/routes';
 import {GetState} from '../../reducers/rootReducer';
 import {makeToken} from '../../services/authService';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
-import {EndPoints} from '../../state/domain-models/domainModels';
+import {EndPoints} from '../../services/endPoints';
 import {User} from '../../state/domain-models/user/userModels';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 

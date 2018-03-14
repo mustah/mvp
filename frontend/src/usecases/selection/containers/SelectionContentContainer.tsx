@@ -27,9 +27,7 @@ import {
   getCities,
   getCitiesSelection,
   getGatewayStatuses,
-  getManufacturers,
   getMeterStatuses,
-  getProductModels,
 } from '../../../state/search/selection/selectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SelectionQuantity} from '../components/SelectionQuantity';
@@ -39,8 +37,6 @@ interface StateToProps {
   cities: SelectionListItem[];
   addresses: SelectionListItem[];
   alarms: SelectionListItem[];
-  manufacturers: SelectionListItem[];
-  productModels: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   gatewayStatuses: SelectionListItem[];
   citiesSelection: ObjectsById<IdNamed>;
@@ -71,8 +67,6 @@ class SelectionContent extends React.Component<Props> {
       cities,
       addresses,
       alarms,
-      manufacturers,
-      productModels,
       meterStatuses,
       gatewayStatuses,
       citiesSelection,
@@ -84,10 +78,6 @@ class SelectionContent extends React.Component<Props> {
     const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
     const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
     const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.alarms});
-    const selectManufacturer = (selection: IdNamed) =>
-      toggleSelection({...selection, parameter: ParameterName.manufacturers});
-    const selectProductModel = (selection: IdNamed) =>
-      toggleSelection({...selection, parameter: ParameterName.productModels});
     const selectMeterStatus = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.meterStatuses});
     const selectGatewayStatus = (selection: IdNamed) =>
@@ -96,8 +86,6 @@ class SelectionContent extends React.Component<Props> {
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
     const alarmSelectionText = translate('alarm') + ': ';
-    const manufacturerSelectionText = translate('manufacturer') + ': ';
-    const productModelSelectionText = translate('product model') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
 
@@ -118,22 +106,12 @@ class SelectionContent extends React.Component<Props> {
               selectionText={addressSelectionText}
               select={selectAddress}
               parentSelectionLookup={citiesSelection}
-              parentIdentifier="cityId"
-            />
-            <SimpleDropdownSelector
-              list={productModels}
-              selectionText={productModelSelectionText}
-              select={selectProductModel}
+              parentIdentifier="parentId"
             />
             <SimpleDropdownSelector
               list={gatewayStatuses}
               selectionText={gatewayStatusSelectionText}
               select={selectGatewayStatus}
-            />
-            <SimpleDropdownSelector
-              list={manufacturers}
-              selectionText={manufacturerSelectionText}
-              select={selectManufacturer}
             />
             <SimpleDropdownSelector
               list={meterStatuses}
@@ -166,8 +144,6 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     citiesSelection: getCitiesSelection(lookupState).entities,
     addresses: getAddresses(lookupState),
     alarms: getAlarms(lookupState),
-    manufacturers: getManufacturers(lookupState),
-    productModels: getProductModels(lookupState),
     meterStatuses: getMeterStatuses(lookupState),
     gatewayStatuses: getGatewayStatuses(lookupState),
     isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,

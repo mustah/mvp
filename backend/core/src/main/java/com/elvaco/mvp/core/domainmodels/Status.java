@@ -12,7 +12,7 @@ public enum Status {
   UNKNOWN("unknown"),
   MAINTENANCE_SCHEDULED("maintenance scheduled");
 
-  private final String name;
+  public final String name;
 
   Status(String name) {
     this.name = name;

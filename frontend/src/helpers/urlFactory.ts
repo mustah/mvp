@@ -17,8 +17,8 @@ const parameterCallbacks: ParameterCallbacks = {
 };
 
 const baseParameterNames: ParameterNames = {
-  cities: 'city.id',
-  addresses: 'address.id',
+  cities: 'city',
+  addresses: 'address',
   alarms: 'alarm',
   productModels: 'productModel',
   manufacturers: 'manufacturer',

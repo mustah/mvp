@@ -6,18 +6,6 @@ import {MeasurementState} from './measurement/measurementModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
 
-export const enum EndPoints {
-  selections = '/selections',
-  meters = '/meters',
-  allMeters = '/meters/all',
-  gateways = '/gateways',
-  users = '/users',
-  authenticate = '/authenticate',
-  logout = '/logout',
-  measurements = '/measurements',
-  organisations = '/organisations',
-}
-
 export interface ObjectsById<T extends Identifiable> {
   [id: string]: T;
 }
@@ -46,14 +34,13 @@ export type SelectionEntity = IdNamed | Address;
 export type SelectionEntityState = NormalizedState<SelectionEntity>;
 
 export interface DomainModelsState {
+  countries: SelectionEntityState;
+  cities: SelectionEntityState;
   addresses: SelectionEntityState;
   alarms: SelectionEntityState;
-  cities: SelectionEntityState;
   gatewayStatuses: SelectionEntityState;
-  gateways: GatewaysState;
-  manufacturers: SelectionEntityState;
   meterStatuses: SelectionEntityState;
-  productModels: SelectionEntityState;
+  gateways: GatewaysState;
   measurements: MeasurementState;
   allMeters: NormalizedState<Meter>;
   users: UserState;

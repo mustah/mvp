@@ -1,4 +1,4 @@
-import {EndPoints} from '../domainModels';
+import {EndPoints} from '../../../services/endPoints';
 import {fetchIfNeeded} from '../domainModelsActions';
 import {Measurement} from './measurementModels';
 import {measurementSchema} from './measurementSchema';

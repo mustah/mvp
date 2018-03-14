@@ -4,7 +4,7 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
-import {EndPoints} from '../../../state/domain-models/domainModels';
+import {EndPoints} from '../../../services/endPoints';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {
   AUTH_SET_USER_INFO,

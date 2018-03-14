@@ -1,8 +1,5 @@
-import {normalize} from 'normalizr';
-import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
-import {selectionsSchema} from '../../../domain-models/domainModelsSchemas';
 import {
   ADD_SELECTION,
   DESELECT_SELECTION,
@@ -20,89 +17,15 @@ describe('selectionReducer', () => {
     name: 'something else',
     isChanged: false,
     selected: {
-      cities: ['got', 'sto'],
+      cities: ['sweden,gothenburg', 'sweden,stockholm'],
       addresses: [1, 2, 3],
       period: Period.latest,
     },
   };
 
-  describe('normalize state', () => {
-
-    it('normalized selection data', () => {
-      const normalizedData = normalize(testData.selections, selectionsSchema);
-
-      expect(normalizedData).toEqual({
-        entities: {
-          addresses: {
-            1: {
-              id: 1,
-              name: 'Stampgatan 46',
-              cityId: 'got',
-            },
-            2: {
-              id: 2,
-              name: 'Stampgatan 33',
-              cityId: 'got',
-            },
-            3: {
-              id: 3,
-              name: 'Kungsgatan 44',
-              cityId: 'sto',
-            },
-            4: {
-              id: 4,
-              name: 'Drottninggatan 1',
-              cityId: 'mmx',
-            },
-            5: {
-              id: 5,
-              name: 'Åvägen 9',
-              cityId: 'kub',
-            },
-          },
-          cities: {
-            got: {
-              id: 'got',
-              name: 'Göteborg',
-            },
-            kub: {
-              id: 'kub',
-              name: 'Kungsbacka',
-            },
-            mmx: {
-              id: 'mmx',
-              name: 'Malmö',
-            },
-            sto: {
-              id: 'sto',
-              name: 'Stockholm',
-            },
-          },
-        },
-        result: {
-          addresses: [
-            1,
-            2,
-            3,
-            4,
-            5,
-          ],
-          alarms: [],
-          users: [],
-          cities: [
-            'got',
-            'sto',
-            'mmx',
-            'kub',
-          ],
-          manufacturers: [],
-          productModels: [],
-          meterStatuses: [],
-          gatewayStatuses: [],
-        },
-      });
-    });
-  });
+  const gothenburg: IdNamed = {id: 'sweden,gothenburg', name: 'gothenburg'};
+  const stockholm: IdNamed = {id: 'sweden,stockholm', name: 'stockholm'};
+  const malmo: IdNamed = {id: 'sweden,malmo', name: 'malmo'};
 
   describe('select saved selections', () => {
 
@@ -117,7 +40,7 @@ describe('selectionReducer', () => {
 
     it('adds to selected list', () => {
       const state = {...initialState};
-      const stockholm: IdNamed = {...testData.selections.cities[0]};
+      const stockholm: IdNamed = {id: 'sweden,stockholm', name: 'stockholm'};
       const selectionParameters: SelectionParameter = {
         ...stockholm,
         parameter: ParameterName.cities,
@@ -134,9 +57,6 @@ describe('selectionReducer', () => {
     });
 
     it('adds array of filterParams to selected list', () => {
-      const gothenburg: IdNamed = {...testData.selections.cities[0]};
-      const stockholm: IdNamed = {...testData.selections.cities[1]};
-      const malmo: IdNamed = {...testData.selections.cities[2]};
 
       const selectionParameterItem: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
       const selectionParametersArray: SelectionParameter = {
@@ -167,8 +87,6 @@ describe('selectionReducer', () => {
     });
 
     it('set filterParam as selected list', () => {
-      const gothenburg: IdNamed = {...testData.selections.cities[0]};
-      const stockholm: IdNamed = {...testData.selections.cities[1]};
 
       const selectionParameterInitial: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
       const selectionParametersFinal: SelectionParameter = {
@@ -198,9 +116,6 @@ describe('selectionReducer', () => {
     });
 
     it('set array of filterParams as selected list', () => {
-      const gothenburg: IdNamed = {...testData.selections.cities[0]};
-      const stockholm: IdNamed = {...testData.selections.cities[1]};
-      const malmo: IdNamed = {...testData.selections.cities[2]};
 
       const selectionParameterInitial: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
       const selectionParametersFinal: SelectionParameter = {
@@ -248,7 +163,6 @@ describe('selectionReducer', () => {
   describe('deselect', () => {
 
     it('will deselect selected city', () => {
-      const gothenburg: IdNamed = testData.selections.cities[0];
       const parameter: SelectionParameter = {
         parameter: ParameterName.cities,
         ...gothenburg,
@@ -260,7 +174,7 @@ describe('selectionReducer', () => {
         id: 5,
         name: 'something else',
         isChanged: true,
-        selected: {cities: ['sto'], addresses: [1, 2, 3], period: Period.latest},
+        selected: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
       });
     });
   });

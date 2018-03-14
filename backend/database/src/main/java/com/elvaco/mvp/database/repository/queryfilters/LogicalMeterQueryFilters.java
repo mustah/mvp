@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
+import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,6 +18,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toDate;
+import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
+import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
@@ -31,10 +34,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
 
     FILTERABLE_PROPERTIES.put("manufacturer", Q.physicalMeters.any().manufacturer::eq);
-
-    FILTERABLE_PROPERTIES.put("city.id", Q.location.city::eq);
-
-    FILTERABLE_PROPERTIES.put("address.id", Q.location.streetAddress::eq);
 
     FILTERABLE_PROPERTIES.put(
       "organisation",
@@ -56,6 +55,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     }
     return builder
       .and(whereStatusesIn(parameters.getValues("status")))
+      .and(whereCity(toCityParameters(parameters.getValues("city"))))
+      .and(whereAddress(toAddressParameters(parameters.getValues("address"))))
       .and(propertiesExpression(parameters))
       .getValue();
   }
@@ -81,6 +82,25 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private Predicate whereStatusesIn(List<String> statuses) {
     if (!statuses.isEmpty()) {
       return Q.physicalMeters.any().statusLogs.any().status.name.in(statuses);
+    }
+    return null;
+  }
+
+  @Nullable
+  private Predicate whereCity(Parameters parameters) {
+    if (parameters.hasCities()) {
+      return Q.location.country.toLowerCase().in(parameters.countries)
+        .and(Q.location.city.toLowerCase().in(parameters.cities));
+    }
+    return null;
+  }
+
+  @Nullable
+  private Predicate whereAddress(Parameters parameters) {
+    if (parameters.hasAddresses()) {
+      return Q.location.country.toLowerCase().in(parameters.countries)
+        .and(Q.location.city.toLowerCase().in(parameters.cities))
+        .and(Q.location.streetAddress.toLowerCase().in(parameters.addresses));
     }
     return null;
   }

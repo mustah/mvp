@@ -1,26 +1,16 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {
-  createEmptyAction,
-  createPayloadAction,
-  EmptyAction,
-  PayloadAction,
-} from 'react-redux-typescript';
+import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
+import {EndPoints} from '../../services/endPoints';
 import {InvalidToken, restClient} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
 import {limit} from '../ui/pagination/paginationReducer';
-import {
-  DomainModelsState,
-  EndPoints,
-  Normalized,
-  NormalizedState,
-  RequestType,
-} from './domainModels';
+import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
 
@@ -109,7 +99,10 @@ export const fetchIfNeeded = <T extends Identifiable>(
   entityType: keyof DomainModelsState,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
 ) => {
-  const formatData = (data) => normalize(data, schema);
+  const formatData = (data) => {
+    return normalize(data, schema);
+  };
+
   const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
 
   return (requestData?: string) => (dispatch, getState: GetState) => {

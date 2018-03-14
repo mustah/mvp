@@ -51,4 +51,8 @@ public class Location {
   public boolean hasCoordinates() {
     return coordinate != null;
   }
+
+  public boolean isKnownAddress() {
+    return getStreetAddress() != null;
+  }
 }

@@ -124,7 +124,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
       String city = seed % 2 == 0 ? "Varberg" : "Östersund";
       String streetAddress = seed % 2 == 0 ? "Drottninggatan " + seed : "Kungsgatan " + seed;
-      saveLogicalMeter(seed, meterDefinition, streetAddress, city);
+      saveLogicalMeter(seed, meterDefinition, streetAddress, city, "sweden");
     }
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
@@ -299,6 +299,61 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThatStatusIsOk(response);
     assertThat(response.getBody()).hasSize(2);
+  }
+
+  @Test
+  public void findAll_FilterOnCity() {
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList("/meters/all?city=sweden,Varberg", LogicalMeterDto.class);
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(27);
+  }
+
+  @Test
+  public void findAll_FilterOnAddress() {
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList("/meters/all?address=Sweden,Varberg,Drottninggatan 2", LogicalMeterDto.class);
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(1);
+  }
+
+  @Test
+  public void findAll_FilterOnCityAndAddress() {
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList(
+        "/meters/all?address=Sweden,Varberg,Drottninggatan 2&city=sweden,varberg",
+        LogicalMeterDto.class
+      );
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(1);
+  }
+
+  @Test
+  public void findAll_FilterOnSeveralAddresses() {
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList(
+        "/meters/all?address=Sweden,Varberg,Drottninggatan 2&"
+          + "address=sweden,varberg, drottninggatan 4",
+        LogicalMeterDto.class
+      );
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).hasSize(2);
+  }
+
+  @Test
+  public void findAll_FilterOnDifferentCityAndAddressCity() {
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList(
+        "/meters/all?address=Sweden,Varberg,Drottninggatan 2&city=sweden,stockholm",
+        LogicalMeterDto.class
+      );
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody()).isEmpty();
   }
 
   /**
@@ -641,7 +696,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     int seed,
     MeterDefinition meterDefinition,
     String streetAddress,
-    String city
+    String city,
+    String country
   ) {
     Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
     Calendar calendar = Calendar.getInstance();
@@ -654,6 +710,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "external-id-" + seed,
       context().organisation().id,
       new LocationBuilder()
+        .country(country)
         .city(city)
         .streetAddress(streetAddress)
         .coordinate(new GeoCoordinate(1.1, 123.12))
