@@ -8,6 +8,8 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 
 class IntegrationTestFixtureContextFactory {
 
@@ -24,12 +26,13 @@ class IntegrationTestFixtureContextFactory {
     this.users = users;
   }
 
-  public IntegrationTestFixtureContext create() {
+  @Transactional
+  public IntegrationTestFixtureContext create(String callSiteIdentifier) {
     UUID contextUuid = UUID.randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
       new OrganisationEntity(
         contextUuid,
-        contextUuid.toString().substring(0, 10) + "-organisation",
+        callSiteIdentifier + "-organisation",
         contextUuid.toString()
       )
     );
@@ -38,15 +41,29 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "@test.com")
       .password("password")
       .organisation(organisationMapper.toDomainModel(organisation))
-      .id(contextUuid)
+      .id(UUID.randomUUID())
       .asUser()
       .build();
+
     users.create(user);
 
-    return new IntegrationTestFixtureContext(organisation, user);
+    User admin = new UserBuilder().name("integration-test-admin")
+      .email(contextUuid.toString() + "-admin@test.com")
+      .password("password")
+      .organisation(organisationMapper.toDomainModel(organisation))
+      .id(UUID.randomUUID())
+      .asAdmin()
+      .build();
+    users.create(admin);
+    return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin);
   }
 
+  @Transactional
   public void destroy(IntegrationTestFixtureContext context) {
-    organisationJpaRepository.delete(context.organisationEntity.id);
+    try {
+      organisationJpaRepository.delete(context.organisationEntity.id);
+    } catch (EmptyResultDataAccessException ignore) {
+      // The test case probably removed it already
+    }
   }
 }

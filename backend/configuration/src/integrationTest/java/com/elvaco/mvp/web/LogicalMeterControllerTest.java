@@ -54,7 +54,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -166,7 +165,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findById() {
-    ResponseEntity<LogicalMeterDto> response = asElvacoUser()
+    ResponseEntity<LogicalMeterDto> response = as(context().user)
       .get("/meters/" + physicalMeter1.logicalMeterId, LogicalMeterDto.class);
 
     LogicalMeterDto logicalMeterDto = response.getBody();
@@ -194,14 +193,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllPaged() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage("/meters", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
     assertThat(response.getNumberOfElements()).isEqualTo(20);
     assertThat(response.getTotalPages()).isEqualTo(3);
 
-    response = asElvacoUser()
+    response = as(context().user)
       .getPage("/meters?page=2", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
@@ -261,7 +260,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAll() {
-    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList("/meters/all", LogicalMeterDto.class);
 
     assertThatStatusIsOk(response);
@@ -270,14 +269,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_FilterOnMeterId() {
-    LogicalMeterDto meter = asElvacoUser()
+    LogicalMeterDto meter = as(context().user)
       .getList("/meters/all", LogicalMeterDto.class)
       .getBody()
       .stream()
       .findFirst()
       .orElseThrow(() -> new RuntimeException("No meters found"));
 
-    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList("/meters/all?id=" + meter.id, LogicalMeterDto.class);
 
     assertThat(response.getBody()).hasSize(1);
@@ -286,7 +285,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_FilterOnStatusInfo() {
-    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList("/meters/all?status=info", LogicalMeterDto.class);
 
     assertThatStatusIsOk(response);
@@ -295,7 +294,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAll_FilterOnStatusInfoAndWarning() {
-    ResponseEntity<List<LogicalMeterDto>> response = asElvacoUser()
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList("/meters/all?status=info&status=warning", LogicalMeterDto.class);
 
     assertThatStatusIsOk(response);
@@ -308,14 +307,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    */
   @Test
   public void findAllWithStatusUnderPeriodExcludeLate() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-01T01:00:00.00Z"
-        + "&before=2001-01-01T23:00:00.00Z"
-        + "&status=active"
-        + "&size=20"
-        + "&page=0"
-        + "&sort=id,asc",
+          + "&before=2001-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -351,14 +350,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    */
   @Test
   public void findAllWithStatusUnderPeriodExcludeEarly() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-        + "&before=2005-01-01T23:00:00.00Z"
-        + "&status=active"
-        + "&size=20"
-        + "&page=0"
-        + "&sort=id,asc",
+          + "&before=2005-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -382,14 +381,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithStatusUnderPeriodExcludeEarlyAndLate() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-        + "&before=2001-01-20T23:00:00.00Z"
-        + "&status=active"
-        + "&size=20"
-        + "&page=0"
-        + "&sort=id,asc",
+          + "&before=2001-01-20T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -425,14 +424,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    */
   @Test
   public void findAllWithStatusThatIsWithoutStopDate() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-        + "&before=2015-01-01T23:00:00.00Z"
-        + "&status=active"
-        + "&size=20"
-        + "&page=0"
-        + "&sort=id,asc",
+          + "&before=2015-01-01T23:00:00.00Z"
+          + "&status=active"
+          + "&size=20"
+          + "&page=0"
+          + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -452,7 +451,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithPredicates() {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(5);
@@ -465,12 +464,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-meter",
-      ELVACO.id,
+      context().organisation().id,
       hotWaterMeterDefinition
     ));
 
-    Page<LogicalMeterDto> response = asElvacoUser()
-      .getPage("/meters?organisation=" + ELVACO.id, LogicalMeterDto.class);
+    Page<LogicalMeterDto> response = as(context().user)
+      .getPage("/meters?organisation=" + context().organisation().id, LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isGreaterThanOrEqualTo(1L);
   }
@@ -482,14 +481,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
-      ELVACO.id,
+      context().organisation().id,
       hotWaterMeterDefinition
     ));
 
     Page<LogicalMeterDto> response = restClient()
       .loginWith("me@myorg.com", "secr3t")
       .tokenAuthorization()
-      .getPage("/meters?organisation=" + ELVACO.id, LogicalMeterDto.class);
+      .getPage("/meters?organisation=" + context().organisation().id, LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0L);
   }
@@ -506,7 +505,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
-      ELVACO.id,
+      context().organisation().id,
       hotWaterMeterDefinition
     ));
 
@@ -528,7 +527,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       hotWaterMeterDefinition
     ));
 
-    ResponseEntity<ErrorMessageDto> response = asElvacoUser()
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get("/meters/" + theirMeter.id, ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
@@ -536,7 +535,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void meterNotFound() {
-    ResponseEntity<ErrorMessageDto> response = asElvacoUser()
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
@@ -544,7 +543,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMapDataForLogicalMeters() {
-    ResponseEntity<List> response = asElvacoUser()
+    ResponseEntity<List> response = as(context().user)
       .get("/meters/map-data", List.class);
 
     assertThatStatusIsOk(response);
@@ -554,13 +553,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findMeasurementsForLogicalMeter() {
     LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
-      new LogicalMeter(randomUUID(), "external-id", ELVACO.id, districtHeatingMeterDefinition)
+      new LogicalMeter(
+        randomUUID(),
+        "external-id",
+        context().organisation().id,
+        districtHeatingMeterDefinition
+      )
     );
 
     PhysicalMeter physicalMeter = physicalMeters.save(
       new PhysicalMeter(
         randomUUID(),
-        ELVACO,
+        context().organisation(),
         "111-222-333-444",
         "external-id",
         "Some device specific medium name",
@@ -584,7 +588,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     UUID meterId = savedLogicalMeter.id;
 
-    ResponseEntity<List<MeasurementDto>> response = asElvacoUser()
+    ResponseEntity<List<MeasurementDto>> response = as(context().user)
       .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);
 
     List<MeasurementDto> measurementDtos = response.getBody();
@@ -623,7 +627,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Function<LogicalMeterDto, String> actual,
     String expected
   ) {
-    Page<LogicalMeterDto> response = asElvacoUser()
+    Page<LogicalMeterDto> response = as(context().user)
       .getPage(url, LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);
@@ -648,7 +652,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter logicalMeter = new LogicalMeter(
       randomUUID(),
       "external-id-" + seed,
-      ELVACO.id,
+      context().organisation().id,
       new LocationBuilder()
         .city(city)
         .streetAddress(streetAddress)
@@ -771,7 +775,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeters.save(
       new PhysicalMeter(
         randomUUID(),
-        ELVACO,
+        context().organisation(),
         "111-222-333-444-" + seed,
         externalId,
         "Some device specific medium name",

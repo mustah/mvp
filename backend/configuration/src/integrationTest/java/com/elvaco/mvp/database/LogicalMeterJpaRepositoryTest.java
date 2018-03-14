@@ -19,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Collections.singleton;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +54,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeterId,
       "Some external ID",
-      ELVACO.id,
+      context().organisation().id,
       new Date(),
       meterDefinitionEntity
     );
@@ -65,7 +64,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
     PhysicalMeterEntity physicalMeterEntity = new PhysicalMeterEntity(
       randomUUID(),
-      organisationRepository.findOne(ELVACO.id),
+      organisationRepository.findOne(context().organisation().id),
       "123123",
       "Some external ID",
       "Some medium",

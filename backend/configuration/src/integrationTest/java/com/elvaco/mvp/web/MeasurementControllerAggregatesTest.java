@@ -16,7 +16,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
@@ -43,20 +42,17 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
   private MeterDefinitionMapper meterDefinitionMapper;
 
-  private IntegrationTestFixtureContext context;
 
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
     meterDefinitionMapper = new MeterDefinitionMapper();
-    context = newContext();
   }
 
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
-    destroyContext(context);
   }
 
   @Test
@@ -68,7 +64,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -113,7 +109,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 3.0, "W");
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -153,7 +149,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:02Z"), "Power", 4.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:03Z"), "Power", 6.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -190,7 +186,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 4.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01+01:00"), "Power", 8.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -200,7 +196,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementAggregateDto.class);
-    ResponseEntity<MeasurementAggregateDto> responseForNonZuluRequest = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> responseForNonZuluRequest = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T03:00:00.000-02:00"
@@ -233,7 +229,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
     );
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -254,7 +250,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -276,7 +272,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -306,7 +302,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 40000.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -339,7 +335,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 2.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-06T05:00:00.000Z"
@@ -380,7 +376,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-02-07T05:00:01Z"), "Power", 2.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<MeasurementAggregateDto> response = as(context.user).get(
+    ResponseEntity<MeasurementAggregateDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-01-01T05:00:00.000Z"
@@ -418,7 +414,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
   @Test
   public void invalidAverageParameterValuesReturnsHttp400() {
 
-    ResponseEntity<ErrorMessageDto> response = as(context.user).get(
+    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=thisIsNotAValidTimestamp"
@@ -434,7 +430,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'from' timestamp: 'thisIsNotAValidTimestamp'.");
 
-    response = as(context.user).get(
+    response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-07T12:32:05.999Z"
@@ -451,7 +447,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       "Invalid 'to' timestamp: 'thisIsNotAValidTimestamp'.");
 
 
-    response = as(context.user).get(
+    response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-07T12:32:05.999Z"
@@ -467,7 +463,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
 
 
-    response = as(context.user).get(
+    response = as(context().user).get(
       String.format(
         "/measurements/average"
           + "?from=2018-03-07T12:32:05.999Z"
@@ -506,7 +502,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
       UUID.randomUUID(),
       uuid.toString(),
-      context.organisationEntity.id,
+      context().organisationEntity.id,
       new Date(),
       meterDefinitionEntity
     ));
@@ -516,7 +512,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     UUID uuid = UUID.randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context.organisationEntity,
+      context().organisationEntity,
       "",
       uuid.toString(),
       "",

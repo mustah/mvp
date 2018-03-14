@@ -15,7 +15,7 @@ import lombok.ToString;
 
 import static java.util.Collections.emptySet;
 
-@ToString
+@ToString(exclude = "users")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "organisation")

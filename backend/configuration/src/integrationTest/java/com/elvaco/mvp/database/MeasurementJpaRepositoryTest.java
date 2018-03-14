@@ -14,7 +14,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -35,18 +34,14 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Autowired
   OrganisationJpaRepository organisationJpaRepository;
 
-  private IntegrationTestFixtureContext context;
-
   @Before
   public void setUp() {
     Assume.assumeTrue(isPostgresDialect());
-    context = newContext();
   }
 
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
-    destroyContext(context);
   }
 
   @Test
@@ -274,7 +269,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assertThat(resultsWithMonthResolution).hasSize(1);
     assertThat(resultsWithMonthResolution.get(0)
                  .getWhen()
-               .toInstant()).isEqualTo(START_TIME.toInstant());
+                 .toInstant()).isEqualTo(START_TIME.toInstant());
 
   }
 
@@ -301,7 +296,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     UUID uuid = UUID.randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
-      context.organisationEntity,
+      context().organisationEntity,
       "",
       uuid.toString(),
       "",

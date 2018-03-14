@@ -32,6 +32,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   private Organisation theBeatles =
     new Organisation(randomUUID(), "The Beatles", "the-beatles");
 
+
   @Before
   public void setUp() {
     secretService = organisations.save(secretService);
@@ -43,7 +44,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   public void tearDown() {
     organisations.findAll()
       .stream()
-      .filter(organisation -> !organisation.name.equals(ELVACO.name))
+      .filter(organisation -> !organisation.id.equals(ELVACO.id))
       .forEach(organisation -> organisations.deleteById(organisation.id));
   }
 
@@ -63,15 +64,15 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asAdminOfElvaco()
-      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
+    ResponseEntity<OrganisationDto> request = as(context().admin)
+      .get("/organisations/" + context().organisation().id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void adminDoesNotFindOtherOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asElvacoUser()
+    ResponseEntity<OrganisationDto> request = as(context().user)
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -79,8 +80,8 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = asElvacoUser()
-      .get("/organisations/" + ELVACO.id, OrganisationDto.class);
+    ResponseEntity<OrganisationDto> request = as(context().user)
+      .get("/organisations/" + context().organisation().id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -96,7 +97,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOrganisations() {
-    ResponseEntity<List> request = asAdminOfElvaco()
+    ResponseEntity<List> request = as(context().user)
       .get("/organisations", List.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -105,7 +106,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUsersDoesNotFindOrganisations() {
-    ResponseEntity<List> request = asElvacoUser()
+    ResponseEntity<List> request = as(context().user)
       .get("/organisations", List.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -128,7 +129,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
-    ResponseEntity<OrganisationDto> created = asAdminOfElvaco()
+    ResponseEntity<OrganisationDto> created = as(context().admin)
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -137,7 +138,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
-    ResponseEntity<OrganisationDto> created = asElvacoUser()
+    ResponseEntity<OrganisationDto> created = as(context().user)
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -173,12 +174,12 @@ public class OrganisationControllerTest extends IntegrationTest {
       "batcave"
     );
 
-    ResponseEntity<UnauthorizedDto> putResponse = asAdminOfElvaco()
+    ResponseEntity<UnauthorizedDto> putResponse = as(context().admin)
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     assertThat(putResponse.getBody().message).isEqualTo(
-      "User 'peteri@elvaco.se' is not allowed to save this organisation"
+      "User '" + context().admin.email + "' is not allowed to save this organisation"
     );
   }
 
@@ -195,7 +196,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     // act
     organisation.code = "batcave";
-    ResponseEntity<UnauthorizedDto> putResponse = asElvacoUser()
+    ResponseEntity<UnauthorizedDto> putResponse = as(context().user)
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     // assert
@@ -229,7 +230,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = asAdminOfElvaco()
+    ResponseEntity<OrganisationDto> notReallyDeleted = as(context().admin)
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -244,7 +245,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = asElvacoUser()
+    ResponseEntity<OrganisationDto> notReallyDeleted = as(context().user)
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 

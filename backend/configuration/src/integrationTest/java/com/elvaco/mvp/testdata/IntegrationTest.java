@@ -42,6 +42,7 @@ public abstract class IntegrationTest {
   private int serverPort;
 
 
+  private IntegrationTestFixtureContext context;
   private RestClient restClient;
 
   protected boolean isPostgresDialect() {
@@ -53,19 +54,20 @@ public abstract class IntegrationTest {
       .contains("postgres");
   }
 
-  protected IntegrationTestFixtureContext newContext() {
-    return getIntegrationTestFixtureContextFactory().create();
-  }
-
-  protected void destroyContext(IntegrationTestFixtureContext context) {
-    if (context != null) {
-      getIntegrationTestFixtureContextFactory().destroy(context);
+  protected IntegrationTestFixtureContext context() {
+    if (context == null) {
+      context = newContext(getCallerClassName());
     }
+    return context;
   }
 
   @After
   public final void tearDownBase() {
     restClient().logout();
+    if (context != null) {
+      getIntegrationTestFixtureContextFactory().destroy(context);
+      context = null;
+    }
     SecurityContextHolder.clearContext();
   }
 
@@ -117,6 +119,15 @@ public abstract class IntegrationTest {
       Thread.sleep(100);
     } while (System.currentTimeMillis() < startTime + MAX_WAIT_TIME);
     return false;
+  }
+
+  public String getCallerClassName() {
+    StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+    return stackTraceElements[3].getClassName();
+  }
+
+  private IntegrationTestFixtureContext newContext(String identifier) {
+    return getIntegrationTestFixtureContextFactory().create(identifier);
   }
 
   private IntegrationTestFixtureContextFactory getIntegrationTestFixtureContextFactory() {
