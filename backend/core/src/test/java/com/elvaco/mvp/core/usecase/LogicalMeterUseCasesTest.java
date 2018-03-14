@@ -107,6 +107,7 @@ public class LogicalMeterUseCasesTest {
     assertThat(saved.id).isEqualTo(meterId);
   }
 
+
   @Test
   public void nrOfReadOutsInHour() {
     LocalDateTime after = parseDateTime("2001-01-01T13:00:00Z");

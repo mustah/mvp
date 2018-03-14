@@ -39,6 +39,14 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
+  static double calculatedExpectedReadOuts(
+    long readInterval,
+    LocalDateTime after,
+    LocalDateTime before
+  ) {
+    return Math.floor((double) Duration.between(after, before).toMinutes() / readInterval);
+  }
+
   public List<LogicalMeter> findAll() {
     if (!currentUser.isSuperAdmin()) {
       return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
@@ -50,56 +58,23 @@ public class LogicalMeterUseCases {
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
       .map(logicalMeter ->
-        logicalMeter.withCollectionPercentage(
-          getCollectionPercent(
-            logicalMeter.physicalMeters, parameters
-          ).orElse(null)
-        )
+             logicalMeter.withCollectionPercentage(
+               getCollectionPercent(
+                 logicalMeter.physicalMeters, parameters
+               ).orElse(null)
+             )
       );
   }
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream().map(logicalMeter ->
-      logicalMeter.withCollectionPercentage(
-        getCollectionPercent(
-          logicalMeter.physicalMeters, parameters
-        ).orElse(null)
-      )
-    ).collect(toList());
-  }
-
-  private Optional<Double> getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    RequestParameters parameters
-  ) {
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return Optional.empty();
-    }
-
-    LocalDateTime after = parseDateTime(parameters.getValues("after").get(0));
-    LocalDateTime before = parseDateTime(parameters.getValues("before").get(0));
-
-    double expectedReadouts = 0L;
-    double actualReadouts = 0L;
-
-    for (PhysicalMeter physicalMeter : physicalMeters) {
-      //TODO the physical meter might not be active, during the entire period.
-      expectedReadouts += calculatedExpectedReadOuts(physicalMeter.readInterval, after, before);
-      actualReadouts += physicalMeter.getMeasurementCount().map(val -> val.longValue()).orElse(0L);
-    }
-
-    return Optional.of(actualReadouts / expectedReadouts);
-  }
-
-  public static double calculatedExpectedReadOuts(
-    long readInterval,
-    LocalDateTime after,
-    LocalDateTime before
-  ) {
-    return Math.floor((double)
-      Duration.between(after, before).toMinutes() / readInterval
-    );
+                      logicalMeter.withCollectionPercentage(
+                        getCollectionPercent(
+                          logicalMeter.physicalMeters, parameters
+                        ).orElse(null)
+                      )
+      ).collect(toList());
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -107,7 +82,7 @@ public class LogicalMeterUseCases {
       return logicalMeters.save(logicalMeter);
     }
     throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
-                           + "create this meter.");
+                             + "create this meter.");
   }
 
   public List<Measurement> measurements(
@@ -115,8 +90,8 @@ public class LogicalMeterUseCases {
     Supplier<RequestParameters> filter
   ) {
     if (logicalMeter.physicalMeters.isEmpty()
-        || logicalMeter.getQuantities().isEmpty()
-        || !hasTenantAccess(logicalMeter.organisationId)) {
+      || logicalMeter.getQuantities().isEmpty()
+      || !hasTenantAccess(logicalMeter.organisationId)) {
       return emptyList();
     }
     return measurements.findAll(filter.get());
@@ -141,6 +116,29 @@ public class LogicalMeterUseCases {
       );
     }
     return Optional.empty();
+  }
+
+  private Optional<Double> getCollectionPercent(
+    List<PhysicalMeter> physicalMeters,
+    RequestParameters parameters
+  ) {
+    if (!parameters.hasName("after") || !parameters.hasName("before")) {
+      return Optional.empty();
+    }
+
+    LocalDateTime after = parseDateTime(parameters.getValues("after").get(0));
+    LocalDateTime before = parseDateTime(parameters.getValues("before").get(0));
+
+    double expectedReadouts = 0L;
+    double actualReadouts = 0L;
+
+    for (PhysicalMeter physicalMeter : physicalMeters) {
+      //TODO the physical meter might not be active, during the entire period.
+      expectedReadouts += calculatedExpectedReadOuts(physicalMeter.readInterval, after, before);
+      actualReadouts += physicalMeter.getMeasurementCount().map(val -> val.longValue()).orElse(0L);
+    }
+
+    return Optional.of(actualReadouts / expectedReadouts);
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

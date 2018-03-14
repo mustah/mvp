@@ -1,11 +1,15 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class Quantity {
+
   public static final Quantity VOLUME = new Quantity("Volume", "m³");
   public static final Quantity FLOW = new Quantity("Flow", "m³/h");
   public static final Quantity TEMPERATURE = new Quantity("Temperature", "°C");
@@ -19,18 +23,44 @@ public class Quantity {
     "Difference temperature", "°K");
 
   public final String name;
+
+  @Nullable
   public final String unit;
 
   @Nullable
   public final Long id;
 
-  public Quantity(@Nullable Long id, String name, String unit) {
+  public Quantity(@Nullable Long id, String name, @Nullable String unit) {
     this.id = id;
     this.name = name;
     this.unit = unit;
   }
 
-  private Quantity(String name, String unit) {
+  public Quantity(String name, @Nullable String unit) {
     this(null, name, unit);
+  }
+
+  public Quantity(String name) {
+    this(null, name, null);
+  }
+
+  public static Quantity of(String quantityUnitPair) {
+    String[] parts = quantityUnitPair.split(",");
+    String quantityName = parts[0];
+    if (quantityName.isEmpty() || parts.length > 2) {
+      throw new RuntimeException("Invalid quantity/unit pair: '" + quantityUnitPair + "'");
+    } else if (parts.length == 2) {
+      return new Quantity(quantityName, parts[1]);
+    } else {
+      return new Quantity(quantityName);
+    }
+  }
+
+  public Optional<String> unit() {
+    return Optional.ofNullable(unit);
+  }
+
+  public Quantity withUnit(String unit) {
+    return new Quantity(id, name, unit);
   }
 }
