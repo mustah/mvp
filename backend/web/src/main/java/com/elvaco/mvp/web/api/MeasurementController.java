@@ -1,22 +1,25 @@
 package com.elvaco.mvp.web.api;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
-import com.elvaco.mvp.web.exception.LogicalMeterMissingQuantityException;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.NoPhysicalMetersException;
+import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -62,28 +65,34 @@ public class MeasurementController {
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
     @RequestParam TemporalResolution resolution
   ) {
-    RequestParametersAdapter requestParams = new RequestParametersAdapter();
-    meters.forEach(meterId -> requestParams.add("id", meterId.toString()));
+    RequestParameters requestParams = new RequestParametersAdapter()
+      .setAll("id", meters.stream()
+        .map(UUID::toString)
+        .collect(toList())
+      );
     List<LogicalMeter> logicalMeters = logicalMeterUseCases.findAll(requestParams);
-    List<UUID> physicalMeterUuids = new ArrayList<>();
-    for (LogicalMeter logicalMeter : logicalMeters) {
-      Quantity quantity = logicalMeter.getQuantity(quantityName)
-        .orElseThrow(() -> new LogicalMeterMissingQuantityException(logicalMeter.id, quantityName));
 
-      if (unit == null) {
-        unit = quantity.unit;
-      }
-      physicalMeterUuids.addAll(logicalMeter.physicalMeters.stream()
-                                  .map(physicalMeter -> physicalMeter.id)
-                                  .collect(toList()));
-    }
-    if (physicalMeterUuids.isEmpty()) {
+    Map.Entry<Quantity, List<UUID>> entry =
+      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+        logicalMeters,
+        Collections.singletonList(new Quantity(
+          quantityName,
+          unit
+        ))
+      ).entrySet()
+        .stream()
+        .findAny()
+        .orElseThrow(() -> new QuantityNotFound(quantityName));
+
+    if (entry.getValue().isEmpty()) {
       throw new NoPhysicalMetersException();
     }
+
+    Quantity quantity = entry.getKey();
     List<MeasurementValueDto> measurementValueDtos = measurementUseCases.averageForPeriod(
-      physicalMeterUuids,
-      quantityName,
-      unit,
+      entry.getValue(),
+      quantity.name,
+      quantity.unit,
       from,
       to,
       resolution
@@ -91,7 +100,7 @@ public class MeasurementController {
       (measurementValue) -> new MeasurementValueDto(measurementValue.when, measurementValue.value)
     ).collect(toList());
 
-    return new MeasurementAggregateDto(quantityName, unit, measurementValueDtos);
+    return new MeasurementAggregateDto(quantity.name, quantity.unit, measurementValueDtos);
   }
 
   @GetMapping
