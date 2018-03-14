@@ -1,11 +1,14 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
@@ -108,6 +111,19 @@ public class MeasurementJpaRepositoryImpl extends QueryDslJpaRepository<Measurem
       .where(predicate)
       .from(path);
     return query;
+  }
+
+  public Map<UUID, Long> countGroupedByPhysicalMeterId(Predicate predicate) {
+    JPQLQuery<Void> query = new JPAQuery<>(entityManager);
+    QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
+    return query.from(queryMeasurement)
+      .groupBy(queryMeasurement.physicalMeter.id)
+      .where(predicate)
+      .transform(
+        GroupBy.groupBy(
+          queryMeasurement.physicalMeter.id).as(queryMeasurement.count()
+        )
+      );
   }
 }
 

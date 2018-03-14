@@ -19,6 +19,8 @@ public class LogicalMeterMapper {
 
   private final MeterStatusLogMapper meterStatusLogMapper;
 
+  public static final String NO_PERCENTAGE = "";
+
   public LogicalMeterMapper(MeterStatusLogMapper meterStatusLogMapper) {
     this.meterStatusLogMapper = meterStatusLogMapper;
   }
@@ -61,6 +63,10 @@ public class LogicalMeterMapper {
       .map(date -> Dates.formatTime(date, timeZone))
       .orElse(created);
     meterDto.facility = logicalMeter.externalId;
+
+    meterDto.collectionStatus = logicalMeter.getCollectionPercentage()
+      .map(val -> String.valueOf(val.doubleValue() * 100))
+      .orElse(NO_PERCENTAGE);
 
     meterDto.gateway = logicalMeter.gateways
       .stream()

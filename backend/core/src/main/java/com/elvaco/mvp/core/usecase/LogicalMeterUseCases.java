@@ -1,5 +1,7 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,6 +9,7 @@ import java.util.function.Supplier;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -16,7 +19,9 @@ import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
+import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterUseCases {
 
@@ -43,11 +48,58 @@ public class LogicalMeterUseCases {
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
+      .map(logicalMeter ->
+        logicalMeter.withCollectionPercentage(
+          getCollectionPercent(
+            logicalMeter.physicalMeters, parameters
+          ).orElse(null)
+        )
+      );
   }
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
+      .stream().map(logicalMeter ->
+      logicalMeter.withCollectionPercentage(
+        getCollectionPercent(
+          logicalMeter.physicalMeters, parameters
+        ).orElse(null)
+      )
+    ).collect(toList());
+  }
+
+  private Optional<Double> getCollectionPercent(
+    List<PhysicalMeter> physicalMeters,
+    RequestParameters parameters
+  ) {
+    if (!parameters.hasName("after") || !parameters.hasName("before")) {
+      return Optional.empty();
+    }
+
+    LocalDateTime after = parseDateTime(parameters.getValues("after").get(0));
+    LocalDateTime before = parseDateTime(parameters.getValues("before").get(0));
+
+    double expectedReadouts = 0L;
+    double actualReadouts = 0L;
+
+    for (PhysicalMeter physicalMeter : physicalMeters) {
+      //TODO the physical meter might not be active, during the entire period.
+      expectedReadouts += calculatedExpectedReadOuts(physicalMeter.readInterval, after, before);
+      actualReadouts += physicalMeter.getMeasurementCount().map(val -> val.longValue()).orElse(0L);
+    }
+
+    return Optional.of(actualReadouts / expectedReadouts);
+  }
+
+  public static double calculatedExpectedReadOuts(
+    long readInterval,
+    LocalDateTime after,
+    LocalDateTime before
+  ) {
+    return Math.floor((double)
+      Duration.between(after, before).toMinutes() / readInterval
+    );
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

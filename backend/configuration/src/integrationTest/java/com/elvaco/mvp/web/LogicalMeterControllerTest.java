@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,6 +30,9 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
@@ -64,6 +68,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   private static int seed = 1;
 
+  private final ZonedDateTime measurementDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   private final Date statusLogDate = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
 
   PhysicalMeter physicalMeter1;
@@ -161,6 +166,69 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
+    measurementJpaRepository.deleteAll();
+  }
+
+  @Test
+  public void findAllWithCollectionStatus() {
+    addMeasurements(
+      physicalMeter1,
+      physicalMeter2);
+
+    ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
+      .getList("/meters/all"
+          + "?after=2001-01-01T01:00:00.00Z"
+          + "&before=2002-01-01T00:00:00.00Z"
+          + "&status=active"
+          + "&sort=id,asc",
+        LogicalMeterDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    assertCollectionStatus(response.getBody().get(0), response.getBody().get(1));
+  }
+
+  @Test
+  public void findAllWithCollectionStatusPaged() {
+    addMeasurements(
+      physicalMeter1,
+      physicalMeter2);
+
+    Page<LogicalMeterDto> response = as(context().user)
+      .getPage("/meters"
+          + "?after=2001-01-01T01:00:00.00Z"
+          + "&before=2002-01-01T00:00:00.00Z"
+          + "&status=active"
+          + "&sort=id,asc",
+        LogicalMeterDto.class);
+
+    assertThat(response.getTotalElements()).isEqualTo(5);
+    assertThat(response.getNumberOfElements()).isEqualTo(5);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    assertCollectionStatus(response.getContent().get(0), response.getContent().get(1));
+  }
+
+  private void assertCollectionStatus(
+    LogicalMeterDto logicalMeter1,
+    LogicalMeterDto logicalMeter2
+  ) {
+    assertThat(logicalMeter1.id)
+      .as("Unexpected meter id")
+      .isEqualTo(physicalMeter1.logicalMeterId.toString());
+
+    assertThat(logicalMeter1.collectionStatus)
+      .as("Unexpected collection status")
+      // TODO should be "90.0" when calculation takes meter status in consideration
+      .isEqualTo("0.25402443201278685");
+
+    assertThat(logicalMeter2.id)
+      .as("Unexpected meter id")
+      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+
+    assertThat(logicalMeter2.collectionStatus)
+      .as("Unexpected collection status")
+      .isEqualTo("100.0");
   }
 
   @Test
@@ -624,7 +692,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "external-id",
         "Some device specific medium name",
         "ELV",
-        savedLogicalMeter.id
+        savedLogicalMeter.id,
+        15L,
+        null
       )
     );
 
@@ -806,6 +876,75 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     meterStatusLogs.save(statuses);
   }
 
+  private void addMeasurements(
+    PhysicalMeter meter1,
+    PhysicalMeter meter2
+  ) {
+    MeasurementUnit measurementUnit = new MeasurementUnit("2.0 m3");
+
+    List<MeasurementEntity> meter1Measurements =
+      createMeasureMents(meter1, measurementUnit, 60, 100);
+
+    // Simulate lost measurements
+    meter1Measurements.remove(40);
+    meter1Measurements.remove(40);
+    meter1Measurements.remove(40);
+    meter1Measurements.remove(40);
+    meter1Measurements.remove(40);
+
+    meter1Measurements.remove(20);
+    meter1Measurements.remove(20);
+    meter1Measurements.remove(20);
+    meter1Measurements.remove(20);
+    meter1Measurements.remove(20);
+
+    List<MeasurementEntity> measurements = new ArrayList<>();
+    measurements.addAll(meter1Measurements);
+    measurements.addAll(createMeasureMents(meter2, measurementUnit, 15, 36000));
+
+    measurementJpaRepository.save(measurements);
+  }
+
+  /**
+   * Creates a list of fake measurements.
+   *
+   * @param physicalMeter   Physical meter
+   * @param measurementUnit Unit of measurement
+   * @param interval        Time in minutes between measurements
+   * @param values          Nr of values to generate
+   * @return
+   */
+  private List<MeasurementEntity> createMeasureMents(
+    PhysicalMeter physicalMeter,
+    MeasurementUnit measurementUnit,
+    int interval,
+    int values
+  ) {
+    List<MeasurementEntity> measurementEntities = new ArrayList<>();
+
+    PhysicalMeterEntity meter = new PhysicalMeterEntity();
+    meter.id = physicalMeter.id;
+
+    for (int x = 0; x < values; x++) {
+      measurementEntities.add(new MeasurementEntity(
+        null,
+        measurementDate.plusMinutes((long)x * interval),
+        String.valueOf(x),
+        measurementUnit,
+        meter
+      ));
+    }
+
+    return measurementEntities;
+  }
+
+  private Date addMinutes(Date date, int count) {
+    Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    calendar.add(Calendar.MINUTE, count);
+    return calendar.getTime();
+  }
+
   private Date addDays(Date date, int count) {
     Calendar calendar = Calendar.getInstance();
     calendar.setTime(date);
@@ -837,7 +976,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         externalId,
         "Some device specific medium name",
         "ELV" + seed,
-        logicalMeterId
+        logicalMeterId,
+        15,
+        null
       )
     );
   }

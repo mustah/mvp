@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
@@ -18,6 +19,9 @@ public interface LogicalMeterJpaRepository
 
   @Override
   List<LogicalMeterEntity> findAll(Predicate predicate);
+
+  @Override
+  List<LogicalMeterEntity> findAll(Predicate predicate, Sort sort);
 
   Optional<LogicalMeterEntity> findByOrganisationIdAndExternalId(
     UUID organisationId,

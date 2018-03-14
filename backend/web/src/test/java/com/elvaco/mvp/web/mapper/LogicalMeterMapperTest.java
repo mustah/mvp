@@ -109,6 +109,7 @@ public class LogicalMeterMapperTest {
       "123123",
       Status.OK
     );
+    expected.collectionStatus = "";
 
     UUID organisationId = ELVACO.id;
 
@@ -133,7 +134,8 @@ public class LogicalMeterMapperTest {
               "an-external-id",
               "Some device specific medium",
               "ELV",
-              ELVACO
+              ELVACO,
+              15
             )),
           MeterDefinition.HOT_WATER_METER,
           singletonList(

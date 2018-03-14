@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -103,6 +105,26 @@ public class LogicalMeterUseCasesTest {
     LogicalMeter saved = useCases.save(newMeter(meterId, organisation.id));
 
     assertThat(saved.id).isEqualTo(meterId);
+  }
+
+  @Test
+  public void nrOfReadOutsInHour() {
+    LocalDateTime after = parseDateTime("2001-01-01T13:00:00Z");
+    LocalDateTime before = parseDateTime("2001-01-01T14:00:00Z");
+
+    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(15, after, before))
+      .as("Unexpected nr of read outs")
+      .isEqualTo(4);
+  }
+
+  @Test
+  public void nrOfReadOutsInDay() {
+    LocalDateTime after = parseDateTime("2001-01-01T00:00:00Z");
+    LocalDateTime before = parseDateTime("2001-01-02T00:00:00Z");
+
+    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(60, after, before))
+      .as("Unexpected nr of read outs")
+      .isEqualTo(24);
   }
 
   private LogicalMeter newMeter(UUID meterId, UUID organisationId) {

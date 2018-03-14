@@ -34,7 +34,7 @@ public class LogicalMeterMapperTest {
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
-      new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper()),
+      new PhysicalMeterMapper(new OrganisationMapper()),
       new GatewayMapper(),
       new MeterStatusLogMapper()
     );
@@ -53,7 +53,8 @@ public class LogicalMeterMapperTest {
         "an-external-ID",
         "My medium",
         "ELV",
-        ELVACO
+        ELVACO,
+        15
       ))
     );
 

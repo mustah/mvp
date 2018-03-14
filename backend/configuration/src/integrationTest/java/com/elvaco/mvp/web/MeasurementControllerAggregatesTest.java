@@ -517,7 +517,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       uuid.toString(),
       "",
       "",
-      logicalMeterId
+      logicalMeterId,
+      0
     ));
   }
 
