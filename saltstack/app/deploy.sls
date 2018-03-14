@@ -3,8 +3,10 @@
 include:
   - mvp.openjdk-8-jre
   - mvp.app.user
-
-{% set mvp_version = salt['cmd.run']('/usr/bin/remote-git-describe.sh git@gitlab.elvaco.se:elvaco/mvp.git mr-salt-install-tar') %}
+{% set mvp_branch = salt['grains.get']('mvp-branch', 'master') %}
+{% set remote_git_describe = '/usr/bin/remote-git-describe.sh' %}
+{% set git_repository = 'git@gitlab.elvaco.se:elvaco/mvp.git' %}
+{% set mvp_version = salt['cmd.run'](remote_git_describe + " " + git_repository  + " " + mvp_branch) %}
 
 fetch_mvp_archive:
   file.managed:
