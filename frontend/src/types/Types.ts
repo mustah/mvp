@@ -2,6 +2,7 @@ import * as React from 'react';
 import {createEmptyAction, createPayloadAction, PayloadAction} from 'react-redux-typescript';
 import {EmptyAction} from 'ts-redux-actions';
 import {Maybe} from '../helpers/Maybe';
+import {HasPageNumber} from '../state/domain-models-paginated/paginatedDomainModels';
 
 export type uuid = string | number;
 
@@ -12,6 +13,9 @@ export type RenderFunction<T> = (props: T) => Children;
 
 export type Fetch = (parameters?: string) => void;
 export type ClearError = () => void;
+
+export type FetchPaginated = (page: number, requestModel?: string) => void;
+export type ClearErrorPaginated = (payload: HasPageNumber) => void;
 
 export type Predicate<T> = (value: T) => boolean;
 

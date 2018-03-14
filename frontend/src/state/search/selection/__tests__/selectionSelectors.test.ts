@@ -19,6 +19,7 @@ import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
+import {getPagination} from '../../../ui/pagination/paginationSelectors';
 import {ADD_SELECTION, SELECT_PERIOD} from '../selectionActions';
 import {
   LookupState,
@@ -48,9 +49,11 @@ describe('selectionSelectors', () => {
   const initialSearchParameterState = {selection: {...initialState}, saved: []};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
-    entityType: 'meters',
-    componentId: 'test',
-    pagination: initialPaginationState,
+    pagination: getPagination({
+      entityType: 'meters',
+      componentId: 'test',
+      pagination: initialPaginationState,
+    }),
   };
   const initialEncodedParameters = getEncodedUriParametersForMeters(initialUriLookupState);
   const initialDomainModelState = initialDomain<SelectionEntity>();
@@ -120,9 +123,11 @@ describe('selectionSelectors', () => {
       const encodedUriParametersForMeters = getEncodedUriParametersForMeters({
         selection: state,
         saved: [],
-        entityType: 'meters',
-        componentId: 'test',
-        pagination: initialPaginationState,
+        pagination: getPagination({
+          entityType: 'meters',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
       });
 
       expect(encodedUriParametersForMeters).toEqual(`size=${limit}&page=0&city=sweden%2Cstockholm`);
@@ -143,9 +148,11 @@ describe('selectionSelectors', () => {
       expect(getEncodedUriParametersForMeters({
         selection: state,
         saved: [],
-        entityType: 'meters',
-        componentId: 'test',
-        pagination: initialPaginationState,
+        pagination: getPagination({
+          entityType: 'meters',
+          componentId: 'test',
+          pagination: initialPaginationState,
+        }),
       }))
         .toEqual(`size=${limit}&page=0&city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm`);
     });
