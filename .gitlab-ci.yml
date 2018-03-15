@@ -10,6 +10,10 @@ stages:
 
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_EAUTH: "pam"
+    SALTAPI_USER: "administrator"
+    SALTAPI_PASS: "password2"
 
 .cache_gradle: &cache_gradle
      cache:
@@ -136,11 +140,6 @@ deploy:drop-dbs:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   when: manual
-  variables:
-    SALTAPI_URL: "https://salt-master:8000"
-    SALTAPI_EAUTH: "pam"
-    SALTAPI_USER: "administrator"
-    SALTAPI_PASS: "password2"
   script:
     - pepper -G 'roles:mvp-app' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -G 'roles:postgresql-server' state.apply mvp.db.drop
@@ -149,11 +148,6 @@ deploy:staging:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   when: manual
-  variables:
-    SALTAPI_URL: "https://salt-master:8000"
-    SALTAPI_EAUTH: "pam"
-    SALTAPI_USER: "administrator"
-    SALTAPI_PASS: "password2"
   script:
     - pepper -G 'roles:salt-master'  event.fire_master update salt/fileserver/gitfs/update
     - sleep 10
@@ -163,10 +157,5 @@ deploy:production:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   when: manual
-  variables:
-    SALTAPI_URL: "https://salt-master:8000"
-    SALTAPI_EAUTH: "pam"
-    SALTAPI_USER: "administrator"
-    SALTAPI_PASS: "password2"
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply
