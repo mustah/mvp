@@ -3,6 +3,7 @@ package com.elvaco.mvp.configuration.config;
 import com.elvaco.mvp.consumers.rabbitmq.MeteringMessageReceiver;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
+import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
@@ -38,13 +39,15 @@ class RabbitMqConfig {
     LogicalMeterUseCases logicalMeterUseCases,
     PhysicalMeterUseCases physicalMeterUseCases,
     OrganisationUseCases organisationUseCases,
-    MeasurementUseCases measurementUseCases
+    MeasurementUseCases measurementUseCases,
+    GatewayUseCases gatewayUseCases
   ) {
     return new MeteringMessageHandler(
       logicalMeterUseCases,
       physicalMeterUseCases,
       organisationUseCases,
-      measurementUseCases
+      measurementUseCases,
+      gatewayUseCases
     );
   }
 

@@ -19,6 +19,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -28,15 +29,18 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
@@ -73,6 +77,7 @@ public class MessageHandlerTest {
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
   private LogicalMeters logicalMeters;
+  private Gateways gateways;
   private Measurements measurements;
   private MessageHandler messageHandler;
 
@@ -104,6 +109,7 @@ public class MessageHandlerTest {
     );
     this.measurements = new MockMeasurements();
     this.logicalMeters = new MockLogicalMeters();
+    this.gateways = new MockGateways();
 
     this.messageHandler = new MeteringMessageHandler(
       new LogicalMeterUseCases(
@@ -113,7 +119,8 @@ public class MessageHandlerTest {
       ),
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters),
       organisationUseCases,
-      new MeasurementUseCases(authenticatedUser, this.measurements)
+      new MeasurementUseCases(authenticatedUser, this.measurements),
+      new GatewayUseCases(gateways, authenticatedUser)
     );
   }
 
@@ -161,20 +168,21 @@ public class MessageHandlerTest {
   }
 
   @Test
-  public void createsMeterForExistingOrganisation() {
+  public void createsMeterAndGatewayForExistingOrganisation() {
     messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 
-    Organisation expectedOrganisation = findOrganisation();
+    Organisation organisation = findOrganisation();
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
     assertThat(logicalMeters.findAll()).hasSize(1);
     assertThat(organisations.findAll()).hasSize(1);
     PhysicalMeter meter = allPhysicalMeters.get(0);
-    assertThat(meter.organisation).isEqualTo(expectedOrganisation);
+    assertThat(meter.organisation).isEqualTo(organisation);
 
     LogicalMeter logicalMeter = logicalMeters.findById(meter.logicalMeterId).get();
     assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.HOT_WATER_METER);
+    assertThat(gateways.findBy(organisation.id, "CMi2110", "001694120").isPresent()).isTrue();
   }
 
   @Test
@@ -189,6 +197,32 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void resendingSameMessageShouldNotUpdateExistingGateways() {
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
+
+    List<Gateway> allAfterFirstMessage = gateways.findAll();
+    assertThat(allAfterFirstMessage).hasSize(1);
+
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
+
+    assertThat(gateways.findAll()).isEqualTo(allAfterFirstMessage);
+  }
+
+  @Test
+  public void gatewaysAreConnectedToMeters() {
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
+
+    List<Gateway> all = gateways.findAll();
+    assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
+  }
+
+  @Ignore
+  @Test
+  public void newLogicalMeterIsConnectedToExistingGateway() {
+    // TODO[!must!]
+  }
+
+  @Test
   public void setsNoMeterDefinitionForUnmappableMedium() {
     messageHandler.handle(newStructureMessage("Unmappable medium", "ELV"));
 
@@ -199,7 +233,7 @@ public class MessageHandlerTest {
 
   @Test
   @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-    + "ought to be considered a new physical meter.")
+          + "ought to be considered a new physical meter.")
   public void updatesExistingMeterForExistingOrganisation() {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
     Organisation organisation = organisations.save(
@@ -234,7 +268,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                     + "organisation"));
+                                                                   + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -349,7 +383,7 @@ public class MessageHandlerTest {
       new FacilityDto(EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
       ORGANISATION_CODE,
-      new GatewayStatusDto("gateway-id", "CMi2110", "OK")
+      new GatewayStatusDto("001694120", "CMi2110", "OK")
     );
   }
 

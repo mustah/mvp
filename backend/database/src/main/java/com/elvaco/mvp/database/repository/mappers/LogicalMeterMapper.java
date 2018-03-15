@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -118,7 +119,7 @@ public class LogicalMeterMapper {
     logicalMeterEntity.gateways = logicalMeter.gateways
       .stream()
       .map(gatewayMapper::toEntity)
-      .collect(toList());
+      .collect(toSet());
 
     if (logicalMeter.location != null) {
       LocationEntity location = locationMapper.toEntity(logicalMeter.location);
@@ -129,7 +130,7 @@ public class LogicalMeterMapper {
     return logicalMeterEntity;
   }
 
-  private List<Gateway> toGateways(List<GatewayEntity> gateways) {
+  private List<Gateway> toGateways(Set<GatewayEntity> gateways) {
     return gateways
       .stream()
       .map(gatewayMapper::toDomainModel)

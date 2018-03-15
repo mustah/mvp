@@ -1,6 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
@@ -11,9 +12,12 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -35,10 +39,16 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Autowired
   Organisations organisations;
+
   @Autowired
   PhysicalMeters physicalMeters;
+
+  @Autowired
+  Gateways gateways;
+
   @Autowired
   RabbitProperties rabbitProperties;
+
   @Autowired
   ConnectionFactory connectionFactory;
 
@@ -47,6 +57,9 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Autowired
   LogicalMeterJpaRepository logicalMeterJpaRepository;
+
+  @Autowired
+  GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
   LogicalMeters logicalMeters;
@@ -79,6 +92,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     }
 
     physicalMeterJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisations.findByCode("Some organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));
@@ -86,22 +100,24 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Test
   public void messagesSentToRabbitAreReceivedAndProcessed() throws InterruptedException,
-    IOException {
+                                                                   IOException {
     MeteringMeterStructureMessageDto messageDto = new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
       "Some organisation",
-      new GatewayStatusDto("GW-1234", "Gateway 2000", "OK")
+      new GatewayStatusDto("123987", "Gateway 2000", "OK")
     );
 
     publishMessage(serializeDto(messageDto));
+
     assertOrganisationWithCodeWasCreated("Some organisation");
-    assertLogicalMeterWasCreated(
-      organisations.findByCode("Some organisation").get().id,
-      "facility-id"
-    );
+
+    UUID organisationId = organisations.findByCode("Some organisation").get().id;
+    assertLogicalMeterWasCreated(organisationId, "facility-id");
+    assertPhysicalMeterIsCreated(organisationId, "1234", "facility-id");
+    assertGatewayWasCreated(organisationId, "123987");
   }
 
   private byte[] serializeDto(MeteringMessageDto dto) {
@@ -120,6 +136,34 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       organisationId,
       externalId
     ).isPresent())).as("Logical meter '" + externalId + "' was created").isTrue();
+  }
+
+  private void assertGatewayWasCreated(
+    UUID organisationId,
+    String serial
+  ) throws InterruptedException {
+    assertThat(waitForCondition(() -> gateways.findAllByOrganisationId(organisationId)
+      .stream()
+      .anyMatch(gateway -> gateway.serial.equals(serial))
+    )).as("Gateway '" + serial + "' was created").isTrue();
+  }
+
+  private void assertPhysicalMeterIsCreated(
+    UUID organisationId,
+    String address,
+    String externalId
+  ) throws InterruptedException {
+    assertThat(waitForCondition(
+      () -> {
+        Optional<PhysicalMeterEntity> meter = physicalMeterJpaRepository
+          .findByOrganisationIdAndExternalIdAndAddress(
+            organisationId,
+            externalId,
+            address
+          );
+        return meter.isPresent();
+      }
+    )).as("Physical meter '" + externalId + "' was created").isTrue();
   }
 
   private void assertOrganisationWithCodeWasCreated(String code) throws InterruptedException {

@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.entity.gateway;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -15,10 +15,10 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "meters")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
@@ -39,7 +39,7 @@ public class GatewayEntity extends EntityType<UUID> {
   public UUID organisationId;
 
   @ManyToMany(mappedBy = "gateways")
-  public List<LogicalMeterEntity> meters;
+  public Set<LogicalMeterEntity> meters;
 
   public GatewayEntity(
     UUID id,
@@ -51,7 +51,7 @@ public class GatewayEntity extends EntityType<UUID> {
     this.organisationId = organisationId;
     this.serial = serial;
     this.productModel = productModel;
-    this.meters = emptyList();
+    this.meters = emptySet();
   }
 
   @Override

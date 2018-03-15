@@ -40,6 +40,23 @@ public class GatewayUseCasesTest {
     assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
   }
 
+  @Test
+  public void doesNotFindGatewayByOrganisationSerialAndProductModel() {
+    GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
+
+    assertThat(useCases.findBy(DAILY_PLANET.id, "test", "123").isPresent()).isFalse();
+  }
+
+  @Test
+  public void findGatewayByOrganisationSerialAndProductModel() {
+    GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
+
+    useCases.save(new Gateway(null, DAILY_PLANET.id, "4567", "someModel"));
+    useCases.save(new Gateway(null, DAILY_PLANET.id, "123", "test"));
+
+    assertThat(useCases.findBy(DAILY_PLANET.id, "test", "123").isPresent()).isTrue();
+  }
+
   private GatewayUseCases useCasesWithCurrentUser(User currentUser) {
     return new GatewayUseCases(
       new MockGateways(),
