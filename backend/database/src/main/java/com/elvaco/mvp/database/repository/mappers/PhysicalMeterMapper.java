@@ -1,7 +1,7 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.List;
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -25,17 +25,17 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
 
   @Override
   public PhysicalMeter toDomainModel(PhysicalMeterEntity entity) {
-    return toDomainModel(entity, Optional.empty());
+    return toDomainModel(entity, null);
   }
 
   public PhysicalMeter toDomainModel(
-    PhysicalMeterEntity entity, Optional<Long> measurementCount) {
+    PhysicalMeterEntity entity, @Nullable Long measurementCount) {
     return toDomainModel(entity, measurementCount, emptyList());
   }
 
   public PhysicalMeter toDomainModel(
     PhysicalMeterEntity entity,
-    Optional<Long> measurementCount,
+    @Nullable Long measurementCount,
     List<PhysicalMeterStatusLogEntity> statuses
   ) {
     return new PhysicalMeter(
@@ -47,7 +47,7 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       entity.manufacturer,
       entity.logicalMeterId,
       entity.readIntervalMinutes,
-      measurementCount.orElse(null),
+      measurementCount,
       statuses.stream().map(meterStatusLogMapper::toDomainModel).collect(toList())
     );
   }

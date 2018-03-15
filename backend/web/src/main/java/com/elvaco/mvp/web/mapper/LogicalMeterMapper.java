@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -20,9 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
 
-  private final MeterStatusLogMapper meterStatusLogMapper;
-
   public static final String NO_PERCENTAGE = "";
+  private final MeterStatusLogMapper meterStatusLogMapper;
 
   public LogicalMeterMapper(MeterStatusLogMapper meterStatusLogMapper) {
     this.meterStatusLogMapper = meterStatusLogMapper;
@@ -35,10 +33,7 @@ public class LogicalMeterMapper {
     mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     // TODO[!must!] meter status logs should be mapped as enum in db
-    mapMarkerDto.status = statusLogs.stream()
-      .findFirst()
-      .map(meterStatusLog -> Status.from(meterStatusLog.name))
-      .orElse(Status.UNKNOWN);
+    mapMarkerDto.status = getCurrentStatus(statusLogs);
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {
@@ -58,10 +53,7 @@ public class LogicalMeterMapper {
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
     meterDto.id = logicalMeter.id.toString();
-    meterDto.status = statusLogs.stream()
-      .findFirst()
-      .map(meterStatusLog -> Status.from(meterStatusLog.name))
-      .orElse(Status.UNKNOWN);
+    meterDto.status = getCurrentStatus(statusLogs);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();
     meterDto.statusChanged = statusLogs.stream()
@@ -95,10 +87,18 @@ public class LogicalMeterMapper {
     return meterDto;
   }
 
-  private List<MeterStatusLog> getMeterStatusLogs(LogicalMeter logicalMeter) {
-    List<MeterStatusLog> statusLogs = new ArrayList<>();
+  private Status getCurrentStatus(List<MeterStatusLog> statusLogs) {
+    return statusLogs.stream()
+      .findFirst()
+      .map(meterStatusLog -> Status.from(meterStatusLog.name))
+      .orElse(Status.UNKNOWN);
+  }
 
-    logicalMeter.physicalMeters.forEach(physicalMeter -> statusLogs.addAll(physicalMeter.statuses));
+  private List<MeterStatusLog> getMeterStatusLogs(LogicalMeter logicalMeter) {
+    List<MeterStatusLog> statusLogs = logicalMeter.physicalMeters.stream()
+      .map(physicalMeter -> physicalMeter.statuses)
+      .flatMap(meterStatusLogs -> meterStatusLogs.stream())
+      .collect(toList());
 
     return statusLogs;
   }

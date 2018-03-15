@@ -19,7 +19,6 @@ public class MeterStatusLog {
   @Nullable
   public final ZonedDateTime stop;
 
-  //TODO remove
   public MeterStatusLog(
     @Nullable Long id,
     UUID physicalMeterId,

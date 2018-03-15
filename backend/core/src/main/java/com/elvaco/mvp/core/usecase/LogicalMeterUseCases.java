@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -25,6 +26,9 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterUseCases {
+
+  private static final int DAY_INTERVAL = 1440;
+  private static final int HOUR_INTERVAL = 60;
 
   private final LogicalMeters logicalMeters;
   private final AuthenticatedUser currentUser;
@@ -85,14 +89,14 @@ public class LogicalMeterUseCases {
     double actualReadouts = 0L;
 
     for (PhysicalMeter physicalMeter : physicalMeters) {
-      expectedReadouts = calculatedExpectedReadOuts(physicalMeter, after, before);
+      expectedReadouts = calculateExpectedReadOuts(physicalMeter, after, before);
       actualReadouts += physicalMeter.getMeasurementCount().map(val -> val.longValue()).orElse(0L);
     }
 
     return Optional.of(actualReadouts / expectedReadouts);
   }
 
-  static Double calculatedExpectedReadOuts(
+  static Double calculateExpectedReadOuts(
     PhysicalMeter physicalMeter,
     ZonedDateTime after,
     ZonedDateTime before
@@ -102,9 +106,7 @@ public class LogicalMeterUseCases {
     for (int x = 0; x < physicalMeter.statuses.size(); x++) {
       MeterStatusLog status = physicalMeter.statuses.get(x);
 
-      // TODO might there be several statuses that should be considered?
-      if ("active".equals(status.name)) {
-
+      if (Status.ACTIVE.equals(Status.from(status.name))) {
         ZonedDateTime startPoint = getStartPoint(
           status.start,
           after,
@@ -113,11 +115,10 @@ public class LogicalMeterUseCases {
 
         ZonedDateTime endPoint = getEndPoint(
           status.stop == null ? before : status.stop,
-          before,
-          physicalMeter.readIntervalMinutes
+          before
         );
 
-        count += calculatedExpectedReadOuts(
+        count += calculateExpectedReadOuts(
           physicalMeter.readIntervalMinutes,
           startPoint,
           endPoint
@@ -128,7 +129,7 @@ public class LogicalMeterUseCases {
     return count;
   }
 
-  static double calculatedExpectedReadOuts(
+  static double calculateExpectedReadOuts(
     long readIntervalMinutes,
     ZonedDateTime after,
     ZonedDateTime before
@@ -157,10 +158,8 @@ public class LogicalMeterUseCases {
    */
   private static ZonedDateTime getEndPoint(
     ZonedDateTime statusEnd,
-    ZonedDateTime periodBefore,
-    Long readIntervalMinutes
+    ZonedDateTime periodBefore
   ) {
-    //TODO do we need to calculate last possible read?
     return statusEnd.isBefore(periodBefore) ? statusEnd : periodBefore;
   }
 
@@ -172,13 +171,25 @@ public class LogicalMeterUseCases {
    *
    * @return
    */
-  public static ZonedDateTime getFirstDateMatchingInterval(ZonedDateTime date, Long interval) {
-    if (date.getMinute() == 0) {
-      return ZonedDateTime.ofInstant(date.toInstant(), date.getZone());
+  static ZonedDateTime getFirstDateMatchingInterval(ZonedDateTime date, Long interval) {
+    if (interval == DAY_INTERVAL) {
+      if (date.getHour() == 0 && date.getMinute() == 0) {
+        return date;
+      }
+      return date.truncatedTo(ChronoUnit.DAYS).plusDays(1);
     }
 
-    return date.truncatedTo(ChronoUnit.HOURS)
-      .plusMinutes(interval * (date.getMinute() / interval) + interval);
+    if (interval <= HOUR_INTERVAL) {
+
+      if (date.getMinute() == 0) {
+        return ZonedDateTime.ofInstant(date.toInstant(), date.getZone());
+      }
+
+      return date.truncatedTo(ChronoUnit.HOURS)
+        .plusMinutes(interval * (date.getMinute() / interval) + interval);
+    }
+
+    throw new RuntimeException("Unhandled meter interval");
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

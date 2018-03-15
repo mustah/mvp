@@ -2,7 +2,6 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -55,9 +54,10 @@ public class LogicalMeterMapper {
       .stream()
       .map(physicalMeterEntity -> physicalMeterMapper.toDomainModel(
         physicalMeterEntity,
-        Optional.ofNullable(meterMeasurementCount.get(physicalMeterEntity.getId())),
-        meterStatusMap.getOrDefault(physicalMeterEntity.getId(),emptyList())
-      )).collect(toList());
+        meterMeasurementCount.get(physicalMeterEntity.getId()),
+        meterStatusMap.getOrDefault(physicalMeterEntity.getId(), emptyList())
+      ))
+      .collect(toList());
 
     return toLogicalMeter(
       logicalMeterEntity,

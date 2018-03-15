@@ -13,7 +13,6 @@ import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -112,7 +111,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-01T14:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(15, after, before))
+    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(15, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(4);
   }
@@ -122,7 +121,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T00:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-02T00:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(60, after, before))
+    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(60, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(24);
   }
@@ -207,9 +206,20 @@ public class LogicalMeterUseCasesTest {
       .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
   }
 
-  @Ignore
   @Test
   public void getFirst24HourInterval() {
+    assertThat(getFirstMatching("2001-01-01T00:00:00.00Z", 1440))
+      .as("Failed to advance 00:00 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T00:31:00.00Z", 1440))
+      .as("Failed to advance 00:31 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T12:01:00.00Z", 1440))
+      .as("Failed to advance 12:01 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
     assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 1440))
       .as("Failed to advance 10:31 to first 24 hour interval")
       .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));

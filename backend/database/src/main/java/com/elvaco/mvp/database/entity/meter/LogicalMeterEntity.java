@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
