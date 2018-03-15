@@ -168,6 +168,15 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void createsOrganisationWithSameNameAsCode() {
+    messageHandler.handle(newStructureMessage("Hot water", "ELV"));
+
+    Organisation organisation = findOrganisation();
+
+    assertThat(organisation.name).isEqualTo(ORGANISATION_CODE);
+  }
+
+  @Test
   public void createsMeterAndGatewayForExistingOrganisation() {
     messageHandler.handle(newStructureMessage("Hot water", "ELV"));
 

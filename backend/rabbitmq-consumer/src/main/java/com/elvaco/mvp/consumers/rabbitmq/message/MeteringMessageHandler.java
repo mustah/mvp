@@ -141,7 +141,7 @@ public class MeteringMessageHandler implements MessageHandler {
                    organisationUseCases.create(
                      new Organisation(
                        UUID.randomUUID(),
-                       "",
+                       organisationCode,
                        organisationCode
                      )));
   }
