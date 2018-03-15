@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +16,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -111,8 +109,8 @@ public class LogicalMeterUseCasesTest {
 
   @Test
   public void nrOfReadOutsInHour() {
-    ZonedDateTime after = parseDateTime("2001-01-01T13:00:00Z");
-    ZonedDateTime before = parseDateTime("2001-01-01T14:00:00Z");
+    ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
+    ZonedDateTime before = ZonedDateTime.parse("2001-01-01T14:00:00Z");
 
     assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(15, after, before))
       .as("Unexpected nr of read outs")
@@ -121,8 +119,8 @@ public class LogicalMeterUseCasesTest {
 
   @Test
   public void nrOfReadOutsInDay() {
-    ZonedDateTime after = parseDateTime("2001-01-01T00:00:00Z");
-    ZonedDateTime before = parseDateTime("2001-01-02T00:00:00Z");
+    ZonedDateTime after = ZonedDateTime.parse("2001-01-01T00:00:00Z");
+    ZonedDateTime before = ZonedDateTime.parse("2001-01-02T00:00:00Z");
 
     assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(60, after, before))
       .as("Unexpected nr of read outs")
@@ -240,7 +238,7 @@ public class LogicalMeterUseCasesTest {
       "meter-" + meterId,
       organisationId,
       Location.UNKNOWN_LOCATION,
-      new Date()
+      ZonedDateTime.now()
     );
   }
 

@@ -1,8 +1,7 @@
 package com.elvaco.mvp.configuration.bootstrap.demo;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import com.elvaco.mvp.core.domainmodels.MeterStatus;
@@ -96,12 +95,7 @@ public class LogDatabaseLoader implements CommandLineRunner {
            || meterStatus.name.equalsIgnoreCase("warning");
   }
 
-  private Date addDays(int daySeed, int hourSeed) {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, -daySeed);
-    calendar.add(Calendar.HOUR, hourSeed);
-
-    return calendar.getTime();
+  private ZonedDateTime addDays(int daySeed, int hourSeed) {
+    return ZonedDateTime.now().plusDays(daySeed).plusHours(hourSeed);
   }
 }

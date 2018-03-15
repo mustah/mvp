@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -16,28 +15,11 @@ public class MeterStatusLog {
   public final long statusId;
   public final String name;
 
-  //TODO ZonedDateTime
-  public final Date start;
+  public final ZonedDateTime start;
   @Nullable
-  public final Date stop;
+  public final ZonedDateTime stop;
 
   //TODO remove
-  public MeterStatusLog(
-    @Nullable Long id,
-    UUID physicalMeterId,
-    long statusId,
-    String name,
-    Date start,
-    @Nullable Date stop
-  ) {
-    this.id = id;
-    this.physicalMeterId = physicalMeterId;
-    this.statusId = statusId;
-    this.name = name;
-    this.start = new Date(start.getTime());
-    this.stop = stop != null ? new Date(stop.getTime()) : null;
-  }
-
   public MeterStatusLog(
     @Nullable Long id,
     UUID physicalMeterId,
@@ -50,7 +32,7 @@ public class MeterStatusLog {
     this.physicalMeterId = physicalMeterId;
     this.statusId = statusId;
     this.name = name;
-    this.start = Date.from(start.toInstant());
-    this.stop = stop != null ? Date.from(stop.toInstant()) : null;
+    this.start = ZonedDateTime.ofInstant(start.toInstant(), start.getZone());
+    this.stop = stop != null ? ZonedDateTime.ofInstant(stop.toInstant(), stop.getZone()) : null;
   }
 }

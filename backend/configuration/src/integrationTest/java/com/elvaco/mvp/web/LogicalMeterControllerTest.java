@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -284,15 +282,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(2);
 
     MeterStatusLogDto meterStatusLogDto = logicalMeterDto.statusChangelog.get(0);
-    String formatTime = Dates.formatTime(statusLogDate, TimeZone.getDefault());
 
     assertThat(meterStatusLogDto.start)
-      .as("Unexpected date format")
-      .isEqualTo(formatTime);
+      .as("Unexpected date format for status start")
+      .isEqualTo(timeZoneMagic("2001-01-01T10:14:00.00Z"));
 
     assertThat(meterStatusLogDto.stop)
-      .as("Unexpected date format")
-      .isEqualTo(formatTime);
+      .as("Unexpected date format for status stop")
+      .isEqualTo(timeZoneMagic("2001-01-06T10:14:00.00Z"));
   }
 
   @Test
@@ -805,11 +802,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     String city,
     String country
   ) {
-    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(created);
-    calendar.add(Calendar.DATE, seed);
-    created = calendar.getTime();
+
+    ZonedDateTime created = ZonedDateTime.ofInstant(
+      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId())
+      .plusDays(seed);
 
     LogicalMeter logicalMeter = new LogicalMeter(
       randomUUID(),
@@ -1018,6 +1014,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   private String timeZoneMagic(String date) {
-    return Dates.formatTime(Date.from(Instant.parse(date)), TimeZone.getDefault());
+    return Dates.formatTime(ZonedDateTime.parse(date), TimeZone.getDefault());
   }
 }

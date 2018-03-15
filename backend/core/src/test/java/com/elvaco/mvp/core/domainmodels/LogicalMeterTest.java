@@ -1,6 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -53,7 +53,6 @@ public class LogicalMeterTest {
 
   @Test
   public void logicalMeterEquality() {
-    Date now = new Date();
     UUID organisationId = randomUUID();
     UUID meterId = randomUUID();
 
@@ -61,13 +60,13 @@ public class LogicalMeterTest {
       meterId,
       organisationId,
       MeterDefinition.HOT_WATER_METER
-    ).createdAt(now);
+    ).createdAt(ZonedDateTime.now());
 
     LogicalMeter otherLogicalMeter = newLogicalMeter(
       meterId,
       organisationId,
       MeterDefinition.HOT_WATER_METER
-    ).createdAt(now);
+    ).createdAt(ZonedDateTime.now());
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }

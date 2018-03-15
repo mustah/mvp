@@ -2,7 +2,6 @@ package com.elvaco.mvp.web;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -503,7 +502,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       UUID.randomUUID(),
       uuid.toString(),
       context().organisationEntity.id,
-      new Date(),
+      ZonedDateTime.now(),
       meterDefinitionEntity
     ));
   }

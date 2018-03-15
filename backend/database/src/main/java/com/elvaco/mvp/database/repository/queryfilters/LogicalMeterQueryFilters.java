@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toDate;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
 
@@ -62,8 +61,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   }
 
   private Predicate periodQueryFilter(RequestParameters parameters) {
-    Date start = toDate(parameters.getFirst(AFTER));
-    Date stop = toDate(parameters.getFirst(BEFORE));
+    ZonedDateTime start = ZonedDateTime.parse(parameters.getFirst(AFTER));
+    ZonedDateTime stop = ZonedDateTime.parse(parameters.getFirst(BEFORE));
     return isBefore(stop).and(isAfter(start).or(hasNoEndDate()));
   }
 
@@ -71,11 +70,11 @@ public class LogicalMeterQueryFilters extends QueryFilters {
     return Q.physicalMeters.any().statusLogs.any().stop.isNull();
   }
 
-  private BooleanExpression isAfter(Date start) {
+  private BooleanExpression isAfter(ZonedDateTime start) {
     return Q.physicalMeters.any().statusLogs.any().stop.after(start);
   }
 
-  private BooleanExpression isBefore(Date stop) {
+  private BooleanExpression isBefore(ZonedDateTime stop) {
     return Q.physicalMeters.any().statusLogs.any().start.before(stop);
   }
 

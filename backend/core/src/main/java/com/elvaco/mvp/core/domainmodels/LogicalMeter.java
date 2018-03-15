@@ -1,11 +1,10 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -23,7 +22,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   public final UUID id;
   public final Location location;
   public final List<PhysicalMeter> physicalMeters;
-  public final Date created;
+  public final ZonedDateTime created;
   public final String externalId;
   public final UUID organisationId;
   public final MeterDefinition meterDefinition;
@@ -35,7 +34,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     String externalId,
     UUID organisationId,
     Location location,
-    Date created,
+    ZonedDateTime created,
     List<PhysicalMeter> physicalMeters,
     MeterDefinition meterDefinition,
     List<Gateway> gateways,
@@ -45,7 +44,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.location = location;
-    this.created = new Date(created.getTime());
+    this.created = ZonedDateTime.ofInstant(created.toInstant(), created.getZone());
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);
@@ -57,7 +56,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     String externalId,
     UUID organisationId,
     Location location,
-    Date created,
+    ZonedDateTime created,
     List<PhysicalMeter> physicalMeters,
     MeterDefinition meterDefinition,
     List<Gateway> gateways
@@ -96,7 +95,7 @@ public class LogicalMeter implements Identifiable<UUID> {
       externalId,
       organisationId,
       Location.UNKNOWN_LOCATION,
-      new Date(),
+      ZonedDateTime.now(),
       physicalMeters,
       meterDefinition,
       emptyList(),
@@ -109,7 +108,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     String externalId,
     UUID organisationId,
     Location location,
-    Date created
+    ZonedDateTime created
   ) {
     this(
       id,
@@ -129,7 +128,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     return id;
   }
 
-  public LogicalMeter createdAt(Date creationTime) {
+  public LogicalMeter createdAt(ZonedDateTime creationTime) {
     return new LogicalMeter(
       id,
       externalId,

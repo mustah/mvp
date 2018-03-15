@@ -19,10 +19,8 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-import com.elvaco.mvp.core.util.Dates;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -80,8 +78,8 @@ public class LogicalMeterUseCases {
       return Optional.empty();
     }
 
-    ZonedDateTime after = parseDateTime(parameters.getValues("after").get(0));
-    ZonedDateTime before = parseDateTime(parameters.getValues("before").get(0));
+    ZonedDateTime after = ZonedDateTime.parse(parameters.getValues("after").get(0));
+    ZonedDateTime before = ZonedDateTime.parse(parameters.getValues("before").get(0));
 
     double expectedReadouts = 0L;
     double actualReadouts = 0L;
@@ -108,13 +106,13 @@ public class LogicalMeterUseCases {
       if ("active".equals(status.name)) {
 
         ZonedDateTime startPoint = getStartPoint(
-          Dates.of(status.start),
+          status.start,
           after,
           physicalMeter.readIntervalMinutes
         );
 
         ZonedDateTime endPoint = getEndPoint(
-          status.stop == null ? before : Dates.of(status.stop),
+          status.stop == null ? before : status.stop,
           before,
           physicalMeter.readIntervalMinutes
         );

@@ -1,9 +1,8 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -69,7 +68,13 @@ public class LogicalMeterMapperTest {
       0,
       null,
       singletonList(
-        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
+        new MeterStatusLog(
+          null,
+          randomUUID(),
+          1,
+          "Ok",
+          ZonedDateTime.now(),
+          ZonedDateTime.now())
       )
     );
 
@@ -78,7 +83,7 @@ public class LogicalMeterMapperTest {
       "some-external-id",
       ELVACO.id,
       location,
-      new Date(),
+      ZonedDateTime.now(),
       singletonList(physicalMeter),
       null,
       emptyList()
@@ -138,7 +143,7 @@ public class LogicalMeterMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build(),
-          dateFormat().parse("2018-02-12T14:14:25"),
+          parseDate("2018-02-12T14:14:25"),
           singletonList(
             new PhysicalMeter(
               randomUUID(),
@@ -156,8 +161,8 @@ public class LogicalMeterMapperTest {
                   randomUUID(),
                   2,
                   "Ok",
-                  dateFormat().parse("2018-02-12T14:14:25"),
-                  dateFormat().parse("2018-02-13T14:14:25")
+                  parseDate("2018-02-12T14:14:25"),
+                  parseDate("2018-02-13T14:14:25")
                 )
               )
             )),
@@ -180,7 +185,7 @@ public class LogicalMeterMapperTest {
       "external-id",
       ELVACO.id,
       Location.UNKNOWN_LOCATION,
-      dateFormat().parse("2018-02-12T14:14:25")
+      parseDate("2018-02-12T14:14:25")
     );
 
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created)
@@ -189,9 +194,10 @@ public class LogicalMeterMapperTest {
       .isEqualTo("2018-02-12 06:14:25");
   }
 
-  private static DateFormat dateFormat() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return dateFormat;
+  private static ZonedDateTime parseDate(String s) {
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+      .ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+      .withZone(TimeZone.getTimeZone("UTC").toZoneId());
+    return ZonedDateTime.from(dateTimeFormatter.parse(s));
   }
 }
