@@ -92,8 +92,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     }
 
     physicalMeterJpaRepository.deleteAll();
-    gatewayJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     organisations.findByCode("Some organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));
   }

@@ -3,7 +3,6 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -144,7 +143,7 @@ public class MessageHandlerTest {
       emptyList(),
       MeterDefinition.HOT_WATER_METER,
       emptyList(),
-      emptyList()
+      singletonList(gateways.findBy(organisation.id, "CMi2110", "001694120").get())
     );
 
     PhysicalMeter savedPhysicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
@@ -404,7 +403,7 @@ public class MessageHandlerTest {
       new FacilityIdDto("asdfg2"),
       "ICA Maxi",
       "Elvaco Metering",
-      Collections.emptyList()
+      emptyList()
     );
   }
 

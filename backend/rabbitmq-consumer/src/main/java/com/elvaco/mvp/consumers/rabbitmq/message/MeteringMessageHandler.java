@@ -76,13 +76,22 @@ public class MeteringMessageHandler implements MessageHandler {
     GatewayStatusDto gateway = structureMessage.gateway;
 
     gatewayUseCases.findBy(organisation.id, gateway.productModel, gateway.id)
-      .orElseGet(() -> gatewayUseCases.save(new Gateway(
-        UUID.randomUUID(),
-        organisation.id,
-        gateway.id,
-        gateway.productModel,
-        singletonList(logicalMeter)
-      )));
+      .orElseGet(() -> {
+        // TODO[!must!] create and save gateway when the logical meter is created (after demo)
+        // TODO[!must!] this still works, but it does one extra round-trip to DB
+        Gateway g = new Gateway(
+          UUID.randomUUID(),
+          organisation.id,
+          gateway.id,
+          gateway.productModel,
+          singletonList(logicalMeter)
+        );
+        Gateway saved = gatewayUseCases.save(g);
+
+        logicalMeterUseCases.save(logicalMeter.withGateway(saved));
+
+        return saved;
+      });
   }
 
   @Override

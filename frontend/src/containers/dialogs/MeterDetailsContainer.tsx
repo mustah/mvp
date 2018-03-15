@@ -93,7 +93,6 @@ const MeterDetailsInfo = (props: Props) => {
 
   const gateway = gateways[meter.gateway.id];
   const meterFlags = meter.flags || [];
-  const meterStatus = meter.statusChangelog[0];
 
   return (
     <Row>
@@ -132,7 +131,7 @@ const MeterDetailsInfo = (props: Props) => {
           </Column>
           <Info
             label={translate('status')}
-            value={<IconStatus id={meterStatus.statusId} name={meterStatus.name}/>}
+            value={<IconStatus id={meter.status.id} name={meter.status.name}/>}
           />
           {renderAlarm()}
           <Info label={translate('flagged for action')} value={titleOf(meterFlags)}/>
