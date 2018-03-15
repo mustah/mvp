@@ -122,10 +122,7 @@ test:unit_and_IT:
 publish:artifactory:
     image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
     stage: publish
-    only:
-      refs:
-        - master
-        - develop
+    when: manual
     dependencies:
       - gradle:build
     script:
@@ -135,14 +132,23 @@ publish:artifactory:
         - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
         - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
+deploy:drop-dbs:
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
+  when: manual
+  variables:
+    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_EAUTH: "pam"
+    SALTAPI_USER: "administrator"
+    SALTAPI_PASS: "password2"
+  script:
+    - pepper -G 'roles:mvp-app' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -G 'roles:postgresql-server' state.apply mvp.db.drop
 
 deploy:staging:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
-  only:
-    refs:
-      - master
-      - develop
+  when: manual
   variables:
     SALTAPI_URL: "https://salt-master:8000"
     SALTAPI_EAUTH: "pam"
@@ -157,9 +163,6 @@ deploy:production:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   when: manual
-  only:
-    refs:
-      - master
   variables:
     SALTAPI_URL: "https://salt-master:8000"
     SALTAPI_EAUTH: "pam"
