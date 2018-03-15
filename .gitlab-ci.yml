@@ -136,13 +136,14 @@ publish:artifactory:
         - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
         - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
-deploy:drop-dbs:
+deploy:recreate-dbs:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
   when: manual
   script:
     - pepper -G 'roles:mvp-app' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -G 'roles:postgresql-server' state.apply mvp.db.drop
+    - pepper -G 'roles:postgresql-server' state.apply mvp.db.create
 
 deploy:staging:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
