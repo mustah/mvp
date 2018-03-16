@@ -1,26 +1,27 @@
 import * as Leaflet from 'leaflet';
-import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {Dictionary, IdNamed} from '../../../types/Types';
-import {MapMarker, MapMarkerItem, Marker} from '../mapModels';
+import {Dictionary, Status} from '../../../types/Types';
+import {MapMarker, Marker} from '../mapModels';
 
+// TODO: Check if more markers types than 3 are needed to distinguish the different statuses
 const icons = {
-  ok: 'assets/images/marker-icon-ok.png',
-  warning: 'assets/images/marker-icon-warning.png',
-  critical: 'assets/images/marker-icon-error.png',
+  [Status.ok]: 'assets/images/marker-icon-ok.png',
+  [Status.active]: 'assets/images/marker-icon-ok.png',
+  [Status.warning]: 'assets/images/marker-icon-warning.png',
+  [Status.info]: 'assets/images/marker-icon-warning.png',
+  [Status.maintenance_scheduled]: 'assets/images/marker-icon-warning.png',
+  [Status.alarm]: 'assets/images/marker-icon-error.png',
+  [Status.critical]: 'assets/images/marker-icon-error.png',
 };
 
-const getStatusIcon = (status: IdNamed): string => status
-  ? icons[status.id] || 'assets/images/marker-icon.png'
+const getStatusIcon = (status: Status): string => status
+  ? icons[status] || 'assets/images/marker-icon.png'
   : 'assets/images/marker-icon.png';
 
-const toLatLngTuple = ({latitude, longitude}: GeoPosition): Leaflet.LatLngTuple =>
-  [latitude, longitude];
-
 const makeMarker = (marker: MapMarker): Marker => ({
-  position: toLatLngTuple(marker.location.position),
+  position: [marker.latitude, marker.longitude],
   options: {
     icon: Leaflet.icon({iconUrl: getStatusIcon(marker.status)}),
-    mapMarkerItem: marker as MapMarkerItem,
+    mapMarkerItem: marker.id,
   },
 });
 
@@ -32,12 +33,13 @@ export const isMarkersWithinThreshold = (markers: Dictionary<MapMarker>): boolea
 };
 
 export const isGeoPositionWithinThreshold =
-  ({location: {position: {latitude, longitude, confidence}}}: MapMarker) =>
+  ({latitude, longitude, confidence}: MapMarker) =>
     latitude !== undefined && longitude !== undefined && confidence >= 0.7;
 
 export const isMapMarker = (markers: Dictionary<MapMarker> | MapMarker): markers is MapMarker =>
   (markers as MapMarker).status !== undefined &&
-  (markers as MapMarker).location.position !== undefined;
+  (markers as MapMarker).longitude !== undefined &&
+  (markers as MapMarker).latitude !== undefined;
 
 export const makeLeafletCompatibleMarkersFrom = (markers: Dictionary<MapMarker> | MapMarker): Marker[] => {
   const mapMarkers = isMapMarker(markers) ? {markers} : markers;

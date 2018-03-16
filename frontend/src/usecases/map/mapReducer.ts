@@ -1,18 +1,17 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {Action} from '../../types/Types';
+import {Action, uuid} from '../../types/Types';
 import {CLOSE_CLUSTER_DIALOG, OPEN_CLUSTER_DIALOG} from './mapActions';
-import {MapMarkerItem} from './mapModels';
 
 export interface MapState {
   isClusterDialogOpen: boolean;
-  selectedMarker?: MapMarkerItem;
+  selectedMarker?: uuid;
 }
 
 export const initialState: MapState = {
   isClusterDialogOpen: false,
 };
 
-export const map = (state: MapState = initialState, action: Action<MapMarkerItem> | EmptyAction<string>): MapState => {
+export const map = (state: MapState = initialState, action: Action<uuid> | EmptyAction<string>): MapState => {
   switch (action.type) {
     case CLOSE_CLUSTER_DIALOG:
       return {
@@ -24,7 +23,7 @@ export const map = (state: MapState = initialState, action: Action<MapMarkerItem
       return {
         ...state,
         isClusterDialogOpen: true,
-        selectedMarker: (action as Action<MapMarkerItem>).payload,
+        selectedMarker: (action as Action<uuid>).payload,
       };
     default:
       return state;

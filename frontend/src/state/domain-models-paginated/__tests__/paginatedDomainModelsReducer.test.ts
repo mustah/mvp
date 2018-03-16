@@ -8,7 +8,7 @@ import {
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../paginatedDomainModels';
-import {clearErrorMeters, paginatedRequestMethod} from '../paginatedDomainModelsActions';
+import {clearErrorMeters, getRequestOf} from '../paginatedDomainModelsActions';
 import {
   initialPaginatedDomain,
   meters,
@@ -20,7 +20,7 @@ describe('paginatedDomainModelsReducer', () => {
 
   describe('meters, paginated', () => {
 
-    const getRequest = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
+    const getRequest = getRequestOf<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 

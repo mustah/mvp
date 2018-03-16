@@ -26,7 +26,7 @@ import {fetchOrganisations} from '../../../state/domain-models/organisation/orga
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
-import {ClearError, ErrorResponse, OnClick, Fetch, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, Fetch, uuid, FetchSingle} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -37,7 +37,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchUser: (id: uuid) => void;
+  fetchUser: FetchSingle;
   fetchOrganisations: Fetch;
   modifyUser: OnClick;
   clearError: ClearError;

@@ -16,19 +16,26 @@ import {
   HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
-  PaginatedDomainModelsState,
+  PaginatedDomainModelsState, SingleEntityFailure,
 } from './paginatedDomainModels';
 import {
   domainModelPaginatedClearError,
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
-  domainModelsPaginatedRequest,
-} from './paginatedDomainModelsActions';
+  domainModelsPaginatedRequest} from './paginatedDomainModelsActions';
+import {
+  domainModelsPaginatedEntityFailure,
+  domainModelsPaginatedEntityRequest,
+  domainModelsPaginatedEntitySuccess,
+} from './paginatedDomainModelsEntityActions';
 
 export const initialPaginatedDomain = <T extends Identifiable>(): NormalizedPaginatedState<T> => ({
+  isFetchingSingle: false,
+  nonExistingSingles: {},
   result: {},
   entities: {},
 });
+
 const setRequest = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
   {payload: page}: Action<number>,
@@ -80,11 +87,38 @@ const clearError = <T extends Identifiable>(
   },
 });
 
+const entityRequest = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+): NormalizedPaginatedState<T> => ({
+  ...state,
+  isFetchingSingle: true,
+});
+
+const addEntity = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  {payload}: Action<T>,
+): NormalizedPaginatedState<T> => ({
+  ...state,
+  isFetchingSingle: false,
+  entities: {...state.entities, [payload.id]: payload},
+});
+
+const entityFailure = <T extends Identifiable>(
+  state: NormalizedPaginatedState<T>,
+  {payload}: Action<SingleEntityFailure>,
+): NormalizedPaginatedState<T> => ({
+  ...state,
+  isFetchingSingle: false,
+  nonExistingSingles: {...state.nonExistingSingles, [payload.id]: payload},
+});
+
 type ActionTypes<T extends Identifiable> =
   | Action<NormalizedPaginated<T>>
   | Action<number>
   | Action<ErrorResponse & HasPageNumber>
-  | Action<HasPageNumber>;
+  | Action<HasPageNumber>
+  | Action<T>
+  | Action<SingleEntityFailure>;
 
 export const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
@@ -103,6 +137,12 @@ export const reducerFor = <T extends Identifiable>(
         return setError<T>(state, action as Action<ErrorResponse & HasPageNumber>);
       case domainModelPaginatedClearError(endPoint):
         return clearError(state, action as Action<HasPageNumber>);
+      case domainModelsPaginatedEntityRequest(endPoint):
+        return entityRequest(state);
+      case domainModelsPaginatedEntitySuccess(endPoint):
+        return addEntity(state, action as Action<T>);
+      case domainModelsPaginatedEntityFailure(endPoint):
+        return entityFailure(state, action as Action<SingleEntityFailure>);
       case SELECT_SAVED_SELECTION:
       case ADD_SELECTION:
       case DESELECT_SELECTION:

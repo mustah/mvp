@@ -194,6 +194,7 @@ export const measurements = reducerFor<Measurement>(
 );
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
 export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
+export const meterMapMarkers = reducerFor<Meter>('meterMapMarkers', EndPoints.meterMapMarkers, resetStateReducer);
 export const organisations = reducerFor<Organisation>(
   'organisations',
   EndPoints.organisations,
@@ -211,5 +212,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   users,
   measurements,
   allMeters,
+  meterMapMarkers,
   organisations,
 });

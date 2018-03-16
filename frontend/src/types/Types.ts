@@ -11,6 +11,8 @@ export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type RenderFunction<T> = (props: T) => Children;
 
+export type FetchSingle = (id: uuid) => void;
+
 export type Fetch = (parameters?: string) => void;
 export type ClearError = () => void;
 

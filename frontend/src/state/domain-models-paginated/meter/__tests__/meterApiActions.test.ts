@@ -14,7 +14,7 @@ import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
 import {
   clearErrorMeters,
   domainModelPaginatedClearError,
-  paginatedRequestMethod,
+  getRequestOf,
 } from '../../paginatedDomainModelsActions';
 import {fetchMeters} from '../meterApiActions';
 import {Meter} from '../meterModels';
@@ -34,7 +34,7 @@ describe('meterApiActions', () => {
     },
   };
 
-  const requestMeters = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
+  const requestMeters = getRequestOf<NormalizedPaginated<Meter>>(EndPoints.meters);
 
   beforeEach(() => {
     store = configureMockStore(initialRootState);

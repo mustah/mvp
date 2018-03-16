@@ -35,7 +35,7 @@ import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
-import {getSelectedGatewayMarker} from '../../map/mapSelectors';
+import {getSelectedMapMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayList} from '../components/GatewayList';
 
@@ -162,7 +162,7 @@ const mapStateToProps = ({
       result: getResultDomainModels(gateways),
     }),
     pagination: paginationData,
-    selectedMaker: getSelectedGatewayMarker(map),
+    selectedMaker: getSelectedMapMarker(map),
     encodedUriParametersForGateways: getEncodedUriParametersForGateways(searchParameters),
     isFetching: gateways.isFetching,
     error: getError(gateways),
