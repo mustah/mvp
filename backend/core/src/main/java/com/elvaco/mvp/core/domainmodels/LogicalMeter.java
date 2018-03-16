@@ -9,7 +9,6 @@ import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -18,7 +17,6 @@ import static java.util.Collections.unmodifiableList;
 
 @ToString
 @EqualsAndHashCode(doNotUseGetters = true)
-@Slf4j
 public class LogicalMeter implements Identifiable<UUID> {
 
   public final UUID id;
@@ -218,9 +216,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     } else if (physicalMeters.isEmpty()) {
       return Optional.empty();
     }
-    log.warn(
-      "Active meter identification with multiple meters is not implemented! Returning last in "
-        + "list (not necessarily correct).");
+    //TODO: Implement actual active meter identification
     return Optional.of(physicalMeters.get(physicalMeters.size() - 1));
   }
 }

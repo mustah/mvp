@@ -1,10 +1,13 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,6 +86,81 @@ public class LogicalMeterTest {
     assertThat(logicalMeter.getQuantity("Bildäck")).isEmpty();
   }
 
+  @Test
+  public void getManufacturerNoPhysicalMeter() {
+
+    LogicalMeter logicalMeter = newLogicalMeter(
+      UUID.randomUUID(),
+      UUID.randomUUID(),
+      MeterDefinition.HOT_WATER_METER
+    );
+    assertThat(logicalMeter.getManufacturer()).isEqualTo("Unknown manufacturer");
+  }
+
+  @Test
+  public void getManufacturerOnePhysicalMeter() {
+
+    UUID organisationId = UUID.randomUUID();
+    UUID logicalMeterId = UUID.randomUUID();
+    LogicalMeter logicalMeter = newLogicalMeter(
+      logicalMeterId,
+      organisationId,
+      MeterDefinition.HOT_WATER_METER,
+      Collections.singletonList(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
+    );
+    assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
+  }
+
+  @Test
+  public void getManufacturerTwoPhysicalMeters() {
+
+    UUID organisationId = UUID.randomUUID();
+    UUID logicalMeterId = UUID.randomUUID();
+    LogicalMeter logicalMeter = newLogicalMeter(
+      logicalMeterId,
+      organisationId,
+      MeterDefinition.HOT_WATER_METER,
+      asList(
+        newPhysicalMeter(organisationId, logicalMeterId, "KAM"),
+        newPhysicalMeter(organisationId, logicalMeterId, "ELV")
+      )
+    );
+    assertThat(logicalMeter.getManufacturer()).isEqualTo("ELV");
+  }
+
+  private PhysicalMeter newPhysicalMeter(
+    UUID organisationId,
+    UUID logicalMeterId,
+    String manufacturer
+  ) {
+    return new PhysicalMeter(
+      UUID.randomUUID(),
+      new Organisation(organisationId, "an-organisation", "an-organisation"),
+      "12341234",
+      "an-external-id",
+      "Hot water",
+      manufacturer,
+      logicalMeterId,
+      0L,
+      0L,
+      Collections.emptyList()
+    );
+  }
+
+  private LogicalMeter newLogicalMeter(
+    UUID id,
+    UUID organisationId,
+    MeterDefinition meterDefinition,
+    List<PhysicalMeter> physicalMeterList
+  ) {
+    return new LogicalMeter(
+      id,
+      "an-external-id",
+      organisationId,
+      meterDefinition,
+      physicalMeterList
+    );
+  }
 
   private LogicalMeter newLogicalMeter(
     UUID id,
