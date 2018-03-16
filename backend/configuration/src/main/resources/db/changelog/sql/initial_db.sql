@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS users_roles (
 
 CREATE TABLE IF NOT EXISTS logical_meter (
   id UUID PRIMARY KEY,
-  created TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
+  created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   meter_definition_type BIGINT REFERENCES meter_definition,
   organisation_id UUID NOT NULL REFERENCES organisation,
   external_id TEXT NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
   medium TEXT,
   manufacturer VARCHAR(255),
   logical_meter_id UUID REFERENCES logical_meter,
-  read_interval BIGINT NOT NULL,
+  read_interval_minutes BIGINT NOT NULL,
   UNIQUE (organisation_id, external_id, address)
 );
 
@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS physical_meter_status (
 
 CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   id BIGSERIAL PRIMARY KEY,
-  start TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
-  stop TIMESTAMP WITHOUT TIME ZONE,
+  start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  stop TIMESTAMP WITH TIME ZONE,
   status_id BIGINT REFERENCES physical_meter_status (id),
   physical_meter_id UUID REFERENCES physical_meter (id)
 );

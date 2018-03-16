@@ -9,6 +9,8 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static java.util.Collections.emptyList;
+
 @EqualsAndHashCode
 @ToString
 public class PhysicalMeter implements Identifiable<UUID> {
@@ -22,8 +24,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final UUID logicalMeterId;
   public final String manufacturer;
   private final List<Measurement> measurements;
-  public final long readInterval;
+  public final long readIntervalMinutes;
   private final Long measurementCount;
+  public final List<MeterStatusLog> statuses;
 
   public PhysicalMeter(
     UUID id,
@@ -33,8 +36,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String medium,
     String manufacturer,
     @Nullable UUID logicalMeterId,
-    long readInterval,
-    @Nullable Long measurementCount
+    long readIntervalMinutes,
+    @Nullable Long measurementCount,
+    List<MeterStatusLog> statuses
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -44,8 +48,34 @@ public class PhysicalMeter implements Identifiable<UUID> {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.measurements = new ArrayList<>();
-    this.readInterval = readInterval;
+    this.readIntervalMinutes = readIntervalMinutes;
     this.measurementCount = measurementCount;
+    this.statuses = statuses;
+  }
+
+  public PhysicalMeter(
+    UUID id,
+    Organisation organisation,
+    String address,
+    String externalId,
+    String medium,
+    String manufacturer,
+    @Nullable UUID logicalMeterId,
+    long readIntervalMinutes,
+    Long measurementCount
+  ) {
+    this(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      readIntervalMinutes,
+      measurementCount,
+      emptyList()
+    );
   }
 
   public PhysicalMeter(
@@ -55,7 +85,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String medium,
     String manufacturer,
     Organisation organisation,
-    long readInterval
+    long readIntervalMinutes
   ) {
     this(
       id,
@@ -65,7 +95,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       null,
-      readInterval,
+      readIntervalMinutes,
       null
     );
   }
@@ -77,9 +107,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
     String externalId,
     String medium,
     String manufacturer,
-    long readInterval
+    long readIntervalMinutes
   ) {
-    this(id, address, externalId, medium, manufacturer, organisation, readInterval);
+    this(id, address, externalId, medium, manufacturer, organisation, readIntervalMinutes);
   }
 
   @Override
@@ -100,7 +130,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       logicalMeterId,
-      readInterval,
+      readIntervalMinutes,
       measurementCount
     );
   }
@@ -114,7 +144,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       logicalMeterId,
-      readInterval,
+      readIntervalMinutes,
       measurementCount
     );
   }
@@ -128,8 +158,9 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       logicalMeterId,
-      readInterval,
+      readIntervalMinutes,
       measurementCount
     );
   }
+
 }

@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +15,6 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.elvaco.mvp.core.util.Dates.parseDateTime;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -110,23 +108,139 @@ public class LogicalMeterUseCasesTest {
 
   @Test
   public void nrOfReadOutsInHour() {
-    LocalDateTime after = parseDateTime("2001-01-01T13:00:00Z");
-    LocalDateTime before = parseDateTime("2001-01-01T14:00:00Z");
+    ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
+    ZonedDateTime before = ZonedDateTime.parse("2001-01-01T14:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(15, after, before))
+    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(15, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(4);
   }
 
   @Test
   public void nrOfReadOutsInDay() {
-    LocalDateTime after = parseDateTime("2001-01-01T00:00:00Z");
-    LocalDateTime before = parseDateTime("2001-01-02T00:00:00Z");
+    ZonedDateTime after = ZonedDateTime.parse("2001-01-01T00:00:00Z");
+    ZonedDateTime before = ZonedDateTime.parse("2001-01-02T00:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculatedExpectedReadOuts(60, after, before))
+    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(60, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(24);
   }
+
+  @Test
+  public void getFirstQuarterInterval() {
+    assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 15))
+      .as("Failed to advance 10:31 to first 15 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:45:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:00:00.00Z", 15))
+      .as("Failed to advance 10:00 to first 15 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:16:00.00Z", 15))
+      .as("Failed to advance 10:16 to next 15 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:30:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:14:00.00Z", 15))
+      .as("Failed to advance 10:14 to next 15 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:15:00.00Z"));
+  }
+
+  @Test
+  public void getFirst30MinInterval() {
+    assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 30))
+      .as("Failed to advance 10:31 to first 30 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:00:00.00Z", 30))
+      .as("Failed to advance 10:00 to first 30 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:50:00.00Z", 30))
+      .as("Failed to advance 10:50 to first 30 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:16:00.00Z", 30))
+      .as("Failed to advance 10:16 to next 30 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:30:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:14:00.00Z", 30))
+      .as("Failed to advance 10:14 to next 30 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:30:00.00Z"));
+  }
+
+  @Test
+  public void getFirst20MinInterval() {
+    assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 20))
+      .as("Failed to advance 10:31 to first 20 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:40:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:00:00.00Z", 20))
+      .as("Failed to advance 10:00 to first 20 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:16:00.00Z", 20))
+      .as("Failed to advance 10:16 to next 20 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:20:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:14:00.00Z", 20))
+      .as("Failed to advance 10:14 to next 20 min interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:20:00.00Z"));
+  }
+
+  @Test
+  public void getFirstHourInterval() {
+    assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 60))
+      .as("Failed to advance 10:31 to first hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:00:00.00Z", 60))
+      .as("Failed to advance 10:00 to first hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T10:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:16:00.00Z", 60))
+      .as("Failed to advance 10:16 to next hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:14:00.00Z", 60))
+      .as("Failed to advance 10:14 to next hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T11:00:00.00Z"));
+  }
+
+  @Test
+  public void getFirst24HourInterval() {
+    assertThat(getFirstMatching("2001-01-01T00:00:00.00Z", 1440))
+      .as("Failed to advance 00:00 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-01T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T00:31:00.00Z", 1440))
+      .as("Failed to advance 00:31 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T12:01:00.00Z", 1440))
+      .as("Failed to advance 12:01 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:31:00.00Z", 1440))
+      .as("Failed to advance 10:31 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:00:00.00Z", 1440))
+      .as("Failed to advance 10:00 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:16:00.00Z", 1440))
+      .as("Failed to advance 10:16 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+
+    assertThat(getFirstMatching("2001-01-01T10:14:00.00Z", 1440))
+      .as("Failed to advance 10:14 to first 24 hour interval")
+      .isEqualTo(ZonedDateTime.parse("2001-01-02T00:00:00.00Z"));
+  }
+
+  private ZonedDateTime getFirstMatching(String date, long interval) {
+    return LogicalMeterUseCases.getFirstDateMatchingInterval(ZonedDateTime.parse(date), interval);
+  }
+
 
   private LogicalMeter newMeter(UUID meterId, UUID organisationId) {
     return new LogicalMeter(
@@ -134,7 +248,7 @@ public class LogicalMeterUseCasesTest {
       "meter-" + meterId,
       organisationId,
       Location.UNKNOWN_LOCATION,
-      new Date()
+      ZonedDateTime.now()
     );
   }
 

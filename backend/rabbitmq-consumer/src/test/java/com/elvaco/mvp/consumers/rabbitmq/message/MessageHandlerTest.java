@@ -68,8 +68,7 @@ public class MessageHandlerTest {
     13,
     9,
     0,
-    ZoneId
-      .of("CET")
+    ZoneId.of("CET")
   );
   private static final long MEASUREMENT_TIMESTAMP = 1520435589000L;
 
@@ -142,7 +141,6 @@ public class MessageHandlerTest {
       logicalMeter.created,
       emptyList(),
       MeterDefinition.HOT_WATER_METER,
-      emptyList(),
       singletonList(gateways.findBy(organisation.id, "CMi2110", "001694120").get())
     );
 

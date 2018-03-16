@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
@@ -17,8 +17,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.database.entity.EntityType;
@@ -44,9 +42,8 @@ public class LogicalMeterEntity extends EntityType<UUID> {
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   public Set<PhysicalMeterEntity> physicalMeters;
 
-  @Temporal(value = TemporalType.TIMESTAMP)
   @Column(nullable = false)
-  public Date created;
+  public ZonedDateTime created;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
@@ -75,13 +72,13 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     UUID id,
     String externalId,
     UUID organisationId,
-    Date created,
+    ZonedDateTime created,
     MeterDefinitionEntity meterDefinition
   ) {
     this.id = id;
     this.externalId = externalId;
     this.organisationId = organisationId;
-    this.created = new Date(created.getTime());
+    this.created = ZonedDateTime.ofInstant(created.toInstant(), created.getZone());
     this.physicalMeters = emptySet();
     this.gateways = emptySet();
     this.meterDefinition = meterDefinition;

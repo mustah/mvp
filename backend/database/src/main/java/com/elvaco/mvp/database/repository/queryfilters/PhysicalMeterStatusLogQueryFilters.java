@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,6 @@ import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.toDate;
 import static java.util.stream.Collectors.toList;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
@@ -64,8 +63,8 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   }
 
   private Predicate periodQueryFilter(RequestParameters parameters) {
-    Date start = toDate(parameters.getFirst(AFTER));
-    Date stop = toDate(parameters.getFirst(BEFORE));
+    ZonedDateTime start = ZonedDateTime.parse(parameters.getFirst(AFTER));
+    ZonedDateTime stop = ZonedDateTime.parse(parameters.getFirst(BEFORE));
     return
       Q.start.before(stop)
         .and(Q.stop.after(start).or(Q.stop.isNull()))

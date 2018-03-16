@@ -1,6 +1,6 @@
 package com.elvaco.mvp.database;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
@@ -55,7 +55,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       logicalMeterId,
       "Some external ID",
       context().organisation().id,
-      new Date(),
+      ZonedDateTime.now(),
       meterDefinitionEntity
     );
     logicalMeterEntity.setLocation(new LocationEntity(logicalMeterId, 1.0, 2.0, 1.0));

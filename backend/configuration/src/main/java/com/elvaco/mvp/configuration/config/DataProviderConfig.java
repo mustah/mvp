@@ -183,12 +183,11 @@ class DataProviderConfig {
       new MeterDefinitionMapper(),
       new LocationMapper(),
       newPhysicalMeterMapper(),
-      new GatewayMapper(),
-      new MeterStatusLogMapper()
+      new GatewayMapper()
     );
   }
 
   private PhysicalMeterMapper newPhysicalMeterMapper() {
-    return new PhysicalMeterMapper(new OrganisationMapper());
+    return new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper());
   }
 }

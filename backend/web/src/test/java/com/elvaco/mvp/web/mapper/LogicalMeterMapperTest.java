@@ -1,9 +1,8 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -58,17 +57,35 @@ public class LogicalMeterMapperTest {
       .coordinate(new GeoCoordinate(3.1, 2.1))
       .build();
 
+    PhysicalMeter physicalMeter = new PhysicalMeter(
+      null,
+      ELVACO,
+      "",
+      "",
+      "",
+      "",
+      meterId,
+      0,
+      null,
+      singletonList(
+        new MeterStatusLog(
+          null,
+          randomUUID(),
+          1,
+          "Ok",
+          ZonedDateTime.now(),
+          ZonedDateTime.now())
+      )
+    );
+
     LogicalMeter logicalMeter = new LogicalMeter(
       meterId,
       "some-external-id",
       ELVACO.id,
       location,
-      new Date(),
-      emptyList(),
+      ZonedDateTime.now(),
+      singletonList(physicalMeter),
       null,
-      singletonList(
-        new MeterStatusLog(null, randomUUID(), 1, "Ok", new Date(), new Date())
-      ),
       emptyList()
     );
 
@@ -126,28 +143,30 @@ public class LogicalMeterMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build(),
-          dateFormat().parse("2018-02-12T14:14:25"),
+          parseDate("2018-02-12T14:14:25"),
           singletonList(
             new PhysicalMeter(
               randomUUID(),
+              ELVACO,
               "123123",
               "an-external-id",
               "Some device specific medium",
               "ELV",
-              ELVACO,
-              15
+              meterId,
+              15,
+              null,
+              singletonList(
+                new MeterStatusLog(
+                  1L,
+                  randomUUID(),
+                  2,
+                  "Ok",
+                  parseDate("2018-02-12T14:14:25"),
+                  parseDate("2018-02-13T14:14:25")
+                )
+              )
             )),
           MeterDefinition.HOT_WATER_METER,
-          singletonList(
-            new MeterStatusLog(
-              1L,
-              randomUUID(),
-              2,
-              "Ok",
-              dateFormat().parse("2018-02-12T14:14:25"),
-              dateFormat().parse("2018-02-13T14:14:25")
-            )
-          ),
           singletonList(new Gateway(
             uuidOf(expected.gateway.id),
             organisationId,
@@ -166,7 +185,7 @@ public class LogicalMeterMapperTest {
       "external-id",
       ELVACO.id,
       Location.UNKNOWN_LOCATION,
-      dateFormat().parse("2018-02-12T14:14:25")
+      parseDate("2018-02-12T14:14:25")
     );
 
     assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created)
@@ -175,9 +194,10 @@ public class LogicalMeterMapperTest {
       .isEqualTo("2018-02-12 06:14:25");
   }
 
-  private static DateFormat dateFormat() {
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    return dateFormat;
+  private static ZonedDateTime parseDate(String s) {
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+      .ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+      .withZone(TimeZone.getTimeZone("UTC").toZoneId());
+    return ZonedDateTime.from(dateTimeFormatter.parse(s));
   }
 }

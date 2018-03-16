@@ -47,7 +47,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
 
   public UUID logicalMeterId;
 
-  public long readInterval;
+  public long readIntervalMinutes;
 
   public PhysicalMeterEntity() {}
 
@@ -59,7 +59,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     String medium,
     String manufacturer,
     @Nullable UUID logicalMeterId,
-    long readInterval
+    long readIntervalMinutes
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -68,7 +68,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
-    this.readInterval = readInterval;
+    this.readIntervalMinutes = readIntervalMinutes;
   }
 
   @Override

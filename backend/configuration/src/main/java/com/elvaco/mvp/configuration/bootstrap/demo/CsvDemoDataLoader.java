@@ -3,8 +3,7 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -109,7 +108,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
               addDays(),
               emptyList(),
               meterDefinition,
-              emptyList(),
               emptyList()
             );
             PhysicalMeter physicalMeter = new PhysicalMeter(
@@ -138,7 +136,7 @@ public class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,
-            physicalMeter.readInterval,
+            physicalMeter.readIntervalMinutes,
             null
           ));
       });
@@ -146,14 +144,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
 
   private int daySeed = 1;
 
-  private Date addDays() {
-    Calendar calendar = Calendar.getInstance();
-    calendar.setTime(new Date());
-    calendar.add(Calendar.DATE, - daySeed);
-
-    daySeed++;
-
-    return calendar.getTime();
+  private ZonedDateTime addDays() {
+    return ZonedDateTime.now().minusDays(daySeed++);
   }
 
   private static Map<String, Location> mapAddressToLocation() throws IOException {

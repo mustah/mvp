@@ -1,7 +1,8 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.time.Instant;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -34,9 +35,8 @@ public class LogicalMeterMapperTest {
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       new LocationMapper(),
-      new PhysicalMeterMapper(new OrganisationMapper()),
-      new GatewayMapper(),
-      new MeterStatusLogMapper()
+      new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper()),
+      new GatewayMapper()
     );
   }
 
@@ -66,7 +66,10 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterEntityToDomainModelWithPosition() {
-    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    ZonedDateTime created = ZonedDateTime.ofInstant(
+      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId()
+    );
+
     UUID organisationId = randomUUID();
 
     UUID meterId = randomUUID();
@@ -103,7 +106,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Speed", "mps")),
           false
         ),
-        emptyList(),
         emptyList()
       )
     );
@@ -111,7 +113,7 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterEntityToDomainModelOutPosition() {
-    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    ZonedDateTime created = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
 
     UUID organisationId = randomUUID();
 
@@ -141,7 +143,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
         ),
-        emptyList(),
         emptyList()
       )
     );
@@ -149,7 +150,10 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterDomainModelToEntity() {
-    Date created = Date.from(Instant.parse("2001-01-01T10:14:00.00Z"));
+    ZonedDateTime created = ZonedDateTime.ofInstant(
+      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId()
+    );
+
 
     UUID meterId = randomUUID();
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity(
@@ -179,7 +183,6 @@ public class LogicalMeterMapperTest {
           singleton(new Quantity(1L, "Energy", "kWh")),
           false
         ),
-        emptyList(),
         emptyList()
       ));
 
