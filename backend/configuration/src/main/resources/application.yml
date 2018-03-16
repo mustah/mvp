@@ -28,12 +28,6 @@ ehcache:
   heap-entries: 1000
   idle-time: 20
 
-zuul:
-  routes:
-    dashboards:
-      path: /v1/api/dashboards/**
-      url: http://localhost:4000/v1/api/dashboards/
-
 liquibase:
   enabled: false
 
