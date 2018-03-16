@@ -1,5 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -70,7 +71,8 @@ public class MessageHandlerTest {
     0,
     ZoneId.of("CET")
   );
-  private static final long MEASUREMENT_TIMESTAMP = 1520435589000L;
+  private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
+    "2018-03-07T16:13:09");
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -239,7 +241,7 @@ public class MessageHandlerTest {
 
   @Test
   @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-          + "ought to be considered a new physical meter.")
+    + "ought to be considered a new physical meter.")
   public void updatesExistingMeterForExistingOrganisation() {
     MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
     Organisation organisation = organisations.save(
@@ -274,7 +276,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                   + "organisation"));
+                                                                     + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       "1234",
@@ -407,8 +409,8 @@ public class MessageHandlerTest {
 
   private MeteringAlarmMessageDto newAlarmMessageWithTwoAlarms() {
     List<AlarmDto> alarms = new ArrayList<>();
-    alarms.add(new AlarmDto(1234, 88));
-    alarms.add(new AlarmDto(1235, 99));
+    alarms.add(new AlarmDto(LocalDateTime.parse("2018-04-09T13:45:02"), 88));
+    alarms.add(new AlarmDto(LocalDateTime.parse("2009-05-16T14:14:06"), 99));
     return new MeteringAlarmMessageDto(
       MessageType.METERING_ALARM_V_1_0,
       new GatewayIdDto("351"),
