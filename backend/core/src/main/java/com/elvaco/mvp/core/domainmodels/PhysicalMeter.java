@@ -2,7 +2,6 @@ package com.elvaco.mvp.core.domainmodels;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
@@ -25,7 +24,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final String manufacturer;
   private final List<Measurement> measurements;
   public final long readIntervalMinutes;
-  private final Long measurementCount;
+  public final Long measurementCount;
   public final List<MeterStatusLog> statuses;
 
   public PhysicalMeter(
@@ -117,8 +116,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
     return id;
   }
 
-  public Optional<Long> getMeasurementCount() {
-    return Optional.ofNullable(measurementCount);
+  public long getMeasurementCountOrZero() {
+    return measurementCount != null ? measurementCount : 0;
   }
 
   public PhysicalMeter withMedium(String medium) {

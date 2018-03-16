@@ -48,46 +48,14 @@ public class LogicalMeterUseCases {
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
-      .map(logicalMeter ->
-             logicalMeter.withCollectionPercentage(
-               getCollectionPercent(
-                 logicalMeter.physicalMeters, parameters
-               ).orElse(null)
-             )
-      );
+      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
   }
 
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
-      .stream().map(logicalMeter ->
-                      logicalMeter.withCollectionPercentage(
-                        getCollectionPercent(
-                          logicalMeter.physicalMeters, parameters
-                        ).orElse(null)
-                      )
-      ).collect(toList());
-  }
-
-  private Optional<Double> getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    RequestParameters parameters
-  ) {
-    if (!parameters.hasName("after") || !parameters.hasName("before")) {
-      return Optional.empty();
-    }
-
-    ZonedDateTime after = ZonedDateTime.parse(parameters.getValues("after").get(0));
-    ZonedDateTime before = ZonedDateTime.parse(parameters.getValues("before").get(0));
-
-    double expectedReadouts = 0L;
-    double actualReadouts = 0L;
-
-    for (PhysicalMeter physicalMeter : physicalMeters) {
-      expectedReadouts = calculateExpectedReadOuts(physicalMeter, after, before);
-      actualReadouts += physicalMeter.getMeasurementCount().map(val -> val.longValue()).orElse(0L);
-    }
-
-    return Optional.of(actualReadouts / expectedReadouts);
+      .stream()
+      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
+      .collect(toList());
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -129,6 +97,35 @@ public class LogicalMeterUseCases {
       );
     }
     return Optional.empty();
+  }
+
+  private LogicalMeter withCollectionPercentage(
+    LogicalMeter logicalMeter,
+    RequestParameters parameters
+  ) {
+    return logicalMeter.withCollectionPercentage(
+      getCollectionPercent(logicalMeter.physicalMeters, parameters)
+    );
+  }
+
+  private Double getCollectionPercent(
+    List<PhysicalMeter> physicalMeters,
+    RequestParameters parameters
+  ) {
+    if (parameters.hasName("after") && parameters.hasName("before")) {
+      ZonedDateTime after = ZonedDateTime.parse(parameters.getFirst("after"));
+      ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
+
+      double expectedReadouts = 0L;
+      double actualReadouts = 0L;
+
+      for (PhysicalMeter physicalMeter : physicalMeters) {
+        expectedReadouts = calculateExpectedReadOuts(physicalMeter, after, before);
+        actualReadouts += physicalMeter.getMeasurementCountOrZero();
+      }
+      return actualReadouts / expectedReadouts;
+    }
+    return null;
   }
 
   private boolean hasTenantAccess(UUID organisationId) {
