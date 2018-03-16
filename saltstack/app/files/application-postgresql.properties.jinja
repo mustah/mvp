@@ -1,0 +1,18 @@
+server.port=8080
+spring.datasource.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
+spring.datasource.username=mvpdb-app
+spring.datasource.password=mvp-password
+
+spring.rabbitmq.host=rabbitmq.elvaco.se
+spring.rabbitmq.username=app.rabbitmq.mvp
+spring.rabbitmq.password=Yk"!43iTpeToL1!1WjXgwl!89Tq1
+spring.rabbitmq.listener.simple.default-requeue-rejected=false
+
+mvp.consumers.rabbit.queueName={{ salt['grains.get']('env')[0] }}
+
+liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
+liquibase.user=mvpdb-admin
+liquibase.password=crA4JNdA8Z^N35&5u@!
+liquibase.parameters.application_user="mvpdb-app"
+liquibase.parameters.application_password=mvp-password
+liquibase.parameters.application_database=mvpdb

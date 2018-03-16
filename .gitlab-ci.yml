@@ -5,10 +5,19 @@ stages:
     - prepare
     - build
     - test
+    - publish
     - deploy
 
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_EAUTH: "pam"
+    SALTAPI_USER: "administrator"
+    SALTAPI_PASS: "password2"
+
+.no_cache: &no_cache
+     cache:
+        key: "$CI_COMMIT_REF_NAME-no_cache"
 
 .cache_gradle: &cache_gradle
      cache:
@@ -16,7 +25,18 @@ variables:
         paths:
           - .gradle/caches
           - .yarn
+          - frontend/.fusebox/cache
           - .version
+
+.cache_gradle_read_only: &cache_gradle_read_only
+     cache:
+        key: "$CI_COMMIT_REF_NAME-gradle"
+        paths:
+          - .gradle/caches
+          - .yarn
+          - frontend/.fusebox/cache
+          - .version
+        policy: pull
 
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -34,6 +54,7 @@ gradle:clean:
         - /^release-.*$/
 
 docker:postgresql:
+    <<: *no_cache
     stage: prepare
     tags:
       - shell
@@ -42,7 +63,18 @@ docker:postgresql:
       - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
       - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
+docker:ci-utils:
+    <<: *no_cache
+    stage: prepare
+    tags:
+      - shell
+    script:
+      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest -f Dockerfile-ci-utils .
+      - docker push gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+
 prepare:version:
+    <<: *no_cache
     stage: prepare
     image:
       name: alpine/git:latest
@@ -70,7 +102,7 @@ gradle:build:
         expire_in: 1 week
 
 test:system:
-    <<: *cache_gradle
+    <<: *cache_gradle_read_only
     stage: test
     services:
         - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
@@ -87,7 +119,7 @@ test:system:
         expire_in: 7 days
 
 test:unit_and_IT:
-    <<: *cache_gradle
+    <<: *cache_gradle_read_only
     stage: test
     artifacts:
         name: "${CI_COMMIT_REF_NAME}-integration"
@@ -98,81 +130,44 @@ test:unit_and_IT:
     script:
         - gradle check -x systemTest
 
-.review_app_job_template: &review_app
-    stage: deploy
-    variables:
-      GIT_STRATEGY: none
-      CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG
-    before_script:
-        - echo "Removing review container $CONTAINER_NAME"
-        - docker stop $CONTAINER_NAME || true
-        - docker rm $CONTAINER_NAME || true
-        - echo "Removing previously deployed directory app-root-$CI_COMMIT_REF_SLUG"
-        - rm -rf app-root-$CI_COMMIT_REF_SLUG
-    tags:
-        - shell
-    environment:
-        name: review/$CI_COMMIT_REF_NAME
-        url: http://rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se
-        on_stop: teardown_review
-    script:
-        - mkdir app-root-$CI_COMMIT_REF_SLUG
-        - tar -C app-root-$CI_COMMIT_REF_SLUG -xf frontend/mockup/elvaco-mvp-mockup-`cat .version`.tar.gz
-        - docker run -v $(pwd)/app-root-$CI_COMMIT_REF_SLUG/:/data/ -d -e VIRTUAL_HOST=rv-mvp-$CI_COMMIT_REF_SLUG.gitlab.elvaco.se --name $CONTAINER_NAME clue/json-server --routes routes.json --static . db.json
-        - sleep 1
-        - docker logs $CONTAINER_NAME
-        - test $(docker inspect -f {{.State.Running}} $CONTAINER_NAME) = "true"
+publish:artifactory:
+    <<: *no_cache
+    image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+    stage: publish
+    when: manual
     dependencies:
       - gradle:build
+    script:
+        - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+        - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
+        - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
+        - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
+        - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
-deploy_review:
-  <<: *review_app
+deploy:recreate-dbs:
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
   when: manual
-  only:
-    - branches
-  except:
-    - eon
-    - develop
-    - master
+  script:
+    - pepper -G 'roles:mvp-app' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -G 'roles:postgresql-server' state.apply mvp.db.drop
+    - pepper -G 'roles:postgresql-server' state.apply mvp.db.create
 
-teardown_review:
-    stage: deploy
-    variables:
-      GIT_STRATEGY: none
-      CONTAINER_NAME: review-mvp-$CI_COMMIT_REF_SLUG
-    script:
-      - echo "Removing review container $CONTAINER_NAME"
-      - docker stop $CONTAINER_NAME || true
-      - docker rm $CONTAINER_NAME || true
-      - echo "Removing review app root"
-      - rm -rf app-root-$CI_COMMIT_REF_SLUG
-    when: manual
-    environment:
-        name: review/$CI_COMMIT_REF_NAME
-        action: stop
-    tags:
-        - shell
+deploy:staging:
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
+  when: manual
+  script:
+    - pepper -G 'roles:salt-master'  event.fire_master update salt/fileserver/gitfs/update
+    - sleep 10
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply
 
-deploy_staging:
-    stage: deploy
-    environment:
-        name: staging
-        url: http://elvsealiweb02.elvaco.local
-    only:
-        - develop
-    before_script:
-        - apt-get update -y && apt-get install git openssh-client -y
-        - mkdir -p ~/.ssh
-        - echo "$DOCKER_ROOT_SSH_PRIVATE" > ~/.ssh/id_rsa
-        - chmod 0600 ~/.ssh/id_rsa
-        - echo "$DOCKER_ROOT_SSH_PUBLIC" > ~/.ssh/id_rsa.pub
-        - ssh-keygen -p -N '' -f ~/.ssh/id_rsa
-        - echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\n" > ~/.ssh/config
-        - echo "Checking for a keystore stored in Gitlab"
-        - test -n "$STAGING_KEYSTORE_BASE64"
-        - echo "Checking for a keystore password stored in Gitlab"
-        - test -n "$STAGING_KEYSTORE_PASSWORD_BASE64"
-        - echo "Verifying certificate stored in Gitlab (note that the -passin argument is prefixed with 'pass:', so 'pass:the_real_password'):"
-        - openssl pkcs12 -in <(base64 -d <(echo "$STAGING_KEYSTORE_BASE64")) -nodes -passin pass:$(base64 -d <(echo "$STAGING_KEYSTORE_PASSWORD_BASE64")) | openssl x509 -checkend 3600 -startdate -enddate
-    script:
-        - ./deploy/deploy_to_staging.sh $WEB_STAGING_SSH_USER $WEB_STAGING_SSH_HOST $STAGING_KEYSTORE_BASE64 $STAGING_KEYSTORE_PASSWORD_BASE64 $STAGING_KEYSTORE_ALIAS_BASE64
+deploy:production:
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
+  when: manual
+  script:
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply
