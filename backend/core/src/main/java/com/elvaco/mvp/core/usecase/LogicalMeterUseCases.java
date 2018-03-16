@@ -39,10 +39,10 @@ public class LogicalMeterUseCases {
   }
 
   public List<LogicalMeter> findAll() {
-    if (!currentUser.isSuperAdmin()) {
-      return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
-    } else {
+    if (currentUser.isSuperAdmin()) {
       return logicalMeters.findAll();
+    } else {
+      return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
     }
   }
 
