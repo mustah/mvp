@@ -6,7 +6,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
-
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,6 +73,39 @@ public class MeteringMessageReceiverTest {
     assertThat(messageHandler.alarmMessageReceived).isFalse();
   }
 
+  @Test
+  public void receiveAlarmMessage() {
+    MessageHandlerSpy messageHandler = new MessageHandlerSpy();
+    MeteringMessageReceiver meteringMessageReceiver = new MeteringMessageReceiver(messageHandler);
+
+    byte[] alarmMessage = ("{\n"
+      + "\"alarm\": [\n"
+      + "\t{\n"
+      + "\t\t\"code\": 1308,\n"
+      + "\t\t\"description\": \"Elvaco specialfel 3\",\n"
+      + "\t\t\"timestamp\": \"2018-03-15T09:00:00\"\n"
+      + "\t}\n"
+      + "],\n"
+      + "\"facility\": {\n"
+      + "\t\"id\": \"MVP_alarm_test\"\n"
+      + "},\n"
+      + "\"gateway\": {\n"
+      + "\t\"id\": \"12100016\"\n"
+      + "},\n"
+      + "\"message_type\": \"Elvaco MVP MQ Alarm Message 1.0\",\n"
+      + "\"meter\": {\n"
+      + "\t\"id\": \"67125944\"\n"
+      + "},\n"
+      + "\"organisation_id\": \"Elvaco AB\",\n"
+      + "\"source_system_id\": \"Elvaco Metering\"\n"
+      + "}\n").getBytes();
+
+    meteringMessageReceiver.receiveMessage(alarmMessage);
+
+    assertThat(messageHandler.measurementMessageReceived).isFalse();
+    assertThat(messageHandler.structureMessageReceived).isFalse();
+    assertThat(messageHandler.alarmMessageReceived).isTrue();
+  }
 
   @Test
   public void receiveMeasurementMessage() {
@@ -94,7 +126,7 @@ public class MeteringMessageReceiverTest {
       + "  \"source_system_id\": \"Elvaco Metering\",\n"
       + "  \"values\": [\n"
       + "    {\n"
-      + "      \"timestamp\": 1506069947,\n"
+      + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
       + "      \"value\": 0.659,\n"
       + "      \"unit\": \"wH\",\n"
       + "      \"quantity\": \"power\"\n"

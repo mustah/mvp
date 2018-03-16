@@ -1,5 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.LocalDateTime;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 
@@ -27,7 +29,7 @@ public class MeteringAlarmParserTest {
       + "  },\n"
       + "  \"alarm\": [\n"
       + "   {\n"
-      + "     \"timestamp\": 1506069949,\n"
+      + "     \"timestamp\": \"2017-09-22T08:45:49\",\n"
       + "     \"code\": 42\n"
       + "   }\n"
       + "  ]\n"
@@ -49,7 +51,8 @@ public class MeteringAlarmParserTest {
     assertThat(parsedMessage.meter.id).isEqualTo("1");
     assertThat(parsedMessage.alarm).isNotNull();
     assertThat(parsedMessage.alarm.size()).isEqualTo(1);
-    assertThat(parsedMessage.alarm.get(0).timestamp).isEqualTo(1506069949);
+    assertThat(parsedMessage.alarm.get(0).timestamp)
+      .isEqualTo(LocalDateTime.parse("2017-09-22T08:45:49"));
     assertThat(parsedMessage.alarm.get(0).code).isEqualTo(42);
   }
 
@@ -71,7 +74,7 @@ public class MeteringAlarmParserTest {
       + "  },\n"
       + "  \"alarm\": [\n"
       + "   {\n"
-      + "     \"timestamp\": 1506069949,\n"
+      + "     \"timestamp\": \"2017-09-22T08:45:49\",\n"
       + "     \"code\": 42\n"
       + "   }\n"
       + "  ]\n"

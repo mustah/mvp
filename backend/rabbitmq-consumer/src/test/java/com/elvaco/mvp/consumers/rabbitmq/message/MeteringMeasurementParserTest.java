@@ -1,5 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.time.LocalDateTime;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -28,7 +30,7 @@ public class MeteringMeasurementParserTest {
       + "  \"source_system_id\": \"Elvaco Metering\",\n"
       + "  \"values\": [\n"
       + "    {\n"
-      + "      \"timestamp\": 1506069947,\n"
+      + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
       + "      \"value\": 0.659,\n"
       + "      \"unit\": \"wH\",\n"
       + "      \"quantity\": \"power\",\n"
@@ -53,7 +55,7 @@ public class MeteringMeasurementParserTest {
     assertThat(parsedMessage.values).isNotNull();
     assertThat(parsedMessage.values).hasSize(1);
     ValueDto value = parsedMessage.values.get(0);
-    assertThat(value.timestamp).isEqualTo(1506069947);
+    assertThat(value.timestamp).isEqualTo(LocalDateTime.parse("2018-03-16T13:07:01"));
     assertThat(value.value).isEqualTo(0.659);
     assertThat(value.unit).isEqualTo("wH");
     assertThat(value.quantity).isEqualTo("power");
