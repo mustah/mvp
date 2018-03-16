@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -29,18 +30,18 @@ public class LogicalMeterHelperTest {
   @Test
   public void mapMeterQuantitiesToPhysicalMeterUuids_emptyParams() {
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(emptyList(), emptySet()))
+      mapMeterQuantitiesToPhysicalMeterUuids(emptyList(), emptySet()))
       .isEqualTo(emptyMap());
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(singletonList(newMeter(
+      mapMeterQuantitiesToPhysicalMeterUuids(singletonList(newMeter(
         randomUUID(),
         DISTRICT_HEATING_METER
       )), emptySet()))
       .isEqualTo(emptyMap());
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         emptyList(),
         singleton(Quantity.ENERGY)
       )).isEqualTo(singletonMap(Quantity.ENERGY, emptyList()));
@@ -50,7 +51,7 @@ public class LogicalMeterHelperTest {
   public void mapMeterQuantitiesToPhysicalMeterUuids_oneMeterOneQuantity() {
     LogicalMeter meter = newMeter(randomUUID(), DISTRICT_HEATING_METER);
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
         singleton(Quantity.ENERGY)
       )).isEqualTo(
@@ -63,7 +64,7 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(randomUUID(), DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(randomUUID(), DISTRICT_HEATING_METER);
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
         singleton(Quantity.ENERGY)
       )).isEqualTo(
@@ -90,7 +91,7 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
         new HashSet<>(asList(Quantity.ENERGY, Quantity.VOLUME))
       )).isEqualTo(
@@ -114,7 +115,7 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         asList(meterOne, meterTwo),
         new HashSet<>(asList(Quantity.TEMPERATURE, Quantity.VOLUME))
       )).isEqualTo(
@@ -134,7 +135,7 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
         singleton(volumeInSquareKilometers)
       )).isEqualTo(
@@ -154,14 +155,13 @@ public class LogicalMeterHelperTest {
     );
 
     assertThat(
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         singletonList(meter),
         singleton(volumeWithNoUnit)
       )).isEqualTo(
       expected
     );
   }
-
 
   private LogicalMeter newMeter(
     UUID meterId,
@@ -188,5 +188,4 @@ public class LogicalMeterHelperTest {
       )
     );
   }
-
 }

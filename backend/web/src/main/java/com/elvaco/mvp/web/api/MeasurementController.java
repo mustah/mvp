@@ -17,7 +17,6 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
@@ -31,6 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
@@ -72,7 +72,7 @@ public class MeasurementController {
     List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
 
     Map.Entry<Quantity, List<UUID>> entry =
-      LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids(
+      mapMeterQuantitiesToPhysicalMeterUuids(
         logicalMeters,
         Collections.singleton(new Quantity(
           quantityName,
