@@ -98,18 +98,6 @@ The H2 console is only intended for use during development so make sure that
 Navigate to <http://localhost:8080/h2-console> and use `Generic H2 (Server)`
 settings and the JDBC URL should be `jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1`.
 
-## Proxying non-existent REST API endpoints to json-server
-
-It is possible to have the backend proxy requests to non-existent endpoints to
-a `json-server` instance. This functionality is enabled by `@EnableZuulProxy` in `MvpApplication`.
-
-All the endpoints listed in `application.yml` are routing the requests to `json-server`. 
-
-So when a developer has implemented an api endpoint in Java then the endpoint listed in  `application.yml`
-can be removed. Also the data from `json-server` should be removed too.
-
-> **IMPORTANT**: `json-server` must be started before java application in order for zuul to find these resources.
-
 ## Addendum
 
 ### Installing Docker

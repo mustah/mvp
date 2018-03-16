@@ -13,7 +13,6 @@ const {
 
 const {createPotFile} = require('./fuse-extract-translations');
 const {convertPoToJson} = require('./fuse-convert-po-to-json');
-const {buildMockDatabase} = require('./fuse-build-mock-database');
 
 const autoprefixer = require('autoprefixer');
 const TypeHelper = require('fuse-box-typechecker').TypeHelper;
@@ -102,9 +101,6 @@ Sparky.task('convert-po-to-json', ['extract-translations'], () =>
     outputDir: `${distDir}/i18n/locales/`,
   }));
 
-Sparky.task('build-mock-database', ['config'], () =>
-  buildMockDatabase({dist: distDir, doGeocoding: false}));
-
 Sparky.task('watch:assets', () => Sparky.watch(assets, {base: homeDir}).dest(distDir));
 
 Sparky.task('copy:assets', () => Sparky.src(assets, {base: homeDir}).dest(distDir));
@@ -133,7 +129,6 @@ const distTasks = [
   'clean',
   'config',
   'run-type-checker',
-  'build-mock-database',
   'copy:assets',
 ];
 
