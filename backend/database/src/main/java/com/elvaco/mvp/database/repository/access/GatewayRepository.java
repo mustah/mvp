@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -9,6 +10,8 @@ import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -36,6 +39,7 @@ public class GatewayRepository implements Gateways {
       .collect(toList());
   }
 
+  @Transactional
   @Override
   public List<Gateway> findAllByOrganisationId(UUID organisationId) {
     return repository.findAllByOrganisationId(organisationId)
@@ -48,5 +52,18 @@ public class GatewayRepository implements Gateways {
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = repository.save(mapper.toEntity(gateway));
     return gatewayWithMetersMapper.withLogicalMeters(entity);
+  }
+
+  @Override
+  public Optional<Gateway> findBy(
+    UUID organisationId,
+    String productModel,
+    String serial
+  ) {
+    return repository.findByOrganisationIdAndProductModelAndSerial(
+      organisationId,
+      productModel,
+      serial
+    ).map(mapper::toDomainModel);
   }
 }

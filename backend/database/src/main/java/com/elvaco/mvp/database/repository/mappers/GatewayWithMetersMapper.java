@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.mappers;
 
 import java.util.List;
+import java.util.Set;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -27,7 +28,7 @@ public class GatewayWithMetersMapper {
     );
   }
 
-  private List<LogicalMeter> toLogicalMeters(List<LogicalMeterEntity> meters) {
+  private List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {
     return meters
       .stream()
       .map(logicalMeterMapper::toDomainModel)

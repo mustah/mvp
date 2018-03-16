@@ -1,6 +1,8 @@
 package com.elvaco.mvp.core.usecase;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -30,5 +32,13 @@ public class GatewayUseCases {
       return gateways.save(gateway);
     }
     throw new Unauthorized("User is not authorized to save this entity");
+  }
+
+  public Optional<Gateway> findBy(
+    UUID organisationId,
+    String productModel,
+    String serial
+  ) {
+    return gateways.findBy(organisationId, productModel, serial);
   }
 }

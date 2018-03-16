@@ -180,7 +180,7 @@ msgid "ok"
 msgstr "ok"
 
 msgid "unknown"
-msgstr "okända"
+msgstr "okänd"
 
 msgid "critical"
 msgstr "kritisk"

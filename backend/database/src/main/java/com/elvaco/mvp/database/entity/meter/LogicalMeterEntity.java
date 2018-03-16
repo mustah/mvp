@@ -1,7 +1,6 @@
 package com.elvaco.mvp.database.entity.meter;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.Access;
@@ -26,11 +25,10 @@ import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static javax.persistence.CascadeType.ALL;
 
-@ToString
+@ToString(exclude = "gateways")
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "logical_meter",
@@ -56,7 +54,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     joinColumns = @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
-  public List<GatewayEntity> gateways;
+  public Set<GatewayEntity> gateways;
 
   @ManyToOne(optional = false)
   public MeterDefinitionEntity meterDefinition;
@@ -85,7 +83,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     this.organisationId = organisationId;
     this.created = new Date(created.getTime());
     this.physicalMeters = emptySet();
-    this.gateways = emptyList();
+    this.gateways = emptySet();
     this.meterDefinition = meterDefinition;
     setLocation(new LocationEntity(id));
   }

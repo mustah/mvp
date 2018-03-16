@@ -7,19 +7,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
@@ -30,18 +34,21 @@ public class MeteringMessageHandler implements MessageHandler {
   private final PhysicalMeterUseCases physicalMeterUseCases;
   private final OrganisationUseCases organisationUseCases;
   private final MeasurementUseCases measurementUseCases;
+  private final GatewayUseCases gatewayUseCases;
 
   public MeteringMessageHandler(
     LogicalMeterUseCases logicalMetersUseCases,
     PhysicalMeterUseCases physicalMeterUseCases,
     OrganisationUseCases organisationUseCases,
-    MeasurementUseCases measurementUseCases
+    MeasurementUseCases measurementUseCases,
+    GatewayUseCases gatewayUseCases
   ) {
     this.logicalMeterUseCases = logicalMetersUseCases;
     this.physicalMeterUseCases = physicalMeterUseCases;
     this.organisationUseCases = organisationUseCases;
     this.measurementUseCases = measurementUseCases;
-    mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
+    this.gatewayUseCases = gatewayUseCases;
+    this.mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
   }
 
   @Override
@@ -65,6 +72,26 @@ public class MeteringMessageHandler implements MessageHandler {
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id);
     physicalMeterUseCases.save(physicalMeter);
+
+    GatewayStatusDto gateway = structureMessage.gateway;
+
+    gatewayUseCases.findBy(organisation.id, gateway.productModel, gateway.id)
+      .orElseGet(() -> {
+        // TODO[!must!] create and save gateway when the logical meter is created (after demo)
+        // TODO[!must!] this still works, but it does one extra round-trip to DB
+        Gateway g = new Gateway(
+          UUID.randomUUID(),
+          organisation.id,
+          gateway.id,
+          gateway.productModel,
+          singletonList(logicalMeter)
+        );
+        Gateway saved = gatewayUseCases.save(g);
+
+        logicalMeterUseCases.save(logicalMeter.withGateway(saved));
+
+        return saved;
+      });
   }
 
   @Override
@@ -97,7 +124,7 @@ public class MeteringMessageHandler implements MessageHandler {
 
   @Override
   public void handle(MeteringAlarmMessageDto alarmMessage) {
-     // TODO we should handle incoming alarms
+    // TODO we should handle incoming alarms
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
@@ -120,12 +147,12 @@ public class MeteringMessageHandler implements MessageHandler {
   private Organisation findOrCreateOrganisation(String organisationCode) {
     return organisationUseCases.findByCode(organisationCode)
       .orElseGet(() ->
-        organisationUseCases.create(
-          new Organisation(
-            UUID.randomUUID(),
-            "",
-            organisationCode
-          )));
+                   organisationUseCases.create(
+                     new Organisation(
+                       UUID.randomUUID(),
+                       organisationCode,
+                       organisationCode
+                     )));
   }
 
   private PhysicalMeter findOrCreatePhysicalMeter(

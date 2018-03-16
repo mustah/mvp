@@ -25,7 +25,7 @@ import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class IntegrationTest {
 
-  private static final long MAX_WAIT_TIME = 60000;
+  private static final long MAX_WAIT_TIME = 15_000;
 
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
