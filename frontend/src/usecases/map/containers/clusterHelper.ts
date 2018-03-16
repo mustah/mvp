@@ -4,10 +4,9 @@ import {Dictionary, IdNamed} from '../../../types/Types';
 import {MapMarker, MapMarkerItem, Marker} from '../mapModels';
 
 const icons = {
-  0: 'assets/images/marker-icon-ok.png',
-  1: 'assets/images/marker-icon-ok.png',
-  2: 'assets/images/marker-icon-warning.png',
-  3: 'assets/images/marker-icon-error.png',
+  ok: 'assets/images/marker-icon-ok.png',
+  warning: 'assets/images/marker-icon-warning.png',
+  critical: 'assets/images/marker-icon-error.png',
 };
 
 const getStatusIcon = (status: IdNamed): string => status

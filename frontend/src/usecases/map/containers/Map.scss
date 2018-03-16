@@ -6,9 +6,9 @@
 }
 
 .marker-cluster {
-  border: 3px solid #ededed;
+  border: 4px solid $dark-green;
   border-radius: 50%;
-  color: #ededed;
+  color: $black;
 
   display: flex !important;
   align-items: center;
@@ -17,7 +17,8 @@
 
 .marker-cluster-warning {
   @extend .marker-cluster;
-  background: $dark-orange;
+  background: $dark-green;
+  border-color: $red;
 }
 
 .marker-cluster-ok {
@@ -28,4 +29,5 @@
 .marker-cluster-error {
   @extend .marker-cluster;
   background: $red;
+  border-color: $red;
 }

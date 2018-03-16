@@ -43,19 +43,18 @@ public class LogDatabaseLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    createStatusMockData();
+    List<MeterStatus> statuses = meterStatuses.findAll();
+    if (statuses.size() == 0) {
+      createStatusMockData();
 
-    createStatusLogMockData();
+      createStatusLogMockData();
+    }
   }
 
   private void createStatusMockData() {
     meterStatuses.save(asList(
-      new MeterStatus("active"),
       new MeterStatus("ok"),
-      new MeterStatus("warning"),
-      new MeterStatus("critical"),
-      new MeterStatus("info"),
-      new MeterStatus("maintenance scheduled")
+      new MeterStatus("warning")
     ));
   }
 
@@ -71,22 +70,30 @@ public class LogDatabaseLoader implements CommandLineRunner {
     List<MeterStatusLog> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
-      for (MeterStatus status : statuses) {
-        hourSeed++;
-        statusLogs.add(
-          new MeterStatusLog(
-            null,
-            meter.id,
-            status.id,
-            status.name,
-            addDays(daySeed, hourSeed),
-            addDays(daySeed - 10, hourSeed)
-          )
-        );
-      }
+
+      MeterStatus status = getStatus(daySeed, statuses);
+
+      statusLogs.add(
+        new MeterStatusLog(
+          null,
+          meter.id,
+          status.id,
+          status.name,
+          addDays(daySeed, hourSeed),
+          null
+        )
+      );
       hourSeed = 0;
     }
     meterStatusLogs.save(statusLogs);
+  }
+
+  private MeterStatus getStatus(int hourSeed, List<MeterStatus> statuses) {
+    if (hourSeed % 7 == 0) {
+      return statuses.get(1);
+    } else {
+      return statuses.get(0);
+    }
   }
 
   private boolean onStatus(MeterStatus meterStatus) {
