@@ -10,7 +10,7 @@ describe('clusterHelper', () => {
 
   const mapMarker1: Partial<MapMarker & Identifiable> = {
     id: 1,
-    status: {id: 1, name: 'Ok'},
+    status: {id: 'ok', name: 'Ok'},
     location: {
       address: {id: 1, name: 'vägen 1'},
       city: {id: 1, name: 'Kungsbacka'},
@@ -20,7 +20,7 @@ describe('clusterHelper', () => {
 
   const mapMarker2: Partial<MapMarker & Identifiable> = {
     id: 2,
-    status: {id: 2, name: 'Warning'},
+    status: {id: 'warning', name: 'Warning'},
     location: {
       address: {id: 1, name: 'vägen 2'},
       city: {id: 1, name: 'Kungsbacka'},
@@ -46,7 +46,7 @@ describe('clusterHelper', () => {
           },
           mapMarkerItem: {
             id: 1,
-            status: {id: 1, name: 'Ok'},
+            status: {id: 'ok', name: 'Ok'},
             location: {
               address: {id: 1, name: 'vägen 1'},
               city: {id: 1, name: 'Kungsbacka'},
@@ -69,7 +69,7 @@ describe('clusterHelper', () => {
             },
             mapMarkerItem: {
               id: 1,
-              status: {id: 1, name: 'Ok'},
+              status: {id: 'ok', name: 'Ok'},
               location: {
                 address: {id: 1, name: 'vägen 1'},
                 city: {id: 1, name: 'Kungsbacka'},
@@ -87,7 +87,7 @@ describe('clusterHelper', () => {
             },
             mapMarkerItem: {
               id: 2,
-              status: {id: 2, name: 'Warning'},
+              status: {id: 'warning', name: 'Warning'},
               location: {
                 address: {id: 1, name: 'vägen 2'},
                 city: {id: 1, name: 'Kungsbacka'},
@@ -104,7 +104,7 @@ describe('clusterHelper', () => {
   describe('isGeoPositionWithinThreshold', () => {
 
     const mapMarker3: Partial<MapMarker> = {
-      status: {id: 2, name: 'Warning'},
+      status: {id: 'warning', name: 'Warning'},
       location: {
         address: {id: 1, name: 'vägen 2'},
         city: {id: 1, name: 'Kungsbacka'},

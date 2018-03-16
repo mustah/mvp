@@ -91,7 +91,7 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   let cssClass: string;
   if (percent === 100) {
     cssClass = 'marker-cluster-ok';
-  } else if (percent > 90) {
+  } else if (percent > 70) {
     cssClass = 'marker-cluster-warning';
   } else {
     cssClass = 'marker-cluster-error';
