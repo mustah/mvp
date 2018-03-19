@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-01-18 13:59+0100\n"
+"POT-Creation-Date: 2018-03-19 09:19+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.5\n"
+"X-Generator: Poedit 1.8.9\n"
 
 msgid "admin"
 msgstr "admin"
@@ -26,11 +26,29 @@ msgstr "exportera till JSON"
 msgid "add to report"
 msgstr "lägg till i rapport"
 
+msgid "delete organisation"
+msgstr "ta bort organisation"
+
+msgid "add organisation"
+msgstr "lägg till organisation"
+
 msgid "edit user"
 msgstr "redigera användare"
 
 msgid "delete user"
 msgstr "ta bort användare"
+
+msgid "add user"
+msgstr "lägg till användare"
+
+msgid "login"
+msgstr "logga in"
+
+msgid "retry"
+msgstr "försök igen"
+
+msgid "save"
+msgstr "spara"
 
 msgid "close"
 msgstr "stäng"
@@ -40,9 +58,6 @@ msgstr "bekräfta"
 
 msgid "cancel"
 msgstr "avbryt"
-
-msgid "are you sure you want to delete this item"
-msgstr "är du säker på att du vill ta bort den här entiteten"
 
 msgid "latest"
 msgstr "senaste"
@@ -59,38 +74,38 @@ msgstr "denna vecka"
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
 
+msgid "are you sure you want to delete this item"
+msgstr "är du säker på att du vill ta bort detta objekt"
+
 msgid "all"
 msgstr "allt"
 
+msgid "organisation name"
+msgstr "organisationsnamn"
+
+msgid "organisation code"
+msgstr "organisationskod"
+
+msgid "name"
+msgstr "namn"
+
+msgid "email"
+msgstr "e-post"
+
+msgid "organisation"
+msgstr "organisation"
+
+msgid "user roles"
+msgstr "användarroller"
+
+msgid "new password"
+msgstr "nytt lösenord"
+
+msgid "password"
+msgstr "lösenord"
+
 msgid "of {{count}} metering point"
 msgstr "av {{count}} mätpunkt"
-
-msgid "facility"
-msgstr "anläggning"
-
-msgid "city"
-msgstr "stad"
-
-msgid "address"
-msgstr "adress"
-
-msgid "manufacturer"
-msgstr "tillverkare"
-
-msgid "medium"
-msgstr "typ"
-
-msgid "gateway"
-msgstr "gateway"
-
-msgid "status"
-msgstr "status"
-
-msgid "status change"
-msgstr "statusförändring"
-
-msgid "flags"
-msgstr "flaggor"
 
 msgid "other"
 msgstr "övriga"
@@ -100,6 +115,12 @@ msgstr "nej"
 
 msgid "gateway details"
 msgstr "gateway"
+
+msgid "city"
+msgstr "stad"
+
+msgid "address"
+msgstr "adress"
 
 msgid "gateway serial"
 msgstr "serienummer"
@@ -124,6 +145,15 @@ msgstr "statuslogg"
 
 msgid "map"
 msgstr "karta"
+
+msgid "manufacturer"
+msgstr "tillverkare"
+
+msgid "medium"
+msgstr "typ"
+
+msgid "status"
+msgstr "status"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
@@ -176,20 +206,35 @@ msgstr "värde"
 msgid "latest snr"
 msgstr "senaste SNR"
 
+msgid "no meters"
+msgstr "inga mätare"
+
+msgid "facility"
+msgstr "anläggning"
+
+msgid "gateway"
+msgstr "gateway"
+
+msgid "status change"
+msgstr "statusförändring"
+
+msgid "flags"
+msgstr "flaggor"
+
 msgid "ok"
 msgstr "ok"
-
-msgid "unknown"
-msgstr "okänd"
-
-msgid "critical"
-msgstr "kritisk"
 
 msgid "active"
 msgstr "aktiv"
 
+msgid "critical"
+msgstr "kritisk"
+
 msgid "info"
 msgstr "info"
+
+msgid "unknown"
+msgstr "okänd"
 
 msgid "warning"
 msgstr "varning"
@@ -202,6 +247,24 @@ msgstr "flaggad"
 
 msgid "unFlagged"
 msgstr "ej flaggad"
+
+msgid "error: {{message}}"
+msgstr "fel: {{message}}"
+
+msgid "an unexpected error occurred"
+msgstr "ett oväntat fel inträffade"
+
+msgid "successfully deleted the organisation {{name}}"
+msgstr "lyckades ta bort organisationen {{name}}"
+
+msgid "failed to delete the organisation: {{error}}"
+msgstr "misslyckades att skapa organisationen: {{error}}"
+
+msgid "successfully created the organisation {{name}} ({{code}})"
+msgstr "skapade organisationen {{name}} ({{code}})"
+
+msgid "failed to create organisation: {{error}}"
+msgstr "misslyckades skapa organisationen: {{error}}"
 
 msgid "successfully created the user {{name}} ({{email}})"
 msgstr "skapade användaren {{name}} ({{email}})"
@@ -227,65 +290,17 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
 
-msgid "an unexpected error occurred"
-msgstr "ett oväntat fel inträffade"
-
-msgid "error: {{message}}"
-msgstr "fel: {{message}}"
-
-msgid "add user"
-msgstr "lägg till användare"
-
-msgid "name"
-msgstr "namn"
-
-msgid "code"
-msgstr "kod"
-
-msgid "email"
-msgstr "e-post"
-
-msgid "organisation"
-msgstr "organisation"
+msgid "users"
+msgstr "användare"
 
 msgid "organisations"
 msgstr "organisationer"
 
-msgid "add organisation"
-msgstr "lägg till organisation"
-
-msgid "organisation name"
-msgstr "organisationsnamn"
-
-msgid "organisation code"
-msgstr "organisationskod"
-
-msgid "delete organisation"
-msgstr "ta bort organisation"
-
-msgid "successfully deleted the organisation {{name}}"
-msgstr "lyckades ta bort organisationen {{name}}"
-
-msgid "failed to delete the organisation: {{error}}"
-msgstr "misslyckades att skapa organisationen: {{error}}"
-
-msgid "successfully created the organisation {{name}} ({{code}})"
-msgstr "skapade organisationen {{name}} ({{code}})"
-
-msgid "failed to create organisation: {{error}}"
-msgstr "misslyckades skapa organisationen: {{error}}"
+msgid "code"
+msgstr "kod"
 
 msgid "roles"
 msgstr "roller"
-
-msgid "password"
-msgstr "lösenord"
-
-msgid "user roles"
-msgstr "användarroller"
-
-msgid "save"
-msgstr "spara"
 
 msgid "your email address"
 msgstr "din e-post"
@@ -293,17 +308,14 @@ msgstr "din e-post"
 msgid "your password"
 msgstr "ditt lösenord"
 
-msgid "login"
-msgstr "logga in"
-
-msgid "retry"
-msgstr "försök igen"
-
 msgid "cities"
 msgstr "städer"
 
 msgid "product models"
 msgstr "produktmodeller"
+
+msgid "no gateways"
+msgstr "inga gateways"
 
 msgid "overview"
 msgstr "översikt"
@@ -311,11 +323,8 @@ msgstr "översikt"
 msgid "list"
 msgstr "lista"
 
-msgid "no gateways"
-msgstr "inga gateways"
-
-msgid "no meters"
-msgstr "inga mätare"
+msgid "all meters in selection"
+msgstr "alla mätare i urvalet"
 
 msgid "edit"
 msgstr "redigera"
@@ -325,21 +334,6 @@ msgstr "ta bort"
 
 msgid "dashboard"
 msgstr "dashboard"
-
-msgid "user roles"
-msgstr "användarroller"
-
-msgid "new password"
-msgstr "nytt lösenord"
-
-msgid "save"
-msgstr "spara"
-
-msgid "users"
-msgstr "användare"
-
-msgid "selection"
-msgstr "urval"
 
 msgid "report"
 msgstr "rapport"
@@ -361,6 +355,9 @@ msgstr "ångra ändringar"
 
 msgid "give the selection a name"
 msgstr "namnge ditt urval"
+
+msgid "selection"
+msgstr "urval"
 
 msgid "meter status"
 msgstr "mätarstatus"
@@ -406,3 +403,5 @@ msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
 
+#~ msgid "all meters"
+#~ msgstr "alla mätare"

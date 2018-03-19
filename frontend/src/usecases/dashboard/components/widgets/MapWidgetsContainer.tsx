@@ -9,7 +9,6 @@ import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetails
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
-import {GeoPosition} from '../../../../state/domain-models/location/locationModels';
 import {Dictionary, OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
@@ -34,42 +33,7 @@ interface DispatchToProps {
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
-  // TODO retrieve real data
-  const markersFailing: Dictionary<MapMarker> = {
-    0: {
-      status: {id: 3, name: 'Fel'},
-      location: {
-        address: {id: '', name: ''},
-        city: {id: '', name: ''},
-        position: {
-          confidence: 1,
-          latitude: 56.138288,
-          longitude: 13.394854,
-        },
-      },
-    },
-    1: {
-      status: {id: 3, name: 'Fel'},
-      location: {
-        address: {id: '', name: ''},
-        city: {id: '', name: ''},
-        position: {
-          confidence: 1,
-          latitude: 56.552119,
-          longitude: 14.137460,
-        },
-      },
-    },
-  };
-
   const hasMeters: boolean = isMarkersWithinThreshold(markers);
-
-  const centerOfPerstorpMap: GeoPosition = {
-    latitude: 56.138288,
-    longitude: 13.394854,
-    confidence: 1,
-  };
-  const centerOfErrorMap: GeoPosition = {latitude: 56.228288, longitude: 13.794854, confidence: 1};
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
@@ -79,7 +43,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
 
   return (
     <Row className="MapWidgets">
-      <Widget title="Perstorp">
+      <Widget title={firstUpperTranslated('all meters in selection')}>
         <HasContent
           hasContent={hasMeters}
           fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
@@ -87,22 +51,10 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
           <Map
             height={400}
             width={400}
-            defaultZoom={13}
-            viewCenter={centerOfPerstorpMap}
           >
             <ClusterContainer markers={markers}/>
           </Map>
         </HasContent>
-      </Widget>
-      <Widget title="Fel">
-        <Map
-          height={400}
-          width={400}
-          defaultZoom={8}
-          viewCenter={centerOfErrorMap}
-        >
-          <ClusterContainer markers={markersFailing}/>
-        </Map>
       </Widget>
       {dialog}
     </Row>
