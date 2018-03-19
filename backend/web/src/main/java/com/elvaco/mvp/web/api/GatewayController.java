@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.mapper.GatewayMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -47,6 +48,14 @@ public class GatewayController {
     return gatewayUseCases.findAll()
       .stream()
       .map(gatewayMapper::toDto)
+      .collect(toList());
+  }
+
+  @GetMapping("/map-data")
+  public List<MapMarkerDto> mapData() {
+    return gatewayUseCases.findAll()
+      .stream()
+      .map(gatewayMapper::toMapMarkerDto)
       .collect(toList());
   }
 
