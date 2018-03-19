@@ -5,11 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -22,12 +25,24 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class MeteringMessageHandler implements MessageHandler {
 
+  private static final List<String> DISTRICT_HEATING_METER_QUANTITIES = unmodifiableList(asList(
+    "Return temp.",
+    "Difference temp.",
+    "Flow temp.",
+    "Volume flow",
+    "Power",
+    "Volume",
+    "Energy"
+  ));
   private final Map<String, MeterDefinition> mediumToMeterDefinitionMap;
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
@@ -97,12 +112,20 @@ public class MeteringMessageHandler implements MessageHandler {
   public void handle(MeteringMeasurementMessageDto measurementMessage) {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
+    String medium = selectMeterDefinition(measurementMessage.values).medium;
+
+    LogicalMeter logicalMeter = findOrCreateLogicalMeter(
+      measurementMessage.facility.id,
+      medium,
+      organisation
+    );
+
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
       measurementMessage.facility.id,
       measurementMessage.meter.id,
-      "Unknown",
+      medium,
       "UNKNOWN",
-      null,
+      logicalMeter.id,
       organisation
     );
 
@@ -124,6 +147,22 @@ public class MeteringMessageHandler implements MessageHandler {
   @Override
   public void handle(MeteringAlarmMessageDto alarmMessage) {
     // TODO we should handle incoming alarms
+  }
+
+  MeterDefinition selectMeterDefinition(String medium) {
+    return mediumToMeterDefinitionMap.getOrDefault(medium, MeterDefinition.UNKNOWN_METER);
+  }
+
+  MeterDefinition selectMeterDefinition(List<ValueDto> values) {
+    boolean isDistrictHeatingMeter = values
+      .stream()
+      .map(valueDto -> valueDto.quantity)
+      .collect(toList())
+      .containsAll(DISTRICT_HEATING_METER_QUANTITIES);
+    if (isDistrictHeatingMeter) {
+      return MeterDefinition.DISTRICT_HEATING_METER;
+    }
+    return MeterDefinition.UNKNOWN_METER;
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
@@ -182,13 +221,15 @@ public class MeteringMessageHandler implements MessageHandler {
     );
   }
 
-  private MeterDefinition selectMeterDefinition(String medium) {
-    return mediumToMeterDefinitionMap.getOrDefault(medium, MeterDefinition.UNKNOWN_METER);
-  }
-
   private Map<String, MeterDefinition> newMediumToMeterDefinitionMap() {
     Map<String, MeterDefinition> map = new HashMap<>();
     map.put("Hot water", MeterDefinition.HOT_WATER_METER);
+    map.putAll(Stream.of(
+      MeterDefinition.DISTRICT_HEATING_METER,
+      MeterDefinition.HOT_WATER_METER,
+      MeterDefinition.UNKNOWN_METER,
+      MeterDefinition.DISTRICT_COOLING_METER
+    ).collect(toMap((meterDefinition) -> meterDefinition.medium, Function.identity())));
     return map;
   }
 }
