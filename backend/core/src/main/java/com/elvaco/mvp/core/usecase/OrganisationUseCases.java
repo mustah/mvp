@@ -61,7 +61,7 @@ public class OrganisationUseCases {
 
   public Optional<Organisation> findByCode(String organisationCode) {
     return organisations
-      .findByCode(organisationCode)
+      .findBySlug(organisationCode)
       .filter(this::mayRead);
   }
 

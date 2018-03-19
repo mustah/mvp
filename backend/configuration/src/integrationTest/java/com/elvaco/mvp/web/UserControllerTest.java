@@ -227,11 +227,11 @@ public class UserControllerTest extends IntegrationTest {
     ResponseEntity<List<UserDto>> response = as(context().user).getList("/users", UserDto.class);
 
     List<String> organisationCodes = response.getBody().stream()
-      .map(u -> u.organisation.code)
+      .map(u -> u.organisation.slug)
       .collect(toList());
 
     assertThat(organisationCodes).isNotEmpty();
-    assertThat(organisationCodes).containsOnly(context().organisation().code);
+    assertThat(organisationCodes).containsOnly(context().organisation().slug);
   }
 
   @Test

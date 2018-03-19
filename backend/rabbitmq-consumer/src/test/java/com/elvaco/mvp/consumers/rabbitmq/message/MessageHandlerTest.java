@@ -439,7 +439,7 @@ public class MessageHandlerTest {
   }
 
   private Organisation findOrganisation() {
-    return organisations.findByCode(ORGANISATION_CODE).get();
+    return organisations.findBySlug(ORGANISATION_CODE).get();
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage() {

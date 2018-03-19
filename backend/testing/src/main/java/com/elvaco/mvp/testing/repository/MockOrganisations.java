@@ -19,7 +19,7 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
 
   @Override
   protected Organisation copyWithId(UUID id, Organisation entity) {
-    return new Organisation(id, entity.name, entity.code);
+    return new Organisation(id, entity.name, entity.slug);
   }
 
   @Override
@@ -49,8 +49,8 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
   }
 
   @Override
-  public Optional<Organisation> findByCode(String code) {
-    return filter(organisation -> organisation.code.equals(code))
+  public Optional<Organisation> findBySlug(String slug) {
+    return filter(organisation -> organisation.slug.equals(slug))
       .findFirst();
   }
 }

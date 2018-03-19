@@ -128,6 +128,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new OrganisationEntity(
         randomUUID(),
         "Another Organisation",
+        "another-organisation",
         "another-organisation"
       ));
 
@@ -195,15 +196,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurements(
       physicalMeter1Hourly,
-      physicalMeter2);
+      physicalMeter2
+    );
 
     ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
-      .getList("/meters/all"
+      .getList(
+        "/meters/all"
           + "?after=2001-01-01T01:00:00.00Z"
           + "&before=2002-01-01T00:00:00.00Z"
           + "&status=active"
           + "&sort=id,asc",
-        LogicalMeterDto.class);
+        LogicalMeterDto.class
+      );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -227,42 +231,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurements(
       physicalMeter1Hourly,
-      physicalMeter2);
+      physicalMeter2
+    );
 
     Page<LogicalMeterDto> response = as(context().user)
-      .getPage("/meters"
+      .getPage(
+        "/meters"
           + "?after=2001-01-01T01:00:00.00Z"
           + "&before=2002-01-01T00:00:00.00Z"
           + "&status=active"
           + "&sort=id,asc",
-        LogicalMeterDto.class);
+        LogicalMeterDto.class
+      );
 
     assertThat(response.getTotalElements()).isEqualTo(5);
     assertThat(response.getNumberOfElements()).isEqualTo(5);
     assertThat(response.getTotalPages()).isEqualTo(1);
 
     assertCollectionStatus(response.getContent().get(0), response.getContent().get(1));
-  }
-
-  private void assertCollectionStatus(
-    LogicalMeterDto logicalMeter1,
-    LogicalMeterDto logicalMeter2
-  ) {
-    assertThat(logicalMeter1.id)
-      .as("Unexpected meter id")
-      .isEqualTo(physicalMeter1.logicalMeterId.toString());
-
-    assertThat(logicalMeter1.collectionStatus)
-      .as("Unexpected collection status")
-      .isEqualTo("91.59663865546219");
-
-    assertThat(logicalMeter2.id)
-      .as("Unexpected meter id")
-      .isEqualTo(physicalMeter2.logicalMeterId.toString());
-
-    assertThat(logicalMeter2.collectionStatus)
-      .as("Unexpected collection status")
-      .isEqualTo("100.0");
   }
 
   @Test
@@ -758,6 +744,27 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurement.unit).isEqualTo("m^3");
   }
 
+  private void assertCollectionStatus(
+    LogicalMeterDto logicalMeter1,
+    LogicalMeterDto logicalMeter2
+  ) {
+    assertThat(logicalMeter1.id)
+      .as("Unexpected meter id")
+      .isEqualTo(physicalMeter1.logicalMeterId.toString());
+
+    assertThat(logicalMeter1.collectionStatus)
+      .as("Unexpected collection status")
+      .isEqualTo("91.59663865546219");
+
+    assertThat(logicalMeter2.id)
+      .as("Unexpected meter id")
+      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+
+    assertThat(logicalMeter2.collectionStatus)
+      .as("Unexpected collection status")
+      .isEqualTo("100.0");
+  }
+
   private void assertThatStatusIsNotFound(ResponseEntity<ErrorMessageDto> response) {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -774,7 +781,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .organisation(new Organisation(
         anotherOrganisation.id,
         anotherOrganisation.name,
-        anotherOrganisation.code
+        anotherOrganisation.slug
       ))
       .asUser();
   }
@@ -918,7 +925,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       measurementUnit,
       meter1FirstMeasurement,
       meter1.readIntervalMinutes,
-      119);
+      119
+    );
 
     // Simulate lost measurements
     meter1Measurements.remove(40);

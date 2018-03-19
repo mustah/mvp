@@ -51,8 +51,14 @@ public class OrganisationRepository implements Organisations {
   }
 
   @Override
-  public Optional<Organisation> findByCode(String organisationCode) {
-    return organisationJpaRepository.findByCode(organisationCode)
+  public Optional<Organisation> findBySlug(String slug) {
+    return organisationJpaRepository.findBySlug(slug)
+      .map(organisationMapper::toDomainModel);
+  }
+
+  @Override
+  public Optional<Organisation> findByExternalId(String externalId) {
+    return organisationJpaRepository.findByExternalId(externalId)
       .map(organisationMapper::toDomainModel);
   }
 }

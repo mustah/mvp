@@ -16,5 +16,5 @@ public interface Organisations {
 
   void deleteById(UUID id);
 
-  Optional<Organisation> findByCode(String code);
+  Optional<Organisation> findBySlug(String slug);
 }

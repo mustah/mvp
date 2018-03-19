@@ -26,17 +26,19 @@ public class OrganisationEntity extends EntityType<UUID> {
   @Id
   public UUID id;
   public String name;
-  public String code;
+  public String slug;
+  public String externalId;
 
   @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "organisation")
   public Set<UserEntity> users;
 
   OrganisationEntity() {}
 
-  public OrganisationEntity(UUID id, String name, String code) {
+  public OrganisationEntity(UUID id, String name, String slug, String externalId) {
     this.id = id;
     this.name = name;
-    this.code = code;
+    this.slug = slug;
+    this.externalId = externalId;
     this.users = emptySet();
   }
 

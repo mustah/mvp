@@ -62,7 +62,7 @@ class ProductionDataLoader implements CommandLineRunner {
   private void createOrganisations() {
     productionDataProvider.organisations()
       .stream()
-      .filter(organisation -> !organisations.findByCode(organisation.code).isPresent())
+      .filter(organisation -> !organisations.findBySlug(organisation.slug).isPresent())
       .forEach(organisations::save);
   }
 

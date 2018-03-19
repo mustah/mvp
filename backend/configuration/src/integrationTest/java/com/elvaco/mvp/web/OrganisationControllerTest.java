@@ -59,7 +59,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     assertThat(body).hasFieldOrPropertyWithValue("id", secretService.id.toString());
     assertThat(body).hasFieldOrPropertyWithValue("name", "Secret Service");
-    assertThat(body).hasFieldOrPropertyWithValue("code", "secret-service");
+    assertThat(body).hasFieldOrPropertyWithValue("slug", "secret-service");
   }
 
   @Test
@@ -146,7 +146,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanUpdateOrganisation() {
-    OrganisationDto requestModel = new OrganisationDto("OrganisationName", "org-code");
+    OrganisationDto requestModel = new OrganisationDto("OrganisationName", "org-slug");
 
     ResponseEntity<OrganisationDto> response = asSuperAdmin()
       .post("/organisations", requestModel, OrganisationDto.class);
@@ -192,10 +192,10 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     OrganisationDto organisation = original.getBody();
     String oldCode = "wayne-industries";
-    assertThat(organisation.code).isEqualTo(oldCode);
+    assertThat(organisation.slug).isEqualTo(oldCode);
 
     // act
-    organisation.code = "batcave";
+    organisation.slug = "batcave";
     ResponseEntity<UnauthorizedDto> putResponse = as(context().user)
       .put("/organisations", organisation, UnauthorizedDto.class);
 
@@ -204,7 +204,7 @@ public class OrganisationControllerTest extends IntegrationTest {
     ResponseEntity<OrganisationDto> updatedDto = asSuperAdmin()
       .get("/organisations/" + wayneIndustries.id, OrganisationDto.class);
     assertThat(updatedDto.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(updatedDto.getBody().code).isEqualTo(oldCode);
+    assertThat(updatedDto.getBody().slug).isEqualTo(oldCode);
   }
 
   @Test
