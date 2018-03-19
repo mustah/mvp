@@ -29,14 +29,9 @@ variables:
           - .version
 
 .cache_gradle_read_only: &cache_gradle_read_only
-     cache:
-        key: "$CI_COMMIT_REF_NAME-gradle"
-        paths:
-          - .gradle/caches
-          - .yarn
-          - frontend/.fusebox/cache
-          - .version
-        policy: pull
+  <<: *cache_gradle
+  cache:
+    policy: pull
 
 before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
