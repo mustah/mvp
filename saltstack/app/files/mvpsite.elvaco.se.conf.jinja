@@ -1,7 +1,7 @@
 {% if "mvp-prod" in salt['grains.get']('env') %}
 {% set fqdn = 'mvp.elvaco.se' %}
 {% else %}
-{% set fqdn = 'mvp-staging.elvaco.se' %}
+{% set fqdn = 'mvpstaging.elvaco.se' %}
 {% endif %}
 
 server {
