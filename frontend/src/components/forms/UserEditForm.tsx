@@ -43,24 +43,23 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
     }
   }
 
+  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
+  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
+  changeRoles = (event, index, value) => this.setState({roles: value});
+  onChange = (event) => this.setState({[event.target.id]: event.target.value});
+  wrappedSubmit = (event) => {
+    event.preventDefault();
+    this.props.onSubmit(this.state);
+  }
+
   componentWillReceiveProps({user}: UserFormProps) {
     if (user) {
       this.setState({...user, password: ''});
     }
   }
 
-  organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
-  changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
-  changeRoles = (event, index, value) => this.setState({roles: value});
-  onChange = (event) => this.setState({[event.target.id]: event.target.value});
-
-  wrappedSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit(this.state);
-  }
-
   render() {
-    const {organisations, possibleRoles, isEditSelf} = this.props;
+    const {organisations, possibleRoles, isEditSelf, user} = this.props;
     const {name, email, organisation, roles, password} = this.state;
 
     const nameLabel = firstUpperTranslated('name');
@@ -72,6 +71,17 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
 
     const organisationOptions: IdNamed[] = organisations.map(({id, name}: Organisation) => ({id, name}));
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
+
+    const passwordElement = user ? null : (
+      <TextFieldInput
+        id="password"
+        floatingLabelText={newPasswordLabel}
+        hintText={newPasswordLabel}
+        type="password"
+        value={password}
+        onChange={this.onChange}
+      />
+    );
 
     return (
       <form onSubmit={this.wrappedSubmit}>
@@ -109,14 +119,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             value={roles}
             disabled={isEditSelf}
           />
-          <TextFieldInput
-            id="password"
-            floatingLabelText={newPasswordLabel}
-            hintText={newPasswordLabel}
-            type="password"
-            value={password}
-            onChange={this.onChange}
-          />
+          {passwordElement}
           <ButtonSave
             className="SaveButton"
             type="submit"
