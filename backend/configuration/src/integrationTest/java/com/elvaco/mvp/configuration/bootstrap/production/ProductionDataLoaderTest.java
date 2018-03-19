@@ -3,23 +3,21 @@ package com.elvaco.mvp.configuration.bootstrap.production;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.RoleRepository;
+import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.meterDefinitions;
-import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.organisations;
-import static com.elvaco.mvp.configuration.bootstrap.production.ProductionData.users;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductionDataLoaderTest extends IntegrationTest {
+
   @Autowired
   ProductionDataLoader productionDataLoader;
 
   @Autowired
-  RoleRepository roleRepository;
+  RoleJpaRepository roleRepository;
 
   @Autowired
   MeterDefinitionJpaRepository meterDefinitionJpaRepository;
@@ -40,9 +38,18 @@ public class ProductionDataLoaderTest extends IntegrationTest {
       Assertions.fail("Running production data loader failed", ex);
     }
 
-    assertThat(roleRepository.findAll()).hasSize(users().size());
-    assertThat(meterDefinitionJpaRepository.findAll()).hasSize(meterDefinitions().size());
-    assertThat(organisationJpaRepository.findAll()).hasSize(organisations().size());
+    assertThat(roleRepository.findAll()).hasSize(productionDataLoader.getProductionDataProvider()
+                                                   .users()
+                                                   .size());
+    assertThat(meterDefinitionJpaRepository.findAll()).hasSize(productionDataLoader
+                                                                 .getProductionDataProvider()
+                                                                 .meterDefinitions()
+                                                                 .size());
+    assertThat(organisationJpaRepository.findAll()).hasSize(productionDataLoader
+                                                              .getProductionDataProvider()
+                                                              .organisations()
+                                                              .size());
+
     assertThat(users.findAll()).filteredOn("name", "System Administrator").hasSize(1);
   }
 }

@@ -12,7 +12,7 @@ import static java.util.Collections.unmodifiableSet;
 
 @EqualsAndHashCode
 @ToString
-public class MeterDefinition {
+public class MeterDefinition implements Identifiable<MeterDefinitionType> {
 
   public static final MeterDefinition UNKNOWN_METER = new MeterDefinition(
     MeterDefinitionType.UNKNOWN_METER_TYPE,
@@ -78,5 +78,10 @@ public class MeterDefinition {
     this.medium = medium;
     this.quantities = unmodifiableSet(quantities);
     this.systemOwned = systemOwned;
+  }
+
+  @Override
+  public MeterDefinitionType getId() {
+    return type;
   }
 }

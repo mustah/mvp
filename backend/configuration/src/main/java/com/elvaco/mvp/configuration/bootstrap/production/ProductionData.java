@@ -6,26 +6,36 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
-import com.elvaco.mvp.database.entity.user.RoleEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 
-final class ProductionData {
+public class ProductionData implements ProductionDataProvider {
 
-  private ProductionData() {}
+  private final String superAdminEmail;
+  private final String superAdminPassword;
 
-  static List<RoleEntity> users() {
+  public ProductionData(
+    String superAdminEmail,
+    String superAdminPassword
+  ) {
+    this.superAdminEmail = superAdminEmail;
+    this.superAdminPassword = superAdminPassword;
+  }
+
+  @Override
+  public List<Role> users() {
     return unmodifiableList(asList(
-      RoleEntity.user(),
-      RoleEntity.admin(),
-      RoleEntity.superAdmin()
+      Role.USER,
+      Role.ADMIN,
+      Role.SUPER_ADMIN
     ));
   }
 
-  static List<MeterDefinition> meterDefinitions() {
+  @Override
+  public List<MeterDefinition> meterDefinitions() {
     return unmodifiableList(asList(
       MeterDefinition.UNKNOWN_METER,
       MeterDefinition.DISTRICT_HEATING_METER,
@@ -34,15 +44,17 @@ final class ProductionData {
     ));
   }
 
-  static List<Organisation> organisations() {
+  @Override
+  public List<Organisation> organisations() {
     return singletonList(ELVACO);
   }
 
-  static User superAdminUser(String email, String password) {
+  @Override
+  public User superAdminUser() {
     return new User(
       "System Administrator",
-      email,
-      password,
+      superAdminEmail,
+      superAdminPassword,
       ELVACO,
       singletonList(Role.SUPER_ADMIN)
     );

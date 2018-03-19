@@ -11,6 +11,12 @@ import static java.util.UUID.randomUUID;
 
 public class MockOrganisations extends MockRepository<UUID, Organisation> implements Organisations {
 
+  public MockOrganisations() {}
+
+  public MockOrganisations(List<Organisation> organisations) {
+    organisations.forEach(this::saveMock);
+  }
+
   @Override
   protected Organisation copyWithId(UUID id, Organisation entity) {
     return new Organisation(id, entity.name, entity.code);
