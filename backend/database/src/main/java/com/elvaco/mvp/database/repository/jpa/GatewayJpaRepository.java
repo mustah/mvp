@@ -16,4 +16,8 @@ public interface GatewayJpaRepository extends JpaRepository<GatewayEntity, Long>
     String productModel,
     String serial
   );
+
+  Optional<GatewayEntity> findById(UUID id);
+
+  Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
 }

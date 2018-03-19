@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.exception.GatewayNotFound;
 import com.elvaco.mvp.web.mapper.GatewayMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
 @RestApi("/v1/api/gateways")
@@ -49,6 +51,13 @@ public class GatewayController {
       .stream()
       .map(gatewayMapper::toDto)
       .collect(toList());
+  }
+
+  @GetMapping("{id}")
+  public GatewayDto logicalMeter(@PathVariable String id) {
+    return gatewayUseCases.findById(uuidOf(id))
+      .map(gatewayMapper::toDto)
+      .orElseThrow(() -> new GatewayNotFound(id));
   }
 
   @GetMapping("/map-data")

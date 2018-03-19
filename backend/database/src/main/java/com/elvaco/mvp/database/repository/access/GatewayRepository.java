@@ -58,6 +58,17 @@ public class GatewayRepository implements Gateways {
     return new PageAdapter<>(gatewayEntities.map(mapper::toDomainModel));
   }
 
+  @Override
+  public Optional<Gateway> findById(UUID id) {
+    return repository.findById(id).map(gatewayWithMetersMapper::withLogicalMeters);
+  }
+
+  @Override
+  public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    return repository
+      .findByOrganisationIdAndId(organisationId, id)
+      .map(gatewayWithMetersMapper::withLogicalMeters);
+  }
 
   @Transactional
   @Override

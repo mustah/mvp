@@ -50,4 +50,12 @@ public class GatewayUseCases {
   ) {
     return gateways.findBy(organisationId, productModel, serial);
   }
+
+  public Optional<Gateway> findById(UUID id) {
+    if (currentUser.isSuperAdmin()) {
+      return gateways.findById(id);
+    } else {
+      return gateways.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
+    }
+  }
 }
