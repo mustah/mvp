@@ -157,7 +157,7 @@ class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               hasContent={hasConfidentPosition}
               fallbackContent={<MissingDataTitle title={firstUpperTranslated('no reliable position')}/>}
             >
-              <Map height={400} viewCenter={gateway.location.position}>
+              <Map height={400} viewCenter={gateway.location.position} defaultZoom={7}>
                 <ClusterContainer markers={markers}/>
               </Map>
             </HasContent>

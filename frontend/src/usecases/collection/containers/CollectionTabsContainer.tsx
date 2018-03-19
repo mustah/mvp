@@ -17,15 +17,8 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {
-  getDomainModel,
-  getError,
-  getResultDomainModels,
-} from '../../../state/domain-models/domainModelsSelectors';
-import {
-  clearErrorGateways,
-  fetchGateways,
-} from '../../../state/domain-models/gateway/gatewayApiActions';
+import {getDomainModel, getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
+import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/gateway/gatewayApiActions';
 import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
 import {getGatewayDataSummary} from '../../../state/domain-models/gateway/gatewaySelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
@@ -35,20 +28,9 @@ import {changePaginationPage} from '../../../state/ui/pagination/paginationActio
 import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {
-  TabName,
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {
-  ClearError,
-  ErrorResponse,
-  OnClick,
-  OnClickWithId,
-  Fetch,
-  uuid,
-} from '../../../types/Types';
+import {ClearError, ErrorResponse, Fetch, OnClick, OnClickWithId, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -82,6 +64,12 @@ type Props = StateToProps & DispatchToProps;
 const componentId = 'gatewayList';
 
 class CollectionTabs extends React.Component<Props> {
+  changePage = (page: number) => (
+    this.props.changePaginationPage({
+      entityType: 'gateways',
+      componentId,
+      page,
+    }))
 
   componentDidMount() {
     const {encodedUriParametersForGateways, fetchGateways} = this.props;
@@ -91,13 +79,6 @@ class CollectionTabs extends React.Component<Props> {
   componentWillReceiveProps({encodedUriParametersForGateways, fetchGateways}: Props) {
     fetchGateways(encodedUriParametersForGateways);
   }
-
-  changePage = (page: number) => (
-    this.props.changePaginationPage({
-      entityType: 'gateways',
-      componentId,
-      page,
-    }))
 
   render() {
     const {
@@ -148,7 +129,7 @@ class CollectionTabs extends React.Component<Props> {
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
               <HasContent hasContent={hasGateways} fallbackContent={noGatewaysFallbackContent}>
-                <Map>
+                <Map defaultZoom={7}>
                   <ClusterContainer markers={gateways.entities}/>
                 </Map>
               </HasContent>
@@ -161,14 +142,12 @@ class CollectionTabs extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (
-  {
-    ui: {pagination, tabs},
-    map,
-    domainModels: {gateways},
-    searchParameters,
-  }: RootState,
-): StateToProps => {
+const mapStateToProps = ({
+                           ui: {pagination, tabs},
+                           map,
+                           domainModels: {gateways},
+                           searchParameters,
+                         }: RootState): StateToProps => {
   const paginationData: Pagination = getPagination({
     pagination,
     componentId,
