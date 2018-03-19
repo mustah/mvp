@@ -233,7 +233,7 @@ class MeterDetailsTabs extends React.Component<Props, State> {
               hasContent={hasConfidentPosition}
               fallbackContent={<h2 style={{padding: 8}}>{translate('no reliable position')}</h2>}
             >
-              <Map height={400} viewCenter={meter.location.position}>
+              <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
                 <ClusterContainer markers={meter}/>
               </Map>
             </HasContent>
