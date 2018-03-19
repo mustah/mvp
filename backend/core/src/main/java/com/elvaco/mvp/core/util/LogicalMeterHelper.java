@@ -47,15 +47,4 @@ public class LogicalMeterHelper {
       .map(physicalMeter -> physicalMeter.id)
       .collect(toList());
   }
-
-
-  public static double calculatedExpectedReadOuts(
-    long readInterval,
-    LocalDateTime after,
-    LocalDateTime before
-  ) {
-    return Math.floor((double)
-                        Duration.between(after, before).toMinutes() / readInterval
-    );
-  }
 }
