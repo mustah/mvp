@@ -51,6 +51,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -79,7 +80,7 @@ public class MessageHandlerTest {
   private LogicalMeters logicalMeters;
   private Gateways gateways;
   private Measurements measurements;
-  private MessageHandler messageHandler;
+  private MeteringMessageHandler messageHandler;
 
   @Before
   public void setUp() {
@@ -325,6 +326,18 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void createsLogicalMeterForMeasurement() {
+    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_CODE));
+
+    messageHandler.handle(newMeasurementMessage());
+
+    assertThat(logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      EXTERNAL_ID
+    )).isNotEmpty();
+  }
+
+  @Test
   public void createsOrganisationAndMeterForMeasurement() {
     messageHandler.handle(newMeasurementMessage());
 
@@ -334,6 +347,10 @@ public class MessageHandlerTest {
       organisation.id,
       EXTERNAL_ID,
       "1234"
+    ).get();
+    LogicalMeter logicalMeter = logicalMeters.findByOrganisationIdAndExternalId(
+      organisation.id,
+      EXTERNAL_ID
     ).get();
 
     Measurement expectedMeasurement = new Measurement(
@@ -347,10 +364,10 @@ public class MessageHandlerTest {
         organisation,
         "1234",
         EXTERNAL_ID,
-        "Unknown",
+        "Unknown meter",
         "UNKNOWN",
         0
-      )
+      ).withLogicalMeterId(logicalMeter.id)
     );
     List<Measurement> createdMeasurements = measurements.findAll(null);
     assertThat(createdMeasurements).hasSize(1);
@@ -361,6 +378,59 @@ public class MessageHandlerTest {
   public void ignoresAlarmsWithoutCrashing() {
     messageHandler.handle(newAlarmMessageWithoutAlarms());
     messageHandler.handle(newAlarmMessageWithTwoAlarms());
+  }
+
+  @Test
+  public void hotWaterMeterIsMappedFromMedium() {
+    assertThat(messageHandler.selectMeterDefinition("Hot water"))
+      .isEqualTo(MeterDefinition.HOT_WATER_METER);
+  }
+
+  @Test
+  public void districtHeatingMeterIsMappedFromMedium() {
+    assertThat(messageHandler.selectMeterDefinition("District heating meter"))
+      .isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
+  }
+
+  @Test
+  public void unknownMediumIsMappedToUnknownMeterDefinition() {
+    assertThat(messageHandler.selectMeterDefinition("Some unsupported, unknown medium"))
+      .isEqualTo(MeterDefinition.UNKNOWN_METER);
+  }
+
+  @Test
+  public void unknowMediumIsMappedFromEmptyValueSet() {
+    List<ValueDto> districtHeatingMeterValues = emptyList();
+    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
+      MeterDefinition.UNKNOWN_METER);
+  }
+
+  @Test
+  public void unknowMediumIsMappedFromUnknownValueSet() {
+    List<ValueDto> districtHeatingMeterValues = asList(
+      new ValueDto(LocalDateTime.now(), 0.0, "MW", "UnknownQuantity")
+    );
+    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
+      MeterDefinition.UNKNOWN_METER);
+  }
+
+  @Test
+  public void districtHeatingMeterIsMappedFromValueQuantities() {
+    List<ValueDto> districtHeatingMeterValues = asList(
+      newValueDto("Return temp."),
+      newValueDto("Difference temp."),
+      newValueDto("Flow temp."),
+      newValueDto("Volume flow"),
+      newValueDto("Power"),
+      newValueDto("Volume"),
+      newValueDto("Energy")
+    );
+    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
+      MeterDefinition.DISTRICT_HEATING_METER);
+  }
+
+  private ValueDto newValueDto(String quantity) {
+    return new ValueDto(LocalDateTime.now(), 0.0, "one", quantity);
   }
 
   private LogicalMeter findLogicalMeter() {
