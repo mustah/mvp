@@ -55,4 +55,8 @@ public class Location {
   public boolean isKnownAddress() {
     return getStreetAddress() != null;
   }
+
+  public boolean isUnknown() {
+    return country == null && city == null && streetAddress == null;
+  }
 }

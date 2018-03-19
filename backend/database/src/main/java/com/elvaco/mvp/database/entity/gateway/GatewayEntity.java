@@ -14,6 +14,8 @@ import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import static java.util.Collections.emptySet;
 
@@ -39,6 +41,7 @@ public class GatewayEntity extends EntityType<UUID> {
   public UUID organisationId;
 
   @ManyToMany(mappedBy = "gateways")
+  @Fetch(FetchMode.SUBSELECT)
   public Set<LogicalMeterEntity> meters;
 
   public GatewayEntity(

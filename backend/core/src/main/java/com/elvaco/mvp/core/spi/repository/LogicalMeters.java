@@ -26,4 +26,6 @@ public interface LogicalMeters {
   Optional<LogicalMeter> findByOrganisationIdAndExternalId(UUID organisationId, String externalId);
 
   List<LogicalMeter> findByOrganisationId(UUID organisationId);
+
+  List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters);
 }

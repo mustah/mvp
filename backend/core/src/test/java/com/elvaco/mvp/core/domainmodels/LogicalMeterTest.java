@@ -60,7 +60,6 @@ public class LogicalMeterTest {
     UUID meterId = randomUUID();
     ZonedDateTime now = ZonedDateTime.now();
 
-    ZonedDateTime now = ZonedDateTime.now();
     LogicalMeter logicalMeter = newLogicalMeter(
       meterId,
       organisationId,

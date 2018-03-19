@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
+import com.elvaco.mvp.core.usecase.MeterLocationUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
@@ -90,5 +91,10 @@ class UseCaseConfig {
   @Bean
   PhysicalMeterUseCases physicalMeterUseCases(AuthenticatedUser currentUser) {
     return new PhysicalMeterUseCases(currentUser, physicalMeters);
+  }
+
+  @Bean
+  MeterLocationUseCases meterLocationUseCases(AuthenticatedUser currentUser) {
+    return new MeterLocationUseCases(logicalMeters, currentUser);
   }
 }

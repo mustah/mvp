@@ -94,4 +94,9 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
     return filter(logicalMeter -> logicalMeter.organisationId == organisationId)
       .collect(toList());
   }
+
+  @Override
+  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
+    return allMocks();
+  }
 }

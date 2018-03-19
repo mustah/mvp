@@ -22,6 +22,8 @@ import javax.persistence.UniqueConstraint;
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import static java.util.Collections.emptySet;
 import static javax.persistence.CascadeType.ALL;
@@ -40,6 +42,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
   public UUID id;
 
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
+  @Fetch(FetchMode.SUBSELECT)
   public Set<PhysicalMeterEntity> physicalMeters;
 
   @Column(nullable = false)
@@ -51,6 +54,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     joinColumns = @JoinColumn(name = "logical_meter_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "gateway_id", referencedColumnName = "id")
   )
+  @Fetch(FetchMode.SUBSELECT)
   public Set<GatewayEntity> gateways;
 
   @ManyToOne(optional = false)

@@ -38,10 +38,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserControllerTest extends IntegrationTest {
 
   private final OrganisationMapper organisationMapper = new OrganisationMapper();
+
   @Autowired
   private Users users;
+
   @Autowired
   private UserMapper userMapper;
+
   @Autowired
   private Organisations organisations;
 

@@ -141,6 +141,14 @@ public class LogicalMeterRepository implements LogicalMeters {
       .collect(toList());
   }
 
+  @Override
+  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findAll(toPredicate(parameters))
+      .stream()
+      .map(logicalMeterMapper::justLocationModel)
+      .collect(toList());
+  }
+
   private Predicate toPredicate(RequestParameters parameters) {
     return meterQueryFilters.toExpression(parameters);
   }
