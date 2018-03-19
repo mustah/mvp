@@ -4,7 +4,7 @@ import {CHANGE_TAB} from './tabsActions';
 import {SelectedTabs, TabName, TabSelection, TabsState} from './tabsModels';
 
 const listTab: SelectedTabs = {
-  selectedTab: TabName.overview,
+  selectedTab: TabName.list,
 };
 
 export const initialState: TabsState = {
