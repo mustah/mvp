@@ -130,11 +130,10 @@ test:unit_and_IT:
     script:
         - gradle check -x systemTest
 
-publish:artifactory:
+.publish:artifactory: &publish_to_artifactory
     <<: *no_cache
     image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
     stage: publish
-    when: manual
     dependencies:
       - gradle:build
     script:
@@ -143,6 +142,21 @@ publish:artifactory:
         - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
         - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
         - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+
+publish:artifactory_manual:
+    <<: *publish_to_artifactory
+    when: manual
+    only:
+        - branches
+    except:
+        - develop
+        - master
+
+publish:artifactory:
+    <<: *publish_to_artifactory
+    only:
+        - develop
+        - master
 
 deploy:recreate-dbs:
   <<: *no_cache
