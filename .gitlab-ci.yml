@@ -1,32 +1,32 @@
 image:
-    name: gradle:jdk8
+  name: gradle:jdk8
 
 stages:
-    - prepare
-    - build
-    - test
-    - publish
-    - deploy
+  - prepare
+  - build
+  - test
+  - publish
+  - deploy
 
 variables:
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
-    SALTAPI_URL: "https://salt.elvaco.se:8000"
-    SALTAPI_EAUTH: "pam"
-    SALTAPI_USER: "saltapi"
-    SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
+  SALTAPI_URL: "https://salt.elvaco.se:8000"
+  SALTAPI_EAUTH: "pam"
+  SALTAPI_USER: "saltapi"
+  SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
 
 .no_cache: &no_cache
-     cache:
-        key: "$CI_COMMIT_REF_NAME-no_cache"
+  cache:
+    key: "$CI_COMMIT_REF_NAME-no_cache"
 
 .cache_gradle: &cache_gradle
-     cache:
-        key: "$CI_COMMIT_REF_NAME-gradle"
-        paths:
-          - .gradle/caches
-          - .yarn
-          - frontend/.fusebox/cache
-          - .version
+  cache:
+    key: "$CI_COMMIT_REF_NAME-gradle"
+    paths:
+      - .gradle/caches
+      - .yarn
+      - frontend/.fusebox/cache
+      - .version
 
 .cache_gradle_read_only: &cache_gradle_read_only
   <<: *cache_gradle
@@ -34,124 +34,124 @@ variables:
     policy: pull
 
 before_script:
-    - export GRADLE_USER_HOME=`pwd`/.gradle
-    - export YARN_CACHE_FOLDER=`pwd`/.yarn
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export YARN_CACHE_FOLDER=`pwd`/.yarn
 
 gradle:clean:
-    <<: *cache_gradle
-    stage: prepare
-    script:
-        - gradle clean
-    only:
-      refs:
-        - master
-        - develop
-        - /^release-.*$/
+  <<: *cache_gradle
+  stage: prepare
+  script:
+    - gradle clean
+  only:
+    refs:
+      - master
+      - develop
+      - /^release-.*$/
 
 docker:postgresql:
-    <<: *no_cache
-    stage: prepare
-    tags:
-      - shell
-    script:
-      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
-      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
-      - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+  <<: *no_cache
+  stage: prepare
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+    - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
+    - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
 
 docker:ci-utils:
-    <<: *no_cache
-    stage: prepare
-    tags:
-      - shell
-    script:
-      - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
-      - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest -f Dockerfile-ci-utils .
-      - docker push gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  <<: *no_cache
+  stage: prepare
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
+    - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest -f Dockerfile-ci-utils .
+    - docker push gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
 
 prepare:version:
-    <<: *no_cache
-    stage: prepare
-    image:
-      name: alpine/git:latest
-      entrypoint: ["/bin/sh", "-c"]
-    script:
-      - git describe --tags --abbrev=7 --dirty > .version
-      - chmod 644 .version
-    artifacts:
-        paths:
-          - .version
-        expire_in: 7 days
+  <<: *no_cache
+  stage: prepare
+  image:
+    name: alpine/git:latest
+    entrypoint: ["/bin/sh", "-c"]
+  script:
+    - git describe --tags --abbrev=7 --dirty > .version
+    - chmod 644 .version
+  artifacts:
+    paths:
+      - .version
+    expire_in: 7 days
 
 gradle:build:
-    <<: *cache_gradle
-    stage: build
-    dependencies:
-        - prepare:version
-    script:
-        - gradle build -x check
-    artifacts:
-        name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
-        paths:
-            - backend/configuration/build/distributions/
-            - .version
-        expire_in: 1 week
+  <<: *cache_gradle
+  stage: build
+  dependencies:
+    - prepare:version
+  script:
+    - gradle build -x check
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
+    paths:
+      - backend/configuration/build/distributions/
+      - .version
+    expire_in: 1 week
 
 test:system:
-    <<: *cache_gradle_read_only
-    stage: test
-    services:
-        - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
-          alias: pg_host
-        - name: rabbitmq
-          alias: rabbit_host
-    script:
-        - gradle systemTestCI
-    artifacts:
-        name: "${CI_COMMIT_REF_NAME}-system"
-        when: on_failure
-        paths:
-          - backend/configuration/build/reports/tests/systemTestCI/*
-        expire_in: 7 days
+  <<: *cache_gradle_read_only
+  stage: test
+  services:
+    - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+      alias: pg_host
+    - name: rabbitmq
+      alias: rabbit_host
+  script:
+    - gradle systemTestCI
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-system"
+    when: on_failure
+    paths:
+      - backend/configuration/build/reports/tests/systemTestCI/*
+    expire_in: 7 days
 
 test:unit_and_IT:
-    <<: *cache_gradle_read_only
-    stage: test
-    artifacts:
-        name: "${CI_COMMIT_REF_NAME}-integration"
-        when: on_failure
-        paths:
-          - backend/configuration/build/reports/tests/integrationTest/*
-        expire_in: 7 days
-    script:
-        - gradle check -x systemTest
+  <<: *cache_gradle_read_only
+  stage: test
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-integration"
+    when: on_failure
+    paths:
+      - backend/configuration/build/reports/tests/integrationTest/*
+    expire_in: 7 days
+  script:
+    - gradle check -x systemTest
 
 .publish:artifactory: &publish_to_artifactory
-    <<: *no_cache
-    image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
-    stage: publish
-    dependencies:
-      - gradle:build
-    script:
-        - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-        - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
-        - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
-        - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
-        - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
+    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
 publish:artifactory_manual:
-    <<: *publish_to_artifactory
-    when: manual
-    only:
-        - branches
-    except:
-        - develop
-        - master
+  <<: *publish_to_artifactory
+  when: manual
+  only:
+    - branches
+  except:
+    - develop
+    - master
 
 publish:artifactory:
-    <<: *publish_to_artifactory
-    only:
-        - develop
-        - master
+  <<: *publish_to_artifactory
+  only:
+    - develop
+    - master
 
 deploy:recreate-dbs:
   <<: *no_cache
