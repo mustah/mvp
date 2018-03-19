@@ -38,11 +38,11 @@ final class ProductionData {
     return singletonList(ELVACO);
   }
 
-  static User superAdminUser() {
+  static User superAdminUser(String email, String password) {
     return new User(
       "System Administrator",
-      "mvpadmin@elvaco.se",
-      "changeme",
+      email,
+      password,
       ELVACO,
       singletonList(Role.SUPER_ADMIN)
     );
