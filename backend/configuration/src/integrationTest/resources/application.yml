@@ -26,3 +26,6 @@ mvp:
   consumers:
     rabbit:
       queueName: MVP
+  superadmin:
+    email: mvpadmin@elvaco.se
+    password: changeme

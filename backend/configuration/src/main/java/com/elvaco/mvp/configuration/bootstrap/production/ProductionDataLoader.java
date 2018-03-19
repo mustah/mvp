@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.repository.jpa.RoleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,8 @@ class ProductionDataLoader implements CommandLineRunner {
   private final Organisations organisations;
   private final Users users;
   private final SettingUseCases settingUseCases;
+  private final String superAdminEmail;
+  private final String superAdminPassword;
 
   @Autowired
   ProductionDataLoader(
@@ -34,13 +37,17 @@ class ProductionDataLoader implements CommandLineRunner {
     MeterDefinitions meterDefinitions,
     Organisations organisations,
     Users users,
-    SettingUseCases settingUseCases
+    SettingUseCases settingUseCases,
+    @Value("${mvp.superadmin.email}") String superAdminEmail,
+    @Value("${mvp.superadmin.password}") String superAdminPassword
   ) {
     this.roleRepository = roleRepository;
     this.meterDefinitions = meterDefinitions;
     this.organisations = organisations;
     this.users = users;
     this.settingUseCases = settingUseCases;
+    this.superAdminEmail = superAdminEmail;
+    this.superAdminPassword = superAdminPassword;
   }
 
   @Override
@@ -62,7 +69,7 @@ class ProductionDataLoader implements CommandLineRunner {
   }
 
   private void createSuperAdministratorIfNotPresent() {
-    User user = superAdminUser();
+    User user = superAdminUser(superAdminEmail, superAdminPassword);
     if (!users.findByEmail(user.email).isPresent()) {
       users.create(user);
     }

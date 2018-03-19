@@ -58,18 +58,19 @@ public class LogicalMeterTest {
   public void logicalMeterEquality() {
     UUID organisationId = randomUUID();
     UUID meterId = randomUUID();
+    ZonedDateTime now = ZonedDateTime.now();
 
     LogicalMeter logicalMeter = newLogicalMeter(
       meterId,
       organisationId,
       MeterDefinition.HOT_WATER_METER
-    ).createdAt(ZonedDateTime.now());
+    ).createdAt(now);
 
     LogicalMeter otherLogicalMeter = newLogicalMeter(
       meterId,
       organisationId,
       MeterDefinition.HOT_WATER_METER
-    ).createdAt(ZonedDateTime.now());
+    ).createdAt(now);
 
     assertThat(logicalMeter).isEqualTo(otherLogicalMeter);
   }
