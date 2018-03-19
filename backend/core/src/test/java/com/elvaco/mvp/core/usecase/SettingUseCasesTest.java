@@ -37,16 +37,4 @@ public class SettingUseCasesTest {
     settingUseCases.save(new Setting(randomUUID(), "foo", "bar"));
     assertThat(settingUseCases.findAll()).hasSize(settingListPreAddSize + 1);
   }
-
-  @Test
-  public void isProductionDataLoaded() {
-    settingUseCases.setProductionDataLoaded();
-
-    assertThat(settingUseCases.isProductionDataLoaded()).isTrue();
-  }
-
-  @Test
-  public void productionDataIsNotLoaded() {
-    assertThat(settingUseCases.isProductionDataLoaded()).isFalse();
-  }
 }
