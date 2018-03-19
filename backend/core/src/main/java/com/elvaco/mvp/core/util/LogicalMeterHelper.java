@@ -138,6 +138,8 @@ public final class LogicalMeterHelper {
    * Decides whether to use status end date or period as end point.
    */
   private static ZonedDateTime getEndPoint(ZonedDateTime statusEnd, ZonedDateTime periodBefore) {
-    return statusEnd.isBefore(periodBefore) ? statusEnd : periodBefore;
+    ZonedDateTime endPoint = statusEnd.isBefore(periodBefore) ? statusEnd : periodBefore;
+
+    return endPoint.isBefore(ZonedDateTime.now()) ? endPoint : ZonedDateTime.now();
   }
 }

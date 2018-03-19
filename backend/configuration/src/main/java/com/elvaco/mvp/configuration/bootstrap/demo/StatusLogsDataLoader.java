@@ -18,13 +18,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
+import static com.elvaco.mvp.core.domainmodels.StatusType.CRITICAL;
+import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
+import static com.elvaco.mvp.core.domainmodels.StatusType.MAINTENANCE_SCHEDULED;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.core.domainmodels.StatusType.UNKNOWN;
+import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
+
 @Slf4j
 @Profile("demo")
 @Component
 class StatusLogsDataLoader {
 
   private static final Random RANDOM = new Random();
-  private static final StatusType[] STATUS_TYPES = StatusType.values();
+  private static final StatusType[] STATUS_TYPES = {
+    OK,
+    INFO,
+    CRITICAL,
+    WARNING,
+    UNKNOWN,
+    MAINTENANCE_SCHEDULED
+  };
 
   private final PhysicalMeters physicalMeters;
   private final MeterStatusLogs meterStatusLogs;
@@ -68,6 +83,16 @@ class StatusLogsDataLoader {
     List<MeterStatusLog> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
+      statusLogs.add(
+        new MeterStatusLog(
+          null,
+          meter.id,
+          ACTIVE,
+          subtractDays(daySeed),
+          null
+        )
+      );
+
       statusLogs.add(
         new MeterStatusLog(
           null,
