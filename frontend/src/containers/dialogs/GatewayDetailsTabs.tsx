@@ -1,6 +1,4 @@
-import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
-import {checkbox, checkboxLabel} from '../../app/themes';
 import {HasContent} from '../../components/content/HasContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -23,7 +21,6 @@ import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 import {Map} from '../../usecases/map/containers/Map';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {normalizedStatusChangelogFor} from './dialogHelper';
 
 interface Props {
   gateway: Gateway;
@@ -48,11 +45,8 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
     const renderFacility = ({facility}: Meter) => facility;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-    const renderDate = ({date}: Meter) => date;
     const renderMedium = ({medium}: Meter) => medium;
     const hasConfidentPosition: boolean = gatewayMapMarker.filter(isGeoPositionWithinThreshold).isJust();
-
-    const statusChangelog = normalizedStatusChangelogFor(gateway);
 
     return (
       <Row>
@@ -60,7 +54,6 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
           <TabTopBar>
             <TabHeaders selectedTab={selectedTab} onChangeTab={this.changeTab}>
               <Tab tab={TabName.values} title={translate('meter')}/>
-              <Tab tab={TabName.log} title={translate('status log')}/>
               <Tab tab={TabName.map} title={translate('map')}/>
             </TabHeaders>
             <TabSettings/>
@@ -78,25 +71,6 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               <TableColumn
                 header={<TableHead>{translate('medium')}</TableHead>}
                 renderCell={renderMedium}
-              />
-              <TableColumn
-                header={<TableHead>{translate('status')}</TableHead>}
-                renderCell={renderStatusCell}
-              />
-            </Table>
-          </TabContent>
-          <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Row>
-              <Checkbox
-                iconStyle={checkbox}
-                labelStyle={checkboxLabel}
-                label={translate('show only changes')}
-              />
-            </Row>
-            <Table {...statusChangelog}>
-              <TableColumn
-                header={<TableHead>{translate('date')}</TableHead>}
-                renderCell={renderDate}
               />
               <TableColumn
                 header={<TableHead>{translate('status')}</TableHead>}

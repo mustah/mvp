@@ -13,7 +13,7 @@ import com.elvaco.mvp.database.entity.EntityType;
 
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "physical_meter_status")
+@Table(name = "status")
 public class MeterStatusEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -124418354565237L;
