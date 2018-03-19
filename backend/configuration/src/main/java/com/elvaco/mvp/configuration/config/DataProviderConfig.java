@@ -1,5 +1,7 @@
 package com.elvaco.mvp.configuration.config;
 
+import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
+import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -8,6 +10,7 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
@@ -18,6 +21,7 @@ import com.elvaco.mvp.database.repository.access.MeterStatusLogsRepository;
 import com.elvaco.mvp.database.repository.access.MeterStatusRepository;
 import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
+import com.elvaco.mvp.database.repository.access.RoleRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
@@ -28,6 +32,7 @@ import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
@@ -47,6 +52,7 @@ import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -65,6 +71,7 @@ class DataProviderConfig {
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final MeterStatusJpaRepository meterStatusJpaRepository;
   private final GatewayJpaRepository gatewayJpaRepository;
+  private final RoleJpaRepository roleJpaRepository;
 
   @Autowired
   DataProviderConfig(
@@ -78,7 +85,8 @@ class DataProviderConfig {
     OrganisationJpaRepository organisationJpaRepository,
     PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
     MeterStatusJpaRepository meterStatusJpaRepository,
-    GatewayJpaRepository gatewayJpaRepository
+    GatewayJpaRepository gatewayJpaRepository,
+    RoleJpaRepository roleJpaRepository
   ) {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
@@ -91,6 +99,7 @@ class DataProviderConfig {
     this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
     this.meterStatusJpaRepository = meterStatusJpaRepository;
     this.gatewayJpaRepository = gatewayJpaRepository;
+    this.roleJpaRepository = roleJpaRepository;
   }
 
   @Bean
@@ -162,6 +171,19 @@ class DataProviderConfig {
       organisationJpaRepository,
       new OrganisationMapper()
     );
+  }
+
+  @Bean
+  ProductionDataProvider productionData(
+    @Value("${mvp.superadmin.email}") String superAdminEmail,
+    @Value("${mvp.superadmin.password}") String superAdminPassword
+  ) {
+    return new ProductionData(superAdminEmail, superAdminPassword);
+  }
+
+  @Bean
+  Roles roles() {
+    return new RoleRepository(roleJpaRepository);
   }
 
   @Bean

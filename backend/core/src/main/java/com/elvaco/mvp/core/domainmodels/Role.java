@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode
-public class Role {
+public class Role implements Identifiable<String> {
 
   public static final Role USER = new Role("USER");
   public static final Role ADMIN = new Role("ADMIN");
@@ -15,5 +15,10 @@ public class Role {
 
   public Role(String role) {
     this.role = role;
+  }
+
+  @Override
+  public String getId() {
+    return role;
   }
 }
