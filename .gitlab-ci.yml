@@ -10,10 +10,10 @@ stages:
 
 variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
-    SALTAPI_URL: "https://salt-master:8000"
+    SALTAPI_URL: "https://salt.elvaco.se:8000"
     SALTAPI_EAUTH: "pam"
-    SALTAPI_USER: "administrator"
-    SALTAPI_PASS: "password2"
+    SALTAPI_USER: "saltapi"
+    SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
 
 .no_cache: &no_cache
      cache:
