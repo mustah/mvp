@@ -1,6 +1,5 @@
 include:
   - postgresql.server
-  - postgresql.conf
   - postgresql.db_users
 
 create-mvp-database:
