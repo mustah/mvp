@@ -1,15 +1,23 @@
 package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
+import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -21,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -37,13 +46,18 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
 
+  @Autowired
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
+
+  @Autowired
+  private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
+
   private Map<String, MeasurementEntity> measurementQuantities;
   private PhysicalMeterEntity forceMeter;
   private OrganisationEntity wayneIndustriesEntity;
 
   @Before
   public void setUp() {
-
     PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
       randomUUID(),
       context().organisationEntity,
@@ -51,13 +65,26 @@ public class MeasurementControllerTest extends IntegrationTest {
       "butter-external-id",
       "Butter",
       "ELV",
-      null,
+      newLogicalMeterEntity(
+        "Butter",
+        MeterDefinitionType.TEST_METER_TYPE_1,
+        asList(new QuantityEntity(
+          null,
+          "Butter temperature",
+          "°C"
+        ), new QuantityEntity(
+          null,
+          "Left to walk",
+          "m"
+        ))
+      ).id,
       15
     );
 
     wayneIndustriesEntity = organisationJpaRepository.save(
       new OrganisationEntity(randomUUID(), "Wayne Industries", "wayne-industries")
     );
+
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
       randomUUID(),
       wayneIndustriesEntity,
@@ -65,17 +92,38 @@ public class MeasurementControllerTest extends IntegrationTest {
       "milk-external-id",
       "Milk",
       "ELV",
-      null,
+      newLogicalMeterEntity(
+        "Milk",
+        MeterDefinitionType.TEST_METER_TYPE_2,
+        singletonList(new QuantityEntity(
+          null,
+          "Milk temperature",
+          "°C"
+        ))
+      ).id,
       15
     );
+
     forceMeter = new PhysicalMeterEntity(
       randomUUID(),
       wayneIndustriesEntity,
       String.valueOf(Math.random()),
       "force-external-id",
-      "vacum",
+      "Vacuum",
       "ELV",
-      null,
+      newLogicalMeterEntity(
+        "Vacuum",
+        MeterDefinitionType.TEST_METER_TYPE_3,
+        asList(new QuantityEntity(
+          null,
+          "Heat",
+          "°C"
+        ), new QuantityEntity(
+          null,
+          "LightsaberPower",
+          "kW"
+        ))
+      ).id,
       15
     );
 
@@ -109,7 +157,7 @@ public class MeasurementControllerTest extends IntegrationTest {
         ZonedDateTime.now(),
         "Left to walk",
         500,
-        "mi",
+        "m",
         butterMeter
       ),
       new MeasurementEntity(
@@ -128,6 +176,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void tearDown() {
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
+    meterDefinitionJpaRepository.delete(MeterDefinitionType.TEST_METER_TYPE_1);
+    meterDefinitionJpaRepository.delete(MeterDefinitionType.TEST_METER_TYPE_2);
+    meterDefinitionJpaRepository.delete(MeterDefinitionType.TEST_METER_TYPE_3);
     organisationJpaRepository.delete(wayneIndustriesEntity);
   }
 
@@ -157,7 +209,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementUnitScaled() {
     List<MeasurementDto> measurements = as(context().user)
-      .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
+      .getList("/measurements?quantities=Butter temperature:K", MeasurementDto.class)
       .getBody();
 
     assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
@@ -168,7 +220,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
     List<MeasurementDto> measurements = as(context().user)
-      .getList("/measurements?quantity=Butter temperature&scale=K", MeasurementDto.class)
+      .getList("/measurements?quantities=Butter temperature:K", MeasurementDto.class)
       .getBody();
 
     List<String> names = measurements.stream().map(m -> m.quantity).collect(toList());
@@ -207,10 +259,11 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeter() {
-    List<String> quantities = getListAsSuperAdmin("/measurements?meterId=" + forceMeter.id)
-      .stream()
-      .map(c -> c.quantity)
-      .collect(toList());
+    List<String> quantities =
+      getListAsSuperAdmin("/measurements?meters=" + forceMeter.logicalMeterId)
+        .stream()
+        .map(c -> c.quantity)
+        .collect(toList());
 
     assertThat(quantities).hasSize(2);
     assertThat(quantities).containsExactlyInAnyOrder("Heat", "LightsaberPower");
@@ -218,7 +271,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForHeatMeter() {
-    List<MeasurementDto> contents = getListAsSuperAdmin("/measurements?quantity=Heat");
+    List<MeasurementDto> contents = getListAsSuperAdmin("/measurements?quantities=Heat");
 
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
@@ -233,7 +286,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementDto> contents =
-      getListAsSuperAdmin("/measurements?quantity=LightsaberPower&before=" + date);
+      getListAsSuperAdmin("/measurements?quantities=LightsaberPower&before=" + date);
 
     assertThat(contents).hasSize(1);
     MeasurementDto dto = contents.get(0);
@@ -243,13 +296,91 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void fetchMeasurementsForMeterBeforeTime() {
+    String date = "1990-01-01T08:00:00Z";
+    List<MeasurementDto> contents =
+      getListAsSuperAdmin("/measurements?before=" + date);
+
+    assertThat(contents).hasSize(1);
+    MeasurementDto dto = contents.get(0);
+    assertThat(dto.quantity).isEqualTo("LightsaberPower");
+    assertThat(dto.value).isEqualTo(0);
+  }
+
+  @Test
+  public void fetchMeasurementsForMeterAfterTime() {
+    String date = "1990-01-01T08:00:00Z";
+    List<String> foundQuantities =
+      getListAsSuperAdmin("/measurements?after=" + date)
+        .stream()
+        .map(c -> c.quantity)
+        .collect(toList());
+
+    assertThat(foundQuantities).hasSize(4);
+    assertThat(foundQuantities).doesNotContain("LightsaberPower");
+  }
+
+  @Test
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
     List<MeasurementDto> contents =
-      getListAsSuperAdmin("/measurements?quantity=Heat&after=1990-01-01T08:00:00Z");
+      getListAsSuperAdmin("/measurements?quantities=Heat&after=1990-01-01T08:00:00Z");
 
     MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("Heat");
+  }
+
+  @Test
+  public void fetchMeasurementsForMeterByQuantityAfterTimeWithNonDefaultUnit() {
+    List<MeasurementDto> contents =
+      getListAsSuperAdmin("/measurements?quantities=Heat:K&after=1990-01-01T08:00:00Z");
+
+    MeasurementDto dto = contents.get(0);
+    assertThat(contents).hasSize(1);
+    assertThat(dto.quantity).isEqualTo("Heat");
+    assertThat(dto.unit).isEqualTo("K");
+    assertThat(dto.value).isEqualTo(423.15); // 150 degrees Celsius
+  }
+
+  @Test
+  public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
+    List<MeasurementDto> contents =
+      getListAsSuperAdmin(
+        "/measurements?quantities=Heat:K,LightsaberPower:MW");
+
+    assertThat(contents).hasSize(2);
+    MeasurementDto dto = contents.get(0);
+    assertThat(dto.quantity).isEqualTo("Heat");
+    assertThat(dto.unit).isEqualTo("K");
+    assertThat(dto.value).isEqualTo(423.15); // 150 degrees Celsius
+
+    dto = contents.get(1);
+    assertThat(dto.quantity).isEqualTo("LightsaberPower");
+    assertThat(dto.unit).isEqualTo("MW");
+    assertThat(dto.value).isEqualTo(0);
+  }
+
+  private LogicalMeterEntity newLogicalMeterEntity(
+    String medium,
+    MeterDefinitionType meterDefinitionType,
+    List<QuantityEntity> quantityEntities
+  ) {
+    MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
+      new MeterDefinitionEntity(
+        meterDefinitionType,
+        new HashSet<>(quantityEntities),
+        medium,
+        false
+      ));
+    UUID uuid = UUID.randomUUID();
+    return logicalMeterJpaRepository.save(new LogicalMeterEntity(
+      UUID.randomUUID(),
+      uuid.toString(),
+      context().organisationEntity.id,
+      ZonedDateTime.now(),
+      meterDefinitionEntity
+    ));
+
   }
 
   private List<MeasurementDto> getListAsSuperAdmin(String url) {

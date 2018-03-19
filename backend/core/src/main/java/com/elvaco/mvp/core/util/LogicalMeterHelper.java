@@ -1,12 +1,11 @@
 package com.elvaco.mvp.core.util;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -17,11 +16,11 @@ import lombok.NoArgsConstructor;
 import static java.util.stream.Collectors.toList;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LogicalMeterHelper {
+public final class LogicalMeterHelper {
 
   public static Map<Quantity, List<UUID>> mapMeterQuantitiesToPhysicalMeterUuids(
     List<LogicalMeter> logicalMeters,
-    List<Quantity> quantities
+    Set<Quantity> quantities
   ) {
     Map<Quantity, List<UUID>> physicalMeterQuantityMap = new HashMap<>();
     quantities.forEach((quantity) -> {
@@ -46,16 +45,5 @@ public class LogicalMeterHelper {
       .stream()
       .map(physicalMeter -> physicalMeter.id)
       .collect(toList());
-  }
-
-
-  public static double calculatedExpectedReadOuts(
-    long readInterval,
-    LocalDateTime after,
-    LocalDateTime before
-  ) {
-    return Math.floor((double)
-                        Duration.between(after, before).toMinutes() / readInterval
-    );
   }
 }

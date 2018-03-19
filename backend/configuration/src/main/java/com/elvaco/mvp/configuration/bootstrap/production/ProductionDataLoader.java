@@ -45,19 +45,12 @@ class ProductionDataLoader implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    if (settingUseCases.isProductionDataLoaded()) {
-      log.info("Production data seems to already be loaded - skipping production data loading!");
-      return;
-    }
-
     log.info("Seeding database with initial data ...");
     createRoles();
     createOrganisations();
     createSuperAdministratorIfNotPresent();
     createMeterDefinitions();
     log.info("Initial database seeding done.");
-
-    settingUseCases.setProductionDataLoaded();
   }
 
   private void createMeterDefinitions() {

@@ -10,7 +10,6 @@ import static java.util.UUID.randomUUID;
 
 public class SettingUseCases {
 
-  private static final String PRODUCTION_DATA_LOADED = "Production data loaded";
   private static final String DEMO_DATA_LOADED = "Demo data loaded";
   private static final String DEMO_USERS_LOADED = "Demo users loaded";
   private static final String TRUE = "true";
@@ -30,20 +29,12 @@ public class SettingUseCases {
     return isSettingTrue(DEMO_USERS_LOADED);
   }
 
-  public boolean isProductionDataLoaded() {
-    return isSettingTrue(PRODUCTION_DATA_LOADED);
-  }
-
   public void setDemoDataLoaded() {
     setSettingTrue(DEMO_DATA_LOADED);
   }
 
   public void setDemoUsersLoaded() {
     setSettingTrue(DEMO_USERS_LOADED);
-  }
-
-  public void setProductionDataLoaded() {
-    setSettingTrue(PRODUCTION_DATA_LOADED);
   }
 
   public Setting save(Setting setting) {
