@@ -55,7 +55,6 @@ import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {getSelectedGatewayMarker} from '../../map/mapSelectors';
 import {selectEntryAdd} from '../../report/reportActions';
-import {CollectionOverview} from '../components/CollectionOverview';
 import {GatewayList} from '../components/GatewayList';
 
 interface StateToProps extends TabsContainerStateToProps {
@@ -83,6 +82,7 @@ type Props = StateToProps & DispatchToProps;
 const componentId = 'gatewayList';
 
 class CollectionTabs extends React.Component<Props> {
+
   componentDidMount() {
     const {encodedUriParametersForGateways, fetchGateways} = this.props;
     fetchGateways(encodedUriParametersForGateways);
@@ -104,10 +104,8 @@ class CollectionTabs extends React.Component<Props> {
       selectedTab,
       changeTab,
       gateways,
-      gatewayDataSummary,
       pagination,
       paginatedList,
-      setSelection,
       selectEntryAdd,
       selectedMaker,
       closeClusterDialog,
@@ -131,19 +129,11 @@ class CollectionTabs extends React.Component<Props> {
       <Tabs>
         <TabTopBar>
           <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-            <Tab tab={TabName.overview} title={translate('overview')}/>
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
           <TabSettings/>
         </TabTopBar>
-        <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <HasContent hasContent={gatewayDataSummary.isJust()} fallbackContent={noGatewaysFallbackContent}>
-              <CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>
-            </HasContent>
-          </Loader>
-        </TabContent>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <HasContent hasContent={gateways.result.length > 0} fallbackContent={noGatewaysFallbackContent}>
