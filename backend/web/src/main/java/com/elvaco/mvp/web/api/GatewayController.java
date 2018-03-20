@@ -81,13 +81,6 @@ public class GatewayController {
     Pageable pageable
   ) {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
-    return filterGatewayDtos(parameters, pageable);
-  }
-
-  private org.springframework.data.domain.Page<GatewayDto> filterGatewayDtos(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
