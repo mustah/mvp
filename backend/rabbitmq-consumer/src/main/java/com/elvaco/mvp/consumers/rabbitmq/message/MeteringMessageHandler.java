@@ -89,23 +89,7 @@ public class MeteringMessageHandler implements MessageHandler {
 
     GatewayStatusDto gateway = structureMessage.gateway;
 
-    gatewayUseCases.findBy(organisation.id, gateway.productModel, gateway.id)
-      .orElseGet(() -> {
-        // TODO[!must!] create and save gateway when the logical meter is created (after demo)
-        // TODO[!must!] this still works, but it does one extra round-trip to DB
-        Gateway g = new Gateway(
-          UUID.randomUUID(),
-          organisation.id,
-          gateway.id,
-          gateway.productModel,
-          singletonList(logicalMeter)
-        );
-        Gateway saved = gatewayUseCases.save(g);
-
-        logicalMeterUseCases.save(logicalMeter.withGateway(saved));
-
-        return saved;
-      });
+    findOrCreateGateway(organisation, logicalMeter, gateway.id, gateway.productModel);
   }
 
   @Override
@@ -128,6 +112,8 @@ public class MeteringMessageHandler implements MessageHandler {
       logicalMeter.id,
       organisation
     );
+
+    findOrCreateGateway(organisation, logicalMeter, measurementMessage.gateway.id, "Unknown");
 
     List<Measurement> measurements = measurementMessage.values
       .stream()
@@ -163,6 +149,31 @@ public class MeteringMessageHandler implements MessageHandler {
       return MeterDefinition.DISTRICT_HEATING_METER;
     }
     return MeterDefinition.UNKNOWN_METER;
+  }
+
+  private void findOrCreateGateway(
+    Organisation organisation,
+    LogicalMeter logicalMeter,
+    String serial,
+    String productModel
+  ) {
+    gatewayUseCases.findBy(organisation.id, productModel, serial)
+      .orElseGet(() -> {
+        // TODO[!must!] create and save gateway when the logical meter is created (after demo)
+        // TODO[!must!] this still works, but it does one extra round-trip to DB
+        Gateway g = new Gateway(
+          UUID.randomUUID(),
+          organisation.id,
+          serial,
+          productModel,
+          singletonList(logicalMeter)
+        );
+        Gateway saved = gatewayUseCases.save(g);
+
+        logicalMeterUseCases.save(logicalMeter.withGateway(saved));
+
+        return saved;
+      });
   }
 
   private LogicalMeter findOrCreateLogicalMeter(

@@ -463,6 +463,15 @@ public class MessageHandlerTest {
       "some-organisation");
   }
 
+  @Test
+  public void gatewayIsCreatedFromMeasurementMessage() {
+    MeteringMeasurementMessageDto message = newMeasurementMessage();
+
+    messageHandler.handle(message);
+
+    assertThat(gateways.findAll()).hasSize(1);
+  }
+
   private ValueDto newValueDto(String quantity) {
     return new ValueDto(LocalDateTime.now(), 0.0, "one", quantity);
   }
