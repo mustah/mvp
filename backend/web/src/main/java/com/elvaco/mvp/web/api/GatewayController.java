@@ -54,7 +54,7 @@ public class GatewayController {
   }
 
   @GetMapping("{id}")
-  public GatewayDto logicalMeter(@PathVariable String id) {
+  public GatewayDto gateway(@PathVariable String id) {
     return gatewayUseCases.findById(uuidOf(id))
       .map(gatewayMapper::toDto)
       .orElseThrow(() -> new GatewayNotFound(id));
@@ -75,7 +75,7 @@ public class GatewayController {
   }
 
   @GetMapping
-  public org.springframework.data.domain.Page<GatewayDto> logicalMeters(
+  public org.springframework.data.domain.Page<GatewayDto> gateways(
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
