@@ -16,7 +16,7 @@ spring:
       hibernate.use_sql_comments: false
       hibernate.format_sql: true
       hibernate.type: trace
-      hibernate.jdbc.batch_size: 30
+      hibernate.jdbc.batch_size: 300
   rabbitmq:
     host: localhost
     username: guest

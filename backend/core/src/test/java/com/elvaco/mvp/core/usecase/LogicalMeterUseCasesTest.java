@@ -15,6 +15,8 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.getFirstDateMatchingInterval;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -111,7 +113,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-01T14:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(15, after, before))
+    assertThat(calculateExpectedReadOuts(15, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(4);
   }
@@ -121,7 +123,7 @@ public class LogicalMeterUseCasesTest {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T00:00:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2001-01-02T00:00:00Z");
 
-    assertThat(LogicalMeterUseCases.calculateExpectedReadOuts(60, after, before))
+    assertThat(calculateExpectedReadOuts(60, after, before))
       .as("Unexpected nr of read outs")
       .isEqualTo(24);
   }
@@ -238,7 +240,7 @@ public class LogicalMeterUseCasesTest {
   }
 
   private ZonedDateTime getFirstMatching(String date, long interval) {
-    return LogicalMeterUseCases.getFirstDateMatchingInterval(ZonedDateTime.parse(date), interval);
+    return getFirstDateMatchingInterval(ZonedDateTime.parse(date), interval);
   }
 
 

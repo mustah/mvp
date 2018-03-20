@@ -1,5 +1,7 @@
 package com.elvaco.mvp.testdata;
 
+import java.util.UUID;
+
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
@@ -26,5 +28,9 @@ public class IntegrationTestFixtureContext {
 
   public Organisation organisation() {
     return organisationMapper.toDomainModel(organisationEntity);
+  }
+
+  public UUID getOrganisationId() {
+    return organisation().id;
   }
 }

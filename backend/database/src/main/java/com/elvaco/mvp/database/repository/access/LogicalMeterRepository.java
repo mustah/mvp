@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -25,6 +26,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
 import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -86,7 +88,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<LogicalMeterEntity> logicalMeterEntities =
       logicalMeterJpaRepository.findAll(
-        meterQueryFilters.toExpression(parameters),
+        toPredicate(parameters),
         new PageRequest(
           pageable.getPageNumber(),
           pageable.getPageSize(),
@@ -108,13 +110,11 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    List<LogicalMeterEntity> all = sortingMapper.getAsSpringSort(parameters).map(sort ->
-      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters), sort)
-    ).orElse(
-      logicalMeterJpaRepository.findAll(meterQueryFilters.toExpression(parameters))
-    );
+    List<LogicalMeterEntity> meters = sortingMapper.getAsSpringSort(parameters)
+      .map(sort -> logicalMeterJpaRepository.findAll(toPredicate(parameters), sort))
+      .orElseGet(() -> logicalMeterJpaRepository.findAll(toPredicate(parameters)));
 
-    return mapAndCollectWithStatuses(all, parameters);
+    return mapAndCollectWithStatuses(meters, parameters);
   }
 
   @Override
@@ -139,6 +139,18 @@ public class LogicalMeterRepository implements LogicalMeters {
       .stream()
       .map(logicalMeterMapper::toDomainModel)
       .collect(toList());
+  }
+
+  @Override
+  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
+    return logicalMeterJpaRepository.findAll(toPredicate(parameters))
+      .stream()
+      .map(logicalMeterMapper::justLocationModel)
+      .collect(toList());
+  }
+
+  private Predicate toPredicate(RequestParameters parameters) {
+    return meterQueryFilters.toExpression(parameters);
   }
 
   private Iterable<PhysicalMeterStatusLogEntity> getStatusesForMeters(
@@ -184,8 +196,8 @@ public class LogicalMeterRepository implements LogicalMeters {
         logicalMeterEntity,
         mappedStatuses,
         meterCounts
-        )
-      ).collect(toList());
+      ))
+      .collect(toList());
   }
 
   private Map<UUID, List<PhysicalMeterStatusLogEntity>> getStatusesGroupedByPhysicalMeterId(
@@ -202,38 +214,26 @@ public class LogicalMeterRepository implements LogicalMeters {
     return mappedStatuses;
   }
 
-  private static String toSortString(Object sortProperty) {
-    return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
-  }
-
   private Map<UUID, Long> getCountForMetersWithinPeriod(
     List<LogicalMeterEntity> logicalMeterEntities,
     RequestParameters parameters
   ) {
-    List<UUID> physicalMeterIds = new ArrayList<>();
-    logicalMeterEntities.forEach(
-      logicalMeterEntity -> logicalMeterEntity.physicalMeters.forEach(
-        physicalMeterEntity -> physicalMeterIds.add(physicalMeterEntity.id)
-      )
-    );
+    if (parameters.hasName("after") && parameters.hasName("before")) {
+      List<UUID> physicalMeterIds = logicalMeterEntities
+        .stream()
+        .flatMap(logicalMeterEntity -> logicalMeterEntity.physicalMeters.stream())
+        .map(PhysicalMeterEntity::getId)
+        .collect(toList());
 
-    if (physicalMeterIds.size() != 0
-      && parameters.hasName("after")
-      && parameters.hasName("before")
-    ) {
-      //TODO handle multiple dates?
-      ZonedDateTime after =  ZonedDateTime.parse(parameters.getValues("after").get(0));
-      ZonedDateTime before = ZonedDateTime.parse(parameters.getValues("before").get(0));
-
-      Map<UUID, Long> meterMeasurementsCount = getCountForMetersWithinPeriod(
-        physicalMeterIds,
-        after,
-        before
-      );
-
-      return meterMeasurementsCount;
+      if (!physicalMeterIds.isEmpty()) {
+        // TODO handle multiple dates?
+        return getCountForMetersWithinPeriod(
+          physicalMeterIds,
+          ZonedDateTime.parse(parameters.getFirst("after")),
+          ZonedDateTime.parse(parameters.getFirst("before"))
+        );
+      }
     }
-
     return emptyMap();
   }
 
@@ -243,15 +243,15 @@ public class LogicalMeterRepository implements LogicalMeters {
     ZonedDateTime before
   ) {
     QMeasurementEntity q = QMeasurementEntity.measurementEntity;
-
     // TODO check that all measurements matches interval pattern
-    Map<UUID, Long> result = measurementJpaRepository.countGroupedByPhysicalMeterId(
+    return measurementJpaRepository.countGroupedByPhysicalMeterId(
       q.physicalMeter.id.in(physicalMeterIds)
-        //Roughly filter on date
-        .and(q.created.goe(after))
+        .and(q.created.goe(after)) // Roughly filter on date
         .and(q.created.before(before))
     );
+  }
 
-    return result;
+  private static String toSortString(Object sortProperty) {
+    return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
   }
 }

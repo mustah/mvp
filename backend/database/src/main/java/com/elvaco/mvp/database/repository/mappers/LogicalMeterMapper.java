@@ -65,22 +65,6 @@ public class LogicalMeterMapper {
     );
   }
 
-  private LogicalMeter toLogicalMeter(
-    LogicalMeterEntity logicalMeterEntity,
-    List<PhysicalMeter> physicalMeters
-  ) {
-    return new LogicalMeter(
-      logicalMeterEntity.id,
-      logicalMeterEntity.externalId,
-      logicalMeterEntity.organisationId,
-      locationMapper.toDomainModel(logicalMeterEntity.getLocation()),
-      logicalMeterEntity.created,
-      physicalMeters,
-      meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),
-      toGateways(logicalMeterEntity.gateways)
-    );
-  }
-
   public LogicalMeterEntity toEntity(LogicalMeter logicalMeter) {
     LogicalMeterEntity logicalMeterEntity = new LogicalMeterEntity(
       logicalMeter.id,
@@ -107,6 +91,32 @@ public class LogicalMeterMapper {
     }
 
     return logicalMeterEntity;
+  }
+
+  public LogicalMeter justLocationModel(LogicalMeterEntity entity) {
+    return new LogicalMeter(
+      entity.getId(),
+      entity.externalId,
+      entity.organisationId,
+      locationMapper.toDomainModel(entity.location),
+      entity.created
+    );
+  }
+
+  private LogicalMeter toLogicalMeter(
+    LogicalMeterEntity logicalMeterEntity,
+    List<PhysicalMeter> physicalMeters
+  ) {
+    return new LogicalMeter(
+      logicalMeterEntity.id,
+      logicalMeterEntity.externalId,
+      logicalMeterEntity.organisationId,
+      locationMapper.toDomainModel(logicalMeterEntity.getLocation()),
+      logicalMeterEntity.created,
+      physicalMeters,
+      meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),
+      toGateways(logicalMeterEntity.gateways)
+    );
   }
 
   private List<Gateway> toGateways(Set<GatewayEntity> gateways) {

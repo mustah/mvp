@@ -17,9 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -40,7 +39,6 @@ public abstract class IntegrationTest {
 
   @LocalServerPort
   private int serverPort;
-
 
   private IntegrationTestFixtureContext context;
   private RestClient restClient;
@@ -78,16 +76,12 @@ public abstract class IntegrationTest {
     return restClient;
   }
 
-  protected RestClient asElvacoUser() {
-    return restAsUser(ELVACO_USER);
-  }
-
-  protected RestClient asAdminOfElvaco() {
-    return restAsUser(ELVACO_ADMIN_USER);
-  }
-
   protected RestClient asSuperAdmin() {
     return restAsUser(ELVACO_SUPER_ADMIN_USER);
+  }
+
+  protected RestClient asOtherUser() {
+    return restAsUser(OTHER_USER);
   }
 
   protected RestClient as(User user) {
