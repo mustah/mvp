@@ -1,6 +1,7 @@
 package com.elvaco.mvp.database.repository.access;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,7 +12,10 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
@@ -28,24 +32,31 @@ public class GatewayRepository implements Gateways {
   private final GatewayQueryFilters queryFilters;
   private final GatewayMapper mapper;
   private final GatewayWithMetersMapper gatewayWithMetersMapper;
+  private final GatewayStatusLogJpaRepository statusLogJpaRepository;
 
   public GatewayRepository(
     GatewayJpaRepository repository,
     GatewayQueryFilters queryFilters,
     GatewayMapper mapper,
-    GatewayWithMetersMapper gatewayWithMetersMapper
+    GatewayWithMetersMapper gatewayWithMetersMapper,
+    GatewayStatusLogJpaRepository statusLogJpaRepository
   ) {
     this.repository = repository;
     this.queryFilters = queryFilters;
     this.mapper = mapper;
     this.gatewayWithMetersMapper = gatewayWithMetersMapper;
+    this.statusLogJpaRepository = statusLogJpaRepository;
   }
 
   @Override
   public List<Gateway> findAll() {
+    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
+      .findAllGroupedByGatewayId(null);
+
     return repository.findAll()
       .stream()
-      .map(gatewayWithMetersMapper::withLogicalMeters)
+      .map(gateway ->
+             gatewayWithMetersMapper.withLogicalMetersAndGatewayStatus(gateway, statusLogMap))
       .collect(toList());
   }
 
@@ -79,10 +90,21 @@ public class GatewayRepository implements Gateways {
   @Transactional
   @Override
   public List<Gateway> findAllByOrganisationId(UUID organisationId) {
-    return repository.findAllByOrganisationId(organisationId)
+    List<GatewayEntity> gatewayEntities = repository.findAllByOrganisationId(organisationId);
+
+    Map<UUID, List<GatewayStatusLogEntity>> statusLogEntityMap = statusLogJpaRepository
+      .findAllGroupedByGatewayId(
+        QGatewayStatusLogEntity.gatewayStatusLogEntity.gatewayId.in(
+          getGatewayIds(gatewayEntities)
+        ));
+
+    return gatewayEntities
       .stream()
-      .map(gatewayWithMetersMapper::withLogicalMeters)
-      .collect(toList());
+      .map(gateway -> gatewayWithMetersMapper.withLogicalMetersAndGatewayStatus(
+        gateway,
+        statusLogEntityMap
+           )
+      ).collect(toList());
   }
 
   @Override
@@ -106,5 +128,9 @@ public class GatewayRepository implements Gateways {
 
   private Predicate toPredicate(RequestParameters parameters) {
     return queryFilters.toExpression(parameters);
+  }
+
+  private List<UUID> getGatewayIds(List<GatewayEntity> gatewayEntities) {
+    return gatewayEntities.stream().map(gatewayEntity -> gatewayEntity.id).collect(toList());
   }
 }

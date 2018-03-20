@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.dto;
 
-import com.elvaco.mvp.core.domainmodels.Status;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,17 +12,20 @@ public class GatewayMandatoryDto {
   public String id;
   public String productModel;
   public String serial;
-  public Status status;
+  public String status;
+  public String statusChanged;
 
   public GatewayMandatoryDto(
     String id,
     String productModel,
     String serial,
-    Status status
+    String status,
+    String statusChanged
   ) {
     this.id = id;
     this.status = status;
     this.productModel = productModel;
     this.serial = serial;
+    this.statusChanged = statusChanged;
   }
 }

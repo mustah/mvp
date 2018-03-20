@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Location;
-import com.elvaco.mvp.core.domainmodels.Status;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.SelectionsDto;
 
@@ -21,7 +21,7 @@ public class SelectionsMapper {
   ));
 
   public static final List<IdNamedDto> METER_STATUSES = unmodifiableList(
-    Stream.of(Status.values())
+    Stream.of(StatusType.values())
       .map(value -> value.name)
       .map(IdNamedDto::new)
       .collect(Collectors.toList()));

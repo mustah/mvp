@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterStatus;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -25,8 +24,8 @@ import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Statuses;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -34,10 +33,10 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
-import com.elvaco.mvp.database.repository.jpa.MeterStatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.StatusJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -56,6 +55,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
+import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
+import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -103,11 +105,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Autowired
   private PhysicalMeters physicalMeters;
   @Autowired
-  private MeterStatuses meterStatuses;
+  private Statuses statuses;
   @Autowired
   private MeterStatusLogs meterStatusLogs;
   @Autowired
-  private MeterStatusJpaRepository meterStatusJpaRepository;
+  private StatusJpaRepository statusJpaRepository;
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   @Autowired
@@ -164,7 +166,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter3,
       physicalMeter4,
       physicalMeter5,
-      meterStatuses.findAll()
+      statuses.findAll()
     );
   }
 
@@ -172,7 +174,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void tearDown() {
     measurementJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
-    meterStatusJpaRepository.deleteAll();
+    statusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
@@ -202,10 +204,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList(
         "/meters/all"
-          + "?after=2001-01-01T01:00:00.00Z"
-          + "&before=2002-01-01T00:00:00.00Z"
-          + "&status=active"
-          + "&sort=id,asc",
+        + "?after=2001-01-01T01:00:00.00Z"
+        + "&before=2002-01-01T00:00:00.00Z"
+        + "&status=active"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -237,10 +239,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters"
-          + "?after=2001-01-01T01:00:00.00Z"
-          + "&before=2002-01-01T00:00:00.00Z"
-          + "&status=active"
-          + "&sort=id,asc",
+        + "?after=2001-01-01T01:00:00.00Z"
+        + "&before=2002-01-01T00:00:00.00Z"
+        + "&status=active"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -423,7 +425,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<List<LogicalMeterDto>> response = as(context().user)
       .getList(
         "/meters/all?address=Sweden,Varberg,Drottninggatan 2&"
-          + "address=sweden,varberg, drottninggatan 4",
+        + "address=sweden,varberg, drottninggatan 4",
         LogicalMeterDto.class
       );
 
@@ -452,11 +454,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-01T01:00:00.00Z"
-          + "&before=2001-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2001-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -495,11 +497,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-          + "&before=2005-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2005-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -526,11 +528,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2001-01-10T01:00:00.00Z"
-          + "&before=2001-01-20T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2001-01-20T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -556,7 +558,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .as("Unexpected date of last log entry")
       .isEqualTo(timeZoneMagic("2001-01-10T10:14:00.00Z"));
 
-    assertThat(logicalMeter.status).isEqualTo(Status.ACTIVE);
+    assertThat(logicalMeter.status).isEqualTo(ACTIVE);
     assertThat(logicalMeter.statusChanged).isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
   }
 
@@ -569,11 +571,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-          + "&before=2015-01-01T23:00:00.00Z"
-          + "&status=active"
-          + "&size=20"
-          + "&page=0"
-          + "&sort=id,asc",
+        + "&before=2015-01-01T23:00:00.00Z"
+        + "&status=active"
+        + "&size=20"
+        + "&page=0"
+        + "&sort=id,asc",
         LogicalMeterDto.class
       );
 
@@ -838,11 +840,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter3,
     PhysicalMeter meter4,
     PhysicalMeter meter5,
-    List<MeterStatus> meterStatuses
+    List<Status> meterStatuses
   ) {
-    MeterStatus active = meterStatuses.get(0);
-    MeterStatus info = meterStatuses.get(1);
-    MeterStatus warning = meterStatuses.get(2);
+    Status active = meterStatuses.get(0);
+    Status info = meterStatuses.get(1);
+    Status warning = meterStatuses.get(2);
 
     List<MeterStatusLog> statuses = new ArrayList<>();
 
@@ -963,6 +965,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    * @param measurementUnit Unit of measurement
    * @param interval        Time in minutes between measurements
    * @param values          Nr of values to generate
+   *
    * @return
    */
   private List<MeasurementEntity> createMeasurements(
@@ -991,10 +994,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   private void saveMeterStatuses() {
-    meterStatuses.save(asList(
-      new MeterStatus("active"),
-      new MeterStatus("info"),
-      new MeterStatus("warning")
+    statuses.save(asList(
+      new Status(ACTIVE.name),
+      new Status(INFO.name),
+      new Status(WARNING.name)
     ));
   }
 

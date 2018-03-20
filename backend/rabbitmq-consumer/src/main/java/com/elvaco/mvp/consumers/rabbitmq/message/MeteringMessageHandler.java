@@ -26,6 +26,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
@@ -166,7 +167,8 @@ public class MeteringMessageHandler implements MessageHandler {
           organisation.id,
           serial,
           productModel,
-          singletonList(logicalMeter)
+          singletonList(logicalMeter),
+          emptyList() // TODO Save gateway status
         );
         Gateway saved = gatewayUseCases.save(g);
 

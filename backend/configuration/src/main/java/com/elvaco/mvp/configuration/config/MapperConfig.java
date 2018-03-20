@@ -15,7 +15,7 @@ class MapperConfig {
 
   @Bean
   LogicalMeterMapper logicalMeterMapper() {
-    return new LogicalMeterMapper(new MeterStatusLogMapper());
+    return new LogicalMeterMapper(new MeterStatusLogMapper(), new GatewayMapper());
   }
 
   @Bean

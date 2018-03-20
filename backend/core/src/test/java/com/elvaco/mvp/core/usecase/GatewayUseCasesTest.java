@@ -20,14 +20,24 @@ public class GatewayUseCasesTest {
   public void saveGateway() {
     GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
 
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
+    assertThat(useCases.save(new Gateway(
+      null,
+      DAILY_PLANET.id,
+      "1",
+      "t"
+    )).id).isNotNull();
   }
 
   @Test
   public void canOnlySaveGatewaysForSameOrganisationWhenNotSuperAdmin() {
     GatewayUseCases useCases = useCasesWithCurrentUser(CLARK_KENT);
 
-    assertThatThrownBy(() -> useCases.save(new Gateway(null, MARVEL.id, "1", "t")))
+    assertThatThrownBy(() -> useCases.save(new Gateway(
+      null,
+      MARVEL.id,
+      "1",
+      "t"
+    )))
       .isInstanceOf(Unauthorized.class)
       .hasMessage("User is not authorized to save this entity");
   }
@@ -36,8 +46,18 @@ public class GatewayUseCasesTest {
   public void superAdminCanSaveAllGateways() {
     GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
 
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
-    assertThat(useCases.save(new Gateway(null, DAILY_PLANET.id, "1", "t")).id).isNotNull();
+    assertThat(useCases.save(new Gateway(
+      null,
+      DAILY_PLANET.id,
+      "1",
+      "t"
+    )).id).isNotNull();
+    assertThat(useCases.save(new Gateway(
+      null,
+      DAILY_PLANET.id,
+      "1",
+      "t"
+    )).id).isNotNull();
   }
 
   @Test
@@ -51,7 +71,12 @@ public class GatewayUseCasesTest {
   public void findGatewayByOrganisationSerialAndProductModel() {
     GatewayUseCases useCases = useCasesWithCurrentUser(ELVACO_SUPER_ADMIN_USER);
 
-    useCases.save(new Gateway(null, DAILY_PLANET.id, "4567", "someModel"));
+    useCases.save(new Gateway(
+      null,
+      DAILY_PLANET.id,
+      "4567",
+      "someModel"
+    ));
     useCases.save(new Gateway(null, DAILY_PLANET.id, "123", "test"));
 
     assertThat(useCases.findBy(DAILY_PLANET.id, "test", "123").isPresent()).isTrue();
