@@ -138,45 +138,33 @@ test:unit_and_IT:
     - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
-publish:artifactory_manual:
-  <<: *publish_to_artifactory
-  when: manual
-  only:
-    - branches
-  except:
-    - develop
-    - master
-
 publish:artifactory:
   <<: *publish_to_artifactory
   only:
     - develop
-    - master
-
-deploy:recreate-dbs:
-  <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
-  stage: deploy
-  when: manual
-  script:
-    - pepper -G 'roles:mvp-app' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -G 'roles:postgresql-server' state.apply mvp.db.drop
-    - pepper -G 'roles:postgresql-server' state.apply mvp.db.create
 
 deploy:staging:
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
-  when: manual
+  only:
+    - develop
   script:
-    - pepper -G 'roles:salt-master'  event.fire_master update salt/fileserver/gitfs/update
+    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
     - sleep 10
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply
 
 deploy:production:
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
-  when: manual
+  only:
+    - develop
   script:
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply
