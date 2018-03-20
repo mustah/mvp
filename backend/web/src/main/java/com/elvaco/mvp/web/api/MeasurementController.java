@@ -20,6 +20,7 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.NoPhysicalMetersException;
@@ -105,7 +106,7 @@ public class MeasurementController {
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
-  public List<MeasurementDto> measurements(
+  public List<MeasurementSeriesDto> measurements(
     @RequestParam(name = "quantities") Optional<List<String>> quantityUnits,
     @RequestParam Optional<List<UUID>> meters,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
@@ -153,10 +154,7 @@ public class MeasurementController {
       );
     }
 
-    return foundMeasurements
-      .stream()
-      .map(measurementMapper::toDto)
-      .collect(toList());
+    return measurementMapper.toSeries(foundMeasurements);
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {

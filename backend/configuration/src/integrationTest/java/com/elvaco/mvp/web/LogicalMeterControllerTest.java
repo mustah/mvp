@@ -719,15 +719,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     measurementUseCases.save(Arrays.asList(
       // We should find these
-      new Measurement(Quantity.VOLUME, 2.0, "m^3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 3.1, "m^3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 4.0, "m^3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.0, "m^3", physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.2, "m^3", physicalMeter),
+      new Measurement(Quantity.VOLUME, 2.0, physicalMeter),
+      new Measurement(Quantity.VOLUME, 3.1, physicalMeter),
+      new Measurement(Quantity.VOLUME, 4.0, physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.0, physicalMeter),
+      new Measurement(Quantity.VOLUME, 5.2, physicalMeter),
 
       // ... But not these, as they are of a quantity not defined in the meter definition
-      new Measurement(Quantity.TEMPERATURE, 99, "°C", physicalMeter),
-      new Measurement(Quantity.TEMPERATURE, 32, "°C", physicalMeter)
+      new Measurement(Quantity.TEMPERATURE, 99, physicalMeter),
+      new Measurement(Quantity.TEMPERATURE, 32, physicalMeter)
     ));
 
     UUID meterId = savedLogicalMeter.id;
@@ -741,7 +741,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThatStatusIsOk(response);
     assertThat(measurementDtos).hasSize(5);
     assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
-    assertThat(measurement.unit).isEqualTo("m^3");
+    assertThat(measurement.unit).isEqualTo("m³");
   }
 
   private void assertCollectionStatus(
@@ -918,9 +918,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter1,
     PhysicalMeter meter2
   ) {
-    MeasurementUnit measurementUnit = new MeasurementUnit("2.0 m3");
+    MeasurementUnit measurementUnit = MeasurementUnit.from("2.0 m³");
 
-    List<MeasurementEntity> meter1Measurements = createMeasureMents(
+    List<MeasurementEntity> meter1Measurements = createMeasurements(
       meter1,
       measurementUnit,
       meter1FirstMeasurement,
@@ -944,7 +944,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     List<MeasurementEntity> measurements = new ArrayList<>();
     measurements.addAll(meter1Measurements);
     measurements.addAll(
-      createMeasureMents(
+      createMeasurements(
         meter2,
         measurementUnit,
         meter2FirstMeasurement,
@@ -965,7 +965,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    * @param values          Nr of values to generate
    * @return
    */
-  private List<MeasurementEntity> createMeasureMents(
+  private List<MeasurementEntity> createMeasurements(
     PhysicalMeter physicalMeter,
     MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,
