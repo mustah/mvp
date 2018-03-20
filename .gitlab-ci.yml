@@ -143,6 +143,15 @@ publish:artifactory:
   only:
     - develop
 
+publish:update_salt:
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  only:
+    - develop
+  script:
+    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
+
 deploy:staging:
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
@@ -150,8 +159,6 @@ deploy:staging:
   only:
     - develop
   script:
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
-    - sleep 10
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
