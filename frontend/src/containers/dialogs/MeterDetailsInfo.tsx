@@ -5,24 +5,21 @@ import {Row} from '../../components/layouts/row/Row';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {ObjectsById} from '../../state/domain-models/domainModels';
-import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
 import {titleOf} from './dialogHelper';
 import {Info} from './Info';
 
 interface Props {
-  gateways: ObjectsById<Gateway>;
   meter: Meter;
 }
 
 export const MeterDetailsInfo = (props: Props) => {
-  const {gateways, meter} = props;
+  const {meter} = props;
 
   const renderAlarm = () => meter.alarm
     ? <Info label={translate('alarm')} value={meter.alarm}/>
     : null;
 
-  const gateway = gateways[meter.gateway.id];
+  const gateway = meter.gateway;
   const meterFlags = meter.flags || [];
   const meterStatus = meter.statusChangelog[0];
 
@@ -53,7 +50,7 @@ export const MeterDetailsInfo = (props: Props) => {
           />
           <Info label={translate('interval')} value="24h"/>
           <Info label={translate('resolution')} value="1h"/>
-          <Info label={translate('flagged for action')} value={titleOf(gateway.flags)}/>
+          {/*<Info label={translate('flagged for action')} value={titleOf(gateway.flags)}/>*/}
         </Row>
         <Row>
           <Column>

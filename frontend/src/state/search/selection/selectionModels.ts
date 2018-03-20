@@ -33,6 +33,7 @@ export type OnSelectParameter = (searchParameters: SelectionParameter) => void;
  * }
  */
 export interface SelectedParameters {
+  meterIds?: uuid[];
   cities?: uuid[];
   addresses?: uuid[];
   meterStatuses?: uuid[];

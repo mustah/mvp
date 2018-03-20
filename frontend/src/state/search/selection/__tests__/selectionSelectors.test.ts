@@ -9,13 +9,11 @@ import {
   addresses,
   alarms,
   cities,
-  gateways,
   gatewayStatuses,
   initialDomain,
   meterStatuses,
   users,
 } from '../../../domain-models/domainModelsReducer';
-import {Gateway} from '../../../domain-models/gateway/gatewayModels';
 import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
@@ -65,7 +63,6 @@ describe('selectionSelectors', () => {
       initialDomainModelState,
       selectionsRequest.success(domainModelPayload),
     ),
-    gateways: gateways(initialDomain<Gateway>(), {type: 'none'}),
     meterStatuses: meterStatuses(
       initialDomainModelState,
       selectionsRequest.success(domainModelPayload),

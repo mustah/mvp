@@ -7,6 +7,12 @@ describe('paginationReducer', () => {
 
   const paginatedState: Readonly<PaginationState> = {
     meters: {size: limit, totalPages: 10, totalElements: 100, useCases: {component1: {page: 0}, component2: {page: 0}}},
+    gateways: {
+      size: limit,
+      totalPages: 10,
+      totalElements: 100,
+      useCases: {component1: {page: 0}, component2: {page: 0}},
+    },
     measurements: {size: limit, totalPages: 10, totalElements: 100, useCases: {}},
   };
 
@@ -45,6 +51,7 @@ describe('paginationReducer', () => {
   it('updates pagination but leaves useCases intact', () => {
     const paginatedState: PaginationState = {
       meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+      gateways: {size: limit, totalPages: -1, totalElements: -1, useCases: {}},
     };
     const payload: PaginationMetadataPayload = {
       entityType: 'meters',
@@ -55,6 +62,7 @@ describe('paginationReducer', () => {
 
     expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
       meters: {size: limit, totalPages: 200, totalElements: 2000, useCases: {validationList: {page: 1}}},
+      gateways: {size: limit, totalPages: -1, totalElements: -1, useCases: {}},
     });
 
   });
@@ -91,6 +99,7 @@ describe('paginationReducer', () => {
     it('sets pagination to initialState when getting the reset action', () => {
       const paginatedState: PaginationState = {
         meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+        gateways: {size: limit, totalPages: 10, totalElements: 10, useCases: {}},
       };
 
       expect(pagination(paginatedState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({

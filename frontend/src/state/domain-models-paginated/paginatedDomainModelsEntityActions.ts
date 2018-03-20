@@ -25,9 +25,9 @@ interface PaginatedRequestEntityHandler<T> {
 }
 
 interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, RequestCallbacks<DATA> {
-  requestFunc: (requestData: uuid) => any;
+  requestFunc: () => any;
   dispatch: Dispatch<RootState>;
-  id: uuid;
+  id?: uuid;
 }
 
 export const getRequestEntityOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
@@ -36,7 +36,7 @@ export const getRequestEntityOf = <T>(endPoint: EndPoints): PaginatedRequestEnti
   failure: createPayloadAction<string, SingleEntityFailure>(domainModelsPaginatedEntityFailure(endPoint)),
 });
 
-const asyncRequestEntity = async <DAT>(
+const asyncRequestEntities = async <DAT>(
   {
     request,
     success,
@@ -49,7 +49,7 @@ const asyncRequestEntity = async <DAT>(
   }: AsyncRequestEntity<DAT>) => {
   try {
     dispatch(request());
-    const {data: entityData} = await requestFunc(id);
+    const {data: entityData} = await requestFunc();
     dispatch(success(entityData));
     if (afterSuccess) {
       afterSuccess(entityData, dispatch);
@@ -84,12 +84,44 @@ export const fetchEntityIfNeeded = <T>(
       const {paginatedDomainModels} = getState();
 
       if (shouldFetchEntity(id, paginatedDomainModels[entityType])) {
-        const requestFunc = (requestData: uuid) =>
-          restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
-        return asyncRequestEntity<T>({
+        const requestFunc = () =>
+          restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(id.toString())}`));
+        return asyncRequestEntities<T>({
           ...getRequestEntityOf<T>(endPoint),
           requestFunc,
           id,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
+
+const shouldFetchEntities = (
+  ids: uuid[],
+  {entities, isFetchingSingle}: NormalizedPaginatedState<Identifiable>,
+): boolean => {
+  const isMissingEntity = ids.reduce((prev, id) => prev || !entities[id], false);
+  return isMissingEntity && !isFetchingSingle;
+};
+
+const idRequestParams = (ids: uuid[]): string => ids.map((id) => `id=${id.toString()}`).join('&');
+
+// TODO: Try to come up with a better way then concatinating with /all in requestFunc.
+export const fetchEntitiesIfNeeded = <T>(
+  endPoint: EndPoints,
+  entityType: keyof PaginatedDomainModelsState,
+) =>
+  (ids: uuid[]) =>
+    (dispatch, getState: GetState) => {
+      const {paginatedDomainModels} = getState();
+
+      if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
+        const requestFunc = () =>
+          restClient.get(makeUrl(`${endPoint}/all`, idRequestParams(ids)));
+        return asyncRequestEntities<T>({
+          ...getRequestEntityOf<T>(endPoint),
+          requestFunc,
           dispatch,
         });
       } else {

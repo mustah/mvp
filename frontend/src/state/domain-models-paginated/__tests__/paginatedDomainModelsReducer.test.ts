@@ -2,13 +2,15 @@ import {makeMeter} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
+import {Gateway} from '../gateway/gatewayModels';
+import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter} from '../meter/meterModels';
 import {
   HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
 } from '../paginatedDomainModels';
-import {clearErrorMeters, getRequestOf} from '../paginatedDomainModelsActions';
+import {getRequestOf} from '../paginatedDomainModelsActions';
 import {
   initialPaginatedDomain,
   meters,
@@ -97,6 +99,8 @@ describe('paginatedDomainModelsReducer', () => {
     it('adds new meter to state', () => {
       const newState = meters(initialState, getRequest.success(normalizedMeters));
       const expected: NormalizedPaginatedState<Meter> = {
+        isFetchingSingle: false,
+        nonExistingSingles: {},
         entities: {...normalizedMeters.entities.meters},
         result: {
           [page]: {
@@ -139,6 +143,8 @@ describe('paginatedDomainModelsReducer', () => {
       ;
 
       const expectedState: NormalizedPaginatedState<Identifiable> = {
+        isFetchingSingle: false,
+        nonExistingSingles: {},
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
@@ -181,6 +187,8 @@ describe('paginatedDomainModelsReducer', () => {
     it('clears error from a page', () => {
       const payload: HasPageNumber = {page: 1};
       const errorState: NormalizedPaginatedState<Meter> = {
+        isFetchingSingle: false,
+        nonExistingSingles: {},
         entities: {},
         result: {
           [payload.page]: {
@@ -209,9 +217,12 @@ describe('paginatedDomainModelsReducer', () => {
             ...initialPaginatedDomain<Meter>(),
             entities: {1: {...makeMeter(1, {id: 1, name: 'Mo'}, {id: 1, name: 'b'})}},
           },
+          gateways: {
+            ...initialPaginatedDomain<Gateway>(),
+          },
         },
         {type: SET_SELECTION, payload: 'irrelevant'},
-      )).toEqual({meters: initialPaginatedDomain()});
+      )).toEqual({meters: initialPaginatedDomain(), gateways: initialPaginatedDomain()});
     });
   });
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {OpenDialogInfoButton} from '../../../components/dialog/OpenDialogInfoButton';
 import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
-import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 
 interface Props {
   gateway: Gateway;
@@ -9,6 +9,6 @@ interface Props {
 
 export const GatewayListItem = ({gateway}: Props) => (
   <OpenDialogInfoButton label={gateway.serial}>
-    <GatewayDetailsContainer gateway={gateway}/>
+    <GatewayDetailsContainer gatewayId={gateway.id}/>
   </OpenDialogInfoButton>
 );

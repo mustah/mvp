@@ -1,7 +1,7 @@
-import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {MapState} from '../mapReducer';
-import {getSelectedMapMarker, getSelectedMapMarker} from '../mapSelectors';
+import {getSelectedMapMarker} from '../mapSelectors';
 
 describe('mapSelectors', () => {
 

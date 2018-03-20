@@ -1,7 +1,7 @@
 import {Identifiable, IdNamed, uuid} from '../../../types/Types';
 import {Flag} from '../../domain-models/flag/flagModels';
-import {GatewayMandatory} from '../../domain-models/gateway/gatewayModels';
 import {LocationHolder} from '../../domain-models/location/locationModels';
+import {GatewayMandatory} from '../gateway/gatewayModels';
 
 export interface MeterStatusChangelog extends Identifiable {
   statusId: uuid;

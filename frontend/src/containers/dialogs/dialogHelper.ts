@@ -1,9 +1,9 @@
 import {normalize} from 'normalizr';
 import {translate} from '../../services/translationService';
+import {Gateway, GatewayStatusChangelog} from '../../state/domain-models-paginated/gateway/gatewayModels';
+import {statusChangelogSchema} from '../../state/domain-models-paginated/gateway/gatewaySchema';
 import {Normalized} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
-import {Gateway, GatewayStatusChangelog} from '../../state/domain-models/gateway/gatewayModels';
-import {statusChangelogSchema} from '../../state/domain-models/gateway/gatewaySchema';
 import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 
 export const titleOf = (flags: Flag[]): string => {
@@ -21,6 +21,6 @@ export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Norm
 
   return {
     entities: entities.statusChangelog,
-    result: result.statusChangelog,
+    result: Array.isArray(result.statusChangelog) ? result.statusChangelog : [],
   };
 };

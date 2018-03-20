@@ -117,7 +117,7 @@ class ValidationTabs extends React.Component<Props> {
               hasContent={isMarkersWithinThreshold(meterMapMarkers.entities) && meterMapMarkers.result.length > 0}
               fallbackContent={noMetersFallbackContent}
             >
-              <Map>
+              <Map defaultZoom={7}>
                 <ClusterContainer markers={meterMapMarkers.entities}/>
               </Map>
             </HasContent>

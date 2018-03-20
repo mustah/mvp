@@ -22,7 +22,8 @@ import {
   domainModelPaginatedClearError,
   domainModelsPaginatedFailure,
   domainModelsPaginatedGetSuccess,
-  domainModelsPaginatedRequest} from './paginatedDomainModelsActions';
+  domainModelsPaginatedRequest,
+} from './paginatedDomainModelsActions';
 import {
   domainModelsPaginatedEntityFailure,
   domainModelsPaginatedEntityRequest,
@@ -94,14 +95,21 @@ const entityRequest = <T extends Identifiable>(
   isFetchingSingle: true,
 });
 
-const addEntity = <T extends Identifiable>(
+const addEntities = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
-  {payload}: Action<T>,
-): NormalizedPaginatedState<T> => ({
-  ...state,
-  isFetchingSingle: false,
-  entities: {...state.entities, [payload.id]: payload},
-});
+  {payload}: Action<T | T[]>,
+): NormalizedPaginatedState<T> => {
+
+  const newEntities: ObjectsById<T> = Array.isArray(payload) ? payload.reduce((prev, curr) => ({
+    ...prev,
+    [curr.id]: curr,
+  }), {}) : {[payload.id]: payload};
+  return ({
+    ...state,
+    isFetchingSingle: false,
+    entities: {...state.entities, ...newEntities},
+  });
+};
 
 const entityFailure = <T extends Identifiable>(
   state: NormalizedPaginatedState<T>,
@@ -117,7 +125,7 @@ type ActionTypes<T extends Identifiable> =
   | Action<number>
   | Action<ErrorResponse & HasPageNumber>
   | Action<HasPageNumber>
-  | Action<T>
+  | Action<T | T[]>
   | Action<SingleEntityFailure>;
 
 export const reducerFor = <T extends Identifiable>(
@@ -140,7 +148,7 @@ export const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityRequest(endPoint):
         return entityRequest(state);
       case domainModelsPaginatedEntitySuccess(endPoint):
-        return addEntity(state, action as Action<T>);
+        return addEntities(state, action as Action<T | T[]>);
       case domainModelsPaginatedEntityFailure(endPoint):
         return entityFailure(state, action as Action<SingleEntityFailure>);
       case SELECT_SAVED_SELECTION:
@@ -157,7 +165,9 @@ export const reducerFor = <T extends Identifiable>(
   };
 
 export const meters = reducerFor<Meter>('meters', EndPoints.meters);
+export const gateways = reducerFor<Meter>('gateways', EndPoints.gateways);
 
 export const paginatedDomainModels = combineReducers<PaginatedDomainModelsState>({
   meters,
+  gateways,
 });

@@ -131,7 +131,8 @@ export const getEncodedUriParametersForAllMeters =
   );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<SearchParameterState, SelectedParameters, string>(
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
+    ({pagination}) => pagination,
     getSelectedParameters,
     encodedUriParametersForGateways,
   );

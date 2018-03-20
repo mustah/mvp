@@ -13,9 +13,9 @@ import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {translate} from '../../services/translationService';
+import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
-import {DomainModel, Normalized, ObjectsById} from '../../state/domain-models/domainModels';
-import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
+import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
 import {Measurement} from '../../state/domain-models/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
@@ -68,7 +68,6 @@ interface State {
 }
 
 interface Props {
-  gateways: ObjectsById<Gateway>;
   meter: Meter;
   meterMapMarker: MapMarker;
 }
@@ -79,11 +78,11 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
 
   render() {
     const {selectedTab} = this.state;
-    const {meter, gateways, meterMapMarker} = this.props;
+    const {meter, meterMapMarker} = this.props;
 
-    const gateway = gateways[meter.gateway.id];
+    const gateway = meter.gateway;
 
-    const normalizedGateways: DomainModel<Gateway> = {
+    const normalizedGateways: DomainModel<GatewayMandatory> = {
       entities: {[gateway.id]: gateway},
       result: [gateway.id],
     };
@@ -103,8 +102,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const renderValue = ({value}: Measurement) => value;
     const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({serial}: Gateway) => serial;
-    const renderSignalNoiseRatio = ({signalToNoiseRatio}: Gateway) =>
-      signalToNoiseRatio || translate('n/a');
     const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(meterMapMarker);
 
     return (
@@ -155,7 +152,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
               hasContent={hasConfidentPosition}
               fallbackContent={<h2 style={{padding: 8}}>{translate('no reliable position')}</h2>}
             >
-              <Map height={400} viewCenter={meter.location.position}>
+              <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
                 <ClusterContainer markers={meterMapMarker}/>
               </Map>
             </HasContent>
@@ -167,10 +164,10 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
                   header={<TableHead>{translate('gateway serial')}</TableHead>}
                   renderCell={renderSerial}
                 />
-                <TableColumn
-                  header={<TableHead>{translate('latest snr')}</TableHead>}
-                  renderCell={renderSignalNoiseRatio}
-                />
+                {/*<TableColumn*/}
+                  {/*header={<TableHead>{translate('latest snr')}</TableHead>}*/}
+                  {/*renderCell={renderSignalNoiseRatio}*/}
+                {/*/>*/}
               </Table>
             </Row>
           </TabContent>

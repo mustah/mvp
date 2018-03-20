@@ -17,7 +17,6 @@ import {
   PaginatedDomainModelsState,
 } from './paginatedDomainModels';
 
-
 export const domainModelsPaginatedRequest = (endPoint: EndPoints) => `DOMAIN_MODELS_PAGINATED_REQUEST${endPoint}`;
 export const domainModelsPaginatedGetSuccess = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_${RequestType.GET}_SUCCESS${endPoint}`;
@@ -25,10 +24,8 @@ export const domainModelsPaginatedFailure = (endPoint: EndPoints) => `DOMAIN_MOD
 export const domainModelPaginatedClearError = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_CLEAR_ERROR${endPoint}`;
 
-const clearError = (endPoint: EndPoints) =>
+export const clearError = (endPoint: EndPoints) =>
   createPayloadAction<string, HasPageNumber>(domainModelPaginatedClearError(endPoint));
-
-export const clearErrorMeters = clearError(EndPoints.meters);
 
 interface PaginatedRequestHandler<T> {
   request: (payload) => PayloadAction<string, number>;
@@ -80,8 +77,6 @@ const asyncRequest = async <REQ, DAT>(
   }
 };
 
-
-
 const shouldFetch = (page: number, {result}: NormalizedPaginatedState<Identifiable>): boolean =>
   !result[page]
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
@@ -93,8 +88,6 @@ export const getRequestOf = <T>(endPoint: EndPoints): PaginatedRequestHandler<T>
     domainModelsPaginatedFailure(endPoint),
   ),
 });
-
-
 
 export const fetchIfNeeded = <T extends Identifiable>(
   endPoint: EndPoints,
@@ -121,7 +114,3 @@ export const fetchIfNeeded = <T extends Identifiable>(
         return null;
       }
     };
-
-
-
-

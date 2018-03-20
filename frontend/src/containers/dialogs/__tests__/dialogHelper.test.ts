@@ -1,5 +1,5 @@
 import {initLanguage} from '../../../i18n/i18n';
-import {Gateway} from '../../../state/domain-models/gateway/gatewayModels';
+import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 
 describe('dialogSelectors', () => {

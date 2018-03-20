@@ -1,41 +1,35 @@
-import {Dictionary, Identifiable} from '../../../../types/Types';
+import {Dictionary, Status} from '../../../../types/Types';
 import {MapMarker, Marker} from '../../mapModels';
-import {
-  isGeoPositionWithinThreshold,
-  isMapMarker,
-  makeLeafletCompatibleMarkersFrom,
-} from '../clusterHelper';
+import {isGeoPositionWithinThreshold, isMapMarker, makeLeafletCompatibleMarkersFrom} from '../clusterHelper';
 
 describe('clusterHelper', () => {
 
-  const mapMarker1: Partial<MapMarker & Identifiable> = {
+  const mapMarker1: MapMarker = {
     id: 1,
-    status: {id: 'ok', name: 'Ok'},
-    location: {
-      address: {id: 1, name: 'vägen 1'},
-      city: {id: 1, name: 'Kungsbacka'},
-      position: {latitude: 57.505402, longitude: 12.069364, confidence: 1},
-    },
+    status: Status.ok,
+    mapMarkerType: 'Meter',
+    latitude: 57.505402,
+    longitude: 12.069364,
+    confidence: 1,
   };
 
-  const mapMarker2: Partial<MapMarker & Identifiable> = {
+  const mapMarker2: MapMarker = {
     id: 2,
-    status: {id: 'warning', name: 'Warning'},
-    location: {
-      address: {id: 1, name: 'vägen 2'},
-      city: {id: 1, name: 'Kungsbacka'},
-      position: {latitude: 57.505412, longitude: 12.069374, confidence: 0.7},
-    },
+    status: Status.warning,
+    mapMarkerType: 'Meter',
+    latitude: 57.505412,
+    longitude: 12.069374,
+    confidence: 0.7,
   };
 
   const markers: Dictionary<MapMarker> = {
-    1: mapMarker1 as MapMarker,
-    2: mapMarker2 as MapMarker,
+    1: mapMarker1,
+    2: mapMarker2,
   };
 
   describe('makeLeafletCompatibleMarkersFrom', () => {
     it('should handle single marker', () => {
-      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarker1 as MapMarker);
+      const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(mapMarker1);
 
       expect(leafletMarkers).toEqual([{
         position: [57.505402, 12.069364],
@@ -44,15 +38,7 @@ describe('clusterHelper', () => {
             options: {iconUrl: 'assets/images/marker-icon-ok.png'},
             _initHooksCalled: true,
           },
-          mapMarkerItem: {
-            id: 1,
-            status: {id: 'ok', name: 'Ok'},
-            location: {
-              address: {id: 1, name: 'vägen 1'},
-              city: {id: 1, name: 'Kungsbacka'},
-              position: {latitude: 57.505402, longitude: 12.069364, confidence: 1},
-            },
-          },
+          mapMarkerItem: 1,
         },
       }]);
     });
@@ -67,15 +53,7 @@ describe('clusterHelper', () => {
               _initHooksCalled: true,
               options: {iconUrl: 'assets/images/marker-icon-ok.png'},
             },
-            mapMarkerItem: {
-              id: 1,
-              status: {id: 'ok', name: 'Ok'},
-              location: {
-                address: {id: 1, name: 'vägen 1'},
-                city: {id: 1, name: 'Kungsbacka'},
-                position: {confidence: 1, latitude: 57.505402, longitude: 12.069364},
-              },
-            },
+            mapMarkerItem: 1,
           },
           position: [57.505402, 12.069364],
         },
@@ -85,15 +63,7 @@ describe('clusterHelper', () => {
               _initHooksCalled: true,
               options: {iconUrl: 'assets/images/marker-icon-warning.png'},
             },
-            mapMarkerItem: {
-              id: 2,
-              status: {id: 'warning', name: 'Warning'},
-              location: {
-                address: {id: 1, name: 'vägen 2'},
-                city: {id: 1, name: 'Kungsbacka'},
-                position: {confidence: 0.7, latitude: 57.505412, longitude: 12.069374},
-              },
-            },
+            mapMarkerItem: 2,
           },
           position: [57.505412, 12.069374],
         },
@@ -103,13 +73,13 @@ describe('clusterHelper', () => {
 
   describe('isGeoPositionWithinThreshold', () => {
 
-    const mapMarker3: Partial<MapMarker> = {
-      status: {id: 'warning', name: 'Warning'},
-      location: {
-        address: {id: 1, name: 'vägen 2'},
-        city: {id: 1, name: 'Kungsbacka'},
-        position: {latitude: 57.505412, longitude: 12.069374, confidence: 0.6},
-      },
+    const mapMarker3: MapMarker = {
+      id: 1,
+      status: Status.warning,
+      mapMarkerType: 'Meter',
+      latitude: 57.505412,
+      longitude: 12.069374,
+      confidence: 0.6,
     };
 
     it('it should accept confidence of 0.7 and above', () => {
@@ -126,16 +96,12 @@ describe('clusterHelper', () => {
   describe('isMapMarker', () => {
     it('is of type MapMarker', () => {
       const markers: MapMarker = {
-        status: {id: 1, name: 'foo'},
-        location: {
-          address: {id: 1, name: 'vägen 1'},
-          city: {id: 1, name: 'Kungsbacka'},
-          position: {
-            latitude: 1,
-            longitude: 2,
-            confidence: 3,
-          },
-        },
+        id: 1,
+        status: Status.info,
+        mapMarkerType: 'Meter',
+        latitude: 1,
+        longitude: 2,
+        confidence: 3,
       };
 
       expect(isMapMarker(markers as MapMarker)).toBe(true);
@@ -144,23 +110,17 @@ describe('clusterHelper', () => {
     it('is not of type MapMarker', () => {
       const markers: Dictionary<MapMarker> = {
         foo: {
-          status: {id: 1, name: 'foo'},
-          location: {
-            city: {id: 1, name: 'stockholm'},
-            address: {
-              id: 2,
-              name: 'stampgatan',
-            },
-            position: {
-              latitude: 1,
-              longitude: 2,
-              confidence: 3,
-            },
-          },
+          id: 'foo',
+          status: Status.ok,
+          mapMarkerType: 'Meter',
+          latitude: 1,
+          longitude: 2,
+          confidence: 3,
         },
       };
 
       expect(isMapMarker(markers)).toBe(false);
     });
   });
-});
+})
+;

@@ -27,6 +27,16 @@ describe('paginationSelectors', () => {
         totalPages: 10,
         totalElements: 40,
       },
+      meterMapMarkers: {
+        useCases: {
+          aList: {
+            page: 3,
+          },
+        },
+        size: 4,
+        totalPages: 10,
+        totalElements: 40,
+      },
       measurements: {
         useCases: {
           meterList: {
@@ -42,8 +52,8 @@ describe('paginationSelectors', () => {
     it('retrieves pagination from existing entityType and componentId', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
-        componentId: 'gatewayList',
-        entityType: 'gateways',
+        componentId: 'aList',
+        entityType: 'meterMapMarkers',
       };
 
       const expected: Pagination = {
@@ -60,7 +70,7 @@ describe('paginationSelectors', () => {
       const lookupState: PaginationLookupState<DomainModelsState> = {
         pagination: initialState,
         componentId: 'dont exist',
-        entityType: 'gateways',
+        entityType: 'meterMapMarkers',
       };
 
       const expected: Pagination = {

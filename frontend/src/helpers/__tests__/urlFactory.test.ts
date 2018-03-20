@@ -2,7 +2,10 @@ import {Period} from '../../components/dates/dateModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {Status} from '../../types/Types';
-import {encodedUriParametersForGateways, encodedUriParametersForMeters} from '../urlFactory';
+import {
+  encodedUriParametersForAllMeters, encodedUriParametersForGateways,
+  encodedUriParametersForMeters,
+} from '../urlFactory';
 
 describe('urlFactory', () => {
 
@@ -23,12 +26,16 @@ describe('urlFactory', () => {
 
       expect(encodedUriParametersForMeters(pagination, selection))
         .toEqual(`size=${pagination.size}&page=${pagination.page}`);
+      expect(encodedUriParametersForGateways(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}`);
     });
 
     it('returns selected city', () => {
       const selection = selectedParameters({cities: ['got']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got`);
+      expect(encodedUriParametersForGateways(pagination, selection))
         .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got`);
     });
 
@@ -37,12 +44,16 @@ describe('urlFactory', () => {
 
       expect(encodedUriParametersForMeters(pagination, selection))
         .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got&city=sto&city=mmx`);
+      expect(encodedUriParametersForGateways(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&city=got&city=sto&city=mmx`);
     });
 
     it('returns selected address', () => {
       const selection = selectedParameters({addresses: ['address 2']});
 
       expect(encodedUriParametersForMeters(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202`);
+      expect(encodedUriParametersForGateways(pagination, selection))
         .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202`);
     });
 
@@ -51,13 +62,17 @@ describe('urlFactory', () => {
 
       expect(encodedUriParametersForMeters(pagination, selection))
         .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202&address=storgatan%205`);
+      expect(encodedUriParametersForGateways(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&address=address%202&address=storgatan%205`);
     });
 
     it('returns selected statuses', () => {
-      const selection = selectedParameters({meterStatuses: [Status.ok, Status.warning]});
+      const selection = selectedParameters({meterStatuses: [Status.ok, Status.warning], gatewayStatuses: [Status.ok]});
 
       expect(encodedUriParametersForMeters(pagination, selection))
-        .toEqual(`size=${pagination.size}&page=${pagination.page}&status=ok&status=warning`);
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&status=ok&status=warning&gatewayStatus=ok`);
+      expect(encodedUriParametersForGateways(pagination, selection))
+        .toEqual(`size=${pagination.size}&page=${pagination.page}&meterStatus=ok&meterStatus=warning&status=ok`);
     });
 
     it('returns all selected parameters', () => {
@@ -65,12 +80,15 @@ describe('urlFactory', () => {
         addresses: ['address 2', 'storgatan 5'],
         cities: ['got', 'sto', 'mmx'],
         meterStatuses: [Status.ok, Status.warning],
+        gatewayStatuses: [Status.ok],
       });
 
-      const expected =
-        `size=${pagination.size}&page=${pagination.page}&address=address%202&address=storgatan%205` +
-        '&city=got&city=sto&city=mmx&status=ok&status=warning';
-      expect(encodedUriParametersForMeters(pagination, selection)).toEqual(expected);
+      expect(encodedUriParametersForMeters(pagination, selection)).toEqual(`size=${pagination.size}` +
+        `&page=${pagination.page}&address=address%202&address=storgatan%205` +
+        '&city=got&city=sto&city=mmx&status=ok&status=warning&gatewayStatus=ok');
+      expect(encodedUriParametersForGateways(pagination, selection)).toEqual(`size=${pagination.size}` +
+        `&page=${pagination.page}&address=address%202&address=storgatan%205` +
+        '&city=got&city=sto&city=mmx&meterStatus=ok&meterStatus=warning&status=ok');
     });
   });
 
@@ -83,21 +101,21 @@ describe('urlFactory', () => {
     it('returns empty parameters string when nothing is selected', () => {
       const selection = selectedParameters({cities: []});
 
-      expect(encodedUriParametersForGateways(selection))
+      expect(encodedUriParametersForAllMeters(selection))
         .toEqual('');
     });
 
     it('returns selected city', () => {
       const selection = selectedParameters({cities: ['got']});
 
-      expect(encodedUriParametersForGateways(selection))
+      expect(encodedUriParametersForAllMeters(selection))
         .toEqual('city=got');
     });
 
     it('returns selected cities', () => {
       const selection = selectedParameters({cities: ['got', 'sto', 'mmx']});
 
-      expect(encodedUriParametersForGateways(selection))
+      expect(encodedUriParametersForAllMeters(selection))
         .toEqual('city=got&city=sto&city=mmx');
     });
 
@@ -110,8 +128,8 @@ describe('urlFactory', () => {
 
       const expected =
         `address=address%202&address=storgatan%205` +
-        '&city=got&city=sto&city=mmx&meterStatus=ok&meterStatus=warning';
-      expect(encodedUriParametersForGateways(selection)).toEqual(expected);
+        '&city=got&city=sto&city=mmx&status=ok&status=warning';
+      expect(encodedUriParametersForAllMeters(selection)).toEqual(expected);
     });
   });
 });

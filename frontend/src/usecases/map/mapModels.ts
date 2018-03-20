@@ -1,8 +1,7 @@
 import {Icon, LatLngTuple, MarkerOptions} from 'leaflet';
-import {Status, uuid} from '../../types/Types';
+import {Identifiable, Status, uuid} from '../../types/Types';
 
-export interface MapMarker {
-  id: uuid;
+export interface MapMarker extends Identifiable {
   mapMarkerType: 'Meter' | 'Gateway';
   status: Status;
   latitude: number;

@@ -5,18 +5,13 @@ import thunk from 'redux-thunk';
 import {makeMeterDto, MeterDto} from '../../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../../i18n/i18n';
 import {RootState} from '../../../../reducers/rootReducer';
+import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse} from '../../../../types/Types';
-import {EndPoints} from '../../../../services/endPoints';
-import {showFailMessage} from '../../../ui/message/messageActions';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
-import {
-  clearErrorMeters,
-  domainModelPaginatedClearError,
-  getRequestOf,
-} from '../../paginatedDomainModelsActions';
-import {fetchMeters} from '../meterApiActions';
+import {domainModelPaginatedClearError, getRequestOf} from '../../paginatedDomainModelsActions';
+import {clearErrorMeters, fetchMeters} from '../meterApiActions';
 import {Meter} from '../meterModels';
 import {meterSchema} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
@@ -30,7 +25,8 @@ describe('meterApiActions', () => {
 
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
-      meters: {entities: {}, result: {}},
+      meters: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
+      gateways: {isFetchingSingle: false, nonExistingSingles: {}, entities: {}, result: {}},
     },
   };
 
@@ -106,7 +102,6 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
         requestMeters.failure({page, message: 'An unexpected error occurred'}),
-        showFailMessage('Error: An unexpected error occurred'),
       ]);
     });
 
@@ -118,7 +113,6 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([
         requestMeters.request(page),
         requestMeters.failure({page, ...errorResponse}),
-        showFailMessage('Error: an error'),
       ]);
     });
 
@@ -127,8 +121,16 @@ describe('meterApiActions', () => {
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
           meters: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
             entities: {},
             result: {[existingPage]: {isFetching: false, isSuccessfullyFetched: true, result: []}},
+          },
+          gateways: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
           },
         },
       };
@@ -144,8 +146,16 @@ describe('meterApiActions', () => {
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
           meters: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
             entities: {},
             result: {[existingPage]: {isFetching: true, isSuccessfullyFetched: false}},
+          },
+          gateways: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
           },
         },
       };
@@ -161,6 +171,8 @@ describe('meterApiActions', () => {
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
           meters: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
             entities: {},
             result: {
               [existingPage]: {
@@ -169,6 +181,12 @@ describe('meterApiActions', () => {
                 error: {message: 'an error'},
               },
             },
+          },
+          gateways: {
+            isFetchingSingle: false,
+            nonExistingSingles: {},
+            entities: {},
+            result: {},
           },
         },
       };
