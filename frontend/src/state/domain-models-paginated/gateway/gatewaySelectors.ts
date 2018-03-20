@@ -4,10 +4,14 @@ import {hasItems} from '../../../helpers/functionalHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {pieChartTranslation} from '../../../helpers/translations';
 import {IdNamed, uuid} from '../../../types/Types';
+import {ObjectsById} from '../../domain-models/domainModels';
+import {getEntitiesDomainModels, getResultDomainModels} from '../../domain-models/domainModelsSelectors';
 import {FilterParam} from '../../search/selection/selectionModels';
-import {ObjectsById} from '../domainModels';
-import {getEntitiesDomainModels, getResultDomainModels} from '../domainModelsSelectors';
+import {NormalizedPaginatedState} from '../paginatedDomainModels';
 import {Gateway, GatewayDataSummary, GatewayDataSummaryKey, GatewaysState} from './gatewayModels';
+
+export const getGateway = ({entities}: NormalizedPaginatedState<Gateway>, id: uuid): Maybe<Gateway> =>
+  Maybe.maybe(entities[id]);
 
 const addToPie = (
   category: PieData,
