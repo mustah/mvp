@@ -30,7 +30,7 @@ describe('allMeterApiActions', () => {
         id: 1,
         name: 'al',
         email: 'al@la.se',
-        organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+        organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
         roles: [],
       };
       const initialState = {
@@ -52,7 +52,7 @@ describe('allMeterApiActions', () => {
       expect(store.getActions()).toEqual([
         meterRequest.request(),
         logoutUser(error as Unauthorized),
-        routerActions.push(`${routes.login}/${initialState.auth.user.organisation.code}`),
+        routerActions.push(`${routes.login}/${initialState.auth.user.organisation.slug}`),
       ]);
     });
   });

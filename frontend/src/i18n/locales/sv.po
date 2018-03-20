@@ -83,7 +83,7 @@ msgstr "allt"
 msgid "organisation name"
 msgstr "organisationsnamn"
 
-msgid "organisation code"
+msgid "organisation slug"
 msgstr "organisationskod"
 
 msgid "name"
@@ -260,8 +260,8 @@ msgstr "lyckades ta bort organisationen {{name}}"
 msgid "failed to delete the organisation: {{error}}"
 msgstr "misslyckades att skapa organisationen: {{error}}"
 
-msgid "successfully created the organisation {{name}} ({{code}})"
-msgstr "skapade organisationen {{name}} ({{code}})"
+msgid "successfully created the organisation {{name}} ({{slug}})"
+msgstr "skapade organisationen {{name}} ({{slug}})"
 
 msgid "failed to create organisation: {{error}}"
 msgstr "misslyckades skapa organisationen: {{error}}"
@@ -296,7 +296,7 @@ msgstr "användare"
 msgid "organisations"
 msgstr "organisationer"
 
-msgid "code"
+msgid "slug"
 msgstr "kod"
 
 msgid "roles"

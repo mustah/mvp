@@ -36,7 +36,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
       this.state = {
         name: '',
         email: '',
-        organisation: {id: '', code: '', name: ''},
+        organisation: {id: '', slug: '', name: ''},
         roles: [Role.USER],
         password: '',
       };

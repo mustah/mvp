@@ -27,7 +27,7 @@ describe('authActions', () => {
     id: 1,
     name: 'clark',
     email: 'ck@dailyplanet.net',
-    organisation: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
+    organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
     roles: [Role.USER],
   };
   let mockRestClient;
@@ -68,7 +68,7 @@ describe('authActions', () => {
 
       expect(store.getActions()).toEqual([
         logoutUser(undefined),
-        routerActions.push(`${routes.login}/${user.organisation.code}`),
+        routerActions.push(`${routes.login}/${user.organisation.slug}`),
       ]);
     });
 
@@ -145,7 +145,7 @@ describe('authActions', () => {
 
       expect(store.getActions()).toEqual([
         logoutUser(undefined),
-        routerActions.push(`${routes.login}/${user.organisation.code}`),
+        routerActions.push(`${routes.login}/${user.organisation.slug}`),
       ]);
     });
   });

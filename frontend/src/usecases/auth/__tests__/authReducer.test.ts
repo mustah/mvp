@@ -12,7 +12,7 @@ describe('authReducer', () => {
     id: 1,
     name: 'clark',
     email: 'ck@dailyplanet.net',
-    organisation: {id: 'daily planet', name: 'daily planet', code: 'daily-planet'},
+    organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
     roles: [Role.USER],
   };
   const token = makeToken(user.email, password);

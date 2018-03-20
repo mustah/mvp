@@ -166,7 +166,7 @@ describe('domainModelsReducer', () => {
     const user: User = {
       id: 3,
       name: 'Eva',
-      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };

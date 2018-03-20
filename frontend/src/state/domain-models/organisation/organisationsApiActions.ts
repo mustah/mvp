@@ -34,7 +34,7 @@ export const addOrganisation = postRequest<Organisation>(EndPoints.organisations
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(
       firstUpperTranslated(
-        'successfully created the organisation {{name}} ({{code}})',
+        'successfully created the organisation {{name}} ({{slug}})',
         {...organisation},
       ),
     ));

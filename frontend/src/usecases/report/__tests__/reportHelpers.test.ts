@@ -34,7 +34,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
           10: {
@@ -47,7 +47,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
         };
@@ -69,7 +69,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
           10: {
@@ -82,7 +82,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
         };
@@ -105,7 +105,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
           10: {
@@ -118,7 +118,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
           11: {
@@ -131,7 +131,7 @@ describe('reportHelpers', () => {
               id: 1,
               identity: 'any',
               medium: 'water',
-              organisation: {id: 1, name: 'test', code: 'elv'},
+              organisation: {id: 1, name: 'test', slug: 'elv'},
             },
           },
         };

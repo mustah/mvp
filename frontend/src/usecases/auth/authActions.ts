@@ -47,7 +47,7 @@ export const logout = (error?: Unauthorized) => {
     if (isAuthenticated(auth)) {
       try {
         dispatch(logoutUser(error));
-        dispatch(routerActions.push(`${routes.login}/${auth.user!.organisation.code}`));
+        dispatch(routerActions.push(`${routes.login}/${auth.user!.organisation.slug}`));
         await restClient.get(EndPoints.logout);
       } catch (ignore) {
         // tslint:disable
