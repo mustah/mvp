@@ -31,7 +31,7 @@ public class MeasurementMapperTest {
     Measurement measurement = new Measurement(Quantity.VOLUME, 2.0, physicalMeter);
     MeasurementEntity entity = measurementMapper.toEntity(measurement);
     assertThat(entity.quantity).isEqualTo("Volume");
-    assertThat(entity.value).isEqualTo(new MeasurementUnit("2.0 m³"));
+    assertThat(entity.value).isEqualTo(MeasurementUnit.from("2.0 m³"));
     Measurement actual = measurementMapper.toDomainModel(entity);
     assertThat(actual).isEqualTo(measurement);
   }

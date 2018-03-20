@@ -19,7 +19,7 @@ public interface MeasurementValueProjection {
     if (this.getValue() == null) {
       return Optional.empty();
     }
-    return Optional.of(new MeasurementUnit(this.getValue()));
+    return Optional.of(MeasurementUnit.from(this.getValue()));
   }
 
   @Nullable

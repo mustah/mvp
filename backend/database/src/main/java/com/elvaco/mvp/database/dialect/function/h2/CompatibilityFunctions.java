@@ -24,7 +24,7 @@ public final class CompatibilityFunctions {
     try {
       sourceQuantity = Quantities.getQuantity(valueAndUnit);
     } catch (IllegalArgumentException iex) {
-      MeasurementUnit measurementUnit = new MeasurementUnit(valueAndUnit);
+      MeasurementUnit measurementUnit = MeasurementUnit.from(valueAndUnit);
       if (CUSTOM_TYPES.containsKey(measurementUnit.getUnit())) {
         sourceQuantity = Quantities.getQuantity(
           measurementUnit.getValue(),

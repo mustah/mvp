@@ -28,7 +28,7 @@ public class H2MeasurementUnitType extends MeasurementUnitType {
     if (value == null) {
       return null;
     }
-    return new MeasurementUnit(value);
+    return MeasurementUnit.from(value);
   }
 
   @Override

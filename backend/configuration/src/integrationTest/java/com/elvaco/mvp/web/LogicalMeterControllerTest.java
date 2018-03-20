@@ -918,9 +918,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter1,
     PhysicalMeter meter2
   ) {
-    MeasurementUnit measurementUnit = new MeasurementUnit("2.0 m3");
+    MeasurementUnit measurementUnit = MeasurementUnit.from("2.0 m³");
 
-    List<MeasurementEntity> meter1Measurements = createMeasureMents(
+    List<MeasurementEntity> meter1Measurements = createMeasurements(
       meter1,
       measurementUnit,
       meter1FirstMeasurement,
@@ -944,7 +944,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     List<MeasurementEntity> measurements = new ArrayList<>();
     measurements.addAll(meter1Measurements);
     measurements.addAll(
-      createMeasureMents(
+      createMeasurements(
         meter2,
         measurementUnit,
         meter2FirstMeasurement,
@@ -965,7 +965,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
    * @param values          Nr of values to generate
    * @return
    */
-  private List<MeasurementEntity> createMeasureMents(
+  private List<MeasurementEntity> createMeasurements(
     PhysicalMeter physicalMeter,
     MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,

@@ -30,7 +30,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
     if (value == null || value.getValue() == null) {
       return null;
     }
-    return new MeasurementUnit(value.getValue());
+    return MeasurementUnit.from(value.getValue());
   }
 
   @Override
