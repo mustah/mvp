@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import lombok.ToString;
+
 import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 
+@ToString
 public class User implements Identifiable<UUID>, Usernamed {
 
   public final UUID id;
