@@ -53,4 +53,10 @@ public class MockOrganisations extends MockRepository<UUID, Organisation> implem
     return filter(organisation -> organisation.slug.equals(slug))
       .findFirst();
   }
+
+  @Override
+  public Optional<Organisation> findByExternalId(String externalId) {
+    return filter(organisation -> organisation.externalId.equals(externalId))
+      .findFirst();
+  }
 }

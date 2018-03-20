@@ -38,4 +38,12 @@ public class Organisation implements Identifiable<UUID>, Serializable {
     return id;
   }
 
+  public Organisation withExternalId(String externalId) {
+    return new Organisation(
+      id,
+      name,
+      slug,
+      externalId
+    );
+  }
 }

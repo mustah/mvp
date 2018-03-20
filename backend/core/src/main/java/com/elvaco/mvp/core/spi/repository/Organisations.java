@@ -17,4 +17,6 @@ public interface Organisations {
   void deleteById(UUID id);
 
   Optional<Organisation> findBySlug(String slug);
+
+  Optional<Organisation> findByExternalId(String externalId);
 }

@@ -182,15 +182,14 @@ public class MeteringMessageHandler implements MessageHandler {
       )));
   }
 
-  private Organisation findOrCreateOrganisation(String organisationCode) {
-    return organisationUseCases.findByCode(organisationCode)
+  private Organisation findOrCreateOrganisation(String externalId) {
+    return organisationUseCases.findByExternalId(externalId)
       .orElseGet(() ->
                    organisationUseCases.create(
                      new Organisation(
                        UUID.randomUUID(),
-                       organisationCode,
-                       organisationCode
-                     )));
+                       externalId
+                     ).withExternalId(externalId)));
   }
 
   private PhysicalMeter findOrCreatePhysicalMeter(

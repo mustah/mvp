@@ -60,7 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ConstantConditions")
 public class MessageHandlerTest {
 
-  private static final String ORGANISATION_CODE = "some-organisation";
+  private static final String ORGANISATION_EXTERNAL_ID = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
   private static final ZonedDateTime EXPECTED_DATETIME = ZonedDateTime.of(
     2018,
@@ -98,7 +98,7 @@ public class MessageHandlerTest {
         .name("mock user")
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
-        .organisation(new Organisation(randomUUID(), "some organisation", ORGANISATION_CODE))
+        .organisation(new Organisation(randomUUID(), "some organisation", ORGANISATION_EXTERNAL_ID))
         .asSuperAdmin()
         .build(),
       randomUUID().toString()
@@ -173,7 +173,7 @@ public class MessageHandlerTest {
 
     Organisation organisation = findOrganisation();
 
-    assertThat(organisation.name).isEqualTo(ORGANISATION_CODE);
+    assertThat(organisation.name).isEqualTo(ORGANISATION_EXTERNAL_ID);
   }
 
   @Test
@@ -296,7 +296,7 @@ public class MessageHandlerTest {
 
   @Test
   public void addsMeasurementToExistingMeter() {
-    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_CODE));
+    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_EXTERNAL_ID));
 
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
       new PhysicalMeter(
@@ -327,7 +327,7 @@ public class MessageHandlerTest {
 
   @Test
   public void createsLogicalMeterForMeasurement() {
-    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_CODE));
+    Organisation organisation = organisations.save(newOrganisation(ORGANISATION_EXTERNAL_ID));
 
     messageHandler.handle(newMeasurementMessage());
 
@@ -429,6 +429,40 @@ public class MessageHandlerTest {
       MeterDefinition.DISTRICT_HEATING_METER);
   }
 
+  @Test
+  public void usesOrganisationExternalIdForMeasurementMessage() {
+    Organisation existingOrganisation = new Organisation(
+      UUID.randomUUID(),
+      "An organisation",
+      "an-organisation",
+      "An external organisation ID"
+    );
+    organisations.save(
+      existingOrganisation
+    );
+
+    MeteringMeasurementMessageDto message = newMeasurementMessage("An external organisation ID");
+
+    messageHandler.handle(message);
+
+    List<Measurement> createdMeasurements = measurements.findAll(null);
+    assertThat(createdMeasurements).hasSize(1);
+    assertThat(createdMeasurements.get(0).physicalMeter.organisation)
+      .isEqualTo(existingOrganisation);
+  }
+
+  @Test
+  public void createdOrganisationIsSlugged() {
+    MeteringMeasurementMessageDto message = newMeasurementMessage("Some Organisation");
+
+    messageHandler.handle(message);
+
+    List<Measurement> createdMeasurements = measurements.findAll(null);
+    assertThat(createdMeasurements).hasSize(1);
+    assertThat(createdMeasurements.get(0).physicalMeter.organisation.slug).isEqualTo(
+      "some-organisation");
+  }
+
   private ValueDto newValueDto(String quantity) {
     return new ValueDto(LocalDateTime.now(), 0.0, "one", quantity);
   }
@@ -439,19 +473,23 @@ public class MessageHandlerTest {
   }
 
   private Organisation findOrganisation() {
-    return organisations.findBySlug(ORGANISATION_CODE).get();
+    return organisations.findBySlug(ORGANISATION_EXTERNAL_ID).get();
   }
 
-  private MeteringMeasurementMessageDto newMeasurementMessage() {
+  private MeteringMeasurementMessageDto newMeasurementMessage(String organisationExternalId) {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("123"),
       new MeterIdDto("1234"),
       new FacilityIdDto(EXTERNAL_ID),
-      ORGANISATION_CODE,
+      organisationExternalId,
       "Elvaco Metering",
       singletonList(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", "Energy"))
     );
+  }
+
+  private MeteringMeasurementMessageDto newMeasurementMessage() {
+    return newMeasurementMessage(ORGANISATION_EXTERNAL_ID);
   }
 
   private MeteringMeterStructureMessageDto newStructureMessage(String medium, String manufacturer) {
@@ -460,7 +498,7 @@ public class MessageHandlerTest {
       new MeterDto("1234", medium, "OK", manufacturer, 15),
       new FacilityDto(EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
-      ORGANISATION_CODE,
+      ORGANISATION_EXTERNAL_ID,
       new GatewayStatusDto("001694120", "CMi2110", "OK")
     );
   }
