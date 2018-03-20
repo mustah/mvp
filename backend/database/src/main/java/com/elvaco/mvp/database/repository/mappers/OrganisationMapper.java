@@ -7,11 +7,16 @@ public class OrganisationMapper implements DomainEntityMapper<Organisation, Orga
 
   @Override
   public Organisation toDomainModel(OrganisationEntity entity) {
-    return new Organisation(entity.id, entity.name, entity.code);
+    return new Organisation(entity.id, entity.name, entity.slug);
   }
 
   @Override
   public OrganisationEntity toEntity(Organisation domainModel) {
-    return new OrganisationEntity(domainModel.id, domainModel.name, domainModel.code);
+    return new OrganisationEntity(
+      domainModel.id,
+      domainModel.name,
+      domainModel.slug,
+      domainModel.externalId
+    );
   }
 }

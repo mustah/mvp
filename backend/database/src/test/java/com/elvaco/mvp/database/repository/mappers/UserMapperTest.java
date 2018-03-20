@@ -57,7 +57,8 @@ public class UserMapperTest {
       new OrganisationEntity(
         user.organisation.id,
         user.organisation.name,
-        user.organisation.code
+        user.organisation.slug,
+        user.organisation.externalId
       ),
       asList(admin(), user())
     ));

@@ -26,6 +26,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
     OrganisationEntity organisationEntity = organisationJpaRepository.save(new OrganisationEntity(
       randomUUID(),
       "An organisation",
+      "an-organisation",
       "an-organisation"
     ));
     userJpaRepository.save(new UserEntity(

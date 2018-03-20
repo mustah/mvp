@@ -40,7 +40,7 @@ describe('organisationsApiActions', () => {
 
     const newOrganisation: Partial<Organisation> = {
       name: 'Hällesåkers IF',
-      code: 'HIF',
+      slug: 'HIF',
     };
     const returnedOrganisation: Partial<Organisation> = {...newOrganisation, id: 1};
     const errorResponse = {message: 'An error'};
@@ -61,7 +61,7 @@ describe('organisationsApiActions', () => {
         createOrganisation.request(),
         createOrganisation.success(returnedOrganisation as Organisation),
         showSuccessMessage('Successfully created the organisation ' +
-                           `${returnedOrganisation.name} (${returnedOrganisation.code})`),
+                           `${returnedOrganisation.name} (${returnedOrganisation.slug})`),
       ]);
     });
 

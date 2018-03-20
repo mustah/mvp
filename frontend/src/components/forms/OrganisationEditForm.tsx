@@ -15,7 +15,7 @@ interface OrganisationFormProps {
 interface State {
   id?: uuid;
   name: string;
-  code: uuid;
+  slug: uuid;
 }
 
 export class OrganisationEditForm extends React.Component<OrganisationFormProps, State> {
@@ -27,7 +27,7 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
     } else {
       this.state = {
         name: '',
-        code: '',
+        slug: '',
       };
     }
   }
@@ -45,13 +45,13 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
     this.props.onSubmit(this.state);
   }
 
-  // TODO: need check that code can't contain whitespaces or other characters that aren't allowed in a url.
+  // TODO: need check that slug can't contain whitespaces or other characters that aren't allowed in a url.
   // Also need to be unique
   render() {
-    const {name, code} = this.state;
+    const {name, slug} = this.state;
 
     const nameLabel = firstUpperTranslated('organisation name');
-    const codeLabel = firstUpperTranslated('organisation code');
+    const codeLabel = firstUpperTranslated('organisation slug');
 
     return (
       <form onSubmit={this.wrappedSubmit}>
@@ -66,8 +66,8 @@ export class OrganisationEditForm extends React.Component<OrganisationFormProps,
           <TextFieldInput
             floatingLabelText={codeLabel}
             hintText={codeLabel}
-            id="code"
-            value={code.toString()}
+            id="slug"
+            value={slug.toString()}
             onChange={this.onChange}
           />
           <ButtonSave

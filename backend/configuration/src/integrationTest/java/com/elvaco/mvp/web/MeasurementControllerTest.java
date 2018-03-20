@@ -82,7 +82,12 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
 
     wayneIndustriesEntity = organisationJpaRepository.save(
-      new OrganisationEntity(randomUUID(), "Wayne Industries", "wayne-industries")
+      new OrganisationEntity(
+        randomUUID(),
+        "Wayne Industries",
+        "wayne-industries",
+        "wayne-industries"
+      )
     );
 
     PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(

@@ -59,10 +59,8 @@ public class OrganisationUseCases {
     }
   }
 
-  public Optional<Organisation> findByCode(String organisationCode) {
-    return organisations
-      .findByCode(organisationCode)
-      .filter(this::mayRead);
+  public Optional<Organisation> findByExternalId(String externalId) {
+    return organisations.findByExternalId(externalId).filter(this::mayRead);
   }
 
   private boolean mayRead(Organisation organisation) {

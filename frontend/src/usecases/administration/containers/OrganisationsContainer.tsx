@@ -62,7 +62,7 @@ class OrganisationsComponent extends React.Component<Props, State> {
     } = this.props;
 
     const renderName = ({name}: Organisation) => name;
-    const renderCode = ({code}: Organisation) => code;
+    const renderSlug = ({slug}: Organisation) => slug;
     const renderActionDropdown = ({id}: Organisation) =>
       <OrganisationActionsDropdown confirmDelete={this.openDialog} id={id}/>;
 
@@ -78,8 +78,8 @@ class OrganisationsComponent extends React.Component<Props, State> {
               renderCell={renderName}
             />
             <TableColumn
-              header={<TableHead>{translate('code')}</TableHead>}
-              renderCell={renderCode}
+              header={<TableHead>{translate('slug')}</TableHead>}
+              renderCell={renderSlug}
             />
             <TableColumn
               header={<TableHead className="actionDropdown">{' '}</TableHead>}

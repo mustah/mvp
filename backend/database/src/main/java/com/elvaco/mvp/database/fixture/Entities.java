@@ -10,7 +10,8 @@ public final class Entities {
     new OrganisationEntity(
       randomUUID(),
       "Elvaco",
-      "elvaco"
+      "elvaco",
+      "Elvaco AB"
     );
 
   private Entities() { }

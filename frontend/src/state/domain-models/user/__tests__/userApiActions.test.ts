@@ -43,7 +43,7 @@ describe('userApiActions', () => {
     const newUser: Partial<User> = {
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
-      organisation: {id: 1, code: 'elvaco', name: 'elvaco'},
+      organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
       roles: [Role.USER],
     };
     const returnedUser: Partial<User> = {...newUser, id: 1};
@@ -82,7 +82,7 @@ describe('userApiActions', () => {
       id: 1,
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
-      organisation: {id: 1, code: 'elvaco', name: 'elvaco'},
+      organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
       roles: [Role.USER, Role.ADMIN],
     };
     const errorResponse = {message: 'An error'};
@@ -120,7 +120,7 @@ describe('userApiActions', () => {
       id: 1,
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
-      organisation: {id: 1, code: 'elvaco', name: 'elvaco'},
+      organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
       roles: [Role.USER, Role.ADMIN],
     };
 
@@ -167,7 +167,7 @@ describe('userApiActions', () => {
     const user: User = {
       id: 3,
       name: 'Eva',
-      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };
@@ -198,7 +198,7 @@ describe('userApiActions', () => {
     const user: User = {
       id: 3,
       name: 'Eva',
-      organisation: {id: 1, name: 'elvaco', code: 'elvaco'},
+      organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };

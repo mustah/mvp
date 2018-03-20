@@ -83,8 +83,8 @@ msgstr "all"
 msgid "organisation name"
 msgstr "organisation name"
 
-msgid "organisation code"
-msgstr "organisation code"
+msgid "organisation slug"
+msgstr "organisation slug"
 
 msgid "name"
 msgstr "name"
@@ -260,8 +260,8 @@ msgstr "successfully deleted the organisation {{name}}"
 msgid "failed to delete the organisation: {{error}}"
 msgstr "failed to delete the organisation: {{error}}"
 
-msgid "successfully created the organisation {{name}} ({{code}})"
-msgstr "successfully created the organisation {{name}} ({{code}})"
+msgid "successfully created the organisation {{name}} ({{slug}})"
+msgstr "successfully created the organisation {{name}} ({{slug}})"
 
 msgid "failed to create organisation: {{error}}"
 msgstr "failed to create organisation: {{error}}"
@@ -296,8 +296,8 @@ msgstr "users"
 msgid "organisations"
 msgstr "organisations"
 
-msgid "code"
-msgstr "code"
+msgid "slug"
+msgstr "slug"
 
 msgid "roles"
 msgstr "roles"

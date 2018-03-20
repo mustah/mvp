@@ -33,6 +33,7 @@ class IntegrationTestFixtureContextFactory {
       new OrganisationEntity(
         contextUuid,
         callSiteIdentifier + "-organisation",
+        contextUuid.toString(),
         contextUuid.toString()
       )
     );

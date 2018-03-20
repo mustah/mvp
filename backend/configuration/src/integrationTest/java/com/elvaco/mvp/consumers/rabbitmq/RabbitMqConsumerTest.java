@@ -35,6 +35,7 @@ import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeNoException;
 
+@SuppressWarnings("SameParameterValue")
 public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Autowired
@@ -94,7 +95,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
-    organisations.findByCode("Some organisation")
+    organisations.findBySlug("some-organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));
   }
 
@@ -112,9 +113,9 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     publishMessage(serializeDto(messageDto));
 
-    assertOrganisationWithCodeWasCreated("Some organisation");
+    assertOrganisationWithSlugWasCreated("some-organisation");
 
-    UUID organisationId = organisations.findByCode("Some organisation").get().id;
+    UUID organisationId = organisations.findBySlug("some-organisation").get().id;
     assertLogicalMeterWasCreated(organisationId, "facility-id");
     assertPhysicalMeterIsCreated(organisationId, "1234", "facility-id");
     assertGatewayWasCreated(organisationId, "123987");
@@ -166,8 +167,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     )).as("Physical meter '" + externalId + "' was created").isTrue();
   }
 
-  private void assertOrganisationWithCodeWasCreated(String code) throws InterruptedException {
-    assertThat(waitForCondition(() -> organisations.findByCode(code)
-      .isPresent())).as("Organisation '" + code + "' was created").isTrue();
+  private void assertOrganisationWithSlugWasCreated(String slug) throws InterruptedException {
+    assertThat(waitForCondition(() -> organisations.findBySlug(slug)
+      .isPresent())).as("Organisation '" + slug + "' was created").isTrue();
   }
 }

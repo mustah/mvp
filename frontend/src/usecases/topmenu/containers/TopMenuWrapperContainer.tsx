@@ -37,7 +37,7 @@ const TopMenuWrapper = (props: StateToProps & DispatchToProps) => {
       </Row>
       <RowCenter>
         <Link className="Logo" to={routes.home}>
-          <Logo src={getLogoPath(user.organisation.code)} className="small"/>
+          <Logo src={getLogoPath(user.organisation.slug)} className="small"/>
         </Link>
       </RowCenter>
       <Row>

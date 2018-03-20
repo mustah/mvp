@@ -8,14 +8,14 @@ import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 public class OrganisationMapper {
 
   public OrganisationDto toDto(Organisation organisation) {
-    return new OrganisationDto(organisation.id.toString(), organisation.name, organisation.code);
+    return new OrganisationDto(organisation.id.toString(), organisation.name, organisation.slug);
   }
 
   public Organisation toDomainModel(OrganisationDto organisationDto) {
     return new Organisation(
       uuidOf(organisationDto.id),
       organisationDto.name,
-      organisationDto.code
+      organisationDto.slug
     );
   }
 }
