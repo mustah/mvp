@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(doNotUseGetters = true)
 @ToString
 public class Measurement implements Identifiable<Long> {
 
@@ -21,10 +21,9 @@ public class Measurement implements Identifiable<Long> {
   public Measurement(
     Quantity quantity,
     double value,
-    String unit,
     PhysicalMeter physicalMeter
   ) {
-    this(null, ZonedDateTime.now(), quantity.name, value, unit, physicalMeter);
+    this(null, ZonedDateTime.now(), quantity.name, value, quantity.unit, physicalMeter);
   }
 
   public Measurement(
@@ -47,5 +46,9 @@ public class Measurement implements Identifiable<Long> {
   @Override
   public Long getId() {
     return id;
+  }
+
+  public Quantity getQuantity() {
+    return new Quantity(quantity, unit);
   }
 }

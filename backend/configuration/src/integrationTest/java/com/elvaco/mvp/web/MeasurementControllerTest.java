@@ -22,6 +22,7 @@ import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeasurementDto;
+import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -213,13 +214,14 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementUnitScaled() {
-    List<MeasurementDto> measurements = as(context().user)
-      .getList("/measurements?quantities=Butter temperature:K", MeasurementDto.class)
+    List<MeasurementSeriesDto> measurements = as(context().user)
+      .getList("/measurements?quantities=Butter temperature:K", MeasurementSeriesDto.class)
       .getBody();
 
     assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
     assertThat(measurements.get(0).unit).isEqualTo("K");
-    assertThat(measurements.get(0).value).isEqualTo(285.59); // 12.44 Celsius = 285.59 Kelvin
+    assertThat(measurements.get(0).values.get(0).value)
+      .isEqualTo(285.59); // 12.44 Celsius =  285.59 Kelvin
   }
 
   @Test
@@ -267,7 +269,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     List<String> quantities =
       getListAsSuperAdmin("/measurements?meters=" + forceMeter.logicalMeterId)
         .stream()
-        .map(c -> c.quantity)
+        .map(series -> series.quantity)
         .collect(toList());
 
     assertThat(quantities).hasSize(2);
@@ -276,9 +278,9 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForHeatMeter() {
-    List<MeasurementDto> contents = getListAsSuperAdmin("/measurements?quantities=Heat");
+    List<MeasurementSeriesDto> contents = getListAsSuperAdmin("/measurements?quantities=Heat");
 
-    MeasurementDto dto = contents.get(0);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("Heat");
 
@@ -290,26 +292,27 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
-    List<MeasurementDto> contents =
+    List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantities=LightsaberPower&before=" + date);
 
     assertThat(contents).hasSize(1);
-    MeasurementDto dto = contents.get(0);
-    assertThat(contents).hasSize(1);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
-    assertThat(dto.value).isEqualTo(0);
+    assertThat(dto.values).hasSize(1);
+    assertThat(dto.values.get(0).value).isEqualTo(0);
   }
 
   @Test
   public void fetchMeasurementsForMeterBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
-    List<MeasurementDto> contents =
+    List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?before=" + date);
 
     assertThat(contents).hasSize(1);
-    MeasurementDto dto = contents.get(0);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
-    assertThat(dto.value).isEqualTo(0);
+    assertThat(dto.values).hasSize(1);
+    assertThat(dto.values.get(0).value).isEqualTo(0);
   }
 
   @Test
@@ -327,42 +330,43 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
-    List<MeasurementDto> contents =
+    List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantities=Heat&after=1990-01-01T08:00:00Z");
 
-    MeasurementDto dto = contents.get(0);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
     assertThat(dto.quantity).isEqualTo("Heat");
   }
 
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTimeWithNonDefaultUnit() {
-    List<MeasurementDto> contents =
+    List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin("/measurements?quantities=Heat:K&after=1990-01-01T08:00:00Z");
 
-    MeasurementDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("Heat");
     assertThat(dto.unit).isEqualTo("K");
-    assertThat(dto.value).isEqualTo(423.15); // 150 degrees Celsius
+    assertThat(dto.values).hasSize(1); // 150 degrees Celsius
+    assertThat(dto.values.get(0).value).isEqualTo(423.15); // 150 degrees Celsius
   }
 
   @Test
   public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
-    List<MeasurementDto> contents =
+    List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
         "/measurements?quantities=Heat:K,LightsaberPower:MW");
 
     assertThat(contents).hasSize(2);
-    MeasurementDto dto = contents.get(0);
+    MeasurementSeriesDto dto = contents.get(0);
     assertThat(dto.quantity).isEqualTo("Heat");
     assertThat(dto.unit).isEqualTo("K");
-    assertThat(dto.value).isEqualTo(423.15); // 150 degrees Celsius
+    assertThat(dto.values.get(0).value).isEqualTo(423.15); // 150 degrees Celsius
 
     dto = contents.get(1);
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
     assertThat(dto.unit).isEqualTo("MW");
-    assertThat(dto.value).isEqualTo(0);
+    assertThat(dto.values.get(0).value).isEqualTo(0);
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(
@@ -388,8 +392,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   }
 
-  private List<MeasurementDto> getListAsSuperAdmin(String url) {
-    return asSuperAdmin().getList(url, MeasurementDto.class).getBody();
+  private List<MeasurementSeriesDto> getListAsSuperAdmin(String url) {
+    return asSuperAdmin().getList(url, MeasurementSeriesDto.class).getBody();
   }
 
   private Long idOf(String measurementQuantity) {
