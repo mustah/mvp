@@ -65,7 +65,7 @@ public class GatewayControllerTest extends IntegrationTest {
     gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
     gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
 
-    Page<GatewayDto> response = as(context().user)
+    Page<GatewayDto> response = as(context().superAdmin)
       .getPage("/gateways",
         GatewayDto.class);
 
