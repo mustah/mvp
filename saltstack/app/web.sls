@@ -4,12 +4,12 @@ include:
 Install ssl cert:
   file.managed:
     - name: /etc/nginx/cert.crt
-    - source: salt://web/nginx/files/wildcard.elvaco.se.crt
+    - source: salt://certs/files/wildcard.elvaco.se.crt
 
 Install ssl key:
   file.managed:
     - name: /etc/nginx/cert.key
-    - source: salt://web/nginx/files/wildcard.elvaco.se.key
+    - source: salt://certs/files/wildcard.elvaco.se.key
 
 Install nginx config:
   file.managed:
