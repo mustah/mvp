@@ -103,8 +103,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const renderValue = ({value}: Measurement) => value;
     const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({serial}: Gateway) => serial;
-    const hasConfidentPosition: boolean = meterMapMarker.isJust() ?
-      isGeoPositionWithinThreshold(meterMapMarker.get()) : false;
+    const hasConfidentPosition: boolean = meterMapMarker.filter(isGeoPositionWithinThreshold).isJust();
 
     return (
       <Row>
@@ -166,10 +165,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
                   header={<TableHead>{translate('gateway serial')}</TableHead>}
                   renderCell={renderSerial}
                 />
-                {/*<TableColumn*/}
-                {/*header={<TableHead>{translate('latest snr')}</TableHead>}*/}
-                {/*renderCell={renderSignalNoiseRatio}*/}
-                {/*/>*/}
               </Table>
             </Row>
           </TabContent>

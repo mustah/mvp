@@ -39,16 +39,12 @@ class GatewayDetails extends React.Component<Props> {
   componentDidMount() {
     const {fetchGateway, gatewayId, gateway, fetchMeterEntities} = this.props;
     fetchGateway(gatewayId);
-    if (gateway.isJust()) {
-      fetchMeterEntities(gateway.get().meterIds);
-    }
+    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds));
   }
 
   componentWillReceiveProps({fetchGateway, gatewayId, gateway, fetchMeterEntities}: Props) {
     fetchGateway(gatewayId);
-    if (gateway.isJust()) {
-      fetchMeterEntities(gateway.get().meterIds);
-    }
+    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds));
   }
 
   render() {

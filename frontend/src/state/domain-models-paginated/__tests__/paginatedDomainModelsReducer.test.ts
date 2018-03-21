@@ -6,8 +6,8 @@ import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
 import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
-import {getRequestOf} from '../paginatedDomainModelsActions';
-import {getRequestEntityOf} from '../paginatedDomainModelsEntityActions';
+import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
+import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
 import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
@@ -15,7 +15,7 @@ describe('paginatedDomainModelsReducer', () => {
 
   describe('meters, paginated', () => {
 
-    const getRequest = getRequestOf<NormalizedPaginated<Meter>>(EndPoints.meters);
+    const getRequest = makeRequestActionsOf<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 
@@ -156,7 +156,7 @@ describe('paginatedDomainModelsReducer', () => {
     });
 
     it('appends entities if payload is an array', () => {
-      const getMeterEntitiesRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+      const getMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
       const populatedState: MetersState =
         meters(initialState, getRequest.success(normalizedMeters));
 

@@ -9,8 +9,8 @@ import {authenticate} from '../../../../services/restClient';
 import {uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
-import {domainModelPaginatedClearError, getRequestOf} from '../../paginatedDomainModelsActions';
-import {getRequestEntityOf} from '../../paginatedDomainModelsEntityActions';
+import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
+import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
 import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
 import {clearErrorGateways, fetchGateway, fetchGateways} from '../gatewayApiActions';
 import {Gateway, GatewaysState} from '../gatewayModels';
@@ -26,7 +26,7 @@ describe('gatewayApiActions', () => {
   let mockRestClient: MockAdapter;
   let store;
 
-  const getGateways = getRequestOf<NormalizedPaginated<Gateway>>(EndPoints.gateways);
+  const getGateways = makeRequestActionsOf<NormalizedPaginated<Gateway>>(EndPoints.gateways);
 
   beforeEach(() => {
     const initialState: Partial<PaginatedDomainModelsState> = {
@@ -73,7 +73,7 @@ describe('gatewayApiActions', () => {
   });
 
   describe('fetchGateway', () => {
-    const gatewayEntityRequest = getRequestEntityOf<Gateway>(EndPoints.gateways);
+    const gatewayEntityRequest = makeEntityRequestActionsOf<Gateway>(EndPoints.gateways);
     const gateway: Partial<Gateway> = {
       id: 1,
       meterIds: [1, 2, 3],

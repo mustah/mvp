@@ -81,7 +81,7 @@ const shouldFetch = (page: number, {result}: NormalizedPaginatedState<Identifiab
   !result[page]
   || (!result[page].isSuccessfullyFetched && !result[page].isFetching && !result[page].error);
 
-export const getRequestOf = <T>(endPoint: EndPoints): PaginatedRequestHandler<T> => ({
+export const makeRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestHandler<T> => ({
   request: createPayloadAction<string, number>(domainModelsPaginatedRequest(endPoint)),
   success: createPayloadAction<string, T>(domainModelsPaginatedGetSuccess(endPoint)),
   failure: createPayloadAction<string, ErrorResponse & HasPageNumber>(
@@ -102,7 +102,7 @@ export const fetchIfNeeded = <T extends Identifiable>(
       if (shouldFetch(page, paginatedDomainModels[entityType])) {
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, NormalizedPaginated<T>>({
-          ...getRequestOf<NormalizedPaginated<T>>(endPoint),
+          ...makeRequestActionsOf<NormalizedPaginated<T>>(endPoint),
           formatData: (data) => ({...normalize(data, schema), page}),
           requestFunc,
           requestData,

@@ -50,8 +50,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderDate = ({date}: Meter) => date;
     const renderMedium = ({medium}: Meter) => medium;
-    const hasConfidentPosition: boolean = gatewayMapMarker.isJust() ?
-      isGeoPositionWithinThreshold(gatewayMapMarker.get()) : false;
+    const hasConfidentPosition: boolean = gatewayMapMarker.filter(isGeoPositionWithinThreshold).isJust();
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 

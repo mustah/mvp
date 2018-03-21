@@ -85,19 +85,11 @@ class CollectionTabs extends React.Component<Props> {
       <Tabs>
         <TabTopBar>
           <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-            {/*<Tab tab={TabName.overview} title={translate('overview')}/>*/}
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
           <TabSettings/>
         </TabTopBar>
-        {/*<TabContent tab={TabName.overview} selectedTab={selectedTab}>*/}
-        {/*<Loader isFetching={isFetching} error={error} clearError={clearError}>*/}
-        {/*<HasContent hasContent={gatewayDataSummary.isJust()} fallbackContent={noGatewaysFallbackContent}>*/}
-        {/*<CollectionOverview gatewayDataSummary={gatewayDataSummary} setSelection={setSelection}/>*/}
-        {/*</HasContent>*/}
-        {/*</Loader>*/}
-        {/*</TabContent>*/}
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <GatewayListContainer componentId="collectionGatewayList"/>
         </TabContent>
@@ -118,13 +110,11 @@ class CollectionTabs extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (
-  {
-    ui: {pagination, tabs},
-    map,
-    domainModels: {gatewayMapMarkers},
-  }: RootState,
-): StateToProps => {
+const mapStateToProps = ({
+                           ui: {pagination, tabs},
+                           map,
+                           domainModels: {gatewayMapMarkers},
+                         }: RootState): StateToProps => {
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),

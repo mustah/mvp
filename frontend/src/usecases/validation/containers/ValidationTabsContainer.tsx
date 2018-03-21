@@ -35,7 +35,6 @@ import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 
 interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
-  // meterDataSummary: Maybe<MeterDataSummary>;
   meterMapMarkers: DomainModel<MapMarker>;
   selectedMarker: Maybe<uuid>;
   encodedUriParametersForAllMeters: string;
@@ -43,7 +42,6 @@ interface StateToProps extends TabsContainerStateToProps {
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
-  // setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
   fetchAllMeters: Fetch;
   fetchMeterMapMarkers: Fetch;
@@ -89,19 +87,11 @@ class ValidationTabs extends React.Component<Props> {
       <Tabs>
         <TabTopBar>
           <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-            {/*<Tab tab={TabName.overview} title={translate('overview')}/>*/}
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
           <TabSettings/>
         </TabTopBar>
-        {/*<TabContent tab={TabName.overview} selectedTab={selectedTab}>*/}
-        {/*<Loader isFetching={isFetching} error={error} clearError={clearError}>*/}
-        {/*<HasContent hasContent={meterDataSummary.isJust()} fallbackContent={noMetersFallbackContent}>*/}
-        {/*<ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>*/}
-        {/*</HasContent>*/}
-        {/*</Loader>*/}
-        {/*</TabContent>*/}
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <MeterListContainer componentId={'validationMeterList'}/>
         </TabContent>

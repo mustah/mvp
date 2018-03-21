@@ -1,4 +1,5 @@
 import {EndPoints} from '../../../services/endPoints';
+import {processStrategy} from '../../domain-models/selections/selectionsSchemas';
 import {paginationUpdateMetaData} from '../../ui/pagination/paginationActions';
 import {NormalizedPaginated} from '../paginatedDomainModels';
 import {clearError, fetchIfNeeded} from '../paginatedDomainModelsActions';
@@ -13,6 +14,7 @@ export const fetchMeters = fetchIfNeeded<Meter>(EndPoints.meters, meterSchema, '
   ) => dispatch(paginationUpdateMetaData({entityType: 'meters', ...result})),
 });
 
-export const fetchMeter = fetchEntityIfNeeded<Meter>(EndPoints.meters, 'meters');
-export const fetchMeterEntities = fetchEntitiesIfNeeded<Meter>(EndPoints.meters, 'meters');
+export const fetchMeter = fetchEntityIfNeeded<Meter>(EndPoints.meters, 'meters', processStrategy);
+export const fetchMeterEntities = fetchEntitiesIfNeeded<Meter>(EndPoints.meters, 'meters', (data) =>
+  data.map(processStrategy));
 export const clearErrorMeters = clearError(EndPoints.meters);

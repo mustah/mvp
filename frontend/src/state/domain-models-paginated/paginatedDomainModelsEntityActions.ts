@@ -20,7 +20,7 @@ export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints) =>
 
 interface PaginatedRequestEntityHandler<T> {
   request: () => EmptyAction<string>;
-  success: (payload: T | T[]) => PayloadAction<string, T | T[]>;
+  success: (payload: T) => PayloadAction<string, T>;
   failure: (payload: SingleEntityFailure) => PayloadAction<string, SingleEntityFailure>;
 }
 
@@ -31,7 +31,7 @@ interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, 
   id?: uuid;
 }
 
-export const getRequestEntityOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
+export const makeEntityRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
   request: createEmptyAction<string>(domainModelsPaginatedEntityRequest(endPoint)),
   success: createPayloadAction<string, T>(domainModelsPaginatedEntitySuccess(endPoint)),
   failure: createPayloadAction<string, SingleEntityFailure>(domainModelsPaginatedEntityFailure(endPoint)),
@@ -81,6 +81,7 @@ const shouldFetchEntity = (
 export const fetchEntityIfNeeded = <T>(
   endPoint: EndPoints,
   entityType: keyof PaginatedDomainModelsState,
+  formatData: (value: T) => any = (identity) => identity,
 ) =>
   (id: uuid) =>
     (dispatch, getState: GetState) => {
@@ -90,8 +91,9 @@ export const fetchEntityIfNeeded = <T>(
         const requestFunc = () =>
           restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(id.toString())}`));
         return asyncRequestEntities<T>({
-          ...getRequestEntityOf<T>(endPoint),
+          ...makeEntityRequestActionsOf<T>(endPoint),
           requestFunc,
+          formatData: (data) => formatData(data),
           id,
           dispatch,
         });
@@ -114,6 +116,7 @@ const idRequestParams = (ids: uuid[]): string => ids.map((id) => `id=${id.toStri
 export const fetchEntitiesIfNeeded = <T>(
   endPoint: EndPoints,
   entityType: keyof PaginatedDomainModelsState,
+  formatData: (values: T[]) => any = (identity) => identity,
 ) =>
   (ids: uuid[]) =>
     (dispatch, getState: GetState) => {
@@ -122,9 +125,9 @@ export const fetchEntitiesIfNeeded = <T>(
       if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
         const requestFunc = () =>
           restClient.get(makeUrl(`${endPoint}`, idRequestParams(ids)));
-        return asyncRequestEntities<T>({
-          ...getRequestEntityOf<T>(endPoint),
-          formatData: (data) => data.content,
+        return asyncRequestEntities<T[]>({
+          ...makeEntityRequestActionsOf<T[]>(endPoint),
+          formatData: (data) => formatData(data.content),
           requestFunc,
           dispatch,
         });

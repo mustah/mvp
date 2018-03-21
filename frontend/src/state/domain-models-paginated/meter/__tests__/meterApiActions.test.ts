@@ -10,8 +10,8 @@ import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse, uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
-import {domainModelPaginatedClearError, getRequestOf} from '../../paginatedDomainModelsActions';
-import {getRequestEntityOf} from '../../paginatedDomainModelsEntityActions';
+import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
+import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
 import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
 import {clearErrorMeters, fetchMeter, fetchMeterEntities, fetchMeters} from '../meterApiActions';
 import {Meter, MetersState} from '../meterModels';
@@ -32,7 +32,7 @@ describe('meterApiActions', () => {
     },
   };
 
-  const requestMeters = getRequestOf<NormalizedPaginated<Meter>>(EndPoints.meters);
+  const requestMeters = makeRequestActionsOf<NormalizedPaginated<Meter>>(EndPoints.meters);
 
   beforeEach(() => {
     store = configureMockStore(initialRootState);
@@ -202,7 +202,7 @@ describe('meterApiActions', () => {
   });
 
   describe('fetchMeter', () => {
-    const getMeterRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+    const getMeterRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
     const meter: Partial<Meter> = {
       id: 1,
       flags: [],
@@ -255,7 +255,7 @@ describe('meterApiActions', () => {
 
   describe('fetchMeterEntities', () => {
 
-    const fetchMeterEntitiesRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+    const fetchMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
     const meter1: Partial<Meter> = {id: 1};
     const meter2: Partial<Meter> = {id: 2};
     const meter3: Partial<Meter> = {id: 3};
