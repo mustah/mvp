@@ -5,17 +5,10 @@ import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
-import {
-  HasPageNumber,
-  NormalizedPaginated,
-  NormalizedPaginatedState,
-} from '../paginatedDomainModels';
+import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
 import {getRequestOf} from '../paginatedDomainModelsActions';
-import {
-  initialPaginatedDomain,
-  meters,
-  paginatedDomainModels,
-} from '../paginatedDomainModelsReducer';
+import {getRequestEntityOf} from '../paginatedDomainModelsEntityActions';
+import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
   const initialState: MetersState = initialPaginatedDomain<Meter>();
@@ -143,8 +136,7 @@ describe('paginatedDomainModelsReducer', () => {
       ;
 
       const expectedState: NormalizedPaginatedState<Identifiable> = {
-        isFetchingSingle: false,
-        nonExistingSingles: {},
+        ...populatedState,
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
@@ -159,6 +151,28 @@ describe('paginatedDomainModelsReducer', () => {
       const newState = meters(
         populatedState,
         getRequest.success(payload as NormalizedPaginated<Meter>),
+      );
+      expect(newState).toEqual(expectedState);
+    });
+
+    it('appends entities if payload is an array', () => {
+      const getMeterEntitiesRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+      const populatedState: MetersState =
+        meters(initialState, getRequest.success(normalizedMeters));
+
+      const payload: Array<Partial<Meter>> = [
+        {id: 1},
+        {id: 4},
+      ];
+
+      const expectedState: NormalizedPaginatedState<Identifiable> = {
+        ...populatedState,
+        entities: {...populatedState.entities, 1: payload[0] as Meter, 4: payload[1] as Meter},
+      };
+
+      const newState = meters(
+        populatedState,
+        getMeterEntitiesRequest.success(payload as Meter[]),
       );
       expect(newState).toEqual(expectedState);
     });
