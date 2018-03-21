@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -26,35 +26,38 @@ import org.springframework.stereotype.Component;
 @Component
 public class MeasurementDatabaseLoader implements CommandLineRunner {
 
+  private static final int DAYS_TO_ADD = 10;
   private final PhysicalMeters physicalMeters;
   private final Measurements measurements;
   private final Random random = new Random();
-
+  private final SettingUseCases settingUseCases;
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
   @Autowired
   public MeasurementDatabaseLoader(
     PhysicalMeters physicalMeters,
-    Measurements measurements
+    Measurements measurements,
+    SettingUseCases settingUseCases
   ) {
     this.physicalMeters = physicalMeters;
     this.measurements = measurements;
+    this.settingUseCases = settingUseCases;
   }
 
   @Override
   public void run(String... args) {
-    int measurementCount = measurements.findAll(new RequestParametersAdapter()).size();
-
-    if (measurementCount != 0) {
+    if (settingUseCases.isDemoMeasurementsLoaded()) {
       log.info("Demo measurements seems to already be loaded - skipping!");
       return;
     }
     createMeasurementMockData();
+
+    settingUseCases.setDemoMeasurementsLoaded();
   }
 
   private void createMeasurementMockData() {
-    MeasurementUnit measurementUnit = new MeasurementUnit("m3", 2.0);
+    MeasurementUnit measurementUnit = new MeasurementUnit("m^3", 2.0);
     List<PhysicalMeter> meters = physicalMeters.findAll();
 
     for (int x = 0; x < meters.size(); x++) {
@@ -65,9 +68,9 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
       measurementJpaRepository.save(createMeasurements(
         meters.get(x),
         measurementUnit,
-        ZonedDateTime.now().minusMinutes(31 * 1440),
+        ZonedDateTime.now().minusMinutes(DAYS_TO_ADD * 1440),
         meters.get(x).readIntervalMinutes,
-        31 * 1440 / meters.get(x).readIntervalMinutes,
+        DAYS_TO_ADD * 1440 / meters.get(x).readIntervalMinutes,
         isFailing
       ));
       log.info("Saved demo measurements " + x + "/" + meters.size());

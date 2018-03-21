@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -105,10 +106,12 @@ public class LogicalMeterUseCases {
   ) {
     return logicalMeter.withCollectionPercentage(
       getCollectionPercent(logicalMeter.physicalMeters, parameters)
+        .map(a -> a.getCollectionPercentage())
+        .orElse(null)
     );
   }
 
-  private Double getCollectionPercent(
+  static Optional<CollectionStats> getCollectionPercent(
     List<PhysicalMeter> physicalMeters,
     RequestParameters parameters
   ) {
@@ -120,12 +123,12 @@ public class LogicalMeterUseCases {
       double actualReadouts = 0L;
 
       for (PhysicalMeter physicalMeter : physicalMeters) {
-        expectedReadouts = calculateExpectedReadOuts(physicalMeter, after, before);
+        expectedReadouts += calculateExpectedReadOuts(physicalMeter, after, before);
         actualReadouts += physicalMeter.getMeasurementCountOrZero();
       }
-      return actualReadouts / expectedReadouts;
+      return Optional.of(new CollectionStats(actualReadouts, expectedReadouts));
     }
-    return null;
+    return Optional.empty();
   }
 
   private boolean hasTenantAccess(UUID organisationId) {

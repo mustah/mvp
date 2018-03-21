@@ -84,16 +84,7 @@ public class LogicalMeterMapper {
   }
 
   private StatusType getCurrentStatus(List<MeterStatusLog> statusLogs) {
-    //TODO not very nice
-    List<MeterStatusLog> statusLogs2 = statusLogs;
-    if(statusLogs.stream()
-      .findFirst()
-      .map(meterStatusLog -> StatusType.from(meterStatusLog.name))
-      .orElse(StatusType.UNKNOWN) == StatusType.ACTIVE) {
-      statusLogs2 =  statusLogs.subList(1, statusLogs.size());
-    }
-
-    return statusLogs2.stream()
+    return statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> meterStatusLog.status)
       .orElse(StatusType.UNKNOWN);
