@@ -6,12 +6,14 @@ import {testData} from '../../../../__tests__/testDataFactory';
 import {initLanguage} from '../../../../i18n/i18n';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
+import {uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
 import {domainModelPaginatedClearError, getRequestOf} from '../../paginatedDomainModelsActions';
+import {getRequestEntityOf} from '../../paginatedDomainModelsEntityActions';
 import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
-import {clearErrorGateways, fetchGateways} from '../gatewayApiActions';
-import {Gateway} from '../gatewayModels';
+import {clearErrorGateways, fetchGateway, fetchGateways} from '../gatewayApiActions';
+import {Gateway, GatewaysState} from '../gatewayModels';
 import {gatewaySchema} from '../gatewaySchema';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -39,7 +41,7 @@ describe('gatewayApiActions', () => {
     mockRestClient.reset();
   });
 
-  describe('get gateways', () => {
+  describe('fetchGateways', () => {
 
     const page = 0;
 
@@ -67,6 +69,57 @@ describe('gatewayApiActions', () => {
           sort: null,
         }),
       ]);
+    });
+  });
+
+  describe('fetchGateway', () => {
+    const gatewayEntityRequest = getRequestEntityOf<Gateway>(EndPoints.gateways);
+    const gateway: Partial<Gateway> = {
+      id: 1,
+      meterIds: [1, 2, 3],
+    };
+    const fetchGatewayWithResponseOk = async (id: uuid) => {
+      mockRestClient.onGet(`${EndPoints.gateways}/${id.toString()}`).reply(201, gateway);
+      return store.dispatch(fetchGateway(id));
+    };
+
+    it('does not normalize data', async () => {
+      await fetchGatewayWithResponseOk(gateway.id as uuid);
+
+      expect(store.getActions()).toEqual([
+        gatewayEntityRequest.request(),
+        gatewayEntityRequest.success(gateway),
+      ]);
+    });
+    it('does not fetch data if already fetching an entity', async () => {
+      const initialState: Partial<GatewaysState> = {...initialPaginatedDomain(), isFetchingSingle: true};
+      store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
+
+      await fetchGatewayWithResponseOk(gateway.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
+
+    });
+
+    it('does not fetch if entity already already exists in state', async () => {
+      const initialState: Partial<GatewaysState> = {...initialPaginatedDomain(), entities: {1: gateway as Gateway}};
+      store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
+
+      await fetchGatewayWithResponseOk(gateway.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('does not fetch if entity already have been attempted to be fetched but failed', async () => {
+      const initialState: Partial<GatewaysState> = {
+        ...initialPaginatedDomain(),
+        nonExistingSingles: {1: {id: 1, message: 'gateway not found'}},
+      };
+      store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
+
+      await fetchGatewayWithResponseOk(gateway.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
     });
   });
 
