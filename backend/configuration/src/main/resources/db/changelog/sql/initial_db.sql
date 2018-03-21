@@ -29,33 +29,37 @@ CREATE TABLE IF NOT EXISTS organisation (
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
-  id UUID PRIMARY KEY,
+  id UUID,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
-  organisation_id UUID REFERENCES organisation
+  organisation_id UUID REFERENCES organisation,
+  PRIMARY KEY (organisation_id, id)
 );
 
 CREATE TABLE IF NOT EXISTS role (
-  role VARCHAR(255) PRIMARY KEY
+  role TEXT PRIMARY KEY
 );
 
 CREATE TABLE IF NOT EXISTS users_roles (
-  user_id UUID REFERENCES mvp_user,
-  role_id VARCHAR(255) REFERENCES role
+  organisation_id UUID,
+  user_id UUID,
+  role_id TEXT REFERENCES role,
+  FOREIGN KEY (organisation_id, user_id) REFERENCES mvp_user
 );
 
 CREATE TABLE IF NOT EXISTS logical_meter (
-  id UUID PRIMARY KEY,
+  id UUID UNIQUE,
   created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   meter_definition_type BIGINT REFERENCES meter_definition,
   organisation_id UUID NOT NULL REFERENCES organisation,
   external_id TEXT NOT NULL,
+  PRIMARY KEY (organisation_id, id),
   UNIQUE (organisation_id, external_id)
 );
 
 CREATE TABLE IF NOT EXISTS location (
-  logical_meter_id UUID REFERENCES logical_meter ON DELETE CASCADE PRIMARY KEY,
+  logical_meter_id UUID PRIMARY KEY REFERENCES logical_meter(id) ON DELETE CASCADE,
   country TEXT,
   city TEXT,
   street_address TEXT,
@@ -65,28 +69,34 @@ CREATE TABLE IF NOT EXISTS location (
 );
 
 CREATE TABLE IF NOT EXISTS physical_meter (
-  id UUID PRIMARY KEY,
+  id UUID UNIQUE,
   organisation_id UUID REFERENCES organisation,
   address VARCHAR(255) NOT NULL,
   external_id TEXT NOT NULL,
   medium TEXT,
   manufacturer VARCHAR(255),
-  logical_meter_id UUID REFERENCES logical_meter,
+  logical_meter_id UUID,
   read_interval_minutes BIGINT NOT NULL,
+  FOREIGN KEY (organisation_id, logical_meter_id) REFERENCES logical_meter,
+  PRIMARY KEY (organisation_id, id),
   UNIQUE (organisation_id, external_id, address)
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
-  id UUID PRIMARY KEY,
+  id UUID,
+  organisation_id UUID REFERENCES organisation,
   serial TEXT NOT NULL UNIQUE,
   product_model TEXT NOT NULL,
-  organisation_id UUID REFERENCES organisation,
+  PRIMARY KEY (organisation_id, id),
   UNIQUE (organisation_id, serial, product_model)
 );
 
 CREATE TABLE IF NOT EXISTS gateways_meters (
-  logical_meter_id UUID REFERENCES logical_meter,
-  gateway_id UUID REFERENCES gateway
+  organisation_id UUID,
+  logical_meter_id UUID,
+  gateway_id UUID,
+  FOREIGN KEY (organisation_id, logical_meter_id) REFERENCES logical_meter,
+  FOREIGN KEY (organisation_id, gateway_id) REFERENCES gateway
 );
 
 CREATE TABLE IF NOT EXISTS measurement (
@@ -95,7 +105,7 @@ CREATE TABLE IF NOT EXISTS measurement (
     ON UPDATE CASCADE
     ON DELETE CASCADE,
   created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  quantity VARCHAR(255) NOT NULL,
+  quantity TEXT NOT NULL,
   value UNIT NOT NULL,
   UNIQUE (physical_meter_id, created, quantity, value)
 );
@@ -108,11 +118,12 @@ CREATE TABLE IF NOT EXISTS mvp_setting (
 
 CREATE TABLE IF NOT EXISTS physical_meter_status (
   id BIGSERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
+  name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   id BIGSERIAL PRIMARY KEY,
+  -- FIXME: These should be tzranges
   start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   stop TIMESTAMP WITH TIME ZONE,
   status_id BIGINT REFERENCES physical_meter_status (id),

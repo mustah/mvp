@@ -68,6 +68,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "ELV",
       newLogicalMeterEntity(
         "Butter",
+        context().organisation().id,
         MeterDefinitionType.TEST_METER_TYPE_1,
         asList(new QuantityEntity(
           null,
@@ -100,6 +101,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "ELV",
       newLogicalMeterEntity(
         "Milk",
+        wayneIndustriesEntity.id,
         MeterDefinitionType.TEST_METER_TYPE_2,
         singletonList(new QuantityEntity(
           null,
@@ -119,6 +121,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "ELV",
       newLogicalMeterEntity(
         "Vacuum",
+        wayneIndustriesEntity.id,
         MeterDefinitionType.TEST_METER_TYPE_3,
         asList(new QuantityEntity(
           null,
@@ -371,6 +374,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private LogicalMeterEntity newLogicalMeterEntity(
     String medium,
+    UUID organisationId,
     MeterDefinitionType meterDefinitionType,
     List<QuantityEntity> quantityEntities
   ) {
@@ -385,7 +389,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
       UUID.randomUUID(),
       uuid.toString(),
-      context().organisationEntity.id,
+      organisationId,
       ZonedDateTime.now(),
       meterDefinitionEntity
     ));
