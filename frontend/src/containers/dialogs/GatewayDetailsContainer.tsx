@@ -52,12 +52,12 @@ class GatewayDetails extends React.Component<Props> {
   }
 
   render() {
-    if (this.props.gateway.isJust() && this.props.meters.isJust()) {
+    const {gateway, meters} = this.props;
+    if (gateway.isJust() && meters.isJust()) {
       const newProps = {
         ...this.props,
-        gateway: this.props.gateway.get(),
-        gatewayMapMarker: this.props.gatewayMapMarker.get(),
-        meters: this.props.meters.get(),
+        gateway: gateway.get(),
+        meters: meters.get(),
       };
       return (
         <div>

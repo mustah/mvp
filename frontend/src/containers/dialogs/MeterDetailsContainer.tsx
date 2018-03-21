@@ -40,8 +40,8 @@ class MeterDetails extends React.Component<MeterDetailsContainerProps> {
   }
 
   render() {
-    if (this.props.meter.isJust() && this.props.meterMapMarker.isJust()) {
-      const newProps = {...this.props, meter: this.props.meter.get(), meterMapMarker: this.props.meterMapMarker.get()};
+    if (this.props.meter.isJust()) {
+      const newProps = {...this.props, meter: this.props.meter.get()};
       return (
         <div>
           <MeterDetailsInfo {...newProps}/>

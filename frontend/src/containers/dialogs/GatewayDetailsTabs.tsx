@@ -13,6 +13,7 @@ import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../components/texts/Titles';
+import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
@@ -26,7 +27,7 @@ import {normalizedStatusChangelogFor} from './dialogHelper';
 
 interface Props {
   gateway: Gateway;
-  gatewayMapMarker: MapMarker;
+  gatewayMapMarker: Maybe<MapMarker>;
   meters: ObjectsById<Meter>;
 }
 
@@ -49,7 +50,8 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderDate = ({date}: Meter) => date;
     const renderMedium = ({medium}: Meter) => medium;
-    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(gatewayMapMarker);
+    const hasConfidentPosition: boolean = gatewayMapMarker.isJust() ?
+      isGeoPositionWithinThreshold(gatewayMapMarker.get()) : false;
 
     const statusChangelog = normalizedStatusChangelogFor(gateway);
 
@@ -109,7 +111,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               fallbackContent={<MissingDataTitle title={firstUpperTranslated('no reliable position')}/>}
             >
               <Map height={400} viewCenter={gateway.location.position} defaultZoom={7}>
-                <ClusterContainer markers={gatewayMapMarker}/>
+                <ClusterContainer markers={gatewayMapMarker.get()}/>
               </Map>
             </HasContent>
           </TabContent>

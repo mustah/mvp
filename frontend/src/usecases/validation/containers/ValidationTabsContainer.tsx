@@ -19,10 +19,7 @@ import {firstUpperTranslated, translate} from '../../../services/translationServ
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorAllMeters, fetchAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
-import {MeterDataSummary} from '../../../state/domain-models/meter-all/allMetersModels';
-import {getMeterDataSummary} from '../../../state/domain-models/meter-all/allMetersSelectors';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
 import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
@@ -35,11 +32,10 @@ import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
 import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
-import {ValidationOverview} from '../components/ValidationOverview';
 
 interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
-  meterDataSummary: Maybe<MeterDataSummary>;
+  // meterDataSummary: Maybe<MeterDataSummary>;
   meterMapMarkers: DomainModel<MapMarker>;
   selectedMarker: Maybe<uuid>;
   encodedUriParametersForAllMeters: string;
@@ -47,7 +43,7 @@ interface StateToProps extends TabsContainerStateToProps {
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
-  setSelection: OnSelectParameter;
+  // setSelection: OnSelectParameter;
   closeClusterDialog: OnClick;
   fetchAllMeters: Fetch;
   fetchMeterMapMarkers: Fetch;
@@ -77,8 +73,6 @@ class ValidationTabs extends React.Component<Props> {
       error,
       isFetching,
       meterMapMarkers,
-      meterDataSummary,
-      setSelection,
       selectedMarker,
       closeClusterDialog,
     } = this.props;
@@ -95,34 +89,36 @@ class ValidationTabs extends React.Component<Props> {
       <Tabs>
         <TabTopBar>
           <TabHeaders selectedTab={selectedTab} onChangeTab={changeTab}>
-            <Tab tab={TabName.overview} title={translate('overview')}/>
+            {/*<Tab tab={TabName.overview} title={translate('overview')}/>*/}
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
           <TabSettings/>
         </TabTopBar>
-        <TabContent tab={TabName.overview} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <HasContent hasContent={meterDataSummary.isJust()} fallbackContent={noMetersFallbackContent}>
-              <ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>
-            </HasContent>
-          </Loader>
-        </TabContent>
+        {/*<TabContent tab={TabName.overview} selectedTab={selectedTab}>*/}
+        {/*<Loader isFetching={isFetching} error={error} clearError={clearError}>*/}
+        {/*<HasContent hasContent={meterDataSummary.isJust()} fallbackContent={noMetersFallbackContent}>*/}
+        {/*<ValidationOverview meterDataSummary={meterDataSummary} setSelection={setSelection}/>*/}
+        {/*</HasContent>*/}
+        {/*</Loader>*/}
+        {/*</TabContent>*/}
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <MeterListContainer componentId={'validationMeterList'}/>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
-          <div>
-            <HasContent
-              hasContent={isMarkersWithinThreshold(meterMapMarkers.entities) && meterMapMarkers.result.length > 0}
-              fallbackContent={noMetersFallbackContent}
-            >
-              <Map defaultZoom={7}>
-                <ClusterContainer markers={meterMapMarkers.entities}/>
-              </Map>
-            </HasContent>
-            {dialog}
-          </div>
+          <Loader isFetching={isFetching} clearError={clearError} error={error}>
+            <div>
+              <HasContent
+                hasContent={isMarkersWithinThreshold(meterMapMarkers.entities) && meterMapMarkers.result.length > 0}
+                fallbackContent={noMetersFallbackContent}
+              >
+                <Map defaultZoom={7}>
+                  <ClusterContainer markers={meterMapMarkers.entities}/>
+                </Map>
+              </HasContent>
+              {dialog}
+            </div>
+          </Loader>
         </TabContent>
       </Tabs>
     );
@@ -130,14 +126,13 @@ class ValidationTabs extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({ui, searchParameters, map, domainModels: {allMeters, meterMapMarkers}}: RootState): StateToProps => ({
+  ({ui, searchParameters, map, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
     selectedTab: getSelectedTab(ui.tabs.validation),
-    meterDataSummary: getMeterDataSummary(allMeters),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
     encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
-    error: getError(allMeters),
-    isFetching: allMeters.isFetching,
+    error: getError(meterMapMarkers),
+    isFetching: meterMapMarkers.isFetching,
   });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

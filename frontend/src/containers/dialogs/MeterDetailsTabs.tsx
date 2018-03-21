@@ -12,6 +12,7 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {Maybe} from '../../helpers/Maybe';
 import {translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
@@ -69,7 +70,7 @@ interface State {
 
 interface Props {
   meter: Meter;
-  meterMapMarker: MapMarker;
+  meterMapMarker: Maybe<MapMarker>;
 }
 
 export class MeterDetailsTabs extends React.Component<Props, State> {
@@ -102,7 +103,8 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const renderValue = ({value}: Measurement) => value;
     const renderDate = (item: MeterStatusChangelog) => item.start;
     const renderSerial = ({serial}: Gateway) => serial;
-    const hasConfidentPosition: boolean = isGeoPositionWithinThreshold(meterMapMarker);
+    const hasConfidentPosition: boolean = meterMapMarker.isJust() ?
+      isGeoPositionWithinThreshold(meterMapMarker.get()) : false;
 
     return (
       <Row>
@@ -153,7 +155,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
               fallbackContent={<h2 style={{padding: 8}}>{translate('no reliable position')}</h2>}
             >
               <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
-                <ClusterContainer markers={meterMapMarker}/>
+                <ClusterContainer markers={meterMapMarker.get()}/>
               </Map>
             </HasContent>
           </TabContent>
@@ -165,8 +167,8 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
                   renderCell={renderSerial}
                 />
                 {/*<TableColumn*/}
-                  {/*header={<TableHead>{translate('latest snr')}</TableHead>}*/}
-                  {/*renderCell={renderSignalNoiseRatio}*/}
+                {/*header={<TableHead>{translate('latest snr')}</TableHead>}*/}
+                {/*renderCell={renderSignalNoiseRatio}*/}
                 {/*/>*/}
               </Table>
             </Row>

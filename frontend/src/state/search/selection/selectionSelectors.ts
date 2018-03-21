@@ -7,28 +7,10 @@ import {
   encodedUriParametersForMeters,
 } from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {Meter} from '../../domain-models-paginated/meter/meterModels';
-import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
-import {
-  DomainModel,
-  NormalizedState,
-  ObjectsById,
-  SelectionEntity,
-} from '../../domain-models/domainModels';
-import {
-  getEntitiesDomainModels,
-  getResultDomainModels,
-} from '../../domain-models/domainModelsSelectors';
-import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
-import {getPagination} from '../../ui/pagination/paginationSelectors';
+import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
+import {Pagination} from '../../ui/pagination/paginationModels';
 import {SearchParameterState} from '../searchParameterReducer';
-import {
-  LookupState,
-  ParameterName,
-  SelectedParameters,
-  SelectionListItem,
-  SelectionState,
-} from './selectionModels';
+import {LookupState, ParameterName, SelectedParameters, SelectionListItem, SelectionState} from './selectionModels';
 import {initialState} from './selectionReducer';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;

@@ -9,7 +9,7 @@ const listTab: SelectedTabs = {
 
 export const initialState: TabsState = {
   validation: {...listTab},
-  collection: {selectedTab: TabName.list},
+  collection: {...listTab},
 };
 
 type ActionType = Action<TabSelection> | EmptyAction<string>;
