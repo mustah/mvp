@@ -89,4 +89,9 @@ public class RequestParametersAdapter implements RequestParameters {
   public MultiValueMap<String, String> multiValueMap() {
     return delegate;
   }
+
+  @Override
+  public String toString() {
+    return entrySet().toString();
+  }
 }
