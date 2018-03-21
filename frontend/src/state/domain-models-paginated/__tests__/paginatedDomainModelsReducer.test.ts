@@ -4,7 +4,7 @@ import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
-import {Meter} from '../meter/meterModels';
+import {Meter, MetersState} from '../meter/meterModels';
 import {
   HasPageNumber,
   NormalizedPaginated,
@@ -18,7 +18,7 @@ import {
 } from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
-  const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
+  const initialState: MetersState = initialPaginatedDomain<Meter>();
 
   describe('meters, paginated', () => {
 
@@ -87,7 +87,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('requests meters', () => {
       const stateAfterRequestInitiation = meters(initialState, getRequest.request(page));
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
         ...initialState,
         result: {
           [page]: {isFetching: true, isSuccessfullyFetched: false},
@@ -98,7 +98,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('adds new meter to state', () => {
       const newState = meters(initialState, getRequest.success(normalizedMeters));
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
         isFetchingSingle: false,
         nonExistingSingles: {},
         entities: {...normalizedMeters.entities.meters},
@@ -115,7 +115,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('appends entities', () => {
 
-      const populatedState: NormalizedPaginatedState<Meter> =
+      const populatedState: MetersState =
         meters(initialState, getRequest.success(normalizedMeters));
 
       const anotherPage = 2;
@@ -186,7 +186,7 @@ describe('paginatedDomainModelsReducer', () => {
   describe('clear error', () => {
     it('clears error from a page', () => {
       const payload: HasPageNumber = {page: 1};
-      const errorState: NormalizedPaginatedState<Meter> = {
+      const errorState: MetersState = {
         isFetchingSingle: false,
         nonExistingSingles: {},
         entities: {},
@@ -200,7 +200,7 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
 
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
         ...errorState,
         result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false}},
       };

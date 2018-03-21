@@ -2,21 +2,19 @@ import {Maybe} from '../../../helpers/Maybe';
 import {uuid} from '../../../types/Types';
 import {ObjectsById} from '../../domain-models/domainModels';
 import {Gateway} from '../gateway/gatewayModels';
-import {NormalizedPaginatedState} from '../paginatedDomainModels';
-import {Meter} from './meterModels';
+import {Meter, MetersState} from './meterModels';
 
-export const getMeter = ({entities}: NormalizedPaginatedState<Meter>, id: uuid): Maybe<Meter> =>
+export const getMeter = ({entities}: MetersState, id: uuid): Maybe<Meter> =>
   Maybe.maybe(entities[id]);
 
-export const getMetersByGateway = (
-  {entities}: NormalizedPaginatedState<Meter>,
-  gateway: Maybe<Gateway>,
-): Maybe<ObjectsById<Meter>> => {
+export const getMetersByGateway = ({entities}: MetersState, gateway: Maybe<Gateway>): Maybe<ObjectsById<Meter>> => {
+  const allMetersExistInState = (prev, curr) => prev && !!entities[curr];
   return (
-    gateway.flatMap(({meterIds}) => meterIds.reduce((
-      prev,
-      curr,
-    ) => prev && !!entities[curr], true) ? Maybe.just(toMeterDict(meterIds, entities)) : Maybe.nothing()));
+    gateway.flatMap(({meterIds}) =>
+      meterIds.reduce(allMetersExistInState, true) ?
+        Maybe.just(toMeterDict(meterIds, entities))
+        : Maybe.nothing()));
 };
 
-const toMeterDict = (ids, entities) => ids.reduce((prev, curr) => ({...prev, [curr]: entities[curr]}), {});
+const toMeterDict = (ids: uuid[], entities: ObjectsById<Meter>) =>
+  ids.reduce((prev, curr) => ({...prev, [curr]: entities[curr]}), {});

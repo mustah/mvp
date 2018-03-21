@@ -20,12 +20,13 @@ export const domainModelsPaginatedEntityFailure = (endPoint: EndPoints) =>
 
 interface PaginatedRequestEntityHandler<T> {
   request: () => EmptyAction<string>;
-  success: (payload) => PayloadAction<string, T>;
-  failure: (payload) => PayloadAction<string, SingleEntityFailure>;
+  success: (payload: T | T[]) => PayloadAction<string, T | T[]>;
+  failure: (payload: SingleEntityFailure) => PayloadAction<string, SingleEntityFailure>;
 }
 
 interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, RequestCallbacks<DATA> {
   requestFunc: () => any;
+  formatData?: (response) => any;
   dispatch: Dispatch<RootState>;
   id?: uuid;
 }
@@ -44,15 +45,17 @@ const asyncRequestEntities = async <DAT>(
     afterSuccess,
     afterFailure,
     requestFunc,
-    id,
+    formatData = (identity) => identity,
+    id = -1,
     dispatch,
   }: AsyncRequestEntity<DAT>) => {
   try {
     dispatch(request());
-    const {data: entityData} = await requestFunc();
-    dispatch(success(entityData));
+    const {data} = await requestFunc();
+    const formattedData = formatData(data);
+    dispatch(success(formattedData));
     if (afterSuccess) {
-      afterSuccess(entityData, dispatch);
+      afterSuccess(formattedData, dispatch);
     }
   } catch (error) {
     if (error instanceof InvalidToken) {
@@ -105,9 +108,9 @@ const shouldFetchEntities = (
   return isMissingEntity && !isFetchingSingle;
 };
 
+// TODO: Move this to url-factory and write tests
 const idRequestParams = (ids: uuid[]): string => ids.map((id) => `id=${id.toString()}`).join('&');
 
-// TODO: Try to come up with a better way then concatinating with /all in requestFunc.
 export const fetchEntitiesIfNeeded = <T>(
   endPoint: EndPoints,
   entityType: keyof PaginatedDomainModelsState,
@@ -118,9 +121,10 @@ export const fetchEntitiesIfNeeded = <T>(
 
       if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
         const requestFunc = () =>
-          restClient.get(makeUrl(`${endPoint}/all`, idRequestParams(ids)));
+          restClient.get(makeUrl(`${endPoint}`, idRequestParams(ids)));
         return asyncRequestEntities<T>({
           ...getRequestEntityOf<T>(endPoint),
+          formatData: (data) => data.content,
           requestFunc,
           dispatch,
         });

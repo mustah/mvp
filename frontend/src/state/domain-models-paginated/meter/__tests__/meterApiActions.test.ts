@@ -7,12 +7,14 @@ import {initLanguage} from '../../../../i18n/i18n';
 import {RootState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
-import {ErrorResponse} from '../../../../types/Types';
+import {ErrorResponse, uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
 import {domainModelPaginatedClearError, getRequestOf} from '../../paginatedDomainModelsActions';
-import {clearErrorMeters, fetchMeters} from '../meterApiActions';
-import {Meter} from '../meterModels';
+import {getRequestEntityOf} from '../../paginatedDomainModelsEntityActions';
+import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
+import {clearErrorMeters, fetchMeter, fetchMeterEntities, fetchMeters} from '../meterApiActions';
+import {Meter, MetersState} from '../meterModels';
 import {meterSchema} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
@@ -42,7 +44,7 @@ describe('meterApiActions', () => {
     mockRestClient.reset();
   });
 
-  describe('fetch meters from /meters', () => {
+  describe('fetchMeters', () => {
     const page = 0;
     const meter1: MeterDto = makeMeterDto(
       1,
@@ -197,6 +199,125 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
+  });
+
+  describe('fetchMeter', () => {
+    const getMeterRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+    const meter: Partial<Meter> = {
+      id: 1,
+      flags: [],
+    };
+
+    const fetchMeterWithResponseOk = async (id: uuid) => {
+      mockRestClient.onGet(`${EndPoints.meters}/${id.toString()}`).reply(201, meter);
+      return store.dispatch(fetchMeter(id));
+    };
+
+    it('does not normalize response', async () => {
+      await fetchMeterWithResponseOk(meter.id as uuid);
+
+      expect(store.getActions()).toEqual([
+        getMeterRequest.request(),
+        getMeterRequest.success(meter as Meter[]),
+      ]);
+    });
+
+    it('does not fetch if already fetching entity', async () => {
+      const initialState: MetersState = {...initialPaginatedDomain(), isFetchingSingle: true};
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterWithResponseOk(meter.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('does not fetch is entity already exist in state', async () => {
+      const initialState: MetersState = {...initialPaginatedDomain(), entities: {1: meter as Meter}};
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterWithResponseOk(meter.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('does not fetch if entity have been attempted to be fetched but failed', async () => {
+      const initialState: MetersState = {
+        ...initialPaginatedDomain(),
+        nonExistingSingles: {1: {id: 1, message: 'meter does not exist'}},
+      };
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterWithResponseOk(meter.id as uuid);
+
+      expect(store.getActions()).toEqual([]);
+    });
+  });
+
+  describe('fetchMeterEntities', () => {
+
+    const fetchMeterEntitiesRequest = getRequestEntityOf<Meter>(EndPoints.meters);
+    const meter1: Partial<Meter> = {id: 1};
+    const meter2: Partial<Meter> = {id: 2};
+    const meter3: Partial<Meter> = {id: 3};
+    const meters: Array<Partial<Meter>> = [
+      meter1,
+      meter2,
+      meter3,
+    ];
+
+    const meterIds: uuid[] = [1, 2, 3];
+
+    const fetchMeterEntitiesWithResponseOk = async (ids: uuid[]) => {
+      mockRestClient
+        .onGet(`${EndPoints.meters}?id=${meterIds[0]}&id=${meterIds[1]}&id=${meterIds[2]}`)
+        .reply(201, {content: meters});
+
+      return store.dispatch(fetchMeterEntities(ids));
+    };
+
+    it('does not normalize data', async () => {
+      await fetchMeterEntitiesWithResponseOk(meterIds);
+
+      expect(store.getActions()).toEqual([
+        fetchMeterEntitiesRequest.request(),
+        fetchMeterEntitiesRequest.success(meters as Meter[]),
+      ]);
+    });
+    it('does not fetch if already fetching', async () => {
+      const initialState: MetersState = {...initialPaginatedDomain(), isFetchingSingle: true};
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterEntitiesWithResponseOk(meterIds);
+
+      expect(store.getActions()).toEqual([]);
+    });
+
+    it('fetches even if a fraction of the requested entities already exist in state', async () => {
+      const initialState: MetersState = {
+        ...initialPaginatedDomain(),
+        entities: {1: meter1 as Meter, 2: meter2 as Meter},
+      };
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterEntitiesWithResponseOk(meterIds);
+
+      expect(store.getActions()).toEqual([
+        fetchMeterEntitiesRequest.request(),
+        fetchMeterEntitiesRequest.success(meters as Meter[]),
+      ]);
+    });
+
+    it('does not fetch is all entities already exist in state', async () => {
+      const initialState: MetersState = {
+        ...initialPaginatedDomain(),
+        entities: {1: meter1 as Meter, 2: meter2 as Meter, 3: meter3 as Meter},
+      };
+      store = configureMockStore({paginatedDomainModels: {meters: initialState}});
+
+      await fetchMeterEntitiesWithResponseOk(meterIds);
+
+      expect(store.getActions()).toEqual([]);
+    });
   });
 
   describe('clear error', () => {

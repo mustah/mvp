@@ -2,10 +2,10 @@ import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {SortingOptions} from '../ui/pagination/paginationModels';
 import {GatewaysState} from './gateway/gatewayModels';
-import {Meter} from './meter/meterModels';
+import {MetersState} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
-  meters: NormalizedPaginatedState<Meter>;
+  meters: MetersState;
   gateways: GatewaysState;
 }
 

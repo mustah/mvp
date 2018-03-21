@@ -88,7 +88,7 @@ describe('gatewayApiActions', () => {
 
       expect(store.getActions()).toEqual([
         gatewayEntityRequest.request(),
-        gatewayEntityRequest.success(gateway),
+        gatewayEntityRequest.success(gateway as Gateway),
       ]);
     });
     it('does not fetch data if already fetching an entity', async () => {
