@@ -6,53 +6,53 @@ import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
+import {getEncodedUriParametersForAllMeters} from '../state/search/selection/selectionSelectors';
+import {fetchSummary} from '../state/summary/summaryApiActions';
+import {SelectionSummary} from '../state/summary/summaryModels';
+import {getSelectionSummary} from '../state/summary/summarySelection';
 import {Fetch} from '../types/Types';
-import {fetchAllMeters} from '../state/domain-models/meter-all/allMetersApiActions';
-import {SelectionSummary} from '../state/search/selection/selectionModels';
-import {getEncodedUriParametersForAllMeters, getSelectionSummary} from '../state/search/selection/selectionSelectors';
 
 interface StateToProps {
   selectionSummary: SelectionSummary;
-  encodedUriParametersForAllMeters: string;
+  parameters: string;
 }
 
 interface DispatchToProps {
-  fetchAllMeters: Fetch;
+  fetchSummary: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps;
 
 class SummaryComponent extends React.Component<Props> {
+
   componentDidMount() {
-    const {fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
-    fetchAllMeters(encodedUriParametersForAllMeters);
+    const {fetchSummary, parameters} = this.props;
+    fetchSummary(parameters);
   }
 
-  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
-    fetchAllMeters(encodedUriParametersForAllMeters);
+  componentWillReceiveProps({fetchSummary, parameters}: Props) {
+    fetchSummary(parameters);
   }
 
   render() {
-    const {selectionSummary: {cities, addresses, meters}} = this.props;
+    const {selectionSummary: {numMeters, numCities, numAddresses}} = this.props;
     return (
       <Row className="SummaryContainer">
-        <Summary title={translate('city', {count: cities})} count={cities}/>
-        <Summary title={translate('address', {count: addresses})} count={addresses}/>
-        <Summary title={translate('meter', {count: meters})} count={meters}/>
+        <Summary title={translate('city', {count: numCities})} count={numCities}/>
+        <Summary title={translate('address', {count: numAddresses})} count={numAddresses}/>
+        <Summary title={translate('meter', {count: numMeters})} count={numMeters}/>
       </Row>
     );
   }
 }
 
-const mapStateToProps = ({domainModels: {allMeters}, searchParameters}: RootState): StateToProps => {
-  return {
-    selectionSummary: getSelectionSummary(allMeters),
-    encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
-  };
-};
+const mapStateToProps = ({searchParameters, summary}: RootState): StateToProps => ({
+  selectionSummary: getSelectionSummary(summary),
+  parameters: getEncodedUriParametersForAllMeters(searchParameters),
+});
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchAllMeters,
+  fetchSummary,
 }, dispatch);
 
 export const SummaryContainer =

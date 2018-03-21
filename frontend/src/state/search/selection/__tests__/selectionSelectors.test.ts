@@ -1,10 +1,9 @@
 import {normalize} from 'normalizr';
-import {makeMeter, testData} from '../../../../__tests__/testDataFactory';
+import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {EndPoints} from '../../../../services/endPoints';
 import {IdNamed} from '../../../../types/Types';
-import {Meter} from '../../../domain-models-paginated/meter/meterModels';
-import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../../../domain-models/domainModels';
+import {DomainModelsState, Normalized, SelectionEntity} from '../../../domain-models/domainModels';
 import {getRequestOf} from '../../../domain-models/domainModelsActions';
 import {
   addresses,
@@ -27,7 +26,6 @@ import {
   SelectionListItem,
   SelectionParameter,
   SelectionState,
-  SelectionSummary,
 } from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {
@@ -35,7 +33,6 @@ import {
   getEncodedUriParametersForMeters,
   getSelectedPeriod,
   getSelection,
-  getSelectionSummary,
   UriLookupStatePaginated,
 } from '../selectionSelectors';
 
@@ -187,48 +184,6 @@ describe('selectionSelectors', () => {
       ];
 
       expect(getCities(state)).toEqual(stockholmSelected);
-    });
-
-  });
-
-  describe('summary of meters in selection', () => {
-
-    const emptySelection = (): SelectionSummary => ({addresses: 0, cities: 0, meters: 0});
-
-    it('handles an empty selection', () => {
-      const meterState: NormalizedState<Meter> = {
-        isFetching: false,
-        isSuccessfullyFetched: false,
-        total: 0,
-        result: [],
-        entities: {},
-      };
-
-      const summary = getSelectionSummary(meterState);
-      expect(summary).toEqual(emptySelection());
-    });
-
-    it('groups meters into cities and addresses', () => {
-      const meterState: NormalizedState<Meter> = {
-        isFetching: false,
-        isSuccessfullyFetched: true,
-        total: 4,
-        result: ['1', '2', '3', '4'],
-        entities: {
-          1: makeMeter(1, {id: 1, name: 'Helsingborg'}, {id: 1, name: 'Storgatan 5'}),
-          2: makeMeter(2, {id: 1, name: 'Helsingborg'}, {id: 2, name: 'Storgatan 6'}),
-          3: makeMeter(3, {id: 2, name: 'Luleå'}, {id: 3, name: 'Ringvägen 7'}),
-          4: makeMeter(4, {id: 2, name: 'Luleå'}, {id: 3, name: 'Ringvägen 7'}),
-        },
-      };
-
-      const selection = emptySelection();
-      selection.meters = 4;
-      selection.cities = 2;
-      selection.addresses = 3;
-
-      const summary = getSelectionSummary(meterState);
-      expect(summary).toEqual(selection);
     });
 
   });

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {PayloadAction} from 'react-redux-typescript';
+import {createEmptyAction, createPayloadAction, PayloadAction} from 'react-redux-typescript';
+import {EmptyAction} from 'ts-redux-actions';
 import {Maybe} from '../helpers/Maybe';
 
 export type uuid = string | number;
@@ -9,7 +10,7 @@ export type OnClickWithId = (id: uuid) => void;
 export type Callback = () => void;
 export type RenderFunction<T> = (props: T) => Children;
 
-export type Fetch = (requestModel?: string) => void;
+export type Fetch = (parameters?: string) => void;
 export type ClearError = () => void;
 
 export type Predicate<T> = (value: T) => boolean;
@@ -22,6 +23,11 @@ export type Children = ItemOrArray<React.ReactNode>;
  * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
  */
 export type Action<P> = PayloadAction<string, P>;
+export type OnPayloadAction<P> = (payload: P) => Action<P>;
+export type OnEmptyAction = () => EmptyAction<string>;
+
+export const payloadActionOf = <P>(type: string): OnPayloadAction<P> => createPayloadAction(type);
+export const emptyActionOf = (type: string): OnEmptyAction => createEmptyAction(type);
 
 export interface Dictionary<T> {
   [key: string]: T;

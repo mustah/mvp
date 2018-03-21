@@ -43,7 +43,6 @@ const addSelected = (state: SelectionState, {payload: {parameter, id}}: Action<S
 };
 
 const setSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
-
   const selected = Array.isArray(id) ? [...id] : [id];
   return {
     ...state,

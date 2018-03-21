@@ -30,6 +30,7 @@ export const deleteOrganisation = deleteRequest<Organisation>(EndPoints.organisa
     },
   },
 );
+
 export const addOrganisation = postRequest<Organisation>(EndPoints.organisations, {
   afterSuccess: (organisation: Organisation, dispatch: Dispatch<RootState>) => {
     dispatch(showSuccessMessage(

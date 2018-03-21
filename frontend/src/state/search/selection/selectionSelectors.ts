@@ -7,18 +7,8 @@ import {
   encodedUriParametersForMeters,
 } from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {Meter} from '../../domain-models-paginated/meter/meterModels';
 import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
-import {
-  DomainModel,
-  NormalizedState,
-  ObjectsById,
-  SelectionEntity,
-} from '../../domain-models/domainModels';
-import {
-  getEntitiesDomainModels,
-  getResultDomainModels,
-} from '../../domain-models/domainModelsSelectors';
+import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
 import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
 import {getPagination} from '../../ui/pagination/paginationSelectors';
 import {SearchParameterState} from '../searchParameterReducer';
@@ -28,7 +18,6 @@ import {
   SelectedParameters,
   SelectionListItem,
   SelectionState,
-  SelectionSummary,
 } from './selectionModels';
 import {initialState} from './selectionReducer';
 
@@ -43,13 +32,19 @@ const getSelectedEntityIdsSelector = (entityType: string) =>
     (selectedParameters: SelectedParameters) => selectedParameters[entityType],
   );
 
-const arrayDiff = <T>(superSet: T[], subSet: T[]): T[] => superSet.filter((a) => !subSet.includes(a));
+const arrayDiff = <T>(
+  superSet: T[],
+  subSet: T[],
+): T[] => superSet.filter((a) => !subSet.includes(a));
 
 const deselectedIdsSelector = (entityType: string) =>
   createSelector<LookupState, DomainModel<SelectionEntity>, SelectedParameters, uuid[]>(
     getSelectionGroup(entityType),
     getSelectedIds,
-    ({result}: DomainModel<SelectionEntity>, selected: SelectedParameters) => arrayDiff(result, selected[entityType]),
+    ({result}: DomainModel<SelectionEntity>, selected: SelectedParameters) => arrayDiff(
+      result,
+      selected[entityType],
+    ),
   );
 
 const getDeselectedEntities = (entityType: string) =>
@@ -69,7 +64,10 @@ const getSelectedEntities = (entityType: string) =>
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
 
-type ListResultCombiner = (selected: SelectionEntity[], deselected: SelectionEntity[]) => SelectionListItem[];
+type ListResultCombiner = (
+  selected: SelectionEntity[],
+  deselected: SelectionEntity[],
+) => SelectionListItem[];
 
 type ListSelector = OutputSelector<LookupState, SelectionListItem[], ListResultCombiner>;
 
@@ -105,7 +103,9 @@ export const getAlarms = getList(ParameterName.alarms);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export type UriLookupStatePaginated = SearchParameterState & PaginationLookupState<PaginatedDomainModelsState>;
+export type UriLookupStatePaginated =
+  SearchParameterState
+  & PaginationLookupState<PaginatedDomainModelsState>;
 
 export const getEncodedUriParametersForMeters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
@@ -137,25 +137,3 @@ export const getSavedSelections = createSelector<SearchParameterState, Selection
 );
 
 export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
-
-export const getSelectionSummary =
-  createSelector<NormalizedState<Meter>, uuid[], ObjectsById<Meter>, SelectionSummary>(
-    getResultDomainModels,
-    getEntitiesDomainModels,
-    (metersIds: uuid[], meters: ObjectsById<Meter>) => {
-      const cities = new Set<uuid>();
-      const addresses = new Set<uuid>();
-
-      metersIds.map((meterId: uuid) => {
-          const {location: {city, address}} = meters[meterId];
-          cities.add(city.id);
-          addresses.add(address.id);
-        },
-      );
-      return ({
-        cities: cities.size,
-        addresses: addresses.size,
-        meters: metersIds.length,
-      });
-    },
-  );

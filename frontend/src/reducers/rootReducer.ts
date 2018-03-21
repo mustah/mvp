@@ -4,7 +4,9 @@ import {PaginatedDomainModelsState} from '../state/domain-models-paginated/pagin
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
+import {SummaryState} from '../state/summary/summaryModels';
 import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
+import {summary} from '../state/summary/summaryReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {LOGOUT_USER} from '../usecases/auth/authActions';
 import {AuthState} from '../usecases/auth/authModels';
@@ -20,6 +22,7 @@ export interface RootState {
   auth: AuthState;
   domainModels: DomainModelsState;
   paginatedDomainModels: PaginatedDomainModelsState;
+  summary: SummaryState;
   dashboard: DashboardState;
   routing: RouterState;
   report: ReportState;
@@ -42,6 +45,7 @@ const appReducer = combineReducers<AppState>({
   report,
   language,
   searchParameters,
+  summary,
   ui,
   map,
 });
