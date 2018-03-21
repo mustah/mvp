@@ -58,9 +58,3 @@ export type OnSelectPeriod = (period: Period) => void;
 export type OnSelectSelection = (selection: SelectionState) => void;
 
 export type SelectionListItem = SelectionEntity & {selected: boolean};
-
-export interface SelectionSummary {
-  cities: number;
-  addresses: number;
-  meters: number;
-}
