@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -9,6 +10,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
 
 import org.junit.After;
 import org.junit.Before;
@@ -113,5 +115,30 @@ public class GatewayControllerTest extends IntegrationTest {
       .collect(toList());
 
     assertThat(gatewayIds).containsOnly(g1.id.toString(), g2.id.toString());
+  }
+
+  @Test
+  public void superUserCanGetSingleGateway() {
+    UUID gatewayId = randomUUID();
+    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+
+    ResponseEntity<GatewayDto> response = as(context().superAdmin)
+      .get("/gateways/" + gatewayId, GatewayDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().id).isEqualTo(gatewayId.toString());
+  }
+
+  @Test
+  public void mapDataIncludesGatewaysWithoutLocation() {
+    UUID gatewayId = randomUUID();
+    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+
+    ResponseEntity<List<MapMarkerDto>> response = as(context().superAdmin)
+      .getList("/gateways/map-data", MapMarkerDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(1);
+    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId.toString());
   }
 }
