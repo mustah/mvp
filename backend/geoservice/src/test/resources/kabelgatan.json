@@ -1,0 +1,57 @@
+{
+	"geocoding_results": {
+		"LEGAL_COPYRIGHT": {
+			"copyright_notice": "Copyright (c) 2018 Geocode.Farm - All Rights Reserved.",
+			"copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+			"terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+			"privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+		},
+		"STATUS": {
+			"access": "FREE_USER, ACCESS_GRANTED",
+			"status": "SUCCESS",
+			"address_provided": "Kabelgatan 2T Kungsbacka Sweden",
+			"result_count": 1
+		},
+		"ACCOUNT": {
+			"ip_address": "85.24.224.66",
+			"distribution_license": "NONE, UNLICENSED",
+			"usage_limit": "250",
+			"used_today": "6",
+			"used_total": "6",
+			"first_used": "05 Mar 2018"
+		},
+		"RESULTS": [
+			{
+				"result_number": 1,
+				"formatted_address": "Kabelgatan 2t, 434 37 Kungsbacka, Sweden",
+				"accuracy": "EXACT_MATCH",
+				"ADDRESS": {
+					"street_number": "2t",
+					"street_name": "Kabelgatan",
+					"admin_1": "Hallands län",
+					"postal_code": "434 37",
+					"country": "Sweden"
+				},
+				"LOCATION_DETAILS": {
+					"elevation": "UNAVAILABLE",
+					"timezone_long": "UNAVAILABLE",
+					"timezone_short": "Europe\/Stockholm"
+				},
+				"COORDINATES": {
+					"latitude": "57.5052694216628",
+					"longitude": "12.0694219774545"
+				},
+				"BOUNDARIES": {
+					"northeast_latitude": "57.5052694216628",
+					"northeast_longitude": "12.0694219774545",
+					"southwest_latitude": "57.5039174197942",
+					"southwest_longitude": "12.0680757197197"
+				}
+			}
+		],
+		"STATISTICS": {
+			"https_ssl": "ENABLED, SECURE",
+			"time_taken": "0.50950694084167"
+		}
+	}
+}

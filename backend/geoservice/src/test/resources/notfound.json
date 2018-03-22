@@ -1,0 +1,26 @@
+{
+	"geocoding_results": {
+		"LEGAL_COPYRIGHT": {
+			"copyright_notice": "Copyright (c) 2018 Geocode.Farm - All Rights Reserved.",
+			"copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+			"terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+			"privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+		},
+		"STATUS": {
+			"access": "FREE_USER, ACCESS_GRANTED",
+			"status": "FAILED, NO_RESULTS"
+		},
+		"ACCOUNT": {
+			"ip_address": "85.24.224.66",
+			"distribution_license": "NONE, UNLICENSED",
+			"usage_limit": "250",
+			"used_today": "9",
+			"used_total": "15",
+			"first_used": "05 Mar 2018"
+		},
+		"STATISTICS": {
+			"https_ssl": "ENABLED, SECURE",
+			"time_taken": "0.7409930229187"
+		}
+	}
+}
