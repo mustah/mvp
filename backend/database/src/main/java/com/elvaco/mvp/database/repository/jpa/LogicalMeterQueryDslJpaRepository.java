@@ -7,48 +7,27 @@ import javax.persistence.EntityManager;
 
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
-import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
-import org.springframework.data.jpa.repository.support.QueryDslJpaRepository;
-import org.springframework.data.jpa.repository.support.Querydsl;
-import org.springframework.data.querydsl.EntityPathResolver;
-import org.springframework.data.querydsl.SimpleEntityPathResolver;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @NoRepositoryBean
 public class LogicalMeterQueryDslJpaRepository
-  extends QueryDslJpaRepository<LogicalMeterEntity, UUID>
+  extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
-  private final EntityPath<LogicalMeterEntity> path;
-  private final Querydsl querydsl;
-
   public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
-    this(entityManager, SimpleEntityPathResolver.INSTANCE);
-  }
-
-  private LogicalMeterQueryDslJpaRepository(
-    EntityManager entityManager,
-    EntityPathResolver resolver
-  ) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
       entityManager
-    );
-    this.path = resolver.createPath(LogicalMeterEntity.class);
-    this.querydsl = new Querydsl(
-      entityManager,
-      new PathBuilder<>(path.getType(), path.getMetadata())
     );
   }
 
