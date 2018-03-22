@@ -7,18 +7,10 @@ import {
   encodedUriParametersForMeters,
 } from '../../../helpers/urlFactory';
 import {IdNamed, uuid} from '../../../types/Types';
-import {PaginatedDomainModelsState} from '../../domain-models-paginated/paginatedDomainModels';
 import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
-import {Pagination, PaginationLookupState} from '../../ui/pagination/paginationModels';
-import {getPagination} from '../../ui/pagination/paginationSelectors';
+import {Pagination} from '../../ui/pagination/paginationModels';
 import {SearchParameterState} from '../searchParameterReducer';
-import {
-  LookupState,
-  ParameterName,
-  SelectedParameters,
-  SelectionListItem,
-  SelectionState,
-} from './selectionModels';
+import {LookupState, ParameterName, SelectedParameters, SelectionListItem, SelectionState} from './selectionModels';
 import {initialState} from './selectionReducer';
 
 const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
@@ -103,13 +95,13 @@ export const getAlarms = getList(ParameterName.alarms);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export type UriLookupStatePaginated =
-  SearchParameterState
-  & PaginationLookupState<PaginatedDomainModelsState>;
+export interface UriLookupStatePaginated extends SearchParameterState {
+  pagination: Pagination;
+}
 
 export const getEncodedUriParametersForMeters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
-    getPagination,
+    ({pagination}) => pagination,
     getSelectedParameters,
     encodedUriParametersForMeters,
   );
@@ -121,7 +113,8 @@ export const getEncodedUriParametersForAllMeters =
   );
 
 export const getEncodedUriParametersForGateways =
-  createSelector<SearchParameterState, SelectedParameters, string>(
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, string>(
+    ({pagination}) => pagination,
     getSelectedParameters,
     encodedUriParametersForGateways,
   );

@@ -7,12 +7,15 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import static java.util.stream.Collectors.toList;
 
+@ToString
 public class MvpUserDetails implements UserDetails, AuthenticatedUser {
 
   private static final long serialVersionUID = -7344530747327091472L;

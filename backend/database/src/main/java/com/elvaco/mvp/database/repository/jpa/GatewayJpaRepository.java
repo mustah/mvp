@@ -5,9 +5,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface GatewayJpaRepository extends JpaRepository<GatewayEntity, Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QueryDslPredicateExecutor;
+
+public interface GatewayJpaRepository extends JpaRepository<GatewayEntity, Long>,
+  QueryDslPredicateExecutor<GatewayEntity> {
 
   List<GatewayEntity> findAllByOrganisationId(UUID organisationId);
 
@@ -16,4 +19,8 @@ public interface GatewayJpaRepository extends JpaRepository<GatewayEntity, Long>
     String productModel,
     String serial
   );
+
+  Optional<GatewayEntity> findById(UUID id);
+
+  Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
 }

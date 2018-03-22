@@ -1,17 +1,30 @@
 package com.elvaco.mvp.web.api;
 
 import java.util.List;
+import java.util.Map;
 
+import com.elvaco.mvp.adapters.spring.PageableAdapter;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.exception.GatewayNotFound;
 import com.elvaco.mvp.web.mapper.GatewayMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
 @RestApi("/v1/api/gateways")
@@ -32,7 +45,7 @@ public class GatewayController {
     this.currentUser = currentUser;
   }
 
-  @GetMapping
+  @GetMapping("/all")
   public List<GatewayDto> findAllGateways() {
     return gatewayUseCases.findAll()
       .stream()
@@ -40,9 +53,37 @@ public class GatewayController {
       .collect(toList());
   }
 
+  @GetMapping("{id}")
+  public GatewayDto gateway(@PathVariable String id) {
+    return gatewayUseCases.findById(uuidOf(id))
+      .map(gatewayMapper::toDto)
+      .orElseThrow(() -> new GatewayNotFound(id));
+  }
+
+  @GetMapping("/map-data")
+  public List<MapMarkerDto> mapData() {
+    return gatewayUseCases.findAll()
+      .stream()
+      .map(gatewayMapper::toMapMarkerDto)
+      .collect(toList());
+  }
+
   @PostMapping
   public GatewayDto createGateway(@RequestBody GatewayDto gateway) {
     Gateway requestModel = gatewayMapper.toDomainModel(gateway, currentUser.getOrganisationId());
     return gatewayMapper.toDto(gatewayUseCases.save(requestModel));
+  }
+
+  @GetMapping
+  public org.springframework.data.domain.Page<GatewayDto> gateways(
+    @PathVariable Map<String, String> pathVars,
+    @RequestParam MultiValueMap<String, String> requestParams,
+    Pageable pageable
+  ) {
+    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    PageableAdapter adapter = new PageableAdapter(pageable);
+    Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+      .map(gatewayMapper::toDto);
   }
 }

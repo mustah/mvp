@@ -8,6 +8,7 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,6 @@ class IntegrationTestFixtureContextFactory {
       .id(UUID.randomUUID())
       .asUser()
       .build();
-
     users.create(user);
 
     User admin = new UserBuilder().name("integration-test-admin")
@@ -56,7 +56,17 @@ class IntegrationTestFixtureContextFactory {
       .asAdmin()
       .build();
     users.create(admin);
-    return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin);
+
+    User superAdmin = new UserBuilder().name("integration-test-super-admin")
+      .email(contextUuid.toString() + "-super-admin@test.com")
+      .password("password")
+      .organisation(organisationMapper.toDomainModel(organisation))
+      .id(UUID.randomUUID())
+      .asSuperAdmin()
+      .build();
+    users.create(superAdmin);
+    return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin,
+      superAdmin);
   }
 
   @Transactional

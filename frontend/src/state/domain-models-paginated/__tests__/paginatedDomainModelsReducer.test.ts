@@ -2,25 +2,20 @@ import {makeMeter} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
-import {Meter} from '../meter/meterModels';
-import {
-  HasPageNumber,
-  NormalizedPaginated,
-  NormalizedPaginatedState,
-} from '../paginatedDomainModels';
-import {clearErrorMeters, paginatedRequestMethod} from '../paginatedDomainModelsActions';
-import {
-  initialPaginatedDomain,
-  meters,
-  paginatedDomainModels,
-} from '../paginatedDomainModelsReducer';
+import {Gateway} from '../gateway/gatewayModels';
+import {clearErrorMeters} from '../meter/meterApiActions';
+import {Meter, MetersState} from '../meter/meterModels';
+import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
+import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
+import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
+import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
-  const initialState: NormalizedPaginatedState<Meter> = initialPaginatedDomain<Meter>();
+  const initialState: MetersState = initialPaginatedDomain<Meter>();
 
   describe('meters, paginated', () => {
 
-    const getRequest = paginatedRequestMethod<NormalizedPaginated<Meter>>(EndPoints.meters);
+    const getRequest = makeRequestActionsOf<NormalizedPaginated<Meter>>(EndPoints.meters);
 
     const page = 0;
 
@@ -85,7 +80,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('requests meters', () => {
       const stateAfterRequestInitiation = meters(initialState, getRequest.request(page));
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
         ...initialState,
         result: {
           [page]: {isFetching: true, isSuccessfullyFetched: false},
@@ -96,7 +91,9 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('adds new meter to state', () => {
       const newState = meters(initialState, getRequest.success(normalizedMeters));
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
+        isFetchingSingle: false,
+        nonExistingSingles: {},
         entities: {...normalizedMeters.entities.meters},
         result: {
           [page]: {
@@ -111,7 +108,7 @@ describe('paginatedDomainModelsReducer', () => {
 
     it('appends entities', () => {
 
-      const populatedState: NormalizedPaginatedState<Meter> =
+      const populatedState: MetersState =
         meters(initialState, getRequest.success(normalizedMeters));
 
       const anotherPage = 2;
@@ -139,6 +136,7 @@ describe('paginatedDomainModelsReducer', () => {
       ;
 
       const expectedState: NormalizedPaginatedState<Identifiable> = {
+        ...populatedState,
         entities: {...populatedState.entities, 1: {id: 1}, 4: {id: 4}},
         result: {
           ...populatedState.result,
@@ -153,6 +151,28 @@ describe('paginatedDomainModelsReducer', () => {
       const newState = meters(
         populatedState,
         getRequest.success(payload as NormalizedPaginated<Meter>),
+      );
+      expect(newState).toEqual(expectedState);
+    });
+
+    it('appends entities if payload is an array', () => {
+      const getMeterEntitiesRequest = makeEntityRequestActionsOf<Meter[]>(EndPoints.meters);
+      const populatedState: MetersState =
+        meters(initialState, getRequest.success(normalizedMeters));
+
+      const payload: Array<Partial<Meter>> = [
+        {id: 1},
+        {id: 4},
+      ];
+
+      const expectedState: NormalizedPaginatedState<Identifiable> = {
+        ...populatedState,
+        entities: {...populatedState.entities, 1: payload[0] as Meter, 4: payload[1] as Meter},
+      };
+
+      const newState = meters(
+        populatedState,
+        getMeterEntitiesRequest.success(payload as Meter[]),
       );
       expect(newState).toEqual(expectedState);
     });
@@ -180,7 +200,9 @@ describe('paginatedDomainModelsReducer', () => {
   describe('clear error', () => {
     it('clears error from a page', () => {
       const payload: HasPageNumber = {page: 1};
-      const errorState: NormalizedPaginatedState<Meter> = {
+      const errorState: MetersState = {
+        isFetchingSingle: false,
+        nonExistingSingles: {},
         entities: {},
         result: {
           [payload.page]: {
@@ -192,7 +214,7 @@ describe('paginatedDomainModelsReducer', () => {
         },
       };
 
-      const expected: NormalizedPaginatedState<Meter> = {
+      const expected: MetersState = {
         ...errorState,
         result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false}},
       };
@@ -209,9 +231,12 @@ describe('paginatedDomainModelsReducer', () => {
             ...initialPaginatedDomain<Meter>(),
             entities: {1: {...makeMeter(1, {id: 1, name: 'Mo'}, {id: 1, name: 'b'})}},
           },
+          gateways: {
+            ...initialPaginatedDomain<Gateway>(),
+          },
         },
         {type: SET_SELECTION, payload: 'irrelevant'},
-      )).toEqual({meters: initialPaginatedDomain()});
+      )).toEqual({meters: initialPaginatedDomain(), gateways: initialPaginatedDomain()});
     });
   });
 });

@@ -30,7 +30,7 @@ const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
 const boundsFromMarkers = (markers: MarkerClusterGroup): Maybe<LatLngTuple[]> => {
   const bounds = Object.keys(markers).reduce(
     (sum: any, markerId: string) => {
-      const {latitude, longitude} = markers[markerId].location.position;
+      const {latitude, longitude} = markers[markerId];
 
       if (!isNaN(parseFloat(latitude))) {
         if (latitude < sum.minLat) {

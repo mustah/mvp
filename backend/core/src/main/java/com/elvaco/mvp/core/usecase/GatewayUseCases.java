@@ -7,7 +7,12 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+
+import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 
 public class GatewayUseCases {
 
@@ -27,6 +32,10 @@ public class GatewayUseCases {
     }
   }
 
+  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
+    return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
+  }
+
   public Gateway save(Gateway gateway) {
     if (currentUser.isSuperAdmin() || currentUser.isWithinOrganisation(gateway.organisationId)) {
       return gateways.save(gateway);
@@ -40,5 +49,13 @@ public class GatewayUseCases {
     String serial
   ) {
     return gateways.findBy(organisationId, productModel, serial);
+  }
+
+  public Optional<Gateway> findById(UUID id) {
+    if (currentUser.isSuperAdmin()) {
+      return gateways.findById(id);
+    } else {
+      return gateways.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
+    }
   }
 }

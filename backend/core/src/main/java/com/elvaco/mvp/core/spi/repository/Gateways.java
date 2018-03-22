@@ -5,10 +5,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Gateways {
 
   List<Gateway> findAll();
+
+  Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable);
 
   List<Gateway> findAllByOrganisationId(UUID organisationId);
 
@@ -19,4 +24,8 @@ public interface Gateways {
     String productModel,
     String serial
   );
+
+  Optional<Gateway> findById(UUID id);
+
+  Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id);
 }

@@ -4,13 +4,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.adapters.spring.PageAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
+import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 
+import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
@@ -18,15 +25,18 @@ import static java.util.stream.Collectors.toList;
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository repository;
+  private final GatewayQueryFilters queryFilters;
   private final GatewayMapper mapper;
   private final GatewayWithMetersMapper gatewayWithMetersMapper;
 
   public GatewayRepository(
     GatewayJpaRepository repository,
+    GatewayQueryFilters queryFilters,
     GatewayMapper mapper,
     GatewayWithMetersMapper gatewayWithMetersMapper
   ) {
     this.repository = repository;
+    this.queryFilters = queryFilters;
     this.mapper = mapper;
     this.gatewayWithMetersMapper = gatewayWithMetersMapper;
   }
@@ -37,6 +47,33 @@ public class GatewayRepository implements Gateways {
       .stream()
       .map(gatewayWithMetersMapper::withLogicalMeters)
       .collect(toList());
+  }
+
+  @Override
+  public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
+    org.springframework.data.domain.Page<GatewayEntity> gatewayEntities =
+      repository.findAll(
+        toPredicate(parameters),
+        new PageRequest(
+          pageable.getPageNumber(),
+          pageable.getPageSize(),
+          null
+        )
+      );
+
+    return new PageAdapter<>(gatewayEntities.map(mapper::toDomainModel));
+  }
+
+  @Override
+  public Optional<Gateway> findById(UUID id) {
+    return repository.findById(id).map(gatewayWithMetersMapper::withLogicalMeters);
+  }
+
+  @Override
+  public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    return repository
+      .findByOrganisationIdAndId(organisationId, id)
+      .map(gatewayWithMetersMapper::withLogicalMeters);
   }
 
   @Transactional
@@ -65,5 +102,9 @@ public class GatewayRepository implements Gateways {
       productModel,
       serial
     ).map(mapper::toDomainModel);
+  }
+
+  private Predicate toPredicate(RequestParameters parameters) {
+    return queryFilters.toExpression(parameters);
   }
 }

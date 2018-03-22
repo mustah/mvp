@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Organisation;
@@ -9,10 +10,13 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -49,10 +53,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void fetchAllGatewaysShouldBeEmptyWhenNoGatewaysExists() {
-    ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
+    Page<GatewayDto> response = as(context().user)
+      .getPage("/gateways", GatewayDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).isEmpty();
+    assertThat(response.getTotalElements()).isEqualTo(0);
+    assertThat(response.getNumberOfElements()).isEqualTo(0);
+    assertThat(response.getTotalPages()).isEqualTo(0);
   }
 
   @Test
@@ -61,10 +67,13 @@ public class GatewayControllerTest extends IntegrationTest {
     gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
     gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
 
-    ResponseEntity<List> response = asSuperAdmin().get("/gateways", List.class);
+    Page<GatewayDto> response = as(context().superAdmin)
+      .getPage("/gateways",
+        GatewayDto.class);
 
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody()).hasSize(3);
+    assertThat(response.getTotalElements()).isEqualTo(3);
+    assertThat(response.getNumberOfElements()).isEqualTo(3);
+    assertThat(response.getTotalPages()).isEqualTo(1);
   }
 
   @Test
@@ -85,11 +94,10 @@ public class GatewayControllerTest extends IntegrationTest {
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
     gateways.save(new Gateway(randomUUID(), context().organisation().id, "1111", "serial-1"));
 
-    ResponseEntity<List> gatewaysResponse = restAsUser(dailyPlanetUser(dailyPlanet))
-      .get("/gateways", List.class);
+    Page<GatewayDto> gatewayResponse = restAsUser(dailyPlanetUser(dailyPlanet))
+      .getPage("/gateways", GatewayDto.class);
 
-    assertThat(gatewaysResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(gatewaysResponse.getBody()).isEmpty();
+    assertThat(gatewayResponse.getTotalElements()).isEqualTo(0L);
   }
 
   @Test
@@ -98,13 +106,39 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway g2 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
     gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
 
-    List<String> gatewayIds = restAsUser(dailyPlanetUser(dailyPlanet))
-      .getList("/gateways", GatewayDto.class)
-      .getBody()
+    Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
+      .getPage("/gateways", GatewayDto.class);
+
+    List<String> gatewayIds = response.getContent()
       .stream()
       .map(g -> g.id)
       .collect(toList());
 
     assertThat(gatewayIds).containsOnly(g1.id.toString(), g2.id.toString());
+  }
+
+  @Test
+  public void superUserCanGetSingleGateway() {
+    UUID gatewayId = randomUUID();
+    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+
+    ResponseEntity<GatewayDto> response = as(context().superAdmin)
+      .get("/gateways/" + gatewayId, GatewayDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody().id).isEqualTo(gatewayId.toString());
+  }
+
+  @Test
+  public void mapDataIncludesGatewaysWithoutLocation() {
+    UUID gatewayId = randomUUID();
+    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+
+    ResponseEntity<List<MapMarkerDto>> response = as(context().superAdmin)
+      .getList("/gateways/map-data", MapMarkerDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(1);
+    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId.toString());
   }
 }

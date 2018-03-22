@@ -32,6 +32,7 @@ const gatewayParameterNames: ParameterNames = {
 
 const meterParameterNames: ParameterNames = {
   ...baseParameterNames,
+  meterIds: 'id',
   meterStatuses: 'status',
   gatewayStatuses: 'gatewayStatus',
 };
@@ -56,8 +57,11 @@ export const encodedUriParametersForAllMeters = (selectedIds: SelectedParameters
   });
 };
 
-export const encodedUriParametersForGateways = (selectedIds: SelectedParameters): string => {
+export const encodedUriParametersForGateways = (
+  pagination: Pagination,
+  selectedIds: SelectedParameters): string => {
   return encodedUriParametersFrom({
+    pagination,
     selectedIds,
     parameterNames: gatewayParameterNames,
     parameterCallbacks,

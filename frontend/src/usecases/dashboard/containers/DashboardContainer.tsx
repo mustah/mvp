@@ -12,12 +12,12 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {clearErrorAllMeters, fetchAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
+import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {Callback, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {MapMarker} from '../../map/mapModels';
+import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
@@ -25,16 +25,15 @@ import {DashboardModel} from '../dashboardModels';
 
 interface StateToProps {
   dashboard?: DashboardModel;
-  meters: ObjectsById<Meter>;
+  meterMapMarkers: ObjectsById<MapMarker>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
-  encodedUriParametersForAllMeters: string;
 }
 
 interface DispatchToProps {
   fetchDashboard: Callback;
   clearError: ClearError;
-  fetchAllMeters: Fetch;
+  fetchMeterMapMarkers: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
@@ -42,17 +41,17 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class DashboardContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchDashboard, fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
+    const {fetchDashboard, fetchMeterMapMarkers} = this.props;
     fetchDashboard();
-    fetchAllMeters(encodedUriParametersForAllMeters);
+    fetchMeterMapMarkers();
   }
 
-  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
-    fetchAllMeters(encodedUriParametersForAllMeters);
+  componentWillReceiveProps({fetchMeterMapMarkers}: Props) {
+    fetchMeterMapMarkers();
   }
 
   render() {
-    const {isFetching, dashboard, meters, error, clearError} = this.props;
+    const {isFetching, dashboard, meterMapMarkers, error, clearError} = this.props;
     return (
       <MvpPageContainer>
         <Row className="space-between">
@@ -66,7 +65,7 @@ class DashboardContainerComponent extends React.Component<Props> {
         <Loader isFetching={isFetching} error={error} clearError={clearError}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgetsContainer markers={meters}/>
+            <MapWidgetsContainer markers={meterMapMarkers}/>
           </Column>
         </Loader>
       </MvpPageContainer>
@@ -74,18 +73,17 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({dashboard, searchParameters, domainModels: {allMeters}}: RootState): StateToProps => ({
+const mapStateToProps = ({dashboard, searchParameters, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
   dashboard: dashboard.record,
-  meters: getEntitiesDomainModels(allMeters),
-  isFetching: dashboard.isFetching,
-  error: getError(allMeters),
-  encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+  meterMapMarkers: getEntitiesDomainModels(meterMapMarkers),
+  isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
+  error: getError(meterMapMarkers),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
   clearError: clearErrorAllMeters,
-  fetchAllMeters,
+  fetchMeterMapMarkers,
 }, dispatch);
 
 export const DashboardContainer =

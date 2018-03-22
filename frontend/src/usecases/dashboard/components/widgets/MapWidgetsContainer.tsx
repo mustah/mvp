@@ -8,7 +8,6 @@ import {MissingDataTitle} from '../../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../../containers/dialogs/MeterDetailsContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
-import {Meter} from '../../../../state/domain-models-paginated/meter/meterModels';
 import {Dictionary, OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
@@ -37,7 +36,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
-      <MeterDetailsContainer meter={map.selectedMarker as Meter}/>
+      <MeterDetailsContainer meterId={map.selectedMarker}/>
     </Dialog>
   );
 
@@ -49,6 +48,7 @@ const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
           fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
         >
           <Map
+            defaultZoom={7}
             height={400}
             width={400}
           >
@@ -67,5 +67,5 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeClusterDialog,
 }, dispatch);
 
-export const MapWidgetsContainer = connect<StateToProps, DispatchToProps>(
-  mapStateToProps, mapDispatchToProps)(MapWidgets);
+export const MapWidgetsContainer =
+  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(MapWidgets);

@@ -68,28 +68,38 @@ const meters = [
   },
 ];
 
-const gateways = [
-  {
-    id: 'g1',
-    name: 'UNICOcoder',
-  },
-  {
-    id: 'g2',
-    name: '3100',
-  },
-  {
-    id: 'g3',
-    name: 'xxx2233',
-  },
-  {
-    id: 'g4',
-    name: '3100',
-  },
-  {
-    id: 'g5',
-    name: 'Test kit',
-  },
-];
+const gateways = {
+  content: [
+    {
+      id: 'g1',
+      name: 'UNICOcoder',
+    },
+    {
+      id: 'g2',
+      name: '3100',
+    },
+    {
+      id: 'g3',
+      name: 'xxx2233',
+    },
+    {
+      id: 'g4',
+      name: '3100',
+    },
+    {
+      id: 'g5',
+      name: 'Test kit',
+    },
+  ],
+  totalElements: 5,
+  last: true,
+  totalPages: 1,
+  size: 20,
+  number: 0,
+  first: true,
+  sort: null,
+  numberOfElements: 5,
+};
 
 const meterStatuses = [
   {

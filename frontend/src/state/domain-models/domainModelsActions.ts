@@ -98,51 +98,49 @@ export const fetchIfNeeded = <T extends Identifiable>(
   schema: Schema,
   entityType: keyof DomainModelsState,
   requestCallbacks?: RequestCallbacks<Normalized<T>>,
-) => {
-  const formatData = (data) => {
-    return normalize(data, schema);
-  };
+) =>
+  (requestData?: string) =>
+    (dispatch, getState: GetState) => {
+      const {domainModels} = getState();
+      if (shouldFetch(domainModels[entityType])) {
+        const formatData = (data) => {
+          return normalize(data, schema);
+        };
 
-  const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
-
-  return (requestData?: string) => (dispatch, getState: GetState) => {
-    const {domainModels} = getState();
-    if (shouldFetch(domainModels[entityType])) {
-      return asyncRequest<string, Normalized<T>>({
-        ...getRequestOf<Normalized<T>>(endPoint),
-        formatData,
-        requestFunc,
-        requestData,
-        ...requestCallbacks,
-        dispatch,
-      });
-    } else {
-      return null;
-    }
-  };
-};
+        const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
+        return asyncRequest<string, Normalized<T>>({
+          ...getRequestOf<Normalized<T>>(endPoint),
+          formatData,
+          requestFunc,
+          requestData,
+          ...requestCallbacks,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
 
 export const fetchEntityIfNeeded = <T>(
   endPoint: EndPoints,
   entityType: keyof DomainModelsState,
-) => {
-  const requestFunc = (requestData: uuid) =>
-    restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
-
-  return (id: uuid) => (dispatch, getState: GetState) => {
-    const {domainModels} = getState();
-    if (shouldFetchEntity(id, domainModels[entityType])) {
-      return asyncRequest<uuid, T>({
-        ...getEntityRequestOf<T>(endPoint),
-        requestFunc,
-        requestData: id,
-        dispatch,
-      });
-    } else {
-      return null;
-    }
-  };
-};
+) =>
+  (id: uuid) =>
+    (dispatch, getState: GetState) => {
+      const {domainModels} = getState();
+      if (shouldFetchEntity(id, domainModels[entityType])) {
+        const requestFunc = (requestData: uuid) =>
+          restClient.get(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
+        return asyncRequest<uuid, T>({
+          ...getEntityRequestOf<T>(endPoint),
+          requestFunc,
+          requestData: id,
+          dispatch,
+        });
+      } else {
+        return null;
+      }
+    };
 
 export const postRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
   const requestFunc = (requestData: T) => restClient.post(makeUrl(endPoint), requestData);

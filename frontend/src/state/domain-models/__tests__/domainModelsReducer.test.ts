@@ -2,14 +2,15 @@ import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
+import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
+import {MapMarker} from '../../../usecases/map/mapModels';
+import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {deleteRequestOf, getEntityRequestOf, getRequestOf, postRequestOf, putRequestOf} from '../domainModelsActions';
-import {addresses, cities, domainModels, gateways, initialDomain, users} from '../domainModelsReducer';
+import {addresses, cities, domainModels, gatewayMapMarkers, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../selections/selectionsSchemas';
-import {clearErrorGateways} from '../gateway/gatewayApiActions';
-import {Gateway} from '../gateway/gatewayModels';
 import {Role, User, UserState} from '../user/userModels';
 
 describe('domainModelsReducer', () => {
@@ -242,40 +243,57 @@ describe('domainModelsReducer', () => {
 
   describe('clear domainModels', () => {
     it('resets all domain models', () => {
-      const errorState: NormalizedState<Gateway> = {
-        ...initialDomain<Gateway>(),
+      const errorState: NormalizedState<MapMarker> = {
+        ...initialDomain<MapMarker>(),
         isSuccessfullyFetched: true,
         error: {message: 'an error'},
       };
 
-      expect(gateways(errorState, clearErrorGateways())).toEqual({
+      expect(gatewayMapMarkers(errorState, clearErrorGatewayMapMarkers())).toEqual({
         ...initialDomain<Gateway>(),
       });
     });
   });
 
   describe('clear domainModels', () => {
-    it('resets all domain models', () => {
+    it('resets all domain models except the ones related to selection drop downs', () => {
       const initialState: DomainModelsState = {
         countries: initialDomain(),
         cities: initialDomain(),
         addresses: initialDomain(),
-        gateways: initialDomain(),
         alarms: initialDomain(),
         gatewayStatuses: initialDomain(),
+        meterStatuses: initialDomain(),
         measurements: initialDomain(),
         allMeters: initialDomain(),
-        meterStatuses: initialDomain(),
+        gatewayMapMarkers: initialDomain(),
+        meterMapMarkers: initialDomain(),
         users: initialDomain(),
         organisations: initialDomain(),
       };
       const nonInitialState: DomainModelsState = {
-        ...initialState,
-        gateways: {...initialState.gateways, isFetching: true},
+        countries: {...initialState.countries, isFetching: true},
+        cities: {...initialState.cities, isFetching: true},
+        addresses: {...initialState.addresses, isFetching: true},
+        alarms: {...initialState.alarms, isFetching: true},
+        gatewayStatuses: {...initialState.gatewayStatuses, isFetching: true},
+        meterStatuses: {...initialState.meterStatuses, isFetching: true},
+        measurements: {...initialState.measurements, isFetching: true},
+        allMeters: {...initialState.allMeters, isFetching: true},
+        gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
+        meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
+        users: {...initialState.users, isFetching: true},
+        organisations: {...initialState.organisations, isFetching: true},
       };
 
       expect(domainModels(nonInitialState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({
         ...initialState,
+        countries: {...nonInitialState.countries},
+        cities: {...nonInitialState.cities},
+        addresses: {...nonInitialState.addresses},
+        alarms: {...nonInitialState.alarms},
+        gatewayStatuses: {...nonInitialState.gatewayStatuses},
+        meterStatuses: {...nonInitialState.meterStatuses},
       });
     });
   });

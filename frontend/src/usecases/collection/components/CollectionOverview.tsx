@@ -3,7 +3,7 @@ import {WrapperIndent} from '../../../components/layouts/wrapper/Wrapper';
 import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
-import {GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
+import {GatewayDataSummary} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
 import {ItemOrArray} from '../../../types/Types';
 

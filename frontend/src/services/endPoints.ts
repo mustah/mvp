@@ -2,6 +2,8 @@ export const enum EndPoints {
   selections = '/selections',
   meters = '/meters',
   allMeters = '/meters/all',
+  meterMapMarkers = '/meters/map-data',
+  gatewayMapMarkers = '/gateways/map-data',
   summaryMeters = '/summary/meters',
   gateways = '/gateways',
   users = '/users',

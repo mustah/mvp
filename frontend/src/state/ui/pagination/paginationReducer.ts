@@ -18,6 +18,7 @@ export const initialPaginationModel: PaginationModel = {
 
 export const initialPaginationState: PaginationState = {
   meters: {...initialPaginationModel},
+  gateways: {...initialPaginationModel},
 };
 
 type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePayload> | EmptyAction<string>;

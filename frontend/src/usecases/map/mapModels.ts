@@ -1,19 +1,18 @@
 import {Icon, LatLngTuple, MarkerOptions} from 'leaflet';
-import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
-import {Gateway} from '../../state/domain-models/gateway/gatewayModels';
-import {LocationHolder} from '../../state/domain-models/location/locationModels';
-import {IdNamed} from '../../types/Types';
+import {Identifiable, Status, uuid} from '../../types/Types';
 
-export interface MapMarker extends LocationHolder {
-  status: IdNamed;
+export interface MapMarker extends Identifiable {
+  mapMarkerType: 'Meter' | 'Gateway';
+  status: Status;
+  latitude: number;
+  longitude: number;
+  confidence: number;
 }
-
-export type MapMarkerItem = Gateway | Meter;
 
 export interface Marker {
   position: LatLngTuple;
   options: MarkerOptions & {
     icon: Icon;
-    mapMarkerItem: MapMarkerItem;
+    mapMarkerItem: uuid;
   };
 }

@@ -4,7 +4,6 @@ import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../components/content/HasContent';
 import {Dialog} from '../../../components/dialog/Dialog';
 import {Loader} from '../../../components/loading/Loader';
-import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
@@ -17,89 +16,65 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
-import {getDomainModel, getError, getResultDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {clearErrorGateways, fetchGateways} from '../../../state/domain-models/gateway/gatewayApiActions';
-import {Gateway, GatewayDataSummary} from '../../../state/domain-models/gateway/gatewayModels';
-import {getGatewayDataSummary} from '../../../state/domain-models/gateway/gatewaySelectors';
-import {setSelection} from '../../../state/search/selection/selectionActions';
-import {OnSelectParameter} from '../../../state/search/selection/selectionModels';
-import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
+import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
-import {OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
-import {getPagination, getPaginationList} from '../../../state/ui/pagination/paginationSelectors';
+import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, ErrorResponse, Fetch, OnClick, OnClickWithId, uuid} from '../../../types/Types';
+import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
+import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/gatewayMapMarkerApiActions';
 import {closeClusterDialog} from '../../map/mapActions';
-import {getSelectedGatewayMarker} from '../../map/mapSelectors';
-import {selectEntryAdd} from '../../report/reportActions';
-import {GatewayList} from '../components/GatewayList';
+import {MapMarker} from '../../map/mapModels';
+import {getSelectedMapMarker} from '../../map/mapSelectors';
+import {GatewayListContainer} from '../components/GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
-  gateways: DomainModel<Gateway>;
-  gatewayDataSummary: Maybe<GatewayDataSummary>;
-  paginatedList: uuid[];
-  pagination: Pagination;
-  selectedMaker: Maybe<Gateway>;
+  gatewayMapMarkers: DomainModel<MapMarker>;
+  selectedMarker: Maybe<uuid>;
   isFetching: boolean;
-  encodedUriParametersForGateways: string;
   error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   changePaginationPage: OnChangePage;
-  setSelection: OnSelectParameter;
-  selectEntryAdd: OnClickWithId;
   closeClusterDialog: OnClick;
-  fetchGateways: Fetch;
   clearError: ClearError;
+  fetchGatewayMapMarkers: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps;
 
-const componentId = 'gatewayList';
-
 class CollectionTabs extends React.Component<Props> {
-  changePage = (page: number) => (
-    this.props.changePaginationPage({
-      entityType: 'gateways',
-      componentId,
-      page,
-    }))
 
   componentDidMount() {
-    const {encodedUriParametersForGateways, fetchGateways} = this.props;
-    fetchGateways(encodedUriParametersForGateways);
+    this.props.fetchGatewayMapMarkers();
   }
 
-  componentWillReceiveProps({encodedUriParametersForGateways, fetchGateways}: Props) {
-    fetchGateways(encodedUriParametersForGateways);
+  componentWillReceiveProps({fetchGatewayMapMarkers}: Props) {
+    fetchGatewayMapMarkers();
   }
 
   render() {
     const {
       selectedTab,
       changeTab,
-      gateways,
-      pagination,
-      paginatedList,
-      selectEntryAdd,
-      selectedMaker,
+      selectedMarker,
       closeClusterDialog,
       isFetching,
       error,
+      gatewayMapMarkers,
       clearError,
     } = this.props;
 
-    const hasGateways: boolean = isMarkersWithinThreshold(gateways.entities);
+    const hasGateways: boolean = isMarkersWithinThreshold(gatewayMapMarkers.entities);
 
-    const dialog = selectedMaker.isJust() && (
+    const dialog = selectedMarker.isJust() && (
       <Dialog isOpen={true} close={closeClusterDialog}>
-        <GatewayDetailsContainer gateway={selectedMaker.get()}/>
+        <GatewayDetailsContainer gatewayId={selectedMarker.get()}/>
       </Dialog>
     );
 
@@ -116,21 +91,14 @@ class CollectionTabs extends React.Component<Props> {
           <TabSettings/>
         </TabTopBar>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
-          <Loader isFetching={isFetching} error={error} clearError={clearError}>
-            <HasContent hasContent={gateways.result.length > 0} fallbackContent={noGatewaysFallbackContent}>
-              <div>
-                <GatewayList result={paginatedList} entities={gateways.entities} selectEntryAdd={selectEntryAdd}/>
-                <PaginationControl pagination={pagination} changePage={this.changePage}/>
-              </div>
-            </HasContent>
-          </Loader>
+          <GatewayListContainer componentId="collectionGatewayList"/>
         </TabContent>
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
               <HasContent hasContent={hasGateways} fallbackContent={noGatewaysFallbackContent}>
                 <Map defaultZoom={7}>
-                  <ClusterContainer markers={gateways.entities}/>
+                  <ClusterContainer markers={gatewayMapMarkers.entities}/>
                 </Map>
               </HasContent>
               {dialog}
@@ -145,38 +113,23 @@ class CollectionTabs extends React.Component<Props> {
 const mapStateToProps = ({
                            ui: {pagination, tabs},
                            map,
-                           domainModels: {gateways},
-                           searchParameters,
+                           domainModels: {gatewayMapMarkers},
                          }: RootState): StateToProps => {
-  const paginationData: Pagination = getPagination({
-    pagination,
-    componentId,
-    entityType: 'gateways',
-  });
   return {
     selectedTab: getSelectedTab(tabs.collection),
-    gateways: getDomainModel(gateways),
-    gatewayDataSummary: getGatewayDataSummary(gateways),
-    paginatedList: getPaginationList({
-      ...paginationData,
-      result: getResultDomainModels(gateways),
-    }),
-    pagination: paginationData,
-    selectedMaker: getSelectedGatewayMarker(map),
-    encodedUriParametersForGateways: getEncodedUriParametersForGateways(searchParameters),
-    isFetching: gateways.isFetching,
-    error: getError(gateways),
+    gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
+    selectedMarker: getSelectedMapMarker(map),
+    isFetching: gatewayMapMarkers.isFetching,
+    error: getError(gatewayMapMarkers),
   };
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabCollection,
   changePaginationPage,
-  setSelection,
-  selectEntryAdd,
   closeClusterDialog,
-  fetchGateways,
-  clearError: clearErrorGateways,
+  fetchGatewayMapMarkers,
+  clearError: clearErrorGatewayMapMarkers,
 }, dispatch);
 
 export const CollectionTabsContainer =

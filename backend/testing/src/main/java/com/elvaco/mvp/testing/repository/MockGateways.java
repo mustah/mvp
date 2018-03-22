@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.spi.data.Page;
+import com.elvaco.mvp.core.spi.data.Pageable;
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
@@ -15,6 +18,11 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   @Override
   public List<Gateway> findAll() {
     return allMocks();
+  }
+
+  @Override
+  public Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable) {
+    return null;
   }
 
   @Override
@@ -31,6 +39,16 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
       .filter(gateway -> gateway.organisationId.equals(organisationId))
       .filter(gateway -> gateway.productModel.equals(productModel))
       .findFirst();
+  }
+
+  @Override
+  public Optional<Gateway> findById(UUID id) {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    return Optional.empty();
   }
 
   @Override

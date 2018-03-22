@@ -12,18 +12,21 @@ public class IntegrationTestFixtureContext {
   public final OrganisationEntity organisationEntity;
   public final User user;
   public final User admin;
+  public final User superAdmin;
   private final OrganisationMapper organisationMapper;
 
   IntegrationTestFixtureContext(
     OrganisationEntity organisation,
     OrganisationMapper organisationMapper,
     User user,
-    User admin
+    User admin,
+    User superAdmin
   ) {
     this.organisationMapper = organisationMapper;
     this.organisationEntity = organisation;
     this.user = user;
     this.admin = admin;
+    this.superAdmin = superAdmin;
   }
 
   public Organisation organisation() {

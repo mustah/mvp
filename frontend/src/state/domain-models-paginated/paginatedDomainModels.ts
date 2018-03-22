@@ -1,10 +1,12 @@
-import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {Dictionary, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {SortingOptions} from '../ui/pagination/paginationModels';
-import {Meter} from './meter/meterModels';
+import {GatewaysState} from './gateway/gatewayModels';
+import {MetersState} from './meter/meterModels';
 
 export interface PaginatedDomainModelsState {
-  meters: NormalizedPaginatedState<Meter>;
+  meters: MetersState;
+  gateways: GatewaysState;
 }
 
 export interface NormalizedPaginatedResult {
@@ -28,14 +30,20 @@ export interface NormalizedPaginated<T extends Identifiable> extends HasPageNumb
   result: NormalizedPaginatedResult;
 }
 
+export type SingleEntityFailure = Identifiable & ErrorResponse;
+
 export interface NormalizedPaginatedState<T extends Identifiable = Identifiable> {
+  isFetchingSingle: boolean;
+  nonExistingSingles: Dictionary<SingleEntityFailure>;
   entities: ObjectsById<T>;
-  result: {[page: number]: PaginatedResult};
+  result: {
+    [page: number]: PaginatedResult;
+  };
 }
 
 interface PaginatedResult {
   isFetching: boolean;
   isSuccessfullyFetched: boolean;
-  error?: ErrorResponse;
   result?: uuid[];
+  error?: ErrorResponse;
 }
