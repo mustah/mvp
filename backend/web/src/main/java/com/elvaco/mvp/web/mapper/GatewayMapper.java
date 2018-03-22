@@ -2,18 +2,22 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Status;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
+import com.elvaco.mvp.web.util.Dates;
 
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
@@ -22,16 +26,35 @@ import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class GatewayMapper {
+  private static final String DEFAULT_STATUS_DATE = "";
 
-  public GatewayDto toDto(Gateway gateway) {
+  public GatewayDto toDto(Gateway gateway, TimeZone timeZone) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
+
+    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+
     return new GatewayDto(
       gateway.id.toString(),
       gateway.serial,
       gateway.productModel,
-      Status.OK,
+      gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name),
+      gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
+        .orElse(DEFAULT_STATUS_DATE),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       connectedMeterIds(gateway)
+    );
+  }
+
+  public GatewayMandatoryDto toGatewayMandatory(Gateway gateway, TimeZone timeZone) {
+    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+
+    return new GatewayMandatoryDto(
+      gateway.id.toString(),
+      gateway.productModel,
+      gateway.serial,
+      gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name),
+      gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
+        .orElse(DEFAULT_STATUS_DATE)
     );
   }
 
@@ -42,6 +65,31 @@ public class GatewayMapper {
       gatewayDto.serial,
       gatewayDto.productModel
     );
+  }
+
+  public MapMarkerDto toMapMarkerDto(Gateway gateway) {
+    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+
+    MapMarkerDto mapMarkerDto = new MapMarkerDto();
+    mapMarkerDto.id = gateway.id.toString();
+    mapMarkerDto.mapMarkerType = MapMarkerType.Gateway;
+    // TODO[!must!] meter status logs should be mapped as enum in db
+    mapMarkerDto.status = gatewayStatusLog.map(status -> status.name)
+      .orElse(StatusType.UNKNOWN.name);
+    Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
+    if (logicalMeter.isPresent() && logicalMeter.get().location.hasCoordinates()) {
+      GeoCoordinate coord = logicalMeter.get().location.getCoordinate();
+      if (coord != null) {
+        mapMarkerDto.confidence = coord.getConfidence();
+        mapMarkerDto.latitude = coord.getLatitude();
+        mapMarkerDto.longitude = coord.getLongitude();
+      }
+    }
+    return mapMarkerDto;
+  }
+
+  private Optional<GatewayStatusLog> getCurrentStatus(List<GatewayStatusLog> statusLogs) {
+    return statusLogs.stream().findFirst();
   }
 
   private List<String> connectedMeterIds(Gateway gateway) {
@@ -67,24 +115,5 @@ public class GatewayMapper {
     return logicalMeter.map(meter -> meter.location)
       .flatMap(LocationMapper::toGeoPosition)
       .orElseGet(GeoPositionDto::new);
-  }
-
-  public MapMarkerDto toMapMarkerDto(Gateway gateway) {
-
-    MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = gateway.id.toString();
-    mapMarkerDto.mapMarkerType = MapMarkerType.Gateway;
-    // TODO[!must!] meter status logs should be mapped as enum in db
-    mapMarkerDto.status = Status.OK;
-    Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
-    if (logicalMeter.isPresent() && logicalMeter.get().location.hasCoordinates()) {
-      GeoCoordinate coord = logicalMeter.get().location.getCoordinate();
-      if (coord != null) {
-        mapMarkerDto.confidence = coord.getConfidence();
-        mapMarkerDto.latitude = coord.getLatitude();
-        mapMarkerDto.longitude = coord.getLongitude();
-      }
-    }
-    return mapMarkerDto;
   }
 }

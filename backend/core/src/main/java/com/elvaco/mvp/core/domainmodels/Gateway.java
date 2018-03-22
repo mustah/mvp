@@ -12,6 +12,8 @@ public class Gateway implements Identifiable<UUID> {
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
+  public final List<GatewayStatusLog> statusLogs;
+
   public final List<LogicalMeter> meters;
 
   public Gateway(
@@ -20,7 +22,7 @@ public class Gateway implements Identifiable<UUID> {
     String serial,
     String productModel
   ) {
-    this(id, organisationId, serial, productModel, emptyList());
+    this(id, organisationId, serial, productModel, emptyList(), emptyList());
   }
 
   public Gateway(
@@ -28,13 +30,15 @@ public class Gateway implements Identifiable<UUID> {
     UUID organisationId,
     String serial,
     String productModel,
-    List<LogicalMeter> meters
+    List<LogicalMeter> meters,
+    List<GatewayStatusLog> statusLogs
   ) {
     this.id = id;
     this.organisationId = organisationId;
     this.serial = serial;
     this.productModel = productModel;
     this.meters = unmodifiableList(meters);
+    this.statusLogs = unmodifiableList(statusLogs);
   }
 
   @Override

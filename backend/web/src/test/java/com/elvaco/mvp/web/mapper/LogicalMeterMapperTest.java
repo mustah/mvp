@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -14,7 +15,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Status;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -39,7 +40,7 @@ public class LogicalMeterMapperTest {
 
   @Before
   public void setUp() {
-    mapper = new LogicalMeterMapper(new MeterStatusLogMapper());
+    mapper = new LogicalMeterMapper(new MeterStatusLogMapper(), new GatewayMapper());
   }
 
   @Test
@@ -50,7 +51,7 @@ public class LogicalMeterMapperTest {
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
-    mapMarkerDtoExpected.status = Status.OK;
+    mapMarkerDtoExpected.status = StatusType.OK.name;
     mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     Location location = new LocationBuilder()
@@ -74,7 +75,8 @@ public class LogicalMeterMapperTest {
           1,
           "Ok",
           ZonedDateTime.now(),
-          ZonedDateTime.now())
+          ZonedDateTime.now()
+        )
       )
     );
 
@@ -102,7 +104,7 @@ public class LogicalMeterMapperTest {
     expected.created = "2018-02-12 15:14:25";
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
-    expected.status = Status.OK;
+    expected.status = StatusType.OK;
     expected.location = new LocationDto(
       new IdNamedDto("Kungsbacka"),
       new IdNamedDto("Kabelgatan 2T"),
@@ -124,7 +126,8 @@ public class LogicalMeterMapperTest {
       randomUUID().toString(),
       "CMi2110",
       "123123",
-      Status.OK
+      StatusType.OK.name,
+      "2018-02-12 15:14:25"
     );
     expected.collectionStatus = "";
 
@@ -172,7 +175,18 @@ public class LogicalMeterMapperTest {
             organisationId,
             expected.gateway.serial,
             expected.gateway.productModel,
-            emptyList()
+            emptyList(),
+            singletonList(
+              new GatewayStatusLog(
+                1L,
+                randomUUID(),
+                organisationId,
+                2,
+                "ok",
+                parseDate("2018-02-12T14:14:25"),
+                parseDate("2018-02-13T14:14:25")
+              )
+            )
           ))
         ), TimeZone.getTimeZone("Europe/Stockholm")))
       .isEqualTo(expected);

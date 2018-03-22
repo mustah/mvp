@@ -1,26 +1,18 @@
 package com.elvaco.mvp.core.domainmodels;
 
-import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
-public enum Status {
-
-  OK("ok"),
-  INFO("info"),
-  ACTIVE("active"),
-  CRITICAL("critical"),
-  WARNING("warning"),
-  UNKNOWN("unknown"),
-  MAINTENANCE_SCHEDULED("maintenance scheduled");
-
+public class Status {
+  @Nullable
+  public final Long id;
   public final String name;
 
-  Status(String name) {
-    this.name = name;
+  public Status(String name) {
+    this(null, name);
   }
 
-  public static Status from(String status) {
-    return Stream.of(values())
-      .filter(s -> s.name.equalsIgnoreCase(status))
-      .findFirst().orElse(UNKNOWN);
+  public Status(@Nullable Long id, String name) {
+    this.id = id;
+    this.name = name;
   }
 }

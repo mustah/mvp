@@ -14,7 +14,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.Status;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -54,7 +54,7 @@ public final class LogicalMeterHelper {
   ) {
     return physicalMeter.statuses
       .stream()
-      .filter(status -> Status.ACTIVE.equals(Status.from(status.name)))
+      .filter(status -> StatusType.ACTIVE == StatusType.from(status.name))
       .mapToDouble(status -> {
         ZonedDateTime startPoint = getStartPoint(
           status.start,

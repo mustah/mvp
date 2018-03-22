@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
@@ -46,17 +47,17 @@ public class GatewayController {
   }
 
   @GetMapping("/all")
-  public List<GatewayDto> findAllGateways() {
+  public List<GatewayDto> findAllGateways(TimeZone timeZone) {
     return gatewayUseCases.findAll()
       .stream()
-      .map(gatewayMapper::toDto)
+      .map(gateway ->  gatewayMapper.toDto(gateway, timeZone))
       .collect(toList());
   }
 
   @GetMapping("{id}")
-  public GatewayDto gateway(@PathVariable String id) {
+  public GatewayDto gateway(TimeZone timeZone, @PathVariable String id) {
     return gatewayUseCases.findById(uuidOf(id))
-      .map(gatewayMapper::toDto)
+      .map(gateway -> gatewayMapper.toDto(gateway, timeZone))
       .orElseThrow(() -> new GatewayNotFound(id));
   }
 
@@ -69,13 +70,14 @@ public class GatewayController {
   }
 
   @PostMapping
-  public GatewayDto createGateway(@RequestBody GatewayDto gateway) {
+  public GatewayDto createGateway(TimeZone timeZone, @RequestBody GatewayDto gateway) {
     Gateway requestModel = gatewayMapper.toDomainModel(gateway, currentUser.getOrganisationId());
-    return gatewayMapper.toDto(gatewayUseCases.save(requestModel));
+    return gatewayMapper.toDto(gatewayUseCases.save(requestModel), timeZone);
   }
 
   @GetMapping
   public org.springframework.data.domain.Page<GatewayDto> gateways(
+    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
@@ -84,6 +86,6 @@ public class GatewayController {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(gatewayMapper::toDto);
+      .map(gateway -> gatewayMapper.toDto(gateway, timeZone));
   }
 }

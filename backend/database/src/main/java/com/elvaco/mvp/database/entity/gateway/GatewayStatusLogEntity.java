@@ -1,4 +1,4 @@
-package com.elvaco.mvp.database.entity.meter;
+package com.elvaco.mvp.database.entity.gateway;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -12,21 +12,24 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
+import com.elvaco.mvp.database.entity.meter.StatusEntity;
 import lombok.ToString;
 
 @ToString
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "physical_meter_status_log")
-public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
+@Table(name = "gateway_status_log")
+public class GatewayStatusLogEntity extends EntityType<Long> {
 
-  private static final long serialVersionUID = -365050103321687201L;
+  private static final long serialVersionUID = -365050443321687201L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   public Long id;
 
-  public UUID physicalMeterId;
+  public UUID gatewayId;
+
+  public UUID organisationId;
 
   public ZonedDateTime start;
 

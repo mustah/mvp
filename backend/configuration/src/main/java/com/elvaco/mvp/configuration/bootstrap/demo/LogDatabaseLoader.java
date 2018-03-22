@@ -4,12 +4,16 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.elvaco.mvp.core.domainmodels.MeterStatus;
+import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Status;
+import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
+import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
-import com.elvaco.mvp.core.spi.repository.MeterStatuses;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
+import com.elvaco.mvp.core.spi.repository.Statuses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +21,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -27,39 +34,73 @@ import static java.util.stream.Collectors.toList;
 public class LogDatabaseLoader implements CommandLineRunner {
 
   private final PhysicalMeters physicalMeters;
-  private final MeterStatuses meterStatuses;
+  private final Statuses statuses;
   private final MeterStatusLogs meterStatusLogs;
+  private final Gateways gateways;
+  private final GatewayStatusLogs gatewayStatusLogs;
 
   @Autowired
   public LogDatabaseLoader(
     PhysicalMeters physicalMeters,
-    MeterStatuses meterStatuses,
-    MeterStatusLogs meterStatusLogs
+    Statuses statuses,
+    MeterStatusLogs meterStatusLogs,
+    Gateways gateways,
+    GatewayStatusLogs gatewayStatusLogs
   ) {
     this.physicalMeters = physicalMeters;
-    this.meterStatuses = meterStatuses;
+    this.statuses = statuses;
     this.meterStatusLogs = meterStatusLogs;
+    this.gateways = gateways;
+    this.gatewayStatusLogs = gatewayStatusLogs;
   }
 
   @Override
   public void run(String... args) {
-    List<MeterStatus> statuses = meterStatuses.findAll();
+    List<Status> statuses = this.statuses.findAll();
     if (statuses.size() == 0) {
       createStatusMockData();
 
       createStatusLogMockData();
+
+      createGatewayLogMockdata();
     }
   }
 
+  private void createGatewayLogMockdata() {
+    List<Gateway> gatewayList = gateways.findAll();
+    List<GatewayStatusLog> gatewayStatusLogsList = new ArrayList<>();
+
+    List<Status> statuses = this.statuses.findAll()
+      .stream()
+      .filter(this::onStatus)
+      .collect(toList());
+
+    for (int x = 0; x < gatewayList.size(); x++) {
+      Status status = getStatus(x, statuses);
+
+      gatewayStatusLogsList.add(new GatewayStatusLog(
+        null,
+        gatewayList.get(x).id,
+        gatewayList.get(x).organisationId,
+        status.id,
+        status.name,
+        ZonedDateTime.now(),
+        null
+      ));
+    }
+
+    gatewayStatusLogs.save(gatewayStatusLogsList);
+  }
+
   private void createStatusMockData() {
-    meterStatuses.save(asList(
-      new MeterStatus("ok"),
-      new MeterStatus("warning")
+    statuses.save(asList(
+      new Status(OK.name),
+      new Status(WARNING.name)
     ));
   }
 
   private void createStatusLogMockData() {
-    List<MeterStatus> statuses = meterStatuses.findAll()
+    List<Status> statuses = this.statuses.findAll()
       .stream()
       .filter(this::onStatus)
       .collect(toList());
@@ -71,7 +112,7 @@ public class LogDatabaseLoader implements CommandLineRunner {
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
 
-      MeterStatus status = getStatus(daySeed, statuses);
+      Status status = getStatus(daySeed, statuses);
 
       statusLogs.add(
         new MeterStatusLog(
@@ -88,7 +129,7 @@ public class LogDatabaseLoader implements CommandLineRunner {
     meterStatusLogs.save(statusLogs);
   }
 
-  private MeterStatus getStatus(int hourSeed, List<MeterStatus> statuses) {
+  private Status getStatus(int hourSeed, List<Status> statuses) {
     if (hourSeed % 7 == 0) {
       return statuses.get(1);
     } else {
@@ -96,10 +137,10 @@ public class LogDatabaseLoader implements CommandLineRunner {
     }
   }
 
-  private boolean onStatus(MeterStatus meterStatus) {
-    return meterStatus.name.equalsIgnoreCase("info")
-           || meterStatus.name.equalsIgnoreCase("ok")
-           || meterStatus.name.equalsIgnoreCase("warning");
+  private boolean onStatus(Status status) {
+    return status.name.equalsIgnoreCase(INFO.name)
+           || status.name.equalsIgnoreCase(OK.name)
+           || status.name.equalsIgnoreCase(WARNING.name);
   }
 
   private ZonedDateTime addDays(int daySeed, int hourSeed) {

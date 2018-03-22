@@ -1,17 +1,21 @@
 package com.elvaco.mvp.web;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
+import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-
+import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -63,13 +68,30 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminsCanListAllGateways() {
-    gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
-    gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
+    gateways.save(new Gateway(
+      randomUUID(),
+      dailyPlanet.id,
+      "1111",
+      "serial-1"
+    ));
+    gateways.save(new Gateway(
+      randomUUID(),
+      dailyPlanet.id,
+      "2222",
+      "serial-2"
+    ));
+    gateways.save(new Gateway(
+      randomUUID(),
+      context().organisation().id,
+      "3333",
+      "serial-3"
+    ));
 
     Page<GatewayDto> response = as(context().superAdmin)
-      .getPage("/gateways",
-        GatewayDto.class);
+      .getPage(
+        "/gateways",
+        GatewayDto.class
+      );
 
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getNumberOfElements()).isEqualTo(3);
@@ -78,7 +100,15 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void createNewGateway() {
-    GatewayDto requestModel = new GatewayDto(null, "123", "2100");
+    GatewayDto requestModel = new GatewayDto(
+      null,
+      "123",
+      "2100",
+      StatusType.OK.name,
+      Dates.formatTime(ZonedDateTime.now(), TimeZone.getDefault()),
+      new LocationDto(),
+      emptyList()
+    );
 
     ResponseEntity<GatewayDto> response = asSuperAdmin()
       .post("/gateways", requestModel, GatewayDto.class);
@@ -92,7 +122,12 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    gateways.save(new Gateway(randomUUID(), context().organisation().id, "1111", "serial-1"));
+    gateways.save(new Gateway(
+      randomUUID(),
+      context().organisation().id,
+      "1111",
+      "serial-1"
+    ));
 
     Page<GatewayDto> gatewayResponse = restAsUser(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
@@ -102,9 +137,24 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
-    Gateway g1 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "1111", "serial-1"));
-    Gateway g2 = gateways.save(new Gateway(randomUUID(), dailyPlanet.id, "2222", "serial-2"));
-    gateways.save(new Gateway(randomUUID(), context().organisation().id, "3333", "serial-3"));
+    Gateway g1 = gateways.save(new Gateway(
+      randomUUID(),
+      dailyPlanet.id,
+      "1111",
+      "serial-1"
+    ));
+    Gateway g2 = gateways.save(new Gateway(
+      randomUUID(),
+      dailyPlanet.id,
+      "2222",
+      "serial-2"
+    ));
+    gateways.save(new Gateway(
+      randomUUID(),
+      context().organisation().id,
+      "3333",
+      "serial-3"
+    ));
 
     Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
