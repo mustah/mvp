@@ -1,10 +1,9 @@
 package com.elvaco.geoservice.repository.entity;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,42 +14,27 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class TimeStampedPersistableObject extends PersistableObject {
 
   @CreatedDate
-  @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-  private Date created;
+  private ZonedDateTime created;
 
   @LastModifiedDate
-  @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-  private Date updated;
+  private ZonedDateTime updated;
 
-  public Date getCreated() {
-    if (created == null) {
-      return null;
-    } else {
-      return (Date) this.created.clone();
-    }
+  public ZonedDateTime getCreated() {
+    return this.created;
+
   }
 
-  public void setCreated(Date created) {
-    if (created == null) {
-      this.created = null;
-    } else {
-      this.created = (Date) created.clone();
-    }
+  public void setCreated(ZonedDateTime created) {
+    this.created = created;
+
   }
 
-  public Date getUpdated() {
-    if (this.updated == null) {
-      return null;
-    } else {
-      return (Date) this.updated.clone();
-    }
+  public ZonedDateTime getUpdated() {
+    return this.updated;
   }
 
-  public void setUpdated(Date updated) {
-    if (updated == null) {
-      this.updated = null;
-    } else {
-      this.updated = (Date) updated.clone();
-    }
+  public void setUpdated(ZonedDateTime updated) {
+    this.updated = updated;
+
   }
 }

@@ -123,5 +123,6 @@ public class BasicTest {
     assertNotNull(response);
     assertEquals("Error message differ", "No geolocation found", response.getMessage());
   }
+  
 
 }

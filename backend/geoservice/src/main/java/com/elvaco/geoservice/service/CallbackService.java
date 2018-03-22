@@ -1,7 +1,7 @@
 package com.elvaco.geoservice.service;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.transaction.Transactional;
 
@@ -46,7 +46,7 @@ public class CallbackService {
     CallbackEntity callback = new CallbackEntity();
     callback.setCallback(callbackUrl);
     callback.setAttempt(0);
-    callback.setNextRetry(new Date());
+    callback.setNextRetry(LocalDateTime.now());
     callback.setPayload(response);
 
     callbackRepository.save(callback);
@@ -65,7 +65,7 @@ public class CallbackService {
     CallbackEntity callback = new CallbackEntity();
     callback.setCallback(callbackUrl);
     callback.setAttempt(0);
-    callback.setNextRetry(new Date());
+    callback.setNextRetry(LocalDateTime.now());
     callback.setPayload(error);
 
     callbackRepository.save(callback);
@@ -89,8 +89,8 @@ public class CallbackService {
       System.out.println("callback failed:" + e.getMessage());
 
       callback.setAttempt(callback.getAttempt() + 1);
-      callback.setNextRetry(new Date(
-          System.currentTimeMillis() + (long) java.lang.Math.pow(1 * 100, callback.getAttempt())));
+      callback.setNextRetry(LocalDateTime.now()
+          .plusNanos(1000 * 1000 * (long) java.lang.Math.pow(1 * 100, callback.getAttempt())));
       callbackRepository.save(callback);
       if (callback.getAttempt() >= maxAttempts - 1) {
         callbackRepository.delete(callback);
