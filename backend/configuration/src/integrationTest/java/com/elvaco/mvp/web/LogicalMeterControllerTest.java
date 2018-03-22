@@ -273,11 +273,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(meterStatusLogDto.start)
       .as("Unexpected date format for status start")
-      .isEqualTo(timeZoneMagic("2001-01-01T10:14:00.00Z"));
+      .isEqualTo(toUtcString("2001-01-01T10:14:00.00Z"));
 
     assertThat(meterStatusLogDto.stop)
       .as("Unexpected date format for status stop")
-      .isEqualTo(timeZoneMagic("2001-01-06T10:14:00.00Z"));
+      .isEqualTo(toUtcString("2001-01-06T10:14:00.00Z"));
   }
 
   @Test
@@ -485,7 +485,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(actualMeter5.statusChangelog.get(0).start)
       .as("Unexpected date of first log entry")
-      .isEqualTo(timeZoneMagic("2001-01-01T10:14:00.00Z"));
+      .isEqualTo(toUtcString("2001-01-01T10:14:00.00Z"));
   }
 
   /**
@@ -552,14 +552,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter.statusChangelog.get(0).start)
       .as("Unexpected date of first log entry")
-      .isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
+      .isEqualTo(toUtcString("2001-01-20T10:14:00.00Z"));
 
     assertThat(logicalMeter.statusChangelog.get(10).start)
       .as("Unexpected date of last log entry")
-      .isEqualTo(timeZoneMagic("2001-01-10T10:14:00.00Z"));
+      .isEqualTo(toUtcString("2001-01-10T10:14:00.00Z"));
 
     assertThat(logicalMeter.status).isEqualTo(ACTIVE);
-    assertThat(logicalMeter.statusChanged).isEqualTo(timeZoneMagic("2001-01-20T10:14:00.00Z"));
+    assertThat(logicalMeter.statusChanged).isEqualTo(toUtcString("2001-01-20T10:14:00.00Z"));
   }
 
   /**
@@ -1024,7 +1024,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
   }
 
-  private String timeZoneMagic(String date) {
-    return Dates.formatTime(ZonedDateTime.parse(date), TimeZone.getDefault());
+  private String toUtcString(String date) {
+    return Dates.formatTime(ZonedDateTime.parse(date), TimeZone.getTimeZone("UTC"));
   }
 }

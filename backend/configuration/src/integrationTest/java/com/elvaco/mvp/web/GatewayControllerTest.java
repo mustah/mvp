@@ -105,7 +105,7 @@ public class GatewayControllerTest extends IntegrationTest {
       "123",
       "2100",
       StatusType.OK.name,
-      Dates.formatTime(ZonedDateTime.now(), TimeZone.getDefault()),
+      Dates.formatTime(ZonedDateTime.now(), TimeZone.getTimeZone("UTC")),
       new LocationDto(),
       emptyList()
     );

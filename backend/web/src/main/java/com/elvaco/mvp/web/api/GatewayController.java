@@ -47,10 +47,10 @@ public class GatewayController {
   }
 
   @GetMapping("/all")
-  public List<GatewayDto> findAllGateways(TimeZone timeZone) {
+  public List<GatewayDto> findAllGateways() {
     return gatewayUseCases.findAll()
       .stream()
-      .map(gateway ->  gatewayMapper.toDto(gateway, timeZone))
+      .map(gateway ->  gatewayMapper.toDto(gateway, TimeZone.getTimeZone("UTC")))
       .collect(toList());
   }
 

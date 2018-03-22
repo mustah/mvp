@@ -47,9 +47,9 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}")
-  public LogicalMeterDto logicalMeter(TimeZone timeZone, @PathVariable String id) {
+  public LogicalMeterDto logicalMeter(@PathVariable String id) {
     return logicalMeterUseCases.findById(uuidOf(id))
-      .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, timeZone))
+      .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
@@ -74,26 +74,24 @@ public class LogicalMeterController {
 
   @GetMapping("/all")
   public List<LogicalMeterDto> logicalAllMeters(
-    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
     return logicalMeterUseCases.findAll(parameters)
       .stream()
-      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone))
+      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
       .collect(toList());
   }
 
   @GetMapping
   public org.springframework.data.domain.Page<LogicalMeterDto> logicalMeters(
-    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
     RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
-    return filterLogicalMeterDtos(parameters, pageable, timeZone);
+    return filterLogicalMeterDtos(parameters, pageable);
   }
 
   private Supplier<RequestParameters> lazyRequestParameters(LogicalMeter logicalMeter) {
@@ -114,12 +112,11 @@ public class LogicalMeterController {
 
   private org.springframework.data.domain.Page<LogicalMeterDto> filterLogicalMeterDtos(
     RequestParameters parameters,
-    Pageable pageable,
-    TimeZone timeZone
+    Pageable pageable
   ) {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, timeZone));
+      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")));
   }
 }
