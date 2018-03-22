@@ -81,6 +81,7 @@ public class LogDatabaseLoader implements CommandLineRunner {
       gatewayStatusLogsList.add(new GatewayStatusLog(
         null,
         gatewayList.get(x).id,
+        gatewayList.get(x).organisationId,
         status.id,
         status.name,
         ZonedDateTime.now(),

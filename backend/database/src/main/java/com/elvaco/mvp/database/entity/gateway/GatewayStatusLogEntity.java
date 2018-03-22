@@ -29,6 +29,8 @@ public class GatewayStatusLogEntity extends EntityType<Long> {
 
   public UUID gatewayId;
 
+  public UUID organisationId;
+
   public ZonedDateTime start;
 
   public ZonedDateTime stop;

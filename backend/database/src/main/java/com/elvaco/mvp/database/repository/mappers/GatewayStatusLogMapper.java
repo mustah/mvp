@@ -12,6 +12,7 @@ public class GatewayStatusLogMapper implements
     return new GatewayStatusLog(
       entity.id,
       entity.gatewayId,
+      entity.organisationId,
       entity.status.id,
       entity.status.name,
       entity.start,
@@ -24,6 +25,7 @@ public class GatewayStatusLogMapper implements
     GatewayStatusLogEntity entity = new GatewayStatusLogEntity();
     entity.id = domainModel.id;
     entity.gatewayId = domainModel.gatewayId;
+    entity.organisationId = domainModel.organisationId;
     entity.status = new StatusEntity(domainModel.statusId, domainModel.name);
     entity.start = domainModel.start;
     entity.stop = domainModel.stop;

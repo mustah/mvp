@@ -12,6 +12,7 @@ public class GatewayStatusLog {
   @Nullable
   public final Long id;
   public final UUID gatewayId;
+  public final UUID organisationId;
   public final long statusId;
   public final String name;
 
@@ -22,6 +23,7 @@ public class GatewayStatusLog {
   public GatewayStatusLog(
     @Nullable Long id,
     UUID gatewayId,
+    UUID organisationId,
     long statusId,
     String name,
     ZonedDateTime start,
@@ -29,6 +31,7 @@ public class GatewayStatusLog {
   ) {
     this.id = id;
     this.gatewayId = gatewayId;
+    this.organisationId = organisationId;
     this.statusId = statusId;
     this.name = name;
     this.start = ZonedDateTime.ofInstant(start.toInstant(), start.getZone());

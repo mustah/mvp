@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
-  id UUID UNIQUE,
+  id UUID,
   organisation_id UUID REFERENCES organisation,
   serial TEXT NOT NULL UNIQUE,
   product_model TEXT NOT NULL,
@@ -109,7 +109,9 @@ CREATE TABLE IF NOT EXISTS gateway_status_log (
   start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   stop TIMESTAMP WITH TIME ZONE,
   status_id BIGINT REFERENCES status (id),
-  gateway_id UUID REFERENCES gateway (id)
+  gateway_id UUID,
+  organisation_id UUID REFERENCES organisation,
+  FOREIGN KEY (organisation_id, gateway_id) REFERENCES gateway
 );
 
 CREATE TABLE IF NOT EXISTS measurement (

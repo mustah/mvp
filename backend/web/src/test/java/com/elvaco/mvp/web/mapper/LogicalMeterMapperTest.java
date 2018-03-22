@@ -180,6 +180,7 @@ public class LogicalMeterMapperTest {
               new GatewayStatusLog(
                 1L,
                 randomUUID(),
+                organisationId,
                 2,
                 "ok",
                 parseDate("2018-02-12T14:14:25"),
