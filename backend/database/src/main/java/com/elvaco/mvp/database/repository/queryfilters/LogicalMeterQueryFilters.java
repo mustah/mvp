@@ -1,11 +1,9 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -24,33 +22,12 @@ public class LogicalMeterQueryFilters extends QueryFilters {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
-  private static final Map<String, Function<String, Predicate>>
-    FILTERABLE_PROPERTIES = new HashMap<>();
-
-  static {
-    FILTERABLE_PROPERTIES.put("id", (String id) -> Q.id.eq(UUID.fromString(id)));
-
-    FILTERABLE_PROPERTIES.put("medium", Q.meterDefinition.medium::eq);
-
-    FILTERABLE_PROPERTIES.put("manufacturer", Q.physicalMeters.any().manufacturer::eq);
-
-    FILTERABLE_PROPERTIES.put(
-      "organisation",
-      (String id) -> Q.organisationId.eq(UUID.fromString(id))
-    );
-  }
-
-  @Override
-  public Map<String, Function<String, Predicate>> getPropertyFilters() {
-    return FILTERABLE_PROPERTIES;
-  }
-
   @Nullable
   @Override
   public Predicate toExpression(RequestParameters parameters) {
     BooleanBuilder builder = new BooleanBuilder();
     if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
-      builder.and(periodQueryFilter(parameters));
+      builder.and(periodQueryFilter(parameters.getFirst(AFTER), parameters.getFirst(BEFORE)));
     }
     return builder
       .and(whereStatusesIn(parameters.getValues("status")))
@@ -60,9 +37,32 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       .getValue();
   }
 
-  private Predicate periodQueryFilter(RequestParameters parameters) {
-    ZonedDateTime start = ZonedDateTime.parse(parameters.getFirst(AFTER));
-    ZonedDateTime stop = ZonedDateTime.parse(parameters.getFirst(BEFORE));
+  @Override
+  public Optional<Predicate> buildPredicateFor(
+    String filter, List<String> values
+  ) {
+    return Optional.ofNullable(buildNullablePredicateFor(filter, values));
+  }
+
+  @Nullable
+  private Predicate buildNullablePredicateFor(String filter, List<String> values) {
+    switch (filter) {
+      case "id":
+        return Q.id.in(mapValues(UUID::fromString, values));
+      case "medium":
+        return Q.meterDefinition.medium.in(values);
+      case "manufacturer":
+        return Q.physicalMeters.any().manufacturer.in(values);
+      case "organisation":
+        return Q.organisationId.in(mapValues(UUID::fromString, values));
+      default:
+        return null;
+    }
+  }
+
+  private Predicate periodQueryFilter(String after, String before) {
+    ZonedDateTime start = ZonedDateTime.parse(after);
+    ZonedDateTime stop = ZonedDateTime.parse(before);
     return isBefore(stop).and(isAfter(start).or(hasNoEndDate()));
   }
 

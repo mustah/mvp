@@ -1,73 +1,58 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
-import static java.util.stream.Collectors.toList;
 
 public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  private static final Map<String, Function<String, Predicate>>
-    FILTERABLE_PROPERTIES = new HashMap<>();
-
-  static {
-    FILTERABLE_PROPERTIES.put(
-      "physicalMeterId",
-      (String id) -> Q.physicalMeterId.eq(UUID.fromString(id))
-    );
-  }
-
-  @Override
-  public Map<String, Function<String, Predicate>> getPropertyFilters() {
-    return FILTERABLE_PROPERTIES;
-  }
-
   @Nullable
   @Override
   public Predicate toExpression(@Nullable RequestParameters parameters) {
     if (parameters != null) {
-      return Q.physicalMeterId
-        .in(getPhysicalMeterIds(parameters))
-        .and(applyPeriodQueryFilter(parameters));
+      return new BooleanBuilder().and(propertiesExpression(parameters))
+        .and(applyPeriodQueryFilter(parameters))
+        .getValue();
     }
     return null;
   }
 
-  private List<UUID> getPhysicalMeterIds(RequestParameters parameters) {
-    return parameters.getValues("physicalMeterIds")
-      .stream()
-      .map(UUID::fromString)
-      .collect(toList());
+  @Override
+  public Optional<Predicate> buildPredicateFor(
+    String filter, List<String> values
+  ) {
+    if (filter.equals("physicalMeterId")) {
+      return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+    }
+    return Optional.empty();
   }
 
+  @Nullable
   private Predicate applyPeriodQueryFilter(RequestParameters parameters) {
     if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
-      return periodQueryFilter(parameters);
-    } else {
-      return propertiesExpression(parameters);
+      return periodQueryFilter(parameters.getFirst(AFTER), parameters.getFirst(BEFORE));
     }
+    return null;
   }
 
-  private Predicate periodQueryFilter(RequestParameters parameters) {
-    ZonedDateTime start = ZonedDateTime.parse(parameters.getFirst(AFTER));
-    ZonedDateTime stop = ZonedDateTime.parse(parameters.getFirst(BEFORE));
+  private Predicate periodQueryFilter(String after, String before) {
+    ZonedDateTime start = ZonedDateTime.parse(after);
+    ZonedDateTime stop = ZonedDateTime.parse(before);
     return
       Q.start.before(stop)
-        .and(Q.stop.after(start).or(Q.stop.isNull()))
-        .and(propertiesExpression(parameters));
+        .and(Q.stop.after(start).or(Q.stop.isNull()));
   }
 }

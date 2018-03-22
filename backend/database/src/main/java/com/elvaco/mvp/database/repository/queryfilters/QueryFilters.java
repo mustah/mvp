@@ -2,8 +2,8 @@ package com.elvaco.mvp.database.repository.queryfilters;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
@@ -11,20 +11,17 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * A mapper of property filters to QueryDsl predicates.
  */
 public abstract class QueryFilters {
 
-  /**
-   * Returns a mapping of filterable property names to property filter functions.
-   *
-   * @return A mapping of property names to property filter functions
-   */
-  public abstract Map<String, Function<String, Predicate>> getPropertyFilters();
-
   @Nullable
   public abstract Predicate toExpression(RequestParameters parameters);
+
+  public abstract Optional<Predicate> buildPredicateFor(String filter, List<String> values);
 
   /**
    * Maps a property filter to a QueryDsl Predicate.
@@ -41,7 +38,6 @@ public abstract class QueryFilters {
    * constructed, since {@link com.querydsl.core.FilteredClause} explicitly ignores null arguments.
    *
    * @param parameters The filter to map
-   *
    * @return A QueryDsl Predicate representation of that filter, or null if no predicate could be
    *   constructed.
    */
@@ -54,13 +50,7 @@ public abstract class QueryFilters {
     List<Predicate> predicates = new ArrayList<>();
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
-
-      Function<String, Predicate> predicateFunction =
-        getPropertyFilters().get(propertyFilter.getKey());
-
-      if (predicateFunction != null && !propertyValues.isEmpty()) {
-        predicates.add(applyOrPredicates(predicateFunction, propertyValues));
-      }
+      buildPredicateFor(propertyFilter.getKey(), propertyValues).ifPresent(predicates::add);
     }
 
     if (predicates.isEmpty()) {
@@ -70,7 +60,11 @@ public abstract class QueryFilters {
     return applyAndPredicates(predicates);
   }
 
-  private Predicate applyOrPredicates(
+  final <T> List<T> mapValues(Function<String, T> function, List<String> values) {
+    return values.stream().map(function).collect(toList());
+  }
+
+  final Predicate applyOrPredicates(
     Function<String, Predicate> predicateFunction,
     List<String> propertyValues
   ) {
@@ -82,6 +76,7 @@ public abstract class QueryFilters {
     }
     return predicate;
   }
+
 
   private Predicate applyAndPredicates(List<Predicate> predicates) {
     BooleanExpression predicate = (BooleanExpression) predicates.remove(0);
