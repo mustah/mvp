@@ -69,6 +69,10 @@ public class GeocodeFarmService implements AddressToGeoService {
     return ID;
   }
 
+  /**
+   * Returns quota left. Note that the quota is for now reset at every restart and
+   * will be correct after first call request to getGeoByAddress
+   */
   @Override
   public Integer getQuota() {
     return quota;
