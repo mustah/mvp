@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.querydsl.core.types.Predicate;
 
@@ -18,11 +17,6 @@ public class MeasurementQueryFilters extends QueryFilters {
 
   private static ZonedDateTime toZonedDateTime(String when) {
     return ZonedDateTime.parse(when);
-  }
-
-  @Override
-  public Predicate toExpression(RequestParameters parameters) {
-    return propertiesExpression(parameters);
   }
 
   @Override

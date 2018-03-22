@@ -22,7 +22,7 @@ public class QueryFiltersTest {
       .add("prop", "2")
       .add("prop", "3");
 
-    QueryFilters test = new AbstractQueryFilters() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(
         String filter, List<String> values
@@ -39,7 +39,7 @@ public class QueryFiltersTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAll("foo", emptyList());
 
-    QueryFilters test = new AbstractQueryFilters() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
         return Optional.empty();
@@ -51,7 +51,7 @@ public class QueryFiltersTest {
 
   @Test
   public void mapEmptyProperties() {
-    QueryFilters test = new AbstractQueryFilters() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
         return Optional.empty();
@@ -66,7 +66,7 @@ public class QueryFiltersTest {
     RequestParameters parameters = new RequestParametersAdapter()
       .add("foo", "42");
 
-    QueryFilters test = new AbstractQueryFilters() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
         return Optional.of(
@@ -93,7 +93,7 @@ public class QueryFiltersTest {
       .add("bar", "Woop!")
       .add("foo", "42");
 
-    QueryFilters test = new AbstractQueryFilters() {
+    QueryFilters test = new QueryFilters() {
       @Override
       public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
         if (filter.equals("foo")) {
@@ -129,11 +129,4 @@ public class QueryFiltersTest {
     assertThat(test.toExpression(parameters)).isEqualTo(expected);
   }
 
-  private abstract static class AbstractQueryFilters extends QueryFilters {
-
-    @Override
-    public Predicate toExpression(RequestParameters parameters) {
-      return propertiesExpression(parameters);
-    }
-  }
 }

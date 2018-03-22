@@ -22,19 +22,15 @@ public class LogicalMeterQueryFilters extends QueryFilters {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
-  @Nullable
   @Override
-  public Predicate toExpression(RequestParameters parameters) {
-    BooleanBuilder builder = new BooleanBuilder();
+  public Optional<Predicate> prePredicateHook(RequestParameters parameters) {
     if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
-      builder.and(periodQueryFilter(parameters.getFirst(AFTER), parameters.getFirst(BEFORE)));
+      return Optional.ofNullable(new BooleanBuilder().and(periodQueryFilter(
+        parameters.getFirst(AFTER),
+        parameters.getFirst(BEFORE)
+      )).getValue());
     }
-    return builder
-      .and(whereStatusesIn(parameters.getValues("status")))
-      .and(whereCity(toCityParameters(parameters.getValues("city"))))
-      .and(whereAddress(toAddressParameters(parameters.getValues("address"))))
-      .and(propertiesExpression(parameters))
-      .getValue();
+    return Optional.empty();
   }
 
   @Override
@@ -55,6 +51,12 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return Q.physicalMeters.any().manufacturer.in(values);
       case "organisation":
         return Q.organisationId.in(mapValues(UUID::fromString, values));
+      case "status":
+        return Q.physicalMeters.any().statusLogs.any().status.name.in(values);
+      case "city":
+        return whereCity(toCityParameters(values));
+      case "address":
+        return whereAddress(toAddressParameters(values));
       default:
         return null;
     }
@@ -76,13 +78,6 @@ public class LogicalMeterQueryFilters extends QueryFilters {
 
   private BooleanExpression isBefore(ZonedDateTime stop) {
     return Q.physicalMeters.any().statusLogs.any().start.before(stop);
-  }
-
-  private Predicate whereStatusesIn(List<String> statuses) {
-    if (!statuses.isEmpty()) {
-      return Q.physicalMeters.any().statusLogs.any().status.name.in(statuses);
-    }
-    return null;
   }
 
   @Nullable
