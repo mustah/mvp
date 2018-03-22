@@ -9,21 +9,23 @@ import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.JPQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.stereotype.Repository;
 
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
-@NoRepositoryBean
+@Repository
 public class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
 
+  @Autowired
   public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(LogicalMeterEntity.class, entityManager.getMetamodel()),
