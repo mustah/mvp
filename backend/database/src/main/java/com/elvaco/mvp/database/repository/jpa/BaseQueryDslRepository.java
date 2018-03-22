@@ -19,10 +19,16 @@ abstract class BaseQueryDslRepository<T, I extends Serializable>
   final EntityPath<T> path;
   final Querydsl querydsl;
 
-  BaseQueryDslRepository(JpaEntityInformation<T, I> entityInformation, EntityManager em) {
-    super(entityInformation, em);
-    this.entityManager = em;
+  BaseQueryDslRepository(
+    JpaEntityInformation<T, I> entityInformation,
+    EntityManager entityManager
+  ) {
+    super(entityInformation, entityManager);
+    this.entityManager = entityManager;
     this.path = SimpleEntityPathResolver.INSTANCE.createPath(entityInformation.getJavaType());
-    this.querydsl = new Querydsl(em, new PathBuilder<>(path.getType(), path.getMetadata()));
+    this.querydsl = new Querydsl(
+      entityManager,
+      new PathBuilder<>(path.getType(), path.getMetadata())
+    );
   }
 }

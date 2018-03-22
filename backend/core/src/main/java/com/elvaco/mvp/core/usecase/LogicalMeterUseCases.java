@@ -46,16 +46,16 @@ public class LogicalMeterUseCases {
     }
   }
 
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
-      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
-  }
-
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream()
       .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
       .collect(toList());
+  }
+
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
+      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

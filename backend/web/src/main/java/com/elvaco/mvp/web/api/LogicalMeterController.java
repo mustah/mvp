@@ -55,7 +55,7 @@ public class LogicalMeterController {
 
   @GetMapping("/map-data")
   public List<MapMarkerDto> mapData() {
-    return logicalMeterUseCases.findAll()
+    return logicalMeterUseCases.findAll(new RequestParametersAdapter())
       .stream()
       .map(logicalMeterMapper::toMapMarkerDto)
       .collect(toList());
