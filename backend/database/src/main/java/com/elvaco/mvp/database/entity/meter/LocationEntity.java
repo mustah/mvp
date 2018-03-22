@@ -9,7 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Entity
 @Table(name = "location")
 @Access(AccessType.FIELD)
@@ -20,14 +22,13 @@ public class LocationEntity extends EntityType<UUID> {
   @Id
   @Column(name = "logical_meter_id")
   public UUID logicalMeterId;
+
   public String country;
   public String city;
   public String streetAddress;
   public Double latitude;
   public Double longitude;
   public Double confidence;
-
-  public LocationEntity() {}
 
   public LocationEntity(
     UUID logicalMeterId,
@@ -45,7 +46,13 @@ public class LocationEntity extends EntityType<UUID> {
     this.logicalMeterId = logicalMeterId;
   }
 
-  public LocationEntity(String country, String city, String streetAddress) {
+  public LocationEntity(
+    UUID logicalMeterId,
+    String country,
+    String city,
+    String streetAddress
+  ) {
+    this.logicalMeterId = logicalMeterId;
     this.country = country;
     this.city = city;
     this.streetAddress = streetAddress;

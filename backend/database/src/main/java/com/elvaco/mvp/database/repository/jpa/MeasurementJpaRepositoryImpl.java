@@ -61,6 +61,7 @@ public class MeasurementJpaRepositoryImpl extends QueryDslJpaRepository<Measurem
     this.querydsl = new Querydsl(entityManager, builder);
   }
 
+  @Override
   public List<MeasurementEntity> findAllScaled(
     String scale,
     Predicate predicate
@@ -73,6 +74,7 @@ public class MeasurementJpaRepositoryImpl extends QueryDslJpaRepository<Measurem
     return query.fetch();
   }
 
+  @Override
   public Page<MeasurementEntity> findAllScaled(
     String scale,
     Predicate predicate,
@@ -113,6 +115,7 @@ public class MeasurementJpaRepositoryImpl extends QueryDslJpaRepository<Measurem
     return query;
   }
 
+  @Override
   public Map<UUID, Long> countGroupedByPhysicalMeterId(Predicate predicate) {
     JPQLQuery<Void> query = new JPAQuery<>(entityManager);
     QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;

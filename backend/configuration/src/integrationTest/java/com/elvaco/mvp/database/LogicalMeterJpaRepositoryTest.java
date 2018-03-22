@@ -58,7 +58,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
       ZonedDateTime.now(),
       meterDefinitionEntity
     );
-    logicalMeterEntity.setLocation(new LocationEntity(logicalMeterId, 1.0, 2.0, 1.0));
+    logicalMeterEntity.location = new LocationEntity(logicalMeterId, 1.0, 2.0, 1.0);
 
     logicalMeterJpaRepository.save(logicalMeterEntity);
 
@@ -83,14 +83,15 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
 
   @Test
   public void locationIsPersisted() {
-    LogicalMeterEntity foundEntity = logicalMeterJpaRepository.findOne(logicalMeterId);
-    assertThat(foundEntity.getLocation().confidence).isEqualTo(1.0);
-    assertThat(foundEntity.getLocation().latitude).isEqualTo(1.0);
-    assertThat(foundEntity.getLocation().longitude).isEqualTo(2.0);
+    LogicalMeterEntity foundEntity = logicalMeterJpaRepository.findById(logicalMeterId).get();
+    assertThat(foundEntity.location.confidence).isEqualTo(1.0);
+    assertThat(foundEntity.location.latitude).isEqualTo(1.0);
+    assertThat(foundEntity.location.longitude).isEqualTo(2.0);
   }
 
   @Test
   public void physicalMetersAreFetched() {
-    assertThat(logicalMeterJpaRepository.findOne(logicalMeterId).physicalMeters).isNotEmpty();
+    assertThat(logicalMeterJpaRepository.findById(logicalMeterId).get().physicalMeters)
+      .isNotEmpty();
   }
 }

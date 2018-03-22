@@ -133,7 +133,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     UUID organisationId,
     String externalId
   ) throws InterruptedException {
-    assertThat(waitForCondition(() -> logicalMeterJpaRepository.findByOrganisationIdAndExternalId(
+    assertThat(waitForCondition(() -> logicalMeterJpaRepository.findBy(
       organisationId,
       externalId
     ).isPresent())).as("Logical meter '" + externalId + "' was created").isTrue();

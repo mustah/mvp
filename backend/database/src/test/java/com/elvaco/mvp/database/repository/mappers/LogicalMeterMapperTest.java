@@ -80,7 +80,7 @@ public class LogicalMeterMapperTest {
       created,
       newMeterDefinitionEntity("Speed", "mps", "speed-o-meter")
     );
-    logicalMeterEntity.setLocation(new LocationEntity(meterId, 3.1, 2.1, 1.0));
+    logicalMeterEntity.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
     LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
 
@@ -163,7 +163,7 @@ public class LogicalMeterMapperTest {
       created,
       newMeterDefinitionEntity("Energy", "kWh", "Energy meter")
     );
-    logicalMeterEntityExpected.setLocation(new LocationEntity(meterId, 3.1, 2.1, 1.0));
+    logicalMeterEntityExpected.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
     LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
       new LogicalMeter(
@@ -186,7 +186,7 @@ public class LogicalMeterMapperTest {
         emptyList()
       ));
 
-    LocationEntity location = logicalMeterEntity.getLocation();
+    LocationEntity location = logicalMeterEntity.location;
     assertThat(location.confidence).isEqualTo(1.0);
     assertThat(location.latitude).isEqualTo(3.1);
     assertThat(location.longitude).isEqualTo(2.1);

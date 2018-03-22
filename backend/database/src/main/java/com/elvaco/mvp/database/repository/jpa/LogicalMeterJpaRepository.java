@@ -6,29 +6,29 @@ import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
-public interface LogicalMeterJpaRepository
-  extends
-  QueryDslPredicateExecutor<LogicalMeterEntity>,
-  JpaRepository<LogicalMeterEntity, UUID> {
+public interface LogicalMeterJpaRepository {
+
+  <S extends LogicalMeterEntity> S save(S entity);
+
+  List<LogicalMeterEntity> findAll();
+
+  List<LogicalMeterEntity> findAll(Predicate predicate);
+
+  List<LogicalMeterEntity> findAll(Predicate predicate, Sort sort);
+
+  Page<LogicalMeterEntity> findAll(Predicate predicate, Pageable pageable);
+
+  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 
   Optional<LogicalMeterEntity> findById(UUID id);
 
-  @Override
-  List<LogicalMeterEntity> findAll(Predicate predicate);
+  Optional<LogicalMeterEntity> findBy(UUID organisationId, String externalId);
 
-  @Override
-  List<LogicalMeterEntity> findAll(Predicate predicate, Sort sort);
+  Optional<LogicalMeterEntity> findBy(UUID organisationId, UUID id);
 
-  Optional<LogicalMeterEntity> findByOrganisationIdAndExternalId(
-    UUID organisationId,
-    String externalId
-  );
-
-  Optional<LogicalMeterEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
-
-  List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
+  void deleteAll();
 }
