@@ -6,10 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -21,17 +19,8 @@ import static com.elvaco.mvp.database.repository.queryfilters.LocationParameters
 public class LogicalMeterQueryFilters extends QueryFilters {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
-
-  @Override
-  public Optional<Predicate> prePredicateHook(RequestParameters parameters) {
-    if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
-      return Optional.ofNullable(new BooleanBuilder().and(periodQueryFilter(
-        parameters.getFirst(AFTER),
-        parameters.getFirst(BEFORE)
-      )).getValue());
-    }
-    return Optional.empty();
-  }
+  private ZonedDateTime before;
+  private ZonedDateTime after;
 
   @Override
   public Optional<Predicate> buildPredicateFor(
@@ -57,14 +46,22 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
+      case BEFORE:
+        before = ZonedDateTime.parse(values.get(0));
+        return periodQueryFilter(after, before);
+      case AFTER:
+        after = ZonedDateTime.parse(values.get(0));
+        return periodQueryFilter(after, before);
       default:
         return null;
     }
   }
 
-  private Predicate periodQueryFilter(String after, String before) {
-    ZonedDateTime start = ZonedDateTime.parse(after);
-    ZonedDateTime stop = ZonedDateTime.parse(before);
+  @Nullable
+  private Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
+    if (start == null || stop == null) {
+      return null;
+    }
     return isBefore(stop).and(isAfter(start).or(hasNoEndDate()));
   }
 

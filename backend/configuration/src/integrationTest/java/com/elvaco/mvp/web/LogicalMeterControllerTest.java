@@ -594,6 +594,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void malformedDateParameter() {
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
+      .get(
+        "/meters?"
+          + "after=NotAValidTimestamp"
+          + "&before=AndNeitherIsThis",
+        ErrorMessageDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Failed to construct filter 'after' for value 'NotAValidTimestamp'");
+  }
+
+  @Test
   public void findAllWithPredicates() {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);

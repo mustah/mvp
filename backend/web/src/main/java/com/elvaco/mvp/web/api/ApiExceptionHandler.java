@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,11 @@ public class ApiExceptionHandler {
     return badRequest(exception);
   }
 
+  @ExceptionHandler(PredicateConstructionFailure.class)
+  public ResponseEntity<ErrorMessageDto> handle(PredicateConstructionFailure exception) {
+    return badRequest(exception);
+  }
+
   private ApiExceptionInformation resolveHttpStatus(Exception exception) {
     return Optional.ofNullable(findMergedAnnotation(exception.getClass(), ResponseStatus.class))
       .map(responseStatus ->
@@ -79,9 +85,18 @@ public class ApiExceptionHandler {
     return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType, "parameter");
   }
 
+  private ResponseEntity<ErrorMessageDto> badRequest(PredicateConstructionFailure exception) {
+    HttpStatus responseHttpStatus = HttpStatus.BAD_REQUEST;
+
+    ErrorMessageDto dto = new ErrorMessageDto(
+      exception.getMessage(),
+      responseHttpStatus.value()
+    );
+    return new ResponseEntity<>(dto, responseHttpStatus);
+  }
+
   private ResponseEntity<ErrorMessageDto> badRequest(
-    MethodArgumentTypeMismatchException
-      exception
+    MethodArgumentTypeMismatchException exception
   ) {
     HttpStatus responseHttpStatus = HttpStatus.BAD_REQUEST;
     String message = String.format(
