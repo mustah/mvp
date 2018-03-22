@@ -43,11 +43,7 @@ public class GatewayUseCases {
     throw new Unauthorized("User is not authorized to save this entity");
   }
 
-  public Optional<Gateway> findBy(
-    UUID organisationId,
-    String productModel,
-    String serial
-  ) {
+  public Optional<Gateway> findBy(UUID organisationId, String productModel, String serial) {
     return gateways.findBy(organisationId, productModel, serial);
   }
 

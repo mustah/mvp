@@ -162,11 +162,11 @@ public class MeasurementController {
   }
 
   private List<LogicalMeter> getLogicalMetersByIdList(@RequestParam List<UUID> meters) {
-    RequestParameters requestParams = new RequestParametersAdapter()
+    RequestParameters parameters = new RequestParametersAdapter()
       .setAll("id", meters.stream()
         .map(UUID::toString)
         .collect(toList())
       );
-    return logicalMeterUseCases.findAll(requestParams);
+    return logicalMeterUseCases.findAll(parameters);
   }
 }

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
@@ -9,9 +10,8 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 
-public class LocationMapper implements DomainEntityMapper<Location, LocationEntity> {
+public class LocationMapper {
 
-  @Override
   public Location toDomainModel(LocationEntity entity) {
     return entity != null
       ? new LocationBuilder()
@@ -23,20 +23,25 @@ public class LocationMapper implements DomainEntityMapper<Location, LocationEnti
       : UNKNOWN_LOCATION;
   }
 
-  @Override
-  public LocationEntity toEntity(Location location) {
-    LocationEntity entity = new LocationEntity(
-      location.getCountry(),
-      location.getCity(),
-      location.getStreetAddress()
-    );
-    if (location.hasCoordinates()) {
-      GeoCoordinate coordinate = location.getCoordinate();
-      entity.latitude = coordinate.getLatitude();
-      entity.longitude = coordinate.getLongitude();
-      entity.confidence = coordinate.getConfidence();
+  @Nullable
+  public LocationEntity toEntity(Location location, UUID logicalMeterId) {
+    if (location != null) {
+      LocationEntity entity = new LocationEntity(
+        logicalMeterId,
+        location.getCountry(),
+        location.getCity(),
+        location.getStreetAddress()
+      );
+      if (location.hasCoordinates()) {
+        GeoCoordinate coordinate = location.getCoordinate();
+        entity.latitude = coordinate.getLatitude();
+        entity.longitude = coordinate.getLongitude();
+        entity.confidence = coordinate.getConfidence();
+      }
+      return entity;
+    } else {
+      return null;
     }
-    return entity;
   }
 
   @Nullable

@@ -74,7 +74,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return logicalMeterJpaRepository.findByOrganisationIdAndId(organisationId, id)
+    return logicalMeterJpaRepository.findBy(organisationId, id)
       .flatMap(this::filterParametersOn);
   }
 
@@ -128,8 +128,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     UUID organisationId,
     String externalId
   ) {
-    return logicalMeterJpaRepository
-      .findByOrganisationIdAndExternalId(organisationId, externalId)
+    return logicalMeterJpaRepository.findBy(organisationId, externalId)
       .map(logicalMeterMapper::toDomainModel);
   }
 

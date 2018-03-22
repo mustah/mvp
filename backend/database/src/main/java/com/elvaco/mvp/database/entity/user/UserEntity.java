@@ -37,7 +37,7 @@ public class UserEntity extends EntityType<UUID> {
   @Column(nullable = false)
   public String password;
 
-  @ManyToOne(optional = false, fetch = FetchType.EAGER)
+  @ManyToOne(optional = false)
   @JoinColumn(name = "organisationId", nullable = false)
   public OrganisationEntity organisation;
 

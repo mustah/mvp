@@ -21,6 +21,7 @@ import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -28,6 +29,7 @@ import org.hibernate.annotations.FetchMode;
 import static java.util.Collections.emptySet;
 import static javax.persistence.CascadeType.ALL;
 
+@NoArgsConstructor
 @ToString(exclude = "gateways")
 @Entity
 @Access(AccessType.FIELD)
@@ -45,9 +47,6 @@ public class LogicalMeterEntity extends EntityType<UUID> {
   @Fetch(FetchMode.SUBSELECT)
   public Set<PhysicalMeterEntity> physicalMeters;
 
-  @Column(nullable = false)
-  public ZonedDateTime created;
-
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
     name = "gateways_meters",
@@ -61,16 +60,18 @@ public class LogicalMeterEntity extends EntityType<UUID> {
   public MeterDefinitionEntity meterDefinition;
 
   @Column(nullable = false)
+  public ZonedDateTime created;
+
+  @Column(nullable = false)
   public String externalId;
 
   @Column(nullable = false)
   public UUID organisationId;
 
-  @OneToOne(cascade = ALL)
+  @OneToOne(cascade = ALL, orphanRemoval = true)
   @PrimaryKeyJoinColumn
+  @Fetch(FetchMode.JOIN)
   public LocationEntity location;
-
-  public LogicalMeterEntity() {}
 
   public LogicalMeterEntity(
     UUID id,
@@ -86,15 +87,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     this.physicalMeters = emptySet();
     this.gateways = emptySet();
     this.meterDefinition = meterDefinition;
-    setLocation(new LocationEntity(id));
-  }
-
-  public LocationEntity getLocation() {
-    return location;
-  }
-
-  public void setLocation(LocationEntity location) {
-    this.location = location;
+    this.location = new LocationEntity(id);
   }
 
   @Override

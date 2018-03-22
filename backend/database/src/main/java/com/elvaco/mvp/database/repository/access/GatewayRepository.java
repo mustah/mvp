@@ -19,7 +19,6 @@ import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
-
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,17 +61,15 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    org.springframework.data.domain.Page<GatewayEntity> gatewayEntities =
-      repository.findAll(
-        toPredicate(parameters),
-        new PageRequest(
-          pageable.getPageNumber(),
-          pageable.getPageSize(),
-          null
-        )
-      );
+    org.springframework.data.domain.Page<Gateway> gatewayPage = repository.findAll(
+      toPredicate(parameters),
+      new PageRequest(
+        pageable.getPageNumber(),
+        pageable.getPageSize()
+      )
+    ).map(mapper::toDomainModel);
 
-    return new PageAdapter<>(gatewayEntities.map(mapper::toDomainModel));
+    return new PageAdapter<>(gatewayPage);
   }
 
   @Override
@@ -114,11 +111,7 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  public Optional<Gateway> findBy(
-    UUID organisationId,
-    String productModel,
-    String serial
-  ) {
+  public Optional<Gateway> findBy(UUID organisationId, String productModel, String serial) {
     return repository.findByOrganisationIdAndProductModelAndSerial(
       organisationId,
       productModel,

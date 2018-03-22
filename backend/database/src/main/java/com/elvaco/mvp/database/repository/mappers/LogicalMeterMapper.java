@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
@@ -74,6 +73,8 @@ public class LogicalMeterMapper {
       meterDefinitionMapper.toEntity(logicalMeter.meterDefinition)
     );
 
+    logicalMeterEntity.location = locationMapper.toEntity(logicalMeter.location, logicalMeter.id);
+
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
       .stream()
       .map(physicalMeterMapper::toEntity)
@@ -83,12 +84,6 @@ public class LogicalMeterMapper {
       .stream()
       .map(gatewayMapper::toEntity)
       .collect(toSet());
-
-    if (logicalMeter.location != null) {
-      LocationEntity location = locationMapper.toEntity(logicalMeter.location);
-      location.logicalMeterId = logicalMeterEntity.id;
-      logicalMeterEntity.setLocation(location);
-    }
 
     return logicalMeterEntity;
   }
@@ -111,7 +106,7 @@ public class LogicalMeterMapper {
       logicalMeterEntity.id,
       logicalMeterEntity.externalId,
       logicalMeterEntity.organisationId,
-      locationMapper.toDomainModel(logicalMeterEntity.getLocation()),
+      locationMapper.toDomainModel(logicalMeterEntity.location),
       logicalMeterEntity.created,
       physicalMeters,
       meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),
