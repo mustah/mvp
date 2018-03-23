@@ -54,8 +54,8 @@ public class LogicalMeterController {
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
-  @GetMapping("/map-data")
-  public List<MapMarkerDto> mapData(@RequestParam MultiValueMap<String, String> requestParams) {
+  @GetMapping("/map-markers")
+  public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
     return logicalMeterUseCases.findAll(requestParametersOf(requestParams))
       .stream()
       .map(logicalMeterMapper::toMapMarkerDto)

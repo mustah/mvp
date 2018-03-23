@@ -161,7 +161,7 @@ public class GatewayControllerTest extends IntegrationTest {
     UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
     ResponseEntity<List<MapMarkerDto>> response = as(context().superAdmin)
-      .getList("/gateways/map-data", MapMarkerDto.class);
+      .getList("/gateways/map-markers", MapMarkerDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(1);
@@ -198,10 +198,10 @@ public class GatewayControllerTest extends IntegrationTest {
     );
 
     ResponseEntity<List<MapMarkerDto>> cityAddressResponse = as(context().superAdmin)
-      .getList("/gateways/map-data?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
+      .getList("/gateways/map-markers?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
 
     ResponseEntity<List<MapMarkerDto>> cityResponse = as(context().superAdmin)
-      .getList("/gateways/map-data?city=sweden,kungsbacka", MapMarkerDto.class);
+      .getList("/gateways/map-markers?city=sweden,kungsbacka", MapMarkerDto.class);
 
     assertSameMapMarker(cityAddressResponse, mapMarker);
     assertSameMapMarker(cityResponse, mapMarker);

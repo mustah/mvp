@@ -61,8 +61,8 @@ public class GatewayController {
       .orElseThrow(() -> new GatewayNotFound(id));
   }
 
-  @GetMapping("/map-data")
-  public List<MapMarkerDto> mapData(@RequestParam MultiValueMap<String, String> requestParams) {
+  @GetMapping("/map-markers")
+  public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
     return gatewayUseCases.findAll(requestParametersOf(requestParams))
       .stream()
       .map(gatewayMapper::toMapMarkerDto)

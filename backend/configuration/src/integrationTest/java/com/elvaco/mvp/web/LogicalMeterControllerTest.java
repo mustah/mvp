@@ -699,7 +699,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllMapDataForLogicalMeters() {
     ResponseEntity<List<MapMarkerDto>> response = as(context().user)
-      .getList("/meters/map-data", MapMarkerDto.class);
+      .getList("/meters/map-markers", MapMarkerDto.class);
 
     assertThatStatusIsOk(response);
     assertThat(response.getBody().size()).isEqualTo(55);
@@ -708,7 +708,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllMapDataForLogicalMetersWithParameters() {
     ResponseEntity<List<MapMarkerDto>> response = as(context().user)
-      .getList("/meters/map-data?city=sweden,varberg", MapMarkerDto.class);
+      .getList("/meters/map-markers?city=sweden,varberg", MapMarkerDto.class);
 
     assertThatStatusIsOk(response);
     assertThat(response.getBody().size()).isEqualTo(27);
