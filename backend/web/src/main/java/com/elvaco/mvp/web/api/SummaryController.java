@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestApi("/v1/api/summary")
+@RestApi("/api/v1/summary")
 public class SummaryController {
 
   private final MeterLocationUseCases meterLocationUseCases;

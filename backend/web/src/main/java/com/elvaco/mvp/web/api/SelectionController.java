@@ -6,7 +6,7 @@ import com.elvaco.mvp.web.mapper.SelectionsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@RestApi("/v1/api/selections")
+@RestApi("/api/v1/selections")
 public class SelectionController {
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final SelectionsMapper selectionsMapper;
