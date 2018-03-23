@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -17,20 +18,24 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class QueryFilters {
 
-  public Optional<Predicate> prePredicateHook(RequestParameters parameters) {
-    return Optional.empty();
-  }
-
   public final Predicate toExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
       return null;
     }
 
     List<Predicate> predicates = new ArrayList<>();
-    prePredicateHook(parameters).ifPresent(predicates::add);
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
       List<String> propertyValues = propertyFilter.getValue();
-      buildPredicateFor(propertyFilter.getKey(), propertyValues).ifPresent(predicates::add);
+
+      if (propertyValues.isEmpty()) {
+        continue;
+      }
+
+      try {
+        buildPredicateFor(propertyFilter.getKey(), propertyValues).ifPresent(predicates::add);
+      } catch (Exception exception) {
+        throw new PredicateConstructionFailure(propertyFilter.getKey(), propertyValues, exception);
+      }
     }
 
     if (predicates.isEmpty()) {

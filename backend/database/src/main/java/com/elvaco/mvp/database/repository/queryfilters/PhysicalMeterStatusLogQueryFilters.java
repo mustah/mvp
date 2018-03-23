@@ -4,8 +4,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.querydsl.core.types.Predicate;
 
@@ -16,33 +16,36 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
-
-  @Override
-  public Optional<Predicate> prePredicateHook(RequestParameters parameters) {
-    if (parameters.hasName(AFTER) && parameters.hasName(BEFORE)) {
-      return Optional.of(periodQueryFilter(
-        parameters.getFirst(AFTER),
-        parameters.getFirst(BEFORE)
-      ));
-    }
-    return Optional.empty();
-  }
+  private ZonedDateTime start;
+  private ZonedDateTime stop;
 
   @Override
   public Optional<Predicate> buildPredicateFor(
     String filter, List<String> values
   ) {
-    if (filter.equals("physicalMeterId")) {
-      return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+    switch (filter) {
+      case "physicalMeterId":
+        return Optional.of(Q.physicalMeterId.in(mapValues(UUID::fromString, values)));
+      case BEFORE:
+        stop = ZonedDateTime.parse(values.get(0));
+        return Optional.ofNullable(
+          periodQueryFilter(start, stop)
+        );
+      case AFTER:
+        start = ZonedDateTime.parse(values.get(0));
+        return Optional.ofNullable(
+          periodQueryFilter(start, stop)
+        );
+      default:
+        return Optional.empty();
     }
-    return Optional.empty();
   }
 
-  private Predicate periodQueryFilter(String after, String before) {
-    ZonedDateTime start = ZonedDateTime.parse(after);
-    ZonedDateTime stop = ZonedDateTime.parse(before);
-    return
-      Q.start.before(stop)
-        .and(Q.stop.after(start).or(Q.stop.isNull()));
+  @Nullable
+  private Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
+    if (start == null || stop == null) {
+      return null;
+    }
+    return Q.start.before(stop).and(Q.stop.after(start).or(Q.stop.isNull()));
   }
 }
