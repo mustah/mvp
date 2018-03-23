@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -8,7 +7,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.web.dto.LocationsDto;
 import com.elvaco.mvp.web.dto.LocationsDto.Address;
 import com.elvaco.mvp.web.dto.LocationsDto.City;
-import com.elvaco.mvp.web.dto.LocationsDto.Country;
 import com.elvaco.mvp.web.dto.SelectionsDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,16 +70,14 @@ public class SelectionsMapperTest {
   }
 
   @Test
-  public void locationsShouldNotHaveAnyCountriesWhenThereIsNoAddressSpecified() {
-    Location location = new LocationBuilder()
-      .country("unknown")
-      .city("new york")
-      .build();
+  public void missingLocationDataShouldBeSetToUnknown() {
+    Location location = Location.UNKNOWN_LOCATION;
 
-    List<Country> countries = mapper.addToDto(location, selections)
-      .locations
-      .getCountries();
+    mapper.addToDto(location, selections);
+    LocationsDto locationsDto = selections.locations;
 
-    assertThat(countries).isEmpty();
+    assertThat(locationsDto.getCountry("unknown")
+                 .getCity("unknown")
+                 .getAddresses()).containsExactly(new Address("unknown"));
   }
 }

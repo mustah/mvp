@@ -24,8 +24,8 @@ public final class LocationMapper {
 
   static Optional<IdNamedDto> toAddress(Location location) {
     return Optional.ofNullable(location)
-      .filter(l -> nonNull(l.getStreetAddress()))
-      .map(l -> new IdNamedDto(l.getStreetAddress()));
+      .filter(l -> nonNull(l.getAddress()))
+      .map(l -> new IdNamedDto(l.getAddress()));
   }
 
   static Optional<GeoPositionDto> toGeoPosition(Location location) {

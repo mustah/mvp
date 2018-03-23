@@ -42,7 +42,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & OwnProps;
 
-class SelectionTree extends React.Component<Props> {
+class SelectionTreeComponent extends React.Component<Props> {
 
   componentDidMount() {
     const {fetchAllMeters, parameters} = this.props;
@@ -105,4 +105,4 @@ export const SelectionTreeContainer =
   connect<StateToProps, DispatchToProps, OwnProps>(
     mapStateToProps,
     mapDispatchToProps,
-  )(SelectionTree);
+  )(SelectionTreeComponent);
