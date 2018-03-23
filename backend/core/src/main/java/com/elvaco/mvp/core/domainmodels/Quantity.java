@@ -20,7 +20,7 @@ public class Quantity {
   public static final Quantity RETURN_TEMPERATURE = new Quantity(
     "Return temperature", "°C");
   public static final Quantity DIFFERENCE_TEMPERATURE = new Quantity(
-    "Difference temperature", "°K");
+    "Difference temperature", "K");
 
   private static final String QUANTITY_UNIT_DELIMITER = ":";
 
