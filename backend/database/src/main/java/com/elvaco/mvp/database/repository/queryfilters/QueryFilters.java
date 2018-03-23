@@ -64,7 +64,6 @@ public abstract class QueryFilters {
     return predicate;
   }
 
-
   private Predicate applyAndPredicates(List<Predicate> predicates) {
     BooleanExpression predicate = (BooleanExpression) predicates.remove(0);
     for (Predicate right : predicates) {

@@ -83,7 +83,6 @@ final class LocationParametersParser {
     return ids.trim().split(DELIMITER);
   }
 
-
   @ToString
   @EqualsAndHashCode
   static class Parameters {
@@ -98,6 +97,14 @@ final class LocationParametersParser {
       this.addresses = new HashSet<>();
     }
 
+    boolean hasCities() {
+      return !cities.isEmpty() && !countries.isEmpty();
+    }
+
+    public boolean hasAddresses() {
+      return hasCities() && !addresses.isEmpty();
+    }
+
     private void addCountry(String country) {
       countries.add(country);
     }
@@ -108,14 +115,6 @@ final class LocationParametersParser {
 
     private void addAddress(String address) {
       addresses.add(address);
-    }
-
-    boolean hasCities() {
-      return !cities.isEmpty() && !countries.isEmpty();
-    }
-
-    public boolean hasAddresses() {
-      return hasCities() && !addresses.isEmpty();
     }
   }
 

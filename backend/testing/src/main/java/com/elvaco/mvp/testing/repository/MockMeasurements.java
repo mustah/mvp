@@ -39,6 +39,16 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
+  public Optional<Measurement> findByPhysicalMeterIdAndCreated(
+    UUID physicalMeterId,
+    ZonedDateTime created
+  ) {
+    return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
+      .filter(measurement -> measurement.created.equals(created))
+      .findAny();
+  }
+
+  @Override
   public Measurement save(Measurement measurement) {
     return saveMock(measurement);
   }

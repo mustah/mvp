@@ -1,7 +1,9 @@
 package com.elvaco.mvp.database.repository.jpa;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
@@ -42,5 +44,10 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("unit") String unit,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to
+  );
+
+  Optional<MeasurementEntity> findByPhysicalMeterIdAndCreated(
+    UUID physicalMeterId,
+    ZonedDateTime created
   );
 }

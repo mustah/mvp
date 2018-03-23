@@ -19,6 +19,11 @@ public interface Measurements {
 
   Optional<Measurement> findById(Long id);
 
+  Optional<Measurement> findByPhysicalMeterIdAndCreated(
+    UUID physicalMeterId,
+    ZonedDateTime created
+  );
+
   Measurement save(Measurement measurement);
 
   Collection<Measurement> save(Collection<Measurement> measurement);

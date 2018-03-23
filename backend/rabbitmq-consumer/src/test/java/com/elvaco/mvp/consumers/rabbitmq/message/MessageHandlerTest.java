@@ -60,6 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ConstantConditions")
 public class MessageHandlerTest {
 
+  public static final String DEFAULT_QUANTITY = "Energy";
   private static final int DEFAULT_EXPECTED_INTERVAL = 15;
   private static final String DEFAULT_MEDIUM = "Hot water";
   private static final String DEFAULT_ADDRESS = "1234";
@@ -77,6 +78,7 @@ public class MessageHandlerTest {
   );
   private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
     "2018-03-07T16:13:09");
+  private static final String DEFAULT_UNIT = "kWh";
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
   private LogicalMeters logicalMeters;
@@ -330,7 +332,7 @@ public class MessageHandlerTest {
     Measurement expectedMeasurement = new Measurement(
       1L,
       EXPECTED_DATETIME,
-      "Energy",
+      DEFAULT_QUANTITY,
       1.0,
       "kWh",
       expectedPhysicalMeter
@@ -372,7 +374,7 @@ public class MessageHandlerTest {
     Measurement expectedMeasurement = new Measurement(
       1L,
       EXPECTED_DATETIME,
-      "Energy",
+      DEFAULT_QUANTITY,
       1.0,
       "kWh",
       new PhysicalMeter(
@@ -439,7 +441,7 @@ public class MessageHandlerTest {
       newValueDto("Volume flow"),
       newValueDto("Power"),
       newValueDto("Volume"),
-      newValueDto("Energy")
+      newValueDto(DEFAULT_QUANTITY)
     );
     assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
       MeterDefinition.DISTRICT_HEATING_METER);
@@ -488,7 +490,6 @@ public class MessageHandlerTest {
     assertThat(gateways.findAll()).hasSize(1);
   }
 
-
   @Test
   public void expectedIntervalIsSetForCreatedPhysicalMeter() {
     MeteringMeterStructureMessageDto message = newStructureMessage(60);
@@ -510,6 +511,53 @@ public class MessageHandlerTest {
     assertThat(all.get(0).readIntervalMinutes).isEqualTo(60);
   }
 
+  @Test
+  public void measurementUnitIsUpdated() {
+    messageHandler.handle(newMeasurementMessage("kW", 1.0));
+
+    List<Measurement> all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).unit).isEqualTo("kW");
+    assertThat(all.get(0).value).isEqualTo(1.0);
+
+    messageHandler.handle(newMeasurementMessage("MW", 1.0));
+
+    all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).unit).isEqualTo("MW");
+    assertThat(all.get(0).value).isEqualTo(1.0);
+  }
+
+  @Test
+  public void measurementQuantityIsUpdated() {
+    messageHandler.handle(newMeasurementMessage("Energy", "kW", 1.0));
+
+    List<Measurement> all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).quantity).isEqualTo("Energy");
+
+    messageHandler.handle(newMeasurementMessage("Un-Energy", "kW", 1.0));
+
+    all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).quantity).isEqualTo("Un-Energy");
+  }
+
+  @Test
+  public void measurementValueIsUpdated() {
+    messageHandler.handle(newMeasurementMessage(1.0));
+
+    List<Measurement> all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).value).isEqualTo(1.0);
+
+    messageHandler.handle(newMeasurementMessage(2.0));
+
+    all = measurements.findAll(null);
+    assertThat(all).hasSize(1);
+    assertThat(all.get(0).value).isEqualTo(2.0);
+  }
+
   private ValueDto newValueDto(String quantity) {
     return new ValueDto(LocalDateTime.now(), 0.0, "one", quantity);
   }
@@ -524,7 +572,46 @@ public class MessageHandlerTest {
     return organisations.findBySlug(DEFAULT_ORGANISATION_EXTERNAL_ID).get();
   }
 
+  private MeteringMeasurementMessageDto newMeasurementMessage(double value) {
+    return newMeasurementMessage(
+      DEFAULT_ORGANISATION_EXTERNAL_ID,
+      DEFAULT_QUANTITY,
+      DEFAULT_UNIT,
+      value
+    );
+  }
+
   private MeteringMeasurementMessageDto newMeasurementMessage(String organisationExternalId) {
+    return newMeasurementMessage(organisationExternalId, DEFAULT_QUANTITY, DEFAULT_UNIT, 1.0);
+  }
+
+  private MeteringMeasurementMessageDto newMeasurementMessage(
+    String quantity,
+    String unit,
+    double value
+  ) {
+    return newMeasurementMessage(DEFAULT_ORGANISATION_EXTERNAL_ID, quantity, unit, value);
+  }
+
+  private MeteringMeasurementMessageDto newMeasurementMessage(String unit, double value) {
+    return newMeasurementMessage(DEFAULT_ORGANISATION_EXTERNAL_ID, DEFAULT_QUANTITY, unit, value);
+  }
+
+  private MeteringMeasurementMessageDto newMeasurementMessage() {
+    return newMeasurementMessage(
+      DEFAULT_ORGANISATION_EXTERNAL_ID,
+      DEFAULT_QUANTITY,
+      DEFAULT_UNIT,
+      1.0
+    );
+  }
+
+  private MeteringMeasurementMessageDto newMeasurementMessage(
+    String organisationExternalId,
+    String quantity,
+    String unit,
+    double value
+  ) {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("123"),
@@ -532,12 +619,8 @@ public class MessageHandlerTest {
       new FacilityIdDto(DEFAULT_EXTERNAL_ID),
       organisationExternalId,
       "Elvaco Metering",
-      singletonList(new ValueDto(MEASUREMENT_TIMESTAMP, 1.0, "kWh", "Energy"))
+      singletonList(new ValueDto(MEASUREMENT_TIMESTAMP, value, unit, quantity))
     );
-  }
-
-  private MeteringMeasurementMessageDto newMeasurementMessage() {
-    return newMeasurementMessage(DEFAULT_ORGANISATION_EXTERNAL_ID);
   }
 
   private MeteringMeterStructureMessageDto newStructureMessage(
@@ -546,7 +629,6 @@ public class MessageHandlerTest {
   ) {
     return newStructureMessage(medium, "KAM", physicalMeterId, DEFAULT_EXPECTED_INTERVAL);
   }
-
 
   private MeteringMeterStructureMessageDto newStructureMessage(
     String medium

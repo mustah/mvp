@@ -2,11 +2,9 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class MeteringStructureParserTest {
 

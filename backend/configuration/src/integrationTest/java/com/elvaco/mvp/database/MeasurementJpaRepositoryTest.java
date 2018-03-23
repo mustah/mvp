@@ -120,7 +120,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assertThat(results.get(1).getValueValue()).isEqualTo(4.0);
   }
 
-
   @Test
   public void resultsCanBeFetchedWithMonthResolution() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
@@ -169,7 +168,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     OffsetDateTime oneHourLater = START_TIME.plus(Duration.ofHours(1));
     newMeasurement(meter, oneHourLater, 1.0, "W");
     newMeasurement(meter, oneHourLater, 9.0, "W");
-
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(

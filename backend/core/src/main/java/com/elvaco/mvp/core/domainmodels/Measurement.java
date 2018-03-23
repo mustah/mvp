@@ -51,4 +51,37 @@ public class Measurement implements Identifiable<Long> {
   public Quantity getQuantity() {
     return new Quantity(quantity, unit);
   }
+
+  public Measurement withValue(double value) {
+    return new Measurement(
+      id,
+      created,
+      quantity,
+      value,
+      unit,
+      physicalMeter
+    );
+  }
+
+  public Measurement withUnit(String unit) {
+    return new Measurement(
+      id,
+      created,
+      quantity,
+      value,
+      unit,
+      physicalMeter
+    );
+  }
+
+  public Measurement withQuantity(String quantity) {
+    return new Measurement(
+      id,
+      created,
+      quantity,
+      value,
+      unit,
+      physicalMeter
+    );
+  }
 }

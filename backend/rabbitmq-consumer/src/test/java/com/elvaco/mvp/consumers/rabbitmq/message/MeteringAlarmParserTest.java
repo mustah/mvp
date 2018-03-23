@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
-
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 
 public class MeteringAlarmParserTest {
 
