@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 
-@RestApi("/v1/api/summary")
+@RestApi("/api/v1/summary")
 public class SummaryController {
 
   private final MeterLocationUseCases meterLocationUseCases;
