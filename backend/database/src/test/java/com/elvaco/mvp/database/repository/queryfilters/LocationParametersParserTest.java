@@ -145,8 +145,6 @@ public class LocationParametersParserTest {
     assertThat(parameters.addresses).isEmpty();
   }
 
-
-
   @Test
   public void createAddressParameters() {
     Parameters parameters = toAddressParameters(singletonList("a, b , c "));

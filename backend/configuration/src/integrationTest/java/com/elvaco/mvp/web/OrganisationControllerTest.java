@@ -32,7 +32,6 @@ public class OrganisationControllerTest extends IntegrationTest {
   private Organisation theBeatles =
     new Organisation(randomUUID(), "The Beatles", "the-beatles");
 
-
   @Before
   public void setUp() {
     secretService = organisations.save(secretService);

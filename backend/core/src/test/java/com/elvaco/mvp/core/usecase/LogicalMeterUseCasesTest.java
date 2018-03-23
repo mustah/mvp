@@ -107,7 +107,6 @@ public class LogicalMeterUseCasesTest {
     assertThat(saved.id).isEqualTo(meterId);
   }
 
-
   @Test
   public void nrOfReadOutsInHour() {
     ZonedDateTime after = ZonedDateTime.parse("2001-01-01T13:00:00Z");
@@ -242,7 +241,6 @@ public class LogicalMeterUseCasesTest {
   private ZonedDateTime getFirstMatching(String date, long interval) {
     return getFirstDateMatchingInterval(ZonedDateTime.parse(date), interval);
   }
-
 
   private LogicalMeter newMeter(UUID meterId, UUID organisationId) {
     return new LogicalMeter(

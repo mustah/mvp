@@ -41,7 +41,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
   private MeterDefinitionMapper meterDefinitionMapper;
 
-
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
@@ -119,7 +118,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
         String.join(",", asList(logicalMeter1.id.toString(), logicalMeter2.id.toString()))
       ), MeasurementAggregateDto.class);
 
-
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
       new MeasurementAggregateDto(
@@ -158,7 +156,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
           + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementAggregateDto.class);
-
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
@@ -260,7 +257,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
         logicalMeter.id.toString()
       ), MeasurementAggregateDto.class);
 
-
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
@@ -346,7 +342,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
         logicalMeter.id.toString()
       ), MeasurementAggregateDto.class);
 
-
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
       new MeasurementAggregateDto(
@@ -386,7 +381,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
           + "&unit=W",
         logicalMeter.id.toString()
       ), MeasurementAggregateDto.class);
-
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(
@@ -445,7 +439,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'to' timestamp: 'thisIsNotAValidTimestamp'.");
 
-
     response = as(context().user).get(
       String.format(
         "/measurements/average"
@@ -460,7 +453,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
-
 
     response = as(context().user).get(
       String.format(

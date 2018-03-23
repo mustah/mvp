@@ -490,7 +490,6 @@ public class MessageHandlerTest {
     assertThat(gateways.findAll()).hasSize(1);
   }
 
-
   @Test
   public void expectedIntervalIsSetForCreatedPhysicalMeter() {
     MeteringMeterStructureMessageDto message = newStructureMessage(60);
@@ -528,7 +527,6 @@ public class MessageHandlerTest {
     assertThat(all.get(0).unit).isEqualTo("MW");
     assertThat(all.get(0).value).isEqualTo(1.0);
   }
-
 
   @Test
   public void measurementQuantityIsUpdated() {
@@ -625,14 +623,12 @@ public class MessageHandlerTest {
     );
   }
 
-
   private MeteringMeterStructureMessageDto newStructureMessage(
     String medium,
     String physicalMeterId
   ) {
     return newStructureMessage(medium, "KAM", physicalMeterId, DEFAULT_EXPECTED_INTERVAL);
   }
-
 
   private MeteringMeterStructureMessageDto newStructureMessage(
     String medium
