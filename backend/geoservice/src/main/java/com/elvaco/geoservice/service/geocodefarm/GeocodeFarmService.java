@@ -16,6 +16,10 @@ public class GeocodeFarmService implements AddressToGeoService {
   @Value("${geocodeFarm.url}")
   private String url;
 
+  public void setUrl(String url) {
+    this.url = url;
+  }
+
   @Value("${geocodeFarm.quota:250}")
   private Integer quota;
   @Value("${geocodeFarm.maxrate:4}")

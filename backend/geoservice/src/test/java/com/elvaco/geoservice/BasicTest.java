@@ -67,6 +67,7 @@ public class BasicTest {
 
   @Before
   public void before() {
+    geocodeFarmService.setUrl("http://localhost:" + port + "/v3/json/forward/?addr={address}");
     callbackController.setLastResponse(null);
   }
 
