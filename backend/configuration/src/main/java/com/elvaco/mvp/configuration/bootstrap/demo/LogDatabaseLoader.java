@@ -20,6 +20,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
@@ -55,6 +56,7 @@ public class LogDatabaseLoader implements CommandLineRunner {
   }
 
   @Override
+  @Transactional
   public void run(String... args) {
     List<Status> statuses = this.statuses.findAll();
     if (statuses.size() == 0) {
