@@ -84,7 +84,8 @@ public class MeteringMessageHandler implements MessageHandler {
       organisation
     ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
-      .withLogicalMeterId(logicalMeter.id);
+      .withLogicalMeterId(logicalMeter.id)
+      .withReadInterval(structureMessage.meter.expectedInterval);
 
     Gateway gateway = findOrCreateGateway(
       organisation,
