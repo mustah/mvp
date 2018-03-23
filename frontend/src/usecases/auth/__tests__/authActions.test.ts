@@ -90,7 +90,7 @@ describe('authActions', () => {
         timestamp: Date.now(),
         error: 'Unauthorized',
         message: 'User is not authorized',
-        path: '/v1/api/authenticate',
+        path: '/api/v1/authenticate',
       };
       const username = 'foo';
       mockRestClient.onGet(EndPoints.authenticate).reply(unauthorized, errorMessage);
@@ -107,7 +107,7 @@ describe('authActions', () => {
         status: internalServerError,
         error: 'Internal Server Error',
         message: 'Something when really wrong',
-        path: '/v1/api/authenticate',
+        path: '/api/v1/authenticate',
       };
 
       const username = 'foo';
@@ -125,7 +125,7 @@ describe('authActions', () => {
         status: internalServerError,
         error: 'Bad credentials',
         message: 'You are not allowed here',
-        path: '/v1/api/authenticate',
+        path: '/api/v1/authenticate',
       };
 
       const username = 'foo';

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
-@RestApi("/v1/api/meters")
+@RestApi("/api/v1/meters")
 public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import static java.util.stream.Collectors.toList;
 
-@RestApi("/v1/api/organisations")
+@RestApi("/api/v1/organisations")
 public class OrganisationController {
 
   private final OrganisationUseCases organisationUseCases;

@@ -45,7 +45,7 @@ describe('authReducer', () => {
       timestamp: Date.now(),
       error: 'Unauthorized',
       message: 'User is not authorized',
-      path: '/v1/api/authenticate',
+      path: '/api/v1/authenticate',
     };
 
     expect(auth(requestState, loginFailure(errorMessage))).toEqual({

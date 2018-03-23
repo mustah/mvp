@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import static java.util.stream.Collectors.toList;
 
-@RestApi("/v1/api/users")
+@RestApi("/api/v1/users")
 public class UserController {
 
   private final UserUseCases userUseCases;

@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
-@RestApi("/v1/api/measurements")
+@RestApi("/api/v1/measurements")
 public class MeasurementController {
 
   private final MeasurementUseCases measurementUseCases;
