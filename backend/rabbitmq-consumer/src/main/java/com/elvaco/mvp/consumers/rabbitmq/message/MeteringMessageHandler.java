@@ -132,15 +132,24 @@ public class MeteringMessageHandler implements MessageHandler {
 
     List<Measurement> measurements = measurementMessage.values
       .stream()
-      .map(valueDto -> new Measurement(
-        null,
-        // Note: Metering stores and treats all values as CET - at least it's consistent!
-        valueDto.timestamp.atZone(ZoneId.of("CET")),
-        valueDto.quantity,
-        valueDto.value,
-        valueDto.unit,
-        physicalMeter
-      ))
+      .map(
+        valueDto -> measurementUseCases
+          .findForMeterCreatedAt(
+            physicalMeter.id,
+            valueDto.timestamp.atZone(ZoneId.of("CET"))
+          ).orElseGet(() -> new Measurement(
+            null,
+            // Note: Metering stores and treats all values as CET - at least
+            // it's consistent!
+            valueDto.timestamp.atZone(ZoneId.of("CET")),
+            valueDto.quantity,
+            valueDto.value,
+            valueDto.unit,
+            physicalMeter
+          )).withValue(valueDto.value)
+          .withUnit(valueDto.unit)
+          .withQuantity(valueDto.quantity)
+      )
       .collect(toList());
     gatewayUseCases.save(gateway);
     logicalMeterUseCases.save(
