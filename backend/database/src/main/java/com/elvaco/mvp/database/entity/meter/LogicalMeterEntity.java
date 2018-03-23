@@ -23,6 +23,8 @@ import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -45,6 +47,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
 
   @OneToMany(mappedBy = "logicalMeterId", fetch = FetchType.EAGER)
   @Fetch(FetchMode.SUBSELECT)
+  @Cascade(CascadeType.MERGE)
   public Set<PhysicalMeterEntity> physicalMeters;
 
   @ManyToMany(fetch = FetchType.EAGER)

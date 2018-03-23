@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -86,11 +85,20 @@ public class MeteringMessageHandler implements MessageHandler {
     ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id);
+
+    Gateway gateway = findOrCreateGateway(
+      organisation,
+      logicalMeter,
+      structureMessage.gateway.id,
+      structureMessage.gateway.productModel
+    );
+    gatewayUseCases.save(gateway);
+    logicalMeterUseCases.save(
+      logicalMeter
+        .withGateway(gateway)
+        .withPhysicalMeter(physicalMeter)
+    );
     physicalMeterUseCases.save(physicalMeter);
-
-    GatewayStatusDto gateway = structureMessage.gateway;
-
-    findOrCreateGateway(organisation, logicalMeter, gateway.id, gateway.productModel);
   }
 
   @Override
@@ -114,7 +122,12 @@ public class MeteringMessageHandler implements MessageHandler {
       organisation
     );
 
-    findOrCreateGateway(organisation, logicalMeter, measurementMessage.gateway.id, "Unknown");
+    Gateway gateway = findOrCreateGateway(
+      organisation,
+      logicalMeter,
+      measurementMessage.gateway.id,
+      "Unknown"
+    );
 
     List<Measurement> measurements = measurementMessage.values
       .stream()
@@ -128,6 +141,13 @@ public class MeteringMessageHandler implements MessageHandler {
         physicalMeter
       ))
       .collect(toList());
+    gatewayUseCases.save(gateway);
+    logicalMeterUseCases.save(
+      logicalMeter
+        .withGateway(gateway)
+        .withPhysicalMeter(physicalMeter)
+    );
+    physicalMeterUseCases.save(physicalMeter);
     measurementUseCases.save(measurements);
   }
 
@@ -152,30 +172,22 @@ public class MeteringMessageHandler implements MessageHandler {
     return MeterDefinition.UNKNOWN_METER;
   }
 
-  private void findOrCreateGateway(
+  private Gateway findOrCreateGateway(
     Organisation organisation,
     LogicalMeter logicalMeter,
     String serial,
     String productModel
   ) {
-    gatewayUseCases.findBy(organisation.id, productModel, serial)
-      .orElseGet(() -> {
-        // TODO[!must!] create and save gateway when the logical meter is created (after demo)
-        // TODO[!must!] this still works, but it does one extra round-trip to DB
-        Gateway g = new Gateway(
-          UUID.randomUUID(),
-          organisation.id,
-          serial,
-          productModel,
-          singletonList(logicalMeter),
-          emptyList() // TODO Save gateway status
-        );
-        Gateway saved = gatewayUseCases.save(g);
-
-        logicalMeterUseCases.save(logicalMeter.withGateway(saved));
-
-        return saved;
-      });
+    return gatewayUseCases.findBy(organisation.id, productModel, serial)
+      .orElseGet(() ->
+                   new Gateway(
+                     UUID.randomUUID(),
+                     organisation.id,
+                     serial,
+                     productModel,
+                     singletonList(logicalMeter),
+                     emptyList() // TODO Save gateway status
+                   ));
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
@@ -186,13 +198,13 @@ public class MeteringMessageHandler implements MessageHandler {
     return logicalMeterUseCases.findByOrganisationIdAndExternalId(
       organisation.id,
       facilityId
-    ).orElseGet(() -> logicalMeterUseCases.save(
-      new LogicalMeter(
-        randomUUID(),
-        facilityId,
-        organisation.id,
-        selectMeterDefinition(medium)
-      )));
+    ).orElseGet(() ->
+                  new LogicalMeter(
+                    randomUUID(),
+                    facilityId,
+                    organisation.id,
+                    selectMeterDefinition(medium)
+                  ));
   }
 
   private Organisation findOrCreateOrganisation(String externalId) {
@@ -218,7 +230,7 @@ public class MeteringMessageHandler implements MessageHandler {
       facilityId,
       meterId
     ).orElseGet(
-      () -> physicalMeterUseCases.save(
+      () ->
         new PhysicalMeter(
           UUID.randomUUID(),
           organisation,
@@ -229,7 +241,7 @@ public class MeteringMessageHandler implements MessageHandler {
           logicalMeterId,
           0L, // TODO add real interval here!
           null
-        ))
+        )
     );
   }
 

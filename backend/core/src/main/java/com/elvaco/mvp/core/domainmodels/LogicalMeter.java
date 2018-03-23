@@ -1,6 +1,7 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -150,6 +151,23 @@ public class LogicalMeter implements Identifiable<UUID> {
       location,
       created,
       physicalMeters,
+      meterDefinition,
+      gateways,
+      collectionPercentage
+    );
+  }
+
+  public LogicalMeter withPhysicalMeter(PhysicalMeter physicalMeter) {
+    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(singletonList(physicalMeter));
+    newPhysicalMeters.addAll(physicalMeters);
+
+    return new LogicalMeter(
+      id,
+      externalId,
+      organisationId,
+      location,
+      created,
+      newPhysicalMeters,
       meterDefinition,
       gateways,
       collectionPercentage

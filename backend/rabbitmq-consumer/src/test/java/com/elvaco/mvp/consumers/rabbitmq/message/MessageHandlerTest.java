@@ -136,22 +136,22 @@ public class MessageHandlerTest {
       EXTERNAL_ID
     ).get();
 
+    PhysicalMeter savedPhysicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+      organisation.id,
+      EXTERNAL_ID,
+      "1234"
+    ).get();
+
     LogicalMeter expectedLogicalMeter = new LogicalMeter(
       logicalMeter.id,
       EXTERNAL_ID,
       organisation.id,
       Location.UNKNOWN_LOCATION,
       logicalMeter.created,
-      emptyList(),
+      singletonList(savedPhysicalMeter),
       MeterDefinition.HOT_WATER_METER,
       singletonList(gateways.findBy(organisation.id, "CMi2110", "001694120").get())
     );
-
-    PhysicalMeter savedPhysicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-      organisation.id,
-      EXTERNAL_ID,
-      "1234"
-    ).get();
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
     assertThat(savedPhysicalMeter).isEqualTo(new PhysicalMeter(
@@ -241,37 +241,47 @@ public class MessageHandlerTest {
   }
 
   @Test
-  @Ignore("Does this really happen? An identical meter with a new manufacturer/medium really "
-    + "ought to be considered a new physical meter.")
-  public void updatesExistingMeterForExistingOrganisation() {
-    MeteringMeterStructureMessageDto structureMessage = newStructureMessage("Hot water", "KAM");
+  public void addsSecondPhysicalMeterToExistingLogicalMeter() {
     Organisation organisation = organisations.save(
-      newOrganisation("An existing organisation", "Some organisation")
+      newOrganisation("An existing organisation", "some-organisation")
     );
-    UUID physicalMeterId = randomUUID();
-
-    physicalMeters.save(new PhysicalMeter(
-      physicalMeterId,
+    ZonedDateTime now = ZonedDateTime.now();
+    UUID logicalMeterId = UUID.randomUUID();
+    PhysicalMeter existingPhysicalMeter = physicalMeters.save(new PhysicalMeter(
+      UUID.randomUUID(),
       "1234",
       EXTERNAL_ID,
       "Hot water",
       "ELV",
       organisation,
       15
+      ).withLogicalMeterId(logicalMeterId));
+
+    logicalMeters.save(new LogicalMeter(
+      logicalMeterId,
+      EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      now,
+      singletonList(existingPhysicalMeter),
+      MeterDefinition.HOT_WATER_METER,
+      emptyList()
     ));
+
+    MeteringMeterStructureMessageDto structureMessage =
+      newStructureMessage("Hot water", "KAM", "4321");
 
     messageHandler.handle(structureMessage);
 
-    PhysicalMeter expectedPhysicalMeter = new PhysicalMeter(
-      physicalMeterId,
-      organisation,
-      "1234",
-      EXTERNAL_ID,
-      "Hot water",
-      "KAM",
-      15
-    );
-    assertThat(physicalMeters.findAll()).containsExactly(expectedPhysicalMeter);
+    List<LogicalMeter> organisationMeters = logicalMeters.findByOrganisationId(organisation.id);
+    assertThat(organisationMeters).hasSize(1);
+    LogicalMeter meter = organisationMeters.get(0);
+    assertThat(meter.physicalMeters).hasSize(2);
+  }
+
+  @Test
+  public void doesNotCreateDuplicateMeters() {
+
   }
 
   @Test
@@ -501,10 +511,21 @@ public class MessageHandlerTest {
     return newMeasurementMessage(ORGANISATION_EXTERNAL_ID);
   }
 
-  private MeteringMeterStructureMessageDto newStructureMessage(String medium, String manufacturer) {
+  private MeteringMeterStructureMessageDto newStructureMessage(
+    String medium,
+    String manufacturer
+  ) {
+    return newStructureMessage(medium, manufacturer, "1234");
+  }
+
+  private MeteringMeterStructureMessageDto newStructureMessage(
+    String medium,
+    String manufacturer,
+    String physicalMeterId
+  ) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
-      new MeterDto("1234", medium, "OK", manufacturer, 15),
+      new MeterDto(physicalMeterId, medium, "OK", manufacturer, 15),
       new FacilityDto(EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
       ORGANISATION_EXTERNAL_ID,
