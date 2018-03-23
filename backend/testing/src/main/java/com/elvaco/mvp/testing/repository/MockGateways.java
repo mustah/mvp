@@ -21,6 +21,11 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   }
 
   @Override
+  public List<Gateway> findAll(RequestParameters requestParameters) {
+    return allMocks();
+  }
+
+  @Override
   public Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable) {
     return null;
   }

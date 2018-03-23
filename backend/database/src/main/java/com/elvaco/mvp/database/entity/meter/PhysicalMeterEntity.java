@@ -18,7 +18,9 @@ import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
@@ -49,7 +51,9 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
 
   public long readIntervalMinutes;
 
-  public PhysicalMeterEntity() {}
+  public PhysicalMeterEntity(UUID id) {
+    this.id = id;
+  }
 
   public PhysicalMeterEntity(
     UUID id,

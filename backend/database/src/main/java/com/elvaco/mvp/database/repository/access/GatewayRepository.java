@@ -13,35 +13,35 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
-import com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
-import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static java.util.stream.Collectors.toList;
 
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository repository;
-  private final GatewayQueryFilters queryFilters;
+  private final QueryFilters gatewayQueryFilters;
   private final GatewayMapper mapper;
   private final GatewayWithMetersMapper gatewayWithMetersMapper;
   private final GatewayStatusLogJpaRepository statusLogJpaRepository;
 
   public GatewayRepository(
     GatewayJpaRepository repository,
-    GatewayQueryFilters queryFilters,
+    QueryFilters gatewayQueryFilters,
     GatewayMapper mapper,
     GatewayWithMetersMapper gatewayWithMetersMapper,
     GatewayStatusLogJpaRepository statusLogJpaRepository
   ) {
     this.repository = repository;
-    this.queryFilters = queryFilters;
+    this.gatewayQueryFilters = gatewayQueryFilters;
     this.mapper = mapper;
     this.gatewayWithMetersMapper = gatewayWithMetersMapper;
     this.statusLogJpaRepository = statusLogJpaRepository;
@@ -52,10 +52,14 @@ public class GatewayRepository implements Gateways {
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
       .findAllGroupedByGatewayId(null);
 
-    return repository.findAll()
+    return toGateways(repository.findAll(), statusLogMap);
+  }
+
+  @Override
+  public List<Gateway> findAll(RequestParameters parameters) {
+    return repository.findAll(toPredicate(parameters))
       .stream()
-      .map(gateway ->
-             gatewayWithMetersMapper.withLogicalMetersAndGatewayStatus(gateway, statusLogMap))
+      .map(gatewayWithMetersMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -72,42 +76,23 @@ public class GatewayRepository implements Gateways {
     return new PageAdapter<>(gatewayPage);
   }
 
-  @Override
-  public Optional<Gateway> findById(UUID id) {
-    return repository.findById(id).map(gatewayWithMetersMapper::withLogicalMeters);
-  }
-
-  @Override
-  public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return repository
-      .findByOrganisationIdAndId(organisationId, id)
-      .map(gatewayWithMetersMapper::withLogicalMeters);
-  }
-
   @Transactional
   @Override
   public List<Gateway> findAllByOrganisationId(UUID organisationId) {
     List<GatewayEntity> gatewayEntities = repository.findAllByOrganisationId(organisationId);
 
-    Map<UUID, List<GatewayStatusLogEntity>> statusLogEntityMap = statusLogJpaRepository
+    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
       .findAllGroupedByGatewayId(
-        QGatewayStatusLogEntity.gatewayStatusLogEntity.gatewayId.in(
-          getGatewayIds(gatewayEntities)
-        ));
+        gatewayStatusLogEntity.gatewayId.in(getGatewayIds(gatewayEntities))
+      );
 
-    return gatewayEntities
-      .stream()
-      .map(gateway -> gatewayWithMetersMapper.withLogicalMetersAndGatewayStatus(
-        gateway,
-        statusLogEntityMap
-           )
-      ).collect(toList());
+    return toGateways(gatewayEntities, statusLogMap);
   }
 
   @Override
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = repository.save(mapper.toEntity(gateway));
-    return gatewayWithMetersMapper.withLogicalMeters(entity);
+    return gatewayWithMetersMapper.toDomainModel(entity);
   }
 
   @Override
@@ -119,8 +104,29 @@ public class GatewayRepository implements Gateways {
     ).map(mapper::toDomainModel);
   }
 
+  @Override
+  public Optional<Gateway> findById(UUID id) {
+    return repository.findById(id).map(gatewayWithMetersMapper::toDomainModel);
+  }
+
+  @Override
+  public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    return repository.findByOrganisationIdAndId(organisationId, id)
+      .map(gatewayWithMetersMapper::toDomainModel);
+  }
+
+  private List<Gateway> toGateways(
+    List<GatewayEntity> gatewayEntities,
+    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap
+  ) {
+    return gatewayEntities
+      .stream()
+      .map(gateway -> gatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
+      .collect(toList());
+  }
+
   private Predicate toPredicate(RequestParameters parameters) {
-    return queryFilters.toExpression(parameters);
+    return gatewayQueryFilters.toExpression(parameters);
   }
 
   private List<UUID> getGatewayIds(List<GatewayEntity> gatewayEntities) {

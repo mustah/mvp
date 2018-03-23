@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.Map;
 
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.MeterLocationUseCases;
@@ -13,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestApi("/api/v1/summary")
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
+
+@RestApi("/v1/api/summary")
 public class SummaryController {
 
   private final MeterLocationUseCases meterLocationUseCases;
@@ -28,7 +29,7 @@ public class SummaryController {
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     MeterSummary summary = meterLocationUseCases.findAllForSummaryInfo(parameters);
     return new MeterSummaryDto(
       summary.numMeters(),

@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
@@ -62,8 +62,8 @@ public class GatewayController {
   }
 
   @GetMapping("/map-data")
-  public List<MapMarkerDto> mapData() {
-    return gatewayUseCases.findAll()
+  public List<MapMarkerDto> mapData(@RequestParam MultiValueMap<String, String> requestParams) {
+    return gatewayUseCases.findAll(requestParametersOf(requestParams))
       .stream()
       .map(gatewayMapper::toMapMarkerDto)
       .collect(toList());
@@ -82,7 +82,7 @@ public class GatewayController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())

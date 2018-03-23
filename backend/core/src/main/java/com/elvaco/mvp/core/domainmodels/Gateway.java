@@ -13,7 +13,6 @@ public class Gateway implements Identifiable<UUID> {
   public final String serial;
   public final String productModel;
   public final List<GatewayStatusLog> statusLogs;
-
   public final List<LogicalMeter> meters;
 
   public Gateway(

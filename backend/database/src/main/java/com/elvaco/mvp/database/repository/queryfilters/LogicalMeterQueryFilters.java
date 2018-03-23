@@ -23,9 +23,7 @@ public class LogicalMeterQueryFilters extends QueryFilters {
   private ZonedDateTime after;
 
   @Override
-  public Optional<Predicate> buildPredicateFor(
-    String filter, List<String> values
-  ) {
+  public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     return Optional.ofNullable(buildNullablePredicateFor(filter, values));
   }
 

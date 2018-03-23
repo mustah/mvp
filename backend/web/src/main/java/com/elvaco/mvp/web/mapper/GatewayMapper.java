@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
-import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.dto.MapMarkerType;
@@ -37,9 +36,8 @@ public class GatewayMapper {
       gateway.id.toString(),
       gateway.serial,
       gateway.productModel,
-      gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name),
-      gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
-        .orElse(DEFAULT_STATUS_DATE),
+      getStatusName(gatewayStatusLog),
+      getStatusChanged(timeZone, gatewayStatusLog),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       connectedMeterIds(gateway)
     );
@@ -47,14 +45,12 @@ public class GatewayMapper {
 
   public GatewayMandatoryDto toGatewayMandatory(Gateway gateway, TimeZone timeZone) {
     Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
-
     return new GatewayMandatoryDto(
       gateway.id.toString(),
       gateway.productModel,
       gateway.serial,
-      gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name),
-      gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
-        .orElse(DEFAULT_STATUS_DATE)
+      getStatusName(gatewayStatusLog),
+      getStatusChanged(timeZone, gatewayStatusLog)
     );
   }
 
@@ -68,24 +64,31 @@ public class GatewayMapper {
   }
 
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
-    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
-
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Gateway;
-    // TODO[!must!] meter status logs should be mapped as enum in db
-    mapMarkerDto.status = gatewayStatusLog.map(status -> status.name)
-      .orElse(StatusType.UNKNOWN.name);
-    Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
-    if (logicalMeter.isPresent() && logicalMeter.get().location.hasCoordinates()) {
-      GeoCoordinate coord = logicalMeter.get().location.getCoordinate();
-      if (coord != null) {
-        mapMarkerDto.confidence = coord.getConfidence();
-        mapMarkerDto.latitude = coord.getLatitude();
-        mapMarkerDto.longitude = coord.getLongitude();
-      }
-    }
+    mapMarkerDto.status = getStatusName(getCurrentStatus(gateway.statusLogs));
+    gateway.meters
+      .stream()
+      .findFirst()
+      .filter(lg -> lg.location.hasCoordinates())
+      .map(lg -> lg.location.getCoordinate())
+      .map(coordinate -> {
+        mapMarkerDto.confidence = coordinate.getConfidence();
+        mapMarkerDto.latitude = coordinate.getLatitude();
+        mapMarkerDto.longitude = coordinate.getLongitude();
+        return coordinate;
+      });
     return mapMarkerDto;
+  }
+
+  private String getStatusChanged(TimeZone timeZone, Optional<GatewayStatusLog> gatewayStatusLog) {
+    return gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
+      .orElse(DEFAULT_STATUS_DATE);
+  }
+
+  private String getStatusName(Optional<GatewayStatusLog> gatewayStatusLog) {
+    return gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name);
   }
 
   private Optional<GatewayStatusLog> getCurrentStatus(List<GatewayStatusLog> statusLogs) {

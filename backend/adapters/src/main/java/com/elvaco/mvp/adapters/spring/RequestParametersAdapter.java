@@ -25,14 +25,16 @@ public class RequestParametersAdapter implements RequestParameters {
     this(new LinkedMultiValueMap<>());
   }
 
-  public static RequestParameters of(@Nullable MultiValueMap<String, String> multiValueMap) {
+  public static RequestParameters requestParametersOf(
+    @Nullable MultiValueMap<String, String> multiValueMap
+  ) {
     return new RequestParametersAdapter(multiValueMap);
   }
 
-  public static RequestParameters of(Map<String, List<String>> multiValueMap) {
-    return of(multiValueMap != null
-                ? new LinkedMultiValueMap<>(multiValueMap)
-                : new LinkedMultiValueMap<>());
+  public static RequestParameters requestParametersOf(Map<String, List<String>> multiValueMap) {
+    return requestParametersOf(multiValueMap != null
+                                 ? new LinkedMultiValueMap<>(multiValueMap)
+                                 : new LinkedMultiValueMap<>());
   }
 
   @Override

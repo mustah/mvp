@@ -6,11 +6,16 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
+import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.LocationDto;
@@ -27,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,10 +41,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GatewayControllerTest extends IntegrationTest {
 
   @Autowired
-  private GatewayJpaRepository jpaRepository;
+  private GatewayJpaRepository gatewayJpaRepository;
+
+  @Autowired
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
   private Gateways gateways;
+
+  @Autowired
+  private LogicalMeters logicalMeters;
 
   @Autowired
   private Organisations organisations;
@@ -52,7 +64,8 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
-    jpaRepository.deleteAll();
+    logicalMeterJpaRepository.deleteAll();
+    gatewayJpaRepository.deleteAll();
     organisations.deleteById(dailyPlanet.id);
   }
 
@@ -68,24 +81,9 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminsCanListAllGateways() {
-    gateways.save(new Gateway(
-      randomUUID(),
-      dailyPlanet.id,
-      "1111",
-      "serial-1"
-    ));
-    gateways.save(new Gateway(
-      randomUUID(),
-      dailyPlanet.id,
-      "2222",
-      "serial-2"
-    ));
-    gateways.save(new Gateway(
-      randomUUID(),
-      context().organisation().id,
-      "3333",
-      "serial-3"
-    ));
+    saveGateway(dailyPlanet.id);
+    saveGateway(dailyPlanet.id);
+    saveGateway(context().getOrganisationId());
 
     Page<GatewayDto> response = as(context().superAdmin)
       .getPage(
@@ -122,12 +120,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void otherUsersCannotFetchGatewaysFromOtherOrganisations() {
-    gateways.save(new Gateway(
-      randomUUID(),
-      context().organisation().id,
-      "1111",
-      "serial-1"
-    ));
+    saveGateway(context().getOrganisationId());
 
     Page<GatewayDto> gatewayResponse = restAsUser(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
@@ -137,24 +130,9 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void userCanOnlyListGatewaysWithinSameOrganisation() {
-    Gateway g1 = gateways.save(new Gateway(
-      randomUUID(),
-      dailyPlanet.id,
-      "1111",
-      "serial-1"
-    ));
-    Gateway g2 = gateways.save(new Gateway(
-      randomUUID(),
-      dailyPlanet.id,
-      "2222",
-      "serial-2"
-    ));
-    gateways.save(new Gateway(
-      randomUUID(),
-      context().organisation().id,
-      "3333",
-      "serial-3"
-    ));
+    Gateway g1 = saveGateway(dailyPlanet.id);
+    Gateway g2 = saveGateway(dailyPlanet.id);
+    saveGateway(context().getOrganisationId());
 
     Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
@@ -169,8 +147,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void superUserCanGetSingleGateway() {
-    UUID gatewayId = randomUUID();
-    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+    UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
     ResponseEntity<GatewayDto> response = as(context().superAdmin)
       .get("/gateways/" + gatewayId, GatewayDto.class);
@@ -181,8 +158,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void mapDataIncludesGatewaysWithoutLocation() {
-    UUID gatewayId = randomUUID();
-    gateways.save(new Gateway(gatewayId, dailyPlanet.id, "1111", "serial-1"));
+    UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
     ResponseEntity<List<MapMarkerDto>> response = as(context().superAdmin)
       .getList("/gateways/map-data", MapMarkerDto.class);
@@ -190,5 +166,62 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(1);
     assertThat(response.getBody().get(0).id).isEqualTo(gatewayId.toString());
+  }
+
+  @Test
+  public void mapDataIncludesGatewaysWithCityAndAddressLocation() {
+    Gateway gateway = saveGateway(dailyPlanet.id);
+
+    LocationBuilder location = new LocationBuilder()
+      .country("sweden")
+      .city("kungsbacka")
+      .streetAddress("super 1")
+      .latitude(1.234)
+      .longitude(2.3323);
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "external-1234",
+      dailyPlanet.id,
+      location.build(),
+      singletonList(gateway),
+      ZonedDateTime.now()
+    ));
+
+    MapMarkerDto mapMarker = new MapMarkerDto(
+      gateway.id.toString(),
+      MapMarkerType.Gateway,
+      "unknown",
+      1.234,
+      2.3323,
+      1.0
+    );
+
+    ResponseEntity<List<MapMarkerDto>> cityAddressResponse = as(context().superAdmin)
+      .getList("/gateways/map-data?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
+
+    ResponseEntity<List<MapMarkerDto>> cityResponse = as(context().superAdmin)
+      .getList("/gateways/map-data?city=sweden,kungsbacka", MapMarkerDto.class);
+
+    assertSameMapMarker(cityAddressResponse, mapMarker);
+    assertSameMapMarker(cityResponse, mapMarker);
+  }
+
+  private Gateway saveGateway(UUID organisationId) {
+    return gateways.save(new Gateway(
+      randomUUID(),
+      organisationId,
+      randomUUID().toString(),
+      randomUUID().toString()
+    ));
+  }
+
+  private void assertSameMapMarker(
+    ResponseEntity<List<MapMarkerDto>> response,
+    MapMarkerDto mapMarker
+  ) {
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).hasSize(1);
+    assertThat(response.getBody().get(0)).isEqualTo(mapMarker);
   }
 }

@@ -32,6 +32,10 @@ public class GatewayUseCases {
     }
   }
 
+  public List<Gateway> findAll(RequestParameters parameters) {
+    return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
+  }
+
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
     return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable);
   }

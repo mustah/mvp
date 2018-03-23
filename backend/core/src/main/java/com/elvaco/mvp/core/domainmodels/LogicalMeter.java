@@ -124,6 +124,27 @@ public class LogicalMeter implements Identifiable<UUID> {
     );
   }
 
+  public LogicalMeter(
+    UUID id,
+    String externalId,
+    UUID organisationId,
+    Location location,
+    List<Gateway> gateways,
+    ZonedDateTime created
+  ) {
+    this(
+      id,
+      externalId,
+      organisationId,
+      location,
+      created,
+      emptyList(),
+      MeterDefinition.UNKNOWN_METER,
+      gateways,
+      null
+    );
+  }
+
   @Override
   public UUID getId() {
     return id;

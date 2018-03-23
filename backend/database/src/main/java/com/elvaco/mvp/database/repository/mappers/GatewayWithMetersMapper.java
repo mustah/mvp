@@ -28,7 +28,7 @@ public class GatewayWithMetersMapper {
     this.gatewayStatusLogMapper = gatewayStatusLogMapper;
   }
 
-  public Gateway withLogicalMetersAndGatewayStatus(
+  public Gateway toDomainModel(
     GatewayEntity entity,
     Map<UUID, List<GatewayStatusLogEntity>> statusLogEntityMap
   ) {
@@ -45,8 +45,8 @@ public class GatewayWithMetersMapper {
     );
   }
 
-  public Gateway withLogicalMeters(GatewayEntity entity) {
-    return withLogicalMetersAndGatewayStatus(entity, emptyMap());
+  public Gateway toDomainModel(GatewayEntity entity) {
+    return toDomainModel(entity, emptyMap());
   }
 
   private List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {
