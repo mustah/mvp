@@ -5,7 +5,6 @@ import {GatewayMandatory} from '../gateway/gatewayModels';
 import {NormalizedPaginatedState} from '../paginatedDomainModels';
 
 export interface MeterStatusChangelog extends Identifiable {
-  statusId: uuid;
   name: string;
   start: string;
 }

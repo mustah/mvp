@@ -39,7 +39,7 @@ import static java.util.Collections.singletonList;
 @Profile("demo")
 @Component
 @Slf4j
-public class UserDatabaseLoader implements CommandLineRunner {
+class UserDatabaseLoader implements CommandLineRunner {
 
   private final TokenService tokenService;
   private final TokenFactory tokenFactory;
@@ -48,7 +48,7 @@ public class UserDatabaseLoader implements CommandLineRunner {
   private final SettingUseCases settingUseCases;
 
   @Autowired
-  public UserDatabaseLoader(
+  UserDatabaseLoader(
     TokenService tokenService,
     TokenFactory tokenFactory,
     Organisations organisations,

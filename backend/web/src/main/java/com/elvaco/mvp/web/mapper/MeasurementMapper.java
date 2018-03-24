@@ -63,7 +63,7 @@ public class MeasurementMapper {
     Quantity quantity;
     UUID meterId;
 
-    MeterQuantity(Quantity quantity, UUID meterId) {
+    private MeterQuantity(Quantity quantity, UUID meterId) {
       this.quantity = quantity;
       this.meterId = meterId;
     }

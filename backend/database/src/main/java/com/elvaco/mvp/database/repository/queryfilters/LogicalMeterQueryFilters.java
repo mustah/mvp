@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
 import com.querydsl.core.types.Predicate;
@@ -15,6 +16,7 @@ import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
 import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
+import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
@@ -39,7 +41,8 @@ public class LogicalMeterQueryFilters extends QueryFilters {
       case "organisation":
         return Q.organisationId.in(mapValues(UUID::fromString, values));
       case "status":
-        return Q.physicalMeters.any().statusLogs.any().status.name.in(values);
+        List<StatusType> statuses = values.stream().map(StatusType::from).collect(toList());
+        return Q.physicalMeters.any().statusLogs.any().status.in(statuses);
       case "city":
         return whereCity(toCityParameters(values));
       case "address":

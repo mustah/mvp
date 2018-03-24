@@ -5,8 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.TimeZone;
 
 public final class Dates {
-  private Dates() {
-  }
+
+  private Dates() {}
 
   public static String formatTime(ZonedDateTime time, TimeZone timeZone) {
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter

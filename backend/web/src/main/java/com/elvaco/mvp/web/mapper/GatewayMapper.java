@@ -25,7 +25,6 @@ import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class GatewayMapper {
-  private static final String DEFAULT_STATUS_DATE = "";
 
   public GatewayDto toDto(Gateway gateway, TimeZone timeZone) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
@@ -37,7 +36,7 @@ public class GatewayMapper {
       gateway.serial,
       gateway.productModel,
       getStatusName(gatewayStatusLog),
-      getStatusChanged(timeZone, gatewayStatusLog),
+      getStatusChanged(gatewayStatusLog, timeZone),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       connectedMeterIds(gateway)
     );
@@ -50,7 +49,7 @@ public class GatewayMapper {
       gateway.productModel,
       gateway.serial,
       getStatusName(gatewayStatusLog),
-      getStatusChanged(timeZone, gatewayStatusLog)
+      getStatusChanged(gatewayStatusLog, timeZone)
     );
   }
 
@@ -82,13 +81,15 @@ public class GatewayMapper {
     return mapMarkerDto;
   }
 
-  private String getStatusChanged(TimeZone timeZone, Optional<GatewayStatusLog> gatewayStatusLog) {
+  private String getStatusChanged(Optional<GatewayStatusLog> gatewayStatusLog, TimeZone timeZone) {
     return gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
-      .orElse(DEFAULT_STATUS_DATE);
+      .orElse("");
   }
 
   private String getStatusName(Optional<GatewayStatusLog> gatewayStatusLog) {
-    return gatewayStatusLog.map(status -> status.name).orElse(StatusType.UNKNOWN.name);
+    return gatewayStatusLog.map(statusLog -> statusLog.status)
+      .map(statusType -> statusType.name)
+      .orElse(StatusType.UNKNOWN.name);
   }
 
   private Optional<GatewayStatusLog> getCurrentStatus(List<GatewayStatusLog> statusLogs) {

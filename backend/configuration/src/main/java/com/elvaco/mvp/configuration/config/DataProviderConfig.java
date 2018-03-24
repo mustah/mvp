@@ -2,6 +2,7 @@ package com.elvaco.mvp.configuration.config;
 
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionData;
 import com.elvaco.mvp.configuration.bootstrap.production.ProductionDataProvider;
+import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -11,7 +12,6 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
-import com.elvaco.mvp.core.spi.repository.Statuses;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
@@ -23,7 +23,6 @@ import com.elvaco.mvp.database.repository.access.OrganisationRepository;
 import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
-import com.elvaco.mvp.database.repository.access.StatusRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -35,7 +34,6 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.StatusJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogMapper;
@@ -49,7 +47,6 @@ import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
-import com.elvaco.mvp.database.repository.mappers.StatusMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
@@ -74,7 +71,6 @@ class DataProviderConfig {
   private final OrganisationJpaRepository organisationJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-  private final StatusJpaRepository statusJpaRepository;
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
 
@@ -90,7 +86,6 @@ class DataProviderConfig {
     OrganisationJpaRepository organisationJpaRepository,
     PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
     GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository,
-    StatusJpaRepository statusJpaRepository,
     GatewayJpaRepository gatewayJpaRepository,
     RoleJpaRepository roleJpaRepository
   ) {
@@ -104,7 +99,6 @@ class DataProviderConfig {
     this.organisationJpaRepository = organisationJpaRepository;
     this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
     this.gatewayStatusLogJpaRepository = gatewayStatusLogJpaRepository;
-    this.statusJpaRepository = statusJpaRepository;
     this.gatewayJpaRepository = gatewayJpaRepository;
     this.roleJpaRepository = roleJpaRepository;
   }
@@ -115,22 +109,6 @@ class DataProviderConfig {
       userJpaRepository,
       new UserMapper(new OrganisationMapper()),
       passwordEncoder::encode
-    );
-  }
-
-  @Bean
-  MeterStatusLogs meterStatusLog() {
-    return new MeterStatusLogsRepository(
-      physicalMeterStatusLogJpaRepository,
-      new MeterStatusLogMapper()
-    );
-  }
-
-  @Bean
-  Statuses meterStatuses() {
-    return new StatusRepository(
-      statusJpaRepository,
-      new StatusMapper()
     );
   }
 
@@ -210,7 +188,15 @@ class DataProviderConfig {
   }
 
   @Bean
-  GatewayStatusLogsRepository gatewayStatusLogs() {
+  MeterStatusLogs meterStatusLog() {
+    return new MeterStatusLogsRepository(
+      physicalMeterStatusLogJpaRepository,
+      new MeterStatusLogMapper()
+    );
+  }
+
+  @Bean
+  GatewayStatusLogs gatewayStatusLogs() {
     return new GatewayStatusLogsRepository(
       gatewayStatusLogJpaRepository,
       new GatewayStatusLogMapper()

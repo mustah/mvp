@@ -4,11 +4,6 @@ CREATE EXTENSION IF NOT EXISTS "unit";
 CREATE USER ${application_user} WITH ENCRYPTED PASSWORD '${application_password}';
 GRANT CONNECT ON DATABASE ${application_database} TO ${application_user};
 
-CREATE TABLE IF NOT EXISTS status (
-  id BIGSERIAL PRIMARY KEY,
-  name TEXT NOT NULL UNIQUE
-);
-
 CREATE TABLE IF NOT EXISTS quantity (
   id BIGSERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -34,7 +29,7 @@ CREATE TABLE IF NOT EXISTS organisation (
 );
 
 CREATE TABLE IF NOT EXISTS mvp_user (
-  id UUID,
+  id UUID UNIQUE,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
@@ -64,7 +59,7 @@ CREATE TABLE IF NOT EXISTS logical_meter (
 );
 
 CREATE TABLE IF NOT EXISTS location (
-  logical_meter_id UUID PRIMARY KEY REFERENCES logical_meter(id) ON DELETE CASCADE,
+  logical_meter_id UUID PRIMARY KEY REFERENCES logical_meter (id) ON DELETE CASCADE,
   country TEXT,
   city TEXT,
   street_address TEXT,
@@ -88,7 +83,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
 );
 
 CREATE TABLE IF NOT EXISTS gateway (
-  id UUID,
+  id UUID UNIQUE,
   organisation_id UUID REFERENCES organisation,
   serial TEXT NOT NULL UNIQUE,
   product_model TEXT NOT NULL,
@@ -104,21 +99,11 @@ CREATE TABLE IF NOT EXISTS gateways_meters (
   FOREIGN KEY (organisation_id, gateway_id) REFERENCES gateway
 );
 
-CREATE TABLE IF NOT EXISTS gateway_status_log (
-  id BIGSERIAL PRIMARY KEY,
-  start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-  stop TIMESTAMP WITH TIME ZONE,
-  status_id BIGINT REFERENCES status (id),
-  gateway_id UUID,
-  organisation_id UUID REFERENCES organisation,
-  FOREIGN KEY (organisation_id, gateway_id) REFERENCES gateway
-);
-
 CREATE TABLE IF NOT EXISTS measurement (
   id BIGSERIAL PRIMARY KEY,
   physical_meter_id UUID NOT NULL REFERENCES physical_meter (id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE,
+  ON UPDATE CASCADE
+  ON DELETE CASCADE,
   created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   quantity TEXT NOT NULL,
   value UNIT NOT NULL,
@@ -131,12 +116,19 @@ CREATE TABLE IF NOT EXISTS mvp_setting (
   value TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS physical_meter_status_log (
+CREATE TABLE IF NOT EXISTS gateway_status_log (
   id BIGSERIAL PRIMARY KEY,
-  -- FIXME: These should be tzranges
   start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
   stop TIMESTAMP WITH TIME ZONE,
-  status_id BIGINT REFERENCES status (id),
+  status TEXT,
+  gateway_id UUID REFERENCES gateway (id)
+);
+
+CREATE TABLE IF NOT EXISTS physical_meter_status_log (
+  id BIGSERIAL PRIMARY KEY,
+  start TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+  stop TIMESTAMP WITH TIME ZONE,
+  status TEXT,
   physical_meter_id UUID REFERENCES physical_meter (id)
 );
 
