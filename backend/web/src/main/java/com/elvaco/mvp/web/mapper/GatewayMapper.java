@@ -96,10 +96,10 @@ public class GatewayMapper {
     return statusLogs.stream().findFirst();
   }
 
-  private List<String> connectedMeterIds(Gateway gateway) {
+  private List<UUID> connectedMeterIds(Gateway gateway) {
     return gateway.meters
       .stream()
-      .map(meter -> meter.id.toString())
+      .map(meter -> meter.id)
       .collect(toList());
   }
 

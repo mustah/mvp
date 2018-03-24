@@ -71,7 +71,7 @@ public class GatewayRepository implements Gateways {
         pageable.getPageNumber(),
         pageable.getPageSize()
       )
-    ).map(mapper::toDomainModel);
+    ).map(gatewayWithMetersMapper::toDomainModel);
 
     return new PageAdapter<>(gatewayPage);
   }

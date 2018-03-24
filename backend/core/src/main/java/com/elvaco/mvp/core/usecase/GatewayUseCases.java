@@ -24,14 +24,6 @@ public class GatewayUseCases {
     this.currentUser = currentUser;
   }
 
-  public List<Gateway> findAll() {
-    if (currentUser.isSuperAdmin()) {
-      return gateways.findAll();
-    } else {
-      return gateways.findAllByOrganisationId(currentUser.getOrganisationId());
-    }
-  }
-
   public List<Gateway> findAll(RequestParameters parameters) {
     return gateways.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
   }

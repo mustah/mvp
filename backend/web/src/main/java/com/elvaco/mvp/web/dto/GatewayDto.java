@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.dto;
 
 import java.util.List;
+import java.util.UUID;
 
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import static java.util.Collections.emptyList;
 public class GatewayDto extends GatewayMandatoryDto {
 
   public LocationDto location;
-  public List<String> meterIds;
+  public List<UUID> meterIds;
   public List<FlagDto> flags;
 
   public GatewayDto(
@@ -24,7 +25,7 @@ public class GatewayDto extends GatewayMandatoryDto {
     String status,
     String statusChanged,
     LocationDto location,
-    List<String> meterIds
+    List<UUID> meterIds
   ) {
     super(id, productModel, serial, status, statusChanged);
     this.location = location;
