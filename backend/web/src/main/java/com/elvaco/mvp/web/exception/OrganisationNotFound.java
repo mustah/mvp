@@ -10,11 +10,7 @@ public class OrganisationNotFound extends RuntimeException {
 
   private static final long serialVersionUID = -3612670568377718769L;
 
-  public OrganisationNotFound(String id) {
-    super("Unable to find organisation with ID '" + id + "'");
-  }
-
   public OrganisationNotFound(UUID id) {
-    this(id.toString());
+    super("Unable to find organisation with ID '" + id.toString() + "'");
   }
 }

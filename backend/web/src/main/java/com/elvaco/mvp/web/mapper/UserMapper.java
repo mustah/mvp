@@ -7,7 +7,7 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 public class UserMapper {
@@ -33,7 +33,7 @@ public class UserMapper {
 
   public User toDomainModel(UserDto userDto) {
     return new User(
-      uuidOf(userDto.id),
+      userDto.id != null ? userDto.id : randomUUID(),
       userDto.name,
       userDto.email,
       null,
@@ -44,7 +44,7 @@ public class UserMapper {
 
   public User toDomainModel(UserWithPasswordDto userDto) {
     return new User(
-      uuidOf(userDto.id),
+      userDto.id != null ? userDto.id : randomUUID(),
       userDto.name,
       userDto.email,
       userDto.password,

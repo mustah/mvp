@@ -53,12 +53,11 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    OrganisationDto body = request.getBody();
-
-    assertThat(body).hasFieldOrPropertyWithValue("id", secretService.id.toString());
-    assertThat(body).hasFieldOrPropertyWithValue("name", "Secret Service");
-    assertThat(body).hasFieldOrPropertyWithValue("slug", "secret-service");
+    assertThat(request.getBody()).isEqualTo(new OrganisationDto(
+      secretService.id,
+      "Secret Service",
+      "secret-service"
+    ));
   }
 
   @Test
@@ -168,7 +167,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminCannotUpdateOrganisation() {
     OrganisationDto organisation = new OrganisationDto(
-      wayneIndustries.id.toString(),
+      wayneIndustries.id,
       wayneIndustries.name,
       "batcave"
     );

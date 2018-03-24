@@ -19,7 +19,7 @@ public class GatewayDto extends GatewayMandatoryDto {
   public List<FlagDto> flags;
 
   public GatewayDto(
-    String id,
+    UUID id,
     String serial,
     String productModel,
     String status,

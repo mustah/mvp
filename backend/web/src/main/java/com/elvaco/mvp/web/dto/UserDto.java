@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class UserDto {
 
-  public String id;
+  public UUID id;
   public String name;
   public String email;
   public OrganisationDto organisation;
@@ -25,7 +25,7 @@ public class UserDto {
     OrganisationDto organisation,
     List<String> roles
   ) {
-    this.id = id.toString();
+    this.id = id;
     this.name = name;
     this.email = email;
     this.organisation = organisation;

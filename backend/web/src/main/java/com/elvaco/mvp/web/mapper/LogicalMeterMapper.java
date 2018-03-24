@@ -34,7 +34,7 @@ public class LogicalMeterMapper {
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = logicalMeter.id.toString();
+    mapMarkerDto.id = logicalMeter.id;
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     mapMarkerDto.status = getCurrentStatus(getMeterStatusLogs(logicalMeter)).name;
     if (logicalMeter.location.hasCoordinates()) {
@@ -55,7 +55,7 @@ public class LogicalMeterMapper {
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
-    meterDto.id = logicalMeter.id.toString();
+    meterDto.id = logicalMeter.id;
     meterDto.status = getCurrentStatus(statusLogs);
     meterDto.flags = emptyList();
     meterDto.manufacturer = logicalMeter.getManufacturer();

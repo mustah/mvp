@@ -12,7 +12,7 @@ public class IdNamedDto {
   public String id;
   public String name;
 
-  public IdNamedDto(String id, String name) {
+  private IdNamedDto(String id, String name) {
     this.id = id;
     this.name = name;
   }

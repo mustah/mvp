@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
 @RestApi("/api/v1/gateways")
@@ -47,8 +47,8 @@ public class GatewayController {
   }
 
   @GetMapping("{id}")
-  public GatewayDto gateway(TimeZone timeZone, @PathVariable String id) {
-    return gatewayUseCases.findById(uuidOf(id))
+  public GatewayDto gateway(TimeZone timeZone, @PathVariable UUID id) {
+    return gatewayUseCases.findById(id)
       .map(gateway -> gatewayMapper.toDto(gateway, timeZone))
       .orElseThrow(() -> new GatewayNotFound(id));
   }

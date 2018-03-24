@@ -137,12 +137,12 @@ public class GatewayControllerTest extends IntegrationTest {
     Page<GatewayDto> response = as(dailyPlanetUser(dailyPlanet))
       .getPage("/gateways", GatewayDto.class);
 
-    List<String> gatewayIds = response.getContent()
+    List<UUID> gatewayIds = response.getContent()
       .stream()
       .map(g -> g.id)
       .collect(toList());
 
-    assertThat(gatewayIds).containsOnly(g1.id.toString(), g2.id.toString());
+    assertThat(gatewayIds).containsOnly(g1.id, g2.id);
   }
 
   @Test
@@ -153,7 +153,7 @@ public class GatewayControllerTest extends IntegrationTest {
       .get("/gateways/" + gatewayId, GatewayDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().id).isEqualTo(gatewayId.toString());
+    assertThat(response.getBody().id).isEqualTo(gatewayId);
   }
 
   @Test
@@ -165,7 +165,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(1);
-    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId.toString());
+    assertThat(response.getBody().get(0).id).isEqualTo(gatewayId);
   }
 
   @Test
@@ -189,7 +189,7 @@ public class GatewayControllerTest extends IntegrationTest {
     ));
 
     MapMarkerDto mapMarker = new MapMarkerDto(
-      gateway.id.toString(),
+      gateway.id,
       MapMarkerType.Gateway,
       "unknown",
       1.234,

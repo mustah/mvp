@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -28,7 +29,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -60,7 +60,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findUserById() {
-    String id = ELVACO_SUPER_ADMIN_USER.getId().toString();
+    UUID id = ELVACO_SUPER_ADMIN_USER.getId();
 
     ResponseEntity<UserDto> response = asSuperAdmin()
       .get("/users/" + id, UserDto.class);
@@ -180,7 +180,7 @@ public class UserControllerTest extends IntegrationTest {
       .delete("/users/" + user.id, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(response.getBody().id).isEqualTo(user.id.toString());
+    assertThat(response.getBody().id).isEqualTo(user.id);
   }
 
   @Test
@@ -329,7 +329,7 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(token).isNotNull();
 
     UserDto user = new UserDto(
-      uuidOf(created.id),
+      created.id,
       "Wayne, Bruce",
       created.email,
       created.organisation,
