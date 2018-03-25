@@ -75,7 +75,6 @@ public class CallbackService {
 
   @Transactional
   public void popFromQueue(CallbackEntity callback) {
-
     RestTemplate template = new RestTemplate();
 
     try {
@@ -103,9 +102,6 @@ public class CallbackService {
 
   @Scheduled(fixedRate = 1000)
   public void popFromQueue() {
-
-    callbackRepository.findByNextRetryBeforeNowOrderByNextRetryAsc().forEach((callback) -> {
-      popFromQueue(callback);
-    });
+    callbackRepository.findByNextRetryBeforeNowOrderByNextRetryAsc().forEach(this::popFromQueue);
   }
 }
