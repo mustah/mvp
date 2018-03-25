@@ -9,12 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JpaConverterJson implements AttributeConverter<Object, String> {
 
-  private static final  ObjectMapper objectMapper = new ObjectMapper();
+  private static final  ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Override
   public String convertToDatabaseColumn(Object meta) {
     try {
-      return objectMapper.writeValueAsString(meta);
+      return OBJECT_MAPPER.writeValueAsString(meta);
     } catch (JsonProcessingException ex) {
       return null;
       // or throw an error
@@ -24,7 +24,7 @@ public class JpaConverterJson implements AttributeConverter<Object, String> {
   @Override
   public Object convertToEntityAttribute(String dbData) {
     try {
-      return objectMapper.readValue(dbData, Object.class);
+      return OBJECT_MAPPER.readValue(dbData, Object.class);
     } catch (IOException ex) {
       // logger.error("Unexpected IOEx decoding json from database: " + dbData);
       return null;
