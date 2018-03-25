@@ -4,11 +4,11 @@ import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 
 public interface AddressToGeoService {
-  public GeoLocation getGeoByAddress(Address address);
+  GeoLocation getGeoByAddress(Address address);
 
-  public String getId();
+  String getId();
 
-  public Integer getQuota();
+  Integer getQuota();
 
-  public Integer getMaxRate();
+  Integer getMaxRate();
 }

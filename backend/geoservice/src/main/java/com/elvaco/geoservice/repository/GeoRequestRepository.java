@@ -7,6 +7,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface GeoRequestRepository extends PagingAndSortingRepository<GeoRequestEntity, Long> {
 
-  public Page<GeoRequestEntity> findByOrderByCreatedAsc(Pageable pageable);
+  Page<GeoRequestEntity> findByOrderByCreatedAsc(Pageable pageable);
 
 }
