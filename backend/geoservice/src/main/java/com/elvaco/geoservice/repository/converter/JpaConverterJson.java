@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JpaConverterJson implements AttributeConverter<Object, String> {
 
-  private static final  ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Override
   public String convertToDatabaseColumn(Object meta) {
