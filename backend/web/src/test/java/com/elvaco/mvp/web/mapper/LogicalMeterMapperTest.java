@@ -16,7 +16,6 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
@@ -51,7 +50,6 @@ public class LogicalMeterMapperTest {
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
     mapMarkerDtoExpected.status = StatusType.OK.name;
-    mapMarkerDtoExpected.mapMarkerType = MapMarkerType.Meter;
 
     Location location = new LocationBuilder()
       .coordinate(new GeoCoordinate(3.1, 2.1))

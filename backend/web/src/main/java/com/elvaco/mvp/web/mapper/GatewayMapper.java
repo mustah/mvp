@@ -9,7 +9,6 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -65,7 +64,6 @@ public class GatewayMapper {
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id;
-    mapMarkerDto.mapMarkerType = MapMarkerType.Gateway;
     mapMarkerDto.status = getStatusName(getCurrentStatus(gateway.statusLogs));
     gateway.meters
       .stream()
