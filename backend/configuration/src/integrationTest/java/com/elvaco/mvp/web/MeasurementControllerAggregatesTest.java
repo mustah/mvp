@@ -550,6 +550,37 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
   }
 
   @Test
+  public void missingParametersReturnsHttp400() {
+    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
+      String.format(
+        "/measurements/average"
+          + "?to=2018-03-07T12:32:05.999Z"
+          + "&quantities=" + Quantity.POWER.name + ":W"
+          + "&meters=%s"
+          + "&resolution=hour",
+        UUID.randomUUID().toString()
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Missing 'from' parameter.");
+
+    response = as(context().user).get(
+      String.format(
+        "/measurements/average"
+          + "?from=2018-03-07T12:32:05.999Z"
+          + "&to=2018-03-07T12:32:05.999Z"
+          + "&meters=%s"
+          + "&resolution=hour",
+        UUID.randomUUID().toString()
+      ), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo(
+      "Missing 'quantities' parameter.");
+  }
+
+  @Test
   public void toTimestampDefaultsToNow() {
     ZonedDateTime now = ZonedDateTime.now();
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
