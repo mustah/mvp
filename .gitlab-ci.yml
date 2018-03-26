@@ -14,6 +14,7 @@ variables:
   SALTAPI_EAUTH: "pam"
   SALTAPI_USER: "saltapi"
   SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
+  GITLAB_API_TOKEN: "J1Jb27mvUxZqAVx5MhhJ"
 
 .no_cache: &no_cache
   cache:
@@ -32,6 +33,48 @@ variables:
   <<: *cache_gradle
   cache:
     policy: pull
+
+.deploy:autodeploy: &auto_deploy
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: deploy
+
+.publish:artifactory: &publish_to_artifactory
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
+    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+
+.publish:update_salt: &update_salt
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  script:
+    - curl -X POST --header 'PRIVATE-TOKEN:$GITLAB_API_TOKEN' 'https://gitlab.elvaco.se/api/v4/projects/17/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop'
+    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
+
+.deploy:staging: &deploy_staging
+  <<: *auto_deploy
+  script:
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+
+.deploy:production: &deploy_production
+  <<: *auto_deploy
+  script:
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -125,52 +168,27 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-.publish:artifactory: &publish_to_artifactory
-  <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
-  stage: publish
-  dependencies:
-    - gradle:build
-  script:
-    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
-    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
-
 publish:artifactory:
   <<: *publish_to_artifactory
   only:
-    - develop
+    - /^release-.*$
+    - master
 
 publish:update_salt:
-  <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
-  stage: publish
+  <<: *update_salt
   only:
-    - develop
-  script:
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
-
-.deploy:autodeploy: &auto_deploy
-  <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
-  stage: deploy
-  only:
-    - develop
+    - /^release-.*$
+    - master
 
 deploy:staging:
-  <<: *auto_deploy
-  script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply
+  <<: *deploy_staging
+  only:
+    - /^release-.*$
+    - master
 
 deploy:production:
-  <<: *auto_deploy
-  script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply
+  <<: *deploy_production
+  when: manual
+  only:
+    - /^release-.*$
+    - master
