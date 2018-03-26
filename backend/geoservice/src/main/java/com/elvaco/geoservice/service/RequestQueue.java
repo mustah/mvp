@@ -8,8 +8,11 @@ import com.elvaco.geoservice.repository.AddressGeoRepository;
 import com.elvaco.geoservice.repository.GeoRequestRepository;
 import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.AddressGeoEntity;
+import com.elvaco.geoservice.repository.entity.CallbackEntity;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 import com.elvaco.geoservice.repository.entity.GeoRequestEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,7 +22,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RequestQueue {
-
+  private final Logger logger = LoggerFactory.getLogger(RequestQueue.class);
   @Autowired
   AddressToGeoService addressToGeoService;
   @Autowired
@@ -38,9 +41,11 @@ public class RequestQueue {
     addr.setCountry(request.getAddress().getCountry());
     AddressGeoEntity result = addressGeoEntityRepository.findByAddress(addr);
     if (result != null) {
-      System.out.println("Found in database...");
-      callbackService.enqueueCallback(request.getCallbackUrl(), result.getAddress(),
-          result.getGeoLocation());
+
+      CallbackEntity callback = callbackService.enqueueCallback(request.getCallbackUrl(),
+          result.getAddress(), result.getGeoLocation());
+      logger.info(
+          "Found in database. Enqueue result imediatly. CallbackEntity id = " + callback.getId());
       return;
     }
     GeoRequestEntity entity = new GeoRequestEntity();
@@ -48,8 +53,8 @@ public class RequestQueue {
     entity.setErrorCallbackUrl(request.getErrorCallbackUrl());
 
     entity.setAddress(addr);
-    requestRepo.save(entity);
-    System.out.println("Request was enqued");
+    entity = requestRepo.save(entity);
+    logger.info("Request was enqued with id = " + entity.getId());
   }
 
   @Scheduled(fixedRate = 1000)
@@ -67,11 +72,13 @@ public class RequestQueue {
 
     result.forEach((e) -> {
 
-      System.out.println("Fetching GEO for: " + e.getAddress());
-      //Check database to be sure whe have not found this address while enqueued
+      logger.info("Fetching GEO for request id " + e.getId() + ": " + e.getAddress());
+      // Check database to be sure we have not found this address while enqueued
       AddressGeoEntity found = addressGeoEntityRepository.findByAddress(e.getAddress());
       if (found != null) {
-        callbackService.enqueueCallback(e.getCallbackUrl(), e.getAddress(), found.getGeoLocation());
+        CallbackEntity callback = callbackService.enqueueCallback(e.getCallbackUrl(),
+            e.getAddress(), found.getGeoLocation());
+        logger.info("Found in database. Enqueue result. CallbackEntity id = " + callback.getId());
       } else {
         GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
         if (geoLocation != null) {
@@ -81,10 +88,15 @@ public class RequestQueue {
           entity.setGeoLocation(geoLocation);
 
           addressGeoEntityRepository.save(entity);
-          callbackService.enqueueCallback(e.getCallbackUrl(), e.getAddress(), geoLocation);
+          CallbackEntity callback = callbackService.enqueueCallback(e.getCallbackUrl(),
+              e.getAddress(), geoLocation);
+          logger.info(
+              "Geolocation found, result is enqueued with callbackEntity id = " + callback.getId());
         } else {
-          callbackService.enqueueCallback(e.getErrorCallbackUrl(), e.getAddress(),
-              new ErrorDto().setErrorCode(1).setMessage("No geolocation found"));
+          CallbackEntity callback = callbackService.enqueueCallback(e.getErrorCallbackUrl(),
+              e.getAddress(), new ErrorDto().setErrorCode(1).setMessage("No geolocation found"));
+          logger.warn("No geo location found for " + e.getAddress() + " callbackEntity id = "
+              + callback.getId());
         }
       }
       requestRepo.delete(e);
