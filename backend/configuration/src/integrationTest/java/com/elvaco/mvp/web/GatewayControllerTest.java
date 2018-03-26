@@ -10,7 +10,6 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -190,7 +189,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
     MapMarkerDto mapMarker = new MapMarkerDto(
       gateway.id,
-      MapMarkerType.Gateway,
       "unknown",
       1.234,
       2.3323,

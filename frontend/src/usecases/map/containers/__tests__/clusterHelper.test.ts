@@ -7,7 +7,6 @@ describe('clusterHelper', () => {
   const mapMarker1: MapMarker = {
     id: 1,
     status: Status.ok,
-    mapMarkerType: 'Meter',
     latitude: 57.505402,
     longitude: 12.069364,
     confidence: 1,
@@ -16,7 +15,6 @@ describe('clusterHelper', () => {
   const mapMarker2: MapMarker = {
     id: 2,
     status: Status.warning,
-    mapMarkerType: 'Meter',
     latitude: 57.505412,
     longitude: 12.069374,
     confidence: 0.7,
@@ -76,7 +74,6 @@ describe('clusterHelper', () => {
     const mapMarker3: MapMarker = {
       id: 1,
       status: Status.warning,
-      mapMarkerType: 'Meter',
       latitude: 57.505412,
       longitude: 12.069374,
       confidence: 0.6,
@@ -98,7 +95,6 @@ describe('clusterHelper', () => {
       const markers: MapMarker = {
         id: 1,
         status: Status.info,
-        mapMarkerType: 'Meter',
         latitude: 1,
         longitude: 2,
         confidence: 3,
@@ -112,7 +108,6 @@ describe('clusterHelper', () => {
         foo: {
           id: 'foo',
           status: Status.ok,
-          mapMarkerType: 'Meter',
           latitude: 1,
           longitude: 2,
           confidence: 3,

@@ -8,7 +8,6 @@ import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.StatusType;
-import com.elvaco.mvp.core.dto.MapMarkerType;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.util.Dates;
@@ -35,7 +34,6 @@ public class LogicalMeterMapper {
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = logicalMeter.id;
-    mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
     mapMarkerDto.status = getCurrentStatus(getMeterStatusLogs(logicalMeter)).name;
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
