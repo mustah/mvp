@@ -15,6 +15,8 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+
 public class GatewayStatusLogJpaRepositoryImpl
   extends BaseQueryDslRepository<GatewayStatusLogEntity, Long>
   implements GatewayStatusLogJpaRepositoryCustom {
@@ -35,11 +37,9 @@ public class GatewayStatusLogJpaRepositoryImpl
     @Nullable Predicate predicate
   ) {
     JPQLQuery<Void> query = new JPAQuery<>(entityManager);
-    QGatewayStatusLogEntity gatewayStatusLogEntity = QGatewayStatusLogEntity.gatewayStatusLogEntity;
-    return query.from(gatewayStatusLogEntity)
+    QGatewayStatusLogEntity gatewayStatusLog = QGatewayStatusLogEntity.gatewayStatusLogEntity;
+    return query.from(gatewayStatusLog)
       .where(predicate)
-      .transform(
-        GroupBy.groupBy(gatewayStatusLogEntity.gatewayId).as(GroupBy.list(gatewayStatusLogEntity))
-      );
+      .transform(groupBy(gatewayStatusLog.gatewayId).as(GroupBy.list(gatewayStatusLog)));
   }
 }
