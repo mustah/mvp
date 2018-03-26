@@ -16,9 +16,9 @@ dependencies {
   compile 'org.postgresql:postgresql'
   compile 'tec.uom:uom-se:1.0.8'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.8.9'
-  compile 'com.querydsl:querydsl-root:4.1.4'
-  compile 'com.querydsl:querydsl-apt:4.1.4:jpa'
-  compile 'com.querydsl:querydsl-jpa:4.1.4'
+  compile 'com.querydsl:querydsl-root:4.2.1'
+  compile 'com.querydsl:querydsl-apt:4.2.1:jpa'
+  compile 'com.querydsl:querydsl-jpa:4.2.1'
 
   compileOnly 'org.projectlombok:lombok:1.16.18'
 
