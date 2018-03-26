@@ -24,8 +24,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -124,6 +122,4 @@ public class BasicTest {
     assertNotNull(response);
     assertEquals("Error message differ", "No geolocation found", response.getMessage());
   }
-  
-
 }

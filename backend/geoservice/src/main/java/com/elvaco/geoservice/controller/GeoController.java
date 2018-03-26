@@ -19,7 +19,6 @@ public class GeoController {
     return "OK";
   }
 
-
   @PostMapping("/byAddress")
   public String requestByAddresspost(@RequestBody GeoRequest request) {
     requestQueue.enqueueRequest(request);
