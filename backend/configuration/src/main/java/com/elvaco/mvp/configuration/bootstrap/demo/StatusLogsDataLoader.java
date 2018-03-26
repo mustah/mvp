@@ -45,7 +45,7 @@ class StatusLogsDataLoader {
   }
 
   void loadMockData() {
-    createStatusLogMockData();
+    createMeterStatusLogMockData();
     createGatewayLogMockData();
   }
 
@@ -62,8 +62,8 @@ class StatusLogsDataLoader {
       .forEach(gatewayStatusLogs::save);
   }
 
-  private void createStatusLogMockData() {
-    int daySeed = 10;
+  private void createMeterStatusLogMockData() {
+    int daySeed = 1;
 
     List<MeterStatusLog> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
@@ -73,7 +73,7 @@ class StatusLogsDataLoader {
           null,
           meter.id,
           nextRandomStatusType(),
-          addDays(daySeed),
+          subtractDays(daySeed),
           null
         )
       );
@@ -85,7 +85,7 @@ class StatusLogsDataLoader {
     return STATUS_TYPES[RANDOM.nextInt(STATUS_TYPES.length - 1)];
   }
 
-  private ZonedDateTime addDays(int daySeed) {
-    return ZonedDateTime.now().plusDays(daySeed).plusHours(0);
+  private ZonedDateTime subtractDays(int daySeed) {
+    return ZonedDateTime.now().minusDays(daySeed).plusHours(0);
   }
 }

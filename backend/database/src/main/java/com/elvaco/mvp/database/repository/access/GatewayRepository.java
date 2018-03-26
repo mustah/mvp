@@ -65,28 +65,31 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Page<Gateway> findAll(RequestParameters parameters, Pageable pageable) {
-    org.springframework.data.domain.Page<Gateway> gatewayPage = repository.findAll(
+    org.springframework.data.domain.Page<GatewayEntity> all = repository.findAll(
       toPredicate(parameters),
       new PageRequest(
         pageable.getPageNumber(),
         pageable.getPageSize()
       )
-    ).map(gatewayWithMetersMapper::toDomainModel);
+    );
 
-    return new PageAdapter<>(gatewayPage);
+    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
+      .findAllGroupedByGatewayId(toPredicate(all.getContent()));
+
+    return new PageAdapter<>(
+      all.map((entity) -> gatewayWithMetersMapper.toDomainModel(entity, statusLogMap))
+    );
   }
 
   @Transactional
   @Override
   public List<Gateway> findAllByOrganisationId(UUID organisationId) {
-    List<GatewayEntity> gatewayEntities = repository.findAllByOrganisationId(organisationId);
+    List<GatewayEntity> gateways = repository.findAllByOrganisationId(organisationId);
 
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
-      .findAllGroupedByGatewayId(
-        gatewayStatusLogEntity.gatewayId.in(getGatewayIds(gatewayEntities))
-      );
+      .findAllGroupedByGatewayId(toPredicate(gateways));
 
-    return toGateways(gatewayEntities, statusLogMap);
+    return toGateways(gateways, statusLogMap);
   }
 
   @Override
@@ -125,11 +128,17 @@ public class GatewayRepository implements Gateways {
       .collect(toList());
   }
 
+  private Predicate toPredicate(List<GatewayEntity> content) {
+    return gatewayStatusLogEntity.gatewayId.in(getGatewayIds(content));
+  }
+
   private Predicate toPredicate(RequestParameters parameters) {
     return gatewayQueryFilters.toExpression(parameters);
   }
 
   private List<UUID> getGatewayIds(List<GatewayEntity> gatewayEntities) {
-    return gatewayEntities.stream().map(gatewayEntity -> gatewayEntity.id).collect(toList());
+    return gatewayEntities.stream()
+      .map(gatewayEntity -> gatewayEntity.id)
+      .collect(toList());
   }
 }
