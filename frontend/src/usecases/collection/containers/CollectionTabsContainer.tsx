@@ -17,16 +17,24 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {getEncodedUriParametersForAllGateways} from '../../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
-import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/gatewayMapMarkerApiActions';
+import {
+  clearErrorGatewayMapMarkers,
+  fetchGatewayMapMarkers,
+} from '../../map/gatewayMapMarkerApiActions';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
@@ -34,6 +42,7 @@ import {GatewayListContainer} from '../components/GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayMapMarkers: DomainModel<MapMarker>;
+  parameters?: string;
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
@@ -51,11 +60,12 @@ type Props = StateToProps & DispatchToProps;
 class CollectionTabs extends React.Component<Props> {
 
   componentDidMount() {
-    this.props.fetchGatewayMapMarkers();
+    const {fetchGatewayMapMarkers, parameters} = this.props;
+    fetchGatewayMapMarkers(parameters);
   }
 
-  componentWillReceiveProps({fetchGatewayMapMarkers}: Props) {
-    fetchGatewayMapMarkers();
+  componentWillReceiveProps({fetchGatewayMapMarkers, parameters}: Props) {
+    fetchGatewayMapMarkers(parameters);
   }
 
   render() {
@@ -111,13 +121,15 @@ class CollectionTabs extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-                           ui: {pagination, tabs},
-                           map,
-                           domainModels: {gatewayMapMarkers},
-                         }: RootState): StateToProps => {
+  ui: {pagination, tabs},
+  map,
+  domainModels: {gatewayMapMarkers},
+  searchParameters,
+}: RootState): StateToProps => {
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
+    parameters: getEncodedUriParametersForAllGateways(searchParameters),
     selectedMarker: getSelectedMapMarker(map),
     isFetching: gatewayMapMarkers.isFetching,
     error: getError(gatewayMapMarkers),

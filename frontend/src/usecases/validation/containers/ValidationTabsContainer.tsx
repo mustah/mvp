@@ -18,11 +18,15 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {clearErrorAllMeters, fetchAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
+import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
+import {
+  TabName,
+  TabsContainerDispatchToProps,
+  TabsContainerStateToProps,
+} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
@@ -37,13 +41,12 @@ interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
   meterMapMarkers: DomainModel<MapMarker>;
   selectedMarker: Maybe<uuid>;
-  encodedUriParametersForAllMeters: string;
+  parameters: string;
   error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps extends TabsContainerDispatchToProps {
   closeClusterDialog: OnClick;
-  fetchAllMeters: Fetch;
   fetchMeterMapMarkers: Fetch;
   clearError: ClearError;
 }
@@ -53,14 +56,12 @@ type Props = StateToProps & DispatchToProps;
 class ValidationTabs extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchAllMeters, encodedUriParametersForAllMeters, fetchMeterMapMarkers} = this.props;
-    fetchAllMeters(encodedUriParametersForAllMeters);
-    fetchMeterMapMarkers();
+    const {parameters, fetchMeterMapMarkers} = this.props;
+    fetchMeterMapMarkers(parameters);
   }
 
-  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters, fetchMeterMapMarkers}: Props) {
-    fetchAllMeters(encodedUriParametersForAllMeters);
-    fetchMeterMapMarkers();
+  componentWillReceiveProps({parameters, fetchMeterMapMarkers}: Props) {
+    fetchMeterMapMarkers(parameters);
   }
 
   render() {
@@ -120,7 +121,7 @@ const mapStateToProps =
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
-    encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+    parameters: getEncodedUriParametersForAllMeters(searchParameters),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
   });
@@ -129,7 +130,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   setSelection,
   closeClusterDialog,
-  fetchAllMeters,
   clearError: clearErrorAllMeters,
   fetchMeterMapMarkers,
 }, dispatch);

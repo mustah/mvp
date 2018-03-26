@@ -13,6 +13,8 @@ public interface Gateways {
 
   List<Gateway> findAll();
 
+  List<Gateway> findAll(RequestParameters requestParameters);
+
   Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable);
 
   List<Gateway> findAllByOrganisationId(UUID organisationId);

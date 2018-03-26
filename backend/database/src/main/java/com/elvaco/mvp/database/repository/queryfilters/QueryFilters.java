@@ -18,6 +18,8 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class QueryFilters {
 
+  public abstract Optional<Predicate> buildPredicateFor(String filter, List<String> values);
+
   public final Predicate toExpression(RequestParameters parameters) {
     if (parameters.isEmpty()) {
       return null;
@@ -25,16 +27,14 @@ public abstract class QueryFilters {
 
     List<Predicate> predicates = new ArrayList<>();
     for (Entry<String, List<String>> propertyFilter : parameters.entrySet()) {
-      List<String> propertyValues = propertyFilter.getValue();
-
-      if (propertyValues.isEmpty()) {
-        continue;
-      }
-
-      try {
-        buildPredicateFor(propertyFilter.getKey(), propertyValues).ifPresent(predicates::add);
-      } catch (Exception exception) {
-        throw new PredicateConstructionFailure(propertyFilter.getKey(), propertyValues, exception);
+      List<String> values = propertyFilter.getValue();
+      if (!values.isEmpty()) {
+        String name = propertyFilter.getKey();
+        try {
+          buildPredicateFor(name, values).ifPresent(predicates::add);
+        } catch (Exception exception) {
+          throw new PredicateConstructionFailure(name, values, exception);
+        }
       }
     }
 
@@ -44,8 +44,6 @@ public abstract class QueryFilters {
 
     return applyAndPredicates(predicates);
   }
-
-  public abstract Optional<Predicate> buildPredicateFor(String filter, List<String> values);
 
   final <T> List<T> mapValues(Function<String, T> function, List<String> values) {
     return values.stream().map(function).collect(toList());

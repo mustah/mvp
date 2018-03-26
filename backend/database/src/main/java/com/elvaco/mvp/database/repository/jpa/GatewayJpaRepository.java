@@ -5,12 +5,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
-public interface GatewayJpaRepository extends JpaRepository<GatewayEntity, Long>,
-  QueryDslPredicateExecutor<GatewayEntity> {
+public interface GatewayJpaRepository
+  extends JpaRepository<GatewayEntity, Long>, QueryDslPredicateExecutor<GatewayEntity> {
+
+  @Override
+  List<GatewayEntity> findAll(Predicate predicate);
 
   List<GatewayEntity> findAllByOrganisationId(UUID organisationId);
 

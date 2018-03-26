@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
 import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
@@ -53,9 +54,9 @@ public class LogicalMeterController {
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
-  @GetMapping("/map-data")
-  public List<MapMarkerDto> mapData() {
-    return logicalMeterUseCases.findAll(new RequestParametersAdapter())
+  @GetMapping("/map-markers")
+  public List<MapMarkerDto> mapMarkers(@RequestParam MultiValueMap<String, String> requestParams) {
+    return logicalMeterUseCases.findAll(requestParametersOf(requestParams))
       .stream()
       .map(logicalMeterMapper::toMapMarkerDto)
       .collect(toList());
@@ -77,7 +78,7 @@ public class LogicalMeterController {
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     return logicalMeterUseCases.findAll(parameters)
       .stream()
       .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
@@ -90,7 +91,7 @@ public class LogicalMeterController {
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     return filterLogicalMeterDtos(parameters, pageable);
   }
 

@@ -2,6 +2,7 @@ import {createSelector, OutputSelector} from 'reselect';
 import {Period} from '../../../components/dates/dateModels';
 import {getTranslationOrName} from '../../../helpers/translations';
 import {
+  encodedUriParametersForAllGateways,
   encodedUriParametersForAllMeters,
   encodedUriParametersForGateways,
   encodedUriParametersForMeters,
@@ -110,6 +111,12 @@ export const getEncodedUriParametersForAllMeters =
   createSelector<SearchParameterState, SelectedParameters, string>(
     getSelectedParameters,
     encodedUriParametersForAllMeters,
+  );
+
+export const getEncodedUriParametersForAllGateways =
+  createSelector<SearchParameterState, SelectedParameters, string>(
+    getSelectedParameters,
+    encodedUriParametersForAllGateways,
   );
 
 export const getEncodedUriParametersForGateways =

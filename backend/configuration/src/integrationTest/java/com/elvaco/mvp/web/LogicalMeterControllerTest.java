@@ -41,6 +41,7 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
+import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import com.elvaco.mvp.web.util.Dates;
@@ -63,10 +64,7 @@ import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings("ALL")
 public class LogicalMeterControllerTest extends IntegrationTest {
-
-  private static int seed = 1;
 
   private final ZonedDateTime meter1ActiveDate =
     ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
@@ -74,22 +72,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private final ZonedDateTime meter1FirstMeasurement =
     ZonedDateTime.parse("2001-01-01T11:00:00.00Z");
 
-  private final ZonedDateTime meter2ActiveDate =
-    ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
-
   private final ZonedDateTime meter2FirstMeasurement =
     ZonedDateTime.parse("2001-01-01T10:15:00.00Z");
 
   private final ZonedDateTime statusLogDate = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
 
-  PhysicalMeter physicalMeter1;
-  PhysicalMeter physicalMeter2;
-  PhysicalMeter physicalMeter3;
-  PhysicalMeter physicalMeter4;
-  PhysicalMeter physicalMeter5;
+  private PhysicalMeter physicalMeter1;
+  private PhysicalMeter physicalMeter2;
+  private PhysicalMeter physicalMeter3;
+  private PhysicalMeter physicalMeter4;
+  private PhysicalMeter physicalMeter5;
 
-  MeterDefinition districtHeatingMeterDefinition;
-  MeterDefinition hotWaterMeterDefinition;
+  private MeterDefinition districtHeatingMeterDefinition;
+  private MeterDefinition hotWaterMeterDefinition;
+
   @Autowired
   private LogicalMeters logicalMeterRepository;
   @Autowired
@@ -141,7 +137,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
       String city = seed % 2 == 0 ? "Varberg" : "Östersund";
       String streetAddress = seed % 2 == 0 ? "Drottninggatan " + seed : "Kungsgatan " + seed;
-      saveLogicalMeter(seed, meterDefinition, streetAddress, city, "sweden");
+      saveLogicalMeter(seed, meterDefinition, streetAddress, city);
     }
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
@@ -218,7 +214,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatusPaged() {
-    //Change to hourly measurements
+    // Change to hourly measurements
     PhysicalMeter physicalMeter1Hourly = physicalMeters.save(new PhysicalMeter(
       physicalMeter1.id,
       physicalMeter1.organisation,
@@ -702,11 +698,20 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void findAllMapDataForLogicalMeters() {
-    ResponseEntity<List> response = as(context().user)
-      .get("/meters/map-data", List.class);
+    ResponseEntity<List<MapMarkerDto>> response = as(context().user)
+      .getList("/meters/map-markers", MapMarkerDto.class);
 
     assertThatStatusIsOk(response);
     assertThat(response.getBody().size()).isEqualTo(55);
+  }
+
+  @Test
+  public void findAllMapDataForLogicalMetersWithParameters() {
+    ResponseEntity<List<MapMarkerDto>> response = as(context().user)
+      .getList("/meters/map-markers?city=sweden,varberg", MapMarkerDto.class);
+
+    assertThatStatusIsOk(response);
+    assertThat(response.getBody().size()).isEqualTo(27);
   }
 
   @Test
@@ -823,10 +828,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     int seed,
     MeterDefinition meterDefinition,
     String streetAddress,
-    String city,
-    String country
+    String city
   ) {
-
     ZonedDateTime created = ZonedDateTime.ofInstant(
       Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId())
       .plusDays(seed);
@@ -836,7 +839,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "external-id-" + seed,
       context().organisation().id,
       new LocationBuilder()
-        .country(country)
+        .country("sweden")
         .city(city)
         .streetAddress(streetAddress)
         .coordinate(new GeoCoordinate(1.1, 123.12))
@@ -938,11 +941,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     MeasurementUnit measurementUnit = MeasurementUnit.from("2.0 m³");
 
     List<MeasurementEntity> meter1Measurements = createMeasurements(
-      meter1,
       measurementUnit,
       meter1FirstMeasurement,
       meter1.readIntervalMinutes,
-      119
+      119,
+      new PhysicalMeterEntity(meter1.id)
     );
 
     // Simulate lost measurements
@@ -962,49 +965,43 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     measurements.addAll(meter1Measurements);
     measurements.addAll(
       createMeasurements(
-        meter2,
         measurementUnit,
         meter2FirstMeasurement,
         meter2.readIntervalMinutes,
-        36000
+        36000,
+        new PhysicalMeterEntity(meter2.id)
       )
     );
-
     measurementJpaRepository.save(measurements);
   }
 
   /**
    * Creates a list of fake measurements.
    *
-   * @param physicalMeter   Physical meter
    * @param measurementUnit Unit of measurement
    * @param interval        Time in minutes between measurements
    * @param values          Nr of values to generate
+   * @param physicalMeter
    *
    * @return
    */
   private List<MeasurementEntity> createMeasurements(
-    PhysicalMeter physicalMeter,
     MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,
     long interval,
-    long values
+    long values,
+    PhysicalMeterEntity physicalMeter
   ) {
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
-
-    PhysicalMeterEntity meter = new PhysicalMeterEntity();
-    meter.id = physicalMeter.id;
-
     for (int x = 0; x < values; x++) {
       measurementEntities.add(new MeasurementEntity(
         null,
         measurementDate.plusMinutes(x * interval),
         String.valueOf(x),
         measurementUnit,
-        meter
+        physicalMeter
       ));
     }
-
     return measurementEntities;
   }
 
@@ -1028,10 +1025,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       new PhysicalMeter(
         randomUUID(),
         context().organisation(),
-        "111-222-333-444-" + seed,
+        "111-222-333-444-1",
         externalId,
         "Some device specific medium name",
-        "ELV" + seed,
+        "ELV1",
         logicalMeterId,
         15,
         null
