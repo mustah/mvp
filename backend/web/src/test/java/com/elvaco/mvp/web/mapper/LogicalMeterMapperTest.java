@@ -28,7 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -47,7 +46,7 @@ public class LogicalMeterMapperTest {
   public void mapLogicalMeterToMapMarkerDto() {
     UUID meterId = randomUUID();
     MapMarkerDto mapMarkerDtoExpected = new MapMarkerDto();
-    mapMarkerDtoExpected.id = meterId.toString();
+    mapMarkerDtoExpected.id = meterId;
     mapMarkerDtoExpected.latitude = 3.1;
     mapMarkerDtoExpected.longitude = 2.1;
     mapMarkerDtoExpected.confidence = 1.0;
@@ -96,10 +95,10 @@ public class LogicalMeterMapperTest {
   }
 
   @Test
-  public void toDto() throws ParseException {
+  public void toDto() {
     UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
-    expected.id = meterId.toString();
+    expected.id = meterId;
     expected.created = "2018-02-12 15:14:25";
     expected.statusChanged = "2018-02-12 15:14:25";
     expected.medium = "Hot water meter";
@@ -121,7 +120,7 @@ public class LogicalMeterMapperTest {
       )
     );
     expected.gateway = new GatewayMandatoryDto(
-      randomUUID().toString(),
+      randomUUID(),
       "CMi2110",
       "123123",
       StatusType.OK.name,
@@ -168,7 +167,7 @@ public class LogicalMeterMapperTest {
             )),
           MeterDefinition.HOT_WATER_METER,
           singletonList(new Gateway(
-            uuidOf(expected.gateway.id),
+            expected.gateway.id,
             organisationId,
             expected.gateway.serial,
             expected.gateway.productModel,

@@ -20,7 +20,7 @@ import com.elvaco.mvp.web.util.Dates;
 
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
+import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -32,7 +32,7 @@ public class GatewayMapper {
     Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
 
     return new GatewayDto(
-      gateway.id.toString(),
+      gateway.id,
       gateway.serial,
       gateway.productModel,
       getStatusName(gatewayStatusLog),
@@ -45,7 +45,7 @@ public class GatewayMapper {
   public GatewayMandatoryDto toGatewayMandatory(Gateway gateway, TimeZone timeZone) {
     Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
     return new GatewayMandatoryDto(
-      gateway.id.toString(),
+      gateway.id,
       gateway.productModel,
       gateway.serial,
       getStatusName(gatewayStatusLog),
@@ -55,7 +55,7 @@ public class GatewayMapper {
 
   public Gateway toDomainModel(GatewayDto gatewayDto, UUID organisationId) {
     return new Gateway(
-      uuidOf(gatewayDto.id),
+      gatewayDto.id != null ? gatewayDto.id : randomUUID(),
       organisationId,
       gatewayDto.serial,
       gatewayDto.productModel
@@ -64,7 +64,7 @@ public class GatewayMapper {
 
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
-    mapMarkerDto.id = gateway.id.toString();
+    mapMarkerDto.id = gateway.id;
     mapMarkerDto.mapMarkerType = MapMarkerType.Gateway;
     mapMarkerDto.status = getStatusName(getCurrentStatus(gateway.statusLogs));
     gateway.meters

@@ -42,8 +42,8 @@ public class UserController {
   }
 
   @GetMapping("{id}")
-  public UserDto userById(@PathVariable String id) {
-    return userUseCases.findById(UUID.fromString(id))
+  public UserDto userById(@PathVariable UUID id) {
+    return userUseCases.findById(id)
       .map(userMapper::toDto)
       .orElseThrow(() -> UserNotFound.withId(id));
   }
@@ -64,8 +64,8 @@ public class UserController {
   }
 
   @DeleteMapping("{id}")
-  public UserDto deleteUser(@PathVariable String id) {
-    User user = userUseCases.findById(UUID.fromString(id))
+  public UserDto deleteUser(@PathVariable UUID id) {
+    User user = userUseCases.findById(id)
       .orElseThrow(() -> UserNotFound.withId(id));
     // TODO[!must!] delete should actually not remove the entity, just mark it as deleted.
     userUseCases.delete(user);

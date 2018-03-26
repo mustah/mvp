@@ -256,7 +256,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThatStatusIsOk(response);
     assertThat(logicalMeterDto.id)
       .as("Unexpected meter id")
-      .isEqualTo(physicalMeter1.logicalMeterId.toString());
+      .isEqualTo(physicalMeter1.logicalMeterId);
 
     assertThat(logicalMeterDto.statusChangelog.size())
       .as("Unexpected number of log entries")
@@ -461,16 +461,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isEqualTo(physicalMeter1.logicalMeterId.toString());
+      .isEqualTo(physicalMeter1.logicalMeterId);
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId);
 
     LogicalMeterDto actualMeter5 = response.getContent().get(2);
 
     assertThat(actualMeter5.id)
       .as("Unexpected meter id at position 2")
-      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+      .isEqualTo(physicalMeter5.logicalMeterId);
 
     assertThat(actualMeter5.statusChangelog.size())
       .as("Unexpected number of log entries")
@@ -504,16 +504,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0 :" + response.getContent().get(0))
-      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId);
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isEqualTo(physicalMeter3.logicalMeterId.toString());
+      .isEqualTo(physicalMeter3.logicalMeterId);
     assertThat(response.getContent().get(2).id)
       .as("Unexpected meter id at position 2")
-      .isEqualTo(physicalMeter4.logicalMeterId.toString());
+      .isEqualTo(physicalMeter4.logicalMeterId);
     assertThat(response.getContent().get(3).id)
       .as("Unexpected meter id at position 3")
-      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+      .isEqualTo(physicalMeter5.logicalMeterId);
   }
 
   @Test
@@ -537,7 +537,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter.id)
       .as("Unexpected meter id at position 3")
-      .isEqualTo(physicalMeter5.logicalMeterId.toString());
+      .isEqualTo(physicalMeter5.logicalMeterId);
 
     assertThat(logicalMeter.statusChangelog.size())
       .as("Unexpected number of log entries")
@@ -580,10 +580,10 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(response.getContent().get(0).id)
       .as("Unexpected meter id at position 0")
-      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId);
     assertThat(response.getContent().get(1).id)
       .as("Unexpected meter id at position 1")
-      .isEqualTo(physicalMeter3.logicalMeterId.toString());
+      .isEqualTo(physicalMeter3.logicalMeterId);
   }
 
   @Test
@@ -667,7 +667,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1L);
-    assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id.toString());
+    assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);
   }
 
   @Test
@@ -769,7 +769,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   ) {
     assertThat(logicalMeter1.id)
       .as("Unexpected meter id")
-      .isEqualTo(physicalMeter1.logicalMeterId.toString());
+      .isEqualTo(physicalMeter1.logicalMeterId);
 
     assertThat(logicalMeter1.collectionStatus)
       .as("Unexpected collection status")
@@ -777,7 +777,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter2.id)
       .as("Unexpected meter id")
-      .isEqualTo(physicalMeter2.logicalMeterId.toString());
+      .isEqualTo(physicalMeter2.logicalMeterId);
 
     assertThat(logicalMeter2.collectionStatus)
       .as("Unexpected collection status")

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.dto;
 
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.dto.MapMarkerType;
@@ -12,7 +13,7 @@ import lombok.ToString;
 @ToString
 public class MapMarkerDto {
 
-  public String id;
+  public UUID id;
   public MapMarkerType mapMarkerType;
   public String status;
   @Nullable
@@ -23,7 +24,7 @@ public class MapMarkerDto {
   public Double confidence;
 
   public MapMarkerDto(
-    String id,
+    UUID id,
     MapMarkerType mapMarkerType,
     String status,
     @Nullable Double latitude,

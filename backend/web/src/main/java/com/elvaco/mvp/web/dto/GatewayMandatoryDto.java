@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web.dto;
 
+import java.util.UUID;
+
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,14 +11,14 @@ import lombok.ToString;
 @NoArgsConstructor
 public class GatewayMandatoryDto {
 
-  public String id;
+  public UUID id;
   public String productModel;
   public String serial;
   public String status;
   public String statusChanged;
 
   public GatewayMandatoryDto(
-    String id,
+    UUID id,
     String productModel,
     String serial,
     String status,

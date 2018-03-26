@@ -1,5 +1,7 @@
 package com.elvaco.mvp.web.exception;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -12,7 +14,7 @@ public class UserNotFound extends RuntimeException {
     super(message);
   }
 
-  public static UserNotFound withId(String id) {
+  public static UserNotFound withId(UUID id) {
     return new UserNotFound("Unable to find user with ID '" + id + "'");
   }
 

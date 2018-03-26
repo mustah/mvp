@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.dto;
 
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -10,7 +11,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class LogicalMeterDto {
-  public String id;
+  public UUID id;
   public String facility;
   public String sapId;
   public String alarm;

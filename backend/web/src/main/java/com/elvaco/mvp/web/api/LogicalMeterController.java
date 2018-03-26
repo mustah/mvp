@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
-import static com.elvaco.mvp.web.util.IdHelper.uuidOf;
 import static java.util.stream.Collectors.toList;
 
 @RestApi("/api/v1/meters")
@@ -48,8 +48,8 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}")
-  public LogicalMeterDto logicalMeter(@PathVariable String id) {
-    return logicalMeterUseCases.findById(uuidOf(id))
+  public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
+    return logicalMeterUseCases.findById(id)
       .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
       .orElseThrow(() -> new MeterNotFound(id));
   }
@@ -63,9 +63,9 @@ public class LogicalMeterController {
   }
 
   @GetMapping("{id}/measurements")
-  public List<MeasurementDto> measurements(@PathVariable String id) {
+  public List<MeasurementDto> measurements(@PathVariable UUID id) {
     LogicalMeter logicalMeter = logicalMeterUseCases
-      .findById(uuidOf(id))
+      .findById(id)
       .orElseThrow(() -> new MeterNotFound(id));
     return logicalMeterUseCases.measurements(logicalMeter, lazyRequestParameters(logicalMeter))
       .stream()
