@@ -64,7 +64,7 @@ public class MeasurementController {
     @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") List<String> quantityUnits,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime from,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
     @RequestParam TemporalResolution resolution
   ) {
     List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
@@ -72,6 +72,10 @@ public class MeasurementController {
 
     if (quantities.isEmpty()) {
       throw new QuantityNotFound(quantityUnits.get(0));
+    }
+
+    if (to == null) {
+      to = ZonedDateTime.now();
     }
 
     Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper

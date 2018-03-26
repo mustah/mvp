@@ -2,6 +2,7 @@ package com.elvaco.mvp.web;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -546,6 +547,35 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'resolution' parameter: 'NotAValidResolution'.");
+  }
+
+  @Test
+  public void toTimestampDefaultsToNow() {
+    ZonedDateTime now = ZonedDateTime.now();
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+    );
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, now, "Power", 1.0, "W");
+
+    List<MeasurementSeriesDto> response = as(context().user).getList(
+      String.format(
+        "/measurements/average"
+          + "?from=" + now.toString()
+          + "&quantities=" + Quantity.POWER.name + ":W"
+          + "&meters=%s"
+          + "&resolution=hour",
+        logicalMeter.getId()
+      ), MeasurementSeriesDto.class).getBody();
+
+    assertThat(response.get(0)).isEqualTo(
+      new MeasurementSeriesDto(
+        Quantity.POWER.name,
+        "W",
+        "average",
+        singletonList(new MeasurementValueDto(now.truncatedTo(ChronoUnit.HOURS).toInstant(), 1.0))
+      )
+    );
   }
 
   private void newMeasurement(
