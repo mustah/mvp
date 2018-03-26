@@ -54,7 +54,7 @@ public final class LogicalMeterHelper {
   ) {
     return physicalMeter.statuses
       .stream()
-      .filter(status -> StatusType.ACTIVE == StatusType.from(status.name))
+      .filter(status -> StatusType.ACTIVE == status.status)
       .mapToDouble(status -> {
         ZonedDateTime startPoint = getStartPoint(
           status.start,

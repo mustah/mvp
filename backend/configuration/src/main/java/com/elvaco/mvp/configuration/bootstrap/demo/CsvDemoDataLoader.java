@@ -30,6 +30,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
@@ -42,31 +43,37 @@ import static java.util.stream.Collectors.toMap;
 @Order(3)
 @Profile("demo")
 @Component
-public class CsvDemoDataLoader implements CommandLineRunner {
+class CsvDemoDataLoader implements CommandLineRunner {
 
   private static final String DELIMITER = " :: ";
 
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final MeterDefinitions meterDefinitions;
-  private final SettingUseCases settingUseCases;
   private final Gateways gateways;
+  private final SettingUseCases settingUseCases;
+  private final StatusLogsDataLoader statusLogsDataLoader;
+
+  private int daySeed = 1;
 
   @Autowired
-  public CsvDemoDataLoader(
+  CsvDemoDataLoader(
     LogicalMeters logicalMeters,
     PhysicalMeters physicalMeters,
     MeterDefinitions meterDefinitions,
+    Gateways gateways,
     SettingUseCases settingUseCases,
-    Gateways gateways
+    StatusLogsDataLoader statusLogsDataLoader
   ) {
     this.logicalMeters = logicalMeters;
     this.physicalMeters = physicalMeters;
     this.gateways = gateways;
     this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
+    this.statusLogsDataLoader = statusLogsDataLoader;
   }
 
+  @Transactional
   @Override
   public void run(String... args) throws Exception {
     if (settingUseCases.isDemoDataLoaded()) {
@@ -80,6 +87,8 @@ public class CsvDemoDataLoader implements CommandLineRunner {
 
     importFrom("data/meters_perstorp.csv", locationMap, meterDefinition);
     importFrom("data/meters_almhult.csv", locationMap, meterDefinition);
+
+    statusLogsDataLoader.loadMockData();
 
     settingUseCases.setDemoDataLoaded();
   }
@@ -141,8 +150,6 @@ public class CsvDemoDataLoader implements CommandLineRunner {
           ));
       });
   }
-
-  private int daySeed = 1;
 
   private ZonedDateTime addDays() {
     return ZonedDateTime.now().minusDays(daySeed++);

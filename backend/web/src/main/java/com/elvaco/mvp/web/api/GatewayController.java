@@ -46,14 +46,6 @@ public class GatewayController {
     this.currentUser = currentUser;
   }
 
-  @GetMapping("/all")
-  public List<GatewayDto> findAllGateways() {
-    return gatewayUseCases.findAll()
-      .stream()
-      .map(gateway ->  gatewayMapper.toDto(gateway, TimeZone.getTimeZone("UTC")))
-      .collect(toList());
-  }
-
   @GetMapping("{id}")
   public GatewayDto gateway(TimeZone timeZone, @PathVariable String id) {
     return gatewayUseCases.findById(uuidOf(id))

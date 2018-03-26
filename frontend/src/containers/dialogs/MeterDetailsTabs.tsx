@@ -94,7 +94,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
       (
         <Status
           {...{
-            id: item.statusId,
+            id: item.name,
             name: item.name,
           }}
         />

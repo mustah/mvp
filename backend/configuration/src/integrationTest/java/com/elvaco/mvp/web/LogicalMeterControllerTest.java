@@ -3,7 +3,6 @@ package com.elvaco.mvp.web;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -20,12 +19,10 @@ import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.Status;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import com.elvaco.mvp.core.spi.repository.Statuses;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -36,7 +33,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
-import com.elvaco.mvp.database.repository.jpa.StatusJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
@@ -88,26 +84,31 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Autowired
   private LogicalMeters logicalMeterRepository;
+
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
+
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
+
   @Autowired
   private MeasurementUseCases measurementUseCases;
+
   @Autowired
   private MeterDefinitions meterDefinitions;
+
   @Autowired
   private PhysicalMeters physicalMeters;
-  @Autowired
-  private Statuses statuses;
+
   @Autowired
   private MeterStatusLogs meterStatusLogs;
-  @Autowired
-  private StatusJpaRepository statusJpaRepository;
+
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
 
@@ -142,8 +143,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
 
-    saveMeterStatuses();
-
     com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
       logicalMeterRepository.findAll(
         new RequestParametersAdapter(),
@@ -161,8 +160,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       physicalMeter2,
       physicalMeter3,
       physicalMeter4,
-      physicalMeter5,
-      statuses.findAll()
+      physicalMeter5
     );
   }
 
@@ -170,7 +168,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void tearDown() {
     measurementJpaRepository.deleteAll();
     physicalMeterStatusLogJpaRepository.deleteAll();
-    statusJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     organisationJpaRepository.delete(anotherOrganisation.id);
@@ -594,8 +591,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get(
         "/meters?"
-          + "after=NotAValidTimestamp"
-          + "&before=AndNeitherIsThis",
+        + "after=NotAValidTimestamp"
+        + "&before=AndNeitherIsThis",
         ErrorMessageDto.class
       );
 
@@ -739,7 +736,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       )
     );
 
-    measurementUseCases.save(Arrays.asList(
+    measurementUseCases.save(asList(
       // We should find these
       new Measurement(Quantity.VOLUME, 2.0, physicalMeter),
       new Measurement(Quantity.VOLUME, 3.1, physicalMeter),
@@ -857,81 +854,69 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter2,
     PhysicalMeter meter3,
     PhysicalMeter meter4,
-    PhysicalMeter meter5,
-    List<Status> meterStatuses
+    PhysicalMeter meter5
   ) {
-    Status active = meterStatuses.get(0);
-    Status info = meterStatuses.get(1);
-    Status warning = meterStatuses.get(2);
+    List<MeterStatusLog> meterStatusLogs = new ArrayList<>();
 
-    List<MeterStatusLog> statuses = new ArrayList<>();
-
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter1.id,
-      active.id,
-      active.name,
+      ACTIVE,
       meter1ActiveDate,
       meter1ActiveDate.plusDays(5L)
     ));
 
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter1.id,
-      info.id,
-      info.name,
+      INFO,
       statusLogDate,
       statusLogDate
     ));
 
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter2.id,
-      active.id,
-      active.name,
+      ACTIVE,
       statusLogDate,
       null
     ));
 
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter3.id,
-      active.id,
-      active.name,
+      ACTIVE,
       statusLogDate.plusDays(100L),
       null
     ));
 
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter4.id,
-      active.id,
-      active.name,
+      ACTIVE,
       statusLogDate.plusDays(100),
       statusLogDate.plusDays(1000)
     ));
 
-    statuses.add(new MeterStatusLog(
+    meterStatusLogs.add(new MeterStatusLog(
       null,
       meter4.id,
-      warning.id,
-      warning.name,
+      WARNING,
       statusLogDate.plusDays(100),
       statusLogDate.plusDays(1000)
     ));
 
     for (int x = 0; x < 50; x++) {
-      statuses.add(new MeterStatusLog(
+      meterStatusLogs.add(new MeterStatusLog(
         null,
         meter5.id,
-        active.id,
-        active.name,
+        ACTIVE,
         statusLogDate.plusDays(x),
         statusLogDate.plusDays(x)
       ));
     }
 
-    meterStatusLogs.save(statuses);
+    this.meterStatusLogs.save(meterStatusLogs);
   }
 
   private void addMeasurements(
@@ -1003,14 +988,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       ));
     }
     return measurementEntities;
-  }
-
-  private void saveMeterStatuses() {
-    statuses.save(asList(
-      new Status(ACTIVE.name),
-      new Status(INFO.name),
-      new Status(WARNING.name)
-    ));
   }
 
   private void createAndConnectPhysicalMeters(List<LogicalMeter> logicalMeters) {

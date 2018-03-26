@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -18,7 +19,8 @@ import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterMapper {
 
-  public static final String NO_PERCENTAGE = "";
+  private static final String NO_PERCENTAGE = "";
+
   private final MeterStatusLogMapper meterStatusLogMapper;
   private final GatewayMapper gatewayMapper;
 
@@ -31,13 +33,10 @@ public class LogicalMeterMapper {
   }
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
-    List<MeterStatusLog> statusLogs = getMeterStatusLogs(logicalMeter);
-
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = logicalMeter.id.toString();
     mapMarkerDto.mapMarkerType = MapMarkerType.Meter;
-    // TODO[!must!] meter status logs should be mapped as enum in db
-    mapMarkerDto.status = getCurrentStatus(statusLogs).name;
+    mapMarkerDto.status = getCurrentStatus(getMeterStatusLogs(logicalMeter)).name;
     if (logicalMeter.location.hasCoordinates()) {
       GeoCoordinate coord = logicalMeter.location.getCoordinate();
       if (coord != null) {
@@ -68,7 +67,7 @@ public class LogicalMeterMapper {
     meterDto.facility = logicalMeter.externalId;
 
     meterDto.collectionStatus = logicalMeter.getCollectionPercentage()
-      .map(val -> String.valueOf(val.doubleValue() * 100))
+      .map(val -> String.valueOf(val * 100))
       .orElse(NO_PERCENTAGE);
 
     meterDto.gateway = logicalMeter.gateways
@@ -89,16 +88,14 @@ public class LogicalMeterMapper {
   private StatusType getCurrentStatus(List<MeterStatusLog> statusLogs) {
     return statusLogs.stream()
       .findFirst()
-      .map(meterStatusLog -> StatusType.from(meterStatusLog.name))
+      .map(meterStatusLog -> meterStatusLog.status)
       .orElse(StatusType.UNKNOWN);
   }
 
   private List<MeterStatusLog> getMeterStatusLogs(LogicalMeter logicalMeter) {
-    List<MeterStatusLog> statusLogs = logicalMeter.physicalMeters.stream()
+    return logicalMeter.physicalMeters.stream()
       .map(physicalMeter -> physicalMeter.statuses)
-      .flatMap(meterStatusLogs -> meterStatusLogs.stream())
+      .flatMap(Collection::stream)
       .collect(toList());
-
-    return statusLogs;
   }
 }

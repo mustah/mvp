@@ -12,9 +12,7 @@ public class MeterStatusLog {
   @Nullable
   public final Long id;
   public final UUID physicalMeterId;
-  public final long statusId;
-  public final String name;
-
+  public final StatusType status;
   public final ZonedDateTime start;
   @Nullable
   public final ZonedDateTime stop;
@@ -22,15 +20,13 @@ public class MeterStatusLog {
   public MeterStatusLog(
     @Nullable Long id,
     UUID physicalMeterId,
-    long statusId,
-    String name,
+    StatusType status,
     ZonedDateTime start,
     @Nullable ZonedDateTime stop
   ) {
     this.id = id;
     this.physicalMeterId = physicalMeterId;
-    this.statusId = statusId;
-    this.name = name;
+    this.status = status;
     this.start = ZonedDateTime.ofInstant(start.toInstant(), start.getZone());
     this.stop = stop != null ? ZonedDateTime.ofInstant(stop.toInstant(), stop.getZone()) : null;
   }

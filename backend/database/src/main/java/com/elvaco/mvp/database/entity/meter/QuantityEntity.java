@@ -10,7 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "quantity")
@@ -23,8 +25,6 @@ public class QuantityEntity extends EntityType<Long> {
   public Long id;
   public String name;
   public String unit;
-
-  public QuantityEntity() {}
 
   public QuantityEntity(@Nullable Long id, String name, String unit) {
     this.id = id;

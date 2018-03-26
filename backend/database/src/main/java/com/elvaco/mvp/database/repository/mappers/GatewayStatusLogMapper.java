@@ -2,34 +2,29 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
-import com.elvaco.mvp.database.entity.meter.StatusEntity;
 
-public class GatewayStatusLogMapper implements
-                                    DomainEntityMapper<GatewayStatusLog, GatewayStatusLogEntity> {
+public class GatewayStatusLogMapper
+  implements DomainEntityMapper<GatewayStatusLog, GatewayStatusLogEntity> {
 
   @Override
   public GatewayStatusLog toDomainModel(GatewayStatusLogEntity entity) {
     return new GatewayStatusLog(
       entity.id,
       entity.gatewayId,
-      entity.organisationId,
-      entity.status.id,
-      entity.status.name,
+      entity.status,
       entity.start,
       entity.stop
     );
   }
 
   @Override
-  public GatewayStatusLogEntity toEntity(GatewayStatusLog domainModel) {
-    GatewayStatusLogEntity entity = new GatewayStatusLogEntity();
-    entity.id = domainModel.id;
-    entity.gatewayId = domainModel.gatewayId;
-    entity.organisationId = domainModel.organisationId;
-    entity.status = new StatusEntity(domainModel.statusId, domainModel.name);
-    entity.start = domainModel.start;
-    entity.stop = domainModel.stop;
-
-    return entity;
+  public GatewayStatusLogEntity toEntity(GatewayStatusLog statusLog) {
+    return new GatewayStatusLogEntity(
+      statusLog.id,
+      statusLog.gatewayId,
+      statusLog.status,
+      statusLog.start,
+      statusLog.stop
+    );
   }
 }

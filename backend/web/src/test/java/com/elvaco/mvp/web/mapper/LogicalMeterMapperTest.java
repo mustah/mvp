@@ -72,8 +72,7 @@ public class LogicalMeterMapperTest {
         new MeterStatusLog(
           null,
           randomUUID(),
-          1,
-          "Ok",
+          StatusType.OK,
           ZonedDateTime.now(),
           ZonedDateTime.now()
         )
@@ -116,8 +115,7 @@ public class LogicalMeterMapperTest {
     expected.statusChangelog = singletonList(
       new MeterStatusLogDto(
         1L,
-        "Ok",
-        "Ok",
+        StatusType.OK.name,
         "2018-02-12 15:14:25",
         "2018-02-13 15:14:25"
       )
@@ -162,8 +160,7 @@ public class LogicalMeterMapperTest {
                 new MeterStatusLog(
                   1L,
                   randomUUID(),
-                  2,
-                  "Ok",
+                  StatusType.OK,
                   parseDate("2018-02-12T14:14:25"),
                   parseDate("2018-02-13T14:14:25")
                 )
@@ -180,9 +177,7 @@ public class LogicalMeterMapperTest {
               new GatewayStatusLog(
                 1L,
                 randomUUID(),
-                organisationId,
-                2,
-                "ok",
+                StatusType.OK,
                 parseDate("2018-02-12T14:14:25"),
                 parseDate("2018-02-13T14:14:25")
               )
