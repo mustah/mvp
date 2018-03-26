@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import javax.measure.format.ParserException;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,15 @@ public final class CompatibilityFunctions {
         throw iex;
       }
     }
-    Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
-    Quantity<?> resultQuantity = sourceQuantity.to(targetUnit);
-
+    Quantity<?> resultQuantity;
+    try {
+      Unit targetUnit = SimpleUnitFormat.getInstance().parse(target);
+      resultQuantity = sourceQuantity.to(targetUnit);
+    } catch (ParserException ex) {
+      throw new RuntimeException("ERROR: unit \"" + target + "\" is not known");
+    } catch (Exception ex) {
+      throw ex;
+    }
     return new MeasurementUnit(
       resultQuantity.getUnit().toString(),
       resultQuantity.getValue().doubleValue()

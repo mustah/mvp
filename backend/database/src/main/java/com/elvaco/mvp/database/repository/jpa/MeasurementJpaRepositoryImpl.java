@@ -4,16 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
+import com.elvaco.mvp.database.util.SqlErrorMapper;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
+import org.hibernate.JDBCException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +46,19 @@ public class MeasurementJpaRepositoryImpl extends BaseQueryDslRepository<Measure
     // TODO: Implement and test sorting...
     // Maybe?: query = querydsl.applySorting(pageable.getSort(), query);
 
-    return query.fetch();
+    try {
+      return query.fetch();
+    } catch (PersistenceException ex) {
+      Throwable cause = ex.getCause();
+      if (cause instanceof JDBCException) {
+        String sqlErrorMessage = ((JDBCException) cause).getSQLException().getMessage();
+        throw SqlErrorMapper.mapScalingError(
+          scale,
+          sqlErrorMessage
+        ).orElse(ex);
+      }
+      throw ex;
+    }
   }
 
   @Override
@@ -60,6 +75,20 @@ public class MeasurementJpaRepositoryImpl extends BaseQueryDslRepository<Measure
     query = querydsl.applyPagination(pageable, query);
 
     return PageableExecutionUtils.getPage(query.fetch(), pageable, countQuery::fetchCount);
+  }
+
+  @Override
+  public Map<UUID, Long> countGroupedByPhysicalMeterId(Predicate predicate) {
+    JPQLQuery<Void> query = new JPAQuery<>(entityManager);
+    QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
+    return query.from(queryMeasurement)
+      .groupBy(queryMeasurement.physicalMeter.id)
+      .where(predicate)
+      .transform(
+        GroupBy.groupBy(
+          queryMeasurement.physicalMeter.id).as(queryMeasurement.count()
+        )
+      );
   }
 
   private JPQLQuery<MeasurementEntity> getMeasurementEntityJpqlQuery(
@@ -85,20 +114,6 @@ public class MeasurementJpaRepositoryImpl extends BaseQueryDslRepository<Measure
       .where(predicate)
       .from(path);
     return query;
-  }
-
-  @Override
-  public Map<UUID, Long> countGroupedByPhysicalMeterId(Predicate predicate) {
-    JPQLQuery<Void> query = new JPAQuery<>(entityManager);
-    QMeasurementEntity queryMeasurement = QMeasurementEntity.measurementEntity;
-    return query.from(queryMeasurement)
-      .groupBy(queryMeasurement.physicalMeter.id)
-      .where(predicate)
-      .transform(
-        GroupBy.groupBy(
-          queryMeasurement.physicalMeter.id).as(queryMeasurement.count()
-        )
-      );
   }
 }
 
