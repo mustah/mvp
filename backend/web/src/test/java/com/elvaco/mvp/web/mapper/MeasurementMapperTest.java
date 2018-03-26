@@ -197,7 +197,7 @@ public class MeasurementMapperTest {
         "an-organisation"
       ),
       "1234",
-      "external-Id",
+      physicalMeterId.toString(),
       "a medium",
       "a manufacturer",
       0

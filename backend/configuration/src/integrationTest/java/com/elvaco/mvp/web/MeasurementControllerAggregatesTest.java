@@ -609,6 +609,28 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     );
   }
 
+  @Test
+  public void resolutionDefaultsToHourForPeriodLessThanADay() {
+    ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
+    ZonedDateTime before = ZonedDateTime.parse("2018-02-01T23:59:10Z");
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
+      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+    );
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
+    newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
+
+    MeasurementSeriesDto response = as(context().user).getList(
+      String.format(
+        "/measurements/average"
+          + "?after=" + after
+          + "&before=" + before
+          + "&quantities=" + Quantity.POWER.name + ":W"
+          + "&meters=%s",
+        logicalMeter.getId()
+      ), MeasurementSeriesDto.class).getBody().get(0);
+    assertThat(response.values).hasSize(23);
+  }
+
   private void newMeasurement(
     PhysicalMeterEntity meter,
     ZonedDateTime when,
