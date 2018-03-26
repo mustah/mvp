@@ -2,7 +2,6 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -19,7 +18,6 @@ import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +100,7 @@ public class GatewayControllerTest extends IntegrationTest {
       "123",
       "2100",
       StatusType.OK.name,
-      Dates.formatTime(ZonedDateTime.now(), TimeZone.getTimeZone("UTC")),
+      "2018-04-09 07:45:12",
       new LocationDto(),
       emptyList()
     );

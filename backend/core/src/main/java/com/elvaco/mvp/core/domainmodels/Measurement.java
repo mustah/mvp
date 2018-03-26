@@ -35,7 +35,7 @@ public class Measurement implements Identifiable<Long> {
     PhysicalMeter physicalMeter
   ) {
     this.id = id;
-    this.created = ZonedDateTime.from(created);
+    this.created = created;
     this.quantity = quantity;
     this.value = value;
     this.unit = unit;

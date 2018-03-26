@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -50,7 +49,7 @@ public class LogicalMeterController {
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
     return logicalMeterUseCases.findById(id)
-      .map(logicalMeter -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
+      .map(logicalMeterMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
 
@@ -81,7 +80,7 @@ public class LogicalMeterController {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     return logicalMeterUseCases.findAll(parameters)
       .stream()
-      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")))
+      .map(logicalMeterMapper::toDto)
       .collect(toList());
   }
 
@@ -118,6 +117,6 @@ public class LogicalMeterController {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map((logicalMeter) -> logicalMeterMapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")));
+      .map(logicalMeterMapper::toDto);
   }
 }

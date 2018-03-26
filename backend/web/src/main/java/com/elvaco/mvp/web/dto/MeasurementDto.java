@@ -26,6 +26,6 @@ public class MeasurementDto {
     this.quantity = quantity;
     this.value = value;
     this.unit = unit;
-    this.created = ZonedDateTime.from(created);
+    this.created = created;
   }
 }

@@ -1,6 +1,6 @@
 import * as moment from 'moment';
-import {Maybe} from './Maybe';
 import {DateRange, Period} from '../components/dates/dateModels';
+import {Maybe} from './Maybe';
 
 const padZero = (aNumber: number): string => {
   return aNumber < 10 ? `0${aNumber}` : aNumber + '';
@@ -8,10 +8,8 @@ const padZero = (aNumber: number): string => {
 
 export const toApiParameters = ({start, end}: DateRange): string[] => {
   const parameters: string[] = [];
-  start.map((date) =>
-    parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
-  end.map((date) =>
-    parameters.push(`before=${encodeURIComponent(date.toISOString())}`));
+  start.map((date: Date) => parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
+  end.map((date: Date) => parameters.push(`before=${encodeURIComponent(date.toISOString())}`));
   return parameters;
 };
 
@@ -52,11 +50,10 @@ export const dateRange = (now: Date, period: Period): DateRange => {
   }
 };
 
-export const currentDateRange = (period: Period) => dateRange(new Date(), period);
+export const currentDateRange = (period: Period): DateRange => dateRange(new Date(), period);
 
-const formatYyMmDd = (date: Date): string => {
-  return `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
-};
+const formatYyMmDd = (date: Date): string =>
+  `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
 
 export const toFriendlyIso8601 = ({start, end}: DateRange): string => {
   const startDate: string = start.map(formatYyMmDd).orElse('');

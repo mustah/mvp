@@ -2,21 +2,19 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.util.Dates;
 
+import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
 import static java.util.UUID.randomUUID;
@@ -25,30 +23,30 @@ import static java.util.stream.Collectors.toList;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class GatewayMapper {
 
-  public GatewayDto toDto(Gateway gateway, TimeZone timeZone) {
+  public GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
 
-    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+    GatewayStatusLog gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
 
     return new GatewayDto(
       gateway.id,
       gateway.serial,
       gateway.productModel,
-      getStatusName(gatewayStatusLog),
-      getStatusChanged(gatewayStatusLog, timeZone),
+      gatewayStatusLog.status.name,
+      formatUtc(gatewayStatusLog.start),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
       connectedMeterIds(gateway)
     );
   }
 
-  public GatewayMandatoryDto toGatewayMandatory(Gateway gateway, TimeZone timeZone) {
-    Optional<GatewayStatusLog> gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+  public GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
+    GatewayStatusLog gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
     return new GatewayMandatoryDto(
       gateway.id,
       gateway.productModel,
       gateway.serial,
-      getStatusName(gatewayStatusLog),
-      getStatusChanged(gatewayStatusLog, timeZone)
+      gatewayStatusLog.status.name,
+      formatUtc(gatewayStatusLog.start)
     );
   }
 
@@ -64,7 +62,7 @@ public class GatewayMapper {
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id;
-    mapMarkerDto.status = getStatusName(getCurrentStatus(gateway.statusLogs));
+    mapMarkerDto.status = getCurrentStatus(gateway.statusLogs).status.name;
     gateway.meters
       .stream()
       .findFirst()
@@ -79,19 +77,8 @@ public class GatewayMapper {
     return mapMarkerDto;
   }
 
-  private String getStatusChanged(Optional<GatewayStatusLog> gatewayStatusLog, TimeZone timeZone) {
-    return gatewayStatusLog.map(status -> Dates.formatTime(status.start, timeZone))
-      .orElse("");
-  }
-
-  private String getStatusName(Optional<GatewayStatusLog> gatewayStatusLog) {
-    return gatewayStatusLog.map(statusLog -> statusLog.status)
-      .map(statusType -> statusType.name)
-      .orElse(StatusType.UNKNOWN.name);
-  }
-
-  private Optional<GatewayStatusLog> getCurrentStatus(List<GatewayStatusLog> statusLogs) {
-    return statusLogs.stream().findFirst();
+  private GatewayStatusLog getCurrentStatus(List<GatewayStatusLog> statusLogs) {
+    return statusLogs.stream().findFirst().orElse(GatewayStatusLog.NULL_OBJECT);
   }
 
   private List<UUID> connectedMeterIds(Gateway gateway) {

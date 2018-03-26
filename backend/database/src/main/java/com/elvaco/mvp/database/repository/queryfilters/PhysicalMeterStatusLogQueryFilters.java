@@ -16,6 +16,7 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
+
   private ZonedDateTime start;
   private ZonedDateTime stop;
 

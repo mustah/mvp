@@ -1,9 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
-import java.text.ParseException;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -27,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -97,8 +95,8 @@ public class LogicalMeterMapperTest {
     UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.id = meterId;
-    expected.created = "2018-02-12 15:14:25";
-    expected.statusChanged = "2018-02-12 15:14:25";
+    expected.created = "2018-02-12 14:14:25";
+    expected.statusChanged = "2018-02-12 14:14:25";
     expected.medium = "Hot water meter";
     expected.status = StatusType.OK;
     expected.location = new LocationDto(
@@ -113,16 +111,17 @@ public class LogicalMeterMapperTest {
       new MeterStatusLogDto(
         1L,
         StatusType.OK.name,
-        "2018-02-12 15:14:25",
-        "2018-02-13 15:14:25"
+        "2018-02-12 14:14:25",
+        "2018-02-13 14:14:25"
       )
     );
+    ZonedDateTime statusChanged = ZonedDateTime.parse("2018-02-12T14:14:25Z");
     expected.gateway = new GatewayMandatoryDto(
       randomUUID(),
       "CMi2110",
       "123123",
       StatusType.OK.name,
-      "2018-02-12 15:14:25"
+      formatUtc(statusChanged)
     );
     expected.collectionStatus = "";
 
@@ -141,7 +140,7 @@ public class LogicalMeterMapperTest {
             .longitude(56.123)
             .confidence(1.0)
             .build(),
-          parseDate("2018-02-12T14:14:25"),
+          statusChanged,
           singletonList(
             new PhysicalMeter(
               randomUUID(),
@@ -158,8 +157,8 @@ public class LogicalMeterMapperTest {
                   1L,
                   randomUUID(),
                   StatusType.OK,
-                  parseDate("2018-02-12T14:14:25"),
-                  parseDate("2018-02-13T14:14:25")
+                  statusChanged,
+                  statusChanged.plusDays(1)
                 )
               )
             )),
@@ -175,35 +174,25 @@ public class LogicalMeterMapperTest {
                 1L,
                 randomUUID(),
                 StatusType.OK,
-                parseDate("2018-02-12T14:14:25"),
-                parseDate("2018-02-13T14:14:25")
+                statusChanged,
+                statusChanged.plusDays(1)
               )
             )
           ))
-        ), TimeZone.getTimeZone("Europe/Stockholm")))
+        )))
       .isEqualTo(expected);
   }
 
   @Test
-  public void dtoCreatedTimeReflectsCallerTimeZone() throws ParseException {
-    LogicalMeter logicalMeter = new LogicalMeter(
+  public void dtoCreatedTimeReflectsCallerTimeZone() {
+    LogicalMeterDto logicalMeterDto = mapper.toDto(new LogicalMeter(
       randomUUID(),
       "external-id",
       ELVACO.id,
       Location.UNKNOWN_LOCATION,
-      parseDate("2018-02-12T14:14:25")
-    );
+      ZonedDateTime.parse("2018-02-12T14:14:25Z")
+    ));
 
-    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("UTC")).created)
-      .isEqualTo("2018-02-12 14:14:25");
-    assertThat(mapper.toDto(logicalMeter, TimeZone.getTimeZone("America/Los_Angeles")).created)
-      .isEqualTo("2018-02-12 06:14:25");
-  }
-
-  private static ZonedDateTime parseDate(String s) {
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-      .ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-      .withZone(TimeZone.getTimeZone("UTC").toZoneId());
-    return ZonedDateTime.from(dateTimeFormatter.parse(s));
+    assertThat(logicalMeterDto.created).isEqualTo("2018-02-12 14:14:25");
   }
 }

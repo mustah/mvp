@@ -78,8 +78,8 @@ public class LogicalMeterTest {
   @Test
   public void getQuantity() {
     LogicalMeter logicalMeter = newLogicalMeter(
-      UUID.randomUUID(),
-      UUID.randomUUID(),
+      randomUUID(),
+      randomUUID(),
       MeterDefinition.HOT_WATER_METER
     );
 
@@ -89,10 +89,9 @@ public class LogicalMeterTest {
 
   @Test
   public void getManufacturerNoPhysicalMeter() {
-
     LogicalMeter logicalMeter = newLogicalMeter(
-      UUID.randomUUID(),
-      UUID.randomUUID(),
+      randomUUID(),
+      randomUUID(),
       MeterDefinition.HOT_WATER_METER
     );
     assertThat(logicalMeter.getManufacturer()).isEqualTo("Unknown manufacturer");
@@ -100,9 +99,8 @@ public class LogicalMeterTest {
 
   @Test
   public void getManufacturerOnePhysicalMeter() {
-
-    UUID organisationId = UUID.randomUUID();
-    UUID logicalMeterId = UUID.randomUUID();
+    UUID organisationId = randomUUID();
+    UUID logicalMeterId = randomUUID();
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
@@ -114,9 +112,8 @@ public class LogicalMeterTest {
 
   @Test
   public void getManufacturerTwoPhysicalMeters() {
-
-    UUID organisationId = UUID.randomUUID();
-    UUID logicalMeterId = UUID.randomUUID();
+    UUID organisationId = randomUUID();
+    UUID logicalMeterId = randomUUID();
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
@@ -135,7 +132,7 @@ public class LogicalMeterTest {
     String manufacturer
   ) {
     return new PhysicalMeter(
-      UUID.randomUUID(),
+      randomUUID(),
       new Organisation(organisationId, "an-organisation", "an-organisation"),
       "12341234",
       "an-external-id",

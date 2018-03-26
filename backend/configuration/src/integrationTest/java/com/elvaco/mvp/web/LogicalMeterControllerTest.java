@@ -1,10 +1,8 @@
 package com.elvaco.mvp.web;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -40,7 +38,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
-import com.elvaco.mvp.web.util.Dates;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -55,6 +52,7 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
 import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
+import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -266,11 +264,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(meterStatusLogDto.start)
       .as("Unexpected date format for status start")
-      .isEqualTo(toUtcString("2001-01-01T10:14:00.00Z"));
+      .isEqualTo("2001-01-01 10:14:00");
 
     assertThat(meterStatusLogDto.stop)
       .as("Unexpected date format for status stop")
-      .isEqualTo(toUtcString("2001-01-06T10:14:00.00Z"));
+      .isEqualTo("2001-01-06 10:14:00");
   }
 
   @Test
@@ -478,7 +476,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(actualMeter5.statusChangelog.get(0).start)
       .as("Unexpected date of first log entry")
-      .isEqualTo(toUtcString("2001-01-01T10:14:00.00Z"));
+      .isEqualTo("2001-01-01 10:14:00");
   }
 
   /**
@@ -545,14 +543,14 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThat(logicalMeter.statusChangelog.get(0).start)
       .as("Unexpected date of first log entry")
-      .isEqualTo(toUtcString("2001-01-20T10:14:00.00Z"));
+      .isEqualTo("2001-01-20 10:14:00");
 
     assertThat(logicalMeter.statusChangelog.get(10).start)
       .as("Unexpected date of last log entry")
-      .isEqualTo(toUtcString("2001-01-10T10:14:00.00Z"));
+      .isEqualTo("2001-01-10 10:14:00");
 
     assertThat(logicalMeter.status).isEqualTo(ACTIVE);
-    assertThat(logicalMeter.statusChanged).isEqualTo(toUtcString("2001-01-20T10:14:00.00Z"));
+    assertThat(logicalMeter.statusChanged).isEqualTo("2001-01-20 10:14:00");
   }
 
   /**
@@ -827,9 +825,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     String streetAddress,
     String city
   ) {
-    ZonedDateTime created = ZonedDateTime.ofInstant(
-      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId())
-      .plusDays(seed);
+    ZonedDateTime created = utcZonedDateTimeOf("2001-01-01T10:14:00.00Z").plusDays(seed);
 
     LogicalMeter logicalMeter = new LogicalMeter(
       randomUUID(),
@@ -1011,9 +1007,5 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         null
       )
     );
-  }
-
-  private String toUtcString(String date) {
-    return Dates.formatTime(ZonedDateTime.parse(date), TimeZone.getTimeZone("UTC"));
   }
 }

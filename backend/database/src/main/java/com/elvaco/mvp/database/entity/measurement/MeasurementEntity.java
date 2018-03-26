@@ -53,7 +53,7 @@ public class MeasurementEntity extends EntityType<Long> {
     PhysicalMeterEntity physicalMeter
   ) {
     this.id = id;
-    this.created = ZonedDateTime.from(created);
+    this.created = created;
     this.quantity = quantity;
     this.value = value;
     this.physicalMeter = physicalMeter;

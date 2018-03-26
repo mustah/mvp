@@ -1,8 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -20,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
+import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -66,9 +65,7 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterEntityToDomainModelWithPosition() {
-    ZonedDateTime created = ZonedDateTime.ofInstant(
-      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId()
-    );
+    ZonedDateTime created = utcZonedDateTimeOf("2001-01-01T10:14:00.00Z");
 
     UUID organisationId = randomUUID();
 
@@ -150,10 +147,7 @@ public class LogicalMeterMapperTest {
 
   @Test
   public void mapLogicalMeterDomainModelToEntity() {
-    ZonedDateTime created = ZonedDateTime.ofInstant(
-      Instant.parse("2001-01-01T10:14:00.00Z"), TimeZone.getTimeZone("UTC").toZoneId()
-    );
-
+    ZonedDateTime created = utcZonedDateTimeOf("2001-01-01T10:14:00.00Z");
 
     UUID meterId = randomUUID();
     LogicalMeterEntity logicalMeterEntityExpected = new LogicalMeterEntity(
