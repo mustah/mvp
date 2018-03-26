@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.Quantity;
@@ -27,11 +26,12 @@ public class MeasurementMapper {
     );
   }
 
-  public List<MeasurementSeriesDto> toSeries(List<Measurement> foundMeasurements) {
-    Map<MeterQuantity, List<Measurement>> quantityMeasurements = new LinkedHashMap<>();
-    for (Measurement measurement : foundMeasurements) {
-      Quantity quantity = measurement.getQuantity();
-      MeterQuantity key = new MeterQuantity(quantity, measurement.physicalMeter.id);
+  public List<MeasurementSeriesDto> toSeries(List<LabeledMeasurementValue> foundMeasurements) {
+    Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements = new
+      LinkedHashMap<>();
+    for (LabeledMeasurementValue measurement : foundMeasurements) {
+      Quantity quantity = measurement.quantity;
+      LabeledQuantity key = new LabeledQuantity(quantity, measurement.label);
       if (!quantityMeasurements.containsKey(key)) {
         quantityMeasurements.put(key, new ArrayList<>());
       }
@@ -39,15 +39,16 @@ public class MeasurementMapper {
     }
 
     List<MeasurementSeriesDto> series = new ArrayList<>();
-    for (Map.Entry<MeterQuantity, List<Measurement>> entry : quantityMeasurements.entrySet()) {
-      MeterQuantity key = entry.getKey();
+    for (Map.Entry<LabeledQuantity, List<LabeledMeasurementValue>> entry : quantityMeasurements
+      .entrySet()) {
+      LabeledQuantity key = entry.getKey();
       series.add(
         new MeasurementSeriesDto(
-          key.quantity.name, key.quantity.unit, key.meterId,
+          key.quantity.name, key.quantity.unit, key.label,
           entry.getValue()
             .stream()
             .map(measurement -> new MeasurementValueDto(
-              measurement.created.toInstant(),
+              measurement.when,
               measurement.value
             ))
             .collect(toList())
@@ -58,14 +59,14 @@ public class MeasurementMapper {
   }
 
   @EqualsAndHashCode
-  private static class MeterQuantity {
+  private static class LabeledQuantity {
 
     Quantity quantity;
-    UUID meterId;
+    String label;
 
-    private MeterQuantity(Quantity quantity, UUID meterId) {
+    LabeledQuantity(Quantity quantity, String label) {
       this.quantity = quantity;
-      this.meterId = meterId;
+      this.label = label;
     }
   }
 }

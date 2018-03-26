@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,6 +56,15 @@ public class ApiExceptionHandler {
   public ResponseEntity<ErrorMessageDto> handle(AccessDeniedException exception) {
     log.info("Access denied", exception);
     return forbidden(exception);
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<ErrorMessageDto> handle(MissingServletRequestParameterException exception) {
+    String message = String.format(
+      "Missing '%s' parameter.",
+      exception.getParameterName()
+    );
+    return badRequest(message);
   }
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)

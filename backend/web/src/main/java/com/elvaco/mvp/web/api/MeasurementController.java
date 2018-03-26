@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,13 +17,12 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
-import com.elvaco.mvp.web.dto.MeasurementAggregateDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
-import com.elvaco.mvp.web.dto.MeasurementValueDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.NoPhysicalMetersException;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
+import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
@@ -63,45 +60,53 @@ public class MeasurementController {
   }
 
   @GetMapping("/average")
-  public MeasurementAggregateDto average(
+  public List<MeasurementSeriesDto> average(
     @RequestParam List<UUID> meters,
-    @RequestParam(name = "quantity") String quantityName,
-    @RequestParam(required = false) String unit,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime from,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
+    @RequestParam(name = "quantities") List<String> quantityUnits,
+    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam TemporalResolution resolution
   ) {
     List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
+    Set<Quantity> quantities = getQuantitiesFromQuantityUnitList(quantityUnits);
 
-    Map.Entry<Quantity, List<UUID>> entry =
-      mapMeterQuantitiesToPhysicalMeterUuids(
+    if (quantities.isEmpty()) {
+      throw new QuantityNotFound(quantityUnits.get(0));
+    }
+
+    if (before == null) {
+      before = ZonedDateTime.now();
+    }
+
+    Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
+      .mapMeterQuantitiesToPhysicalMeterUuids(
         logicalMeters,
-        Collections.singleton(new Quantity(
-          quantityName,
-          unit
-        ))
-      ).entrySet()
-        .stream()
-        .findAny()
-        .orElseThrow(() -> new QuantityNotFound(quantityName));
+        quantities
+      );
 
-    if (entry.getValue().isEmpty()) {
+    if (quantityToPhysicalMeterIdMap.values().stream().allMatch(List::isEmpty)) {
       throw new NoPhysicalMetersException();
     }
 
-    Quantity quantity = entry.getKey();
-    List<MeasurementValueDto> measurementValueDtos = measurementUseCases.averageForPeriod(
-      entry.getValue(),
-      quantity.name,
-      quantity.unit,
-      from,
-      to,
-      resolution
-    ).stream().map(
-      (measurementValue) -> new MeasurementValueDto(measurementValue.when, measurementValue.value)
-    ).collect(toList());
+    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
+    for (Map.Entry<Quantity, List<UUID>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
+      Quantity quantity = entry.getKey();
+      foundMeasurements.addAll(measurementUseCases.averageForPeriod(
+        entry.getValue(),
+        quantity.name,
+        quantity.unit,
+        after,
+        before,
+        resolution
+      ).stream().map(measurementValue -> new LabeledMeasurementValue(
+        "average",
+        measurementValue.when,
+        measurementValue.value,
+        quantity
+      )).collect(toList()));
+    }
 
-    return new MeasurementAggregateDto(quantity.name, quantity.unit, measurementValueDtos);
+    return measurementMapper.toSeries(foundMeasurements);
   }
 
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -154,7 +159,9 @@ public class MeasurementController {
       );
     }
 
-    return measurementMapper.toSeries(foundMeasurements);
+    return measurementMapper.toSeries(foundMeasurements.stream()
+                                        .map(LabeledMeasurementValue::from)
+                                        .collect(toList()));
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {
