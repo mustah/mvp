@@ -1,52 +1,49 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-	<changeSet author="erimel (generated)" id="1521723779404-1">
-		<createTable tableName="callback_entity">
-			<column autoIncrement="true" name="id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="PK__callback__3213E83F972DFD9B" />
-			</column>
-			<column name="created" type="datetime2(7)" />
-			<column name="updated" type="datetime2(7)" />
-			<column name="attempt" type="int" />
-			<column name="callback" type="varbinary(255)" />
-			<column name="next_retry" type="datetime2(7)" />
-			<column name="payload" type="varchar(255)" />
-		</createTable>
-	</changeSet>
-	<changeSet author="erimel (generated)" id="1521723779404-2">
-		<createTable tableName="address_geo_entity">
-			<column autoIncrement="true" name="id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="PK__address___3213E83F37487F10" />
-			</column>
-			<column name="created" type="datetime2(7)" />
-			<column name="updated" type="datetime2(7)" />
-			<column name="city" type="varchar(255)" />
-			<column name="country" type="varchar(255)" />
-			<column name="street" type="varchar(255)" />
-			<column name="confidence" type="float(53)" />
-			<column name="latitude" type="varchar(255)" />
-			<column name="longitude" type="varchar(255)" />
-			<column name="source" type="varchar(255)" />
-		</createTable>
-	</changeSet>
-	<changeSet author="erimel (generated)" id="1521723779404-3">
-		<createTable tableName="geo_request_entity">
-			<column autoIncrement="true" name="id" type="bigint">
-				<constraints primaryKey="true" primaryKeyName="PK__geo_requ__3213E83FB767B3C8" />
-			</column>
-			<column name="created" type="datetime2(7)" />
-			<column name="updated" type="datetime2(7)" />
-			<column name="city" type="varchar(255)" />
-			<column name="country" type="varchar(255)" />
-			<column name="street" type="varchar(255)" />
-			<column name="callback_url" type="varbinary(255)" />
-			<column name="error_callback_url" type="varbinary(255)" />
-		</createTable>
-	</changeSet>
-	<changeSet author="erimel (generated)" id="1521723779404-4">
-		<addUniqueConstraint columnNames="street, city, country"
-			constraintName="i_street_city_country" tableName="address_geo_entity" />
-	</changeSet>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="erimel (generated)" id="1522085104503-1">
+        <createTable tableName="callback_entity">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="PK__callback__3213E83FB6CD62A0"/>
+            </column>
+            <column name="created" type="datetime2(7)"/>
+            <column name="updated" type="datetime2(7)"/>
+            <column name="attempt" type="int"/>
+            <column name="callback" type="varchar(1024)"/>
+            <column name="next_retry" type="datetime2(7)"/>
+            <column name="payload" type="varchar(1024)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1522085104503-2">
+        <createTable tableName="address_geo_entity">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="PK__address___3213E83F7A5238C0"/>
+            </column>
+            <column name="created" type="datetime2(7)"/>
+            <column name="updated" type="datetime2(7)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="confidence" type="float(53)"/>
+            <column name="latitude" type="varchar(255)"/>
+            <column name="longitude" type="varchar(255)"/>
+            <column name="source" type="varchar(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1522085104503-3">
+        <createTable tableName="geo_request_entity">
+            <column autoIncrement="true" name="id" type="bigint">
+                <constraints primaryKey="true" primaryKeyName="PK__geo_requ__3213E83FBAE3312F"/>
+            </column>
+            <column name="created" type="datetime2(7)"/>
+            <column name="updated" type="datetime2(7)"/>
+            <column name="city" type="varchar(255)"/>
+            <column name="country" type="varchar(255)"/>
+            <column name="street" type="varchar(255)"/>
+            <column name="callback_url" type="varchar(1024)"/>
+            <column name="error_callback_url" type="varchar(1024)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1522085104503-4">
+        <addUniqueConstraint columnNames="street, city, country" constraintName="i_street_city_country" tableName="address_geo_entity"/>
+    </changeSet>
 </databaseChangeLog>

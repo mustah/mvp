@@ -22,7 +22,6 @@ public class GeoResponse {
 
   @Override
   public String toString() {
-
     return address + "\n" + geoData;
   }
 }
