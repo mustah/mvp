@@ -376,6 +376,17 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void measurementSeriesAreLabeledWithMeterExternalId() {
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin(
+        "/measurements?quantities=LightsaberPower:MW");
+
+    assertThat(contents).hasSize(1);
+    MeasurementSeriesDto dto = contents.get(0);
+    assertThat(dto.label).isEqualTo(forceMeter.externalId);
+  }
+
+  @Test
   public void unknownUnitSuppliedForScaling() {
     assumeTrue(isPostgresDialect());
 

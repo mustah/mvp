@@ -26,7 +26,7 @@ public class LabeledMeasurementValue {
 
   public static LabeledMeasurementValue from(Measurement measurement) {
     return new LabeledMeasurementValue(
-      measurement.physicalMeter.id.toString(),
+      measurement.physicalMeter.externalId,
       measurement.created.toInstant(),
       measurement.value,
       measurement.getQuantity()
