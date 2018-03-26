@@ -21,6 +21,7 @@ import com.elvaco.mvp.database.repository.jpa.MeterDefinitionJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import org.junit.After;
@@ -28,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -35,6 +37,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 public class MeasurementControllerTest extends IntegrationTest {
 
@@ -370,6 +373,35 @@ public class MeasurementControllerTest extends IntegrationTest {
     assertThat(dto.quantity).isEqualTo("LightsaberPower");
     assertThat(dto.unit).isEqualTo("MW");
     assertThat(dto.values.get(0).value).isEqualTo(0);
+  }
+
+  @Test
+  public void unknownUnitSuppliedForScaling() {
+    assumeTrue(isPostgresDialect());
+
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
+      .get(
+        "/measurements?quantities=Butter temperature:unknownUnit",
+        ErrorMessageDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message)
+      .isEqualTo("Can not convert to unknown unit 'unknownUnit'");
+  }
+
+  @Test
+  public void wrongDimensionForQuantitySuppliedForScaling() {
+    assumeTrue(isPostgresDialect());
+
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
+      .get(
+        "/measurements?quantities=Butter temperature:kWh",
+        ErrorMessageDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).matches("Can not convert from unit '.*' to 'kWh'");
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(

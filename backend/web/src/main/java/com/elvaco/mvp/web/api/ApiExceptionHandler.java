@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.exception.UnitConversionError;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,12 +59,23 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(MethodArgumentTypeMismatchException.class)
   public ResponseEntity<ErrorMessageDto> handle(MethodArgumentTypeMismatchException exception) {
-    return badRequest(exception);
+    String message = String.format(
+      "Invalid '%s' %s: '%s'.",
+      exception.getName(),
+      humanTypeName(exception.getRequiredType().getName()),
+      exception.getValue().toString()
+    );
+    return badRequest(message);
   }
 
   @ExceptionHandler(PredicateConstructionFailure.class)
   public ResponseEntity<ErrorMessageDto> handle(PredicateConstructionFailure exception) {
-    return badRequest(exception);
+    return badRequest(exception.getMessage());
+  }
+
+  @ExceptionHandler(UnitConversionError.class)
+  public ResponseEntity<ErrorMessageDto> handle(UnitConversionError exception) {
+    return badRequest(exception.getMessage());
   }
 
   private ApiExceptionInformation resolveHttpStatus(Exception exception) {
@@ -85,26 +97,8 @@ public class ApiExceptionHandler {
     return TYPE_TO_HUMAN_TYPE_MAP.getOrDefault(javaType, "parameter");
   }
 
-  private ResponseEntity<ErrorMessageDto> badRequest(PredicateConstructionFailure exception) {
+  private ResponseEntity<ErrorMessageDto> badRequest(String message) {
     HttpStatus responseHttpStatus = HttpStatus.BAD_REQUEST;
-
-    ErrorMessageDto dto = new ErrorMessageDto(
-      exception.getMessage(),
-      responseHttpStatus.value()
-    );
-    return new ResponseEntity<>(dto, responseHttpStatus);
-  }
-
-  private ResponseEntity<ErrorMessageDto> badRequest(
-    MethodArgumentTypeMismatchException exception
-  ) {
-    HttpStatus responseHttpStatus = HttpStatus.BAD_REQUEST;
-    String message = String.format(
-      "Invalid '%s' %s: '%s'.",
-      exception.getName(),
-      humanTypeName(exception.getRequiredType().getName()),
-      exception.getValue().toString()
-    );
 
     ErrorMessageDto dto = new ErrorMessageDto(
       message,
