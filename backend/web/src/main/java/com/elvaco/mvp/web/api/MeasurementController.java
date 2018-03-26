@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.api;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
+import com.elvaco.mvp.core.util.ResolutionHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
@@ -65,7 +67,7 @@ public class MeasurementController {
     @RequestParam(name = "quantities") List<String> quantityUnits,
     @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
-    @RequestParam TemporalResolution resolution
+    @RequestParam(required = false) TemporalResolution resolution
   ) {
     List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
     Set<Quantity> quantities = getQuantitiesFromQuantityUnitList(quantityUnits);
@@ -76,6 +78,10 @@ public class MeasurementController {
 
     if (before == null) {
       before = ZonedDateTime.now();
+    }
+
+    if (resolution == null) {
+      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
     }
 
     Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
