@@ -67,8 +67,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T06:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T06:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -113,8 +113,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T06:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T06:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -176,8 +176,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name + "," + Quantity.DIFFERENCE_TEMPERATURE.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -224,8 +224,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -262,8 +262,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -273,8 +273,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       as(context().user).getList(
         String.format(
           "/measurements/average"
-            + "?from=2018-03-06T03:00:00.000-02:00"
-            + "&to=2018-03-06T06:59:59.999+01:00"
+            + "?after=2018-03-06T03:00:00.000-02:00"
+            + "&before=2018-03-06T06:59:59.999+01:00"
             + "&quantities=" + Quantity.POWER.name
             + "&meters=%s&resolution=hour",
           logicalMeter.id.toString()
@@ -308,8 +308,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -329,8 +329,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=SomeUnknownQuantity"
           + "&meters=%s"
           + "&resolution=hour",
@@ -350,8 +350,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name
           + "&meters=%s"
           + "&resolution=hour",
@@ -382,8 +382,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-06T05:59:59.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T05:59:59.999Z"
           + "&quantities=" + Quantity.POWER.name + ":kW"
           + "&meters=%s"
           + "&resolution=hour",
@@ -415,8 +415,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-06T05:00:00.000Z"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=day",
@@ -455,8 +455,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=2018-01-01T05:00:00.000Z"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=2018-01-01T05:00:00.000Z"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=month",
@@ -492,8 +492,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=thisIsNotAValidTimestamp"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=thisIsNotAValidTimestamp"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=month",
@@ -502,13 +502,13 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Invalid 'from' timestamp: 'thisIsNotAValidTimestamp'.");
+      "Invalid 'after' timestamp: 'thisIsNotAValidTimestamp'.");
 
     response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-07T12:32:05.999Z"
-          + "&to=thisIsNotAValidTimestamp"
+          + "?after=2018-03-07T12:32:05.999Z"
+          + "&before=thisIsNotAValidTimestamp"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=month",
@@ -517,13 +517,13 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Invalid 'to' timestamp: 'thisIsNotAValidTimestamp'.");
+      "Invalid 'before' timestamp: 'thisIsNotAValidTimestamp'.");
 
     response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-07T12:32:05.999Z"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=2018-03-07T12:32:05.999Z"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=month",
@@ -536,8 +536,8 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-07T12:32:05.999Z"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=2018-03-07T12:32:05.999Z"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=NotAValidResolution",
@@ -563,13 +563,13 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
-      "Missing 'from' parameter.");
+      "Missing 'after' parameter.");
 
     response = as(context().user).get(
       String.format(
         "/measurements/average"
-          + "?from=2018-03-07T12:32:05.999Z"
-          + "&to=2018-03-07T12:32:05.999Z"
+          + "?after=2018-03-07T12:32:05.999Z"
+          + "&before=2018-03-07T12:32:05.999Z"
           + "&meters=%s"
           + "&resolution=hour",
         UUID.randomUUID().toString()
@@ -592,7 +592,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     List<MeasurementSeriesDto> response = as(context().user).getList(
       String.format(
         "/measurements/average"
-          + "?from=" + now.toString()
+          + "?after=" + now.toString()
           + "&quantities=" + Quantity.POWER.name + ":W"
           + "&meters=%s"
           + "&resolution=hour",

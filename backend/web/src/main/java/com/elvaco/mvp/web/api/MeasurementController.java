@@ -63,8 +63,8 @@ public class MeasurementController {
   public List<MeasurementSeriesDto> average(
     @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") List<String> quantityUnits,
-    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime from,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime to,
+    @RequestParam @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam TemporalResolution resolution
   ) {
     List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
@@ -74,8 +74,8 @@ public class MeasurementController {
       throw new QuantityNotFound(quantityUnits.get(0));
     }
 
-    if (to == null) {
-      to = ZonedDateTime.now();
+    if (before == null) {
+      before = ZonedDateTime.now();
     }
 
     Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
@@ -95,8 +95,8 @@ public class MeasurementController {
         entry.getValue(),
         quantity.name,
         quantity.unit,
-        from,
-        to,
+        after,
+        before,
         resolution
       ).stream().map(measurementValue -> new LabeledMeasurementValue(
         "average",
