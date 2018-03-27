@@ -72,18 +72,6 @@ public class LogicalMeterController {
       .collect(toList());
   }
 
-  @GetMapping("/all")
-  public List<LogicalMeterDto> logicalAllMeters(
-    @PathVariable Map<String, String> pathVars,
-    @RequestParam MultiValueMap<String, String> requestParams
-  ) {
-    RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
-    return logicalMeterUseCases.findAll(parameters)
-      .stream()
-      .map(logicalMeterMapper::toDto)
-      .collect(toList());
-  }
-
   @GetMapping
   public org.springframework.data.domain.Page<LogicalMeterDto> logicalMeters(
     @PathVariable Map<String, String> pathVars,

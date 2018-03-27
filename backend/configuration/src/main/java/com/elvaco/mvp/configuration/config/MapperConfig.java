@@ -48,6 +48,7 @@ class MapperConfig {
   SelectionsMapper selectionsMapper() {
     return new SelectionsMapper();
   }
+
   @Bean
   SelectionTreeMapper selectionTreeMapper() {
     return new SelectionTreeMapper();

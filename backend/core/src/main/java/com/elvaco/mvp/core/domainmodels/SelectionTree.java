@@ -12,7 +12,7 @@ import lombok.ToString;
 public class SelectionTree {
   private final Map<String, City> cities = new HashMap<>();
 
-  public void addToSelectionTreeDto(LogicalMeter logicalMeter) {
+  public void addToSelectionTree(LogicalMeter logicalMeter) {
     Location location = logicalMeter.location;
 
     String countryName = location.getCountryOrUnknown();

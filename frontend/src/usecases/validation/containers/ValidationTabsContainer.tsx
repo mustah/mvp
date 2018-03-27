@@ -18,7 +18,6 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
@@ -42,7 +41,7 @@ import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
-import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
+import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 
 interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
@@ -137,7 +136,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
   setSelection,
   closeClusterDialog,
-  clearError: clearErrorAllMeters,
+  clearError: clearErrorMeterMapMarkers,
   fetchMeterMapMarkers,
 }, dispatch);
 

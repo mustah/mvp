@@ -6,24 +6,20 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.SelectionTreeDto;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SelectionTreeControllerTest extends IntegrationTest{
+public class SelectionTreeControllerTest extends IntegrationTest {
 
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
@@ -53,7 +49,7 @@ public class SelectionTreeControllerTest extends IntegrationTest{
     logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1"));
     logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2"));
     logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
-    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId3"));
+    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
 
     ResponseEntity<SelectionTreeDto> response = as(context().superAdmin)
       .get("/selection-tree?city=sweden,kungsbacka", SelectionTreeDto.class);
@@ -67,7 +63,7 @@ public class SelectionTreeControllerTest extends IntegrationTest{
     logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 1", "extId1"));
     logicalMeters.save(newLogicalMeter("sweden", "kungsbacka", "kabelgatan 2", "extId2"));
     logicalMeters.save(newLogicalMeter("sweden", "gothenburg", "kabelgatan 3", "extId3"));
-    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId3"));
+    logicalMeters.save(newLogicalMeter("finland", "kungsbacka", "joksigatan 2", "extId4"));
 
     ResponseEntity<SelectionTreeDto> response = as(context().superAdmin)
       .get("/selection-tree?address=sweden,kungsbacka,kabelgatan 2", SelectionTreeDto.class);
@@ -76,7 +72,7 @@ public class SelectionTreeControllerTest extends IntegrationTest{
     assertThat(response.getBody().cities.get(0).addresses).hasSize(1);
   }
 
-  private static LogicalMeter newLogicalMeter(
+  private LogicalMeter newLogicalMeter(
     String country,
     String city,
     String address,
@@ -97,7 +93,7 @@ public class SelectionTreeControllerTest extends IntegrationTest{
     );
   }
 
-  private static LogicalMeter newLogicalMeter(
+  private LogicalMeter newLogicalMeter(
     String country,
     String city,
     String address,

@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 public class SelectionTreeMapper {
 
   public void addToDto(LogicalMeter logicalMeter, SelectionTree selectionTree) {
-    selectionTree.addToSelectionTreeDto(logicalMeter);
+    selectionTree.addToSelectionTree(logicalMeter);
   }
 
   public SelectionTreeDto toDto(SelectionTree selectionTree) {
