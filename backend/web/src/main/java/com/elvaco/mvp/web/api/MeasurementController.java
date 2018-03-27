@@ -22,7 +22,6 @@ import com.elvaco.mvp.core.util.ResolutionHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
 import com.elvaco.mvp.web.exception.MeasurementNotFound;
-import com.elvaco.mvp.web.exception.NoPhysicalMetersException;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
@@ -92,7 +91,7 @@ public class MeasurementController {
       );
 
     if (quantityToPhysicalMeterIdMap.values().stream().allMatch(List::isEmpty)) {
-      throw new NoPhysicalMetersException();
+      throw new QuantityNotFound(quantities.stream().findAny().get().name);
     }
 
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
