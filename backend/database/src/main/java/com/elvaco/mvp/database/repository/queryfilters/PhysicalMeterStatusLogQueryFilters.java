@@ -43,10 +43,10 @@ public class PhysicalMeterStatusLogQueryFilters extends QueryFilters {
   }
 
   @Nullable
-  private Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
-    if (start == null || stop == null) {
+  private Predicate periodQueryFilter(ZonedDateTime periodStart, ZonedDateTime periodStop) {
+    if (periodStart == null || periodStop == null) {
       return null;
     }
-    return Q.start.before(stop).and(Q.stop.after(start).or(Q.stop.isNull()));
+    return Q.start.before(periodStop).and(Q.stop.after(periodStart).or(Q.stop.isNull()));
   }
 }

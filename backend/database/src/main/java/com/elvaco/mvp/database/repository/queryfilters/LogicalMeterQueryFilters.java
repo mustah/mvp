@@ -1,28 +1,20 @@
 package com.elvaco.mvp.database.repository.queryfilters;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.AFTER;
-import static com.elvaco.mvp.database.repository.queryfilters.FilterUtils.BEFORE;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toCityParameters;
-import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterQueryFilters extends QueryFilters {
 
   private static final QLogicalMeterEntity Q = QLogicalMeterEntity.logicalMeterEntity;
-  private ZonedDateTime before;
-  private ZonedDateTime after;
 
   @Override
   public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
@@ -40,42 +32,13 @@ public class LogicalMeterQueryFilters extends QueryFilters {
         return Q.physicalMeters.any().manufacturer.in(values);
       case "organisation":
         return Q.organisationId.in(mapValues(UUID::fromString, values));
-      case "status":
-        List<StatusType> statuses = values.stream().map(StatusType::from).collect(toList());
-        return Q.physicalMeters.any().statusLogs.any().status.in(statuses);
       case "city":
         return whereCity(toCityParameters(values));
       case "address":
         return whereAddress(toAddressParameters(values));
-      case BEFORE:
-        before = ZonedDateTime.parse(values.get(0));
-        return periodQueryFilter(after, before);
-      case AFTER:
-        after = ZonedDateTime.parse(values.get(0));
-        return periodQueryFilter(after, before);
       default:
         return null;
     }
-  }
-
-  @Nullable
-  private Predicate periodQueryFilter(ZonedDateTime start, ZonedDateTime stop) {
-    if (start == null || stop == null) {
-      return null;
-    }
-    return isBefore(stop).and(isAfter(start).or(hasNoEndDate()));
-  }
-
-  private BooleanExpression hasNoEndDate() {
-    return Q.physicalMeters.any().statusLogs.any().stop.isNull();
-  }
-
-  private BooleanExpression isAfter(ZonedDateTime start) {
-    return Q.physicalMeters.any().statusLogs.any().stop.after(start);
-  }
-
-  private BooleanExpression isBefore(ZonedDateTime stop) {
-    return Q.physicalMeters.any().statusLogs.any().start.before(stop);
   }
 
   @Nullable

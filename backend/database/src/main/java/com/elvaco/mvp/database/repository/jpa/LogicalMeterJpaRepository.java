@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
@@ -16,11 +17,15 @@ public interface LogicalMeterJpaRepository {
 
   List<LogicalMeterEntity> findAll();
 
-  List<LogicalMeterEntity> findAll(Predicate predicate);
+  List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate);
 
-  List<LogicalMeterEntity> findAll(Predicate predicate, Sort sort);
+  List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate, Sort sort);
 
-  Page<LogicalMeterEntity> findAll(Predicate predicate, Pageable pageable);
+  Page<LogicalMeterEntity> findAll(
+    RequestParameters parameters,
+    Predicate predicate,
+    Pageable pageable
+  );
 
   List<LogicalMeterEntity> findByOrganisationId(UUID organisationId);
 

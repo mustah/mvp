@@ -53,9 +53,7 @@ import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
-import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -134,8 +132,6 @@ class DataProviderConfig {
       physicalMeterStatusLogJpaRepository,
       new LogicalMeterSortingMapper(),
       newLogicalMeterMapper(),
-      new LogicalMeterQueryFilters(),
-      new PhysicalMeterStatusLogQueryFilters(),
       measurementJpaRepository
     );
   }
