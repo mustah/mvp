@@ -58,6 +58,20 @@ public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
     this.stop = stop;
   }
 
+  public PhysicalMeterStatusLogEntity(
+    Long id,
+    UUID physicalMeterId,
+    ZonedDateTime start,
+    @Nullable ZonedDateTime stop,
+    StatusType status
+  ) {
+    this.id = id;
+    this.physicalMeterId = physicalMeterId;
+    this.start = start;
+    this.stop = stop;
+    this.status = status;
+  }
+
   @Override
   public Long getId() {
     return id;

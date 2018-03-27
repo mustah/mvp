@@ -237,10 +237,6 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         LogicalMeterDto.class
       );
 
-    assertThat(response.getTotalElements()).isEqualTo(5);
-    assertThat(response.getNumberOfElements()).isEqualTo(5);
-    assertThat(response.getTotalPages()).isEqualTo(1);
-
     assertCollectionStatus(response.getContent().get(0), response.getContent().get(1));
   }
 

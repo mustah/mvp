@@ -126,7 +126,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               csvData.medium,
               csvData.meterManufacturer,
               ELVACO,
-              15
+              1440
             );
 
             return new Parameters(logicalMeter, physicalMeter, gateway);
