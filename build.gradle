@@ -22,8 +22,10 @@ allprojects {
   version = getVersion()
 
   repositories {
+    maven {
+      url 'http://artifactory2.elvaco.local/artifactory/jcenter'
+    }
     mavenCentral()
-    jcenter()
   }
 }
 
