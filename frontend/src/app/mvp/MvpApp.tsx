@@ -60,7 +60,7 @@ class MvpApp extends React.Component<Props> {
               showMenuIconButton={false}
             />
             <SavedSelectionsContainer/>
-            <SelectionTreeContainer topLevel={'cities'}/>
+            <SelectionTreeContainer />
           </SideMenuContainer>
         </Layout>
         <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>

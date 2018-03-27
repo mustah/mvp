@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@RestApi("/v1/api/selection-tree")
+@RestApi("/api/v1/selection-tree")
 public class SelectionTreeController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
@@ -34,7 +34,9 @@ public class SelectionTreeController {
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams
   ) {
-    RequestParameters parameters = RequestParametersAdapter.of(requestParams).setAll(pathVars);
+    RequestParameters parameters = RequestParametersAdapter
+      .requestParametersOf(requestParams)
+      .setAll(pathVars);
     SelectionTree selectionTree = new SelectionTree();
     logicalMeterUseCases.findAll(parameters)
       .forEach((logicalMeter -> selectionTreeMapper.addToDto(
