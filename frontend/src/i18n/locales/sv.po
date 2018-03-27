@@ -60,7 +60,7 @@ msgid "cancel"
 msgstr "avbryt"
 
 msgid "latest"
-msgstr "senaste"
+msgstr "senaste dygnet"
 
 msgid "current month"
 msgstr "denna månad"

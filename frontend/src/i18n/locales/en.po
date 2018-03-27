@@ -60,7 +60,7 @@ msgid "cancel"
 msgstr "cancel"
 
 msgid "latest"
-msgstr "latest"
+msgstr "last 24h"
 
 msgid "current month"
 msgstr "current month"
