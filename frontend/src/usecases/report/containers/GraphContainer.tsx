@@ -26,7 +26,6 @@ import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
-<<<<<<< fc103ca1d5a106a11c722f9f0889e4d79702deb6
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {
   fetchMeasurements,
@@ -37,16 +36,6 @@ import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {allQuantities, emptyGraphContents} from '../reportHelpers';
-=======
-import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {fetchMeasurements} from '../../../state/domain-models/measurement/measurementApiActions';
-import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
-import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {Children, Fetch, uuid} from '../../../types/Types';
-import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
->>>>>>> Add EncodedUriParameters as type instead of raw string
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -61,11 +50,7 @@ interface State {
 }
 
 interface DispatchToProps {
-<<<<<<< fc103ca1d5a106a11c722f9f0889e4d79702deb6
   selectQuantities: (quantities: Quantity[]) => void;
-=======
-  fetchMeasurements: Fetch;
->>>>>>> Add EncodedUriParameters as type instead of raw string
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -235,22 +220,10 @@ const mapStateToProps = ({
   ui: {measurements: {selectedQuantities}},
 }: RootState): StateToProps =>
   ({
-<<<<<<< fc103ca1d5a106a11c722f9f0889e4d79702deb6
     selectedListItems,
     period,
     selectedQuantities,
   });
-=======
-    domainModels: {measurements},
-    report: {selectedListItems},
-    searchParameters: {selection: {selected: {period}}},
-  }: RootState): StateToProps =>
-    ({
-      measurements: getEntitiesDomainModels(measurements),
-      selectedListItems,
-      period,
-    });
->>>>>>> Add EncodedUriParameters as type instead of raw string
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectQuantities,

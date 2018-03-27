@@ -2,11 +2,7 @@ import {Period} from '../../components/dates/dateModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {EncodedUriParameters, Status} from '../../types/Types';
-<<<<<<< fc103ca1d5a106a11c722f9f0889e4d79702deb6
 import {dateRange, momentWithTimeZone, toApiParameters} from '../dateHelpers';
-=======
-import {dateRange, toApiParameters} from '../dateHelpers';
->>>>>>> Add EncodedUriParameters as type instead of raw string
 import {
   encodedUriParametersForAllGateways,
   encodedUriParametersForAllMeters,
@@ -19,11 +15,7 @@ describe('urlFactory', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: EncodedUriParameters) => toApiParameters(dateRange(
-<<<<<<< fc103ca1d5a106a11c722f9f0889e4d79702deb6
-       momentWithTimeZone('2018-04-27').toDate(),
-=======
-      new Date(2018, 1, 2),
->>>>>>> Add EncodedUriParameters as type instead of raw string
+      momentWithTimeZone('2018-04-27').toDate(),
       parameter as Period,
     )),
   };

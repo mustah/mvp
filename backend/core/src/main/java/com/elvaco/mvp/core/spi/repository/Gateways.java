@@ -11,8 +11,6 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Gateways {
 
-  List<Gateway> findAll();
-
   List<Gateway> findAll(RequestParameters requestParameters);
 
   Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable);

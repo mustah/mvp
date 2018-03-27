@@ -216,19 +216,19 @@ public class MessageHandlerTest {
   public void resendingSameMessageShouldNotUpdateExistingGateways() {
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    List<Gateway> allAfterFirstMessage = gateways.findAll();
+    List<Gateway> allAfterFirstMessage = gateways.findAll(new MockRequestParameters());
     assertThat(allAfterFirstMessage).hasSize(1);
 
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    assertThat(gateways.findAll()).isEqualTo(allAfterFirstMessage);
+    assertThat(gateways.findAll(new MockRequestParameters())).isEqualTo(allAfterFirstMessage);
   }
 
   @Test
   public void gatewaysAreConnectedToMeters() {
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    List<Gateway> all = gateways.findAll();
+    List<Gateway> all = gateways.findAll(new MockRequestParameters());
     assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
   }
 
@@ -488,7 +488,7 @@ public class MessageHandlerTest {
 
     messageHandler.handle(message);
 
-    assertThat(gateways.findAll()).hasSize(1);
+    assertThat(gateways.findAll(new MockRequestParameters())).hasSize(1);
   }
 
   @Test
