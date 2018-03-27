@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-19 09:19+0100\n"
+"POT-Creation-Date: 2018-03-27 09:39+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -140,9 +140,6 @@ msgstr "flaggad för åtgärd"
 msgid "meter"
 msgstr "mätare"
 
-msgid "status log"
-msgstr "statuslogg"
-
 msgid "map"
 msgstr "karta"
 
@@ -154,12 +151,6 @@ msgstr "typ"
 
 msgid "status"
 msgstr "status"
-
-msgid "show only changes"
-msgstr "visa bara ändringar"
-
-msgid "date"
-msgstr "datum"
 
 msgid "no reliable position"
 msgstr "ingen tillförlitlig position"
@@ -188,11 +179,11 @@ msgstr "anläggnings-ID"
 msgid "measure id"
 msgstr "mät-ID"
 
-msgid "n/a"
-msgstr "ej tillämpbar"
-
 msgid "latest value"
 msgstr "senaste"
+
+msgid "status log"
+msgstr "statuslogg"
 
 msgid "gateways"
 msgstr "gateways"
@@ -203,8 +194,11 @@ msgstr "storhet"
 msgid "value"
 msgstr "värde"
 
-msgid "latest snr"
-msgstr "senaste SNR"
+msgid "show only changes"
+msgstr "visa bara ändringar"
+
+msgid "date"
+msgstr "datum"
 
 msgid "no meters"
 msgstr "inga mätare"
@@ -247,9 +241,6 @@ msgstr "flaggad"
 
 msgid "unFlagged"
 msgstr "ej flaggad"
-
-msgid "error: {{message}}"
-msgstr "fel: {{message}}"
 
 msgid "an unexpected error occurred"
 msgstr "ett oväntat fel inträffade"
@@ -317,9 +308,6 @@ msgstr "produktmodeller"
 msgid "no gateways"
 msgstr "inga gateways"
 
-msgid "overview"
-msgstr "översikt"
-
 msgid "list"
 msgstr "lista"
 
@@ -343,6 +331,15 @@ msgstr "graf"
 
 msgid "table"
 msgstr "tabell"
+
+msgid "select quantities"
+msgstr "välj storheter"
+
+msgid "select meters to include in graph"
+msgstr "välj mätare för att inkludera dem i grafen"
+
+msgid "average"
+msgstr "medelvärde"
 
 msgid "save as"
 msgstr "spara som"
@@ -402,6 +399,18 @@ msgstr "mätare"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+#~ msgid "n/a"
+#~ msgstr "ej tillämpbar"
+
+#~ msgid "latest snr"
+#~ msgstr "senaste SNR"
+
+#~ msgid "error: {{message}}"
+#~ msgstr "fel: {{message}}"
+
+#~ msgid "overview"
+#~ msgstr "översikt"
 
 #~ msgid "all meters"
 #~ msgstr "alla mätare"

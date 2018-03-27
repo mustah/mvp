@@ -1,7 +1,12 @@
+import {Paper} from 'material-ui';
+import MenuItem from 'material-ui/MenuItem';
+import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
+import {paperStyle} from '../../../app/themes';
+import {HasContent} from '../../../components/content/HasContent';
 import {Period} from '../../../components/dates/dateModels';
 import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
@@ -9,31 +14,34 @@ import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
-import {Bold} from '../../../components/texts/Texts';
+import {MissingDataTitle} from '../../../components/texts/Titles';
+import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
-import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {fetchMeasurements} from '../../../state/domain-models/measurement/measurementApiActions';
-import {getEntitiesDomainModels} from '../../../state/domain-models/domainModelsSelectors';
-import {Measurement} from '../../../state/domain-models/measurement/measurementModels';
+import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {
+  fetchMeasurements,
+  mapApiResponseToGraphData,
+  selectQuantities,
+} from '../../../state/ui/graph/measurement/measurementActions';
+import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
-import {mapNormalizedPaginatedResultToGraphData} from '../reportHelpers';
+import {allQuantities, emptyGraphContents} from '../reportHelpers';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
 interface StateToProps {
-  measurements: ObjectsById<Measurement>;
   period: Period;
   selectedListItems: uuid[];
+  selectedQuantities: Quantity[];
 }
 
 interface State {
-  selectedTabOption: string;
+  graphContents: GraphContents;
 }
 
 interface DispatchToProps {
-  fetchMeasurements: (encodedUriParameters: string) => void;
+  selectQuantities: (quantities: Quantity[]) => void;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -46,6 +54,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
     <Line
       yAxisId="left"
       type="monotone"
+      dot={false}
       {...props}
     />
   ));
@@ -65,85 +74,148 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
   return components;
 };
 
+const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
+
+const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDate(when);
+
 class GraphComponent extends React.Component<Props> {
 
-  state: State = {selectedTabOption: 'power'};
+  state: State = {graphContents: emptyGraphContents};
 
   onChangeTab = () => void(0);
+  changeQuantities = (event, index, values) => {
+    this.props.selectQuantities(values);
+  };
 
-  componentDidMount() {
-    // TODO: Need to add period to fetch request, create getEncodedUriParametersForMeasurements in selectionSelectors
-    const {selectedListItems, fetchMeasurements} = this.props;
-    fetchMeasurements(selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&'));
+  async componentDidMount() {
+    const {selectedListItems, period, selectedQuantities} = this.props;
+    const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
+
+    this.setState({
+      ...this.state,
+      graphContents: mapApiResponseToGraphData(graphData),
+      selectedQuantities,
+    });
   }
 
-  componentWillReceiveProps({selectedListItems, fetchMeasurements}: Props) {
-    if (JSON.stringify(this.props.selectedListItems) !== JSON.stringify(selectedListItems)) {
-      fetchMeasurements(selectedListItems.map((id: uuid) => `meterId=${id.toString()}`).join('&'));
+  async componentWillReceiveProps({selectedListItems, period, selectedQuantities}: Props) {
+    const somethingChanged = true || period !== this.props.period;
+    if (somethingChanged) {
+      const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
+      this.setState({
+        ...this.state,
+        graphContents: mapApiResponseToGraphData(graphData),
+        selectedQuantities,
+      });
     }
   }
 
   render() {
-    const {measurements} = this.props;
-    const graphContents = mapNormalizedPaginatedResultToGraphData(measurements);
-    const {data} = graphContents;
+    const {selectedQuantities} = this.props;
+    const {graphContents} = this.state;
     const lines = renderGraphContents(graphContents);
+    const {data} = graphContents;
 
     const selectedTab: TabName = TabName.graph;
+
+    const quantityMenuItem = (quantity: string) => (
+      <MenuItem
+        key={quantity}
+        checked={selectedQuantities.includes(quantity)}
+        value={quantity}
+        primaryText={quantity}
+      />
+    );
 
     // TODO: [!Carl]
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
     // it breaks. Setting width of ResponsiveContainer to 100% will cause the menu to overlap when
     // toggled
+
+    const missingData = (
+      <MissingDataTitle
+        title={firstUpperTranslated('select meters to include in graph')}
+      />
+    );
+
     return (
-      <div style={style}>
-        <Tabs>
-          <TabTopBar>
-            <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
-              <Tab tab={TabName.graph} title={translate('graph')}/>
-              <Tab tab={TabName.table} title={translate('table')}/>
-            </TabHeaders>
-            <TabSettings/>
-          </TabTopBar>
-          <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-            <ResponsiveContainer width="80%" aspect={4.0}>
-              <LineChart
-                width={10}
-                height={30}
-                data={data}
-                margin={margin}
+      <Paper style={contentStyle}>
+        <div style={style}>
+          <Tabs>
+            <TabTopBar>
+              <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
+                <Tab tab={TabName.graph} title={translate('graph')}/>
+                <Tab tab={TabName.table} title={translate('table')}/>
+              </TabHeaders>
+              <TabSettings/>
+            </TabTopBar>
+            <TabContent tab={TabName.graph} selectedTab={selectedTab}>
+              <div style={{padding: '20px 20px 0px'}}>
+                <SelectField
+                  multiple={true}
+                  hintText={firstUpperTranslated('select quantities')}
+                  value={selectedQuantities}
+                  onChange={this.changeQuantities}
+                >
+                  {allQuantities.heat.map(quantityMenuItem)}
+                </SelectField>
+              </div>
+              <HasContent
+                hasContent={data.length > 0}
+                fallbackContent={missingData}
               >
-                <XAxis dataKey="name"/>
-                <CartesianGrid strokeDasharray="3 3"/>
-                <Tooltip/>
-                <Legend/>
-                {lines}
-              </LineChart>
-            </ResponsiveContainer>
-          </TabContent>
-          <TabContent tab={TabName.table} selectedTab={selectedTab}>
-            <Bold>TBD</Bold>
-          </TabContent>
-        </Tabs>
-      </div>
+                <div>
+                  <ResponsiveContainer width="80%" aspect={4.0}>
+                    <LineChart
+                      width={10}
+                      height={50}
+                      data={data}
+                      margin={margin}
+                    >
+                      <XAxis
+                        dataKey="name"
+                        domain={['dataMin', 'dataMax']}
+                        scale="time"
+                        tickFormatter={formatTimestamp}
+                        type="number"
+                      />
+                      <CartesianGrid strokeDasharray="3 3"/>
+                      <Tooltip/>
+                      <Legend/>
+                      {lines}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </HasContent>
+            </TabContent>
+            <TabContent tab={TabName.table} selectedTab={selectedTab}>
+              <HasContent
+                hasContent={false}
+                fallbackContent={missingData}
+              >
+                <p>TBD</p>
+              </HasContent>
+            </TabContent>
+          </Tabs>
+        </div>
+      </Paper>
     );
   }
 }
 
-const mapStateToProps =
+const mapStateToProps = ({
+                           report: {selectedListItems},
+                           searchParameters: {selection: {selected: {period}}},
+                           ui: {measurements: {selectedQuantities}},
+                         }: RootState): StateToProps =>
   ({
-     domainModels: {measurements},
-     report: {selectedListItems},
-     searchParameters: {selection: {selected: {period}}},
-   }: RootState): StateToProps =>
-    ({
-      measurements: getEntitiesDomainModels(measurements),
-      selectedListItems,
-      period,
-    });
+    selectedListItems,
+    period,
+    selectedQuantities,
+  });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  fetchMeasurements,
+  selectQuantities,
 }, dispatch);
 
 export const GraphContainer =

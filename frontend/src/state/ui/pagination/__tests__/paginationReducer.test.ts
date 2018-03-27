@@ -13,7 +13,6 @@ describe('paginationReducer', () => {
       totalElements: 100,
       useCases: {component1: {page: 0}, component2: {page: 0}},
     },
-    measurements: {size: limit, totalPages: 10, totalElements: 100, useCases: {}},
   };
 
   describe('pagination meta data', () => {

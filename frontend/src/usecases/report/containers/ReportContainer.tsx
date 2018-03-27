@@ -1,9 +1,7 @@
-import Paper from 'material-ui/Paper';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
-import {paperStyle} from '../../../app/themes';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {
   SelectableIndicatorWidgets,
@@ -27,8 +25,6 @@ interface DispatchToProps {
 
 type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
 
-const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
-
 const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) => (
   <MvpPageContainer>
     <Row className="space-between">
@@ -45,9 +41,7 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
       selectIndicatorWidget={selectIndicatorWidget}
     />
 
-    <Paper style={contentStyle}>
-      <GraphContainer/>
-    </Paper>
+    <GraphContainer/>
   </MvpPageContainer>
 );
 

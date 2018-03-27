@@ -1,5 +1,6 @@
-import {Status, uuid} from '../../types/Types';
+import {LegendPayload} from 'recharts';
 import {IndicatorType} from '../../components/indicators/indicatorWidgetModels';
+import {Status, uuid} from '../../types/Types';
 
 export interface ReportState {
   selectedListItems: uuid[];
@@ -11,16 +12,18 @@ interface Axes {
 }
 
 export interface LineProps {
-  stroke: string;
+  dataKey: string;
   key: string;
   name: string;
-  dataKey: string;
+  stroke: string;
+  strokeWidth?: number;
 }
 
 export interface GraphContents {
   axes: Axes;
-  lines: LineProps[];
   data: object[];
+  legend: LegendPayload[];
+  lines: LineProps[];
 }
 
 export interface Indicator {

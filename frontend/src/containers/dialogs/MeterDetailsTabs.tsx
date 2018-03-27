@@ -17,7 +17,7 @@ import {translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel, Normalized} from '../../state/domain-models/domainModels';
-import {Measurement} from '../../state/domain-models/measurement/measurementModels';
+import {Measurement} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';

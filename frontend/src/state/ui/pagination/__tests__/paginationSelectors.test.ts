@@ -37,16 +37,6 @@ describe('paginationSelectors', () => {
         totalPages: 10,
         totalElements: 40,
       },
-      measurements: {
-        useCases: {
-          meterList: {
-            page: 5,
-          },
-        },
-        size: 4,
-        totalPages: 10,
-        totalElements: 40,
-      },
     };
 
     it('retrieves pagination from existing entityType and componentId', () => {

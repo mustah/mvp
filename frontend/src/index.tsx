@@ -15,11 +15,11 @@ import {initLanguage} from './i18n/i18n';
 import {AppState, RootState} from './reducers/rootReducer';
 import {restClientWith} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
-import {configureStore} from './store/configureStore';
+import {storeFactory} from './store/configureStore';
 
 export const history: History = createHashHistory();
 
-const appStore: Store<AppState> = configureStore(history);
+const appStore: Store<AppState> = storeFactory(history);
 
 persistStore<AppState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
   if (!error) {
