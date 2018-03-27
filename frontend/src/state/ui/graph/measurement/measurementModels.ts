@@ -11,7 +11,7 @@ interface PhysicalMeter extends Identifiable {
 export interface Measurement extends Identifiable {
   created: number;
   value: number;
-  quantity: string;
+  quantity: Quantity;
   unit: string;
   physicalMeter: PhysicalMeter;
 }
@@ -19,7 +19,7 @@ export interface Measurement extends Identifiable {
 export type Quantity = string;
 
 export interface MeasurementApiResponsePart {
-  quantity: string;
+  quantity: Quantity;
   unit: string;
   label: string;
   values: Array<{
@@ -29,7 +29,7 @@ export interface MeasurementApiResponsePart {
 }
 
 export interface AverageApiResponsePart {
-  quantity: string;
+  quantity: Quantity;
   unit: string;
   values: Array<{
     when: number;

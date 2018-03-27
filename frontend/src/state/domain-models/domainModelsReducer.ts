@@ -35,9 +35,11 @@ export const initialDomain = <T extends Identifiable>(): NormalizedState<T> => (
   total: 0,
 });
 
-const setEntities = <T extends Identifiable>(entity: string,
-                                             state: NormalizedState<T>,
-                                             {payload}: Action<Normalized<T>>): NormalizedState<T> => {
+const setEntities = <T extends Identifiable>(
+  entity: string,
+  state: NormalizedState<T>,
+  {payload}: Action<Normalized<T>>,
+): NormalizedState<T> => {
   const entities: ObjectsById<T> = payload.entities[entity];
   if (Array.isArray(payload.result)) {
     const {result} = payload;
@@ -75,16 +77,20 @@ const addEntity =
   };
 
 const modifyEntity =
-  <T extends Identifiable>(state: NormalizedState<T>,
-                           {payload}: Action<T>): NormalizedState<T> => ({
+  <T extends Identifiable>(
+    state: NormalizedState<T>,
+    {payload}: Action<T>,
+  ): NormalizedState<T> => ({
     ...state,
     isFetching: false,
     entities: {...state.entities, [payload.id]: payload},
   });
 
 const removeEntity =
-  <T extends Identifiable>(state: NormalizedState<T>,
-                           {payload: {id: idToDelete}}: Action<T>): NormalizedState<T> => {
+  <T extends Identifiable>(
+    state: NormalizedState<T>,
+    {payload: {id: idToDelete}}: Action<T>,
+  ): NormalizedState<T> => {
     const result: uuid[] = state.result.filter((id) => id !== idToDelete);
     const {[idToDelete]: deletedItem, ...entities}: ObjectsById<T> = state.entities;
     return {
@@ -96,8 +102,10 @@ const removeEntity =
     };
   };
 
-const setError = <T extends Identifiable>(state: NormalizedState<T>,
-                                          {payload: error}: Action<ErrorResponse>): NormalizedState<T> => ({
+const setError = <T extends Identifiable>(
+  state: NormalizedState<T>,
+  {payload: error}: Action<ErrorResponse>,
+): NormalizedState<T> => ({
   ...state,
   isFetching: false,
   isSuccessfullyFetched: false,
@@ -110,11 +118,15 @@ type ActionTypes<T extends Identifiable> =
   | Action<T>
   | Action<ErrorResponse>;
 
-const reducerFor = <T extends Identifiable>(entity: keyof DomainModelsState,
-                                            endPoint: EndPoints,
-                                            resetState = identity) =>
-  (state: NormalizedState<T> = initialDomain<T>(),
-   action: ActionTypes<T>): NormalizedState<T> => {
+const reducerFor = <T extends Identifiable>(
+  entity: keyof DomainModelsState,
+  endPoint: EndPoints,
+  resetState = identity,
+) =>
+  (
+    state: NormalizedState<T> = initialDomain<T>(),
+    action: ActionTypes<T>,
+  ): NormalizedState<T> => {
     switch (action.type) {
       case domainModelsRequest(endPoint):
         return {
@@ -143,8 +155,10 @@ const reducerFor = <T extends Identifiable>(entity: keyof DomainModelsState,
 
 const identity = (state, action, endPoint) => state;
 
-const resetStateReducer = <T extends Identifiable>(state: NormalizedState<T> = initialDomain<T>(),
-                                                   action: ActionTypes<T>): NormalizedState<T> => {
+const resetStateReducer = <T extends Identifiable>(
+  state: NormalizedState<T> = initialDomain<T>(),
+  action: ActionTypes<T>,
+): NormalizedState<T> => {
   switch (action.type) {
     case SELECT_SAVED_SELECTION:
     case ADD_SELECTION:

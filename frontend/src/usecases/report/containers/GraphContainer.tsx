@@ -85,7 +85,7 @@ class GraphComponent extends React.Component<Props> {
   onChangeTab = () => void(0);
   changeQuantities = (event, index, values) => {
     this.props.selectQuantities(values);
-  };
+  }
 
   async componentDidMount() {
     const {selectedListItems, period, selectedQuantities} = this.props;

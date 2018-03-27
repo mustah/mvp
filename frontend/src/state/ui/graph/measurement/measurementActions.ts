@@ -8,7 +8,10 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
 import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
 import {GraphContents, LineProps} from '../../../../usecases/report/reportModels';
-import {AverageApiResponse, MeasurementResponses, Quantity} from './measurementModels';
+import {
+  AverageApiResponse, AverageApiResponsePart, MeasurementApiResponsePart, MeasurementResponses,
+  Quantity,
+} from './measurementModels';
 
 const colorize =
   (colorSchema: {[quantity: string]: string}) =>
@@ -50,10 +53,10 @@ export const mapApiResponseToGraphData =
       lines: [],
     };
 
-    const byDate = {};
+    const byDate: {[when: number]: {[label: string]: number}} = {};
     const uniqueMeters = new Set<string>();
 
-    measurement.forEach((meterQuantity, index: number) => {
+    measurement.forEach((meterQuantity: MeasurementApiResponsePart, index: number) => {
       const label: string = meterQuantity.quantity + ': ' + meterQuantity.label;
       if (!uniqueMeters.has(label)) {
         uniqueMeters.add(label);
@@ -68,7 +71,7 @@ export const mapApiResponseToGraphData =
       }
 
       meterQuantity.values.forEach(({when, value}) => {
-        const created = when * 1000;
+        const created: number = when * 1000;
         if (!byDate[created]) {
           byDate[created] = {};
         }
@@ -82,7 +85,7 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach((averageQuantity, index: number) => {
+    average.forEach((averageQuantity: AverageApiResponsePart, index: number) => {
       const label: string = firstUpperTranslated('average') + ' - ' + averageQuantity.quantity;
       const props: LineProps = {
         dataKey: label,
@@ -97,7 +100,7 @@ export const mapApiResponseToGraphData =
         if (value === null) {
           return;
         }
-        const created = when * 1000;
+        const created: number = when * 1000;
         if (!byDate[created]) {
           byDate[created] = {};
         }
@@ -105,11 +108,11 @@ export const mapApiResponseToGraphData =
       });
     });
 
-    graphContents.data = Object.keys(byDate).reduce((acc: any[], label) => {
-      const allValuesForDate = byDate[label];
+    graphContents.data = Object.keys(byDate).reduce((acc: object[], created) => {
+      const allValuesForDate: {[label: string]: number} = byDate[created];
       acc.push({
         ...allValuesForDate,
-        name: Number(label),
+        name: Number(created),
       });
       return acc;
     }, []);

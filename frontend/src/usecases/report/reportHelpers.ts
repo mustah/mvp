@@ -1,6 +1,6 @@
 import {GraphContents} from './reportModels';
 
-export enum RenderableQuantity {
+export const enum RenderableQuantity {
   volume = 'Volume',
   flow = 'Flow',
   energy = 'Energy',
