@@ -27,7 +27,14 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -42,7 +49,7 @@ import {GatewayListContainer} from '../components/GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayMapMarkers: DomainModel<MapMarker>;
-  parameters?: string;
+  parameters?: EncodedUriParameters;
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;

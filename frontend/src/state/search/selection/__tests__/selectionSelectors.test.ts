@@ -4,7 +4,7 @@ import {Period} from '../../../../components/dates/dateModels';
 import {dateRange, toApiParameters} from '../../../../helpers/dateHelpers';
 import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
-import {IdNamed} from '../../../../types/Types';
+import {EncodedUriParameters, IdNamed} from '../../../../types/Types';
 import {DomainModelsState, Normalized, SelectionEntity} from '../../../domain-models/domainModels';
 import {getRequestOf} from '../../../domain-models/domainModelsActions';
 import {
@@ -134,7 +134,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const state: SelectionState = selection(initialState, {type: ADD_SELECTION, payload});
 
-      const uriParameters: string = composePaginatedCombiner(
+      const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
@@ -162,7 +162,7 @@ describe('selectionSelectors', () => {
         {type: ADD_SELECTION, payload: payloadSto},
       );
 
-      const uriParameters: string = composePaginatedCombiner(
+      const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({

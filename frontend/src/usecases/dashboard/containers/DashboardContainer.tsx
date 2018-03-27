@@ -19,7 +19,7 @@ import {
 } from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
-import {ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
@@ -32,7 +32,7 @@ interface StateToProps {
   meterMapMarkers: ObjectsById<MapMarker>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
-  parameters: string;
+  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {

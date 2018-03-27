@@ -6,7 +6,7 @@ import {makeUrl} from '../../../helpers/urlFactory';
 import {initLanguage} from '../../../i18n/i18n';
 import {EndPoints} from '../../../services/endPoints';
 import {InvalidToken, restClient, restClientWith} from '../../../services/restClient';
-import {ErrorResponse} from '../../../types/Types';
+import {EncodedUriParameters, ErrorResponse} from '../../../types/Types';
 import {logoutUser} from '../../../usecases/auth/authActions';
 import {Unauthorized} from '../../../usecases/auth/authModels';
 import {User} from '../../domain-models/user/userModels';
@@ -151,7 +151,7 @@ describe('summaryApiActions', () => {
     });
   });
 
-  const onFetchMeterSummary = async (parameters?: string) => {
+  const onFetchMeterSummary = async (parameters?: EncodedUriParameters) => {
     const response: SelectionSummary = {numMeters: 2, numCities: 1, numAddresses: 2};
     mockRestClient.onGet(makeUrl(EndPoints.summaryMeters, parameters)).reply(200, response);
     return store.dispatch(fetchSummary(parameters));

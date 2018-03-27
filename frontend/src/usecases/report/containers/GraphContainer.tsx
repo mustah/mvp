@@ -3,7 +3,16 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {HasContent} from '../../../components/content/HasContent';
@@ -26,7 +35,10 @@ import {
 import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
-import {allQuantities, emptyGraphContents} from '../reportHelpers';
+import {
+  allQuantities,
+  emptyGraphContents,
+} from '../reportHelpers';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -204,10 +216,10 @@ class GraphComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-                           report: {selectedListItems},
-                           searchParameters: {selection: {selected: {period}}},
-                           ui: {measurements: {selectedQuantities}},
-                         }: RootState): StateToProps =>
+  report: {selectedListItems},
+  searchParameters: {selection: {selected: {period}}},
+  ui: {measurements: {selectedQuantities}},
+}: RootState): StateToProps =>
   ({
     selectedListItems,
     period,

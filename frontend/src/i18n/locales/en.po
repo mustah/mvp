@@ -59,7 +59,7 @@ msgstr "confirm"
 msgid "cancel"
 msgstr "cancel"
 
-msgid "latest"
+msgid "last 24h"
 msgstr "last 24h"
 
 msgid "current month"

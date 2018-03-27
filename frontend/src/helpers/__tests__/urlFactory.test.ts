@@ -1,7 +1,7 @@
 import {Period} from '../../components/dates/dateModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
-import {Status} from '../../types/Types';
+import {EncodedUriParameters, Status} from '../../types/Types';
 import {dateRange, toApiParameters} from '../dateHelpers';
 import {
   encodedUriParametersForAllGateways,
@@ -14,7 +14,7 @@ import {
 describe('urlFactory', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
-    period: (parameter: string) => toApiParameters(dateRange(
+    period: (parameter: EncodedUriParameters) => toApiParameters(dateRange(
       new Date(2018, 1, 2),
       parameter as Period,
     )),

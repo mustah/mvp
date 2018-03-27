@@ -10,11 +10,11 @@ import {getMeterParameters} from '../state/search/selection/selectionSelectors';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
 import {getSelectionSummary} from '../state/summary/summarySelection';
-import {Fetch} from '../types/Types';
+import {EncodedUriParameters, Fetch} from '../types/Types';
 
 interface StateToProps {
   selectionSummary: SelectionSummary;
-  parameters: string;
+  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {

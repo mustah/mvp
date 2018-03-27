@@ -13,7 +13,7 @@ import {translate} from '../../services/translationService';
 import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
 import {getMeterParameters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {Fetch, OnClick} from '../../types/Types';
+import {EncodedUriParameters, Fetch, OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -24,7 +24,7 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
-  parameters: string;
+  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {
