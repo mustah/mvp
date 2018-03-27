@@ -27,7 +27,7 @@ public class MeterStatusLog {
     this.id = id;
     this.physicalMeterId = physicalMeterId;
     this.status = status;
-    this.start = ZonedDateTime.ofInstant(start.toInstant(), start.getZone());
-    this.stop = stop != null ? ZonedDateTime.ofInstant(stop.toInstant(), stop.getZone()) : null;
+    this.start = start;
+    this.stop = stop;
   }
 }

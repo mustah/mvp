@@ -15,10 +15,6 @@ public class MeasurementQueryFilters extends QueryFilters {
 
   private static final QMeasurementEntity Q = QMeasurementEntity.measurementEntity;
 
-  private static ZonedDateTime toZonedDateTime(String when) {
-    return ZonedDateTime.parse(when);
-  }
-
   @Override
   public Optional<Predicate> buildPredicateFor(String filter, List<String> values) {
     return Optional.ofNullable(
@@ -38,11 +34,12 @@ public class MeasurementQueryFilters extends QueryFilters {
         return Q.id.in(mapValues(Long::parseLong, values));
       case BEFORE:
         return applyOrPredicates(
-          (String before) -> Q.created.before(toZonedDateTime(before)),
-          values
+          (String before) -> Q.created.before(ZonedDateTime.parse(before)), values
         );
       case AFTER:
-        return applyOrPredicates((String after) -> Q.created.after(toZonedDateTime(after)), values);
+        return applyOrPredicates(
+          (String after) -> Q.created.after(ZonedDateTime.parse(after)), values
+        );
       default:
         return null;
     }

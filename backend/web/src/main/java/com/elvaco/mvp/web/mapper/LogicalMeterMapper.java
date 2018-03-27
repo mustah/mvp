@@ -2,16 +2,16 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.TimeZone;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.StatusType;
+import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.util.Dates;
 
+import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationMapper.toLocationDto;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -46,10 +46,10 @@ public class LogicalMeterMapper {
     return mapMarkerDto;
   }
 
-  public LogicalMeterDto toDto(LogicalMeter logicalMeter, TimeZone timeZone) {
+  public LogicalMeterDto toDto(LogicalMeter logicalMeter) {
     List<MeterStatusLog> statusLogs = getMeterStatusLogs(logicalMeter);
 
-    String created = Dates.formatTime(logicalMeter.created, timeZone);
+    String created = formatUtc(logicalMeter.created);
     LogicalMeterDto meterDto = new LogicalMeterDto();
     meterDto.medium = logicalMeter.getMedium();
     meterDto.created = created;
@@ -60,7 +60,7 @@ public class LogicalMeterMapper {
     meterDto.statusChanged = statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> meterStatusLog.start)
-      .map(date -> Dates.formatTime(date, timeZone))
+      .map(Dates::formatUtc)
       .orElse(created);
     meterDto.facility = logicalMeter.externalId;
 
@@ -71,14 +71,14 @@ public class LogicalMeterMapper {
     meterDto.gateway = logicalMeter.gateways
       .stream()
       .findFirst()
-      .map(gateway -> gatewayMapper.toGatewayMandatory(gateway, timeZone))
+      .map(gatewayMapper::toGatewayMandatory)
       .orElse(null);
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
     meterDto.statusChangelog = statusLogs
       .stream()
-      .map((meterStatusLog) -> meterStatusLogMapper.toDto(meterStatusLog, timeZone))
+      .map(meterStatusLogMapper::toDto)
       .collect(toList());
     return meterDto;
   }

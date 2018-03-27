@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.api;
 
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
@@ -47,9 +46,9 @@ public class GatewayController {
   }
 
   @GetMapping("{id}")
-  public GatewayDto gateway(TimeZone timeZone, @PathVariable UUID id) {
+  public GatewayDto gateway(@PathVariable UUID id) {
     return gatewayUseCases.findById(id)
-      .map(gateway -> gatewayMapper.toDto(gateway, timeZone))
+      .map(gatewayMapper::toDto)
       .orElseThrow(() -> new GatewayNotFound(id));
   }
 
@@ -62,14 +61,13 @@ public class GatewayController {
   }
 
   @PostMapping
-  public GatewayDto createGateway(TimeZone timeZone, @RequestBody GatewayDto gateway) {
+  public GatewayDto createGateway(@RequestBody GatewayDto gateway) {
     Gateway requestModel = gatewayMapper.toDomainModel(gateway, currentUser.getOrganisationId());
-    return gatewayMapper.toDto(gatewayUseCases.save(requestModel), timeZone);
+    return gatewayMapper.toDto(gatewayUseCases.save(requestModel));
   }
 
   @GetMapping
   public org.springframework.data.domain.Page<GatewayDto> gateways(
-    TimeZone timeZone,
     @PathVariable Map<String, String> pathVars,
     @RequestParam MultiValueMap<String, String> requestParams,
     Pageable pageable
@@ -78,6 +76,6 @@ public class GatewayController {
     PageableAdapter adapter = new PageableAdapter(pageable);
     Page<Gateway> page = gatewayUseCases.findAll(parameters, adapter);
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(gateway -> gatewayMapper.toDto(gateway, timeZone));
+      .map(gatewayMapper::toDto);
   }
 }

@@ -6,8 +6,19 @@ import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
 
+import static java.util.UUID.randomUUID;
+
 @EqualsAndHashCode
 public class GatewayStatusLog {
+
+  public static final GatewayStatusLog NULL_OBJECT =
+    new GatewayStatusLog(
+      null,
+      randomUUID(),
+      StatusType.UNKNOWN,
+      ZonedDateTime.now(),
+      null
+    );
 
   @Nullable
   public final Long id;
@@ -27,7 +38,7 @@ public class GatewayStatusLog {
     this.id = id;
     this.gatewayId = gatewayId;
     this.status = status;
-    this.start = ZonedDateTime.ofInstant(start.toInstant(), start.getZone());
-    this.stop = stop != null ? ZonedDateTime.ofInstant(stop.toInstant(), stop.getZone()) : null;
+    this.start = start;
+    this.stop = stop;
   }
 }

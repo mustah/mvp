@@ -45,7 +45,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.externalId = externalId;
     this.organisationId = organisationId;
     this.location = location;
-    this.created = ZonedDateTime.ofInstant(created.toInstant(), created.getZone());
+    this.created = created;
     this.physicalMeters = unmodifiableList(physicalMeters);
     this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);

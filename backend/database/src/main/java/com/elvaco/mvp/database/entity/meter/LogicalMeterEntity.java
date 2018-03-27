@@ -86,7 +86,7 @@ public class LogicalMeterEntity extends EntityType<UUID> {
     this.id = id;
     this.externalId = externalId;
     this.organisationId = organisationId;
-    this.created = ZonedDateTime.ofInstant(created.toInstant(), created.getZone());
+    this.created = created;
     this.physicalMeters = emptySet();
     this.gateways = emptySet();
     this.meterDefinition = meterDefinition;

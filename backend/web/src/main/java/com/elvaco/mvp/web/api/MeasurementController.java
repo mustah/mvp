@@ -122,10 +122,9 @@ public class MeasurementController {
     @RequestParam Optional<List<UUID>> meters,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before
-
   ) {
-    List<LogicalMeter> logicalMeters =
-      meters.map(this::getLogicalMetersByIdList).orElseGet(logicalMeterUseCases::findAll);
+    List<LogicalMeter> logicalMeters = meters
+      .map(this::getLogicalMetersByIdList).orElseGet(logicalMeterUseCases::findAll);
 
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
       .orElseGet(() -> logicalMeters
