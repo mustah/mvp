@@ -1,7 +1,8 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
+import {makeUrl} from '../../helpers/urlFactory';
 import {EndPoints} from '../../services/endPoints';
 import {InvalidToken, restClient} from '../../services/restClient';
-import {ErrorResponse} from '../../types/Types';
+import {EncodedUriParameters, ErrorResponse} from '../../types/Types';
 import {logout} from '../auth/authActions';
 import {DashboardModel} from './dashboardModels';
 
@@ -13,18 +14,19 @@ export const dashboardRequest = createEmptyAction(DASHBOARD_REQUEST);
 export const dashboardSuccess = createPayloadAction<string, DashboardModel>(DASHBOARD_SUCCESS);
 export const dashboardFailure = createPayloadAction<string, ErrorResponse>(DASHBOARD_FAILURE);
 
-export const fetchDashboard = () =>
-  async (dispatch) => {
-    try {
-      dispatch(dashboardRequest());
-      const {data: dashboard} = await restClient.get(EndPoints.dashboard);
-      dispatch(dashboardSuccess(dashboard));
-    } catch (error) {
-      if (error instanceof InvalidToken) {
-        await dispatch(logout(error));
-      } else {
-        const {response: {data}} = error;
-        dispatch(dashboardFailure(data));
+export const fetchDashboard =
+  (parameters: EncodedUriParameters) =>
+    async (dispatch) => {
+      try {
+        dispatch(dashboardRequest());
+        const {data: dashboard} = await restClient.get(makeUrl(EndPoints.dashboard, parameters));
+        dispatch(dashboardSuccess(dashboard));
+      } catch (error) {
+        if (error instanceof InvalidToken) {
+          await dispatch(logout(error));
+        } else {
+          const {response: {data}} = error;
+          dispatch(dashboardFailure(data));
+        }
       }
-    }
-  };
+    };

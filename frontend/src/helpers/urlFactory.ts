@@ -87,6 +87,16 @@ export const encodedUriParametersForAllGateways = (
     parameterCallbacks: callbacks,
   });
 
+export const encodedUriParametersForDashboard = (
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): EncodedUriParameters =>
+  encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: meterParameterNames,
+    parameterCallbacks: callbacks,
+  });
+
 interface UrlParameters {
   pagination?: Pagination;
   selectedIds: SelectedParameters;
