@@ -58,11 +58,13 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private Map<String, MeasurementEntity> measurementQuantities;
   private PhysicalMeterEntity forceMeter;
+  private PhysicalMeterEntity butterMeter;
+  private PhysicalMeterEntity milkMeter;
   private OrganisationEntity wayneIndustriesEntity;
 
   @Before
   public void setUp() {
-    PhysicalMeterEntity butterMeter = new PhysicalMeterEntity(
+    butterMeter = new PhysicalMeterEntity(
       randomUUID(),
       context().organisationEntity,
       "test-butter-meter-1",
@@ -95,7 +97,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       )
     );
 
-    PhysicalMeterEntity milkMeter = new PhysicalMeterEntity(
+    milkMeter = new PhysicalMeterEntity(
       randomUUID(),
       wayneIndustriesEntity,
       "test-milk-meter-1",
@@ -198,7 +200,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementsRetrievableAtEndpoint() {
     List<MeasurementDto> measurements = as(context().user)
-      .getList("/measurements", MeasurementDto.class).getBody();
+      .getList("/measurements?meters=" + butterMeter.logicalMeterId, MeasurementDto.class)
+      .getBody();
 
     List<String> quantities = measurements.stream()
       .map(m -> m.quantity)
@@ -221,7 +224,11 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementUnitScaled() {
     List<MeasurementSeriesDto> measurements = as(context().user)
-      .getList("/measurements?quantities=Butter temperature:K", MeasurementSeriesDto.class)
+      .getList(
+        "/measurements?quantities=Butter temperature:K"
+          + "&meters=" + butterMeter.logicalMeterId,
+        MeasurementSeriesDto.class
+      )
       .getBody();
 
     assertThat(measurements.get(0).quantity).isEqualTo("Butter temperature");
@@ -233,7 +240,12 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
     List<MeasurementDto> measurements = as(context().user)
-      .getList("/measurements?quantities=Butter temperature:K", MeasurementDto.class)
+      .getList(
+        "/measurements"
+          + "?quantities=Butter temperature:K"
+          + "&meters=" + allLogicalMeterIds(),
+        MeasurementDto.class
+      )
       .getBody();
 
     List<String> names = measurements.stream().map(m -> m.quantity).collect(toList());
@@ -267,7 +279,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanSeeAllMeasurements() {
-    assertThat(getListAsSuperAdmin("/measurements")).hasSize(5);
+    assertThat(getListAsSuperAdmin("/measurements?meters=" + allLogicalMeterIds())).hasSize(5);
   }
 
   @Test
@@ -284,7 +296,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void fetchMeasurementsForHeatMeter() {
-    List<MeasurementSeriesDto> contents = getListAsSuperAdmin("/measurements?quantities=Heat");
+    List<MeasurementSeriesDto> contents =
+      getListAsSuperAdmin("/measurements?"
+                            + "quantities=Heat"
+                            + "&meters=" + forceMeter.logicalMeterId);
 
     MeasurementSeriesDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
@@ -299,7 +314,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterByQuantityBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin("/measurements?quantities=LightsaberPower&before=" + date);
+      getListAsSuperAdmin("/measurements?"
+                            + "quantities=LightsaberPower"
+                            + "&meters=" + forceMeter.logicalMeterId
+                            + "&before=" + date);
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
@@ -312,7 +330,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterBeforeTime() {
     String date = "1990-01-01T08:00:00Z";
     List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin("/measurements?before=" + date);
+      getListAsSuperAdmin("/measurements?"
+                            + "meters=" + forceMeter.logicalMeterId
+                            + "&before=" + date);
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
@@ -325,10 +345,10 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterAfterTime() {
     String date = "1990-01-01T08:00:00Z";
     List<String> foundQuantities =
-      getListAsSuperAdmin("/measurements?after=" + date)
-        .stream()
-        .map(c -> c.quantity)
-        .collect(toList());
+      getListAsSuperAdmin(
+        "/measurements?after=" + date
+          + "&meters=" + allLogicalMeterIds()
+      ).stream().map(c -> c.quantity).collect(toList());
 
     assertThat(foundQuantities).hasSize(4);
     assertThat(foundQuantities).doesNotContain("LightsaberPower");
@@ -337,7 +357,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTime() {
     List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin("/measurements?quantities=Heat&after=1990-01-01T08:00:00Z");
+      getListAsSuperAdmin("/measurements?quantities=Heat"
+                            + "&after=1990-01-01T08:00:00Z"
+                            + "&meters=" + allLogicalMeterIds());
 
     MeasurementSeriesDto dto = contents.get(0);
     assertThat(contents).hasSize(1);
@@ -347,7 +369,9 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void fetchMeasurementsForMeterByQuantityAfterTimeWithNonDefaultUnit() {
     List<MeasurementSeriesDto> contents =
-      getListAsSuperAdmin("/measurements?quantities=Heat:K&after=1990-01-01T08:00:00Z");
+      getListAsSuperAdmin("/measurements?quantities=Heat:K"
+                            + "&after=1990-01-01T08:00:00Z"
+                            + "&meters=" + allLogicalMeterIds());
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
@@ -361,7 +385,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void fetchMeasurementsForMeterUsingTwoDifferentQuantities() {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
-        "/measurements?quantities=Heat:K,LightsaberPower:MW");
+        "/measurements?quantities=Heat:K,LightsaberPower:MW"
+          + "&meters=" + allLogicalMeterIds());
 
     assertThat(contents).hasSize(2);
     MeasurementSeriesDto dto = contents.get(0);
@@ -379,7 +404,8 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void measurementSeriesAreLabeledWithMeterExternalId() {
     List<MeasurementSeriesDto> contents =
       getListAsSuperAdmin(
-        "/measurements?quantities=LightsaberPower:MW");
+        "/measurements?quantities=LightsaberPower:MW"
+          + "&meters=" + allLogicalMeterIds());
 
     assertThat(contents).hasSize(1);
     MeasurementSeriesDto dto = contents.get(0);
@@ -392,7 +418,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get(
-        "/measurements?quantities=Butter temperature:unknownUnit",
+        "/measurements?quantities=Butter temperature:unknownUnit"
+          + "&meters=" + allLogicalMeterIds(),
         ErrorMessageDto.class
       );
 
@@ -407,12 +434,25 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get(
-        "/measurements?quantities=Butter temperature:kWh",
+        "/measurements?quantities=Butter temperature:kWh"
+          + "&meters=" + allLogicalMeterIds(),
         ErrorMessageDto.class
       );
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).matches("Can not convert from unit '.*' to 'kWh'");
+  }
+
+  @Test
+  public void missingMetersParametersReturnsHttp400() {
+    ResponseEntity<ErrorMessageDto> response = as(context().user)
+      .get(
+        "/measurements?quantities=Butter temperature:kWh",
+        ErrorMessageDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().message).isEqualTo("Missing 'meters' parameter.");
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(
@@ -449,6 +489,15 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private MeasurementEntity measurementOf(String measurementQuantity) {
     return measurementQuantities.get(measurementQuantity);
+  }
+
+  private String allLogicalMeterIds() {
+    return String.join(
+      ",",
+      Stream.of(milkMeter, butterMeter, forceMeter)
+        .map((meter) -> meter.logicalMeterId.toString())
+        .collect(toList())
+    );
   }
 
 }
