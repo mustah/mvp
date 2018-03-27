@@ -1,3 +1,11 @@
+pluginManagement {
+  repositories {
+    maven {
+      url 'http://artifactory2.elvaco.local/artifactory/gradle-plugins'
+    }
+    mavenCentral()
+  }
+}
 include 'frontend'
 include 'backend'
 include 'backend:core'
