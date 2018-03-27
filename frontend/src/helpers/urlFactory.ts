@@ -8,7 +8,7 @@ interface ParameterNames {
   [key: string]: string;
 }
 
-interface ParameterCallbacks {
+export interface ParameterCallbacks {
   [key: string]: ((parameter: string) => string[]);
 }
 
@@ -37,45 +37,55 @@ const meterParameterNames: ParameterNames = {
   gatewayStatuses: 'gatewayStatus',
 };
 
-export const encodedUriParametersForMeters = (
+export type PaginatedParametersCombiner = (
   pagination: Pagination,
   selectedIds: SelectedParameters,
-): string => {
-  return encodedUriParametersFrom({
+  callbacks?: ParameterCallbacks,
+) => string;
+
+export const encodedUriParametersForMeters: PaginatedParametersCombiner = (
+  pagination: Pagination,
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): string =>
+  encodedUriParametersFrom({
     pagination,
     selectedIds,
     parameterNames: meterParameterNames,
-    parameterCallbacks,
+    parameterCallbacks: callbacks,
   });
-};
 
-export const encodedUriParametersForAllMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({
-    selectedIds,
-    parameterNames: meterParameterNames,
-    parameterCallbacks,
-  });
-};
-
-export const encodedUriParametersForAllGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({
-    selectedIds,
-    parameterNames: gatewayParameterNames,
-    parameterCallbacks,
-  });
-};
-
-export const encodedUriParametersForGateways = (
+export const encodedUriParametersForGateways: PaginatedParametersCombiner = (
   pagination: Pagination,
   selectedIds: SelectedParameters,
-): string => {
-  return encodedUriParametersFrom({
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): string =>
+  encodedUriParametersFrom({
     pagination,
     selectedIds,
     parameterNames: gatewayParameterNames,
-    parameterCallbacks,
+    parameterCallbacks: callbacks,
   });
-};
+
+export const encodedUriParametersForAllMeters = (
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): string =>
+  encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: meterParameterNames,
+    parameterCallbacks: callbacks,
+  });
+
+export const encodedUriParametersForAllGateways = (
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): string =>
+  encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: gatewayParameterNames,
+    parameterCallbacks: callbacks,
+  });
 
 interface UriParameters {
   pagination?: Pagination;
