@@ -1,3 +1,9 @@
+pluginManagement {
+  repositories {
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
 include 'frontend'
 include 'backend'
 include 'backend:core'
