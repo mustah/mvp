@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.api;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.SelectionsDto;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
@@ -23,7 +24,7 @@ public class SelectionController {
   @GetMapping
   public SelectionsDto selections() {
     SelectionsDto selectionsDto = new SelectionsDto();
-    logicalMeterUseCases.findAll()
+    logicalMeterUseCases.findAll(new RequestParametersAdapter())
       .forEach(meter -> selectionsMapper.addToDto(meter.location, selectionsDto));
     return selectionsDto;
   }
