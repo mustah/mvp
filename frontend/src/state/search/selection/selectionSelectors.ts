@@ -118,19 +118,19 @@ export const composePaginatedCombiner =
         combiner(pagination, selectedParameters, callbacks),
     );
 
-export const getEncodedUriParametersForMeters =
+export const getPaginatedMeterParameters =
   composePaginatedCombiner(encodedUriParametersForMeters);
 
-export const getEncodedUriParametersForGateways =
+export const getPaginatedGatewayParameters =
   composePaginatedCombiner(encodedUriParametersForGateways);
 
-export const getEncodedUriParametersForAllMeters =
+export const getMeterParameters =
   createSelector<SearchParameterState, SelectedParameters, string>(
     getSelectedParameters,
     encodedUriParametersForAllMeters,
   );
 
-export const getEncodedUriParametersForAllGateways =
+export const getGatewayParameters =
   createSelector<SearchParameterState, SelectedParameters, string>(
     getSelectedParameters,
     encodedUriParametersForAllGateways,

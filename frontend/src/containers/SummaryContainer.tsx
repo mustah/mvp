@@ -6,7 +6,7 @@ import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
-import {getEncodedUriParametersForAllMeters} from '../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../state/search/selection/selectionSelectors';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
 import {getSelectionSummary} from '../state/summary/summarySelection';
@@ -48,7 +48,7 @@ class SummaryComponent extends React.Component<Props> {
 
 const mapStateToProps = ({searchParameters, summary}: RootState): StateToProps => ({
   selectionSummary: getSelectionSummary(summary),
-  parameters: getEncodedUriParametersForAllMeters(searchParameters),
+  parameters: getMeterParameters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

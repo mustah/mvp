@@ -20,7 +20,7 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {
   TabName,
@@ -121,7 +121,7 @@ const mapStateToProps =
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
-    parameters: getEncodedUriParametersForAllMeters(searchParameters),
+    parameters: getMeterParameters(searchParameters),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
   });

@@ -17,7 +17,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getEncodedUriParametersForAllGateways} from '../../../state/search/selection/selectionSelectors';
+import {getGatewayParameters} from '../../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
@@ -129,7 +129,7 @@ const mapStateToProps = ({
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
-    parameters: getEncodedUriParametersForAllGateways(searchParameters),
+    parameters: getGatewayParameters(searchParameters),
     selectedMarker: getSelectedMapMarker(map),
     isFetching: gatewayMapMarkers.isFetching,
     error: getError(gatewayMapMarkers),

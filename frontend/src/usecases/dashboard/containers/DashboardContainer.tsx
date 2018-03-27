@@ -13,9 +13,13 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {
+  getEntitiesDomainModels,
+  getError,
+} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
-import {Callback, ClearError, ErrorResponse, Fetch} from '../../../types/Types';
+import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
+import {ClearError, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
@@ -28,11 +32,12 @@ interface StateToProps {
   meterMapMarkers: ObjectsById<MapMarker>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
+  parameters: string;
 }
 
 interface DispatchToProps {
-  fetchDashboard: Callback;
   clearError: ClearError;
+  fetchDashboard: Fetch;
   fetchMeterMapMarkers: Fetch;
 }
 
@@ -41,13 +46,13 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class DashboardContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchDashboard, fetchMeterMapMarkers} = this.props;
+    const {fetchDashboard, fetchMeterMapMarkers, parameters} = this.props;
     fetchDashboard();
-    fetchMeterMapMarkers();
+    fetchMeterMapMarkers(parameters);
   }
 
-  componentWillReceiveProps({fetchMeterMapMarkers}: Props) {
-    fetchMeterMapMarkers();
+  componentWillReceiveProps({fetchMeterMapMarkers, parameters}: Props) {
+    fetchMeterMapMarkers(parameters);
   }
 
   render() {
@@ -73,8 +78,13 @@ class DashboardContainerComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({dashboard, searchParameters, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
+const mapStateToProps = ({
+  dashboard,
+  searchParameters,
+  domainModels: {meterMapMarkers},
+}: RootState): StateToProps => ({
   dashboard: dashboard.record,
+  parameters: getMeterParameters(searchParameters),
   meterMapMarkers: getEntitiesDomainModels(meterMapMarkers),
   isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),
@@ -86,5 +96,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchMeterMapMarkers,
 }, dispatch);
 
-export const DashboardContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(DashboardContainerComponent);
+export const DashboardContainer = connect<StateToProps, DispatchToProps>(
+  mapStateToProps,
+  mapDispatchToProps,
+)(DashboardContainerComponent);

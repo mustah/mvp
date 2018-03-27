@@ -23,7 +23,7 @@ import {
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {Flag} from '../../state/domain-models/flag/flagModels';
-import {getEncodedUriParametersForMeters} from '../../state/search/selection/selectionSelectors';
+import {getPaginatedMeterParameters} from '../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
@@ -34,7 +34,7 @@ interface StateToProps {
   result: uuid[];
   entities: ObjectsById<Meter>;
   isFetching: boolean;
-  encodedUriParametersForMeters: string;
+  parameters: string;
   pagination: Pagination;
   error: Maybe<ErrorResponse>;
   entityType: EntityTypes;
@@ -56,12 +56,12 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class MeterList extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchMeters, encodedUriParametersForMeters, pagination: {page}} = this.props;
-    fetchMeters(page, encodedUriParametersForMeters);
+    const {fetchMeters, parameters, pagination: {page}} = this.props;
+    fetchMeters(page, parameters);
   }
 
-  componentWillReceiveProps({fetchMeters, encodedUriParametersForMeters, pagination: {page}}: Props) {
-    fetchMeters(page, encodedUriParametersForMeters);
+  componentWillReceiveProps({fetchMeters, parameters, pagination: {page}}: Props) {
+    fetchMeters(page, parameters);
   }
 
   clearError = () => this.props.clearError({page: this.props.pagination.page});
@@ -168,7 +168,7 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<Meter>(meters),
     result: getPageResult(meters, page),
-    encodedUriParametersForMeters: getEncodedUriParametersForMeters({
+    parameters: getPaginatedMeterParameters({
       pagination: paginationData,
       ...searchParameters,
     }),
