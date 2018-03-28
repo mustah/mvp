@@ -20,6 +20,13 @@ services:
       POSTGRES_PASSWORD: mvp
     ports:
       - "${DOCKER_POSTGRES_PORT:-5432:5432}"
+  geoservice-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: geoservice
+      POSTGRES_PASSWORD: geoservice
+    ports:
+      - "${DOCKER_GEOSERVICE_DB_PORT:-5432:5432}"
   rabbitmq:
       image: rabbitmq:management
       ports:
