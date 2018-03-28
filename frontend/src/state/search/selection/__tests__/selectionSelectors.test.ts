@@ -1,7 +1,7 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
-import {dateRange, toApiParameters} from '../../../../helpers/dateHelpers';
+import {dateRange, momentWithTimeZone, toApiParameters} from '../../../../helpers/dateHelpers';
 import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {EncodedUriParameters, IdNamed} from '../../../../types/Types';
@@ -58,7 +58,7 @@ describe('selectionSelectors', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: string) => toApiParameters(dateRange(
-      new Date(2018, 1, 2),
+      momentWithTimeZone('2018-02-02').toDate(),
       parameter as Period,
     )),
   };

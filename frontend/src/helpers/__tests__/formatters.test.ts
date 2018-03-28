@@ -6,7 +6,8 @@ import {
   formatNumber,
 } from '../formatters';
 
-describe('Formatters', () => {
+describe('formatters', () => {
+
   describe('Format numbers', () => {
 
     test('Without specifying format, result defaults to FORMAT_NUMBER_DEFAULT', () => {

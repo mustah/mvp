@@ -1,31 +1,33 @@
 import {Period} from '../../components/dates/dateModels';
-import {dateRange, toApiParameters, toFriendlyIso8601} from '../dateHelpers';
-import moment = require('moment-timezone');
+import {dateRange, momentWithTimeZone, toApiParameters, toFriendlyIso8601} from '../dateHelpers';
 
-describe('periodSelection', () => {
+describe('dateHelper', () => {
+
+  const pattern = 'YYYY-MM-DD HH:mm:ss';
 
   describe('relative time periods', () => {
     it('defaults to no limits if no start/end time is given', () => {
-      const date = new Date(2018, 3, 23, 10, 33, 12);
+      const date = momentWithTimeZone('2018-03-23 11:00:00').toDate();
       const timePeriod = dateRange(date, Period.latest);
-      const pattern = 'YYYY-MM-DD HH:MM:ss';
-      expect(moment(timePeriod.start, pattern).format()).toEqual('2018-04-22T00:00:00+02:00');
-      expect(moment(timePeriod.end, pattern).format()).toEqual('2018-04-22T23:59:59+02:00');
-      expect(toApiParameters(timePeriod)).toEqual(['after=2018-04-21T22%3A00%3A00.000Z',
-                                                   'before=2018-04-22T21%3A59%3A59.999Z']);
+
+      expect(momentWithTimeZone(timePeriod.start).format(pattern)).toEqual('2018-03-22 00:00:00');
+      expect(momentWithTimeZone(timePeriod.end).format(pattern)).toEqual('2018-03-22 23:59:59');
+      expect(toApiParameters(timePeriod)).toEqual(['after=2018-03-21T23%3A00%3A00.000Z',
+                                                   'before=2018-03-22T22%3A59%3A59.999Z']);
     });
   });
 
   describe('user friendliness', () => {
+
     it('can be expressed in a friendly looking way', () => {
-      const endOfNovember = new Date(2013, 10, 24);
+      const endOfNovember = momentWithTimeZone('2013-11-24 11:00:00').toDate();
       const timePeriod = toFriendlyIso8601(dateRange(endOfNovember, Period.currentMonth));
       expect(timePeriod).toEqual('2013-11-01 - 2013-11-30');
     });
 
     it('can be consumed by the MVP REST API', () => {
       const apiFriendlyOutput = toApiParameters(dateRange(
-        new Date(2012, 3, 4),
+        momentWithTimeZone('2012-02-04').toDate(),
         Period.currentMonth,
       ));
       expect(apiFriendlyOutput.length).toEqual(2);
@@ -47,43 +49,43 @@ describe('periodSelection', () => {
 
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
-        const now = new Date(2013, 2, 4);
+        const now = momentWithTimeZone('2013-03-25').toDate();
         const {start} = dateRange(now, Period.previousMonth);
-        expect(start.getMonth()).toEqual(1);
+        const previousMonth = momentWithTimeZone(start).format('MM');
+        expect(previousMonth).toEqual('02');
       });
 
       it('knows about previous 7 days', () => {
-        const march14 = new Date(2013, 2, 14);
-        const aWeekEarlier = new Date(2013, 2, 8);
+        const march14 = momentWithTimeZone('2013-03-14').toDate();
+        const aWeekEarlier = momentWithTimeZone('2013-03-08').toDate();
         const {start} = dateRange(march14, Period.previous7Days);
         expect(start).toEqual(aWeekEarlier);
       });
 
       it('knows about current week', () => {
-        const friday10thNovember = new Date(2017, 10, 10);
+        const friday10thNovember = momentWithTimeZone('2017-11-10').toDate();
         const {start} = dateRange(friday10thNovember, Period.currentWeek);
 
-        const monday = new Date(2017, 10, 6);
+        const monday = momentWithTimeZone('2017-11-06').toDate();
         expect(start.valueOf()).toBeLessThanOrEqual(monday.valueOf());
 
-        const previousSunday = new Date(2017, 10, 5);
+        const previousSunday = momentWithTimeZone('2017-11-05').toDate();
         expect(start.valueOf()).toBeGreaterThanOrEqual(previousSunday.valueOf());
       });
 
       it('knows about current month', () => {
-        const firstOfMonth = new Date(2013, 2, 13);
-        const {start, end} = dateRange(firstOfMonth, Period.currentMonth);
-        expect(start.getMonth()).toEqual(2);
-        expect(start.getDate()).toEqual(1);
-
-        expect(end.getMonth()).toEqual(2);
-        expect(end.getDate()).toEqual(31);
+        const date = momentWithTimeZone('2017-11-23').toDate();
+        const {start, end} = dateRange(date, Period.currentMonth);
+        expect(momentWithTimeZone(start).format('MM')).toEqual('11');
+        expect(momentWithTimeZone(start).format('DD')).toEqual('01');
+        expect(momentWithTimeZone(end).format('MM')).toEqual('11');
+        expect(momentWithTimeZone(end).format('DD')).toEqual('30');
       });
 
-      it('knows about latest', () => {
-        const {start, end} = dateRange(new Date(2013, 2, 13), Period.latest);
-        expect(moment(start).format()).toEqual('2013-03-12T00:00:00+01:00');
-        expect(moment(end).format()).toEqual('2013-03-12T23:59:59+01:00');
+      it('knows about last 24 h', () => {
+        const {start, end} = dateRange(momentWithTimeZone('2013-03-13').toDate(), Period.latest);
+        expect(momentWithTimeZone(start).format(pattern)).toEqual('2013-03-12 00:00:00');
+        expect(momentWithTimeZone(end).format(pattern)).toEqual('2013-03-12 23:59:59');
       });
     });
   });

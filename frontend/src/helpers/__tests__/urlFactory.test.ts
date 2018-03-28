@@ -2,7 +2,7 @@ import {Period} from '../../components/dates/dateModels';
 import {SelectedParameters} from '../../state/search/selection/selectionModels';
 import {Pagination} from '../../state/ui/pagination/paginationModels';
 import {EncodedUriParameters, Status} from '../../types/Types';
-import {dateRange, toApiParameters} from '../dateHelpers';
+import {dateRange, momentWithTimeZone, toApiParameters} from '../dateHelpers';
 import {
   encodedUriParametersForAllGateways,
   encodedUriParametersForAllMeters,
@@ -15,12 +15,12 @@ describe('urlFactory', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: EncodedUriParameters) => toApiParameters(dateRange(
-      new Date(2018, 1, 2),
+       momentWithTimeZone('2018-04-27').toDate(),
       parameter as Period,
     )),
   };
 
-  const latestUrlParameters = 'after=2018-01-31T23%3A00%3A00.000Z&before=2018-02-01T22%3A59%3A59.999Z';
+  const latestUrlParameters = 'after=2018-04-25T22%3A00%3A00.000Z&before=2018-04-26T21%3A59%3A59.999Z';
 
   describe('calculate uri parameters from selected ids and pagination', () => {
     const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {
