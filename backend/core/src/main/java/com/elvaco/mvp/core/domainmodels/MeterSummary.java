@@ -39,7 +39,7 @@ public class MeterSummary {
         "%s:%s:%s",
         location.getCountry(),
         location.getCity(),
-        location.getStreetAddress()
+        location.getAddress()
       );
   }
 

@@ -30,7 +30,7 @@ public class LocationMapper {
         logicalMeterId,
         location.getCountry(),
         location.getCity(),
-        location.getStreetAddress()
+        location.getAddress()
       );
       if (location.hasCoordinates()) {
         GeoCoordinate coordinate = location.getCoordinate();

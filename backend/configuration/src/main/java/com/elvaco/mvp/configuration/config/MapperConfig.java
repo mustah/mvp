@@ -5,6 +5,7 @@ import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
+import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
 import org.springframework.context.annotation.Bean;
@@ -46,5 +47,10 @@ class MapperConfig {
   @Bean
   SelectionsMapper selectionsMapper() {
     return new SelectionsMapper();
+  }
+
+  @Bean
+  SelectionTreeMapper selectionTreeMapper() {
+    return new SelectionTreeMapper();
   }
 }

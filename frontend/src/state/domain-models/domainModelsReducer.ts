@@ -3,7 +3,6 @@ import {combineReducers} from 'redux';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {
   ADD_SELECTION,
   DESELECT_SELECTION,
@@ -180,12 +179,7 @@ export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
-export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
-export const meterMapMarkers = reducerFor<MapMarker>(
-  'meterMapMarkers',
-  EndPoints.meterMapMarkers,
-  resetStateReducer,
-);
+export const meterMapMarkers = reducerFor<MapMarker>('meterMapMarkers', EndPoints.meterMapMarkers, resetStateReducer);
 export const gatewayMapMarkers =
   reducerFor<MapMarker>('gatewayMapMarkers', EndPoints.gatewayMapMarkers, resetStateReducer);
 export const organisations = reducerFor<Organisation>(
@@ -202,7 +196,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   gatewayStatuses,
   meterStatuses,
   users,
-  allMeters,
   meterMapMarkers,
   gatewayMapMarkers,
   organisations,

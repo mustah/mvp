@@ -13,15 +13,11 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {
-  getEntitiesDomainModels,
-  getError,
-} from '../../../state/domain-models/domainModelsSelectors';
-import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
+import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
-import {fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
+import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
@@ -79,10 +75,10 @@ class DashboardContainerComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  dashboard,
-  searchParameters,
-  domainModels: {meterMapMarkers},
-}: RootState): StateToProps => ({
+                           dashboard,
+                           searchParameters,
+                           domainModels: {meterMapMarkers},
+                         }: RootState): StateToProps => ({
   dashboard: dashboard.record,
   parameters: getMeterParameters(searchParameters),
   meterMapMarkers: getEntitiesDomainModels(meterMapMarkers),
@@ -92,7 +88,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   fetchDashboard,
-  clearError: clearErrorAllMeters,
+  clearError: clearErrorMeterMapMarkers,
   fetchMeterMapMarkers,
 }, dispatch);
 

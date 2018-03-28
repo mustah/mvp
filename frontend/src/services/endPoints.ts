@@ -1,7 +1,7 @@
 export const enum EndPoints {
   selections = '/selections',
+  selectionTree = '/selection-tree',
   meters = '/meters',
-  allMeters = '/meters/all',
   meterMapMarkers = '/meters/map-markers',
   gatewayMapMarkers = '/gateways/map-markers',
   summaryMeters = '/summary/meters',

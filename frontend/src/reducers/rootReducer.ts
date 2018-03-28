@@ -4,8 +4,10 @@ import {PaginatedDomainModelsState} from '../state/domain-models-paginated/pagin
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
-import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
+import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
+import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
+import {searchParameters, SearchParameterState} from '../state/search/searchParameterReducer';
 import {summary} from '../state/summary/summaryReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {LOGOUT_USER} from '../usecases/auth/authActions';
@@ -23,6 +25,7 @@ export interface RootState {
   domainModels: DomainModelsState;
   paginatedDomainModels: PaginatedDomainModelsState;
   summary: SummaryState;
+  selectionTree: SelectionTreeState;
   dashboard: DashboardState;
   routing: RouterState;
   report: ReportState;
@@ -46,6 +49,7 @@ const appReducer = combineReducers<AppState>({
   language,
   searchParameters,
   summary,
+  selectionTree,
   ui,
   map,
 });

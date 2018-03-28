@@ -1,6 +1,6 @@
 import {translate} from '../services/translationService';
 import {GatewayDataSummaryKey} from '../state/domain-models-paginated/gateway/gatewayModels';
-import {MeterDataSummaryKey} from '../state/domain-models/meter-all/allMetersModels';
+import {MeterDataSummaryKey} from '../state/domain-models-paginated/meter/meterModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed, Status} from '../types/Types';
 

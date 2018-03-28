@@ -1,3 +1,4 @@
+import {PieData} from '../../../components/pie-chart-selector/PieChartSelector';
 import {Identifiable, IdNamed, uuid} from '../../../types/Types';
 import {Flag} from '../../domain-models/flag/flagModels';
 import {LocationHolder} from '../../domain-models/location/locationModels';
@@ -26,3 +27,14 @@ export interface Meter extends Identifiable, LocationHolder {
   status: IdNamed;
   gateway: GatewayMandatory;
 }
+
+export interface MeterDataSummary {
+  flagged: PieData;
+  location: PieData;
+  manufacturer: PieData;
+  medium: PieData;
+  status: PieData;
+  alarm: PieData;
+}
+
+export type MeterDataSummaryKey = keyof MeterDataSummary;

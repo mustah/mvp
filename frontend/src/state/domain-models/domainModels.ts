@@ -1,6 +1,5 @@
 import {ErrorResponse, Identifiable, IdNamed, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {Meter} from '../domain-models-paginated/meter/meterModels';
 import {Address} from './location/locationModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
@@ -41,7 +40,6 @@ export interface DomainModelsState {
   meterStatuses: SelectionEntityState;
   meterMapMarkers: NormalizedState<MapMarker>;
   gatewayMapMarkers: NormalizedState<MapMarker>;
-  allMeters: NormalizedState<Meter>;
   users: UserState;
   organisations: NormalizedState<Organisation>;
 }

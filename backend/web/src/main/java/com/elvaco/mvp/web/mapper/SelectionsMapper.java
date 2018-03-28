@@ -45,17 +45,11 @@ public class SelectionsMapper {
     new IdNamedDto("internal meter error")
   ));
 
-  public SelectionsDto addToDto(Location location, SelectionsDto selectionsDto) {
-    // TODO: Even if a meter has an unknown location we should send add it to the selectionsDto
-    // however, we don't have a way of sorting of meters with locations equal to null. This method
-    // should be implemented before adding unknown locations to the DTO.
-    if (location.isKnownAddress()) {
-      selectionsDto.addLocation(
-        location.getCountry(),
-        location.getCity(),
-        location.getStreetAddress()
-      );
-    }
-    return selectionsDto;
+  public void addToDto(Location location, SelectionsDto selectionsDto) {
+    selectionsDto.addLocation(
+      location.getCountryOrUnknown(),
+      location.getCityOrUnknown(),
+      location.getAddressOrUnknown()
+    );
   }
 }

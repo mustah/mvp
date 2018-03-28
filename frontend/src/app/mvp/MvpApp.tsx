@@ -10,10 +10,8 @@ import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
-import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
-import {getMeterParameters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {EncodedUriParameters, Fetch, OnClick} from '../../types/Types';
+import {OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -24,62 +22,45 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
-  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {
   toggleShowHideSideMenu: OnClick;
-  fetchAllMeters: Fetch;
 }
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-class MvpApp extends React.Component<Props> {
+const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
 
-  componentDidMount() {
-    const {fetchAllMeters, parameters} = this.props;
-    fetchAllMeters(parameters);
-  }
+  return (
+    <Row className="MvpApp">
+      <MvpMainMenuContainer/>
 
-  componentWillReceiveProps({fetchAllMeters, parameters}: Props) {
-    fetchAllMeters(parameters);
-  }
+      <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
+        <SideMenuContainer>
+          <AppBar
+            className="AppTitle"
+            title={translate('metering')}
+            showMenuIconButton={false}
+          />
+          <SavedSelectionsContainer/>
+          <SelectionTreeContainer/>
+        </SideMenuContainer>
+      </Layout>
+      <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
 
-  render() {
-    const {isSideMenuOpen, toggleShowHideSideMenu} = this.props;
+      <MvpPages/>
+      <MessageContainer/>
+    </Row>
+  );
+};
 
-    return (
-      <Row className="MvpApp">
-        <MvpMainMenuContainer/>
-
-        <Layout className={classNames('SideMenuContainer', {isSideMenuOpen})}>
-          <SideMenuContainer>
-            <AppBar
-              className="AppTitle"
-              title={translate('metering')}
-              showMenuIconButton={false}
-            />
-            <SavedSelectionsContainer/>
-            <SelectionTreeContainer topLevel={'cities'}/>
-          </SideMenuContainer>
-        </Layout>
-        <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
-
-        <MvpPages/>
-        <MessageContainer/>
-      </Row>
-    );
-  }
-}
-
-const mapStateToProps = ({ui, searchParameters}: RootState): StateToProps => ({
+const mapStateToProps = ({ui}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
-  parameters: getMeterParameters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleShowHideSideMenu,
-  fetchAllMeters,
 }, dispatch);
 
 export const MvpAppContainer =
