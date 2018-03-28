@@ -1,14 +1,17 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 
 public interface MessageHandler {
 
-  void handle(MeteringMeterStructureMessageDto structureMessage);
+  Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage);
 
-  void handle(MeteringMeasurementMessageDto measurementMessage);
+  Optional<MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage);
 
-  void handle(MeteringAlarmMessageDto alarmMessage);
+  Optional<MeteringResponseDto> handle(MeteringAlarmMessageDto alarmMessage);
 }

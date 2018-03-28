@@ -23,7 +23,10 @@ public interface GatewayJpaRepository
     String serial
   );
 
+  Optional<GatewayEntity> findByOrganisationIdAndSerial(UUID organisationId, String serial);
+
   Optional<GatewayEntity> findById(UUID id);
 
   Optional<GatewayEntity> findByOrganisationIdAndId(UUID organisationId, UUID id);
+
 }

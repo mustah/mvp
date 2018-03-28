@@ -1,10 +1,12 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
 import org.junit.Test;
 
@@ -166,18 +168,21 @@ public class MeteringMessageReceiverTest {
     }
 
     @Override
-    public void handle(MeteringMeterStructureMessageDto structureMessage) {
+    public Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage) {
       structureMessageReceived = true;
+      return Optional.empty();
     }
 
     @Override
-    public void handle(MeteringMeasurementMessageDto measurementMessage) {
+    public Optional<MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage) {
       measurementMessageReceived = true;
+      return Optional.empty();
     }
 
     @Override
-    public void handle(MeteringAlarmMessageDto alarmMessage) {
+    public Optional<MeteringResponseDto> handle(MeteringAlarmMessageDto alarmMessage) {
       alarmMessageReceived = true;
+      return Optional.empty();
     }
 
     boolean nothingReceived() {

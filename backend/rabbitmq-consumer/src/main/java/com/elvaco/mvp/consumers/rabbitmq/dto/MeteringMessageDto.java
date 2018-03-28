@@ -7,7 +7,7 @@ import com.google.gson.JsonSyntaxException;
 public class MeteringMessageDto {
   public final MessageType messageType;
 
-  public MeteringMessageDto(MessageType messageType) {
+  MeteringMessageDto(MessageType messageType) {
     this.messageType = messageType;
   }
 
