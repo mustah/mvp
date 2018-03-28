@@ -35,10 +35,7 @@ import {
 import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
-import {
-  allQuantities,
-  emptyGraphContents,
-} from '../reportHelpers';
+import {allQuantities, emptyGraphContents} from '../reportHelpers';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -93,11 +90,6 @@ const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDat
 class GraphComponent extends React.Component<Props> {
 
   state: State = {graphContents: emptyGraphContents};
-
-  onChangeTab = () => void(0);
-  changeQuantities = (event, index, values) => {
-    this.props.selectQuantities(values);
-  }
 
   async componentDidMount() {
     const {selectedListItems, period, selectedQuantities} = this.props;
@@ -213,6 +205,13 @@ class GraphComponent extends React.Component<Props> {
       </Paper>
     );
   }
+
+  onChangeTab = () => void(0);
+
+  changeQuantities = (event, index, values) => {
+    this.props.selectQuantities(values);
+  }
+
 }
 
 const mapStateToProps = ({

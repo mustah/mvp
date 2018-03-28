@@ -3,7 +3,7 @@ import {initialMeasurementState, measurements} from '../measurementReducer';
 
 describe('measurementReducer', () => {
 
-  it('sets quantites', () => {
+  it('sets quantities', () => {
     expect(measurements(initialMeasurementState, selectQuantities(['Power', 'Temperature'])))
       .toEqual({
         ...initialMeasurementState,
