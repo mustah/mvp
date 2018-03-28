@@ -1,6 +1,6 @@
 import {Period} from '../../components/dates/dateModels';
 import {dateRange, toApiParameters, toFriendlyIso8601} from '../dateHelpers';
-import moment = require('moment');
+import moment = require('moment-timezone');
 
 describe('periodSelection', () => {
 
@@ -82,8 +82,8 @@ describe('periodSelection', () => {
 
       it('knows about latest', () => {
         const {start, end} = dateRange(new Date(2013, 2, 13), Period.latest);
-        expect(moment(start, 'YYYY-MM-DD HH:MM:ss').format()).toEqual('2013-03-12T00:00:00+01:00');
-        expect(moment(end, 'YYYY-MM-DD HH:MM:ss').format()).toEqual('2013-03-12T23:59:59+01:00');
+        expect(moment(start).format()).toEqual('2013-03-12T00:00:00+01:00');
+        expect(moment(end).format()).toEqual('2013-03-12T23:59:59+01:00');
       });
     });
   });

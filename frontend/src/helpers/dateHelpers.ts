@@ -1,5 +1,9 @@
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import {DateRange, Period} from '../components/dates/dateModels';
+
+export const timezoneStockholm = 'Europe/Stockholm';
+
+const momentWithTimeZone = (date: Date): moment.Moment => moment(date).tz(timezoneStockholm);
 
 const padZero = (aNumber: number): string => {
   return aNumber < 10 ? `0${aNumber}` : aNumber + '';
@@ -21,28 +25,28 @@ export const dateRange = (now: Date, period: Period): DateRange => {
   switch (period) {
     case Period.currentMonth:
       return {
-        start: moment(now).startOf('month').toDate(),
-        end: moment(now).endOf('month').toDate(),
+        start: momentWithTimeZone(now).startOf('month').toDate(),
+        end: momentWithTimeZone(now).endOf('month').toDate(),
       };
     case Period.currentWeek:
       return {
-        start: moment(now).startOf('isoWeek').toDate(),
-        end: moment(now).endOf('isoWeek').toDate(),
+        start: momentWithTimeZone(now).startOf('isoWeek').toDate(),
+        end: momentWithTimeZone(now).endOf('isoWeek').toDate(),
       };
     case Period.previous7Days:
       return {
-        start: moment(now).subtract(6, 'days').toDate(),
+        start: momentWithTimeZone(now).subtract(6, 'days').toDate(),
         end: now,
       };
     case Period.previousMonth:
-      const prevMonth = moment(now).subtract(1, 'month');
+      const prevMonth = momentWithTimeZone(now).subtract(1, 'month');
       return {
         start: prevMonth.startOf('month').toDate(),
         end: prevMonth.endOf('month').toDate(),
       };
     case Period.latest:
     default:
-      const yesterday = moment(now).subtract(1, 'days');
+      const yesterday = momentWithTimeZone(now).subtract(1, 'days');
       return {
         start: yesterday.startOf('day').toDate(),
         end: yesterday.endOf('day').toDate(),
