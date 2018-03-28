@@ -191,5 +191,4 @@ deploy:production:
   <<: *deploy_production
   when: manual
   only:
-    - /^release-.*$/
     - tags
