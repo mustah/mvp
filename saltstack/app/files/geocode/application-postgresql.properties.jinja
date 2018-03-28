@@ -1,0 +1,8 @@
+server.port=8081
+spring.datasource.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/geocodedb
+spring.datasource.username=geocodedb-app
+spring.datasource.password=ftypTI52S66jcbLwQ072AlrCndsgC4Qe
+
+liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/geocodedb
+liquibase.user=geocodedb-admin
+liquibase.password=dCU0WkunRIGDrTfDdPoK5QcyvPqWCe88
