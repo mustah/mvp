@@ -1,0 +1,57 @@
+{
+	"geocoding_results": {
+		"LEGAL_COPYRIGHT": {
+			"copyright_notice": "Copyright (c) 2018 Geocode.Farm - All Rights Reserved.",
+			"copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+			"terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+			"privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+		},
+		"STATUS": {
+			"access": "FREE_USER, ACCESS_GRANTED",
+			"status": "SUCCESS",
+			"address_provided": "Fasanvägen 38 Perstorp Sweden",
+			"result_count": 1
+		},
+		"ACCOUNT": {
+			"ip_address": "85.24.224.66",
+			"distribution_license": "NONE, UNLICENSED",
+			"usage_limit": "250",
+			"used_today": "5",
+			"used_total": "5",
+			"first_used": "05 Mar 2018"
+		},
+		"RESULTS": [
+			{
+				"result_number": 1,
+				"formatted_address": "Fasanvägen 38, 284 37 Perstorp, Sweden",
+				"accuracy": "EXACT_MATCH",
+				"ADDRESS": {
+					"street_number": "38",
+					"street_name": "Fasanvägen",
+					"admin_1": "Skåne län",
+					"postal_code": "284 37",
+					"country": "Sweden"
+				},
+				"LOCATION_DETAILS": {
+					"elevation": "UNAVAILABLE",
+					"timezone_long": "UNAVAILABLE",
+					"timezone_short": "Europe\/Stockholm"
+				},
+				"COORDINATES": {
+					"latitude": "56.1469919912235",
+					"longitude": "13.3966219490091"
+				},
+				"BOUNDARIES": {
+					"northeast_latitude": "56.1469919912235",
+					"northeast_longitude": "13.3966219490091",
+					"southwest_latitude": "56.1456380197919",
+					"southwest_longitude": "13.3952630197219"
+				}
+			}
+		],
+		"STATISTICS": {
+			"https_ssl": "ENABLED, SECURE",
+			"time_taken": "0.56745290756226"
+		}
+	}
+}

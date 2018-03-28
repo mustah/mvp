@@ -1,0 +1,57 @@
+{
+	"geocoding_results": {
+		"LEGAL_COPYRIGHT": {
+			"copyright_notice": "Copyright (c) 2018 Geocode.Farm - All Rights Reserved.",
+			"copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+			"terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+			"privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+		},
+		"STATUS": {
+			"access": "FREE_USER, ACCESS_GRANTED",
+			"status": "SUCCESS",
+			"address_provided": "Walls väg 14 Kungsbacka Sweden",
+			"result_count": 1
+		},
+		"ACCOUNT": {
+			"ip_address": "85.24.224.66",
+			"distribution_license": "NONE, UNLICENSED",
+			"usage_limit": "250",
+			"used_today": "3",
+			"used_total": "3",
+			"first_used": "05 Mar 2018"
+		},
+		"RESULTS": [
+			{
+				"result_number": 1,
+				"formatted_address": "Walls väg 14, 434 91 Kungsbacka, Sweden",
+				"accuracy": "EXACT_MATCH",
+				"ADDRESS": {
+					"street_number": "14",
+					"street_name": "Walls väg",
+					"admin_1": "Hallands län",
+					"postal_code": "434 91",
+					"country": "Sweden"
+				},
+				"LOCATION_DETAILS": {
+					"elevation": "UNAVAILABLE",
+					"timezone_long": "UNAVAILABLE",
+					"timezone_short": "Europe\/Stockholm"
+				},
+				"COORDINATES": {
+					"latitude": "57.4549794134225",
+					"longitude": "12.0472519738219"
+				},
+				"BOUNDARIES": {
+					"northeast_latitude": "57.4549794134225",
+					"northeast_longitude": "12.0472519738219",
+					"southwest_latitude": "57.4536224197941",
+					"southwest_longitude": "12.0459044197197"
+				}
+			}
+		],
+		"STATISTICS": {
+			"https_ssl": "ENABLED, SECURE",
+			"time_taken": "0.55584597587585"
+		}
+	}
+}
