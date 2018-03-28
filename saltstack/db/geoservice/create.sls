@@ -8,11 +8,4 @@ create-geoservice-database:
     - template: template0
     - lc_collate: "sv_SE.utf8"
     - encoding: "UTF8"
-
-set-geoservicedb-app-privileges:
-  postgres_privileges.present:
-    - name: geoservicedb-app
-    - object_name: geoservicedb
-    - object_type: database
-    - privileges:
-      - ALL
+    - owner: geoservicedb-app
