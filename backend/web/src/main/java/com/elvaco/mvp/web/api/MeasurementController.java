@@ -26,6 +26,7 @@ import com.elvaco.mvp.web.exception.NoPhysicalMetersException;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -162,8 +163,8 @@ public class MeasurementController {
     }
 
     return measurementMapper.toSeries(foundMeasurements.stream()
-                                        .map(LabeledMeasurementValue::from)
-                                        .collect(toList()));
+      .map(LabeledMeasurementValue::from)
+      .collect(toList()));
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {

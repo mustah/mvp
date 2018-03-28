@@ -1,6 +1,10 @@
+import axios from 'axios';
+import {Period} from '../../../../../components/dates/dateModels';
+import {authenticate} from '../../../../../services/restClient';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
-import {mapApiResponseToGraphData} from '../measurementActions';
-import {MeasurementApiResponse} from '../measurementModels';
+import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
+import {AverageApiResponse, MeasurementApiResponse, MeasurementResponses} from '../measurementModels';
+import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
   describe('mapApiResponseToGraphData', () => {
@@ -139,6 +143,124 @@ describe('measurementActions', () => {
         expect(graphContents.axes.left).toEqual('mW');
         expect(graphContents.axes.right).toEqual('mA');
       });
+    });
+  });
+
+  describe('fetchMeasurements', () => {
+    const emptyResponses: MeasurementResponses = Object.freeze({
+      measurement: [],
+      average: [],
+    });
+
+    it('returns empty data if no quantities are not provided', async () => {
+      const response = await fetchMeasurements([], ['123abc'], Period.currentMonth);
+      expect(response).toEqual(emptyResponses);
+    });
+
+    it('returns empty data if no meter ids are provided', async () => {
+      const response = await fetchMeasurements(['Power'], [], Period.currentMonth);
+      expect(response).toEqual(emptyResponses);
+    });
+
+    it('does not include average endpoint when asking for measurements for single meter', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+      mockRestClient.onGet().reply((config) => {
+        requestedUrls.push(config.url);
+        return [200, 'some data'];
+      });
+
+      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth);
+      expect(requestedUrls.length).toEqual(1);
+      expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
+    });
+
+    it('includes average when asking for measurements for multiple meters', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+      mockRestClient.onGet().reply((config) => {
+        requestedUrls.push(config.url);
+        return [200, 'some data'];
+      });
+
+      await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth);
+      expect(requestedUrls.length).toEqual(2);
+      expect(requestedUrls[0]).toMatch(
+        /\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+      expect(requestedUrls[1]).toMatch(
+        /\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+    });
+
+    it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {
+      const mockRestClient = new MockAdapter(axios);
+      authenticate('test');
+
+      const requestedUrls: string[] = [];
+
+      mockRestClient.onGet().reply(async (config) => {
+        requestedUrls.push(config.url);
+
+        const measurement: MeasurementApiResponse = [
+          {
+            quantity: 'Power',
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '1',
+            unit: 'mW',
+          },
+          {
+            quantity: 'Power',
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: '2',
+            unit: 'mW',
+          },
+        ];
+
+        const average: AverageApiResponse = [
+          {
+            quantity: 'Power',
+            unit: 'mW',
+            label: 'average',
+            values: [
+              {
+                when: 1516521585107,
+                value: 0.44,
+              },
+              {
+                when: 1516521585109,
+                value: 0.55,
+              },
+            ],
+          },
+        ];
+
+        if (config.url.match(/^\/measurements\/average/)) {
+          return [200, average];
+        } else {
+          return [200, measurement];
+        }
+      });
+
+      const responses = await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth);
+      expect(requestedUrls.length).toEqual(2);
+
+      const graphData = mapApiResponseToGraphData(responses);
+      expect(graphData.axes.left).toEqual('mW');
+      expect(graphData.data).toHaveLength(2);
+      expect(graphData.lines).toHaveLength(3);
     });
   });
 });
