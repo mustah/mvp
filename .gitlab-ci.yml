@@ -174,21 +174,18 @@ publish:artifactory:
   only:
     - /^release-.*$/
     - tags
-    - master
 
 publish:update_salt:
   <<: *update_salt
   only:
     - /^release-.*$/
     - tags
-    - master
 
 deploy:staging:
   <<: *deploy_staging
   only:
     - /^release-.*$/
     - tags
-    - master
 
 deploy:production:
   <<: *deploy_production
@@ -196,4 +193,3 @@ deploy:production:
   only:
     - /^release-.*$/
     - tags
-    - master
