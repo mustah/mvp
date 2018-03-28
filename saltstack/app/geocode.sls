@@ -1,10 +1,10 @@
 {% set module = "geocode" %}
 {% set systemd_unit = "elvaco-" + module + ".service" %}
-{% set artifact = module + "-" + module_version + ".tar" %}
 {% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
 {% set remote_git_describe = '/usr/bin/remote-git-describe.sh' %}
 {% set git_repository = 'git@gitlab.elvaco.se:elvaco/mvp.git' %}
 {% set module_version = salt['cmd.run'](remote_git_describe + " " + git_repository  + " " + mvp_branch) %}
+{% set artifact = module + "-" + module_version + ".tar" %}
 
 include:
   - mvp.openjdk-8-jre
