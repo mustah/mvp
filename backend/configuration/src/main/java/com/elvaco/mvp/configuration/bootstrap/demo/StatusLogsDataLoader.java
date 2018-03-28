@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -63,7 +64,7 @@ class StatusLogsDataLoader {
   }
 
   private void createGatewayLogMockData() {
-    gateways.findAll()
+    gateways.findAll(new RequestParametersAdapter())
       .stream()
       .map(gateway -> new GatewayStatusLog(
         null,

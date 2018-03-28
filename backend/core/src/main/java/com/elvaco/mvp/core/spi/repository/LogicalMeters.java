@@ -15,8 +15,6 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
-  List<LogicalMeter> findAll();
-
   Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);
 
   List<LogicalMeter> findAll(RequestParameters parameters);

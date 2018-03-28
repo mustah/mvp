@@ -16,11 +16,6 @@ import static java.util.UUID.randomUUID;
 public class MockGateways extends MockRepository<UUID, Gateway> implements Gateways {
 
   @Override
-  public List<Gateway> findAll() {
-    return allMocks();
-  }
-
-  @Override
   public List<Gateway> findAll(RequestParameters requestParameters) {
     return allMocks();
   }
@@ -28,6 +23,11 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   @Override
   public Page<Gateway> findAll(RequestParameters requestParameters, Pageable pageable) {
     return null;
+  }
+
+  @Override
+  public List<Gateway> findAllByOrganisationId(UUID organisationId) {
+    throw new NotImplementedYet();
   }
 
   @Override
@@ -71,10 +71,5 @@ public class MockGateways extends MockRepository<UUID, Gateway> implements Gatew
   @Override
   protected UUID generateId() {
     return randomUUID();
-  }
-
-  @Override
-  public List<Gateway> findAllByOrganisationId(UUID organisationId) {
-    throw new NotImplementedYet();
   }
 }

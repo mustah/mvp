@@ -139,7 +139,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       saveLogicalMeter(seed, meterDefinition, streetAddress, city);
     }
 
-    createAndConnectPhysicalMeters(logicalMeterRepository.findAll());
+    createAndConnectPhysicalMeters(logicalMeterRepository.findAll(new RequestParametersAdapter()));
 
     com.elvaco.mvp.core.spi.data.Page<LogicalMeter> meters =
       logicalMeterRepository.findAll(

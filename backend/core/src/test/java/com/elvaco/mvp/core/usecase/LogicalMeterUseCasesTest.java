@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
@@ -66,7 +67,7 @@ public class LogicalMeterUseCasesTest {
       )
     );
 
-    assertThat(useCases.findAll()).hasSize(3);
+    assertThat(useCases.findAll(new MockRequestParameters())).hasSize(3);
   }
 
   @Test
@@ -80,7 +81,7 @@ public class LogicalMeterUseCasesTest {
       )
     );
 
-    assertThat(useCases.findAll()).hasSize(2);
+    assertThat(useCases.findAll(new MockRequestParameters())).hasSize(2);
   }
 
   @Test

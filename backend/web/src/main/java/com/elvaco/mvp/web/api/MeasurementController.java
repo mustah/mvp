@@ -69,7 +69,7 @@ public class MeasurementController {
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
     @RequestParam(required = false) TemporalResolution resolution
   ) {
-    List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
+    List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters);
     Set<Quantity> quantities = getQuantitiesFromQuantityUnitList(quantityUnits);
 
     if (quantities.isEmpty()) {
@@ -127,21 +127,15 @@ public class MeasurementController {
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
     // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
     // measurements, which is a bit too much.
-    List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
+    List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters);
 
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
-      .orElseGet(() -> logicalMeters
-        .stream()
-        .flatMap(
-          logicalMeter -> logicalMeter.getQuantities().stream()
-        )
+      .orElseGet(() -> logicalMeters.stream()
+        .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
         .collect(toSet()));
 
     Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
-      .mapMeterQuantitiesToPhysicalMeterUuids(
-        logicalMeters,
-        quantities
-      );
+      .mapMeterQuantitiesToPhysicalMeterUuids(logicalMeters, quantities);
 
     List<Measurement> foundMeasurements = new ArrayList<>();
     for (Map.Entry<Quantity, List<UUID>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
@@ -176,7 +170,7 @@ public class MeasurementController {
     return quantityAndUnitList.stream().map(Quantity::of).collect(toSet());
   }
 
-  private List<LogicalMeter> getLogicalMetersByIdList(@RequestParam List<UUID> meters) {
+  private List<LogicalMeter> getLogicalMetersByIds(List<UUID> meters) {
     RequestParameters parameters = new RequestParametersAdapter()
       .setAll("id", meters.stream()
         .map(UUID::toString)

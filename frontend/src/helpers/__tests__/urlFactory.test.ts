@@ -15,7 +15,7 @@ describe('urlFactory', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: EncodedUriParameters) => toApiParameters(dateRange(
-       momentWithTimeZone('2018-04-27').toDate(),
+      momentWithTimeZone('2018-04-27').toDate(),
       parameter as Period,
     )),
   };

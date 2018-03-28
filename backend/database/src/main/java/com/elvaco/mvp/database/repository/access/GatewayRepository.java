@@ -48,14 +48,6 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
-  public List<Gateway> findAll() {
-    Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
-      .findAllGroupedByGatewayId(null);
-
-    return toGateways(repository.findAll(), statusLogMap);
-  }
-
-  @Override
   public List<Gateway> findAll(RequestParameters parameters) {
     return repository.findAll(toPredicate(parameters))
       .stream()

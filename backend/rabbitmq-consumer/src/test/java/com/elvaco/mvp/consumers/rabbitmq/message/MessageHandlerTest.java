@@ -39,6 +39,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
@@ -190,7 +191,7 @@ public class MessageHandlerTest {
 
     List<PhysicalMeter> allPhysicalMeters = physicalMeters.findAll();
     assertThat(allPhysicalMeters).hasSize(1);
-    assertThat(logicalMeters.findAll()).hasSize(1);
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
     assertThat(organisations.findAll()).hasSize(1);
     PhysicalMeter meter = allPhysicalMeters.get(0);
     assertThat(meter.organisation).isEqualTo(organisation);
@@ -215,19 +216,19 @@ public class MessageHandlerTest {
   public void resendingSameMessageShouldNotUpdateExistingGateways() {
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    List<Gateway> allAfterFirstMessage = gateways.findAll();
+    List<Gateway> allAfterFirstMessage = gateways.findAll(new MockRequestParameters());
     assertThat(allAfterFirstMessage).hasSize(1);
 
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    assertThat(gateways.findAll()).isEqualTo(allAfterFirstMessage);
+    assertThat(gateways.findAll(new MockRequestParameters())).isEqualTo(allAfterFirstMessage);
   }
 
   @Test
   public void gatewaysAreConnectedToMeters() {
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
-    List<Gateway> all = gateways.findAll();
+    List<Gateway> all = gateways.findAll(new MockRequestParameters());
     assertThat(all.stream().anyMatch(gateway -> gateway.meters.isEmpty())).isFalse();
   }
 
@@ -241,7 +242,7 @@ public class MessageHandlerTest {
   public void setsNoMeterDefinitionForUnmappableMedium() {
     messageHandler.handle(newStructureMessage("Unmappable medium"));
 
-    List<LogicalMeter> meters = logicalMeters.findAll();
+    List<LogicalMeter> meters = logicalMeters.findAll(new MockRequestParameters());
     assertThat(meters).hasSize(1);
     assertThat(meters.get(0).getMedium()).isEqualTo("Unknown meter");
   }
@@ -293,7 +294,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                     + "organisation"));
+                                                                   + "organisation"));
     physicalMeters.save(new PhysicalMeter(
       randomUUID(),
       DEFAULT_ADDRESS,
@@ -487,7 +488,7 @@ public class MessageHandlerTest {
 
     messageHandler.handle(message);
 
-    assertThat(gateways.findAll()).hasSize(1);
+    assertThat(gateways.findAll(new MockRequestParameters())).hasSize(1);
   }
 
   @Test

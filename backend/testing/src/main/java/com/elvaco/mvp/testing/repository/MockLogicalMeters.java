@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -26,6 +27,57 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
+  public Optional<LogicalMeter> findById(UUID id) {
+    return filter(logicalMeter -> logicalMeter.id != null)
+      .filter(isSameId(id))
+      .findFirst();
+  }
+
+  @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
+    return filter(isSameOrganisationId(organisationId))
+      .filter(isSameId(id))
+      .findFirst();
+  }
+
+  @Override
+  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
+    return null;
+  }
+
+  @Override
+  public List<LogicalMeter> findAll(RequestParameters parameters) {
+    return filter(isWithingOrganisation(parameters))
+      .collect(toList());
+  }
+
+  @Override
+  public LogicalMeter save(LogicalMeter logicalMeter) {
+    return saveMock(logicalMeter);
+  }
+
+  @Override
+  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
+    UUID organisationId,
+    String externalId
+  ) {
+    return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
+      .filter(isSameOrganisationId(organisationId))
+      .findFirst();
+  }
+
+  @Override
+  public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
+    return filter(isSameOrganisationId(organisationId))
+      .collect(toList());
+  }
+
+  @Override
+  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
+    return allMocks();
+  }
+
+  @Override
   protected LogicalMeter copyWithId(UUID id, LogicalMeter entity) {
     return new LogicalMeter(
       id,
@@ -45,58 +97,20 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
     return randomUUID();
   }
 
-  @Override
-  public Optional<LogicalMeter> findById(UUID id) {
-    return filter(logicalMeter -> logicalMeter.id != null)
-      .filter(logicalMeter -> Objects.equals(logicalMeter.id, id))
-      .findFirst();
+  private Predicate<LogicalMeter> isSameOrganisationId(UUID organisationId) {
+    return logicalMeter -> logicalMeter.organisationId == organisationId;
   }
 
-  @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
-    return filter(logicalMeter -> logicalMeter.organisationId.equals(organisationId)).filter(
-      logicalMeter -> Objects.equals(logicalMeter.id, id))
-      .findFirst();
+  private Predicate<LogicalMeter> isSameId(UUID id) {
+    return logicalMeter -> Objects.equals(logicalMeter.id, id);
   }
 
-  @Override
-  public List<LogicalMeter> findAll() {
-    return allMocks();
-  }
-
-  @Override
-  public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
-    return null;
-  }
-
-  @Override
-  public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return null;
-  }
-
-  @Override
-  public LogicalMeter save(LogicalMeter logicalMeter) {
-    return saveMock(logicalMeter);
-  }
-
-  @Override
-  public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
-    UUID organisationId,
-    String externalId
-  ) {
-    return filter(logicalMeter -> logicalMeter.externalId.equals(externalId))
-      .filter(logicalMeter -> logicalMeter.organisationId == organisationId)
-      .findFirst();
-  }
-
-  @Override
-  public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
-    return filter(logicalMeter -> logicalMeter.organisationId == organisationId)
-      .collect(toList());
-  }
-
-  @Override
-  public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
-    return allMocks();
+  private Predicate<LogicalMeter> isWithingOrganisation(RequestParameters parameters) {
+    return logicalMeter ->
+      !parameters.hasName("organisation")
+      || Objects.equals(
+        parameters.getFirst("organisation"),
+        logicalMeter.organisationId.toString()
+      );
   }
 }

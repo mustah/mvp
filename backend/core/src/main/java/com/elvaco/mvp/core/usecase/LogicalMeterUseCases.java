@@ -39,14 +39,6 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  public List<LogicalMeter> findAll() {
-    if (currentUser.isSuperAdmin()) {
-      return logicalMeters.findAll();
-    } else {
-      return logicalMeters.findByOrganisationId(currentUser.getOrganisationId());
-    }
-  }
-
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream()

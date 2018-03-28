@@ -2,20 +2,17 @@ package com.elvaco.mvp.core.usecase;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterSummary;
 import com.elvaco.mvp.core.domainmodels.Organisation;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+import org.junit.Before;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -28,11 +25,18 @@ public class MeterLocationUseCasesTest {
 
   private final Organisation organisation = new Organisation(randomUUID(), "org ab", "org");
 
+  private MockRequestParameters parameters;
+
+  @Before
+  public void setUp() {
+    parameters = new MockRequestParameters();
+  }
+
   @Test
   public void hasNoMeters() {
     MeterLocationUseCases useCases = useCasesWith(emptyList());
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(0);
   }
@@ -41,7 +45,7 @@ public class MeterLocationUseCasesTest {
   public void hasOneMeter() {
     MeterLocationUseCases useCases = useCasesWith(singletonList(newMeter()));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(1);
   }
@@ -50,7 +54,7 @@ public class MeterLocationUseCasesTest {
   public void hasMoreThanOneMeters() {
     MeterLocationUseCases useCases = useCasesWith(asList(newMeter(), newMeter()));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(2);
   }
@@ -59,7 +63,7 @@ public class MeterLocationUseCasesTest {
   public void hasOneMeterAndOneCity() {
     MeterLocationUseCases useCases = useCasesWith(singletonList(newMeter()));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(1);
     assertThat(summary.numCities()).isEqualTo(1);
@@ -74,7 +78,7 @@ public class MeterLocationUseCasesTest {
                      .streetAddress("drottninggatan 2"))
     ));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(2);
     assertThat(summary.numCities()).isEqualTo(2);
@@ -91,7 +95,7 @@ public class MeterLocationUseCasesTest {
       newMeterWith(drottningGatan)
     ));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(2);
     assertThat(summary.numCities()).isEqualTo(1);
@@ -106,7 +110,7 @@ public class MeterLocationUseCasesTest {
                      .streetAddress("drottinggatan 1"))
     ));
 
-    MeterSummary summary = useCases.findAllForSummaryInfo(new MockRequestParameters());
+    MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(1);
     assertThat(summary.numCities()).isEqualTo(1);
@@ -146,54 +150,5 @@ public class MeterLocationUseCasesTest {
 
   private static LocationBuilder sweden() {
     return new LocationBuilder().country("sweden");
-  }
-
-  private static class MockRequestParameters implements RequestParameters {
-
-    @Override
-    public RequestParameters add(String name, String value) {
-      return null;
-    }
-
-    @Override
-    public RequestParameters setAll(Map<String, String> values) {
-      return null;
-    }
-
-    @Override
-    public RequestParameters setAll(String name, List<String> values) {
-      return null;
-    }
-
-    @Override
-    public RequestParameters replace(String name, String value) {
-      return null;
-    }
-
-    @Override
-    public List<String> getValues(String name) {
-      return null;
-    }
-
-    @Override
-    public Set<Entry<String, List<String>>> entrySet() {
-      return null;
-    }
-
-    @Nullable
-    @Override
-    public String getFirst(String name) {
-      return null;
-    }
-
-    @Override
-    public boolean hasName(String name) {
-      return false;
-    }
-
-    @Override
-    public boolean isEmpty() {
-      return false;
-    }
   }
 }

@@ -79,12 +79,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public List<LogicalMeter> findAll() {
-    List<LogicalMeterEntity> all = logicalMeterJpaRepository.findAll();
-    return mapAndCollectWithStatuses(all, new RequestParametersAdapter());
-  }
-
-  @Override
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     org.springframework.data.domain.Page<LogicalMeterEntity> logicalMeterEntities =
       logicalMeterJpaRepository.findAll(
