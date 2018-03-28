@@ -1,22 +1,9 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    }
-}
-
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 
 jar {
     baseName = 'geoservice'
     version =  '0.1.0'
-}
-
-repositories {
-    mavenCentral()
 }
 
 sourceCompatibility = 1.8
@@ -30,6 +17,7 @@ dependencies {
     compile("com.h2database:h2")
     compile("com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8")
     compile("commons-io:commons-io:2.6")
+
     testCompile("junit:junit")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
