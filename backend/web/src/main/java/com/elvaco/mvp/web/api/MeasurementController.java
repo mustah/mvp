@@ -118,13 +118,16 @@ public class MeasurementController {
   @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   @GetMapping
   public List<MeasurementSeriesDto> measurements(
+    @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") Optional<List<String>> quantityUnits,
-    @RequestParam Optional<List<UUID>> meters,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before
   ) {
-    List<LogicalMeter> logicalMeters = meters
-      .map(this::getLogicalMetersByIdList).orElseGet(logicalMeterUseCases::findAll);
+    //TODO: We need to limit the amount of measurements here. Even if we're only fetching
+    // measurements for one meter, we might be fetching them over long period. E.g, measurements
+    // for one quantity for a meter with hour interval with 10 years of data = 365 * 10 * 24 = 87600
+    // measurements, which is a bit too much.
+    List<LogicalMeter> logicalMeters = getLogicalMetersByIdList(meters);
 
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
       .orElseGet(() -> logicalMeters

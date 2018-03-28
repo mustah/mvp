@@ -86,8 +86,8 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminFindsAllOrganisations() {
-    ResponseEntity<List> request = asSuperAdmin()
-      .get("/organisations", List.class);
+    ResponseEntity<List<OrganisationDto>> request = asSuperAdmin()
+      .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody().size()).isGreaterThanOrEqualTo(3);
@@ -95,8 +95,8 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOrganisations() {
-    ResponseEntity<List> request = as(context().user)
-      .get("/organisations", List.class);
+    ResponseEntity<List<OrganisationDto>> request = as(context().user)
+      .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).hasSize(0);
@@ -104,8 +104,8 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUsersDoesNotFindOrganisations() {
-    ResponseEntity<List> request = as(context().user)
-      .get("/organisations", List.class);
+    ResponseEntity<List<OrganisationDto>> request = as(context().user)
+      .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(request.getBody()).hasSize(0);
