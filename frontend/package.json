@@ -99,7 +99,6 @@
     "leaflet": "^1.2.0",
     "leaflet.markercluster": "^1.2.0",
     "material-ui": "^0.20.0",
-    "moment": "^2.21.0",
     "moment-timezone": "^0.5.14",
     "normalizr": "^3.2.4",
     "numeral": "^2.0.6",

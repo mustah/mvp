@@ -17,6 +17,7 @@
       "redux-auth-wrapper",
       "history",
       "material-ui",
+      "moment-timezone",
       "leaflet",
       "leaflet.markercluster"
     ],
