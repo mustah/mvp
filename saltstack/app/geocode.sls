@@ -9,7 +9,6 @@
 include:
   - mvp.openjdk-8-jre
   - mvp.app.user
-  - mvp.db.geocode.bootstrap
 
 fetch_{{module}}_archive:
   file.managed:
