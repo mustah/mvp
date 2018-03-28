@@ -13,13 +13,7 @@ import {
   SET_SELECTION,
   UPDATE_SELECTION,
 } from '../search/selection/selectionActions';
-import {
-  DomainModelsState,
-  Normalized,
-  NormalizedState,
-  ObjectsById,
-  SelectionEntity,
-} from './domainModels';
+import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
@@ -30,7 +24,6 @@ import {
   domainModelsPutSuccess,
   domainModelsRequest,
 } from './domainModelsActions';
-import {Measurement} from './measurement/measurementModels';
 import {Organisation} from './organisation/organisationModels';
 import {User} from './user/userModels';
 
@@ -186,11 +179,6 @@ export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.sele
 export const alarms = reducerFor<SelectionEntity>('alarms', EndPoints.selections);
 export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', EndPoints.selections);
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
-export const measurements = reducerFor<Measurement>(
-  'measurements',
-  EndPoints.measurements,
-  resetStateReducer,
-);
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
 export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
 export const meterMapMarkers = reducerFor<MapMarker>('meterMapMarkers', EndPoints.meterMapMarkers, resetStateReducer);
@@ -210,7 +198,6 @@ export const domainModels = combineReducers<DomainModelsState>({
   gatewayStatuses,
   meterStatuses,
   users,
-  measurements,
   allMeters,
   meterMapMarkers,
   gatewayMapMarkers,

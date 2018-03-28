@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-19 09:19+0100\n"
+"POT-Creation-Date: 2018-03-27 09:39+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -140,9 +140,6 @@ msgstr "flagged for action"
 msgid "meter"
 msgstr "meter"
 
-msgid "status log"
-msgstr "status log"
-
 msgid "map"
 msgstr "map"
 
@@ -154,12 +151,6 @@ msgstr "type"
 
 msgid "status"
 msgstr "status"
-
-msgid "show only changes"
-msgstr "show only changes"
-
-msgid "date"
-msgstr "date"
 
 msgid "no reliable position"
 msgstr "no reliable position"
@@ -188,11 +179,11 @@ msgstr "facility ID"
 msgid "measure id"
 msgstr "measure ID"
 
-msgid "n/a"
-msgstr "N/A"
-
 msgid "latest value"
 msgstr "latest"
+
+msgid "status log"
+msgstr "status log"
 
 msgid "gateways"
 msgstr "gateways"
@@ -203,8 +194,11 @@ msgstr "quantity"
 msgid "value"
 msgstr "value"
 
-msgid "latest snr"
-msgstr "latest SNR"
+msgid "show only changes"
+msgstr "show only changes"
+
+msgid "date"
+msgstr "date"
 
 msgid "no meters"
 msgstr "no meters"
@@ -247,9 +241,6 @@ msgstr "flagged"
 
 msgid "unFlagged"
 msgstr "no flag"
-
-msgid "error: {{message}}"
-msgstr "error: {{message}}"
 
 msgid "an unexpected error occurred"
 msgstr "an unexpected error occurred"
@@ -317,9 +308,6 @@ msgstr "product models"
 msgid "no gateways"
 msgstr "no gateways"
 
-msgid "overview"
-msgstr "overview"
-
 msgid "list"
 msgstr "list"
 
@@ -343,6 +331,15 @@ msgstr "graph"
 
 msgid "table"
 msgstr "table"
+
+msgid "select quantities"
+msgstr "select quantities"
+
+msgid "select meters to include in graph"
+msgstr "select meters to include in graph"
+
+msgid "average"
+msgstr "average"
 
 msgid "save as"
 msgstr "save as"
@@ -402,6 +399,18 @@ msgstr "meters"
 msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
+
+#~ msgid "n/a"
+#~ msgstr "N/A"
+
+#~ msgid "latest snr"
+#~ msgstr "latest SNR"
+
+#~ msgid "error: {{message}}"
+#~ msgstr "error: {{message}}"
+
+#~ msgid "overview"
+#~ msgstr "overview"
 
 #~ msgid "all meters"
 #~ msgstr "all meters"

@@ -3,23 +3,33 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleflatmapper.csv.CsvMapper;
@@ -51,9 +61,9 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private final PhysicalMeters physicalMeters;
   private final MeterDefinitions meterDefinitions;
   private final Gateways gateways;
+  private final Measurements measurements;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
-
   private int daySeed = 1;
 
   @Autowired
@@ -63,6 +73,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
     MeterDefinitions meterDefinitions,
     Gateways gateways,
     SettingUseCases settingUseCases,
+    Measurements measurements,
     StatusLogsDataLoader statusLogsDataLoader
   ) {
     this.logicalMeters = logicalMeters;
@@ -70,6 +81,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
     this.gateways = gateways;
     this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
+    this.measurements = measurements;
     this.statusLogsDataLoader = statusLogsDataLoader;
   }
 
@@ -98,6 +110,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
     Map<String, Location> locationMap,
     MeterDefinition meterDefinition
   ) throws IOException {
+    Instant fiveDaysAgo = Instant.now().minus(Period.ofDays(5)).truncatedTo(ChronoUnit.HOURS);
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
       .stream(getFile(filePath), stream ->
@@ -148,6 +161,53 @@ class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.readIntervalMinutes,
             null
           ));
+
+        Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
+        Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
+        Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        IntStream.range(1, 5)
+          .forEach(daysAgo -> {
+              IntStream
+                .iterate(0, i -> i + 15 * 60)
+                .limit(24 * 4)
+                .forEach(quarter -> {
+                  Instant instant = fiveDaysAgo.plusSeconds(quarter * daysAgo);
+
+                  double tempIn = random.nextDouble(1.2, 37.5);
+
+                  measurements.save(new Measurement(
+                    null,
+                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    quantityForward.name,
+                    tempIn,
+                    quantityForward.unit,
+                    physicalMeter
+                  ));
+
+                  double tempOut = tempIn - random.nextDouble(0.5, 10.0);
+
+                  measurements.save(new Measurement(
+                    null,
+                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    quantityReturn.name,
+                    tempOut,
+                    quantityReturn.unit,
+                    physicalMeter
+                  ));
+
+                  measurements.save(new Measurement(
+                    null,
+                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    quantityDiff.name,
+                    tempIn - tempOut,
+                    quantityDiff.unit,
+                    physicalMeter
+                  ));
+                });
+            }
+          );
       });
   }
 

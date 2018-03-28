@@ -15,6 +15,10 @@ describe('indicatorSelector', () => {
     sideMenu: {
       isOpen: false,
     },
+    measurements: {
+      isFetching: false,
+      selectedQuantities: [],
+    },
     pagination: initialPaginationState,
     selectionTree: {
       openListItems: [],

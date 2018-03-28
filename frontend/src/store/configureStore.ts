@@ -10,7 +10,7 @@ const composeEnhancers = (
                            window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
                          ) || compose;
 
-export const configureStore = (history: History, initialState?: AppState): Store<AppState> => {
+export const storeFactory = (history: History, initialState?: AppState): Store<AppState> => {
   return createStore<AppState>(
     rootReducer,
     initialState!,

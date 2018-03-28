@@ -74,7 +74,7 @@ class SelectionTree extends React.Component<Props> {
         <ListItem
           className="ListItem"
           primaryText={translate('selection overview')}
-          initiallyOpen={false}
+          initiallyOpen={true}
           style={sideBarHeaderStyle}
           hoverColor={sideBarStyles.onHover.color}
           nestedItems={nestedItems}
