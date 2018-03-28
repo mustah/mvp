@@ -89,6 +89,7 @@ gradle:clean:
     refs:
       - master
       - develop
+      - tags
       - /^release-.*$/
 
 docker:postgresql:
@@ -171,24 +172,28 @@ test:unit_and_IT:
 publish:artifactory:
   <<: *publish_to_artifactory
   only:
-    - /^release-.*$
+    - /^release-.*$/
+    - tags
     - master
 
 publish:update_salt:
   <<: *update_salt
   only:
-    - /^release-.*$
+    - /^release-.*$/
+    - tags
     - master
 
 deploy:staging:
   <<: *deploy_staging
   only:
-    - /^release-.*$
+    - /^release-.*$/
+    - tags
     - master
 
 deploy:production:
   <<: *deploy_production
   when: manual
   only:
-    - /^release-.*$
+    - /^release-.*$/
+    - tags
     - master
