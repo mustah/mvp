@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -111,6 +112,12 @@ class CsvDemoDataLoader implements CommandLineRunner {
     MeterDefinition meterDefinition
   ) throws IOException {
     Instant fiveDaysAgo = Instant.now().minus(Period.ofDays(5)).truncatedTo(ChronoUnit.HOURS);
+
+    AtomicInteger physicalMetersToSaveMeasurementDataFor = new AtomicInteger(0);
+    final Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
+    final Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
+    final Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
+
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
       .stream(getFile(filePath), stream ->
@@ -162,10 +169,10 @@ class CsvDemoDataLoader implements CommandLineRunner {
             null
           ));
 
-        Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
-        Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
-        Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
-
+        if (physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10) {
+          return;
+        }
+        System.out.println("Mocking measurement for meter: " + physicalMeter);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         IntStream.range(1, 5)
           .forEach(daysAgo -> {
@@ -173,13 +180,16 @@ class CsvDemoDataLoader implements CommandLineRunner {
                 .iterate(0, i -> i + 15 * 60)
                 .limit(24 * 4)
                 .forEach(quarter -> {
-                  Instant instant = fiveDaysAgo.plusSeconds(quarter * daysAgo);
+                  ZonedDateTime created = ZonedDateTime.ofInstant(
+                    fiveDaysAgo.plusSeconds(quarter * daysAgo),
+                    ZoneId.of("UTC")
+                  );
 
                   double tempIn = random.nextDouble(1.2, 37.5);
 
                   measurements.save(new Measurement(
                     null,
-                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    created,
                     quantityForward.name,
                     tempIn,
                     quantityForward.unit,
@@ -190,7 +200,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
 
                   measurements.save(new Measurement(
                     null,
-                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    created,
                     quantityReturn.name,
                     tempOut,
                     quantityReturn.unit,
@@ -199,7 +209,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
 
                   measurements.save(new Measurement(
                     null,
-                    ZonedDateTime.ofInstant(instant, ZoneId.of("UTC")),
+                    created,
                     quantityDiff.name,
                     tempIn - tempOut,
                     quantityDiff.unit,
