@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS physical_meter (
 CREATE TABLE IF NOT EXISTS gateway (
   id UUID UNIQUE,
   organisation_id UUID REFERENCES organisation,
-  serial TEXT NOT NULL UNIQUE,
+  serial TEXT NOT NULL,
   product_model TEXT NOT NULL,
   PRIMARY KEY (organisation_id, id),
   UNIQUE (organisation_id, serial, product_model)
