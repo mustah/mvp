@@ -39,7 +39,7 @@ variables:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
 
-.publish:artifactory: &publish_to_artifactory
+.publish:mvp_artifactory: &publish_mvp_to_artifactory
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: publish
@@ -51,6 +51,19 @@ variables:
     - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
     - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+
+.publish:geocode_artifactory: &publish_geocode_to_artifactory
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export GEOCODE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
+    - export GEOCODE_SHA1SUM=$(sha1sum $GEOCODE_ARTIFACT|awk '{ print $1 }')
+    - export GEOCODE_MD5SUM=$(md5sum $GEOCODE_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $GEOCODE_ARTIFACT -H "X-Checksum-Sha1:$GEOCODE_SHA1SUM" -H "X-Checksum-MD5:$GEOCODE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOCODE_ARTIFACT)
 
 .publish:update_salt: &update_salt
   <<: *no_cache
@@ -137,6 +150,7 @@ gradle:build:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
       - backend/configuration/build/distributions/
+      - backend/geoservice/build/distributions/
       - .version
     expire_in: 1 week
 
@@ -169,8 +183,15 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-publish:artifactory:
-  <<: *publish_to_artifactory
+publish:mvp_artifactory:
+  <<: *publish_mvp_to_artifactory
+  only:
+    - /^release-.*$/
+    - tags
+    - branches
+
+publish:geocode_artifactory:
+  <<: *publish_geocode_to_artifactory
   only:
     - /^release-.*$/
     - tags
