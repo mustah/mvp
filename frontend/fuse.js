@@ -3,6 +3,7 @@ const {
   SVGPlugin,
   CSSPlugin,
   CSSResourcePlugin,
+  JSONPlugin,
   PostCSSPlugin,
   QuantumPlugin,
   SassPlugin,
@@ -62,6 +63,7 @@ Sparky.task('config', ['convert-po-to-json'], () => {
     plugins: [
       TypeScriptHelpers(),
       SVGPlugin(),
+      JSONPlugin(),
       [
         SassPlugin({outputStyle: isProduction && 'compressed'}),
         PostCSSPlugin([autoprefixer()]),

@@ -1,6 +1,8 @@
 import * as moment from 'moment-timezone';
 import {DateRange, Period} from '../components/dates/dateModels';
 
+moment.tz.load(require('moment-timezone/data/packed/latest.json'));
+
 export const timezoneStockholm = 'Europe/Stockholm';
 
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
