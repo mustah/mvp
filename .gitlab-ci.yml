@@ -52,7 +52,7 @@ variables:
     - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
-.publish:geocode_artifactory: &publish_geocode_to_artifactory
+.publish:geoservice_artifactory: &publish_geoservice_to_artifactory
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: publish
@@ -60,10 +60,10 @@ variables:
     - gradle:build
   script:
     - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export GEOCODE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
-    - export GEOCODE_SHA1SUM=$(sha1sum $GEOCODE_ARTIFACT|awk '{ print $1 }')
-    - export GEOCODE_MD5SUM=$(md5sum $GEOCODE_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $GEOCODE_ARTIFACT -H "X-Checksum-Sha1:$GEOCODE_SHA1SUM" -H "X-Checksum-MD5:$GEOCODE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOCODE_ARTIFACT)
+    - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
+    - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
 
 .publish:update_salt: &update_salt
   <<: *no_cache
@@ -79,9 +79,9 @@ variables:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geocode.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geocode.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 .deploy:production: &deploy_production
   <<: *auto_deploy
@@ -89,9 +89,9 @@ variables:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geocode.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geocode.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -194,8 +194,8 @@ publish:mvp_artifactory:
     - tags
     - branches
 
-publish:geocode_artifactory:
-  <<: *publish_geocode_to_artifactory
+publish:geoservice_artifactory:
+  <<: *publish_geoservice_to_artifactory
   only:
     - /^release-.*$/
     - tags

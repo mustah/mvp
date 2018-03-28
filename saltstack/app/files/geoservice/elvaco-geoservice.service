@@ -1,0 +1,11 @@
+[Unit]
+Description=Elvaco Geoservice
+After=syslog.target network.target
+
+[Service]
+User=mvp
+WorkingDirectory=/opt/elvaco/geoservice-current
+ExecStart=/opt/elvaco/geoservice-current/bin/geoservice
+
+[Install]
+WantedBy=multi-user.target

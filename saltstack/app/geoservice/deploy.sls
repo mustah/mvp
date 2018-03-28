@@ -1,4 +1,4 @@
-{% set module = "geocode" %}
+{% set module = "geoservice" %}
 {% set systemd_unit = "elvaco-" + module + ".service" %}
 {% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
 {% set remote_git_describe = '/usr/bin/remote-git-describe.sh' %}

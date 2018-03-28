@@ -2,17 +2,17 @@ include:
   - postgresql.server
   - postgresql.db_users
 
-create-geocode-database:
+create-geoservice-database:
   postgres_database.present:
-    - name: geocodedb
+    - name: geoservicedb
     - template: template0
     - lc_collate: "sv_SE.utf8"
     - encoding: "UTF8"
 
-set-geocodedb-app-privileges:
+set-geoservicedb-app-privileges:
   postgres_privileges.present:
-    - name: geocodedb-app
-    - object_name: geocodedb
+    - name: geoservicedb-app
+    - object_name: geoservicedb
     - object_type: database
     - privileges:
       - ALL
