@@ -14,6 +14,7 @@ dependencies {
     compile("org.hibernate:hibernate-java8")
     compile("com.h2database:h2")
     compile("com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8")
+    compile 'org.postgresql:postgresql'
     compile("commons-io:commons-io:2.6")
 
     testCompile("junit:junit")
