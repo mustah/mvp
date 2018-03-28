@@ -70,7 +70,7 @@ variables:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: publish
   script:
-    - curl -X POST --header 'PRIVATE-TOKEN:$GITLAB_API_TOKEN' 'https://gitlab.elvaco.se/api/v4/projects/17/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop'
+    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/17/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 .deploy:staging: &deploy_staging
