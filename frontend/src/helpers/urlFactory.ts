@@ -1,15 +1,15 @@
 import {Period} from '../components/dates/dateModels';
 import {SelectedParameters} from '../state/search/selection/selectionModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
-import {uuid} from '../types/Types';
+import {EncodedUriParameters, uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';
 
 interface ParameterNames {
   [key: string]: string;
 }
 
-interface ParameterCallbacks {
-  [key: string]: ((parameter: string) => string[]);
+export interface ParameterCallbacks {
+  [key: string]: ((parameter: EncodedUriParameters) => string[]);
 }
 
 const parameterCallbacks: ParameterCallbacks = {
@@ -37,47 +37,57 @@ const meterParameterNames: ParameterNames = {
   gatewayStatuses: 'gatewayStatus',
 };
 
-export const encodedUriParametersForMeters = (
+export type PaginatedParametersCombiner = (
   pagination: Pagination,
   selectedIds: SelectedParameters,
-): string => {
-  return encodedUriParametersFrom({
+  callbacks?: ParameterCallbacks,
+) => EncodedUriParameters;
+
+export const encodedUriParametersForMeters: PaginatedParametersCombiner = (
+  pagination: Pagination,
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): EncodedUriParameters =>
+  encodedUriParametersFrom({
     pagination,
     selectedIds,
     parameterNames: meterParameterNames,
-    parameterCallbacks,
+    parameterCallbacks: callbacks,
   });
-};
 
-export const encodedUriParametersForAllMeters = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({
-    selectedIds,
-    parameterNames: meterParameterNames,
-    parameterCallbacks,
-  });
-};
-
-export const encodedUriParametersForAllGateways = (selectedIds: SelectedParameters): string => {
-  return encodedUriParametersFrom({
-    selectedIds,
-    parameterNames: gatewayParameterNames,
-    parameterCallbacks,
-  });
-};
-
-export const encodedUriParametersForGateways = (
+export const encodedUriParametersForGateways: PaginatedParametersCombiner = (
   pagination: Pagination,
   selectedIds: SelectedParameters,
-): string => {
-  return encodedUriParametersFrom({
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): EncodedUriParameters =>
+  encodedUriParametersFrom({
     pagination,
     selectedIds,
     parameterNames: gatewayParameterNames,
-    parameterCallbacks,
+    parameterCallbacks: callbacks,
   });
-};
 
-interface UriParameters {
+export const encodedUriParametersForAllMeters = (
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): EncodedUriParameters =>
+  encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: meterParameterNames,
+    parameterCallbacks: callbacks,
+  });
+
+export const encodedUriParametersForAllGateways = (
+  selectedIds: SelectedParameters,
+  callbacks: ParameterCallbacks = parameterCallbacks,
+): EncodedUriParameters =>
+  encodedUriParametersFrom({
+    selectedIds,
+    parameterNames: gatewayParameterNames,
+    parameterCallbacks: callbacks,
+  });
+
+interface UrlParameters {
   pagination?: Pagination;
   selectedIds: SelectedParameters;
   parameterNames: ParameterNames;
@@ -91,9 +101,9 @@ const encodedUriParametersFrom =
       selectedIds,
       parameterNames,
       parameterCallbacks,
-    }: UriParameters,
-  ): string => {
-    const parameters: string[] = [];
+    }: UrlParameters,
+  ): EncodedUriParameters => {
+    const parameters: EncodedUriParameters[] = [];
 
     if (pagination.page !== -1) {
       const {page, size} = pagination;
@@ -102,25 +112,27 @@ const encodedUriParametersFrom =
     }
 
     const addParameterWith = (name: string, value: uuid | Period) =>
-      parameters.push((parameterNames[name]) + '=' + encodeURIComponent(value.toString()));
+      parameters.push(`${parameterNames[name]}=${encodeURIComponent(value.toString())}`);
 
-    Object.keys(selectedIds).forEach((parameter: string) => {
-      const selection = selectedIds[parameter];
-      if (parameterCallbacks[parameter]) {
-        parameterCallbacks[parameter](selection).forEach((param: string) => parameters.push(param));
-      } else if (Array.isArray(selection)) {
-        selection.forEach((value: uuid) => addParameterWith(parameter, value));
-      } else {
-        addParameterWith(parameter, selection);
-      }
-    });
+    Object.keys(selectedIds)
+      .forEach((parameter: string) => {
+        const selection = selectedIds[parameter];
+        if (parameterCallbacks[parameter]) {
+          parameterCallbacks[parameter](selection).forEach((param: string) => parameters.push(param));
+        } else if (Array.isArray(selection)) {
+          selection.forEach((value: uuid) => addParameterWith(parameter, value));
+        } else {
+          addParameterWith(parameter, selection);
+        }
+      });
     return parameters.length ? parameters.join('&') : '';
   };
 
-export const makeUrl = (endpoint: string, encodedUriParameters?: string): string => {
-  if (encodedUriParameters && encodedUriParameters.length) {
-    return endpoint + '?' + encodedUriParameters;
-  } else {
-    return endpoint;
-  }
-};
+export const makeUrl =
+  (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters => {
+    if (parameters && parameters.length) {
+      return endpoint + '?' + parameters;
+    } else {
+      return endpoint;
+    }
+  };

@@ -8,6 +8,7 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {
   Action,
   emptyActionOf,
+  EncodedUriParameters,
   ErrorResponse,
   OnEmptyAction,
   OnPayloadAction,
@@ -23,8 +24,8 @@ export interface RequestHandler<P> {
 }
 
 interface AsyncRequest<P> extends RequestHandler<P> {
-  onRequest: (parameters?: string) => AxiosPromise<P>;
-  parameters?: string;
+  onRequest: (parameters?: EncodedUriParameters) => AxiosPromise<P>;
+  parameters?: EncodedUriParameters;
   dispatch: Dispatch<RootState>;
 }
 
@@ -57,10 +58,10 @@ const shouldFetch = (summary: SummaryState): boolean =>
   !summary.isSuccessfullyFetched && !summary.error && !summary.isFetching;
 
 const fetchIfNeeded = <P>(endPoint: EndPoints) => {
-  const onRequest = (parameters?: string): AxiosPromise<P> =>
+  const onRequest = (parameters?: EncodedUriParameters): AxiosPromise<P> =>
     restClient.get(makeUrl(endPoint, parameters));
 
-  return (parameters?: string) =>
+  return (parameters?: EncodedUriParameters) =>
     (dispatch, getState: GetState) => {
       if (shouldFetch(getState().summary)) {
         return makeAsyncRequest<P>({

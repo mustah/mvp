@@ -1,5 +1,3 @@
-import {Maybe} from '../../helpers/Maybe';
-
 export const enum Period {
   latest = 'latest',
   currentMonth = 'current_month',
@@ -9,6 +7,6 @@ export const enum Period {
 }
 
 export interface DateRange {
-  start: Maybe<Date>;
-  end: Maybe<Date>;
+  start: Date;
+  end: Date;
 }

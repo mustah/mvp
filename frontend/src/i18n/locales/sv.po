@@ -59,8 +59,8 @@ msgstr "bekräfta"
 msgid "cancel"
 msgstr "avbryt"
 
-msgid "latest"
-msgstr "senaste"
+msgid "last 24h"
+msgstr "senaste dygnet"
 
 msgid "current month"
 msgstr "denna månad"

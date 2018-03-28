@@ -20,7 +20,7 @@ import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorAllMeters} from '../../../state/domain-models/meter-all/allMetersApiActions';
 import {setSelection} from '../../../state/search/selection/selectionActions';
-import {getEncodedUriParametersForAllMeters} from '../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {
   TabName,
@@ -28,7 +28,14 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -41,7 +48,7 @@ interface StateToProps extends TabsContainerStateToProps {
   isFetching: boolean;
   meterMapMarkers: DomainModel<MapMarker>;
   selectedMarker: Maybe<uuid>;
-  parameters: string;
+  parameters: EncodedUriParameters;
   error: Maybe<ErrorResponse>;
 }
 
@@ -121,7 +128,7 @@ const mapStateToProps =
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
-    parameters: getEncodedUriParametersForAllMeters(searchParameters),
+    parameters: getMeterParameters(searchParameters),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
   });

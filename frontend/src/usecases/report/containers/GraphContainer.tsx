@@ -3,7 +3,16 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {HasContent} from '../../../components/content/HasContent';
@@ -81,11 +90,6 @@ const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDat
 class GraphComponent extends React.Component<Props> {
 
   state: State = {graphContents: emptyGraphContents};
-
-  onChangeTab = () => void(0);
-  changeQuantities = (event, index, values) => {
-    this.props.selectQuantities(values);
-  }
 
   async componentDidMount() {
     const {selectedListItems, period, selectedQuantities} = this.props;
@@ -201,13 +205,20 @@ class GraphComponent extends React.Component<Props> {
       </Paper>
     );
   }
+
+  onChangeTab = () => void(0);
+
+  changeQuantities = (event, index, values) => {
+    this.props.selectQuantities(values);
+  }
+
 }
 
 const mapStateToProps = ({
-                           report: {selectedListItems},
-                           searchParameters: {selection: {selected: {period}}},
-                           ui: {measurements: {selectedQuantities}},
-                         }: RootState): StateToProps =>
+  report: {selectedListItems},
+  searchParameters: {selection: {selected: {period}}},
+  ui: {measurements: {selectedQuantities}},
+}: RootState): StateToProps =>
   ({
     selectedListItems,
     period,

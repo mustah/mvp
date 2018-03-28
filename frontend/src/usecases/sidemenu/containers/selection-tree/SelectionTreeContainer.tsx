@@ -14,10 +14,10 @@ import {translate} from '../../../../services/translationService';
 import {fetchAllMeters} from '../../../../state/domain-models/meter-all/allMetersApiActions';
 import {SelectionTreeData} from '../../../../state/domain-models/meter-all/allMetersModels';
 import {getSelectionTree} from '../../../../state/domain-models/meter-all/allMetersSelectors';
-import {getEncodedUriParametersForAllMeters} from '../../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../../state/search/selection/selectionSelectors';
 import {selectionTreeToggleId} from '../../../../state/ui/selection-tree/selectionTreeActions';
 import {getOpenListItems} from '../../../../state/ui/selection-tree/selectionTreeSelectors';
-import {OnClickWithId, Fetch, uuid} from '../../../../types/Types';
+import {EncodedUriParameters, Fetch, OnClickWithId, uuid} from '../../../../types/Types';
 import {selectEntryToggle} from '../../../report/reportActions';
 import {getSelectedListItems} from '../../../report/reportSelectors';
 import {renderSelectionTree} from '../../components/selection-tree-list-item/SelectionTreeListItem';
@@ -31,7 +31,7 @@ interface StateToProps {
   selectionTree: SelectionTreeData;
   openListItems: Set<uuid>;
   selectedListItems: Set<uuid>;
-  encodedUriParametersForAllMeters: string;
+  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {
@@ -45,12 +45,12 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 class SelectionTree extends React.Component<Props> {
 
   componentDidMount() {
-    const {fetchAllMeters, encodedUriParametersForAllMeters} = this.props;
-    fetchAllMeters(encodedUriParametersForAllMeters);
+    const {fetchAllMeters, parameters} = this.props;
+    fetchAllMeters(parameters);
   }
 
-  componentWillReceiveProps({fetchAllMeters, encodedUriParametersForAllMeters}: Props) {
-    fetchAllMeters(encodedUriParametersForAllMeters);
+  componentWillReceiveProps({fetchAllMeters, parameters}: Props) {
+    fetchAllMeters(parameters);
   }
 
   render() {
@@ -91,7 +91,7 @@ const mapStateToProps =
       selectionTree: getSelectionTree(allMeters),
       openListItems: getOpenListItems(selectionTree),
       selectedListItems: getSelectedListItems(report),
-      encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+      parameters: getMeterParameters(searchParameters),
     };
   };
 

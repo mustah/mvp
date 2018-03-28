@@ -23,7 +23,7 @@ import {
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {Flag} from '../../../state/domain-models/flag/flagModels';
-import {getEncodedUriParametersForGateways} from '../../../state/search/selection/selectionSelectors';
+import {getPaginatedGatewayParameters} from '../../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -156,7 +156,7 @@ const mapStateToProps = (
   return ({
     entities: getPaginatedEntities<Gateway>(gateways),
     result: getPageResult(gateways, page),
-    encodedUriParametersForGateways: getEncodedUriParametersForGateways({
+    encodedUriParametersForGateways: getPaginatedGatewayParameters({
       pagination: paginationData,
       ...searchParameters,
     }),

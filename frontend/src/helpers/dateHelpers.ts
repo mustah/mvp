@@ -1,16 +1,16 @@
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import {DateRange, Period} from '../components/dates/dateModels';
-import {Maybe} from './Maybe';
 
-const padZero = (aNumber: number): string => {
-  return aNumber < 10 ? `0${aNumber}` : aNumber + '';
-};
+export const timezoneStockholm = 'Europe/Stockholm';
+
+export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
+  moment(input).tz(timezoneStockholm);
 
 export const toApiParameters = ({start, end}: DateRange): string[] => {
-  const parameters: string[] = [];
-  start.map((date: Date) => parameters.push(`after=${encodeURIComponent(date.toISOString())}`));
-  end.map((date: Date) => parameters.push(`before=${encodeURIComponent(date.toISOString())}`));
-  return parameters;
+  return [
+    `after=${encodeURIComponent(start.toISOString())}`,
+    `before=${encodeURIComponent(end.toISOString())}`,
+  ];
 };
 
 /**
@@ -18,48 +18,48 @@ export const toApiParameters = ({start, end}: DateRange): string[] => {
  *
  * We work with Date and Period, to not expose moment() to our application.
  */
-export const dateRange = (now: Date, period: Period): DateRange => {
+export const dateRange = (date: Date, period: Period): DateRange => {
+  const zonedDate = momentWithTimeZone(date);
   switch (period) {
     case Period.currentMonth:
       return {
-        start: Maybe.just(moment(now).startOf('month').toDate()),
-        end: Maybe.just(moment(now).endOf('month').toDate()),
+        start: zonedDate.startOf('month').toDate(),
+        end: zonedDate.endOf('month').toDate(),
       };
     case Period.currentWeek:
       return {
-        start: Maybe.just(moment(now).startOf('isoWeek').toDate()),
-        end: Maybe.just(moment(now).endOf('isoWeek').toDate()),
+        start: zonedDate.startOf('isoWeek').toDate(),
+        end: zonedDate.endOf('isoWeek').toDate(),
       };
     case Period.previous7Days:
       return {
-        start: Maybe.just(moment(now).subtract(6, 'days').toDate()),
-        end: Maybe.just(now),
+        start: zonedDate.subtract(6, 'days').toDate(),
+        end: zonedDate.toDate(),
       };
     case Period.previousMonth:
-      const prevMonth = moment(now).subtract(1, 'month');
+      const prevMonth = zonedDate.subtract(1, 'month');
       return {
-        start: Maybe.just(prevMonth.startOf('month').toDate()),
-        end: Maybe.just(prevMonth.endOf('month').toDate()),
+        start: prevMonth.startOf('month').toDate(),
+        end: prevMonth.endOf('month').toDate(),
       };
     case Period.latest:
     default:
+      const yesterday = zonedDate.subtract(1, 'days');
       return {
-        start: Maybe.nothing(),
-        end: Maybe.nothing(),
+        start: yesterday.startOf('day').toDate(),
+        end: yesterday.endOf('day').toDate(),
       };
   }
 };
 
-export const currentDateRange = (period: Period): DateRange => dateRange(new Date(), period);
+const now = (): moment.Moment => moment().tz(timezoneStockholm);
 
-const formatYyMmDd = (date: Date): string =>
-  `${date.getFullYear()}-${padZero(date.getMonth() + 1)}-${padZero(date.getDate())}`;
+export const currentDateRange = (period: Period): DateRange => dateRange(now().toDate(), period);
 
-export const toFriendlyIso8601 = ({start, end}: DateRange): string => {
-  const startDate: string = start.map(formatYyMmDd).orElse('');
-  const endDate: string = end.map(formatYyMmDd).orElse('');
-  return `${startDate} - ${endDate}`;
-};
+const yyyymmdd = 'YYYY-MM-DD';
+
+export const toFriendlyIso8601 = ({start, end}: DateRange): string =>
+  `${momentWithTimeZone(start).format(yyyymmdd)} - ${momentWithTimeZone(end).format(yyyymmdd)}`;
 
 export const prettyRange = (period: Period): string =>
-  toFriendlyIso8601(currentDateRange(period));
+  toFriendlyIso8601(dateRange(now().toDate(), period));

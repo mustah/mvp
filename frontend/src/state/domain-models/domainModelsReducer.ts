@@ -181,7 +181,11 @@ export const gatewayStatuses = reducerFor<SelectionEntity>('gatewayStatuses', En
 export const meterStatuses = reducerFor<SelectionEntity>('meterStatuses', EndPoints.selections);
 export const users = reducerFor<User>('users', EndPoints.users, resetStateReducer);
 export const allMeters = reducerFor<Meter>('allMeters', EndPoints.allMeters, resetStateReducer);
-export const meterMapMarkers = reducerFor<MapMarker>('meterMapMarkers', EndPoints.meterMapMarkers, resetStateReducer);
+export const meterMapMarkers = reducerFor<MapMarker>(
+  'meterMapMarkers',
+  EndPoints.meterMapMarkers,
+  resetStateReducer,
+);
 export const gatewayMapMarkers =
   reducerFor<MapMarker>('gatewayMapMarkers', EndPoints.gatewayMapMarkers, resetStateReducer);
 export const organisations = reducerFor<Organisation>(

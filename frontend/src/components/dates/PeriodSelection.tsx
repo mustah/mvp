@@ -61,8 +61,8 @@ export class PeriodSelection extends React.Component<Props> {
     const timePeriods = [
       {
         value: Period.latest,
-        chosen: translate('latest'),
-        alternative: translate('latest'),
+        chosen: translate('last 24h'),
+        alternative: translate('last 24h'),
       },
       {
         value: Period.currentMonth,

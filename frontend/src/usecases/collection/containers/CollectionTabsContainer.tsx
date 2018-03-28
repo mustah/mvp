@@ -17,7 +17,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getEncodedUriParametersForAllGateways} from '../../../state/search/selection/selectionSelectors';
+import {getGatewayParameters} from '../../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
@@ -27,7 +27,14 @@ import {
   TabsContainerStateToProps,
 } from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
+import {
+  ClearError,
+  EncodedUriParameters,
+  ErrorResponse,
+  Fetch,
+  OnClick,
+  uuid,
+} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -42,7 +49,7 @@ import {GatewayListContainer} from '../components/GatewayListContainer';
 
 interface StateToProps extends TabsContainerStateToProps {
   gatewayMapMarkers: DomainModel<MapMarker>;
-  parameters?: string;
+  parameters?: EncodedUriParameters;
   selectedMarker: Maybe<uuid>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
@@ -129,7 +136,7 @@ const mapStateToProps = ({
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
-    parameters: getEncodedUriParametersForAllGateways(searchParameters),
+    parameters: getGatewayParameters(searchParameters),
     selectedMarker: getSelectedMapMarker(map),
     isFetching: gatewayMapMarkers.isFetching,
     error: getError(gatewayMapMarkers),

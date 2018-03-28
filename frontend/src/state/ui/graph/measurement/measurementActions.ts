@@ -9,7 +9,10 @@ import {uuid} from '../../../../types/Types';
 import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
 import {GraphContents, LineProps} from '../../../../usecases/report/reportModels';
 import {
-  AverageApiResponse, AverageApiResponsePart, MeasurementApiResponsePart, MeasurementResponses,
+  AverageApiResponse,
+  AverageApiResponsePart,
+  MeasurementApiResponsePart,
+  MeasurementResponses,
   Quantity,
 } from './measurementModels';
 
@@ -126,7 +129,11 @@ const measurementUri = (quantities: Quantity[], meters: uuid[], timePeriod: Peri
   `&${toApiParameters(currentDateRange(timePeriod)).join('&')}`;
 
 export const fetchMeasurements =
-  async (quantities: Quantity[], selectedListItems: uuid[], timePeriod: Period): Promise<MeasurementResponses> => {
+  async (
+    quantities: Quantity[],
+    selectedListItems: uuid[],
+    timePeriod: Period,
+  ): Promise<MeasurementResponses> => {
     let averageData: AverageApiResponse = [];
 
     if (selectedListItems.length === 0 || quantities.length === 0) {
@@ -154,7 +161,10 @@ export const fetchMeasurements =
       }
     }
 
-    const measurement = makeUrl(EndPoints.measurements, measurementUri(quantities, selectedListItems, timePeriod));
+    const measurement = makeUrl(
+      EndPoints.measurements,
+      measurementUri(quantities, selectedListItems, timePeriod),
+    );
     try {
       const response = await restClient.get(measurement);
       return {
@@ -171,7 +181,6 @@ export const fetchMeasurements =
 
 export const SAVE_SELECTED_QUANTITIES = 'SAVE_SELECTED_QUANTITIES';
 
-const saveSelectedQuantites = createPayloadAction<string, Quantity[]>(SAVE_SELECTED_QUANTITIES);
+const saveSelectedQuantities = createPayloadAction<string, Quantity[]>(SAVE_SELECTED_QUANTITIES);
 
-export const selectQuantities =
-  (quantities: Quantity[]) => saveSelectedQuantites(quantities);
+export const selectQuantities = (quantities: Quantity[]) => saveSelectedQuantities(quantities);

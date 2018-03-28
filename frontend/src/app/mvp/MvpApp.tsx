@@ -11,9 +11,9 @@ import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
 import {translate} from '../../services/translationService';
 import {fetchAllMeters} from '../../state/domain-models/meter-all/allMetersApiActions';
-import {getEncodedUriParametersForAllMeters} from '../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
-import {Fetch, OnClick} from '../../types/Types';
+import {EncodedUriParameters, Fetch, OnClick} from '../../types/Types';
 import {MainMenuToggleIcon} from '../../usecases/main-menu/components/menuitems/MainMenuToggleIcon';
 import {MvpMainMenuContainer} from '../../usecases/main-menu/containers/MvpMainMenuContainer';
 import {SavedSelectionsContainer} from '../../usecases/sidemenu/containers/savedSelections/SavedSelectionsContainer';
@@ -24,7 +24,7 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
-  encodedUriParametersForAllMeters: string;
+  parameters: EncodedUriParameters;
 }
 
 interface DispatchToProps {
@@ -37,19 +37,12 @@ type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 class MvpApp extends React.Component<Props> {
 
   componentDidMount() {
-    const {
-      fetchAllMeters,
-      encodedUriParametersForAllMeters,
-    } = this.props;
-    fetchAllMeters(encodedUriParametersForAllMeters);
+    const {fetchAllMeters, parameters} = this.props;
+    fetchAllMeters(parameters);
   }
 
-  componentWillReceiveProps(
-    {
-      fetchAllMeters,
-      encodedUriParametersForAllMeters,
-    }: Props) {
-    fetchAllMeters(encodedUriParametersForAllMeters);
+  componentWillReceiveProps({fetchAllMeters, parameters}: Props) {
+    fetchAllMeters(parameters);
   }
 
   render() {
@@ -81,7 +74,7 @@ class MvpApp extends React.Component<Props> {
 
 const mapStateToProps = ({ui, searchParameters}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
-  encodedUriParametersForAllMeters: getEncodedUriParametersForAllMeters(searchParameters),
+  parameters: getMeterParameters(searchParameters),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
