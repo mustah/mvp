@@ -21,7 +21,6 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -44,6 +43,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeNoException;
 
@@ -176,7 +176,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   }
 
   private byte[] serializeDto(MeteringMessageDto dto) {
-    return new MeteringMessageSerializer().serialize(dto).getBytes();
+    return serialize(dto).getBytes();
   }
 
   private void publishMessage(byte[] message) throws IOException {
