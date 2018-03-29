@@ -50,16 +50,19 @@ describe('dateHelper', () => {
     describe('can be constructed from relative terms', () => {
       it('knows about previous month', () => {
         const now = momentWithTimeZone('2013-03-25').toDate();
-        const {start} = dateRange(now, Period.previousMonth);
-        const previousMonth = momentWithTimeZone(start).format('MM');
-        expect(previousMonth).toEqual('02');
+        const {start, end} = dateRange(now, Period.previousMonth);
+        const previousMonthStart = momentWithTimeZone(start).format('MM');
+        expect(previousMonthStart).toEqual('02');
+        const previousMonthEnd = momentWithTimeZone(end).format('MM');
+        expect(previousMonthEnd).toEqual('02');
       });
 
       it('knows about previous 7 days', () => {
         const march14 = momentWithTimeZone('2013-03-14').toDate();
         const aWeekEarlier = momentWithTimeZone('2013-03-08').toDate();
-        const {start} = dateRange(march14, Period.previous7Days);
+        const {start, end} = dateRange(march14, Period.previous7Days);
         expect(start).toEqual(aWeekEarlier);
+        expect(end).toEqual(march14);
       });
 
       it('knows about current week', () => {

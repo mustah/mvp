@@ -35,18 +35,18 @@ export const dateRange = (date: Date, period: Period): DateRange => {
       };
     case Period.previous7Days:
       return {
-        start: zonedDate.subtract(6, 'days').toDate(),
+        start: zonedDate.clone().subtract(6, 'days').toDate(),
         end: zonedDate.toDate(),
       };
     case Period.previousMonth:
-      const prevMonth = zonedDate.subtract(1, 'month');
+      const prevMonth = zonedDate.clone().subtract(1, 'month');
       return {
         start: prevMonth.startOf('month').toDate(),
         end: prevMonth.endOf('month').toDate(),
       };
     case Period.latest:
     default:
-      const yesterday = zonedDate.subtract(1, 'days');
+      const yesterday = zonedDate.clone().subtract(1, 'days');
       return {
         start: yesterday.startOf('day').toDate(),
         end: yesterday.endOf('day').toDate(),
