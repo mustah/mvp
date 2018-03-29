@@ -5,7 +5,3 @@ drop-geoservice-database:
 drop-geoservice-app-role:
   postgres_user.absent:
     - name: geoservicedb-app
-
-drop-geoservice-admin-role:
-  postgres_user.absent:
-    - name: geoservicedb-admin

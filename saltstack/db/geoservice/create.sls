@@ -1,10 +1,3 @@
-geoservicedb-admin:
-  postgres_user.present:
-    - name: geoservicedb-admin
-    - password: dCU0WkunRIGDrTfDdPoK5QcyvPqWCe88
-    - login: True
-    - superuser: True
-
 geoservicedb-app:
   postgres_user.present:
     - name: geoservicedb-app
