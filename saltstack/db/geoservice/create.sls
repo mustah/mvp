@@ -1,6 +1,5 @@
 include:
-  - postgresql.server
-  - postgresql.db_users
+  - mvp.db.geoservice.users
 
 create-geoservice-database:
   postgres_database.present:
