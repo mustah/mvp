@@ -15,6 +15,7 @@ variables:
   SALTAPI_USER: "saltapi"
   SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
   GITLAB_API_TOKEN: "J1Jb27mvUxZqAVx5MhhJ"
+  SALTSTACK_GIT_REPO: "17"
 
 .no_cache: &no_cache
   cache:
@@ -39,7 +40,7 @@ variables:
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: deploy
 
-.publish:artifactory: &publish_to_artifactory
+.publish:mvp_artifactory: &publish_mvp_to_artifactory
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: publish
@@ -52,29 +53,47 @@ variables:
     - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
+.publish:geoservice_artifactory: &publish_geoservice_to_artifactory
+  <<: *no_cache
+  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  stage: publish
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
+    - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
+
 .publish:update_salt: &update_salt
   <<: *no_cache
   image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
   stage: publish
   script:
-    - curl -X POST --header 'PRIVATE-TOKEN:$GITLAB_API_TOKEN' 'https://gitlab.elvaco.se/api/v4/projects/17/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop'
+    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
 .deploy:staging: &deploy_staging
   <<: *auto_deploy
   script:
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+
 
 .deploy:production: &deploy_production
   <<: *auto_deploy
   script:
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -137,6 +156,7 @@ gradle:build:
     name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG-${CI_COMMIT_SHA:0:7}"
     paths:
       - backend/configuration/build/distributions/
+      - backend/geoservice/build/distributions/
       - .version
     expire_in: 1 week
 
@@ -169,8 +189,14 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-publish:artifactory:
-  <<: *publish_to_artifactory
+publish:mvp_artifactory:
+  <<: *publish_mvp_to_artifactory
+  only:
+    - /^release-.*$/
+    - tags
+
+publish:geoservice_artifactory:
+  <<: *publish_geoservice_to_artifactory
   only:
     - /^release-.*$/
     - tags

@@ -5,3 +5,7 @@ drop-mvp-database:
 drop-mvp-app-role:
   postgres_user.absent:
     - name: mvpdb-app
+
+drop-mvp-admin-role:
+  postgres_user.absent:
+    - name: mvpdb-admin

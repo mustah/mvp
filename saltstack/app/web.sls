@@ -14,7 +14,7 @@ Install ssl key:
 Install nginx config:
   file.managed:
     - name: /etc/nginx/sites-available/default
-    - source: salt://mvp/app/files/mvpsite.elvaco.se.conf.jinja
+    - source: salt://mvp/app/files/mvp/mvpsite.elvaco.se.conf.jinja
     - template: jinja
     - require:
       - pkg: nginx

@@ -1,6 +1,5 @@
 include:
-  - postgresql.server
-  - postgresql.db_users
+  - mvp.db.mvp.users
 
 create-mvp-database:
   postgres_database.present:
