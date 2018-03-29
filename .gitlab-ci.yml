@@ -74,33 +74,26 @@ variables:
     - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
-.deploy:mvp_staging: &deploy_mvp_staging
+.deploy:staging: &deploy_staging
   <<: *auto_deploy
   script:
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.drop
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
-.deploy:geoservice_staging: &deploy_geoservice_staging
-  <<: *auto_deploy
-  script:
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
-.deploy:mvp_production: &deploy_mvp_production
-  <<: *auto_deploy
-  script:
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-
-.deploy:geoservice_production: &deploy_geoservice_production
+.deploy:production: &deploy_production
   <<: *auto_deploy
   script:
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
@@ -217,28 +210,15 @@ publish:update_salt:
     - tags
     - branches
 
-deploy:mvp_staging:
-  <<: *deploy_mvp_staging
+deploy:staging:
+  <<: *deploy_staging
   only:
     - /^release-.*$/
     - tags
     - branches
 
-deploy:geoservice_staging:
-  <<: *deploy_geoservice_staging
-  only:
-    - /^release-.*$/
-    - tags
-    - branches
-
-deploy:mvp_production:
-  <<: *deploy_mvp_production
-  when: manual
-  only:
-    - tags
-
-deploy:geoservice_production:
-  <<: *deploy_geoservice_production
+deploy:production:
+  <<: *deploy_production
   when: manual
   only:
     - tags
