@@ -12,6 +12,8 @@ mvp.consumers.rabbit.queueName={{ salt['grains.get']('env')[0] }}
 mvp.superadmin.email=mvpadmin@elvaco.se
 mvp.superadmin.password=PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
+geo-service.url=http://localhost:8081
+
 liquibase.url=jdbc:postgresql://{{ salt['grains.get']('postgresql_server') }}:5432/mvpdb
 liquibase.user=mvpdb-admin
 liquibase.password=crA4JNdA8Z^N35&5u@!
