@@ -194,28 +194,24 @@ publish:mvp_artifactory:
   only:
     - /^release-.*$/
     - tags
-    - branches
 
 publish:geoservice_artifactory:
   <<: *publish_geoservice_to_artifactory
   only:
     - /^release-.*$/
     - tags
-    - branches
 
 publish:update_salt:
   <<: *update_salt
   only:
     - /^release-.*$/
     - tags
-    - branches
 
 deploy:staging:
   <<: *deploy_staging
   only:
     - /^release-.*$/
     - tags
-    - branches
 
 deploy:production:
   <<: *deploy_production
