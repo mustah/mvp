@@ -77,8 +77,8 @@ variables:
   <<: *auto_deploy
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.create
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 .deploy:geoservice_staging: &deploy_geoservice_staging
@@ -91,9 +91,9 @@ variables:
   <<: *auto_deploy
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.drop
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.create
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.drop
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 

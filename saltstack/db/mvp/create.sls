@@ -1,7 +1,3 @@
-include:
-  - postgresql.server
-  - postgresql.db_users
-
 create-mvp-database:
   postgres_database.present:
     - name: mvpdb
