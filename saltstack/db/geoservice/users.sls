@@ -10,3 +10,12 @@ geoservicedb-admin:
     - password: dCU0WkunRIGDrTfDdPoK5QcyvPqWCe88
     - login: True
     - superuser: True
+
+geoservicedb-app-privilegies:
+  postgres_privileges.present:
+    - name: geoservicedb-app
+    - object_name: ALL
+    - object_type: table
+    - privileges:
+      - ALL
+    - maintenance_db: geoservicedb
