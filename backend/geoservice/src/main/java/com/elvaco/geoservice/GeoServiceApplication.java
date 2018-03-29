@@ -8,14 +8,17 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EntityScan(
-    basePackageClasses = {Application.class, Jsr310JpaConverters.class}
+  basePackageClasses = {
+    GeoServiceApplication.class,
+    Jsr310JpaConverters.class
+  }
 )
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
-public class Application {
+public class GeoServiceApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
+    SpringApplication.run(GeoServiceApplication.class, args);
   }
 }
