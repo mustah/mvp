@@ -92,11 +92,9 @@ variables:
   <<: *auto_deploy
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.drop
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 .deploy:geoservice_production: &deploy_geoservice_production
   <<: *auto_deploy
