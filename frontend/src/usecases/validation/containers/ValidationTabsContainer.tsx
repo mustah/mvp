@@ -21,9 +21,9 @@ import {getDomainModel, getError} from '../../../state/domain-models/domainModel
 import {setSelection} from '../../../state/search/selection/selectionActions';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
-import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps,} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid,} from '../../../types/Types';
+import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
 import {metersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
@@ -79,6 +79,14 @@ class ValidationTabs extends React.Component<Props> {
 
     const noMetersFallbackContent = <MissingDataTitle title={firstUpperTranslated('no meters')}/>;
 
+    const metersWithoutConfidence = meterMapMarkers.result.length -
+      metersWithinThreshold(meterMapMarkers.entities).length;
+    const someAreHidden = metersWithoutConfidence
+      ? firstUpperTranslated('{{count}} meters are not displayed in the map due to low accuracy', {
+        count: metersWithoutConfidence,
+      })
+      : undefined;
+
     return (
       <Tabs>
         <TabTopBar>
@@ -95,10 +103,13 @@ class ValidationTabs extends React.Component<Props> {
           <Loader isFetching={isFetching} clearError={clearError} error={error}>
             <div>
               <HasContent
-                hasContent={meterMapMarkers.result.length > 0 && metersWithinThreshold(meterMapMarkers.entities).length > 0}
+                hasContent={meterMapMarkers.result.length > 0}
                 fallbackContent={noMetersFallbackContent}
               >
-                <Map defaultZoom={7}>
+                <Map
+                  defaultZoom={7}
+                  someAreHidden={someAreHidden}
+                >
                   <ClusterContainer markers={meterMapMarkers.entities}/>
                 </Map>
               </HasContent>

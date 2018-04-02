@@ -18,6 +18,7 @@ interface Props {
   defaultZoom?: number;
   viewCenter?: GeoPosition;
   children?: React.ReactElement<any>;
+  someAreHidden?: string;
 }
 
 const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
@@ -82,6 +83,7 @@ export const Map = (props: Props) => {
     defaultZoom = 4,
     viewCenter,
     children,
+    someAreHidden,
   } = props;
 
   const style = {height, width};
@@ -101,6 +103,12 @@ export const Map = (props: Props) => {
     centerProps.center = defaultCenter;
   }
 
+  const noticeAboutHidden = someAreHidden ? (
+    <Control position="topright" className="low-confidence-container">
+      <p>{someAreHidden}</p>
+    </Control>
+  ) : null;
+
   return (
     <Column>
       <LeafletMap
@@ -113,9 +121,7 @@ export const Map = (props: Props) => {
         style={style}
         {...centerProps}
       >
-        <Control position="topright" className="low-confidence-container">
-          <p>This is a control!</p>
-        </Control>
+        {noticeAboutHidden}
         <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
         {children}
       </LeafletMap>

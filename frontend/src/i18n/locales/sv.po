@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-27 09:39+0200\n"
+"POT-Creation-Date: 2018-04-02 23:17+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -281,6 +281,9 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
 
+msgid "average"
+msgstr "medelvärde"
+
 msgid "users"
 msgstr "användare"
 
@@ -308,6 +311,9 @@ msgstr "produktmodeller"
 msgid "no gateways"
 msgstr "inga gateways"
 
+msgid "{{count}} gateways are not displayed in the map due to low accuracy"
+msgstr "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+
 msgid "list"
 msgstr "lista"
 
@@ -326,6 +332,9 @@ msgstr "dashboard"
 msgid "report"
 msgstr "rapport"
 
+msgid "select meters to include in graph"
+msgstr "välj mätare för att inkludera dem i grafen"
+
 msgid "graph"
 msgstr "graf"
 
@@ -334,12 +343,6 @@ msgstr "tabell"
 
 msgid "select quantities"
 msgstr "välj storheter"
-
-msgid "select meters to include in graph"
-msgstr "välj mätare för att inkludera dem i grafen"
-
-msgid "average"
-msgstr "medelvärde"
 
 msgid "save as"
 msgstr "spara som"
@@ -380,6 +383,9 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "{{count}} meters are not displayed in the map due to low accuracy"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
@@ -397,8 +403,16 @@ msgid "meter°"
 msgstr "mätare"
 
 msgctxt "°plural"
+msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
+msgstr "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+
+msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
+
+msgctxt "°plural"
+msgid "{{count}} meters are not displayed in the map due to low accuracy°"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 #~ msgid "n/a"
 #~ msgstr "ej tillämpbar"

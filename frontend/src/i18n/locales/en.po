@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-03-27 09:39+0200\n"
+"POT-Creation-Date: 2018-04-02 23:48+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -281,6 +281,9 @@ msgstr "successfully deleted the user {{name}} ({{email}})"
 msgid "failed to delete the user: {{error}}"
 msgstr "failed to delete the user: {{error}}"
 
+msgid "average"
+msgstr "average"
+
 msgid "users"
 msgstr "users"
 
@@ -308,6 +311,9 @@ msgstr "product models"
 msgid "no gateways"
 msgstr "no gateways"
 
+msgid "{{count}} gateways are not displayed in the map due to low accuracy"
+msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
+
 msgid "list"
 msgstr "list"
 
@@ -326,6 +332,9 @@ msgstr "dashboard"
 msgid "report"
 msgstr "report"
 
+msgid "select meters to include in graph"
+msgstr "select meters to include in graph"
+
 msgid "graph"
 msgstr "graph"
 
@@ -334,12 +343,6 @@ msgstr "table"
 
 msgid "select quantities"
 msgstr "select quantities"
-
-msgid "select meters to include in graph"
-msgstr "select meters to include in graph"
-
-msgid "average"
-msgstr "average"
 
 msgid "save as"
 msgstr "save as"
@@ -380,6 +383,9 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
+msgid "{{count}} meters are not displayed in the map due to low accuracy"
+msgstr "{{count}} meter is not displayed in the map due to low accuracy"
+
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
@@ -397,8 +403,16 @@ msgid "meter°"
 msgstr "meters"
 
 msgctxt "°plural"
+msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
+msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
+
+msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
+
+msgctxt "°plural"
+msgid "{{count}} meters are not displayed in the map due to low accuracy°"
+msgstr "{{count}} meters are not displayed in the map due to low accuracy"
 
 #~ msgid "n/a"
 #~ msgstr "N/A"
