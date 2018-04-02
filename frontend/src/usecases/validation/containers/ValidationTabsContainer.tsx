@@ -106,7 +106,7 @@ class ValidationTabs extends React.Component<Props> {
           <Loader isFetching={isFetching} clearError={clearError} error={error}>
             <div>
               <HasContent
-                hasContent={isMarkersWithinThreshold(meterMapMarkers.entities) && meterMapMarkers.result.length > 0}
+                hasContent={meterMapMarkers.result.length > 0 && isMarkersWithinThreshold(meterMapMarkers.entities)}
                 fallbackContent={noMetersFallbackContent}
               >
                 <Map defaultZoom={7}>
