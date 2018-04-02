@@ -89,17 +89,15 @@ export const Map = (props: Props) => {
 
   if (viewCenter) {
     centerProps.center = [viewCenter.latitude, viewCenter.longitude];
-  } else {
-    if (children && children.props && children.props.markers) {
-      const bounds = boundsFromMarkers(children.props.markers);
-      if (bounds.isJust()) {
-        centerProps.bounds = bounds.get();
-      } else {
-        centerProps.center = defaultCenter;
-      }
+  } else if (children && children.props && children.props.markers) {
+    const bounds = boundsFromMarkers(children.props.markers);
+    if (bounds.isJust()) {
+      centerProps.bounds = bounds.get();
     } else {
       centerProps.center = defaultCenter;
     }
+  } else {
+    centerProps.center = defaultCenter;
   }
 
   return (
