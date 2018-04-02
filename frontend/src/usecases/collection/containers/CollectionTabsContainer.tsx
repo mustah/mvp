@@ -36,7 +36,7 @@ import {
   uuid,
 } from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
+import {anyMarkerWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {
   clearErrorGatewayMapMarkers,
@@ -87,7 +87,7 @@ class CollectionTabs extends React.Component<Props> {
       clearError,
     } = this.props;
 
-    const hasGateways: boolean = isMarkersWithinThreshold(gatewayMapMarkers.entities);
+    const hasGateways: boolean = anyMarkerWithinThreshold(gatewayMapMarkers.entities);
 
     const dialog = selectedMarker.isJust() && (
       <Dialog isOpen={true} close={closeClusterDialog}>

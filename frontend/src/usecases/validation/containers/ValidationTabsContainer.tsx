@@ -36,7 +36,7 @@ import {
   uuid,
 } from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
+import {anyMarkerWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
@@ -106,7 +106,7 @@ class ValidationTabs extends React.Component<Props> {
           <Loader isFetching={isFetching} clearError={clearError} error={error}>
             <div>
               <HasContent
-                hasContent={meterMapMarkers.result.length > 0 && isMarkersWithinThreshold(meterMapMarkers.entities)}
+                hasContent={meterMapMarkers.result.length > 0 && anyMarkerWithinThreshold(meterMapMarkers.entities)}
                 fallbackContent={noMetersFallbackContent}
               >
                 <Map defaultZoom={7}>

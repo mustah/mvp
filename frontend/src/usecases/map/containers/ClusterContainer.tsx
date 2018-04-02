@@ -16,24 +16,6 @@ interface OwnProps {
   markers: Dictionary<MapMarker> | MapMarker;
 }
 
-const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
-  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
-
-  const markerClusterOptions = {
-    iconCreateFunction: handleIconCreate,
-    chunkedLoading: true,
-    showCoverageOnHover: true,
-    maxClusterRadius: getZoomBasedRadius,
-  };
-
-  return leafletMarkers.length > 0 ? (
-    <MarkerClusterGroup
-      markers={leafletMarkers}
-      onMarkerClick={openClusterDialog}
-      options={markerClusterOptions}
-    />) : null;
-};
-
 // TODO needs to be shared with Map
 const maxZoom = 18;
 
@@ -98,6 +80,24 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
   }
 
   return cssClass;
+};
+
+const Cluster = ({openClusterDialog, markers}: DispatchToProps & OwnProps) => {
+  const leafletMarkers: Marker[] = makeLeafletCompatibleMarkersFrom(markers);
+
+  const markerClusterOptions = {
+    iconCreateFunction: handleIconCreate,
+    chunkedLoading: true,
+    showCoverageOnHover: true,
+    maxClusterRadius: getZoomBasedRadius,
+  };
+
+  return leafletMarkers.length > 0 ? (
+    <MarkerClusterGroup
+      markers={leafletMarkers}
+      onMarkerClick={openClusterDialog}
+      options={markerClusterOptions}
+    />) : null;
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
