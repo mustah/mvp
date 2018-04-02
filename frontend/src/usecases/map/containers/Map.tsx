@@ -4,6 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
+import Control from 'react-leaflet-control';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
@@ -112,6 +113,9 @@ export const Map = (props: Props) => {
         style={style}
         {...centerProps}
       >
+        <Control position="topright" className="low-confidence-container">
+          <p>This is a control!</p>
+        </Control>
         <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
         {children}
       </LeafletMap>
