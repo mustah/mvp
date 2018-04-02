@@ -75,49 +75,48 @@ const boundsFromMarkers = (markers: MarkerClusterGroup): Maybe<LatLngTuple[]> =>
 const defaultCenter: LatLngTuple = [62.3919741, 15.0685715];
 
 export const Map = (props: Props) => {
-    const {
-      height,
-      width,
-      defaultZoom = 4,
-      viewCenter,
-      children,
-    } = props;
+  const {
+    height,
+    width,
+    defaultZoom = 4,
+    viewCenter,
+    children,
+  } = props;
 
-    const style = {height, width};
+  const style = {height, width};
 
-    const centerProps: MapProps = {};
+  const centerProps: MapProps = {};
 
-    if (viewCenter) {
-      centerProps.center = [viewCenter.latitude, viewCenter.longitude];
-    } else {
-      if (children && children.props && children.props.markers) {
-        const bounds = boundsFromMarkers(children.props.markers);
-        if (bounds.isJust()) {
-          centerProps.bounds = bounds.get();
-        } else {
-          centerProps.center = defaultCenter;
-        }
+  if (viewCenter) {
+    centerProps.center = [viewCenter.latitude, viewCenter.longitude];
+  } else {
+    if (children && children.props && children.props.markers) {
+      const bounds = boundsFromMarkers(children.props.markers);
+      if (bounds.isJust()) {
+        centerProps.bounds = bounds.get();
       } else {
         centerProps.center = defaultCenter;
       }
+    } else {
+      centerProps.center = defaultCenter;
     }
-
-    return (
-      <Column>
-        <LeafletMap
-          maxZoom={18}
-          minZoom={3}
-          zoom={defaultZoom}
-          className="Map"
-          scrollWheelZoom={false}
-          onclick={toggleScrollWheelZoom}
-          style={style}
-          {...centerProps}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
-          {children}
-        </LeafletMap>
-      </Column>
-    );
   }
-;
+
+  return (
+    <Column>
+      <LeafletMap
+        maxZoom={18}
+        minZoom={3}
+        zoom={defaultZoom}
+        className="Map"
+        scrollWheelZoom={false}
+        onclick={toggleScrollWheelZoom}
+        style={style}
+        {...centerProps}
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
+        {children}
+      </LeafletMap>
+    </Column>
+  );
+};
