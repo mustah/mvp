@@ -4,7 +4,6 @@ import {currentDateRange, toApiParameters} from '../../../../helpers/dateHelpers
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
-import {firstUpperTranslated} from '../../../../services/translationService';
 import {uuid} from '../../../../types/Types';
 import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
 import {GraphContents, LineProps} from '../../../../usecases/report/reportModels';
@@ -58,6 +57,7 @@ export const mapApiResponseToGraphData =
 
     const byDate: {[when: number]: {[label: string]: number}} = {};
     const uniqueMeters = new Set<string>();
+    let firstTimestamp;
 
     measurement.forEach((meterQuantity: MeasurementApiResponsePart, index: number) => {
       const label: string = meterQuantity.quantity + ': ' + meterQuantity.label;
@@ -75,6 +75,9 @@ export const mapApiResponseToGraphData =
 
       meterQuantity.values.forEach(({when, value}) => {
         const created: number = when * 1000;
+        if (!firstTimestamp || created < firstTimestamp) {
+          firstTimestamp = created;
+        }
         if (!byDate[created]) {
           byDate[created] = {};
         }
@@ -89,7 +92,7 @@ export const mapApiResponseToGraphData =
     });
 
     average.forEach((averageQuantity: AverageApiResponsePart, index: number) => {
-      const label: string = firstUpperTranslated('average') + ' - ' + averageQuantity.quantity;
+      const label: string = averageQuantity.quantity;
       const props: LineProps = {
         dataKey: label,
         key: `average-${averageQuantity.quantity}`,
@@ -100,10 +103,10 @@ export const mapApiResponseToGraphData =
       graphContents.lines.push(props);
 
       averageQuantity.values.forEach(({when, value}) => {
-        if (value === null) {
+        const created: number = when * 1000;
+        if (created < firstTimestamp) {
           return;
         }
-        const created: number = when * 1000;
         if (!byDate[created]) {
           byDate[created] = {};
         }

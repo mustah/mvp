@@ -143,7 +143,64 @@ describe('measurementActions', () => {
         expect(graphContents.axes.left).toEqual('mW');
         expect(graphContents.axes.right).toEqual('mA');
       });
+
+      it('adjusts the starting position of the x-axis to the first measurement, not average', () => {
+        const firstMeasurement: number = 1516521585107;
+        const slightlyLaterThanFirstAverage: MeasurementApiResponse = [
+          {
+            quantity: 'Power',
+            values: [
+              {
+                when: firstMeasurement,
+                value: 0.4353763591158477,
+              },
+            ],
+            label: 'meter',
+            unit: 'mW',
+          },
+        ];
+
+        const average: AverageApiResponse = [
+          {
+            quantity: 'Power',
+            values: [
+              {
+                when: firstMeasurement - 10,
+                value: 111,
+              },
+            ],
+            label: 'average',
+            unit: 'mW',
+          },
+          {
+            quantity: 'Power',
+            values: [
+              {
+                when: firstMeasurement + 10,
+                value: 222,
+              },
+            ],
+            label: 'average',
+            unit: 'mW',
+          },
+        ];
+
+        const graphContents = mapApiResponseToGraphData({
+          measurement: slightlyLaterThanFirstAverage,
+          average,
+        });
+
+        expect(graphContents.data).toHaveLength(2);
+        expect(graphContents
+          .data
+          .filter(
+            (value: {[key: string]: number}) => value.name >= firstMeasurement)
+          .length,
+        ).toEqual(2);
+      });
+
     });
+
   });
 
   describe('fetchMeasurements', () => {
