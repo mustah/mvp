@@ -15,18 +15,12 @@ interface Props {
 export const OverviewWidgets = (props: Props) => {
   const {widgets} = props;
   const collectionWidget = widgets[0];
-  const validationWidget = widgets[1];
 
   return (
     <Row className="OverviewWidgets">
       <Widget title={translate('collection')}>
         <Link to={routes.collection}>
           <IndicatorWidget widget={collectionWidget}/>
-        </Link>
-      </Widget>
-      <Widget title={translate('validation')}>
-        <Link to={routes.validation}>
-          <IndicatorWidget widget={validationWidget}/>
         </Link>
       </Widget>
     </Row>

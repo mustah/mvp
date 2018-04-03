@@ -43,11 +43,12 @@ class DashboardContainerComponent extends React.Component<Props> {
 
   componentDidMount() {
     const {fetchDashboard, fetchMeterMapMarkers, parameters} = this.props;
-    fetchDashboard();
+    fetchDashboard(parameters);
     fetchMeterMapMarkers(parameters);
   }
 
   componentWillReceiveProps({fetchMeterMapMarkers, parameters}: Props) {
+    fetchDashboard(parameters);
     fetchMeterMapMarkers(parameters);
   }
 
@@ -75,10 +76,10 @@ class DashboardContainerComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-                           dashboard,
-                           searchParameters,
-                           domainModels: {meterMapMarkers},
-                         }: RootState): StateToProps => ({
+  dashboard,
+  searchParameters,
+  domainModels: {meterMapMarkers},
+}: RootState): StateToProps => ({
   dashboard: dashboard.record,
   parameters: getMeterParameters(searchParameters),
   meterMapMarkers: getEntitiesDomainModels(meterMapMarkers),
