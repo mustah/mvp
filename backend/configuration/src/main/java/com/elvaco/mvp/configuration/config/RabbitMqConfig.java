@@ -12,7 +12,7 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +21,18 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(RabbitConsumerProperties.class)
 class RabbitMqConfig {
 
-  private final String queueName;
+  private final RabbitConsumerProperties consumerProperties;
 
+  @Autowired
   RabbitMqConfig(
-    @Value("${mvp.consumers.rabbit.queueName}") String queueName
+    RabbitConsumerProperties consumerProperties
   ) {
-    this.queueName = queueName;
+    this.consumerProperties = consumerProperties;
   }
 
   @Bean
   Queue queue() {
-    return new Queue(queueName, false);
+    return new Queue(consumerProperties.getQueueName(), false);
   }
 
   @Bean
@@ -63,7 +64,9 @@ class RabbitMqConfig {
   ) {
     SimpleMessageListenerContainer container =
       new SimpleMessageListenerContainer(connectionFactory);
-    container.setQueueNames(queueName);
+    container.setQueueNames(consumerProperties.getQueueName());
+    listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
+    listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
     container.setMessageListener(listenerAdapter);
     container.setDefaultRequeueRejected(false);
     return container;

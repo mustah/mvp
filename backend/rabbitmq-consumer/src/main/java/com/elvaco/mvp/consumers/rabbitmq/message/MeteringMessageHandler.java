@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -11,6 +12,7 @@ import java.util.stream.Stream;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -66,7 +68,7 @@ public class MeteringMessageHandler implements MessageHandler {
   }
 
   @Override
-  public void handle(MeteringMeterStructureMessageDto structureMessage) {
+  public Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage) {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
 
     LogicalMeter logicalMeter = findOrCreateLogicalMeter(
@@ -100,35 +102,71 @@ public class MeteringMessageHandler implements MessageHandler {
         .withPhysicalMeter(physicalMeter)
     );
     physicalMeterUseCases.save(physicalMeter);
+    return Optional.empty();
   }
 
   @Override
-  public void handle(MeteringMeasurementMessageDto measurementMessage) {
+  public Optional<? extends MeteringResponseDto> handle(
+    MeteringMeasurementMessageDto measurementMessage
+  ) {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
     String medium = selectMeterDefinition(measurementMessage.values).medium;
+    GetReferenceInfoDtoBuilder referenceInfoDtoBuilder =
+      new GetReferenceInfoDtoBuilder(measurementMessage.organisationId);
 
-    LogicalMeter logicalMeter = findOrCreateLogicalMeter(
-      measurementMessage.facility.id,
-      medium,
-      organisation
+    String facilityId = measurementMessage.facility.id;
+    LogicalMeter logicalMeter =
+      logicalMeterUseCases.findByOrganisationIdAndExternalId(
+        organisation.id,
+        facilityId
+      ).orElseGet(
+        () -> {
+          referenceInfoDtoBuilder.setMeterExternalId(facilityId);
+          return new LogicalMeter(
+            randomUUID(),
+            facilityId,
+            organisation.id,
+            selectMeterDefinition(medium)
+          );
+        }
+      );
+
+    PhysicalMeter physicalMeter = physicalMeterUseCases.findByOrganisationIdAndExternalIdAndAddress(
+      organisation.id,
+      facilityId,
+      measurementMessage.meter.id
+    ).orElseGet(
+      () -> {
+        referenceInfoDtoBuilder.setMeterExternalId(facilityId);
+        return new PhysicalMeter(
+          UUID.randomUUID(),
+          organisation,
+          measurementMessage.meter.id,
+          facilityId,
+          medium,
+          "UNKNOWN",
+          logicalMeter.id,
+          0L, // TODO add real interval here!
+          null
+        );
+      }
     );
 
-    PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      measurementMessage.facility.id,
-      measurementMessage.meter.id,
-      medium,
-      "UNKNOWN",
-      logicalMeter.id,
-      organisation
-    );
-
-    Gateway gateway = findOrCreateGateway(
-      organisation,
-      logicalMeter,
-      measurementMessage.gateway.id,
-      "Unknown"
-    );
+    Gateway gateway = gatewayUseCases.findBy(
+      organisation.id,
+      measurementMessage.gateway.id
+    ).orElseGet(() -> {
+      referenceInfoDtoBuilder.setGatewayExternalId(measurementMessage.gateway.id);
+      return new Gateway(
+        UUID.randomUUID(),
+        organisation.id,
+        measurementMessage.gateway.id,
+        "Unknown",
+        singletonList(logicalMeter),
+        emptyList() // TODO Save gateway status
+      );
+    });
 
     List<Measurement> measurements = measurementMessage.values
       .stream()
@@ -159,11 +197,13 @@ public class MeteringMessageHandler implements MessageHandler {
     );
     physicalMeterUseCases.save(physicalMeter);
     measurementUseCases.save(measurements);
+    return referenceInfoDtoBuilder.build();
   }
 
   @Override
-  public void handle(MeteringAlarmMessageDto alarmMessage) {
+  public Optional<MeteringResponseDto> handle(MeteringAlarmMessageDto alarmMessage) {
     // TODO we should handle incoming alarms
+    return Optional.empty();
   }
 
   MeterDefinition selectMeterDefinition(String medium) {

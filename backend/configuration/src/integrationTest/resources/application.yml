@@ -26,6 +26,7 @@ mvp:
   consumers:
     rabbit:
       queueName: MVP
+      responseRoutingKey: mvp.to.metering
   superadmin:
     email: mvpadmin@elvaco.se
     password: changeme

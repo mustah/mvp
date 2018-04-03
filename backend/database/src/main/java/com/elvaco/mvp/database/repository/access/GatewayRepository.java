@@ -100,6 +100,14 @@ public class GatewayRepository implements Gateways {
   }
 
   @Override
+  public Optional<Gateway> findBy(UUID organisationId, String serial) {
+    return repository.findByOrganisationIdAndSerial(
+      organisationId,
+      serial
+    ).map(mapper::toDomainModel);
+  }
+
+  @Override
   public Optional<Gateway> findById(UUID id) {
     return repository.findById(id).map(gatewayWithMetersMapper::toDomainModel);
   }

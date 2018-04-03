@@ -6,8 +6,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RabbitConsumerProperties {
 
   private String queueName = "MVP";
+  private String responseExchange = "";
+  private String responseRoutingKey = "mvp.to.metering";
 
   public String getQueueName() {
     return queueName;
+  }
+
+  public String getResponseExchange() {
+    return responseExchange;
+  }
+
+  public String getResponseRoutingKey() {
+    return responseRoutingKey;
   }
 }

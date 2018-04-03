@@ -22,7 +22,7 @@ class AuthenticatingMeteringMessageReceiver {
 
   @SuppressWarnings("unused")
   //this is used through reflection in com.elvaco.mvp.configuration.config.RabbitMqConfig
-  public void receiveMessage(byte[] message) {
+  public String receiveMessage(byte[] message) {
     User user = new User(
       UUID.randomUUID(),
       "Metering Message "
@@ -38,7 +38,7 @@ class AuthenticatingMeteringMessageReceiver {
       new UsernamePasswordAuthenticationToken(new MvpUserDetails(user, ""), null)
     );
     try {
-      meteringMessageReceiver.receiveMessage(message);
+      return meteringMessageReceiver.receiveMessage(message);
     } finally {
       SecurityContextHolder.clearContext();
     }

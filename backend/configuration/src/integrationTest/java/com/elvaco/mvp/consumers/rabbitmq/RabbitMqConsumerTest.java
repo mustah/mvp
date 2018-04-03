@@ -1,14 +1,24 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import com.elvaco.mvp.configuration.config.RabbitConsumerProperties;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
@@ -21,7 +31,10 @@ import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +42,6 @@ import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,8 +77,9 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   @Autowired
   LogicalMeters logicalMeters;
 
-  @Value("${mvp.consumers.rabbit.queueName}")
-  private String queueName;
+  @Autowired
+  RabbitConsumerProperties consumerProperties;
+
   private Connection connection;
   private Channel channel;
 
@@ -101,7 +114,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Test
   public void messagesSentToRabbitAreReceivedAndProcessed() throws InterruptedException,
-                                                                   IOException {
+    IOException {
     MeteringMeterStructureMessageDto messageDto = new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
@@ -121,12 +134,53 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     assertGatewayWasCreated(organisationId, "123987");
   }
 
+  @Test
+  public void responseMessagesForMeasurementMessagesArePublished() throws IOException,
+    InterruptedException {
+    MeteringMeasurementMessageDto messageDto = new MeteringMeasurementMessageDto(
+      MessageType.METERING_MEASUREMENT_V_1_0,
+      new GatewayIdDto("GATEWAY-123"),
+      new MeterIdDto("METER-123"),
+      new FacilityIdDto("FACILITY-123"),
+      "ORGANISATION-123",
+      "test",
+      Collections.emptyList()
+    );
+    TestConsumer consumer = newResponseConsumer();
+
+    publishMessage(serializeDto(messageDto));
+
+    byte[] response = consumer.receiveOne();
+    assertThat(response).isNotNull();
+    GetReferenceInfoDto responseDto = deserializeResponseDto(response, GetReferenceInfoDto.class);
+    assertThat(responseDto).isEqualTo(
+      new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123")
+    );
+  }
+
+  private TestConsumer newResponseConsumer() throws IOException {
+    TestConsumer consumer = new TestConsumer(new LinkedBlockingQueue<>());
+    channel.queueDeclare(
+      consumerProperties.getResponseRoutingKey(),
+      false,
+      true,
+      true,
+      Collections.emptyMap()
+    );
+    channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
+    return consumer;
+  }
+
+  private <T> T deserializeResponseDto(byte[] responseBytes, Class<T> dtoType) {
+    return new MeteringMessageSerializer().deserialize(new String(responseBytes), dtoType);
+  }
+
   private byte[] serializeDto(MeteringMessageDto dto) {
     return new MeteringMessageSerializer().serialize(dto).getBytes();
   }
 
   private void publishMessage(byte[] message) throws IOException {
-    channel.basicPublish("", queueName, null, message);
+    channel.basicPublish("", consumerProperties.getQueueName(), null, message);
   }
 
   private void assertLogicalMeterWasCreated(
@@ -170,5 +224,29 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   private void assertOrganisationWithSlugWasCreated(String slug) throws InterruptedException {
     assertThat(waitForCondition(() -> organisations.findBySlug(slug)
       .isPresent())).as("Organisation '" + slug + "' was created").isTrue();
+  }
+
+  private class TestConsumer extends DefaultConsumer {
+
+    private final BlockingQueue<Object> receivedMessages;
+
+    TestConsumer(BlockingQueue<Object> receivedMessages) {
+      super(channel);
+      this.receivedMessages = receivedMessages;
+    }
+
+    @Override
+    public void handleDelivery(
+      String consumerTag,
+      Envelope envelope,
+      AMQP.BasicProperties properties,
+      byte[] body
+    ) {
+      receivedMessages.add(body);
+    }
+
+    byte[] receiveOne() throws InterruptedException {
+      return (byte[]) receivedMessages.poll(10, TimeUnit.SECONDS);
+    }
   }
 }
