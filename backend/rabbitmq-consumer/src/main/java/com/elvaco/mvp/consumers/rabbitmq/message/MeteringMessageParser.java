@@ -14,23 +14,9 @@ import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerialize
 @Slf4j
 public final class MeteringMessageParser {
 
-  Optional<MeteringMeterStructureMessageDto> parseStructureMessage(String message) {
-    return parseMessage(message, MeteringMeterStructureMessageDto.class);
-  }
-
-  Optional<MeteringMeasurementMessageDto> parseMeasurementMessage(String message) {
-    return parseMessage(message, MeteringMeasurementMessageDto.class);
-  }
-
-  Optional<MeteringAlarmMessageDto> parseAlarmMessage(String message) {
-    return parseMessage(message, MeteringAlarmMessageDto.class);
-  }
-
   public MeteringMessageDto parse(String message) {
-    MeteringMessageDto meteringMessageDto = parseMessage(
-      message,
-      MeteringMessageDto.class
-    ).orElseThrow(() -> new MeteringMessageParseException("Failed to parse " + message));
+    MeteringMessageDto meteringMessageDto = parseMessage(message, MeteringMessageDto.class)
+      .orElseThrow(() -> new MeteringMessageParseException("Failed to parse " + message));
 
     Class<? extends MeteringMessageDto> classOfT;
     switch (meteringMessageDto.messageType) {
@@ -51,6 +37,18 @@ public final class MeteringMessageParser {
     return parseMessage(message, classOfT)
       .orElseThrow(() -> new MeteringMessageParseException(
         "Failed to parse message of type '" + classOfT.getName() + "': " + message));
+  }
+
+  protected Optional<MeteringMeterStructureMessageDto> parseStructureMessage(String message) {
+    return parseMessage(message, MeteringMeterStructureMessageDto.class);
+  }
+
+  protected Optional<MeteringMeasurementMessageDto> parseMeasurementMessage(String message) {
+    return parseMessage(message, MeteringMeasurementMessageDto.class);
+  }
+
+  protected Optional<MeteringAlarmMessageDto> parseAlarmMessage(String message) {
+    return parseMessage(message, MeteringAlarmMessageDto.class);
   }
 
   private <T extends MeteringMessageDto> Optional<T> parseMessage(

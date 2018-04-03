@@ -49,6 +49,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
 import static com.elvaco.mvp.core.domainmodels.StatusType.INFO;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
@@ -478,7 +479,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       randomUUID(),
       "my-meter",
       context().organisation().id,
-      hotWaterMeterDefinition
+      hotWaterMeterDefinition,
+      UNKNOWN_LOCATION
     ));
 
     Page<LogicalMeterDto> response = as(context().user)
@@ -495,7 +497,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       randomUUID(),
       "not-my-meter",
       context().organisation().id,
-      hotWaterMeterDefinition
+      hotWaterMeterDefinition,
+      UNKNOWN_LOCATION
     ));
 
     Page<LogicalMeterDto> response = restClient()
@@ -513,13 +516,15 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       randomUUID(),
       "my-own-meter",
       anotherOrganisation.id,
-      hotWaterMeterDefinition
+      hotWaterMeterDefinition,
+      UNKNOWN_LOCATION
     ));
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
       context().organisation().id,
-      hotWaterMeterDefinition
+      hotWaterMeterDefinition,
+      UNKNOWN_LOCATION
     ));
 
     Page<LogicalMeterDto> response = restClient()
@@ -537,7 +542,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       randomUUID(),
       "this-is-not-my-meter",
       anotherOrganisation.id,
-      hotWaterMeterDefinition
+      hotWaterMeterDefinition,
+      UNKNOWN_LOCATION
     ));
 
     ResponseEntity<ErrorMessageDto> response = as(context().user)
@@ -579,7 +585,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         randomUUID(),
         "external-id",
         context().organisation().id,
-        districtHeatingMeterDefinition
+        districtHeatingMeterDefinition,
+        UNKNOWN_LOCATION
       )
     );
 

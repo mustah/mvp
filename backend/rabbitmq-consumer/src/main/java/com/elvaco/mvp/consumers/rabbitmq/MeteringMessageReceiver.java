@@ -51,7 +51,7 @@ public class MeteringMessageReceiver {
     } else {
       throw new RuntimeException("Unknown message type: " + messageDto.getClass().getName());
     }
-    return responseDto.map(response -> new MeteringMessageSerializer().serialize(response))
+    return responseDto.map(MeteringMessageSerializer::serialize)
       .orElse(null);
   }
 

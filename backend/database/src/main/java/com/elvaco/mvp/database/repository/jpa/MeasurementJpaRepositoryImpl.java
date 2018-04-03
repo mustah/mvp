@@ -17,7 +17,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.JDBCException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Repository;
 public class MeasurementJpaRepositoryImpl extends BaseQueryDslRepository<MeasurementEntity, Long>
   implements MeasurementJpaRepositoryCustom {
 
-  @Autowired
   MeasurementJpaRepositoryImpl(EntityManager entityManager) {
     super(
       new JpaMetamodelEntityInformation<>(MeasurementEntity.class, entityManager.getMetamodel()),

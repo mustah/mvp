@@ -4,22 +4,15 @@ import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.SelectionsDto;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@RequiredArgsConstructor
 @RestApi("/api/v1/selections")
 public class SelectionController {
+
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final SelectionsMapper selectionsMapper;
-
-  @Autowired
-  SelectionController(
-    LogicalMeterUseCases logicalMeterUseCases,
-    SelectionsMapper selectionsMapper
-  ) {
-    this.selectionsMapper = selectionsMapper;
-    this.logicalMeterUseCases = logicalMeterUseCases;
-  }
 
   @GetMapping
   public SelectionsDto selections() {

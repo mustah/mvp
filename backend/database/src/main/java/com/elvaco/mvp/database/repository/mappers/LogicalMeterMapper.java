@@ -73,7 +73,7 @@ public class LogicalMeterMapper {
       meterDefinitionMapper.toEntity(logicalMeter.meterDefinition)
     );
 
-    logicalMeterEntity.location = locationMapper.toEntity(logicalMeter.location, logicalMeter.id);
+    logicalMeterEntity.location = locationMapper.toEntity(logicalMeter.id, logicalMeter.location);
 
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
       .stream()

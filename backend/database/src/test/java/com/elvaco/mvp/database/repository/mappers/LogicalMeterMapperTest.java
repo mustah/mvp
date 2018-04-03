@@ -17,6 +17,7 @@ import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.testing.util.DateHelper.utcZonedDateTimeOf;
 import static java.util.Collections.emptyList;
@@ -46,6 +47,7 @@ public class LogicalMeterMapperTest {
       "an-external-id",
       randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER,
+      UNKNOWN_LOCATION,
       singletonList(new PhysicalMeter(
         randomUUID(),
         "1234",
@@ -131,7 +133,7 @@ public class LogicalMeterMapperTest {
         meterId,
         "an-external-id",
         organisationId,
-        Location.UNKNOWN_LOCATION,
+        UNKNOWN_LOCATION,
         created,
         emptyList(),
         new MeterDefinition(

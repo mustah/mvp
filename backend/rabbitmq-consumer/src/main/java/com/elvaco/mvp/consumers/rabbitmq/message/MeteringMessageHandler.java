@@ -9,23 +9,28 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -52,33 +57,43 @@ public class MeteringMessageHandler implements MessageHandler {
   private final MeasurementUseCases measurementUseCases;
   private final GatewayUseCases gatewayUseCases;
 
+  private final GeocodeService geocodeService;
+
   public MeteringMessageHandler(
     LogicalMeterUseCases logicalMetersUseCases,
     PhysicalMeterUseCases physicalMeterUseCases,
     OrganisationUseCases organisationUseCases,
     MeasurementUseCases measurementUseCases,
-    GatewayUseCases gatewayUseCases
+    GatewayUseCases gatewayUseCases,
+    GeocodeService geocodeService
   ) {
     this.logicalMeterUseCases = logicalMetersUseCases;
     this.physicalMeterUseCases = physicalMeterUseCases;
     this.organisationUseCases = organisationUseCases;
     this.measurementUseCases = measurementUseCases;
     this.gatewayUseCases = gatewayUseCases;
+    this.geocodeService = geocodeService;
     this.mediumToMeterDefinitionMap = newMediumToMeterDefinitionMap();
   }
 
   @Override
   public Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage) {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
+    FacilityDto facility = structureMessage.facility;
 
-    LogicalMeter logicalMeter = findOrCreateLogicalMeter(
-      structureMessage.facility.id,
-      structureMessage.meter.medium,
-      organisation
-    );
+    LogicalMeter logicalMeter = logicalMeterUseCases
+      .findByOrganisationIdAndExternalId(organisation.id, facility.id)
+      .orElseGet(() ->
+                   new LogicalMeter(
+                     randomUUID(),
+                     facility.id,
+                     organisation.id,
+                     selectMeterDefinition(structureMessage.meter.medium),
+                     new Location(facility.country, facility.city, facility.address)
+                   ));
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      structureMessage.facility.id,
+      facility.id,
       structureMessage.meter.id,
       structureMessage.meter.medium,
       structureMessage.meter.manufacturer,
@@ -95,13 +110,19 @@ public class MeteringMessageHandler implements MessageHandler {
       structureMessage.gateway.id,
       structureMessage.gateway.productModel
     );
+
     gatewayUseCases.save(gateway);
-    logicalMeterUseCases.save(
-      logicalMeter
-        .withGateway(gateway)
-        .withPhysicalMeter(physicalMeter)
-    );
+
+    LogicalMeter meter = logicalMeter
+      .withGateway(gateway)
+      .withPhysicalMeter(physicalMeter);
+
+    logicalMeterUseCases.save(meter);
+
     physicalMeterUseCases.save(physicalMeter);
+
+    geocodeService.fetchCoordinates(LocationWithId.from(meter.location, meter.id));
+
     return Optional.empty();
   }
 
@@ -127,7 +148,8 @@ public class MeteringMessageHandler implements MessageHandler {
             randomUUID(),
             facilityId,
             organisation.id,
-            selectMeterDefinition(medium)
+            selectMeterDefinition(medium),
+            UNKNOWN_LOCATION
           );
         }
       );
@@ -241,19 +263,20 @@ public class MeteringMessageHandler implements MessageHandler {
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
-    String facilityId,
+    FacilityDto facility,
     String medium,
     Organisation organisation
   ) {
     return logicalMeterUseCases.findByOrganisationIdAndExternalId(
       organisation.id,
-      facilityId
+      facility.id
     ).orElseGet(() ->
                   new LogicalMeter(
                     randomUUID(),
-                    facilityId,
+                    facility.id,
                     organisation.id,
-                    selectMeterDefinition(medium)
+                    selectMeterDefinition(medium),
+                    new Location(facility.country, facility.city, facility.address)
                   ));
   }
 

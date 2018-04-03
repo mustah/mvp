@@ -79,9 +79,10 @@ public class LogicalMeter implements Identifiable<UUID> {
     UUID id,
     String externalId,
     UUID organisationId,
-    MeterDefinition meterDefinition
+    MeterDefinition meterDefinition,
+    Location location
   ) {
-    this(id, externalId, organisationId, meterDefinition, emptyList());
+    this(id, externalId, organisationId, meterDefinition, location, emptyList());
   }
 
   public LogicalMeter(
@@ -89,13 +90,14 @@ public class LogicalMeter implements Identifiable<UUID> {
     String externalId,
     UUID organisationId,
     MeterDefinition meterDefinition,
+    Location location,
     List<PhysicalMeter> physicalMeters
   ) {
     this(
       id,
       externalId,
       organisationId,
-      Location.UNKNOWN_LOCATION,
+      location,
       ZonedDateTime.now(),
       physicalMeters,
       meterDefinition,
@@ -150,7 +152,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     return id;
   }
 
-  public LogicalMeter createdAt(ZonedDateTime creationTime) {
+  LogicalMeter createdAt(ZonedDateTime creationTime) {
     return new LogicalMeter(
       id,
       externalId,
@@ -164,7 +166,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     );
   }
 
-  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
+  LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
     return new LogicalMeter(
       id,
       externalId,

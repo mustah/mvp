@@ -19,11 +19,17 @@ public final class MeteringMessageSerializer {
         LocalDateTime.parse(json.getAsString())
     ).create();
 
+  private MeteringMessageSerializer() {}
+
+  public static <T> T deserialize(String json, Class<T> classOfT) {
+    return GSON.fromJson(json, classOfT);
+  }
+
   public static <T extends MeteringMessageDto> String serialize(T obj) {
     return GSON.toJson(obj);
   }
 
-  public <T extends MeteringResponseDto> String serialize(T obj) {
+  public static <T extends MeteringResponseDto> String serialize(T obj) {
     return GSON.toJson(obj);
   }
 }

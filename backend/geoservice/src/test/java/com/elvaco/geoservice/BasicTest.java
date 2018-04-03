@@ -7,7 +7,6 @@ import com.elvaco.geoservice.dto.AddressDto;
 import com.elvaco.geoservice.dto.ErrorDto;
 import com.elvaco.geoservice.dto.GeoRequest;
 import com.elvaco.geoservice.dto.GeoResponse;
-import com.elvaco.geoservice.repository.AddressGeoRepository;
 import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 import com.elvaco.geoservice.service.AddressToGeoService;
@@ -28,40 +27,21 @@ import static org.junit.Assert.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class BasicTest {
+
   @LocalServerPort
   Integer port;
-  @Autowired
-  MockedGeoService service;
-  @Autowired
-  AddressToGeoService addrService;
-  @Autowired
-  GeoController geoController;
-  @Autowired
-  GeocodeFarmService geocodeFarmService;
-  @Autowired
-  AddressGeoRepository addressGeoEntityRepository;
-  @Autowired
-  CallbackTestController callbackController;
-  AddressDto kabelgatan = new AddressDto();
-  Address kabelgatan2t = new Address();
-  String longitudeKabelgatan = "12.0694219774545";
-  String latitudeKabelgatan = "57.5052694216628";
-  GeoLocation kabelgatanGeo = new GeoLocation();
 
-  public BasicTest() {
+  @Autowired
+  private AddressToGeoService addrService;
 
-    kabelgatan.setStreet("Kabelgatan 2T");
-    kabelgatan.setCity("Kungsbacka");
-    kabelgatan.setCountry("Sweden");
-    kabelgatan2t.setStreet("Kabelgatan 2T");
-    kabelgatan2t.setCity("Kungsbacka");
-    kabelgatan2t.setCountry("Sweden");
-    kabelgatanGeo.setConfidence(1.0);
-    kabelgatanGeo.setLatitude(latitudeKabelgatan);
-    kabelgatanGeo.setLongitude(longitudeKabelgatan);
-    kabelgatanGeo.setSource("MANUAL");
+  @Autowired
+  private GeoController geoController;
 
-  }
+  @Autowired
+  private GeocodeFarmService geocodeFarmService;
+
+  @Autowired
+  private CallbackTestController callbackController;
 
   @Before
   public void before() {
@@ -71,14 +51,23 @@ public class BasicTest {
 
   @Test
   public void test2() {
+    Address kabelgatan2t = new Address();
+    kabelgatan2t.setStreet("Kabelgatan 2T");
+    kabelgatan2t.setCity("Kungsbacka");
+    kabelgatan2t.setCountry("Sweden");
+
     GeoLocation geo = addrService.getGeoByAddress(kabelgatan2t);
+
     assertEquals(1, geo.getConfidence(), 0.0);
-    System.out.println(geo);
   }
 
   @Test
   public void testRoundtrip() throws URISyntaxException {
     // Arrange
+    AddressDto kabelgatan = new AddressDto();
+    kabelgatan.setStreet("Kabelgatan 2T");
+    kabelgatan.setCity("Kungsbacka");
+    kabelgatan.setCountry("Sweden");
     GeoRequest request = new GeoRequest();
     request.setAddress(kabelgatan);
     request.setCallbackUrl("http://localhost:" + port + "/callback");
@@ -93,9 +82,17 @@ public class BasicTest {
     // Assert
     GeoResponse response = (GeoResponse) callbackController.getLastResponse();
 
-    assertEquals(1, response.getGeoData().getConfidence(), 0.0);
-    assertEquals("Longitude is wrong", longitudeKabelgatan, response.getGeoData().getLongitude());
-    assertEquals("Latitude is wrong", latitudeKabelgatan, response.getGeoData().getLatitude());
+    assertEquals(1, response.getGeoData().confidence, 0.0);
+    assertEquals(
+      "Longitude is wrong",
+      Double.valueOf("12.0694219774545"),
+      response.getGeoData().longitude
+    );
+    assertEquals(
+      "Latitude is wrong",
+      Double.valueOf("57.5052694216628"),
+      response.getGeoData().latitude
+    );
   }
 
   @Test

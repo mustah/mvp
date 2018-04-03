@@ -1,11 +1,16 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.Optional;
+import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
+import com.elvaco.mvp.web.dto.geoservice.AddressDto;
+import com.elvaco.mvp.web.dto.geoservice.GeoResponseDto;
 
 import static java.util.Objects.nonNull;
 
@@ -15,6 +20,23 @@ public final class LocationMapper {
   static final IdNamedDto UNKNOWN_ADDRESS = new IdNamedDto("Unknown address");
 
   private LocationMapper() {}
+
+  public static LocationWithId toLocationWithId(GeoResponseDto geoResponse, UUID logicalMeterId) {
+    AddressDto address = geoResponse.address;
+    GeoPositionDto geoData = geoResponse.geoData;
+    GeoCoordinate coordinate = new GeoCoordinate(
+      geoData.latitude,
+      geoData.longitude,
+      geoData.confidence
+    );
+    return new LocationWithId(
+      logicalMeterId,
+      coordinate,
+      address.country,
+      address.city,
+      address.street
+    );
+  }
 
   static Optional<IdNamedDto> toCity(Location location) {
     return Optional.ofNullable(location)
@@ -41,7 +63,6 @@ public final class LocationMapper {
     IdNamedDto address = toAddress(location).orElse(UNKNOWN_ADDRESS);
     IdNamedDto city = toCity(location).orElse(UNKNOWN_CITY);
     GeoPositionDto geoPosition = toGeoPositionDto(location);
-
     return new LocationDto(city, address, geoPosition);
   }
 

@@ -21,6 +21,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -152,7 +153,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     byte[] response = consumer.receiveOne();
     assertThat(response).isNotNull();
-    GetReferenceInfoDto responseDto = deserializeResponseDto(response, GetReferenceInfoDto.class);
+    GetReferenceInfoDto responseDto = deserialize(response, GetReferenceInfoDto.class);
     assertThat(responseDto).isEqualTo(
       new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123")
     );
@@ -171,8 +172,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     return consumer;
   }
 
-  private <T> T deserializeResponseDto(byte[] responseBytes, Class<T> dtoType) {
-    return new MeteringMessageSerializer().deserialize(new String(responseBytes), dtoType);
+  private <T> T deserialize(byte[] responseBytes, Class<T> dtoType) {
+    return MeteringMessageSerializer.deserialize(new String(responseBytes), dtoType);
   }
 
   private byte[] serializeDto(MeteringMessageDto dto) {
