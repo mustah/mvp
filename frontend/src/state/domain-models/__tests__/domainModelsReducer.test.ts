@@ -1,14 +1,21 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
-import {IdNamed} from '../../../types/Types';
+import {Action, IdNamed} from '../../../types/Types';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
 import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
-import {deleteRequestOf, getEntityRequestOf, getRequestOf, postRequestOf, putRequestOf} from '../domainModelsActions';
+import {
+  deleteRequestOf,
+  domainModelsGetSuccess,
+  getEntityRequestOf,
+  getRequestOf,
+  postRequestOf,
+  putRequestOf,
+} from '../domainModelsActions';
 import {addresses, cities, domainModels, gatewayMapMarkers, initialDomain, users} from '../domainModelsReducer';
 import {selectionsSchema} from '../selections/selectionsSchemas';
 import {Role, User, UserState} from '../user/userModels';
@@ -239,6 +246,30 @@ describe('domainModelsReducer', () => {
         total: 1,
       });
     });
+  });
+
+  describe('gatewayMapMarkers', () => {
+
+    it('stores empty result as object, not undefined', () => {
+      const emptyState: NormalizedState<MapMarker> = {
+        ...initialDomain<MapMarker>(),
+        isSuccessfullyFetched: true,
+      };
+
+      const gatewayAction: Action<Normalized<MapMarker>> = {
+        type: domainModelsGetSuccess(EndPoints.gatewayMapMarkers),
+        payload: {
+          result: [],
+          entities: {},
+        },
+      };
+
+      expect(gatewayMapMarkers(emptyState, gatewayAction)).toEqual({
+        ...initialDomain<Gateway>(),
+        isSuccessfullyFetched: true,
+      });
+    });
+
   });
 
   describe('clear domainModels', () => {

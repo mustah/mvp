@@ -15,6 +15,7 @@ dependencies {
   compile project(':backend:database')
   compile project(':backend:web')
   compile project(':backend:rabbitmq-consumer')
+  compile project(':backend:data-generator')
 
   compile 'org.springframework.boot:spring-boot-devtools'
   compile 'org.springframework.boot:spring-boot-starter-web'
