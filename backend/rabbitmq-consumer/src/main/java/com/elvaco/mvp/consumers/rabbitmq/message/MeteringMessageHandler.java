@@ -249,7 +249,7 @@ public class MeteringMessageHandler implements MessageHandler {
           medium,
           manufacturer,
           logicalMeterId,
-          0L, // TODO add real interval here!
+          0L,
           null
         )
     );
