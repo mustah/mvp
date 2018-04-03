@@ -1,9 +1,10 @@
 import {AxiosPromise} from 'axios';
 import {Dispatch} from 'react-redux';
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {InvalidToken, restClient} from '../../services/restClient';
+import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {
   Action,
@@ -48,6 +49,8 @@ const makeAsyncRequest = async <P>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else {
       dispatch(failure(responseMessageOrFallback(error.response)));
     }

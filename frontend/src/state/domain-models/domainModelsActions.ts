@@ -1,15 +1,14 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
 import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {InvalidToken, restClient} from '../../services/restClient';
+import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
-import {NormalizedPaginatedResult} from '../domain-models-paginated/paginatedDomainModels';
-import {limit} from '../ui/pagination/paginationReducer';
 import {DomainModelsState, Normalized, NormalizedState, RequestType} from './domainModels';
 
 type ActionTypeFactory = (endPoint: EndPoints) => string;
@@ -72,6 +71,8 @@ const asyncRequest = async <REQUEST_MODEL, DATA>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else {
       const {response} = error;
       const data: ErrorResponse = response && response.data ||
@@ -180,12 +181,6 @@ export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestC
     dispatch,
   });
 };
-
-export const paginationMetaDataOf = (result: uuid[]): NormalizedPaginatedResult => ({
-  content: result,
-  totalPages: Math.ceil(result.length / limit),
-  totalElements: result.length,
-});
 
 const makeRequestActionsOf = <T>(
   endPoint: EndPoints,

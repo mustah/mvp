@@ -1,10 +1,11 @@
 import {Dispatch} from 'react-redux';
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {EmptyAction, PayloadAction} from 'ts-redux-actions';
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {InvalidToken, restClient} from '../../services/restClient';
+import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
@@ -60,6 +61,8 @@ const asyncRequestEntities = async <DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else {
       const {response} = error;
       const data: ErrorResponse = response && response.data ||
