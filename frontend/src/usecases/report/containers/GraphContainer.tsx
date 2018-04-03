@@ -3,16 +3,7 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {paperStyle} from '../../../app/themes';
 import {HasContent} from '../../../components/content/HasContent';
@@ -59,8 +50,9 @@ const style: React.CSSProperties = {width: '100%', height: '100%'};
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
-  const components: Children[] = lines.map((props: LineProps) => (
+  const components: Children[] = lines.map((props: LineProps, index: number) => (
     <Line
+      key={index}
       yAxisId="left"
       type="monotone"
       dot={false}

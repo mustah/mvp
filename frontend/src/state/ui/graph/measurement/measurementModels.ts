@@ -31,6 +31,7 @@ export interface MeasurementApiResponsePart {
 export interface AverageApiResponsePart {
   quantity: Quantity;
   unit: string;
+  label: string;
   values: Array<{
     when: number;
     value: number;
