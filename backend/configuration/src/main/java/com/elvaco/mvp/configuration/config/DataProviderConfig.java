@@ -49,6 +49,7 @@ import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
+import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.MeasurementQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
@@ -183,7 +184,8 @@ class DataProviderConfig {
       new GatewayQueryFilters(),
       new GatewayMapper(),
       new GatewayWithMetersMapper(newLogicalMeterMapper(), new GatewayStatusLogMapper()),
-      gatewayStatusLogJpaRepository
+      gatewayStatusLogJpaRepository,
+      new GatewayStatusLogQueryFilters()
     );
   }
 

@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
@@ -12,7 +13,9 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.GatewayDto;
@@ -26,6 +29,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
+import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Collections.emptyList;
@@ -39,6 +44,9 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Autowired
   private GatewayJpaRepository gatewayJpaRepository;
+
+  @Autowired
+  private GatewayStatusLogJpaRepository statusLogJpaRepository;
 
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
@@ -61,9 +69,98 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    statusLogJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     organisations.deleteById(dailyPlanet.id);
+  }
+
+  @Test
+  public void fetchGatewayAndStatusForCurrentMonth() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
+
+    saveGatewayStatus(
+      gateway1,
+      OK,
+      date.minusDays(90),
+      date.minusDays(30)
+    );
+
+    saveGatewayStatus(
+      gateway1,
+      WARNING,
+      date.minusDays(30),
+      null
+    );
+
+    saveGatewayStatus(
+      gateway2,
+      OK,
+      date.minusDays(90),
+      null
+    );
+
+    Page<GatewayDto> response = as(context().superAdmin)
+      .getPage(
+        "/gateways"
+        + "?after=" + date.minusDays(30)
+        + "&before=" + date,
+        GatewayDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(2);
+    assertThat(response.getNumberOfElements()).isEqualTo(2);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    assertGatewayStatus(response.getContent().get(0), gateway1, WARNING);
+    assertGatewayStatus(response.getContent().get(1), gateway2, OK);
+  }
+
+  @Test
+  public void fetchGatewayAndStatusForPreviousMonth() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+
+    ZonedDateTime date = ZonedDateTime.parse("2001-04-01T00:00:00.00Z");
+
+    saveGatewayStatus(
+      gateway1,
+      OK,
+      date.minusDays(90),
+      date.minusDays(30)
+    );
+
+    saveGatewayStatus(
+      gateway1,
+      WARNING,
+      date.minusDays(30),
+      null
+    );
+
+    saveGatewayStatus(
+      gateway2,
+      OK,
+      date.minusDays(90),
+      null
+    );
+
+    Page<GatewayDto> response = as(context().superAdmin)
+      .getPage(
+        "/gateways"
+        + "?after=" + date.minusDays(60)
+        + "&before=" + date.minusDays(30),
+        GatewayDto.class
+      );
+
+    assertThat(response.getTotalElements()).isEqualTo(2);
+    assertThat(response.getNumberOfElements()).isEqualTo(2);
+    assertThat(response.getTotalPages()).isEqualTo(1);
+
+    assertGatewayStatus(response.getContent().get(0), gateway1, OK);
+    assertGatewayStatus(response.getContent().get(1), gateway2, OK);
   }
 
   @Test
@@ -99,7 +196,7 @@ public class GatewayControllerTest extends IntegrationTest {
       null,
       "123",
       "2100",
-      StatusType.OK.name,
+      OK.name,
       "2018-04-09 07:45:12",
       new LocationDto(),
       emptyList()
@@ -203,6 +300,20 @@ public class GatewayControllerTest extends IntegrationTest {
     assertSameMapMarker(cityResponse, mapMarker);
   }
 
+  private void assertGatewayStatus(
+    GatewayDto actalGateway,
+    Gateway expectedGateway,
+    StatusType expectedStatus
+  ) {
+    assertThat(actalGateway.id.toString())
+      .as("Unexpected gateway id")
+      .isEqualTo(expectedGateway.id.toString());
+
+    assertThat(actalGateway.status)
+      .as("Unexpected status")
+      .isEqualTo(expectedStatus.name);
+  }
+
   private Gateway saveGateway(UUID organisationId) {
     return gateways.save(new Gateway(
       randomUUID(),
@@ -219,5 +330,22 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).hasSize(1);
     assertThat(response.getBody().get(0)).isEqualTo(mapMarker);
+  }
+
+  private void saveGatewayStatus(
+    Gateway gateway,
+    StatusType status,
+    ZonedDateTime start,
+    @Nullable ZonedDateTime stop
+  ) {
+    statusLogJpaRepository.save(
+      new GatewayStatusLogEntity(
+        null,
+        gateway.id,
+        status,
+        start,
+        stop
+      )
+    );
   }
 }

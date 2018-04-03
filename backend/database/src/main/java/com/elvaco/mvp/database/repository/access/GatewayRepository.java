@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.PageAdapter;
+import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
@@ -22,13 +23,13 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.elvaco.mvp.database.entity.gateway.QGatewayStatusLogEntity.gatewayStatusLogEntity;
 import static java.util.stream.Collectors.toList;
 
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository repository;
   private final QueryFilters gatewayQueryFilters;
+  private final QueryFilters gatewayStatusLogQueryFilters;
   private final GatewayMapper mapper;
   private final GatewayWithMetersMapper gatewayWithMetersMapper;
   private final GatewayStatusLogJpaRepository statusLogJpaRepository;
@@ -38,13 +39,15 @@ public class GatewayRepository implements Gateways {
     QueryFilters gatewayQueryFilters,
     GatewayMapper mapper,
     GatewayWithMetersMapper gatewayWithMetersMapper,
-    GatewayStatusLogJpaRepository statusLogJpaRepository
+    GatewayStatusLogJpaRepository statusLogJpaRepository,
+    QueryFilters gatewayStatusLogQueryFilters
   ) {
     this.repository = repository;
     this.gatewayQueryFilters = gatewayQueryFilters;
     this.mapper = mapper;
     this.gatewayWithMetersMapper = gatewayWithMetersMapper;
     this.statusLogJpaRepository = statusLogJpaRepository;
+    this.gatewayStatusLogQueryFilters = gatewayStatusLogQueryFilters;
   }
 
   @Override
@@ -66,7 +69,7 @@ public class GatewayRepository implements Gateways {
     );
 
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
-      .findAllGroupedByGatewayId(toPredicate(all.getContent()));
+      .findAllGroupedByGatewayId(toStatusPredicate(all.getContent(), parameters));
 
     return new PageAdapter<>(
       all.map((entity) -> gatewayWithMetersMapper.toDomainModel(entity, statusLogMap))
@@ -79,7 +82,7 @@ public class GatewayRepository implements Gateways {
     List<GatewayEntity> gateways = repository.findAllByOrganisationId(organisationId);
 
     Map<UUID, List<GatewayStatusLogEntity>> statusLogMap = statusLogJpaRepository
-      .findAllGroupedByGatewayId(toPredicate(gateways));
+      .findAllGroupedByGatewayId(toStatusPredicate(gateways));
 
     return toGateways(gateways, statusLogMap);
   }
@@ -128,17 +131,24 @@ public class GatewayRepository implements Gateways {
       .collect(toList());
   }
 
-  private Predicate toPredicate(List<GatewayEntity> content) {
-    return gatewayStatusLogEntity.gatewayId.in(getGatewayIds(content));
+  private Predicate toStatusPredicate(List<GatewayEntity> content) {
+    return toStatusPredicate(content, new RequestParametersAdapter());
+  }
+
+  private Predicate toStatusPredicate(List<GatewayEntity> content, RequestParameters parameters) {
+    //TODO seems risky to modify, clone parameters
+    parameters.setAll("gatewayId", getGatewayIds(content));
+
+    return gatewayStatusLogQueryFilters.toExpression(parameters);
   }
 
   private Predicate toPredicate(RequestParameters parameters) {
     return gatewayQueryFilters.toExpression(parameters);
   }
 
-  private List<UUID> getGatewayIds(List<GatewayEntity> gatewayEntities) {
+  private List<String> getGatewayIds(List<GatewayEntity> gatewayEntities) {
     return gatewayEntities.stream()
-      .map(gatewayEntity -> gatewayEntity.id)
+      .map(gatewayEntity -> gatewayEntity.id.toString())
       .collect(toList());
   }
 }

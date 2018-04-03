@@ -40,6 +40,7 @@ public class GatewayStatusLogJpaRepositoryImpl
     QGatewayStatusLogEntity gatewayStatusLog = QGatewayStatusLogEntity.gatewayStatusLogEntity;
     return query.from(gatewayStatusLog)
       .where(predicate)
+      .orderBy(gatewayStatusLog.start.desc(), gatewayStatusLog.stop.desc())
       .transform(groupBy(gatewayStatusLog.gatewayId).as(GroupBy.list(gatewayStatusLog)));
   }
 }
