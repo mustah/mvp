@@ -305,9 +305,9 @@ public class GatewayControllerTest extends IntegrationTest {
     Gateway expectedGateway,
     StatusType expectedStatus
   ) {
-    assertThat(actalGateway.id.toString())
+    assertThat(actalGateway.id)
       .as("Unexpected gateway id")
-      .isEqualTo(expectedGateway.id.toString());
+      .isEqualTo(expectedGateway.id);
 
     assertThat(actalGateway.status)
       .as("Unexpected status")

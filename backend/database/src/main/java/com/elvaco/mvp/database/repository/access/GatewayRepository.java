@@ -135,11 +135,14 @@ public class GatewayRepository implements Gateways {
     return toStatusPredicate(content, new RequestParametersAdapter());
   }
 
-  private Predicate toStatusPredicate(List<GatewayEntity> content, RequestParameters parameters) {
-    //TODO seems risky to modify, clone parameters
-    parameters.setAll("gatewayId", getGatewayIds(content));
+  private Predicate toStatusPredicate(
+    List<GatewayEntity> content,
+    RequestParameters parameters
+  ) {
+    RequestParameters newParameters = parameters.shallowCopy();
+    newParameters.setAll("gatewayId", getGatewayIds(content));
 
-    return gatewayStatusLogQueryFilters.toExpression(parameters);
+    return gatewayStatusLogQueryFilters.toExpression(newParameters);
   }
 
   private Predicate toPredicate(RequestParameters parameters) {

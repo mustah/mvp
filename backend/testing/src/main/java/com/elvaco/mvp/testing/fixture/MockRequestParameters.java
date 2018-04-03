@@ -17,7 +17,11 @@ public class MockRequestParameters implements RequestParameters {
   private final Map<String, List<String>> map;
 
   public MockRequestParameters() {
-    this.map = new HashMap<>();
+    this(new HashMap<>());
+  }
+
+  public MockRequestParameters(Map<String, List<String>> map) {
+    this.map = map;
   }
 
   @Override
@@ -77,5 +81,10 @@ public class MockRequestParameters implements RequestParameters {
   @Override
   public boolean isEmpty() {
     return map.isEmpty();
+  }
+
+  @Override
+  public RequestParameters shallowCopy() {
+    return new MockRequestParameters(new HashMap<>(map));
   }
 }
