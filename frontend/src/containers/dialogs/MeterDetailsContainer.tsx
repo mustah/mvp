@@ -55,12 +55,16 @@ class MeterDetails extends React.Component<MeterDetailsContainerProps> {
 }
 
 const mapStateToProps = (
-  {domainModels: {meterMapMarkers}, paginatedDomainModels: {meters}}: RootState,
+  {
+    domainModels: {meterMapMarkers},
+    paginatedDomainModels: {meters},
+  }: RootState,
   {meterId}: OwnProps,
-): StateToProps => ({
-  meter: getMeter(meters, meterId),
-  meterMapMarker: getMapMarker(meterMapMarkers, meterId),
-});
+): StateToProps =>
+  ({
+    meter: getMeter(meters, meterId),
+    meterMapMarker: getMapMarker(meterMapMarkers, meterId),
+  });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchMeter,

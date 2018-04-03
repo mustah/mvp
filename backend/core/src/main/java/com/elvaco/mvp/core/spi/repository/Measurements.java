@@ -37,4 +37,8 @@ public interface Measurements {
     String quantity,
     ZonedDateTime when
   );
+
+  List<Measurement> findLatestValues(
+    UUID physicalMeterId
+  );
 }

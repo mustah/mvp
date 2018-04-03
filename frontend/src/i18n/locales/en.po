@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-02 23:48+0200\n"
+"POT-Creation-Date: 2018-04-10 10:25+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -173,8 +173,8 @@ msgstr "sap ID"
 msgid "facility id"
 msgstr "facility ID"
 
-msgid "measure id"
-msgstr "measure ID"
+msgid "never collected"
+msgstr "never collected"
 
 msgid "latest value"
 msgstr "latest"
@@ -190,6 +190,9 @@ msgstr "quantity"
 
 msgid "value"
 msgstr "value"
+
+msgid "collected at"
+msgstr "collected at"
 
 msgid "show only changes"
 msgstr "show only changes"
@@ -239,6 +242,14 @@ msgstr "flagged"
 msgid "unFlagged"
 msgstr "no flag"
 
+msgid "token missing or invalid"
+msgstr ""
+"you've been logged out - session has expired, please log in again to "
+"continue."
+
+msgid "bad credentials"
+msgstr "bad credentials"
+
 msgid "an unexpected error occurred"
 msgstr "an unexpected error occurred"
 
@@ -277,9 +288,6 @@ msgstr "successfully deleted the user {{name}} ({{email}})"
 
 msgid "failed to delete the user: {{error}}"
 msgstr "failed to delete the user: {{error}}"
-
-msgid "average"
-msgstr "average"
 
 msgid "users"
 msgstr "users"
@@ -380,12 +388,6 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
-msgid "token missing or invalid"
-msgstr "you've been logged out - session has expired, please log in again to continue."
-
-msgid "bad credentials"
-msgstr "bad credentials"
-
 msgid "{{count}} meters are not displayed in the map due to low accuracy"
 msgstr "{{count}} meter is not displayed in the map due to low accuracy"
 
@@ -416,6 +418,18 @@ msgstr "alarms"
 msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
 msgstr "{{count}} meters are not displayed in the map due to low accuracy"
+
+#~ msgid "no data for time period"
+#~ msgstr "no data for time period"
+
+#~ msgid "measured at"
+#~ msgstr "measured at"
+
+#~ msgid "measure id"
+#~ msgstr "measure ID"
+
+#~ msgid "average"
+#~ msgstr "average"
 
 #~ msgid "n/a"
 #~ msgstr "N/A"

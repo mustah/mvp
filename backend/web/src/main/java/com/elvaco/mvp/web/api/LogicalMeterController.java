@@ -48,7 +48,7 @@ public class LogicalMeterController {
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
-    return logicalMeterUseCases.findById(id)
+    return logicalMeterUseCases.findByIdWithMeasurements(id)
       .map(logicalMeterMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
@@ -63,6 +63,8 @@ public class LogicalMeterController {
 
   @GetMapping("{id}/measurements")
   public List<MeasurementDto> measurements(@PathVariable UUID id) {
+    // TODO remove this endpoint
+    //throw new RuntimeException("DELETE THIS ENDPOINT");
     LogicalMeter logicalMeter = logicalMeterUseCases
       .findById(id)
       .orElseThrow(() -> new MeterNotFound(id));
@@ -79,7 +81,11 @@ public class LogicalMeterController {
     Pageable pageable
   ) {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
-    return filterLogicalMeterDtos(parameters, pageable);
+    PageableAdapter adapter = new PageableAdapter(pageable);
+    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
+
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+      .map(logicalMeterMapper::toDto);
   }
 
   private Supplier<RequestParameters> lazyRequestParameters(LogicalMeter logicalMeter) {
@@ -98,13 +104,4 @@ public class LogicalMeterController {
     };
   }
 
-  private org.springframework.data.domain.Page<LogicalMeterDto> filterLogicalMeterDtos(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    PageableAdapter adapter = new PageableAdapter(pageable);
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
-    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(logicalMeterMapper::toDto);
-  }
 }

@@ -5,7 +5,7 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
+import {RenderableQuantity} from '../../../domain-models-paginated/meter/meterModels';
 import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
@@ -171,7 +171,6 @@ export const fetchMeasurements =
     }
 
     if (selectedListItems.length > 1) {
-      // TODO make sure timePeriod is not a Maybe, coming in Must's future MR
       const averageUrl = makeUrl(
         EndPoints.measurements.concat('/average'),
         measurementUri(quantities, selectedListItems, timePeriod),

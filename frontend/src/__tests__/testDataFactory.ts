@@ -151,6 +151,10 @@ export const makeMeter = (id: number, city: IdNamed, address: IdNamed): Meter =>
       },
     },
     statusChangelog: [],
+    created: '',
+    collectionStatus: '',
+    readIntervalMinutes: 60,
+    measurements: [],
   }
 );
 

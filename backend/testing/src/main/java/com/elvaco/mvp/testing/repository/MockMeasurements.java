@@ -75,6 +75,11 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
+  public List<Measurement> findLatestValues(UUID physicalMeterId) {
+    throw new UnsupportedOperationException("findLatestValues not implemented!");
+  }
+
+  @Override
   protected Measurement copyWithId(Long id, Measurement entity) {
     return new Measurement(
       id,

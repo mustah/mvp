@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-02 23:17+0200\n"
+"POT-Creation-Date: 2018-04-10 10:24+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -173,8 +173,8 @@ msgstr "sap-ID"
 msgid "facility id"
 msgstr "anläggnings-ID"
 
-msgid "measure id"
-msgstr "mät-ID"
+msgid "never collected"
+msgstr "har aldrig insamlats"
 
 msgid "latest value"
 msgstr "senaste"
@@ -190,6 +190,9 @@ msgstr "storhet"
 
 msgid "value"
 msgstr "värde"
+
+msgid "collected at"
+msgstr "insamlades"
 
 msgid "show only changes"
 msgstr "visa bara ändringar"
@@ -239,6 +242,14 @@ msgstr "flaggad"
 msgid "unFlagged"
 msgstr "ej flaggad"
 
+msgid "token missing or invalid"
+msgstr ""
+"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för "
+"att fortsätta."
+
+msgid "bad credentials"
+msgstr "felaktigt användarnamn eller lösenord"
+
 msgid "an unexpected error occurred"
 msgstr "ett oväntat fel inträffade"
 
@@ -278,9 +289,6 @@ msgstr "användaren {{name}} ({{email}}) togs bort"
 msgid "failed to delete the user: {{error}}"
 msgstr "misslyckades med att ta bort användare: {{error}}"
 
-msgid "average"
-msgstr "medelvärde"
-
 msgid "users"
 msgstr "användare"
 
@@ -309,7 +317,8 @@ msgid "no gateways"
 msgstr "inga gateways"
 
 msgid "{{count}} gateways are not displayed in the map due to low accuracy"
-msgstr "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "list"
 msgstr "lista"
@@ -380,14 +389,9 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
-msgid "token missing or invalid"
-msgstr "du är utloggad, för att du har varit inaktiv för länge. Logga in igen för att fortsätta."
-
-msgid "bad credentials"
-msgstr "felaktigt användarnamn eller lösenord"
-
 msgid "{{count}} meters are not displayed in the map due to low accuracy"
-msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
@@ -407,7 +411,8 @@ msgstr "mätare"
 
 msgctxt "°plural"
 msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
-msgstr "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "alarm°"
@@ -415,7 +420,20 @@ msgstr "larm"
 
 msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
-msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr ""
+"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+
+#~ msgid "no data for time period"
+#~ msgstr "ingen data inom tidsperiod"
+
+#~ msgid "measured at"
+#~ msgstr "uppmättes"
+
+#~ msgid "measure id"
+#~ msgstr "mät-ID"
+
+#~ msgid "average"
+#~ msgstr "medelvärde"
 
 #~ msgid "n/a"
 #~ msgstr "ej tillämpbar"

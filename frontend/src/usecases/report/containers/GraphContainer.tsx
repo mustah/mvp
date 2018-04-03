@@ -27,7 +27,7 @@ import {
 import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
-import {allQuantities, emptyGraphContents} from '../reportHelpers';
+import {allQuantities} from '../../../state/domain-models-paginated/meter/meterModels';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -81,9 +81,20 @@ const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 
 const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDate(when);
 
+const emptyGraphContents: GraphContents = {
+  axes: {},
+  data: [],
+  legend: [],
+  lines: [],
+};
+
 class GraphComponent extends React.Component<Props> {
 
   state: State = {graphContents: emptyGraphContents};
+  onChangeTab = () => void(0);
+  changeQuantities = (event, index, values) => {
+    this.props.selectQuantities(values);
+  }
 
   async componentDidMount() {
     const {selectedListItems, period, selectedQuantities} = this.props;
@@ -199,19 +210,13 @@ class GraphComponent extends React.Component<Props> {
     );
   }
 
-  onChangeTab = () => void(0);
-
-  changeQuantities = (event, index, values) => {
-    this.props.selectQuantities(values);
-  }
-
 }
 
 const mapStateToProps = ({
-                           report: {selectedListItems},
-                           searchParameters: {selection: {selected: {period}}},
-                           ui: {measurements: {selectedQuantities}},
-                         }: RootState): StateToProps =>
+  report: {selectedListItems},
+  searchParameters: {selection: {selected: {period}}},
+  ui: {measurements: {selectedQuantities}},
+}: RootState): StateToProps =>
   ({
     selectedListItems,
     period,
