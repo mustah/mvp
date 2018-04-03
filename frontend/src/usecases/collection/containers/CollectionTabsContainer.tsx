@@ -21,27 +21,13 @@ import {getGatewayParameters} from '../../../state/search/selection/selectionSel
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {OnChangePage} from '../../../state/ui/pagination/paginationModels';
 import {changeTabCollection} from '../../../state/ui/tabs/tabsActions';
-import {
-  TabName,
-  TabsContainerDispatchToProps,
-  TabsContainerStateToProps,
-} from '../../../state/ui/tabs/tabsModels';
+import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
-import {
-  ClearError,
-  EncodedUriParameters,
-  ErrorResponse,
-  Fetch,
-  OnClick,
-  uuid,
-} from '../../../types/Types';
+import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {isMarkersWithinThreshold} from '../../map/containers/clusterHelper';
+import {metersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
-import {
-  clearErrorGatewayMapMarkers,
-  fetchGatewayMapMarkers,
-} from '../../map/gatewayMapMarkerApiActions';
+import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/gatewayMapMarkerApiActions';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
@@ -87,8 +73,6 @@ class CollectionTabs extends React.Component<Props> {
       clearError,
     } = this.props;
 
-    const hasGateways: boolean = isMarkersWithinThreshold(gatewayMapMarkers.entities);
-
     const dialog = selectedMarker.isJust() && (
       <Dialog isOpen={true} close={closeClusterDialog}>
         <GatewayDetailsContainer gatewayId={selectedMarker.get()}/>
@@ -97,6 +81,14 @@ class CollectionTabs extends React.Component<Props> {
 
     const noGatewaysFallbackContent =
       <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
+
+    const gatewaysWithoutConfidence = gatewayMapMarkers.result.length -
+      metersWithinThreshold(gatewayMapMarkers.entities).length;
+    const someAreHidden = gatewaysWithoutConfidence
+      ? firstUpperTranslated('{{count}} gateways are not displayed in the map due to low accuracy', {
+        count: gatewaysWithoutConfidence,
+      })
+      : undefined;
 
     return (
       <Tabs>
@@ -113,8 +105,11 @@ class CollectionTabs extends React.Component<Props> {
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
-              <HasContent hasContent={hasGateways} fallbackContent={noGatewaysFallbackContent}>
-                <Map defaultZoom={7}>
+              <HasContent hasContent={gatewayMapMarkers.result.length > 0} fallbackContent={noGatewaysFallbackContent}>
+                <Map
+                  defaultZoom={7}
+                  someAreHidden={someAreHidden}
+                >
                   <ClusterContainer markers={gatewayMapMarkers.entities}/>
                 </Map>
               </HasContent>

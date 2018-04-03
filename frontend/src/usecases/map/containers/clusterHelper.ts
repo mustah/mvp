@@ -25,11 +25,10 @@ const makeMarker = (marker: MapMarker): Marker => ({
   },
 });
 
-export const isMarkersWithinThreshold = (markers: Dictionary<MapMarker>): boolean => {
+export const metersWithinThreshold = (markers: Dictionary<MapMarker>): MapMarker[] => {
   return markers && Object.keys(markers)
     .map((key: string) => markers[key])
-    .filter(isGeoPositionWithinThreshold)
-    .length >= 0;
+    .filter(isGeoPositionWithinThreshold);
 };
 
 export const isGeoPositionWithinThreshold =

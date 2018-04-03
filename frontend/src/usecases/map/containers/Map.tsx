@@ -4,6 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
+import Control from 'react-leaflet-control';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
@@ -17,6 +18,7 @@ interface Props {
   defaultZoom?: number;
   viewCenter?: GeoPosition;
   children?: React.ReactElement<any>;
+  someAreHidden?: string;
 }
 
 const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
@@ -75,49 +77,54 @@ const boundsFromMarkers = (markers: MarkerClusterGroup): Maybe<LatLngTuple[]> =>
 const defaultCenter: LatLngTuple = [62.3919741, 15.0685715];
 
 export const Map = (props: Props) => {
-    const {
-      height,
-      width,
-      defaultZoom = 4,
-      viewCenter,
-      children,
-    } = props;
+  const {
+    height,
+    width,
+    defaultZoom = 4,
+    viewCenter,
+    children,
+    someAreHidden,
+  } = props;
 
-    const style = {height, width};
+  const style = {height, width};
 
-    const centerProps: MapProps = {};
+  const centerProps: MapProps = {};
 
-    if (viewCenter) {
-      centerProps.center = [viewCenter.latitude, viewCenter.longitude];
+  if (viewCenter) {
+    centerProps.center = [viewCenter.latitude, viewCenter.longitude];
+  } else if (children && children.props && children.props.markers) {
+    const bounds = boundsFromMarkers(children.props.markers);
+    if (bounds.isJust()) {
+      centerProps.bounds = bounds.get();
     } else {
-      if (children && children.props && children.props.markers) {
-        const bounds = boundsFromMarkers(children.props.markers);
-        if (bounds.isJust()) {
-          centerProps.bounds = bounds.get();
-        } else {
-          centerProps.center = defaultCenter;
-        }
-      } else {
-        centerProps.center = defaultCenter;
-      }
+      centerProps.center = defaultCenter;
     }
-
-    return (
-      <Column>
-        <LeafletMap
-          maxZoom={18}
-          minZoom={3}
-          zoom={defaultZoom}
-          className="Map"
-          scrollWheelZoom={false}
-          onclick={toggleScrollWheelZoom}
-          style={style}
-          {...centerProps}
-        >
-          <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
-          {children}
-        </LeafletMap>
-      </Column>
-    );
+  } else {
+    centerProps.center = defaultCenter;
   }
-;
+
+  const noticeAboutHidden = someAreHidden ? (
+    <Control position="topright" className="low-confidence-container">
+      <p>{someAreHidden}</p>
+    </Control>
+  ) : null;
+
+  return (
+    <Column>
+      <LeafletMap
+        maxZoom={18}
+        minZoom={3}
+        zoom={defaultZoom}
+        className="Map"
+        scrollWheelZoom={false}
+        onclick={toggleScrollWheelZoom}
+        style={style}
+        {...centerProps}
+      >
+        {noticeAboutHidden}
+        <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
+        {children}
+      </LeafletMap>
+    </Column>
+  );
+};

@@ -10,7 +10,7 @@ import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {Dictionary, OnClick} from '../../../../types/Types';
 import {ClusterContainer} from '../../../map/containers/ClusterContainer';
-import {isMarkersWithinThreshold} from '../../../map/containers/clusterHelper';
+import {metersWithinThreshold} from '../../../map/containers/clusterHelper';
 import {Map} from '../../../map/containers/Map';
 import {closeClusterDialog} from '../../../map/mapActions';
 import {MapMarker} from '../../../map/mapModels';
@@ -32,7 +32,7 @@ interface DispatchToProps {
 type Props = StateToProps & DispatchToProps & OwnProps;
 
 const MapWidgets = ({markers, map, closeClusterDialog}: Props) => {
-  const hasMeters: boolean = isMarkersWithinThreshold(markers);
+  const hasMeters: boolean = metersWithinThreshold(markers).length > 0;
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
     <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
