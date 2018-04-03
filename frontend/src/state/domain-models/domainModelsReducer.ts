@@ -39,7 +39,7 @@ const setEntities = <T extends Identifiable>(
   state: NormalizedState<T>,
   {payload}: Action<Normalized<T>>,
 ): NormalizedState<T> => {
-  const entities: ObjectsById<T> = payload.entities[entity];
+  const entities: ObjectsById<T> = entity in payload.entities ? payload.entities[entity] : {};
   if (Array.isArray(payload.result)) {
     const {result} = payload;
     return {
@@ -51,7 +51,7 @@ const setEntities = <T extends Identifiable>(
       total: result.length,
     };
   } else {
-    const result = entities ? Object.keys(entities) : [];
+    const result = Object.keys(entities);
     return {
       ...state,
       isFetching: false,

@@ -4,7 +4,7 @@ import {
   isGeoPositionWithinThreshold,
   isMapMarker,
   makeLeafletCompatibleMarkersFrom,
-  metersWithinThreshold
+  metersWithinThreshold,
 } from '../clusterHelper';
 
 describe('clusterHelper', () => {
