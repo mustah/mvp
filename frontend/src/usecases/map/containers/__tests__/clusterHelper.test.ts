@@ -1,6 +1,11 @@
 import {Dictionary, Status} from '../../../../types/Types';
 import {MapMarker, Marker} from '../../mapModels';
-import {isGeoPositionWithinThreshold, isMapMarker, makeLeafletCompatibleMarkersFrom} from '../clusterHelper';
+import {
+  isGeoPositionWithinThreshold,
+  isMapMarker,
+  makeLeafletCompatibleMarkersFrom,
+  metersWithinThreshold
+} from '../clusterHelper';
 
 describe('clusterHelper', () => {
 
@@ -117,5 +122,34 @@ describe('clusterHelper', () => {
       expect(isMapMarker(markers)).toBe(false);
     });
   });
+
+  describe('metersWithinThreshold', () => {
+
+    it('can handle undefined input', () => {
+      expect(metersWithinThreshold(undefined!)).toEqual([]);
+    });
+
+    it('filters out meters with low threshold, like 0.1', () => {
+      const filteredMeters = metersWithinThreshold({
+        asdf: {
+          latitude: 1,
+          longitude: 2,
+          confidence: 1,
+          status: Status.ok,
+          id: 'asdf',
+        },
+        asdf2: {
+          latitude: 1,
+          longitude: 2,
+          confidence: 0.1,
+          status: Status.ok,
+          id: 'asdf2',
+        },
+      });
+      expect(filteredMeters.length).toEqual(1);
+    });
+
+  });
+
 })
 ;
