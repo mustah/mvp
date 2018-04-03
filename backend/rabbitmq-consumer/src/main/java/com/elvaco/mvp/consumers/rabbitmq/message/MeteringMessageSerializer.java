@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.time.LocalDateTime;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,11 +19,15 @@ public class MeteringMessageSerializer {
         LocalDateTime.parse(json.getAsString())
     ).create();
 
-  public <T extends MeteringMessageDto> T deserialize(String json, Class<T> classOfT) {
+  public <T> T deserialize(String json, Class<T> classOfT) {
     return GSON.fromJson(json, classOfT);
   }
 
   public <T extends MeteringMessageDto> String serialize(T obj) {
+    return GSON.toJson(obj);
+  }
+
+  public <T extends MeteringResponseDto> String serialize(T obj) {
     return GSON.toJson(obj);
   }
 }

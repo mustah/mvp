@@ -376,8 +376,8 @@ public class MessageHandlerTest {
 
   @Test
   public void ignoresAlarmsWithoutCrashing() {
-    messageHandler.handle(newAlarmMessageWithoutAlarms());
-    messageHandler.handle(newAlarmMessageWithTwoAlarms());
+    assertThat(messageHandler.handle(newAlarmMessageWithoutAlarms())).isEmpty();
+    assertThat(messageHandler.handle(newAlarmMessageWithTwoAlarms())).isEmpty();
   }
 
   @Test

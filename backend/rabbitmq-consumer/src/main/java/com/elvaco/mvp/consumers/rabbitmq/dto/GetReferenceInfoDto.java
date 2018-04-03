@@ -9,11 +9,11 @@ import lombok.ToString;
 @ToString
 public class GetReferenceInfoDto implements MeteringResponseDto {
 
-  private String organisationExternalId;
+  public final String organisationExternalId;
   @Nullable
-  private String meterExternalId;
+  public final String meterExternalId;
   @Nullable
-  private String gatewayExternalId;
+  public final String gatewayExternalId;
 
   public GetReferenceInfoDto(
     String organisationExternalId,
