@@ -174,7 +174,9 @@ public class MeteringMessageReceiverTest {
     }
 
     @Override
-    public Optional<MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage) {
+    public Optional<? extends MeteringResponseDto> handle(
+      MeteringMeasurementMessageDto measurementMessage
+    ) {
       measurementMessageReceived = true;
       return Optional.empty();
     }

@@ -1,5 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.GetReferenceInfoDto;
 
 class GetReferenceInfoDtoBuilder {
@@ -12,18 +14,18 @@ class GetReferenceInfoDtoBuilder {
     this.organisationId = organisationId;
   }
 
-  public void setMeterExternalId(String meterExternalId) {
+  public Optional<GetReferenceInfoDto> build() {
+    if (meterExternalId == null && gatewayExternalId == null) {
+      return Optional.empty();
+    }
+    return Optional.of(new GetReferenceInfoDto(organisationId, meterExternalId, gatewayExternalId));
+  }
+
+  void setMeterExternalId(String meterExternalId) {
     this.meterExternalId = meterExternalId;
   }
 
-  public GetReferenceInfoDto build() {
-    if (meterExternalId == null && gatewayExternalId == null) {
-      return null;
-    }
-    return new GetReferenceInfoDto(organisationId, meterExternalId, gatewayExternalId);
-  }
-
-  public void setGatewayExternalId(String gatewayExternalId) {
+  void setGatewayExternalId(String gatewayExternalId) {
     this.gatewayExternalId = gatewayExternalId;
   }
 }

@@ -106,7 +106,9 @@ public class MeteringMessageHandler implements MessageHandler {
   }
 
   @Override
-  public Optional<MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage) {
+  public Optional<? extends MeteringResponseDto> handle(
+    MeteringMeasurementMessageDto measurementMessage
+  ) {
     Organisation organisation = findOrCreateOrganisation(measurementMessage.organisationId);
 
     String medium = selectMeterDefinition(measurementMessage.values).medium;
@@ -195,7 +197,7 @@ public class MeteringMessageHandler implements MessageHandler {
     );
     physicalMeterUseCases.save(physicalMeter);
     measurementUseCases.save(measurements);
-    return Optional.ofNullable(referenceInfoDtoBuilder.build());
+    return referenceInfoDtoBuilder.build();
   }
 
   @Override

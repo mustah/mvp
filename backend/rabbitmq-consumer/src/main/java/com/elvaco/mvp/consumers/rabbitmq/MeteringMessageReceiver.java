@@ -41,7 +41,7 @@ public class MeteringMessageReceiver {
       throw new RuntimeException("Malformed metering message: " + ellipsize(messageStr, 40));
     }
 
-    Optional<MeteringResponseDto> responseDto;
+    Optional<? extends MeteringResponseDto> responseDto;
     if (messageDto instanceof MeteringAlarmMessageDto) {
       responseDto = handler.handle((MeteringAlarmMessageDto) messageDto);
     } else if (messageDto instanceof MeteringMeasurementMessageDto) {

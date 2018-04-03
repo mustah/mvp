@@ -9,9 +9,9 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 
 public interface MessageHandler {
 
-  Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage);
+  Optional<? extends MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage);
 
-  Optional<MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage);
+  Optional<? extends MeteringResponseDto> handle(MeteringMeasurementMessageDto measurementMessage);
 
-  Optional<MeteringResponseDto> handle(MeteringAlarmMessageDto alarmMessage);
+  Optional<? extends MeteringResponseDto> handle(MeteringAlarmMessageDto alarmMessage);
 }
