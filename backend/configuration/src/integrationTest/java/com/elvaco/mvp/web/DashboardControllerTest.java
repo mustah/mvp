@@ -8,9 +8,9 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -47,6 +47,13 @@ public class DashboardControllerTest extends IntegrationTest {
     new OrganisationMapper(),
     new MeterStatusLogMapper()
   );
+  private final Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
+  private final Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
+  private final Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
+  private final Quantity quantityFlow = Quantity.FLOW;
+  private final Quantity quantityPower = Quantity.POWER;
+  private final Quantity quantityVolume = Quantity.VOLUME;
+  private final Quantity quantityEnergy = Quantity.ENERGY;
   private double measurementCount = 0.0;
   private double measurementFailedCount = 0.0;
   private ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
@@ -59,8 +66,6 @@ public class DashboardControllerTest extends IntegrationTest {
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
 
   @Before
   public void setUp() {
@@ -84,7 +89,8 @@ public class DashboardControllerTest extends IntegrationTest {
     createMeasurementMockData(
       physicalMeters,
       startDate,
-      Duration.between(startDate, beforeDate).toDays()
+      Duration.between(startDate, beforeDate).toDays(),
+      MeterDefinition.DISTRICT_HEATING_METER.quantities.size()
     );
   }
 
@@ -140,8 +146,8 @@ public class DashboardControllerTest extends IntegrationTest {
       .isEqualTo(measurementCount + measurementFailedCount);
 
     assertThat(dashboardDtos.widgets.get(0).pending)
-      .as("Unexpected number of successful measurements")
-      .isEqualTo(measurementCount);
+      .as("Unexpected number of remaining measurements")
+      .isEqualTo(measurementFailedCount);
   }
 
   private List<PhysicalMeterStatusLogEntity> newStatusLogs(
@@ -167,14 +173,13 @@ public class DashboardControllerTest extends IntegrationTest {
   private void createMeasurementMockData(
     List<PhysicalMeterEntity> meters,
     ZonedDateTime startDate,
-    long dayCount
+    long dayCount,
+    long quantityCount
   ) {
-    MeasurementUnit measurementUnit = new MeasurementUnit("m^3", 2.0);
 
     for (int x = 0; x < meters.size(); x++) {
       measurementJpaRepository.save(createMeasurements(
         meters.get(x),
-        measurementUnit,
         startDate,
         meters.get(x).readIntervalMinutes,
         dayCount * 1440 / meters.get(x).readIntervalMinutes
@@ -195,7 +200,6 @@ public class DashboardControllerTest extends IntegrationTest {
    */
   private List<MeasurementEntity> createMeasurements(
     PhysicalMeterEntity physicalMeterEntity,
-    MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,
     long interval,
     long values
@@ -204,18 +208,68 @@ public class DashboardControllerTest extends IntegrationTest {
 
     for (int x = 0; x < values; x++) {
       if (random.nextInt(10) >= 8) {
-        measurementFailedCount++;
+        measurementFailedCount = measurementFailedCount + 7;
         continue;
       }
+
+      ZonedDateTime created = measurementDate.plusMinutes(x * interval);
+
       measurementEntities.add(new MeasurementEntity(
-        null,
-        measurementDate.plusMinutes(x * interval),
-        String.valueOf(x),
-        measurementUnit,
+        created,
+        quantityForward.name,
+        x,
+        quantityForward.unit,
         physicalMeterEntity
       ));
 
-      measurementCount++;
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityReturn.name,
+        x,
+        quantityReturn.unit,
+        physicalMeterEntity
+      ));
+
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityDiff.name,
+        x,
+        quantityDiff.unit,
+        physicalMeterEntity
+      ));
+
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityFlow.name,
+        x,
+        quantityFlow.unit,
+        physicalMeterEntity
+      ));
+
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityPower.name,
+        x,
+        quantityPower.unit,
+        physicalMeterEntity
+      ));
+
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityVolume.name,
+        x,
+        quantityVolume.unit,
+        physicalMeterEntity
+      ));
+      measurementEntities.add(new MeasurementEntity(
+        created,
+        quantityEnergy.name,
+        x,
+        quantityEnergy.unit,
+        physicalMeterEntity
+      ));
+
+      measurementCount = measurementCount + 7;
     }
 
     return measurementEntities;

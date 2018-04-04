@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.domainmodels.CollectionStats;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -26,14 +25,32 @@ public class DashboardUseCases {
   }
 
   public Optional<CollectionStats> getMeasurementsStatistics(RequestParameters parameters) {
-    List<PhysicalMeter> meterList = logicalMeters.findAll(
+    List<CollectionStats> meterStats = logicalMeters.findAll(
       setCurrentUsersOrganisationId(currentUser, parameters)
     )
       .stream()
-      .map(logicalMeter -> logicalMeter.physicalMeters)
-      .flatMap(physicalMeters -> physicalMeters.stream())
+      .map(logicalMeter -> LogicalMeterUseCases.getCollectionPercent(
+        logicalMeter.physicalMeters,
+        parameters,
+        logicalMeter.meterDefinition.quantities.size()
+           )
+      )
+      .filter(collectionStats -> collectionStats.isPresent())
+      .map(collectionStats -> collectionStats.get())
       .collect(toList());
 
-    return LogicalMeterUseCases.getCollectionPercent(meterList, parameters);
+    double totalExpected = 0.0;
+    double totalActual = 0.0;
+
+    for (int x = 0; x < meterStats.size(); x++) {
+      totalActual = totalActual + meterStats.get(x).actual;
+      totalExpected = totalExpected + meterStats.get(x).expected;
+    }
+
+    if (totalExpected > 0.0) {
+      return Optional.of(new CollectionStats(totalActual, totalExpected));
+    } else {
+      return Optional.empty();
+    }
   }
 }
