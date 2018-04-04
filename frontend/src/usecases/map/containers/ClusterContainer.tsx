@@ -3,7 +3,7 @@ import * as React from 'react';
 import MarkerClusterGroup from 'react-leaflet-markercluster';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {assetsPathFor} from '../../../app/routes';
+import {imagePathFor} from '../../../app/routes';
 import {Dictionary} from '../../../types/Types';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
@@ -60,9 +60,9 @@ const getClusterCssClass = (cluster: MarkerClusterGroup): string => {
 
   cluster.getAllChildMarkers().forEach(({options: {icon}}: Leaflet.Marker) => {
     if (icon) {
-      if (icon.options.iconUrl === assetsPathFor('marker-icon-error.png')) {
+      if (icon.options.iconUrl === imagePathFor('marker-icon-error.png')) {
         errorCount++;
-      } else if (icon.options.iconUrl === assetsPathFor('marker-icon-warning.png')) {
+      } else if (icon.options.iconUrl === imagePathFor('marker-icon-warning.png')) {
         warningCount++;
       }
     }

@@ -383,6 +383,12 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
+msgid "token missing or invalid"
+msgstr "you've been logged out - session has expired, please log in again to continue."
+
+msgid "bad credentials"
+msgstr "bad credentials"
+
 msgid "{{count}} meters are not displayed in the map due to low accuracy"
 msgstr "{{count}} meter is not displayed in the map due to low accuracy"
 

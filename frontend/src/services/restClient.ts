@@ -8,6 +8,7 @@ import axios, {
 } from 'axios';
 import {config} from '../config/config';
 import {InvalidToken} from '../exceptions/InvalidToken';
+import {texts} from '../helpers/texts';
 import {Dictionary, ErrorResponse} from '../types/Types';
 
 const requestCanceled = 'REQUEST_CANCELED';
@@ -20,6 +21,7 @@ class RestClientDelegate implements AxiosInstance {
   }
 
   defaults: AxiosRequestConfig;
+
   interceptors: {
     request: AxiosInterceptorManager<AxiosRequestConfig>;
     response: AxiosInterceptorManager<AxiosResponse>;
@@ -84,20 +86,16 @@ interface Headers {
 }
 
 const makeRestClient = (headers: Headers): AxiosInstance => {
-  restClient = new RestClientDelegate(axios.create({
-    ...axiosConfig,
-    headers,
-  }));
+  restClient = new RestClientDelegate(axios.create({...axiosConfig, headers}));
   setResponseInterceptors();
-
   return restClient;
 };
 
 const setResponseInterceptors = (): void => {
   restClient.interceptors.response.use((response) => response, (error) => {
     const {response} = error;
-    if (response && response.data && response.data.message && response.data.message === 'Token missing or invalid') {
-      return Promise.reject(new InvalidToken(response.data.message)); // TODO: Perhaps set a translated string here.
+    if (response && response.data && response.data.message === texts.invalidToken) {
+      return Promise.reject(new InvalidToken(response.data.message));
     } else {
       return Promise.reject(error);
     }

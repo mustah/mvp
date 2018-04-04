@@ -383,6 +383,12 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
+msgid "token missing or invalid"
+msgstr "du är utloggad, för att du har varit inaktiv för länge. Logga in igen för att fortsätta."
+
+msgid "bad credentials"
+msgstr "felaktigt användarnamn eller lösenord"
+
 msgid "{{count}} meters are not displayed in the map due to low accuracy"
 msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 

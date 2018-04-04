@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {assetsPathFor} from '../../app/routes';
+import {imagePathFor} from '../../app/routes';
 import {Column, ColumnCenter} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -15,7 +15,7 @@ interface Props {
 
 export const GatewayDetailsInfo = ({gateway}: Props) => {
   const {location: {city, address}, serial, productModel, status, flags} = gateway;
-  const gatewayImage = assetsPathFor('cme2110.jpg');
+  const gatewayImage = imagePathFor('cme2110.jpg');
 
   return (
     <div className="GatewayDetailsInfo">
