@@ -30,7 +30,6 @@ import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleflatmapper.csv.CsvMapper;
@@ -165,58 +164,59 @@ class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,
-            physicalMeter.readIntervalMinutes,
+            physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10 ?
+              physicalMeter.readIntervalMinutes : 15,
             null
           ));
 
-        if (physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10) {
+        if (physicalMetersToSaveMeasurementDataFor.get() > 10) {
           return;
         }
         System.out.println("Mocking measurement for meter: " + physicalMeter);
         ThreadLocalRandom random = ThreadLocalRandom.current();
         IntStream.range(1, 5)
           .forEach(daysAgo -> {
-              IntStream
-                .iterate(0, i -> i + 15 * 60)
-                .limit(24 * 4)
-                .forEach(quarter -> {
-                  ZonedDateTime created = ZonedDateTime.ofInstant(
-                    fiveDaysAgo.plusSeconds(quarter * daysAgo),
-                    ZoneId.of("UTC")
-                  );
+                     IntStream
+                       .iterate(0, i -> i + 15 * 60)
+                       .limit(24 * 4)
+                       .forEach(quarter -> {
+                         ZonedDateTime created = ZonedDateTime.ofInstant(
+                           fiveDaysAgo.plusSeconds(quarter * daysAgo),
+                           ZoneId.of("UTC")
+                         );
 
-                  double tempIn = random.nextDouble(1.2, 37.5);
+                         double tempIn = random.nextDouble(1.2, 37.5);
 
-                  measurements.save(new Measurement(
-                    null,
-                    created,
-                    quantityForward.name,
-                    tempIn,
-                    quantityForward.unit,
-                    physicalMeter
-                  ));
+                         measurements.save(new Measurement(
+                           null,
+                           created,
+                           quantityForward.name,
+                           tempIn,
+                           quantityForward.unit,
+                           physicalMeter
+                         ));
 
-                  double tempOut = tempIn - random.nextDouble(0.5, 10.0);
+                         double tempOut = tempIn - random.nextDouble(0.5, 10.0);
 
-                  measurements.save(new Measurement(
-                    null,
-                    created,
-                    quantityReturn.name,
-                    tempOut,
-                    quantityReturn.unit,
-                    physicalMeter
-                  ));
+                         measurements.save(new Measurement(
+                           null,
+                           created,
+                           quantityReturn.name,
+                           tempOut,
+                           quantityReturn.unit,
+                           physicalMeter
+                         ));
 
-                  measurements.save(new Measurement(
-                    null,
-                    created,
-                    quantityDiff.name,
-                    tempIn - tempOut,
-                    quantityDiff.unit,
-                    physicalMeter
-                  ));
-                });
-            }
+                         measurements.save(new Measurement(
+                           null,
+                           created,
+                           quantityDiff.name,
+                           tempIn - tempOut,
+                           quantityDiff.unit,
+                           physicalMeter
+                         ));
+                       });
+                   }
           );
       });
   }
