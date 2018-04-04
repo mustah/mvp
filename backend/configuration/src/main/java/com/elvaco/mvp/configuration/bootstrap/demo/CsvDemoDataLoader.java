@@ -3,29 +3,20 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.time.Instant;
-import java.time.Period;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.IntStream;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.MeterDefinitions;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
@@ -56,12 +47,10 @@ import static java.util.stream.Collectors.toMap;
 class CsvDemoDataLoader implements CommandLineRunner {
 
   private static final String DELIMITER = " :: ";
-
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final MeterDefinitions meterDefinitions;
   private final Gateways gateways;
-  private final Measurements measurements;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
   private int daySeed = 1;
@@ -73,7 +62,6 @@ class CsvDemoDataLoader implements CommandLineRunner {
     MeterDefinitions meterDefinitions,
     Gateways gateways,
     SettingUseCases settingUseCases,
-    Measurements measurements,
     StatusLogsDataLoader statusLogsDataLoader
   ) {
     this.logicalMeters = logicalMeters;
@@ -81,7 +69,6 @@ class CsvDemoDataLoader implements CommandLineRunner {
     this.gateways = gateways;
     this.meterDefinitions = meterDefinitions;
     this.settingUseCases = settingUseCases;
-    this.measurements = measurements;
     this.statusLogsDataLoader = statusLogsDataLoader;
   }
 
@@ -110,12 +97,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
     Map<String, Location> locationMap,
     MeterDefinition meterDefinition
   ) throws IOException {
-    Instant fiveDaysAgo = Instant.now().minus(Period.ofDays(5)).truncatedTo(ChronoUnit.HOURS);
-
     AtomicInteger physicalMetersToSaveMeasurementDataFor = new AtomicInteger(0);
-    final Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
-    final Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
-    final Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
 
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
@@ -145,7 +127,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               csvData.medium,
               csvData.meterManufacturer,
               ELVACO,
-              1440
+              physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10 ? 1440 : 60
             );
 
             return new Parameters(logicalMeter, physicalMeter, gateway);
@@ -164,63 +146,12 @@ class CsvDemoDataLoader implements CommandLineRunner {
             physicalMeter.medium,
             physicalMeter.manufacturer,
             logicalMeter.id,
-            physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10 ?
-              physicalMeter.readIntervalMinutes : 15,
+            physicalMeter.readIntervalMinutes,
             null
           ));
-
-        if (physicalMetersToSaveMeasurementDataFor.get() > 10) {
-          return;
-        }
-        System.out.println("Mocking measurement for meter: " + physicalMeter);
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        IntStream.range(1, 5)
-          .forEach(daysAgo -> {
-                     IntStream
-                       .iterate(0, i -> i + 15 * 60)
-                       .limit(24 * 4)
-                       .forEach(quarter -> {
-                         ZonedDateTime created = ZonedDateTime.ofInstant(
-                           fiveDaysAgo.plusSeconds(quarter * daysAgo),
-                           ZoneId.of("UTC")
-                         );
-
-                         double tempIn = random.nextDouble(1.2, 37.5);
-
-                         measurements.save(new Measurement(
-                           null,
-                           created,
-                           quantityForward.name,
-                           tempIn,
-                           quantityForward.unit,
-                           physicalMeter
-                         ));
-
-                         double tempOut = tempIn - random.nextDouble(0.5, 10.0);
-
-                         measurements.save(new Measurement(
-                           null,
-                           created,
-                           quantityReturn.name,
-                           tempOut,
-                           quantityReturn.unit,
-                           physicalMeter
-                         ));
-
-                         measurements.save(new Measurement(
-                           null,
-                           created,
-                           quantityDiff.name,
-                           tempIn - tempOut,
-                           quantityDiff.unit,
-                           physicalMeter
-                         ));
-                       });
-                   }
-          );
       });
   }
-
+  
   private ZonedDateTime addDays() {
     return ZonedDateTime.now().minusDays(daySeed++);
   }

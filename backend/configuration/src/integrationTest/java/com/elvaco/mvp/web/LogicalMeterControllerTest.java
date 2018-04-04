@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
@@ -23,7 +24,6 @@ import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
@@ -71,46 +71,34 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ZonedDateTime.parse("2001-01-01T10:15:00.00Z");
 
   private final ZonedDateTime statusLogDate = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
-
   private PhysicalMeter physicalMeter1;
   private PhysicalMeter physicalMeter2;
   private PhysicalMeter physicalMeter3;
   private PhysicalMeter physicalMeter4;
   private PhysicalMeter physicalMeter5;
-
   private MeterDefinition districtHeatingMeterDefinition;
   private MeterDefinition hotWaterMeterDefinition;
 
   @Autowired
   private LogicalMeters logicalMeterRepository;
-
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
-
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
-
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
-
   @Autowired
   private MeasurementUseCases measurementUseCases;
-
   @Autowired
   private MeterDefinitions meterDefinitions;
-
   @Autowired
   private PhysicalMeters physicalMeters;
-
   @Autowired
   private MeterStatusLogs meterStatusLogs;
-
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
   @Autowired
   private OrganisationJpaRepository organisationJpaRepository;
-
   private OrganisationEntity anotherOrganisation;
 
   @Before
@@ -789,38 +777,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter meter1,
     PhysicalMeter meter2
   ) {
-    MeasurementUnit measurementUnit = MeasurementUnit.from("2.0 m³");
 
     List<MeasurementEntity> meter1Measurements = createMeasurements(
-      measurementUnit,
       meter1FirstMeasurement,
       meter1.readIntervalMinutes,
       119,
-      new PhysicalMeterEntity(meter1.id)
+      new PhysicalMeterEntity(meter1.id),
+      true
     );
-
-    // Simulate lost measurements
-    meter1Measurements.remove(40);
-    meter1Measurements.remove(40);
-    meter1Measurements.remove(40);
-    meter1Measurements.remove(40);
-    meter1Measurements.remove(40);
-
-    meter1Measurements.remove(20);
-    meter1Measurements.remove(20);
-    meter1Measurements.remove(20);
-    meter1Measurements.remove(20);
-    meter1Measurements.remove(20);
 
     List<MeasurementEntity> measurements = new ArrayList<>();
     measurements.addAll(meter1Measurements);
     measurements.addAll(
       createMeasurements(
-        measurementUnit,
         meter2FirstMeasurement,
         meter2.readIntervalMinutes,
         36000,
-        new PhysicalMeterEntity(meter2.id)
+        new PhysicalMeterEntity(meter2.id),
+        false
       )
     );
     measurementJpaRepository.save(measurements);
@@ -829,30 +803,34 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   /**
    * Creates a list of fake measurements.
    *
-   * @param measurementUnit Unit of measurement
-   * @param interval        Time in minutes between measurements
-   * @param values          Nr of values to generate
+   * @param interval      Time in minutes between measurements
+   * @param values        Nr of values to generate
    * @param physicalMeter
    *
    * @return
    */
   private List<MeasurementEntity> createMeasurements(
-    MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,
     long interval,
     long values,
-    PhysicalMeterEntity physicalMeter
+    PhysicalMeterEntity physicalMeter,
+    boolean skippMeasurements
   ) {
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
     for (int x = 0; x < values; x++) {
-      measurementEntities.add(new MeasurementEntity(
-        null,
-        measurementDate.plusMinutes(x * interval),
-        String.valueOf(x),
-        measurementUnit,
-        physicalMeter
-      ));
+      if (((x >= 10 && x < 15) || (x >= 25 && x < 30)) && skippMeasurements) {
+        //Simulate missing readings
+        continue;
+      }
+
+      measurementEntities.addAll(
+        DemoDataHelper.getDistrictHeatingMeterReading(
+          measurementDate.plusMinutes(x * interval),
+          physicalMeter
+        )
+      );
     }
+
     return measurementEntities;
   }
 

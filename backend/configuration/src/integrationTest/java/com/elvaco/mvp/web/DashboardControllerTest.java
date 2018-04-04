@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
@@ -20,9 +20,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
-import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
-import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetType;
@@ -43,17 +40,6 @@ public class DashboardControllerTest extends IntegrationTest {
 
   private final Random random = new Random();
   private final MeterDefinitionMapper meterDefinitionMapper = new MeterDefinitionMapper();
-  private final PhysicalMeterMapper physicalMeterMapper = new PhysicalMeterMapper(
-    new OrganisationMapper(),
-    new MeterStatusLogMapper()
-  );
-  private final Quantity quantityForward = Quantity.FORWARD_TEMPERATURE;
-  private final Quantity quantityReturn = Quantity.RETURN_TEMPERATURE;
-  private final Quantity quantityDiff = Quantity.DIFFERENCE_TEMPERATURE;
-  private final Quantity quantityFlow = Quantity.FLOW;
-  private final Quantity quantityPower = Quantity.POWER;
-  private final Quantity quantityVolume = Quantity.VOLUME;
-  private final Quantity quantityEnergy = Quantity.ENERGY;
   private double measurementCount = 0.0;
   private double measurementFailedCount = 0.0;
   private ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
@@ -89,8 +75,7 @@ public class DashboardControllerTest extends IntegrationTest {
     createMeasurementMockData(
       physicalMeters,
       startDate,
-      Duration.between(startDate, beforeDate).toDays(),
-      MeterDefinition.DISTRICT_HEATING_METER.quantities.size()
+      Duration.between(startDate, beforeDate).toDays()
     );
   }
 
@@ -173,8 +158,7 @@ public class DashboardControllerTest extends IntegrationTest {
   private void createMeasurementMockData(
     List<PhysicalMeterEntity> meters,
     ZonedDateTime startDate,
-    long dayCount,
-    long quantityCount
+    long dayCount
   ) {
 
     for (int x = 0; x < meters.size(); x++) {
@@ -214,60 +198,9 @@ public class DashboardControllerTest extends IntegrationTest {
 
       ZonedDateTime created = measurementDate.plusMinutes(x * interval);
 
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityForward.name,
-        x,
-        quantityForward.unit,
-        physicalMeterEntity
-      ));
-
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityReturn.name,
-        x,
-        quantityReturn.unit,
-        physicalMeterEntity
-      ));
-
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityDiff.name,
-        x,
-        quantityDiff.unit,
-        physicalMeterEntity
-      ));
-
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityFlow.name,
-        x,
-        quantityFlow.unit,
-        physicalMeterEntity
-      ));
-
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityPower.name,
-        x,
-        quantityPower.unit,
-        physicalMeterEntity
-      ));
-
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityVolume.name,
-        x,
-        quantityVolume.unit,
-        physicalMeterEntity
-      ));
-      measurementEntities.add(new MeasurementEntity(
-        created,
-        quantityEnergy.name,
-        x,
-        quantityEnergy.unit,
-        physicalMeterEntity
-      ));
+      measurementEntities.addAll(
+        DemoDataHelper.getDistrictHeatingMeterReading(created, physicalMeterEntity)
+      );
 
       measurementCount = measurementCount + 7;
     }
