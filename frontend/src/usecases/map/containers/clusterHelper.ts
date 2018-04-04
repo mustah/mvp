@@ -1,21 +1,21 @@
 import * as Leaflet from 'leaflet';
+import {assetsPathFor} from '../../../app/routes';
 import {Dictionary, Status} from '../../../types/Types';
 import {MapMarker, Marker} from '../mapModels';
 
 // TODO: Check if more markers types than 3 are needed to distinguish the different statuses
 const icons = {
-  [Status.ok]: 'assets/images/marker-icon-ok.png',
-  [Status.active]: 'assets/images/marker-icon-ok.png',
-  [Status.warning]: 'assets/images/marker-icon-warning.png',
-  [Status.info]: 'assets/images/marker-icon-warning.png',
-  [Status.maintenance_scheduled]: 'assets/images/marker-icon-warning.png',
-  [Status.alarm]: 'assets/images/marker-icon-error.png',
-  [Status.critical]: 'assets/images/marker-icon-error.png',
+  [Status.ok]: assetsPathFor('marker-icon-ok.png'),
+  [Status.active]: assetsPathFor('marker-icon-ok.png'),
+  [Status.warning]: assetsPathFor('marker-icon-warning.png'),
+  [Status.info]: assetsPathFor('marker-icon-warning.png'),
+  [Status.maintenance_scheduled]: assetsPathFor('marker-icon-warning.png'),
+  [Status.alarm]: assetsPathFor('marker-icon-error.png'),
+  [Status.critical]: assetsPathFor('marker-icon-error.png'),
 };
 
-const getStatusIcon = (status: Status): string => status
-  ? icons[status] || 'assets/images/marker-icon.png'
-  : 'assets/images/marker-icon.png';
+const getStatusIcon = (status: Status): string =>
+  status ? icons[status] || assetsPathFor('marker-icon.png') : assetsPathFor('marker-icon.png');
 
 const makeMarker = (marker: MapMarker): Marker => ({
   position: [marker.latitude, marker.longitude],
