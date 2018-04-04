@@ -1,6 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -10,33 +13,36 @@ import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer.deserialize;
+import static java.util.Collections.unmodifiableMap;
 
 @Slf4j
 public final class MeteringMessageParser {
+
+  private final Map<String, String> meteringUnitTranslations;
+
+  public MeteringMessageParser() {
+    meteringUnitTranslations = newMeteringUnitTranslationsMap();
+  }
 
   public MeteringMessageDto parse(String message) {
     MeteringMessageDto meteringMessageDto = parseMessage(message, MeteringMessageDto.class)
       .orElseThrow(() -> new MeteringMessageParseException("Failed to parse " + message));
 
-    Class<? extends MeteringMessageDto> classOfT;
     switch (meteringMessageDto.messageType) {
       case METERING_ALARM_V_1_0:
-        classOfT = MeteringAlarmMessageDto.class;
-        break;
+        return parseAlarmMessage(message).orElseThrow(() -> new MeteringMessageParseException(
+          "Failed to parse alarm message: " + message));
       case METERING_MEASUREMENT_V_1_0:
-        classOfT = MeteringMeasurementMessageDto.class;
-        break;
+        return parseMeasurementMessage(message).orElseThrow(() -> new MeteringMessageParseException(
+          "Failed to parse measurement message: " + message));
       case METERING_METER_STRUCTURE_V_1_0:
-        classOfT = MeteringMeterStructureMessageDto.class;
-        break;
+        return parseStructureMessage(message).orElseThrow(() -> new MeteringMessageParseException(
+          "Failed to parse structure message: " + message));
       default:
         throw new RuntimeException("Unsupported Metering message type: " + meteringMessageDto
           .messageType
           .toString());
     }
-    return parseMessage(message, classOfT)
-      .orElseThrow(() -> new MeteringMessageParseException(
-        "Failed to parse message of type '" + classOfT.getName() + "': " + message));
   }
 
   protected Optional<MeteringMeterStructureMessageDto> parseStructureMessage(String message) {
@@ -44,11 +50,31 @@ public final class MeteringMessageParser {
   }
 
   protected Optional<MeteringMeasurementMessageDto> parseMeasurementMessage(String message) {
-    return parseMessage(message, MeteringMeasurementMessageDto.class);
+    return parseMessage(message, MeteringMeasurementMessageDto.class).map(
+      this::translateMeasurementUnits
+    );
   }
 
   protected Optional<MeteringAlarmMessageDto> parseAlarmMessage(String message) {
     return parseMessage(message, MeteringAlarmMessageDto.class);
+  }
+
+  private Map<String, String> newMeteringUnitTranslationsMap() {
+    Map<String, String> translationMap = new HashMap<>();
+    translationMap.put("Celsius", "°C");
+    translationMap.put("Kelvin", "K");
+    return unmodifiableMap(translationMap);
+  }
+
+  private MeteringMeasurementMessageDto translateMeasurementUnits(
+    MeteringMeasurementMessageDto
+      messageDto
+  ) {
+    return messageDto.withValues(
+      messageDto.values
+        .stream()
+        .map(value -> value.withUnit(meteringUnitTranslations.getOrDefault(value.unit, value.unit)))
+        .collect(Collectors.toList()));
   }
 
   private <T extends MeteringMessageDto> Optional<T> parseMessage(
