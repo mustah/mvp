@@ -1,7 +1,8 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {EndPoints} from '../../services/endPoints';
-import {InvalidToken, restClient} from '../../services/restClient';
+import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {EncodedUriParameters, ErrorResponse} from '../../types/Types';
 import {logout} from '../auth/authActions';
 import {DashboardModel} from './dashboardModels';
@@ -24,6 +25,8 @@ export const fetchDashboard =
       } catch (error) {
         if (error instanceof InvalidToken) {
           await dispatch(logout(error));
+        } else if (wasRequestCanceled(error)) {
+          return;
         } else {
           const {response: {data}} = error;
           dispatch(dashboardFailure(data));

@@ -37,7 +37,7 @@ interface State {
 
 const filterBy = (list: SelectionListItem[], exp: string) => {
   const regExp = new RegExp(exp, 'i');
-  return list.filter((value: IdNamed) => value.name.match(regExp));
+  return list.filter((value: IdNamed) => regExp.test(value.name));
 };
 
 const selectedOptions = (list: SelectionListItem[]) => list.filter((item: SelectionListItem) => item.selected).length;

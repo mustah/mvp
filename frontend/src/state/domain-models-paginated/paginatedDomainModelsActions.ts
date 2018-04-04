@@ -1,10 +1,11 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
 import {createPayloadAction, PayloadAction} from 'react-redux-typescript';
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
-import {InvalidToken, restClient} from '../../services/restClient';
+import {restClient, wasRequestCanceled} from '../../services/restClient';
 import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, FetchPaginated, Identifiable} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
@@ -65,6 +66,8 @@ const asyncRequest = async <REQ, DAT>(
   } catch (error) {
     if (error instanceof InvalidToken) {
       await dispatch(logout(error));
+    } else if (wasRequestCanceled(error)) {
+      return;
     } else {
       const {response} = error;
       const data: ErrorResponse = response && response.data ||
@@ -72,6 +75,7 @@ const asyncRequest = async <REQ, DAT>(
       dispatch(failure({...data, page}));
       if (afterFailure) {
         afterFailure(data, dispatch);
+
       }
     }
   }

@@ -1,5 +1,6 @@
+import {InvalidToken} from '../../exceptions/InvalidToken';
 import {EndPoints} from '../endPoints';
-import {authenticate, InvalidToken, restClient, restClientWith} from '../restClient';
+import {authenticate, restClient, restClientWith, wasRequestCanceled} from '../restClient';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('restClient', () => {
@@ -52,6 +53,56 @@ describe('restClient', () => {
 
       const error = new InvalidToken('Token missing or invalid');
       await expect(getErrorElseThanInvalidToken()).rejects.not.toEqual(error);
+    });
+  });
+
+  describe('cancel request', () => {
+    let mockRestClient;
+    beforeEach(() => {
+      restClientWith('123123123');
+      mockRestClient = new MockAdapter(restClient, {delayResponse: 200});
+    });
+
+    const getRequestFromURL = async (url: string) => {
+      mockRestClient.onGet(url).reply(201, 'some data');
+      try {
+        return await restClient.get(url);
+      } catch (error) {
+        return Promise.resolve(error);
+      }
+    };
+
+    it('cancels all but the last of simultaneous requests to the same endpoint', async () => {
+      const url = '/endPoint';
+      const response = await Promise.all([getRequestFromURL(url), getRequestFromURL(url)]);
+      expect(wasRequestCanceled(response[0])).toBeTruthy();
+      expect(response[1].data).toEqual('some data');
+    });
+
+    it('cancel requests for same endpoint even if parameters differ', async () => {
+      const url1 = '/endPoint?city=abc';
+      const url2 = '/endPoint?id=5';
+      const response = await Promise.all([getRequestFromURL(url1), getRequestFromURL(url2)]);
+      expect(wasRequestCanceled(response[0])).toBeTruthy();
+      expect(response[1].data).toEqual('some data');
+    });
+
+    it('handles more than two simultaneous requests to the same endpoint', async () => {
+      const url1 = '/endPoint?city=abc';
+      const url2 = '/endPoint?id=5';
+      const url3 = '/endPoint?id=5&address=kungsgatan';
+      const response = await Promise.all([getRequestFromURL(url1), getRequestFromURL(url2), getRequestFromURL(url3)]);
+      expect(wasRequestCanceled(response[0])).toBeTruthy();
+      expect(wasRequestCanceled(response[1])).toBeTruthy();
+      expect(response[2].data).toEqual('some data');
+    });
+
+    it('resolves requests to different endPoints', async () => {
+      const url1 = '/firstEndpoint';
+      const url2 = '/secondEndpoint';
+      const response = await Promise.all([getRequestFromURL(url1), getRequestFromURL(url2)]);
+      expect(response[0].data).toEqual('some data');
+      expect(response[1].data).toEqual('some data');
     });
   });
 });
