@@ -44,6 +44,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer.serialize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeNoException;
 
@@ -152,7 +153,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     byte[] response = consumer.receiveOne();
     assertThat(response).isNotNull();
-    GetReferenceInfoDto responseDto = deserializeResponseDto(response, GetReferenceInfoDto.class);
+    GetReferenceInfoDto responseDto = deserialize(response, GetReferenceInfoDto.class);
     assertThat(responseDto).isEqualTo(
       new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123")
     );
@@ -171,12 +172,12 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     return consumer;
   }
 
-  private <T> T deserializeResponseDto(byte[] responseBytes, Class<T> dtoType) {
-    return new MeteringMessageSerializer().deserialize(new String(responseBytes), dtoType);
+  private <T> T deserialize(byte[] responseBytes, Class<T> dtoType) {
+    return MeteringMessageSerializer.deserialize(new String(responseBytes), dtoType);
   }
 
   private byte[] serializeDto(MeteringMessageDto dto) {
-    return new MeteringMessageSerializer().serialize(dto).getBytes();
+    return serialize(dto).getBytes();
   }
 
   private void publishMessage(byte[] message) throws IOException {

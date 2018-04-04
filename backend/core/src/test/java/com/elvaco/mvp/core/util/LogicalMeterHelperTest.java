@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids;
@@ -173,6 +174,7 @@ public class LogicalMeterHelperTest {
       "meter-" + meterId,
       organisationId,
       meterDefinition,
+      UNKNOWN_LOCATION,
       singletonList(
         new PhysicalMeter(
           randomUUID(),

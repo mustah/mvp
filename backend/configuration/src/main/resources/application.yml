@@ -32,6 +32,7 @@ liquibase:
   enabled: false
 
 mvp:
+  url: http://localhost:8080
   consumers:
     rabbit:
       queueName: MVP
@@ -40,3 +41,6 @@ mvp:
   superadmin:
     email: "mvpadmin@elvaco.se"
     password: "changeme"
+
+geo-service:
+  url: http://localhost:8081

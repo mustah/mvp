@@ -10,14 +10,15 @@ import lombok.ToString;
 public class Location {
 
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
-  public static final String UNKNOWN = "unknown";
+
+  private static final String UNKNOWN = "unknown";
 
   private final String address;
   private final String city;
   private final String country;
   private final GeoCoordinate coordinate;
 
-  Location(
+  public Location(
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
@@ -27,6 +28,14 @@ public class Location {
     this.country = country;
     this.city = city;
     this.address = address;
+  }
+
+  public Location(
+    @Nullable String country,
+    @Nullable String city,
+    @Nullable String address
+  ) {
+    this(null, country, city, address);
   }
 
   @Nullable
@@ -65,7 +74,15 @@ public class Location {
     return coordinate != null;
   }
 
+  public boolean hasNoCoordinates() {
+    return coordinate == null;
+  }
+
   public boolean isUnknown() {
     return country == null && city == null && address == null;
+  }
+
+  public boolean isKnown() {
+    return country != null && city != null && address != null;
   }
 }

@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -23,8 +24,18 @@ public class LocationMapper {
       : UNKNOWN_LOCATION;
   }
 
+  public LocationWithId toLocationWithId(LocationEntity entity) {
+    return new LocationBuilder()
+      .id(entity.logicalMeterId)
+      .country(entity.country)
+      .city(entity.city)
+      .streetAddress(entity.streetAddress)
+      .coordinate(toGeoCoordinate(entity))
+      .buildLocationWithId();
+  }
+
   @Nullable
-  public LocationEntity toEntity(Location location, UUID logicalMeterId) {
+  public LocationEntity toEntity(UUID logicalMeterId, @Nullable Location location) {
     if (location != null) {
       LocationEntity entity = new LocationEntity(
         logicalMeterId,
@@ -42,6 +53,10 @@ public class LocationMapper {
     } else {
       return null;
     }
+  }
+
+  public LocationEntity toEntity(LocationWithId location) {
+    return toEntity(location.getId(), location);
   }
 
   @Nullable

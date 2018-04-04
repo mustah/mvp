@@ -23,6 +23,7 @@ import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static java.util.Collections.emptyList;
@@ -189,7 +190,7 @@ public class LogicalMeterMapperTest {
       randomUUID(),
       "external-id",
       ELVACO.id,
-      Location.UNKNOWN_LOCATION,
+      UNKNOWN_LOCATION,
       ZonedDateTime.parse("2018-02-12T14:14:25Z")
     ));
 

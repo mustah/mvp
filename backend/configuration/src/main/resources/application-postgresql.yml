@@ -34,3 +34,9 @@ liquibase:
   # Not specifying this causes liquibase's autoconfiguration
   #  to use the datasource configured for JPA (with the corresponding user)
   url: jdbc:postgresql://localhost:5432/mvp
+
+mvp:
+  url: http://localhost:8080
+
+geo-service:
+  url: http://localhost:8081

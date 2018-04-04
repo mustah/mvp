@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,6 +157,7 @@ public class LogicalMeterTest {
       "an-external-id",
       organisationId,
       meterDefinition,
+      UNKNOWN_LOCATION,
       physicalMeterList
     );
   }
@@ -165,6 +167,12 @@ public class LogicalMeterTest {
     UUID organisationId,
     MeterDefinition meterDefinition
   ) {
-    return new LogicalMeter(id, "an-external-id", organisationId, meterDefinition);
+    return new LogicalMeter(
+      id,
+      "an-external-id",
+      organisationId,
+      meterDefinition,
+      UNKNOWN_LOCATION
+    );
   }
 }

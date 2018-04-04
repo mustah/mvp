@@ -4,7 +4,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -16,6 +15,7 @@ import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.getFirstDateMatchingInterval;
 import static java.util.Arrays.asList;
@@ -248,7 +248,7 @@ public class LogicalMeterUseCasesTest {
       meterId,
       "meter-" + meterId,
       organisationId,
-      Location.UNKNOWN_LOCATION,
+      UNKNOWN_LOCATION,
       ZonedDateTime.now()
     );
   }

@@ -1,7 +1,10 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.util.UUID;
+
 public class LocationBuilder {
 
+  private UUID id;
   private String country;
   private String city;
   private String streetAddress;
@@ -45,7 +48,22 @@ public class LocationBuilder {
     return this;
   }
 
+  public LocationBuilder id(UUID id) {
+    this.id = id;
+    return this;
+  }
+
   public Location build() {
+    buildCoordinates();
+    return new Location(coordinate, country, city, streetAddress);
+  }
+
+  public LocationWithId buildLocationWithId() {
+    buildCoordinates();
+    return new LocationWithId(id, coordinate, country, city, streetAddress);
+  }
+
+  private void buildCoordinates() {
     if (coordinate == null && hasLatLng()) {
       if (confidence == null) {
         coordinate = new GeoCoordinate(latitude, longitude);
@@ -53,7 +71,6 @@ public class LocationBuilder {
         coordinate = new GeoCoordinate(latitude, longitude, confidence);
       }
     }
-    return new Location(coordinate, country, city, streetAddress);
   }
 
   private boolean hasLatLng() {

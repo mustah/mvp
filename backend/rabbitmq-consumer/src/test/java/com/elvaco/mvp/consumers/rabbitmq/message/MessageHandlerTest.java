@@ -22,6 +22,8 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
+import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -42,6 +44,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
 import com.elvaco.mvp.testing.repository.MockLogicalMeters;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
@@ -53,6 +56,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -88,10 +92,11 @@ public class MessageHandlerTest {
   private Gateways gateways;
   private Measurements measurements;
   private MeteringMessageHandler messageHandler;
+  private MockGeocodeService geocodeService;
 
   @Before
   public void setUp() {
-    this.physicalMeters = new MockPhysicalMeters();
+    physicalMeters = new MockPhysicalMeters();
     User superAdmin = new UserBuilder()
       .name("super-admin")
       .email("super@admin.io")
@@ -117,9 +122,10 @@ public class MessageHandlerTest {
       organisations,
       new OrganisationPermissions(new MockUsers(singletonList(superAdmin)))
     );
-    this.measurements = new MockMeasurements();
-    this.logicalMeters = new MockLogicalMeters();
-    this.gateways = new MockGateways();
+    measurements = new MockMeasurements();
+    logicalMeters = new MockLogicalMeters();
+    gateways = new MockGateways();
+    geocodeService = new MockGeocodeService();
 
     this.messageHandler = new MeteringMessageHandler(
       new LogicalMeterUseCases(
@@ -130,7 +136,8 @@ public class MessageHandlerTest {
       new PhysicalMeterUseCases(authenticatedUser, physicalMeters),
       organisationUseCases,
       new MeasurementUseCases(authenticatedUser, this.measurements),
-      new GatewayUseCases(gateways, authenticatedUser)
+      new GatewayUseCases(gateways, authenticatedUser),
+      geocodeService
     );
   }
 
@@ -155,7 +162,7 @@ public class MessageHandlerTest {
       logicalMeter.id,
       DEFAULT_EXTERNAL_ID,
       organisation.id,
-      Location.UNKNOWN_LOCATION,
+      new Location("Sweden", "Kungsbacka", "Kabelgatan 2T"),
       logicalMeter.created,
       singletonList(savedPhysicalMeter),
       MeterDefinition.HOT_WATER_METER,
@@ -250,6 +257,21 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void callsGeocodeService() {
+    messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
+
+    LocationWithId expectedLocationWithId = new LocationBuilder()
+      .country("Sweden")
+      .city("Kungsbacka")
+      .streetAddress("Kabelgatan 2T")
+      .id(geocodeService.requestId)
+      .buildLocationWithId();
+
+    assertThat(geocodeService.requestId).isNotNull();
+    assertThat(geocodeService.location).isEqualTo(expectedLocationWithId);
+  }
+
+  @Test
   public void addsSecondPhysicalMeterToExistingLogicalMeter() {
     Organisation organisation = organisations.save(
       newOrganisation("An existing organisation", DEFAULT_ORGANISATION_EXTERNAL_ID)
@@ -265,7 +287,7 @@ public class MessageHandlerTest {
       logicalMeterId,
       DEFAULT_EXTERNAL_ID,
       organisation.id,
-      Location.UNKNOWN_LOCATION,
+      UNKNOWN_LOCATION,
       now,
       singletonList(existingPhysicalMeter),
       MeterDefinition.HOT_WATER_METER,
@@ -284,14 +306,9 @@ public class MessageHandlerTest {
   }
 
   @Test
-  public void doesNotCreateDuplicateMeters() {
-
-  }
-
-  @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                     + "organisation"));
+                                                                   + "organisation"));
     physicalMeters.save(newPhysicalMeter(organisation, DEFAULT_MEDIUM));
 
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
@@ -407,7 +424,7 @@ public class MessageHandlerTest {
 
   @Test
   public void unknowMediumIsMappedFromUnknownValueSet() {
-    List<ValueDto> districtHeatingMeterValues = asList(
+    List<ValueDto> districtHeatingMeterValues = singletonList(
       new ValueDto(LocalDateTime.now(), 0.0, "MW", "UnknownQuantity")
     );
     assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
@@ -559,7 +576,8 @@ public class MessageHandlerTest {
       randomUUID(),
       DEFAULT_EXTERNAL_ID,
       organisation.id,
-      MeterDefinition.HOT_WATER_METER
+      MeterDefinition.HOT_WATER_METER,
+      UNKNOWN_LOCATION
     ));
 
     assertThat(messageHandler.handle(newMeasurementMessage()).get())
@@ -616,7 +634,8 @@ public class MessageHandlerTest {
         UUID.randomUUID(),
         DEFAULT_EXTERNAL_ID,
         organisation.id,
-        MeterDefinition.HOT_WATER_METER
+        MeterDefinition.HOT_WATER_METER,
+        UNKNOWN_LOCATION
       )
     );
 

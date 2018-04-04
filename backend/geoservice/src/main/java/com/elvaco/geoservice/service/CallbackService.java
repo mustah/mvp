@@ -2,7 +2,6 @@ package com.elvaco.geoservice.service;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-
 import javax.transaction.Transactional;
 
 import com.elvaco.geoservice.dto.AddressDto;
@@ -40,10 +39,11 @@ public class CallbackService {
     addr.setCity(address.getCity());
     addr.setCountry(address.getCountry());
     response.setAddress(addr);
-    GeoDataDto g = new GeoDataDto();
-    g.setConfidence(geo.getConfidence());
-    g.setLatitude(geo.getLatitude());
-    g.setLongitude(geo.getLongitude());
+    GeoDataDto g = new GeoDataDto(
+      Double.valueOf(geo.getLongitude()),
+      Double.valueOf(geo.getLatitude()),
+      geo.getConfidence()
+    );
 
     response.setGeoData(g);
 
@@ -75,7 +75,6 @@ public class CallbackService {
     callback = callbackRepository.save(callback);
     logger.info("Error Callback enqueued = " + callbackUrl);
     return callback;
-
   }
 
   @Transactional
@@ -84,10 +83,11 @@ public class CallbackService {
 
     try {
       logger.info("Trying callback id = " + callback.getId() + " url = " + callback.getCallback()
-          + ", attempt = " + (callback.getAttempt() + 1));
+                  + ", attempt = " + (callback.getAttempt() + 1));
 
       String result = template.postForObject(callback.getCallback(), callback.getPayload(),
-          String.class);
+                                             String.class
+      );
       logger.info("Callback id = " + callback.getId() + " result = " + result);
       callbackRepository.delete(callback);
     } catch (RuntimeException e) {
@@ -95,15 +95,17 @@ public class CallbackService {
 
       callback.setAttempt(callback.getAttempt() + 1);
       callback.setNextRetry(LocalDateTime.now()
-          .plusNanos(1000 * 1000 * (long) java.lang.Math.pow(1 * 100, callback.getAttempt())));
+                              .plusNanos(1000 * 1000 * (long) java.lang.Math.pow(
+                                1 * 100,
+                                callback.getAttempt()
+                              )));
       callbackRepository.save(callback);
       if (callback.getAttempt() >= maxAttempts - 1) {
         callbackRepository.delete(callback);
         logger.error("To many retries. Bailing out... could not connect to callback id = "
-            + callback.getId() + " at " + callback.getCallback(), e);
+                     + callback.getId() + " at " + callback.getCallback(), e);
       }
     }
-
   }
 
   @Scheduled(fixedRate = 1000)

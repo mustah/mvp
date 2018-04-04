@@ -2,7 +2,6 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.stream.Stream;
 
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.web.dto.LocationsDto;
 import com.elvaco.mvp.web.dto.LocationsDto.Address;
@@ -11,6 +10,7 @@ import com.elvaco.mvp.web.dto.SelectionsDto;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class SelectionsMapperTest {
@@ -71,9 +71,7 @@ public class SelectionsMapperTest {
 
   @Test
   public void missingLocationDataShouldBeSetToUnknown() {
-    Location location = Location.UNKNOWN_LOCATION;
-
-    mapper.addToDto(location, selections);
+    mapper.addToDto(UNKNOWN_LOCATION, selections);
     LocationsDto locationsDto = selections.locations;
 
     assertThat(locationsDto.getCountry("unknown")
