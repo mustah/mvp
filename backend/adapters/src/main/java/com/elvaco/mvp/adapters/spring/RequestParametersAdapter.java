@@ -44,14 +44,14 @@ public class RequestParametersAdapter implements RequestParameters {
   }
 
   @Override
-  public RequestParameters setAll(String name, List<String> values) {
-    delegate.put(name, values);
+  public RequestParameters setAll(Map<String, String> values) {
+    delegate.setAll(values);
     return this;
   }
 
   @Override
-  public RequestParameters setAll(Map<String, String> values) {
-    delegate.setAll(values);
+  public RequestParameters setAll(String name, List<String> values) {
+    delegate.put(name, values);
     return this;
   }
 
@@ -65,6 +65,11 @@ public class RequestParametersAdapter implements RequestParameters {
   public List<String> getValues(String name) {
     List<String> values = delegate.get(name);
     return values != null ? values : emptyList();
+  }
+
+  @Override
+  public Set<Entry<String, List<String>>> entrySet() {
+    return delegate.entrySet();
   }
 
   @Nullable
@@ -83,9 +88,10 @@ public class RequestParametersAdapter implements RequestParameters {
     return delegate.isEmpty();
   }
 
-  @Override
-  public Set<Entry<String, List<String>>> entrySet() {
-    return delegate.entrySet();
+  public RequestParameters shallowCopy() {
+    return new RequestParametersAdapter(
+      new LinkedMultiValueMap<>(delegate)
+    );
   }
 
   public MultiValueMap<String, String> multiValueMap() {

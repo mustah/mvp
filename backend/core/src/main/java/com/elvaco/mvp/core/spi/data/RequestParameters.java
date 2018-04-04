@@ -26,4 +26,6 @@ public interface RequestParameters {
   boolean hasName(String name);
 
   boolean isEmpty();
+
+  RequestParameters shallowCopy();
 }

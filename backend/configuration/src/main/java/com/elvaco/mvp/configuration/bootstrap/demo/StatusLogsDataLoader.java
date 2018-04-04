@@ -70,7 +70,7 @@ class StatusLogsDataLoader {
         null,
         gateway.id,
         nextRandomStatusType(),
-        ZonedDateTime.now(),
+        subtractDays(90),
         null
       ))
       .forEach(gatewayStatusLogs::save);
