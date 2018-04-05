@@ -9,17 +9,18 @@ interface TitleProps {
   subtitle?: string;
 }
 
-export const MainTitle = (props: TitleProps) => (
+export const MainTitle = ({children, subtitle}: TitleProps) => (
   <Row className="MainTitle">
-    <Xlarge className="Bold">{props.children}</Xlarge>
-    {props.subtitle && <Small className="Subtitle-description">{props.subtitle}</Small>}
+    <Xlarge className="Bold">{children}</Xlarge>
+    {subtitle && <Small className="Subtitle-description">{subtitle}</Small>}
   </Row>
 );
 
-export const Subtitle = (props: TitleProps) => (
+export const Subtitle = ({children}: TitleProps) => (
   <Row className="Subtitle">
-    <Bold>{props.children}</Bold>
+    <Bold>{children}</Bold>
   </Row>
 );
 
-export const MissingDataTitle = ({title}: {title: string}) => <Large className="MissingDataTitle">{title}</Large>;
+export const MissingDataTitle = ({title}: {title: string}) =>
+  <Large className="MissingDataTitle">{title}</Large>;

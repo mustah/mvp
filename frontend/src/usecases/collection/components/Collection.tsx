@@ -9,22 +9,20 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {translate} from '../../../services/translationService';
 import {CollectionTabsContainer} from '../containers/CollectionTabsContainer';
 
-export const Collection = () => {
-  return (
-    <MvpPageContainer>
-      <Row className="space-between">
-        <MainTitle subtitle={translate('gateway')}>
-          {translate('collection')}
-        </MainTitle>
-        <Row>
-          <SummaryContainer/>
-          <PeriodContainer/>
-        </Row>
+export const Collection = () => (
+  <MvpPageContainer>
+    <Row className="space-between">
+      <MainTitle subtitle={translate('gateways')}>
+        {translate('collection')}
+      </MainTitle>
+      <Row>
+        <SummaryContainer/>
+        <PeriodContainer/>
       </Row>
+    </Row>
 
-      <Paper style={paperStyle}>
-        <CollectionTabsContainer/>
-      </Paper>
-    </MvpPageContainer>
-  );
-};
+    <Paper style={paperStyle}>
+      <CollectionTabsContainer/>
+    </Paper>
+  </MvpPageContainer>
+);
