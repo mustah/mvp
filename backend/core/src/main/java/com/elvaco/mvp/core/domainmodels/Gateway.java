@@ -3,9 +3,14 @@ package com.elvaco.mvp.core.domainmodels;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
+@ToString
+@EqualsAndHashCode
 public class Gateway implements Identifiable<UUID> {
 
   public final UUID id;
@@ -43,5 +48,16 @@ public class Gateway implements Identifiable<UUID> {
   @Override
   public UUID getId() {
     return id;
+  }
+
+  public Gateway withProductModel(String productModel) {
+    return new Gateway(
+      id,
+      organisationId,
+      serial,
+      productModel,
+      meters,
+      statusLogs
+    );
   }
 }

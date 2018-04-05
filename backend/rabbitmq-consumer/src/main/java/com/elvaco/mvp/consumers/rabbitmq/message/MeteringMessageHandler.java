@@ -84,13 +84,13 @@ public class MeteringMessageHandler implements MessageHandler {
     LogicalMeter logicalMeter = logicalMeterUseCases
       .findByOrganisationIdAndExternalId(organisation.id, facility.id)
       .orElseGet(() ->
-                   new LogicalMeter(
-                     randomUUID(),
-                     facility.id,
-                     organisation.id,
-                     selectMeterDefinition(structureMessage.meter.medium),
-                     new Location(facility.country, facility.city, facility.address)
-                   ));
+        new LogicalMeter(
+          randomUUID(),
+          facility.id,
+          organisation.id,
+          selectMeterDefinition(structureMessage.meter.medium),
+          new Location(facility.country, facility.city, facility.address)
+        ));
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
       facility.id,
@@ -109,7 +109,7 @@ public class MeteringMessageHandler implements MessageHandler {
       logicalMeter,
       structureMessage.gateway.id,
       structureMessage.gateway.productModel
-    );
+    ).withProductModel(structureMessage.gateway.productModel);
 
     gatewayUseCases.save(gateway);
 
@@ -251,15 +251,16 @@ public class MeteringMessageHandler implements MessageHandler {
     String productModel
   ) {
     return gatewayUseCases.findBy(organisation.id, productModel, serial)
-      .orElseGet(() ->
-                   new Gateway(
-                     UUID.randomUUID(),
-                     organisation.id,
-                     serial,
-                     productModel,
-                     singletonList(logicalMeter),
-                     emptyList() // TODO Save gateway status
-                   ));
+      .orElseGet(
+        () -> gatewayUseCases.findBy(organisation.id, serial).orElseGet(() ->
+          new Gateway(
+            UUID.randomUUID(),
+            organisation.id,
+            serial,
+            productModel,
+            singletonList(logicalMeter),
+            emptyList() // TODO Save gateway status
+          )));
   }
 
   private LogicalMeter findOrCreateLogicalMeter(
@@ -271,23 +272,23 @@ public class MeteringMessageHandler implements MessageHandler {
       organisation.id,
       facility.id
     ).orElseGet(() ->
-                  new LogicalMeter(
-                    randomUUID(),
-                    facility.id,
-                    organisation.id,
-                    selectMeterDefinition(medium),
-                    new Location(facility.country, facility.city, facility.address)
-                  ));
+      new LogicalMeter(
+        randomUUID(),
+        facility.id,
+        organisation.id,
+        selectMeterDefinition(medium),
+        new Location(facility.country, facility.city, facility.address)
+      ));
   }
 
   private Organisation findOrCreateOrganisation(String externalId) {
     return organisationUseCases.findByExternalId(externalId)
       .orElseGet(() ->
-                   organisationUseCases.create(
-                     new Organisation(
-                       UUID.randomUUID(),
-                       externalId
-                     ).withExternalId(externalId)));
+        organisationUseCases.create(
+          new Organisation(
+            UUID.randomUUID(),
+            externalId
+          ).withExternalId(externalId)));
   }
 
   private PhysicalMeter findOrCreatePhysicalMeter(
