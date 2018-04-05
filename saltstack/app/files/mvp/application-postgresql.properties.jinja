@@ -9,6 +9,7 @@ spring.rabbitmq.password=Yk"!43iTpeToL1!1WjXgwl!89Tq1
 spring.rabbitmq.listener.simple.default-requeue-rejected=true
 
 mvp.consumers.rabbit.queueName={{ salt['grains.get']('env')[0] }}
+mvp.consumers.rabbit.responseRoutingKey=metering-prod
 mvp.superadmin.email=mvpadmin@elvaco.se
 mvp.superadmin.password=PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 mvp.url=http://localhost:8080
