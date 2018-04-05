@@ -19,8 +19,8 @@ interface Props {
 export const IndicatorWidget = (props: Props) => {
   const {widget: {total, status, pending, type}} = props;
 
-  const value = ((1 - (pending / total)) * 100).toFixed(1);
-  const pendingPercentage = ((pending / total) * 100).toFixed(1);
+  const value = total ? ((1 - (pending / total)) * 100).toFixed(1) : 0;
+  const pendingPercentage = total ? ((pending / total) * 100).toFixed(1) : 0;
 
   const IndicatorIcon = iconComponentFor(type);
 
