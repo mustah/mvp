@@ -21,24 +21,23 @@ const colorize =
       colorSchema[quantity as string];
 
 const colorizeAverage = colorize({
-  [RenderableQuantity.volume as string]: '#3d37ae',
-  [RenderableQuantity.flow as string]: '#3d8f5c',
-  [RenderableQuantity.energy as string]: 'pink',
-  [RenderableQuantity.power as string]: 'pink',
-  [RenderableQuantity.forwardTemperature as string]: 'pink',
-  [RenderableQuantity.returnTemperature as string]: 'pink',
-  [RenderableQuantity.differenceTemperature as string]: 'pink',
+  [RenderableQuantity.volume as string]: '#5555ff',
+  [RenderableQuantity.flow as string]: '#ff99ff',
+  [RenderableQuantity.energy as string]: '#55dd55',
+  [RenderableQuantity.power as string]: '#00aaaa',
+  [RenderableQuantity.forwardTemperature as string]: '#843939',
+  [RenderableQuantity.returnTemperature as string]: '#bbbb44',
+  [RenderableQuantity.differenceTemperature as string]: '#004d78',
 });
 
-const defaultColor = '#006da3';
 const colorizeMeters = colorize({
-  [RenderableQuantity.volume as string]: defaultColor,
-  [RenderableQuantity.flow as string]: defaultColor,
-  [RenderableQuantity.energy as string]: defaultColor,
-  [RenderableQuantity.power as string]: defaultColor,
-  [RenderableQuantity.forwardTemperature as string]: defaultColor,
-  [RenderableQuantity.returnTemperature as string]: defaultColor,
-  [RenderableQuantity.differenceTemperature as string]: defaultColor,
+  [RenderableQuantity.volume as string]: '#0000ff',
+  [RenderableQuantity.flow as string]: '#ff00ff',
+  [RenderableQuantity.energy as string]: '#00ff00',
+  [RenderableQuantity.power as string]: '#00ffff',
+  [RenderableQuantity.forwardTemperature as string]: '#ff0000',
+  [RenderableQuantity.returnTemperature as string]: '#ffff00',
+  [RenderableQuantity.differenceTemperature as string]: '#0084e6',
 });
 
 const thickStroke: number = 3;

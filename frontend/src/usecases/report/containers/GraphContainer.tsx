@@ -161,7 +161,7 @@ class GraphComponent extends React.Component<Props> {
                 fallbackContent={missingData}
               >
                 <div>
-                  <ResponsiveContainer width="80%" aspect={4.0}>
+                  <ResponsiveContainer width="100%" aspect={2.5}>
                     <LineChart
                       width={10}
                       height={50}
