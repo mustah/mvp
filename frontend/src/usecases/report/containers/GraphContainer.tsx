@@ -110,8 +110,7 @@ class GraphComponent extends React.Component<Props> {
     const {selectedQuantities} = this.props;
     const {graphContents} = this.state;
     const lines = renderGraphContents(graphContents);
-    const {data} = graphContents;
-
+    const {data, legend} = graphContents;
     const selectedTab: TabName = TabName.graph;
 
     const quantityMenuItem = (quantity: string) => (
@@ -177,7 +176,7 @@ class GraphComponent extends React.Component<Props> {
                       />
                       <CartesianGrid strokeDasharray="3 3"/>
                       <Tooltip/>
-                      <Legend/>
+                      <Legend payload={legend}/>
                       {lines}
                     </LineChart>
                   </ResponsiveContainer>
@@ -207,10 +206,10 @@ class GraphComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  report: {selectedListItems},
-  searchParameters: {selection: {selected: {period}}},
-  ui: {measurements: {selectedQuantities}},
-}: RootState): StateToProps =>
+                           report: {selectedListItems},
+                           searchParameters: {selection: {selected: {period}}},
+                           ui: {measurements: {selectedQuantities}},
+                         }: RootState): StateToProps =>
   ({
     selectedListItems,
     period,

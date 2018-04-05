@@ -4,9 +4,9 @@ import {currentDateRange, toApiParameters} from '../../../../helpers/dateHelpers
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
-import {uuid} from '../../../../types/Types';
+import {Dictionary, uuid} from '../../../../types/Types';
 import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
-import {GraphContents, LineProps} from '../../../../usecases/report/reportModels';
+import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
   AverageApiResponsePart,
@@ -59,7 +59,31 @@ export const mapApiResponseToGraphData =
     const uniqueMeters = new Set<string>();
     let firstTimestamp;
 
-    measurement.forEach((meterQuantity: MeasurementApiResponsePart, index: number) => {
+    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurement.reduce((prev, {quantity}) => (
+      prev[quantity] ?
+        prev
+        : {
+          ...prev,
+          [quantity]: {
+            type: 'line',
+            color: colorizeMeters(quantity as RenderableQuantity),
+            value: quantity,
+          },
+        }), {});
+    const legendsAverage: Dictionary<ProprietaryLegendProps> = average.reduce((prev, {quantity}) => (
+      prev[quantity] ?
+        prev
+        : {
+          ...prev,
+          [`average-${quantity}`]: {
+            type: 'line',
+            color: colorizeAverage(quantity as RenderableQuantity),
+            value: `Average ${quantity}`,
+          },
+        }), {});
+    const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
+
+    measurement.forEach((meterQuantity: MeasurementApiResponsePart) => {
       const label: string = meterQuantity.quantity + ': ' + meterQuantity.label;
       if (!uniqueMeters.has(label)) {
         uniqueMeters.add(label);
@@ -71,6 +95,7 @@ export const mapApiResponseToGraphData =
           strokeWidth: average.length > 0 ? 1 : thickStroke,
         };
         graphContents.lines.push(props);
+
       }
 
       meterQuantity.values.forEach(({when, value}) => {
@@ -91,7 +116,7 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach((averageQuantity: AverageApiResponsePart, index: number) => {
+    average.forEach((averageQuantity: AverageApiResponsePart) => {
       const label: string = averageQuantity.quantity;
       const props: LineProps = {
         dataKey: label,
@@ -115,14 +140,14 @@ export const mapApiResponseToGraphData =
     });
 
     graphContents.data = Object.keys(byDate).reduce((acc: object[], created) => {
-      const allValuesForDate: {[label: string]: number} = byDate[created];
       acc.push({
-        ...allValuesForDate,
+        ...byDate[created],
         name: Number(created),
       });
       return acc;
     }, []);
 
+    graphContents.legend = Object.keys(legends).map((legend) => legends[legend]);
     return graphContents;
   };
 

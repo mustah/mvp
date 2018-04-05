@@ -5,6 +5,7 @@ moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
 export const timezoneStockholm = 'Europe/Stockholm';
 
+// TODO: This should more general or change name to momentWithTimeZoneStockholm
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
   moment(input).tz(timezoneStockholm);
 

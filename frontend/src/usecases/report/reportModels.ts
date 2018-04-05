@@ -1,4 +1,3 @@
-import {LegendPayload} from 'recharts';
 import {IndicatorType} from '../../components/indicators/indicatorWidgetModels';
 import {Status, uuid} from '../../types/Types';
 
@@ -19,10 +18,16 @@ export interface LineProps {
   strokeWidth?: number;
 }
 
+export interface ProprietaryLegendProps {
+  color: string;
+  value: string | number;
+  type: 'line';
+}
+
 export interface GraphContents {
   axes: Axes;
   data: object[];
-  legend: LegendPayload[];
+  legend: ProprietaryLegendProps[];
   lines: LineProps[];
 }
 
