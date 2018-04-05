@@ -90,7 +90,9 @@ public class MeteringMessageHandler implements MessageHandler {
           organisation.id,
           selectMeterDefinition(structureMessage.meter.medium),
           new Location(facility.country, facility.city, facility.address)
-        ));
+        )).withLocation(
+          new Location(facility.country, facility.city, facility.address)
+      );
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
       facility.id,

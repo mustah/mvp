@@ -227,6 +227,20 @@ public class LogicalMeter implements Identifiable<UUID> {
     );
   }
 
+  public LogicalMeter withLocation(Location location) {
+    return new LogicalMeter(
+      id,
+      externalId,
+      organisationId,
+      location,
+      created,
+      physicalMeters,
+      meterDefinition,
+      gateways,
+      collectionPercentage
+    );
+  }
+
   public Optional<Double> getCollectionPercentage() {
     return Optional.ofNullable(collectionPercentage);
   }
