@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {imagePathFor} from '../../app/routes';
 import {Column, ColumnCenter} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -11,8 +12,10 @@ import {Info} from './Info';
 interface Props {
   gateway: Gateway;
 }
+
 export const GatewayDetailsInfo = ({gateway}: Props) => {
   const {location: {city, address}, serial, productModel, status, flags} = gateway;
+  const gatewayImage = imagePathFor('cme2110.jpg');
 
   return (
     <div className="GatewayDetailsInfo">
@@ -29,7 +32,7 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
       </Row>
       <Row>
         <Column>
-          <img src="assets/images/cme2110.jpg" width={100}/>
+          <img src={gatewayImage} width={100}/>
         </Column>
         <Column className="OverView">
           <Row>

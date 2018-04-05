@@ -20,9 +20,11 @@ export const routes = {
   adminOrganisationsAdd: '/admin/organisations/add',
 };
 
+export const imagePathFor = (image: string): string => `assets/images/${image}`;
+
 const organisationLogo = {
-  'wayne-industries': 'wayne-industries.png',
+  'wayne-industries': imagePathFor('wayne-industries.png'),
 };
 
 export const getLogoPath = (organisationId: uuid): string =>
-  organisationLogo[organisationId] || 'elvaco_logo.png';
+  organisationLogo[organisationId] || imagePathFor('elvaco_logo.png');

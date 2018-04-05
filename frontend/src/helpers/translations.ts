@@ -1,10 +1,10 @@
-import {translate} from '../services/translationService';
+import {firstUpperTranslated, translate} from '../services/translationService';
 import {GatewayDataSummaryKey} from '../state/domain-models-paginated/gateway/gatewayModels';
 import {MeterDataSummaryKey} from '../state/domain-models-paginated/meter/meterModels';
 import {ParameterName} from '../state/search/selection/selectionModels';
 import {IdNamed, Status} from '../types/Types';
+import {texts} from './texts';
 
-// TODO: Write tests on this.
 export const getTranslationOrName = (idName: IdNamed, domainModelName: ParameterName): string => {
   switch (domainModelName) {
     case ParameterName.meterStatuses:
@@ -35,6 +35,16 @@ const flaggedTranslation = (text: string): string => {
     unFlagged: translate('unFlagged'),
   };
   return texts[text] || text;
+};
+
+export const translatedErrorMessage = (message: string): string => {
+  if (message === texts.invalidToken) {
+    return firstUpperTranslated('token missing or invalid');
+  } else if (message === texts.badCredentials) {
+    return firstUpperTranslated('bad credentials');
+  } else {
+    return message;
+  }
 };
 
 type FieldKey = MeterDataSummaryKey | GatewayDataSummaryKey;
