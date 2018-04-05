@@ -6,7 +6,7 @@ spring.datasource.password=mvp-password
 spring.rabbitmq.host=rabbitmq.elvaco.se
 spring.rabbitmq.username=app.rabbitmq.mvp
 spring.rabbitmq.password=Yk"!43iTpeToL1!1WjXgwl!89Tq1
-spring.rabbitmq.listener.simple.default-requeue-rejected=true
+spring.rabbitmq.listener.simple.default-requeue-rejected=false
 
 mvp.consumers.rabbit.queueName={{ salt['grains.get']('env')[0] }}
 mvp.consumers.rabbit.responseRoutingKey=metering-prod
