@@ -6,6 +6,7 @@
   color: $primary-fg;
   cursor: pointer;
   padding: $sm-space;
+  align-items: center;
 
   span:first-letter {
     text-transform: uppercase;

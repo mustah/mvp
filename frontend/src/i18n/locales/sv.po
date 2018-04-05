@@ -78,7 +78,7 @@ msgid "are you sure you want to delete this item"
 msgstr "är du säker på att du vill ta bort detta objekt"
 
 msgid "all"
-msgstr "allt"
+msgstr "alla"
 
 msgid "organisation name"
 msgstr "organisationsnamn"

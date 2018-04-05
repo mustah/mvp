@@ -1,13 +1,13 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
 import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
-import {translate} from '../../services/translationService';
+import {prettyRange} from '../../helpers/dateHelpers';
+import {firstUpperTranslated, translate} from '../../services/translationService';
 import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
 import {Period} from './dateModels';
 import './PeriodSelection.scss';
-import {prettyRange} from '../../helpers/dateHelpers';
 
 const height = 32;
 
@@ -51,6 +51,12 @@ interface Props {
   selectPeriod: OnSelectPeriod;
 }
 
+interface TimePeriods {
+  value: Period;
+  chosen: string;
+  alternative: string;
+}
+
 export class PeriodSelection extends React.Component<Props> {
 
   render() {
@@ -58,10 +64,10 @@ export class PeriodSelection extends React.Component<Props> {
 
     const onSelectPeriod = (event, index: number, period: Period) => selectPeriod(period);
 
-    const timePeriods = [
+    const timePeriods: TimePeriods[] = [
       {
         value: Period.latest,
-        chosen: translate('last 24h'),
+        chosen: firstUpperTranslated('last 24h'),
         alternative: translate('last 24h'),
       },
       {
@@ -86,14 +92,14 @@ export class PeriodSelection extends React.Component<Props> {
       },
     ];
 
-    const timePeriodComponents = timePeriods.map((tp) => (
+    const timePeriodComponents = timePeriods.map(({alternative, chosen, value}: TimePeriods) => (
       <MenuItem
         className="TimePeriod"
-        key={tp.alternative}
-        label={tp.chosen}
-        primaryText={tp.alternative}
+        key={alternative}
+        label={chosen}
+        primaryText={alternative}
         style={listItemStyle}
-        value={tp.value}
+        value={value}
       />
     ));
 

@@ -27,14 +27,15 @@ class RestClientDelegate implements AxiosInstance {
     response: AxiosInterceptorManager<AxiosResponse>;
   };
 
-  private delegate: AxiosInstance;
-  private requests: Dictionary<CancelTokenSource>;
+  private readonly delegate: AxiosInstance;
+  private readonly requests: Dictionary<CancelTokenSource>;
 
   constructor(delegate: AxiosInstance) {
     this.delegate = delegate;
     this.interceptors = delegate.interceptors;
     this.defaults = delegate.defaults;
     this.requests = {};
+    this.setResponseInterceptors();
   }
 
   request<T = any>(config: AxiosRequestConfig): AxiosPromise<T> {
@@ -72,14 +73,22 @@ class RestClientDelegate implements AxiosInstance {
     return this.delegate.patch(url, data, config);
   }
 
+  private setResponseInterceptors(): void {
+    this.interceptors.response.use((response) => response, (error) => {
+      const {response} = error;
+      if (response && response.data && response.data.message === texts.invalidToken) {
+        return Promise.reject(new InvalidToken(response.data.message));
+      } else {
+        return Promise.reject(error);
+      }
+    });
+  }
+
 }
 
 const axiosConfig = config().axios;
-export let restClient: RestClientDelegate = new RestClientDelegate(axios.create(axiosConfig));
 
-interface Headers {
-  Authorization: string;
-}
+export let restClient: AxiosInstance = new RestClientDelegate(axios.create(axiosConfig));
 
 interface Headers {
   Authorization: string;
@@ -87,19 +96,7 @@ interface Headers {
 
 const makeRestClient = (headers: Headers): AxiosInstance => {
   restClient = new RestClientDelegate(axios.create({...axiosConfig, headers}));
-  setResponseInterceptors();
   return restClient;
-};
-
-const setResponseInterceptors = (): void => {
-  restClient.interceptors.response.use((response) => response, (error) => {
-    const {response} = error;
-    if (response && response.data && response.data.message === texts.invalidToken) {
-      return Promise.reject(new InvalidToken(response.data.message));
-    } else {
-      return Promise.reject(error);
-    }
-  });
 };
 
 export const restClientWith = (token?: string): void => {
@@ -111,4 +108,5 @@ export const restClientWith = (token?: string): void => {
 export const authenticate = (token: string): AxiosInstance =>
   makeRestClient({Authorization: `Basic ${token}`});
 
-export const wasRequestCanceled = (error: ErrorResponse) => (error.message === requestCanceled);
+export const wasRequestCanceled = (error: ErrorResponse): boolean =>
+  (error.message === requestCanceled);

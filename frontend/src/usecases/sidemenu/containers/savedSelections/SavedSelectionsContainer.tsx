@@ -6,17 +6,21 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {
   dividerStyle,
-  listItemStyle, listItemStyleSelected,
+  listItemStyle,
+  listItemStyleSelected,
   listStyle,
   nestedListItemStyle,
   sideBarHeaderStyle,
   sideBarStyles,
 } from '../../../../app/themes';
 import {RootState} from '../../../../reducers/rootReducer';
-import {translate} from '../../../../services/translationService';
+import {firstUpperTranslated} from '../../../../services/translationService';
 import {selectSavedSelection} from '../../../../state/search/selection/selectionActions';
 import {SelectionState} from '../../../../state/search/selection/selectionModels';
-import {getSavedSelections, getSelection} from '../../../../state/search/selection/selectionSelectors';
+import {
+  getSavedSelections,
+  getSelection,
+} from '../../../../state/search/selection/selectionSelectors';
 import {IdNamed, OnClick} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
 
@@ -40,7 +44,9 @@ const SavedSelections = (props: StateToProps & DispatchToProps) => {
 
   const renderListItem = (item: IdNamed) => {
     const onSelectSelection = () => selectSavedSelection(item.id);
-    const style: React.CSSProperties = item.id === selection.id ? listItemStyleSelected : listItemStyle;
+    const style: React.CSSProperties = item.id === selection.id
+      ? listItemStyleSelected
+      : listItemStyle;
     return (
       <ListItem
         onClick={onSelectSelection}
@@ -60,7 +66,7 @@ const SavedSelections = (props: StateToProps & DispatchToProps) => {
     <List style={listStyle}>
       <ListItem
         className="ListItem"
-        primaryText={translate('saved selections')}
+        primaryText={firstUpperTranslated('saved selections')}
         initiallyOpen={true}
         style={sideBarHeaderStyle}
         hoverColor={sideBarStyles.onHover.color}

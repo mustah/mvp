@@ -4,7 +4,7 @@ import PopoverAnimationVertical from 'material-ui/Popover/PopoverAnimationVertic
 import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
 import {dropDownStyle} from '../../app/themes';
-import {translate} from '../../services/translationService';
+import {firstUpperTranslated} from '../../services/translationService';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
 import {Children, IdNamed} from '../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
@@ -68,7 +68,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     const entries = filteredList.length;
 
     const selected = selectedOptions(list);
-    const selectedOverview = selected && selected + ' / ' + list.length || translate('all');
+    const selectedOverview = selected && selected + ' / ' + list.length || firstUpperTranslated('all');
 
     return (
       <Row className="DropdownSelector">
@@ -149,6 +149,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
         onClick={onClick}
         key={id}
         style={style}
+        className="first-uppercase"
         checked={selected}
       />
     );

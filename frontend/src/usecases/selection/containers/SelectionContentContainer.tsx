@@ -12,8 +12,8 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
+import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
 import {toggleSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
@@ -23,20 +23,17 @@ import {
 } from '../../../state/search/selection/selectionModels';
 import {
   getAddresses,
-  getAlarms,
   getCities,
   getCitiesSelection,
   getGatewayStatuses,
   getMeterStatuses,
 } from '../../../state/search/selection/selectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
-import {SelectionQuantity} from '../components/SelectionQuantity';
 import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {
   cities: SelectionListItem[];
   addresses: SelectionListItem[];
-  alarms: SelectionListItem[];
   meterStatuses: SelectionListItem[];
   gatewayStatuses: SelectionListItem[];
   citiesSelection: ObjectsById<IdNamed>;
@@ -66,7 +63,6 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection,
       cities,
       addresses,
-      alarms,
       meterStatuses,
       gatewayStatuses,
       citiesSelection,
@@ -77,7 +73,6 @@ class SelectionContent extends React.Component<Props> {
 
     const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
     const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
-    const selectAlarm = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.alarms});
     const selectMeterStatus = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.meterStatuses});
     const selectGatewayStatus = (selection: IdNamed) =>
@@ -85,7 +80,6 @@ class SelectionContent extends React.Component<Props> {
 
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
-    const alarmSelectionText = translate('alarm') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
 
@@ -109,21 +103,15 @@ class SelectionContent extends React.Component<Props> {
               parentIdentifier="parentId"
             />
             <SimpleDropdownSelector
-              list={gatewayStatuses}
-              selectionText={gatewayStatusSelectionText}
-              select={selectGatewayStatus}
-            />
-            <SimpleDropdownSelector
               list={meterStatuses}
               selectionText={meterStatusSelectionText}
               select={selectMeterStatus}
             />
             <SimpleDropdownSelector
-              list={alarms}
-              selectionText={alarmSelectionText}
-              select={selectAlarm}
+              list={gatewayStatuses}
+              selectionText={gatewayStatusSelectionText}
+              select={selectGatewayStatus}
             />
-            <SelectionQuantity/>
           </Row>
           <SearchResultList/>
         </Column>
@@ -143,7 +131,6 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
     cities: getCities(lookupState),
     citiesSelection: getCitiesSelection(lookupState).entities,
     addresses: getAddresses(lookupState),
-    alarms: getAlarms(lookupState),
     meterStatuses: getMeterStatuses(lookupState),
     gatewayStatuses: getGatewayStatuses(lookupState),
     isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
