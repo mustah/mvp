@@ -28,4 +28,16 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
     this.sourceSystemId = sourceSystemId;
     this.values = values;
   }
+
+  public MeteringMeasurementMessageDto withValues(List<ValueDto> values) {
+    return new MeteringMeasurementMessageDto(
+      messageType,
+      gateway,
+      meter,
+      facility,
+      organisationId,
+      sourceSystemId,
+      values
+    );
+  }
 }

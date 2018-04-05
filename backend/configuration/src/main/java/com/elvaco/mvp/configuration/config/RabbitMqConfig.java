@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableConfigurationProperties(RabbitConsumerProperties.class)
@@ -63,7 +64,8 @@ class RabbitMqConfig {
   @Bean
   SimpleMessageListenerContainer container(
     ConnectionFactory connectionFactory,
-    MessageListenerAdapter listenerAdapter
+    MessageListenerAdapter listenerAdapter,
+    PlatformTransactionManager transactionManager
   ) {
     SimpleMessageListenerContainer container =
       new SimpleMessageListenerContainer(connectionFactory);
@@ -71,7 +73,8 @@ class RabbitMqConfig {
     listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
     listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
     container.setMessageListener(listenerAdapter);
-    container.setDefaultRequeueRejected(false);
+    container.setChannelTransacted(true);
+    container.setTransactionManager(transactionManager);
     return container;
   }
 
