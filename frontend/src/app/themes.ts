@@ -16,6 +16,7 @@ export const colors = {
   red: '#ff3d00',
   white: '#ffffff',
   lightGrey: '#f9f9f9',
+  black: '#000000',
   lightBlack: '#7b7b7b',
   borderColor: '#cccccc',
   dividerColor: '#eaeaea',

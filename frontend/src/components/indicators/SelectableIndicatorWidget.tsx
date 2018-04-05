@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import {colors} from '../../app/themes';
 import {Indicator} from '../../usecases/report/reportModels';
 import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
@@ -58,7 +59,7 @@ export const SelectableIndicatorWidget = ({select, indicator, isSelected}: Indic
             <Normal className="Indicator-unit">{isEnabled && unit}</Normal>
           </Row>
           <Row className="Indicator-subtitle Row-center">
-            <IndicatorIcon className="Indicator-icon" color="black"/>
+            <IndicatorIcon className="Indicator-icon" color={isEnabled ? colors.white : colors.black}/>
             <Bold>{subtitle}</Bold>
           </Row>
         </ColumnCenter>
