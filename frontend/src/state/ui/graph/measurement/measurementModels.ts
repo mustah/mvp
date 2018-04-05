@@ -38,8 +38,8 @@ export interface AverageApiResponsePart {
   }>;
 }
 
+// TODO: Redundant types?
 export type AverageApiResponse = AverageApiResponsePart[];
-
 export type MeasurementApiResponse = MeasurementApiResponsePart[];
 
 export interface MeasurementResponses {

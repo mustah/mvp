@@ -5,6 +5,7 @@ moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
 export const timezoneStockholm = 'Europe/Stockholm';
 
+// TODO: This should more general or change name to momentWithTimeZoneStockholm
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
   moment(input).tz(timezoneStockholm);
 
@@ -65,3 +66,6 @@ export const toFriendlyIso8601 = ({start, end}: DateRange): string =>
 
 export const prettyRange = (period: Period): string =>
   toFriendlyIso8601(dateRange(now().toDate(), period));
+
+export const formatLabelTimeStamp = (input: moment.MomentInput): string =>
+  momentWithTimeZone(input).format('MMM d, HH:mm');
