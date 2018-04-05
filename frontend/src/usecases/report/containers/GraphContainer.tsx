@@ -64,7 +64,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
 
   if (axes.left) {
     components.push((
-      <YAxis key="leftYAxis" label={axes.left} yAxisId="left"/>
+      <YAxis key="leftYAxis" label={axes.left} yAxisId="left" />
     ));
   }
 
@@ -162,7 +162,7 @@ class GraphComponent extends React.Component<Props> {
                 fallbackContent={missingData}
               >
                 <div>
-                  <ResponsiveContainer width="90%" aspect={4.0}>
+                  <ResponsiveContainer width="90%" aspect={2.5}>
                     <LineChart
                       width={10}
                       height={50}

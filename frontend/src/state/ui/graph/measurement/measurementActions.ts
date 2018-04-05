@@ -26,7 +26,7 @@ const colorizeAverage = colorize({
   [RenderableQuantity.energy as string]: '#55dd55',
   [RenderableQuantity.power as string]: '#00aaaa',
   [RenderableQuantity.forwardTemperature as string]: '#843939',
-  [RenderableQuantity.returnTemperature as string]: '#bbbb44',
+  [RenderableQuantity.returnTemperature as string]: '#a7317d',
   [RenderableQuantity.differenceTemperature as string]: '#004d78',
 });
 
@@ -36,7 +36,7 @@ const colorizeMeters = colorize({
   [RenderableQuantity.energy as string]: '#00ff00',
   [RenderableQuantity.power as string]: '#00ffff',
   [RenderableQuantity.forwardTemperature as string]: '#ff0000',
-  [RenderableQuantity.returnTemperature as string]: '#ffff00',
+  [RenderableQuantity.returnTemperature as string]: '#ff49bd',
   [RenderableQuantity.differenceTemperature as string]: '#0084e6',
 });
 

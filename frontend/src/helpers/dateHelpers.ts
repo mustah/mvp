@@ -68,4 +68,4 @@ export const prettyRange = (period: Period): string =>
   toFriendlyIso8601(dateRange(now().toDate(), period));
 
 export const formatLabelTimeStamp = (input: moment.MomentInput): string =>
-  momentWithTimeZone(input).format('MMM d, HH:mm');
+  momentWithTimeZone(input).format('MMM D, HH:mm');
