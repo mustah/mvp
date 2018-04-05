@@ -81,7 +81,7 @@ class GatewayList extends React.Component<Props> {
     } = this.props;
 
     const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
-    const renderStatusCell = ({status}: Gateway) => <Status {...status}/>;
+    const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
     const renderCity = ({location: {city}}: Gateway) => city.name;
     const renderAddress = ({location: {address}}: Gateway) => address.name;
     const renderFlags = ({flags}: Gateway) => flags.map((flag: Flag) => flag.title).join(', ');

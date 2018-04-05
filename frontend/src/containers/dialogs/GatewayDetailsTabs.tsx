@@ -42,7 +42,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
     const {selectedTab} = this.state;
     const {gateway, meters, gatewayMapMarker} = this.props;
 
-    const renderStatusCell = (meter: Meter) => <Status {...meter.status}/>;
+    const renderStatusCell = (meter: Meter) => <Status name={meter.status.name}/>;
     const renderFacility = ({facility}: Meter) => facility;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderMedium = ({medium}: Meter) => medium;

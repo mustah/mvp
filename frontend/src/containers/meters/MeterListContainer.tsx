@@ -14,10 +14,7 @@ import {MissingDataTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {
-  clearErrorMeters,
-  fetchMeters,
-} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {
   getPageError,
@@ -91,7 +88,7 @@ class MeterList extends React.Component<Props> {
     } = this.props;
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
-    const renderStatusCell = ({status}: Meter) => <Status {...status}/>;
+    const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
     const renderCityName = ({location: {city}}: Meter) => city ? city.name : null;
     const renderAddressName = ({location: {address}}: Meter) => address ? address.name : null;
     const renderFlags = ({flags}: Meter) => flags

@@ -90,15 +90,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
 
     const statusChangelog = normalizedStatusChangelogFor(meter);
 
-    const renderStatusCell = (item: MeterStatusChangelog) =>
-      (
-        <Status
-          {...{
-            id: item.name,
-            name: item.name,
-          }}
-        />
-      );
+    const renderStatusCell = ({name}: MeterStatusChangelog) => <Status name={name}/>;
     const renderQuantity = ({quantity}: Measurement) => quantity;
     const renderValue = ({value}: Measurement) => value;
     const renderDate = (item: MeterStatusChangelog) => item.start;

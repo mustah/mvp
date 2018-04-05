@@ -1,17 +1,20 @@
 import {schema} from 'normalizr';
-import {processStrategy} from '../../domain-models/selections/selectionsSchemas';
 
-const meter = new schema.Entity('meters', {}, {processStrategy});
-const address = new schema.Entity('addresses');
-const city = new schema.Entity('cities');
-const allMeters = new schema.Entity('allMeters', {}, {processStrategy});
-export const meterSchema = {content: [meter]};
-export const allMetersSchema = [allMeters];
-export const addressCluster = new schema.Entity('addressClusters');
-
-export const selectionTreeSchema = {
-  cities: [city],
-  addresses: [address],
-  addressClusters: [addressCluster],
-  meters: [meter],
+export const meterProcessStrategy = (entity: any): schema.StrategyFunction => {
+  if (entity.status) {
+    const statusCode = entity.status.toLowerCase();
+    const status = {id: statusCode, name: statusCode};
+    const gatewayStatus = entity.gateway.status;
+    return {
+      ...entity,
+      status,
+      gateway: {...entity.gateway, status: {id: gatewayStatus, name: gatewayStatus}},
+    };
+  } else {
+    return entity;
+  }
 };
+
+const meter = new schema.Entity('meters', {}, {processStrategy: meterProcessStrategy});
+
+export const meterSchema = {content: [meter]};

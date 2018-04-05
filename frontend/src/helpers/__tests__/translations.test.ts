@@ -33,23 +33,23 @@ describe('translations', () => {
 
   describe('getTranslationOrName', () => {
 
-    it('does not translate un mapped status', () => {
-      const status = {id: 'x', name: 'unknown'};
-
-      expect(getTranslationOrName(status, ParameterName.addresses)).toEqual('unknown');
+    it('does not translate unknown status', () => {
+      expect(getTranslationOrName('unknown', ParameterName.addresses)).toEqual('unknown');
     });
 
     it('translates gateway statuses', () => {
-      const status = {id: 'warning', name: 'ok'};
+      expect(getTranslationOrName('warning', ParameterName.gatewayStatuses)).toEqual('not good');
+    });
 
-      expect(getTranslationOrName(status, ParameterName.gatewayStatuses)).toEqual('not good');
+    it('translates meter statuses', () => {
+      expect(getTranslationOrName('ok', ParameterName.meterStatuses)).toEqual('ok status');
     });
   });
 
   describe('statusTranslation', () => {
 
     it('fallbacks to unknown status translations', () => {
-      expect(statusTranslation({id: 'no', name: 'x'})).toEqual('do not know this');
+      expect(statusTranslation('no')).toEqual('do not know this');
     });
   });
 });

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {IconStatus} from '../../components/icons/IconStatus';
 import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
+import {Status} from '../../components/status/Status';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
@@ -21,7 +21,6 @@ export const MeterDetailsInfo = (props: Props) => {
 
   const gateway = meter.gateway;
   const meterFlags = meter.flags || [];
-  const meterStatus = meter.status;
 
   return (
     <Row>
@@ -46,7 +45,7 @@ export const MeterDetailsInfo = (props: Props) => {
           </Column>
           <Info
             label={translate('status')}
-            value={<IconStatus id={gateway.status.id} name={gateway.status.name}/>}
+            value={<Status name={gateway.status.name}/>}
           />
           <Info label={translate('interval')} value="24h"/>
           <Info label={translate('resolution')} value="1h"/>
@@ -60,7 +59,7 @@ export const MeterDetailsInfo = (props: Props) => {
           </Column>
           <Info
             label={translate('status')}
-            value={<IconStatus id={meterStatus.id} name={meterStatus.name}/>}
+            value={<Status name={meter.status.name}/>}
           />
           {renderAlarm()}
           <Info label={translate('flagged for action')} value={titleOf(meterFlags)}/>
