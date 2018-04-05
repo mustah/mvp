@@ -29,10 +29,10 @@ export const MeterDetailsInfo = (props: Props) => {
         <Row>
           <Column>
             <Row>
+              <div className="display-none">{meter.id}</div>
               <MainTitle>{translate('meter')}</MainTitle>
             </Row>
           </Column>
-          <Info label={translate('meter id')} value={meter.id}/>
           <Info label={translate('product model')} value={meter.manufacturer}/>
           <Info label={translate('medium')} value={meter.medium}/>
           <Info label={translate('city')} value={meter.location.city.name}/>

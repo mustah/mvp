@@ -158,9 +158,6 @@ msgstr "no reliable position"
 msgid "alarm"
 msgstr "alarm"
 
-msgid "meter id"
-msgstr "MOID"
-
 msgid "resolution"
 msgstr "resolution"
 
