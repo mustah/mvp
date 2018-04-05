@@ -15,6 +15,7 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
+import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -175,7 +176,7 @@ class GraphComponent extends React.Component<Props> {
                         type="number"
                       />
                       <CartesianGrid strokeDasharray="3 3"/>
-                      <Tooltip/>
+                      <Tooltip labelFormatter={formatLabelTimeStamp}/>
                       <Legend payload={legend}/>
                       {lines}
                     </LineChart>
