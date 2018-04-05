@@ -47,7 +47,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
 
   @Override
   public List<LogicalMeter> findAll(RequestParameters parameters) {
-    return filter(isWithingOrganisation(parameters))
+    return filter(isWithinOrganisation(parameters))
       .collect(toList());
   }
 
@@ -105,7 +105,7 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
     return logicalMeter -> Objects.equals(logicalMeter.id, id);
   }
 
-  private Predicate<LogicalMeter> isWithingOrganisation(RequestParameters parameters) {
+  private Predicate<LogicalMeter> isWithinOrganisation(RequestParameters parameters) {
     return logicalMeter ->
       !parameters.hasName("organisation")
       || Objects.equals(
