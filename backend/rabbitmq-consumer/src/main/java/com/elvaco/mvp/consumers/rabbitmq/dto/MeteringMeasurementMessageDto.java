@@ -1,9 +1,11 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
+  @Nullable
   public final GatewayIdDto gateway;
   public final MeterIdDto meter;
   public final FacilityIdDto facility;
@@ -13,7 +15,7 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
   public MeteringMeasurementMessageDto(
     MessageType messageType,
-    GatewayIdDto gateway,
+    @Nullable GatewayIdDto gateway,
     MeterIdDto meter,
     FacilityIdDto facility,
     String organisationId,
