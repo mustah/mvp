@@ -66,6 +66,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ConstantConditions")
 public class MessageHandlerTest {
 
+  private static final String DEFAULT_PRODUCT_MODEL = "CMi2110";
   private static final String DEFAULT_QUANTITY = "Energy";
   private static final String DEFAULT_GATEWAY_EXTERNAL_ID = "123";
   private static final int DEFAULT_EXPECTED_INTERVAL = 15;
@@ -111,7 +112,7 @@ public class MessageHandlerTest {
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
         .organisation(new Organisation(randomUUID(), "some organisation",
-                                       DEFAULT_ORGANISATION_EXTERNAL_ID
+          DEFAULT_ORGANISATION_EXTERNAL_ID
         ))
         .asSuperAdmin()
         .build(),
@@ -166,7 +167,11 @@ public class MessageHandlerTest {
       logicalMeter.created,
       singletonList(savedPhysicalMeter),
       MeterDefinition.HOT_WATER_METER,
-      singletonList(gateways.findBy(organisation.id, "CMi2110", "001694120").get())
+      singletonList(gateways.findBy(
+        organisation.id,
+        DEFAULT_PRODUCT_MODEL,
+        DEFAULT_GATEWAY_EXTERNAL_ID
+      ).get())
     );
 
     assertThat(logicalMeter).isEqualTo(expectedLogicalMeter);
@@ -181,6 +186,25 @@ public class MessageHandlerTest {
       DEFAULT_EXPECTED_INTERVAL,
       null
     ));
+  }
+
+  @Test
+  public void updatesExistingGatewayWithUnknownManufacturer() {
+    UUID gatewayId = UUID.randomUUID();
+    Organisation organisation = organisations.save(
+      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    gateways.save(new Gateway(
+      gatewayId,
+      organisation.id,
+      DEFAULT_GATEWAY_EXTERNAL_ID,
+      "Unknown"
+    ));
+
+    messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
+
+    Gateway gateway = gateways.findBy(organisation.id, DEFAULT_GATEWAY_EXTERNAL_ID).get();
+    assertThat(gateway.id).isEqualTo(gatewayId);
+    assertThat(gateway.productModel).isEqualTo(DEFAULT_PRODUCT_MODEL);
   }
 
   @Test
@@ -207,7 +231,8 @@ public class MessageHandlerTest {
 
     LogicalMeter logicalMeter = logicalMeters.findById(meter.logicalMeterId).get();
     assertThat(logicalMeter.meterDefinition).isEqualTo(MeterDefinition.HOT_WATER_METER);
-    assertThat(gateways.findBy(organisation.id, "CMi2110", "001694120").isPresent()).isTrue();
+    assertThat(gateways.findBy(organisation.id, DEFAULT_PRODUCT_MODEL, DEFAULT_GATEWAY_EXTERNAL_ID)
+      .isPresent()).isTrue();
   }
 
   @Test
@@ -308,7 +333,7 @@ public class MessageHandlerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing "
-                                                                   + "organisation"));
+      + "organisation"));
     physicalMeters.save(newPhysicalMeter(organisation, DEFAULT_MEDIUM));
 
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
@@ -758,7 +783,7 @@ public class MessageHandlerTest {
       new FacilityDto(DEFAULT_EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "Test source system",
       DEFAULT_ORGANISATION_EXTERNAL_ID,
-      new GatewayStatusDto("001694120", "CMi2110", "OK")
+      new GatewayStatusDto(DEFAULT_GATEWAY_EXTERNAL_ID, DEFAULT_PRODUCT_MODEL, "OK")
     );
   }
 
@@ -790,7 +815,7 @@ public class MessageHandlerTest {
   }
 
   private Gateway newGateway(UUID organisationId, String serial) {
-    return new Gateway(UUID.randomUUID(), organisationId, serial, "CMi2110");
+    return new Gateway(UUID.randomUUID(), organisationId, serial, DEFAULT_PRODUCT_MODEL);
   }
 
   private Organisation newOrganisation(String code) {
