@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class MeasurementValueDto {
+public class MeasurementValueDto implements Comparable<MeasurementValueDto> {
 
   public Instant when;
   public Double value;
@@ -17,5 +17,15 @@ public class MeasurementValueDto {
   public MeasurementValueDto(Instant when, Double value) {
     this.when = when;
     this.value = value;
+  }
+
+  @Override
+  public int compareTo(MeasurementValueDto o) {
+    if (o.when.isBefore(when)) {
+      return 1;
+    } else if (o.when.isAfter(when)) {
+      return -1;
+    }
+    return 0;
   }
 }
