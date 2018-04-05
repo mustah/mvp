@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.dto;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ public class MeasurementSeriesDto {
     String label,
     List<MeasurementValueDto> values
   ) {
+    Collections.sort(values);
     this.quantity = quantity;
     this.unit = unit;
     this.label = label;
