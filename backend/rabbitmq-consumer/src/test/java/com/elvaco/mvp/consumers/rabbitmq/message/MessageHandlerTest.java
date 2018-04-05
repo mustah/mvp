@@ -87,6 +87,11 @@ public class MessageHandlerTest {
   private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
     "2018-03-07T16:13:09");
   private static final String DEFAULT_UNIT = "kWh";
+  private static final Location DEFAULT_LOCATION = new Location(
+    "Sweden",
+    "Kungsbacka",
+    "Kabelgatan 2T"
+  );
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
   private LogicalMeters logicalMeters;
@@ -225,6 +230,26 @@ public class MessageHandlerTest {
     assertThat(organisations.findAll()).hasSize(1);
     assertThat(physicalMeters.findAll()).hasSize(1);
     assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+  }
+
+  @Test
+  public void locationIsUpdatedForExistingMeter() {
+    UUID meterId = UUID.randomUUID();
+    Organisation organisation = organisations.save(
+      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      DEFAULT_EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+
+    ));
+
+    Location newLocation = new Location("", "Växjö", "Gatvägen 41");
+    messageHandler.handle(newStructureMessage(newLocation));
+
+    assertThat(logicalMeters.findById(meterId).get().location).isEqualTo(newLocation);
   }
 
   @Test
@@ -771,13 +796,35 @@ public class MessageHandlerTest {
     String medium,
     String physicalMeterId
   ) {
-    return newStructureMessage(medium, "KAM", physicalMeterId, DEFAULT_EXPECTED_INTERVAL);
+    return newStructureMessage(
+      medium,
+      "KAM",
+      physicalMeterId,
+      DEFAULT_EXPECTED_INTERVAL,
+      DEFAULT_LOCATION
+    );
+  }
+
+  private MeteringMeterStructureMessageDto newStructureMessage(Location location) {
+    return newStructureMessage(
+      DEFAULT_MEDIUM,
+      "ELV",
+      DEFAULT_ADDRESS,
+      DEFAULT_EXPECTED_INTERVAL,
+      location
+    );
   }
 
   private MeteringMeterStructureMessageDto newStructureMessage(
     String medium
   ) {
-    return newStructureMessage(medium, "ELV", DEFAULT_ADDRESS, DEFAULT_EXPECTED_INTERVAL);
+    return newStructureMessage(
+      medium,
+      "ELV",
+      DEFAULT_ADDRESS,
+      DEFAULT_EXPECTED_INTERVAL,
+      DEFAULT_LOCATION
+    );
   }
 
   private MeteringMeterStructureMessageDto newStructureMessage(
@@ -787,7 +834,8 @@ public class MessageHandlerTest {
       DEFAULT_MEDIUM,
       "ELV",
       DEFAULT_ADDRESS,
-      expectedInterval
+      expectedInterval,
+      DEFAULT_LOCATION
     );
   }
 
@@ -795,12 +843,18 @@ public class MessageHandlerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    int expectedInterval
+    int expectedInterval,
+    Location location
   ) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto(physicalMeterId, medium, "OK", manufacturer, expectedInterval),
-      new FacilityDto(DEFAULT_EXTERNAL_ID, "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      new FacilityDto(
+        DEFAULT_EXTERNAL_ID,
+        location.getCountry(),
+        location.getCity(),
+        location.getAddress()
+      ),
       "Test source system",
       DEFAULT_ORGANISATION_EXTERNAL_ID,
       new GatewayStatusDto(DEFAULT_GATEWAY_EXTERNAL_ID, DEFAULT_PRODUCT_MODEL, "OK")
