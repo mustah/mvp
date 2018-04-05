@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
 import {Normal} from '../texts/Texts';
-import './DropdownSelector.scss';
 import {DropdownProps, DropdownSelector} from './DropdownSelector';
+import './DropdownSelector.scss';
 
 export const SimpleDropdownSelector = (props: DropdownProps) => {
 
