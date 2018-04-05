@@ -60,6 +60,36 @@ public class MeteringMeasurementParserTest {
   }
 
   @Test
+  public void measurementMessageMissingGatewayIsOk() {
+    String jsonMessage = "{\n"
+      + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+      + "  \"meter\": {\n"
+      + "    \"id\": \"123456789\"\n"
+      + "  },\n"
+      + "  \"facility\": {\n"
+      + "    \"id\": \"42402519\"\n"
+      + "  },\n"
+      + "  \"organisation_id\": \"Elvaco AB\",\n"
+      + "  \"source_system_id\": \"Elvaco Metering\",\n"
+      + "  \"values\": [\n"
+      + "    {\n"
+      + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+      + "      \"value\": 0.659,\n"
+      + "      \"unit\": \"wH\",\n"
+      + "      \"quantity\": \"power\",\n"
+      + "      \"status\": \"OK\"\n"
+      + "    }\n"
+      + "  ]\n"
+      + "}";
+    MeteringMessageParser messageParser = new MeteringMessageParser();
+
+    MeteringMeasurementMessageDto parsedMessage =
+      messageParser.parseMeasurementMessage(jsonMessage).get();
+
+    assertThat(parsedMessage.gateway).isNull();
+  }
+
+  @Test
   public void parseMalformedMeasurementMessage() {
     MeteringMessageParser messageParser = new MeteringMessageParser();
     assertThat(messageParser.parseMeasurementMessage("")).isEmpty();

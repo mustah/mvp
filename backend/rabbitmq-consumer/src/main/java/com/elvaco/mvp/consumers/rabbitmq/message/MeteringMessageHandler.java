@@ -174,22 +174,23 @@ public class MeteringMessageHandler implements MessageHandler {
         );
       }
     );
-
-    Gateway gateway = gatewayUseCases.findBy(
-      organisation.id,
-      measurementMessage.gateway.id
-    ).orElseGet(() -> {
-      referenceInfoDtoBuilder.setGatewayExternalId(measurementMessage.gateway.id);
-      return new Gateway(
-        UUID.randomUUID(),
+    Optional<Gateway> optionalGateway = Optional.empty();
+    if (measurementMessage.gateway != null) {
+      optionalGateway = Optional.of(gatewayUseCases.findBy(
         organisation.id,
-        measurementMessage.gateway.id,
-        "Unknown",
-        singletonList(logicalMeter),
-        emptyList() // TODO Save gateway status
-      );
-    });
-
+        measurementMessage.gateway.id
+      ).orElseGet(() -> {
+        referenceInfoDtoBuilder.setGatewayExternalId(measurementMessage.gateway.id);
+        return new Gateway(
+          UUID.randomUUID(),
+          organisation.id,
+          measurementMessage.gateway.id,
+          "Unknown",
+          singletonList(logicalMeter),
+          emptyList() // TODO Save gateway status
+        );
+      }));
+    }
     List<Measurement> measurements = measurementMessage.values
       .stream()
       .map(
@@ -211,12 +212,17 @@ public class MeteringMessageHandler implements MessageHandler {
           .withQuantity(valueDto.quantity)
       )
       .collect(toList());
-    gatewayUseCases.save(gateway);
-    logicalMeterUseCases.save(
-      logicalMeter
-        .withGateway(gateway)
-        .withPhysicalMeter(physicalMeter)
-    );
+
+    if (optionalGateway.isPresent()) {
+      Gateway gateway = optionalGateway.get();
+      gatewayUseCases.save(optionalGateway.get());
+      logicalMeterUseCases.save(
+        logicalMeter.withGateway(gateway)
+          .withPhysicalMeter(physicalMeter));
+    } else {
+      logicalMeterUseCases.save(logicalMeter.withPhysicalMeter(physicalMeter));
+    }
+
     physicalMeterUseCases.save(physicalMeter);
     measurementUseCases.save(measurements);
     return referenceInfoDtoBuilder.build();

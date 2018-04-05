@@ -208,6 +208,26 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void survivesMissingGatewayFieldInMeasurementMessage() {
+    MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
+      MessageType.METERING_MEASUREMENT_V_1_0,
+      null,
+      new MeterIdDto(DEFAULT_EXTERNAL_ID),
+      new FacilityIdDto(DEFAULT_EXTERNAL_ID),
+      DEFAULT_ORGANISATION_EXTERNAL_ID,
+      "Test source system",
+      emptyList()
+    );
+
+    messageHandler.handle(message);
+
+    assertThat(gateways.findAll(null)).isEmpty();
+    assertThat(organisations.findAll()).hasSize(1);
+    assertThat(physicalMeters.findAll()).hasSize(1);
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+  }
+
+  @Test
   public void createsOrganisationWithSameNameAsCode() {
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
 
