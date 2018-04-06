@@ -79,12 +79,14 @@ class ValidationTabs extends React.Component<Props> {
 
     const noMetersFallbackContent = <MissingDataTitle title={firstUpperTranslated('no meters')}/>;
 
-    const metersWithoutConfidence = meterMapMarkers.result.length -
-      metersWithinThreshold(meterMapMarkers.entities).length;
+    const metersWithoutConfidence =
+      meterMapMarkers.result.length - metersWithinThreshold(meterMapMarkers.entities).length;
+
     const someAreHidden = metersWithoutConfidence
-      ? firstUpperTranslated('{{count}} meters are not displayed in the map due to low accuracy', {
-        count: metersWithoutConfidence,
-      })
+      ? firstUpperTranslated(
+        '{{count}} meters are not displayed in the map due to low accuracy',
+        {count: metersWithoutConfidence},
+      )
       : undefined;
 
     return (

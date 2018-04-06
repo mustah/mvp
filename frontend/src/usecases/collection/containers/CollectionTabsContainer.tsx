@@ -82,12 +82,14 @@ class CollectionTabs extends React.Component<Props> {
     const noGatewaysFallbackContent =
       <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
 
-    const gatewaysWithoutConfidence = gatewayMapMarkers.result.length -
-      metersWithinThreshold(gatewayMapMarkers.entities).length;
+    const gatewaysWithoutConfidence =
+      gatewayMapMarkers.result.length - metersWithinThreshold(gatewayMapMarkers.entities).length;
+
     const someAreHidden = gatewaysWithoutConfidence
-      ? firstUpperTranslated('{{count}} gateways are not displayed in the map due to low accuracy', {
-        count: gatewaysWithoutConfidence,
-      })
+      ? firstUpperTranslated(
+        '{{count}} gateways are not displayed in the map due to low accuracy',
+        {count: gatewaysWithoutConfidence},
+      )
       : undefined;
 
     return (
@@ -105,7 +107,10 @@ class CollectionTabs extends React.Component<Props> {
         <TabContent tab={TabName.map} selectedTab={selectedTab}>
           <Loader isFetching={isFetching} error={error} clearError={clearError}>
             <div>
-              <HasContent hasContent={gatewayMapMarkers.result.length > 0} fallbackContent={noGatewaysFallbackContent}>
+              <HasContent
+                hasContent={gatewayMapMarkers.result.length > 0}
+                fallbackContent={noGatewaysFallbackContent}
+              >
                 <Map
                   defaultZoom={7}
                   someAreHidden={someAreHidden}
