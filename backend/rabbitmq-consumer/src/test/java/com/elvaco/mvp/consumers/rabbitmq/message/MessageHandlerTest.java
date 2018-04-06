@@ -27,8 +27,10 @@ import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
@@ -66,6 +68,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("ConstantConditions")
 public class MessageHandlerTest {
 
+  public static final String DEFAULT_MANUFACTURER = "ELV";
   private static final String DEFAULT_PRODUCT_MODEL = "CMi2110";
   private static final String DEFAULT_QUANTITY = "Energy";
   private static final String DEFAULT_GATEWAY_EXTERNAL_ID = "123";
@@ -186,10 +189,11 @@ public class MessageHandlerTest {
       DEFAULT_ADDRESS,
       DEFAULT_EXTERNAL_ID,
       DEFAULT_MEDIUM,
-      "ELV",
+      DEFAULT_MANUFACTURER,
       logicalMeter.id,
       DEFAULT_EXPECTED_INTERVAL,
-      null
+      null,
+      savedPhysicalMeter.statuses
     ));
   }
 
@@ -646,7 +650,8 @@ public class MessageHandlerTest {
       "meter-id",
       15,
       UNKNOWN_LOCATION,
-      "");
+      ""
+    );
 
     messageHandler.handle(message);
 
@@ -753,6 +758,42 @@ public class MessageHandlerTest {
     assertThat(messageHandler.handle(newMeasurementMessage())).isEmpty();
   }
 
+  @Test
+  public void meterStatusIsSetForNewMeter() {
+    messageHandler.handle(newStructureMessage(StatusType.OK));
+
+    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    assertThat(statuses).hasSize(1);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNull();
+  }
+
+  @Test
+  public void sameMeterStatusIsUnchangedForMeter() {
+    messageHandler.handle(newStructureMessage(StatusType.OK));
+    messageHandler.handle(newStructureMessage(StatusType.OK));
+
+    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    assertThat(statuses).hasSize(1);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNull();
+  }
+
+  @Test
+  public void newMeterStatusChangesStatus() {
+    messageHandler.handle(newStructureMessage(StatusType.OK));
+    messageHandler.handle(newStructureMessage(StatusType.ERROR));
+
+    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    assertThat(statuses).hasSize(2);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNotNull();
+
+    assertThat(statuses.get(1).status).isEqualTo(StatusType.ERROR);
+    assertThat(statuses.get(1).stop).isNull();
+
+  }
+
   private PhysicalMeter newPhysicalMeter(
     Organisation organisation,
     String defaultMedium
@@ -762,7 +803,7 @@ public class MessageHandlerTest {
       DEFAULT_ADDRESS,
       DEFAULT_EXTERNAL_ID,
       defaultMedium,
-      "ELV",
+      DEFAULT_MANUFACTURER,
       organisation,
       DEFAULT_EXPECTED_INTERVAL
     );
@@ -846,10 +887,22 @@ public class MessageHandlerTest {
     );
   }
 
+  private MeteringMeterStructureMessageDto newStructureMessage(StatusType meterStatus) {
+    return newStructureMessage(
+      DEFAULT_MEDIUM,
+      DEFAULT_MANUFACTURER,
+      DEFAULT_ADDRESS,
+      DEFAULT_EXPECTED_INTERVAL,
+      DEFAULT_LOCATION,
+      DEFAULT_EXTERNAL_ID,
+      meterStatus
+    );
+  }
+
   private MeteringMeterStructureMessageDto newStructureMessage(Location location) {
     return newStructureMessage(
       DEFAULT_MEDIUM,
-      "ELV",
+      DEFAULT_MANUFACTURER,
       DEFAULT_ADDRESS,
       DEFAULT_EXPECTED_INTERVAL,
       location
@@ -861,7 +914,7 @@ public class MessageHandlerTest {
   ) {
     return newStructureMessage(
       medium,
-      "ELV",
+      DEFAULT_MANUFACTURER,
       DEFAULT_ADDRESS,
       DEFAULT_EXPECTED_INTERVAL,
       DEFAULT_LOCATION
@@ -873,7 +926,7 @@ public class MessageHandlerTest {
   ) {
     return newStructureMessage(
       DEFAULT_MEDIUM,
-      "ELV",
+      DEFAULT_MANUFACTURER,
       DEFAULT_ADDRESS,
       expectedInterval,
       DEFAULT_LOCATION
@@ -905,9 +958,29 @@ public class MessageHandlerTest {
     Location location,
     String externalId
   ) {
+    return newStructureMessage(
+      medium,
+      manufacturer,
+      physicalMeterId,
+      expectedInterval,
+      location,
+      externalId,
+      StatusType.OK
+    );
+  }
+
+  private MeteringMeterStructureMessageDto newStructureMessage(
+    String medium,
+    String manufacturer,
+    String physicalMeterId,
+    int expectedInterval,
+    Location location,
+    String externalId,
+    StatusType meterStatus
+  ) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
-      new MeterDto(physicalMeterId, medium, "OK", manufacturer, expectedInterval),
+      new MeterDto(physicalMeterId, medium, meterStatus.name(), manufacturer, expectedInterval),
       new FacilityDto(
         externalId,
         location.getCountry(),
@@ -916,7 +989,11 @@ public class MessageHandlerTest {
       ),
       "Test source system",
       DEFAULT_ORGANISATION_EXTERNAL_ID,
-      new GatewayStatusDto(DEFAULT_GATEWAY_EXTERNAL_ID, DEFAULT_PRODUCT_MODEL, "OK")
+      new GatewayStatusDto(
+        DEFAULT_GATEWAY_EXTERNAL_ID,
+        DEFAULT_PRODUCT_MODEL,
+        meterStatus.name()
+      )
     );
   }
 

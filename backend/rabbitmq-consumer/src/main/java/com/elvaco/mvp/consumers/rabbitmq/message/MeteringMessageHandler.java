@@ -23,6 +23,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
@@ -97,9 +98,7 @@ public class MeteringMessageHandler implements MessageHandler {
           organisation.id,
           selectMeterDefinition(structureMessage.meter.medium),
           new Location(facility.country, facility.city, facility.address)
-        )).withLocation(
-        new Location(facility.country, facility.city, facility.address)
-      );
+        )).withLocation(new Location(facility.country, facility.city, facility.address));
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
       facility.id,
@@ -111,7 +110,10 @@ public class MeteringMessageHandler implements MessageHandler {
     ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id)
-      .withReadInterval(structureMessage.meter.expectedInterval);
+      .withReadInterval(structureMessage.meter.expectedInterval)
+      .replaceActiveStatus(
+        StatusType.from(structureMessage.meter.status)
+      );
 
     Gateway gateway = findOrCreateGateway(
       organisation,
