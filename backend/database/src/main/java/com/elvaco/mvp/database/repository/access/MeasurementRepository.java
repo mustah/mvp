@@ -58,12 +58,13 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findByPhysicalMeterIdAndCreated(
+  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
     UUID physicalMeterId,
+    String quantity,
     ZonedDateTime created
   ) {
-    return measurementJpaRepository.findByPhysicalMeterIdAndCreated(
-      physicalMeterId, created
+    return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
+      physicalMeterId, quantity, created
     ).map(measurementMapper::toDomainModel);
   }
 

@@ -388,6 +388,47 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void measurementIsUpdated() {
+    UUID meterId = UUID.randomUUID();
+    Organisation organisation = organisations.save(
+      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      DEFAULT_EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    messageHandler.handle(newMeasurementMessage("Wattage", "W", 1.0));
+    messageHandler.handle(newMeasurementMessage("Wattage", "W", 2.0));
+
+    List<Measurement> actual = measurements.findAll(new MockRequestParameters());
+    assertThat(actual).hasSize(1);
+    assertThat(actual.get(0).value).isEqualTo(2.0);
+  }
+
+  @Test
+  public void measurementForNewQuantityIsNotUpdated() {
+    UUID meterId = UUID.randomUUID();
+    Organisation organisation = organisations.save(
+      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    logicalMeters.save(new LogicalMeter(
+      meterId,
+      DEFAULT_EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    messageHandler.handle(newMeasurementMessage("Wattage", "W", 1.0));
+    messageHandler.handle(newMeasurementMessage("Flow", "m³/s", 2.0));
+
+    List<Measurement> actual = measurements.findAll(new MockRequestParameters());
+    assertThat(actual).hasSize(2);
+  }
+
+  @Test
   public void addsMeasurementToExistingMeter() {
     Organisation organisation = organisations.save(
       newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
@@ -595,21 +636,6 @@ public class MessageHandlerTest {
     assertThat(all).hasSize(1);
     assertThat(all.get(0).unit).isEqualTo("MW");
     assertThat(all.get(0).value).isEqualTo(1.0);
-  }
-
-  @Test
-  public void measurementQuantityIsUpdated() {
-    messageHandler.handle(newMeasurementMessage("Energy", "kW", 1.0));
-
-    List<Measurement> all = measurements.findAll(null);
-    assertThat(all).hasSize(1);
-    assertThat(all.get(0).quantity).isEqualTo("Energy");
-
-    messageHandler.handle(newMeasurementMessage("Un-Energy", "kW", 1.0));
-
-    all = measurements.findAll(null);
-    assertThat(all).hasSize(1);
-    assertThat(all.get(0).quantity).isEqualTo("Un-Energy");
   }
 
   @Test
