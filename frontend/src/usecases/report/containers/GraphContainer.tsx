@@ -57,6 +57,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
       yAxisId="left"
       type="monotone"
       dot={false}
+      connectNulls={true}
       {...props}
     />
   ));
