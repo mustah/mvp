@@ -63,7 +63,7 @@ describe('selectionSelectors', () => {
     )),
   };
 
-  const latestUrlParameters = 'after=2018-01-31T23%3A00%3A00.000Z&before=2018-02-01T22%3A59%3A59.999Z';
+  const latestUrlParameters = 'after=2018-01-31T23%3A00%3A00.000Z&before=2018-02-01T23%3A00%3A00.000Z';
 
   const initialEncodedParameters = composePaginatedCombiner(
     encodedUriParametersForMeters,

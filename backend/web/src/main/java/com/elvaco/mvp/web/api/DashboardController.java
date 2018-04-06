@@ -11,7 +11,6 @@ import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,11 +50,11 @@ public class DashboardController {
   private Optional<WidgetDto> getCollectionWidget(RequestParameters parameters) {
     return dashboardUseCases.getMeasurementsStatistics(parameters)
       .map(collectionStats -> new WidgetDto(
-          WidgetType.COLLECTION.name,
-          collectionStats.expected,
-          OK.name,
-          collectionStats.actual
-        )
+             WidgetType.COLLECTION.name,
+             collectionStats.expected,
+             OK.name,
+             collectionStats.expected - collectionStats.actual
+           )
       );
   }
 }

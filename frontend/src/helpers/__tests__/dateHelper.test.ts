@@ -13,7 +13,7 @@ describe('dateHelper', () => {
       expect(momentWithTimeZone(timePeriod.start).format(pattern)).toEqual('2018-03-22 00:00:00');
       expect(momentWithTimeZone(timePeriod.end).format(pattern)).toEqual('2018-03-22 23:59:59');
       expect(toApiParameters(timePeriod)).toEqual(['after=2018-03-21T23%3A00%3A00.000Z',
-                                                   'before=2018-03-22T22%3A59%3A59.999Z']);
+                                                   'before=2018-03-22T23%3A00%3A00.000Z']);
     });
   });
 

@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import com.elvaco.mvp.configuration.bootstrap.demo.DemoDataHelper;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -20,9 +20,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepositoryImpl;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
-import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
-import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetType;
@@ -43,10 +40,6 @@ public class DashboardControllerTest extends IntegrationTest {
 
   private final Random random = new Random();
   private final MeterDefinitionMapper meterDefinitionMapper = new MeterDefinitionMapper();
-  private final PhysicalMeterMapper physicalMeterMapper = new PhysicalMeterMapper(
-    new OrganisationMapper(),
-    new MeterStatusLogMapper()
-  );
   private double measurementCount = 0.0;
   private double measurementFailedCount = 0.0;
   private ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
@@ -59,8 +52,6 @@ public class DashboardControllerTest extends IntegrationTest {
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
-
-  @Autowired
 
   @Before
   public void setUp() {
@@ -140,8 +131,8 @@ public class DashboardControllerTest extends IntegrationTest {
       .isEqualTo(measurementCount + measurementFailedCount);
 
     assertThat(dashboardDtos.widgets.get(0).pending)
-      .as("Unexpected number of successful measurements")
-      .isEqualTo(measurementCount);
+      .as("Unexpected number of remaining measurements")
+      .isEqualTo(measurementFailedCount);
   }
 
   private List<PhysicalMeterStatusLogEntity> newStatusLogs(
@@ -169,12 +160,10 @@ public class DashboardControllerTest extends IntegrationTest {
     ZonedDateTime startDate,
     long dayCount
   ) {
-    MeasurementUnit measurementUnit = new MeasurementUnit("m^3", 2.0);
 
     for (int x = 0; x < meters.size(); x++) {
       measurementJpaRepository.save(createMeasurements(
         meters.get(x),
-        measurementUnit,
         startDate,
         meters.get(x).readIntervalMinutes,
         dayCount * 1440 / meters.get(x).readIntervalMinutes
@@ -195,7 +184,6 @@ public class DashboardControllerTest extends IntegrationTest {
    */
   private List<MeasurementEntity> createMeasurements(
     PhysicalMeterEntity physicalMeterEntity,
-    MeasurementUnit measurementUnit,
     ZonedDateTime measurementDate,
     long interval,
     long values
@@ -204,18 +192,17 @@ public class DashboardControllerTest extends IntegrationTest {
 
     for (int x = 0; x < values; x++) {
       if (random.nextInt(10) >= 8) {
-        measurementFailedCount++;
+        measurementFailedCount = measurementFailedCount + 7;
         continue;
       }
-      measurementEntities.add(new MeasurementEntity(
-        null,
-        measurementDate.plusMinutes(x * interval),
-        String.valueOf(x),
-        measurementUnit,
-        physicalMeterEntity
-      ));
 
-      measurementCount++;
+      ZonedDateTime created = measurementDate.plusMinutes(x * interval);
+
+      measurementEntities.addAll(
+        DemoDataHelper.getDistrictHeatingMeterReading(created, physicalMeterEntity)
+      );
+
+      measurementCount = measurementCount + 7;
     }
 
     return measurementEntities;

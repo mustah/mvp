@@ -20,7 +20,7 @@ describe('urlFactory', () => {
     )),
   };
 
-  const latestUrlParameters = 'after=2018-04-25T22%3A00%3A00.000Z&before=2018-04-26T21%3A59%3A59.999Z';
+  const latestUrlParameters = 'after=2018-04-25T22%3A00%3A00.000Z&before=2018-04-26T22%3A00%3A00.000Z';
 
   describe('calculate uri parameters from selected ids and pagination', () => {
     const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {

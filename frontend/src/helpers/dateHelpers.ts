@@ -12,7 +12,7 @@ export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
 export const toApiParameters = ({start, end}: DateRange): string[] => {
   return [
     `after=${encodeURIComponent(start.toISOString())}`,
-    `before=${encodeURIComponent(end.toISOString())}`,
+    `before=${encodeURIComponent(momentWithTimeZone(end).add(1, 'ms').toISOString())}`,
   ];
 };
 

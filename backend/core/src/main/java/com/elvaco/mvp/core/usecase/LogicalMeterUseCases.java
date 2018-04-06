@@ -39,6 +39,29 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
+  static Optional<CollectionStats> getCollectionPercent(
+    List<PhysicalMeter> physicalMeters,
+    RequestParameters parameters,
+    int expectedQuantityCount
+  ) {
+    if (parameters.hasName("after") && parameters.hasName("before")) {
+      ZonedDateTime after = ZonedDateTime.parse(parameters.getFirst("after"));
+      ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
+
+      double expectedReadouts = 0.0;
+      double actualReadouts = 0.0;
+
+      for (PhysicalMeter physicalMeter : physicalMeters) {
+        expectedReadouts += calculateExpectedReadOuts(physicalMeter, after, before);
+        actualReadouts += physicalMeter.getMeasurementCountOrZero();
+      }
+      return Optional.of(
+        new CollectionStats(actualReadouts, expectedReadouts * expectedQuantityCount)
+      );
+    }
+    return Optional.empty();
+  }
+
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream()
@@ -96,31 +119,13 @@ public class LogicalMeterUseCases {
     LogicalMeter logicalMeter,
     RequestParameters parameters
   ) {
+    int expectedQuantityCount = logicalMeter.meterDefinition.quantities.size();
+
     return logicalMeter.withCollectionPercentage(
-      getCollectionPercent(logicalMeter.physicalMeters, parameters)
+      getCollectionPercent(logicalMeter.physicalMeters, parameters, expectedQuantityCount)
         .map(a -> a.getCollectionPercentage())
         .orElse(null)
     );
-  }
-
-  static Optional<CollectionStats> getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    RequestParameters parameters
-  ) {
-    if (parameters.hasName("after") && parameters.hasName("before")) {
-      ZonedDateTime after = ZonedDateTime.parse(parameters.getFirst("after"));
-      ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
-
-      double expectedReadouts = 0L;
-      double actualReadouts = 0L;
-
-      for (PhysicalMeter physicalMeter : physicalMeters) {
-        expectedReadouts += calculateExpectedReadOuts(physicalMeter, after, before);
-        actualReadouts += physicalMeter.getMeasurementCountOrZero();
-      }
-      return Optional.of(new CollectionStats(actualReadouts, expectedReadouts));
-    }
-    return Optional.empty();
   }
 
   private boolean hasTenantAccess(UUID organisationId) {
