@@ -29,6 +29,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import lombok.extern.slf4j.Slf4j;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
@@ -39,6 +40,7 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+@Slf4j
 public class MeteringMessageHandler implements MessageHandler {
 
   private static final List<String> DISTRICT_HEATING_METER_QUANTITIES = unmodifiableList(asList(
@@ -80,6 +82,11 @@ public class MeteringMessageHandler implements MessageHandler {
   public Optional<MeteringResponseDto> handle(MeteringMeterStructureMessageDto structureMessage) {
     Organisation organisation = findOrCreateOrganisation(structureMessage.organisationId);
     FacilityDto facility = structureMessage.facility;
+
+    if (facilityIdIsInvalid(facility.id)) {
+      log.warn("Discarding message with invalid facility/external ID '{}'", facility.id);
+      return Optional.empty();
+    }
 
     LogicalMeter logicalMeter = logicalMeterUseCases
       .findByOrganisationIdAndExternalId(organisation.id, facility.id)
@@ -139,6 +146,12 @@ public class MeteringMessageHandler implements MessageHandler {
       new GetReferenceInfoDtoBuilder(measurementMessage.organisationId);
 
     String facilityId = measurementMessage.facility.id;
+
+    if (facilityIdIsInvalid(facilityId)) {
+      log.warn("Discarding measurement message with invalid facility/external ID '{}'", facilityId);
+      return Optional.empty();
+    }
+
     LogicalMeter logicalMeter =
       logicalMeterUseCases.findByOrganisationIdAndExternalId(
         organisation.id,
@@ -251,6 +264,10 @@ public class MeteringMessageHandler implements MessageHandler {
       return MeterDefinition.DISTRICT_HEATING_METER;
     }
     return MeterDefinition.UNKNOWN_METER;
+  }
+
+  private boolean facilityIdIsInvalid(String id) {
+    return id.trim().isEmpty();
   }
 
   private Gateway findOrCreateGateway(
