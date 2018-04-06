@@ -81,13 +81,13 @@ const getList = (entityType: ParameterName): ListSelector =>
         selected
           .sort(comparatorByNameAsc)
           .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: true}));
+            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: true}));
 
       const deselectedEntities: SelectionListItem[] =
         deselected
           .sort(comparatorByNameAsc)
           .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName({id, name}, entityType), ...extra, selected: false}));
+            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: false}));
 
       return [...selectedEntities, ...deselectedEntities];
     },

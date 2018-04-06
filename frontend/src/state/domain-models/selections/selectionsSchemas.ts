@@ -15,8 +15,8 @@ const createId: schema.SchemaFunction = (
   {name: entityName},
   {name: parentName, id: parentId},
   key,
-): string => (parentId ?
-  `${parentId.toLowerCase()},${entityName.toLowerCase()}`
+): string => (parentId
+  ? `${parentId.toLowerCase()},${entityName.toLowerCase()}`
   : `${parentName.toLowerCase()},${entityName.toLowerCase()}`);
 
 const processStrategyCityAddress: schema.StrategyFunction = (entity, parent, key) => {
