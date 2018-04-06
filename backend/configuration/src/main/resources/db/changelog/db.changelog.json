@@ -17,6 +17,24 @@
           }
         ]
       }
+    },
+    {
+      "changeSet": {
+        "id": "Disallow empty external IDs",
+        "author": "Anton Löfgren",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/disallow_empty_external_ids.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
     }
   ]
 }
