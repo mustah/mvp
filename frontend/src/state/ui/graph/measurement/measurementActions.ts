@@ -196,7 +196,10 @@ export const fetchMeasurements =
       const response = await restClient.get(measurement);
       return {
         measurement: response.data,
-        average: averageData,
+        average: averageData.map((averageEntity) => ({
+          ...averageEntity,
+          values: averageEntity.values.filter(({value}) => value),
+        })),
       };
     } catch (error) {
       return {

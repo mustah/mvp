@@ -57,6 +57,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
       yAxisId="left"
       type="monotone"
       dot={false}
+      connectNulls={true}
       {...props}
     />
   ));
@@ -161,7 +162,7 @@ class GraphComponent extends React.Component<Props> {
                 fallbackContent={missingData}
               >
                 <div>
-                  <ResponsiveContainer width="100%" aspect={2.5}>
+                  <ResponsiveContainer width="90%" aspect={4.0}>
                     <LineChart
                       width={10}
                       height={50}
