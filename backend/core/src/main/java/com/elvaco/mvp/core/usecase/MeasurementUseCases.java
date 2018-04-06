@@ -48,8 +48,12 @@ public class MeasurementUseCases {
       });
   }
 
-  public Optional<Measurement> findForMeterCreatedAt(UUID physicalMeterId, ZonedDateTime when) {
-    return measurements.findByPhysicalMeterIdAndCreated(physicalMeterId, when);
+  public Optional<Measurement> findForMeterCreatedAt(
+    UUID physicalMeterId,
+    String quantity,
+    ZonedDateTime when
+  ) {
+    return measurements.findByPhysicalMeterIdAndQuantityAndCreated(physicalMeterId, quantity, when);
   }
 
   public Collection<Measurement> save(Collection<Measurement> measurementsCollection) {

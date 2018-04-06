@@ -91,7 +91,7 @@ public class MeteringMessageHandler implements MessageHandler {
           selectMeterDefinition(structureMessage.meter.medium),
           new Location(facility.country, facility.city, facility.address)
         )).withLocation(
-          new Location(facility.country, facility.city, facility.address)
+        new Location(facility.country, facility.city, facility.address)
       );
 
     PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
@@ -199,6 +199,7 @@ public class MeteringMessageHandler implements MessageHandler {
         valueDto -> measurementUseCases
           .findForMeterCreatedAt(
             physicalMeter.id,
+            valueDto.quantity,
             valueDto.timestamp.atZone(ZoneId.of("CET"))
           ).orElseGet(() -> new Measurement(
             null,

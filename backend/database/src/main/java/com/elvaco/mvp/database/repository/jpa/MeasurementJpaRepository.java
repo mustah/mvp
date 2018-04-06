@@ -46,8 +46,9 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("to") OffsetDateTime to
   );
 
-  Optional<MeasurementEntity> findByPhysicalMeterIdAndCreated(
+  Optional<MeasurementEntity> findByPhysicalMeterIdAndQuantityAndCreated(
     UUID physicalMeterId,
+    String quantity,
     ZonedDateTime created
   );
 }
