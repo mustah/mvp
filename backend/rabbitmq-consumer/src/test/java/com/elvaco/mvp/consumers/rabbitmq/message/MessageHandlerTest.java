@@ -639,6 +639,21 @@ public class MessageHandlerTest {
   }
 
   @Test
+  public void emptyExternalIdIsRejected() {
+    MeteringMeterStructureMessageDto message = newStructureMessage(
+      "medium",
+      "manufacturer",
+      "meter-id",
+      15,
+      UNKNOWN_LOCATION,
+      "");
+
+    messageHandler.handle(message);
+
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).isEmpty();
+  }
+
+  @Test
   public void measurementValueIsUpdated() {
     messageHandler.handle(newMeasurementMessage(1.0));
 
@@ -872,11 +887,29 @@ public class MessageHandlerTest {
     int expectedInterval,
     Location location
   ) {
+    return newStructureMessage(
+      medium,
+      manufacturer,
+      physicalMeterId,
+      expectedInterval,
+      location,
+      DEFAULT_EXTERNAL_ID
+    );
+  }
+
+  private MeteringMeterStructureMessageDto newStructureMessage(
+    String medium,
+    String manufacturer,
+    String physicalMeterId,
+    int expectedInterval,
+    Location location,
+    String externalId
+  ) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto(physicalMeterId, medium, "OK", manufacturer, expectedInterval),
       new FacilityDto(
-        DEFAULT_EXTERNAL_ID,
+        externalId,
         location.getCountry(),
         location.getCity(),
         location.getAddress()
