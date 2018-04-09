@@ -63,6 +63,7 @@ public final class MeteringMessageParser {
     Map<String, String> translationMap = new HashMap<>();
     translationMap.put("Celsius", "°C");
     translationMap.put("Kelvin", "K");
+    translationMap.put("m3", "m³");
     return unmodifiableMap(translationMap);
   }
 
