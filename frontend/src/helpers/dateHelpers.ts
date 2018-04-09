@@ -3,11 +3,11 @@ import {DateRange, Period} from '../components/dates/dateModels';
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 
-export const timezoneStockholm = 'Europe/Stockholm';
+export const timezoneUtc = 'UTC';
 
 // TODO: This should more general or change name to momentWithTimeZoneStockholm
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
-  moment(input).tz(timezoneStockholm);
+  moment(input).tz(timezoneUtc);
 
 export const toApiParameters = ({start, end}: DateRange): string[] => {
   return [
@@ -55,7 +55,7 @@ export const dateRange = (date: Date, period: Period): DateRange => {
   }
 };
 
-const now = (): moment.Moment => moment().tz(timezoneStockholm);
+const now = (): moment.Moment => moment().tz(timezoneUtc);
 
 export const currentDateRange = (period: Period): DateRange => dateRange(now().toDate(), period);
 

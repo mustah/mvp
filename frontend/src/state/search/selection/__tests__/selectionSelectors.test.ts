@@ -58,12 +58,12 @@ describe('selectionSelectors', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: string) => toApiParameters(dateRange(
-      momentWithTimeZone('2018-02-02').toDate(),
+      momentWithTimeZone('2018-02-02T00:00:00Z').toDate(),
       parameter as Period,
     )),
   };
 
-  const latestUrlParameters = 'after=2018-01-31T23%3A00%3A00.000Z&before=2018-02-01T23%3A00%3A00.000Z';
+  const latestUrlParameters = 'after=2018-02-01T00%3A00%3A00.000Z&before=2018-02-02T00%3A00%3A00.000Z';
 
   const initialEncodedParameters = composePaginatedCombiner(
     encodedUriParametersForMeters,
