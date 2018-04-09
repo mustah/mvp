@@ -64,6 +64,8 @@ public final class MeteringMessageParser {
     translationMap.put("Celsius", "°C");
     translationMap.put("Kelvin", "K");
     translationMap.put("m3", "m³");
+    translationMap.put("m3/h", "m³/h");
+
     return unmodifiableMap(translationMap);
   }
 

@@ -93,6 +93,13 @@ public class MeteringMessageParserTest {
       + "      \"unit\": \"m3\",\n"
       + "      \"quantity\": \"Volume\",\n"
       + "      \"status\": \"OK\"\n"
+      + "    },\n"
+      + "    {\n"
+      + "      \"timestamp\": \"2018-03-28T00:00:00\",\n"
+      + "      \"value\": 16,\n"
+      + "      \"unit\": \"m3/h\",\n"
+      + "      \"quantity\": \"Volume Flow\",\n"
+      + "      \"status\": \"OK\"\n"
       + "    }\n"
       + "  ]\n"
       + "}\n"
@@ -109,7 +116,8 @@ public class MeteringMessageParserTest {
         new ValueDto(expectedTimestamp, 82, "°C", "Flow temp."),
         new ValueDto(expectedTimestamp, 55, "°C", "Return temp."),
         new ValueDto(expectedTimestamp, 27.1, "K", "Difference temp."),
-        new ValueDto(expectedTimestamp, 99, "m³", "Volume")
+        new ValueDto(expectedTimestamp, 99, "m³", "Volume"),
+        new ValueDto(expectedTimestamp, 16, "m³/h", "Volume Flow")
       )
     );
   }
