@@ -4,10 +4,11 @@ image:
 stages:
   - prepare
   - build
+  - pretest
   - test
   - publish
   - deploy
-  - smoketest
+  - post-deploy
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
@@ -17,6 +18,8 @@ variables:
   SALTAPI_PASS: "8J^SQvg&zR%rTd5YNuw"
   GITLAB_API_TOKEN: "J1Jb27mvUxZqAVx5MhhJ"
   SALTSTACK_GIT_REPO: "17"
+  DOCKER_REGISTRY_HOST: gitlab.elvaco.se:4567
+  DOCKER_REGISTRY_URL: gitlab.elvaco.se:4567/elvaco/mvp
 
 .no_cache: &no_cache
   cache:
@@ -38,12 +41,12 @@ variables:
 
 .deploy:autodeploy: &auto_deploy
   <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: deploy
 
 .publish:mvp_artifactory: &publish_mvp_to_artifactory
   <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
   dependencies:
     - gradle:build
@@ -56,7 +59,7 @@ variables:
 
 .publish:geoservice_artifactory: &publish_geoservice_to_artifactory
   <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
   dependencies:
     - gradle:build
@@ -69,7 +72,7 @@ variables:
 
 .publish:update_salt: &update_salt
   <<: *no_cache
-  image: gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
   script:
     - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
@@ -116,9 +119,9 @@ docker:postgresql:
   tags:
     - shell
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
-    - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest -f Dockerfile-postgresql .
-    - docker push gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f Dockerfile-postgresql .
+    - docker push $DOCKER_REGISTRY_URL/postgresql:latest
 
 docker:ci-utils:
   <<: *no_cache
@@ -126,9 +129,9 @@ docker:ci-utils:
   tags:
     - shell
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN gitlab.elvaco.se:4567
-    - docker build -t gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest -f Dockerfile-ci-utils .
-    - docker push gitlab.elvaco.se:4567/elvaco/mvp/ci-utils:latest
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f Dockerfile-ci-utils .
+    - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
 prepare:version:
   <<: *no_cache
@@ -159,11 +162,25 @@ gradle:build:
       - .version
     expire_in: 1 week
 
+pretest:docker:
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_SLUG}
+  stage: pretest
+  tags:
+    - shell
+  dependencies:
+    - gradle:build
+    - prepare:version
+  script:
+    - docker build --build-arg MVP_APPVER=$(cat .version) -t ${DOCKER_IMAGE_NAME} -f Dockerfile .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker push ${DOCKER_IMAGE_NAME}
+
 test:system:
   <<: *cache_gradle_read_only
   stage: test
   services:
-    - name: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
+    - name: $DOCKER_REGISTRY_URL/postgresql:latest
       alias: pg_host
     - name: rabbitmq
       alias: rabbit_host
@@ -188,12 +205,12 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-acceptance:
+post-deploy:acceptance:
   <<: *cache_gradle_read_only
   services:
     - name: selenium/standalone-chrome
       alias: selenium_chrome_container_url
-  stage: smoketest
+  stage: post-deploy
   only:
     - /^release-.*$/
     - tags
@@ -205,6 +222,38 @@ acceptance:
     expire_in: 7 days
   script:
     - CHROME_URL="http://selenium_chrome_container_url:4444/wd/hub" MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber '-Pno-docker'
+
+test:upgrade:
+  <<: *no_cache
+  image: tmaier/docker-compose
+  variables:
+    DOCKER_DRIVER: overlay2
+    MVP_UPGRADE_FROM_TAG: production
+    MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_SLUG}
+
+  stage: test
+  dependencies:
+    - gradle:build
+  script:
+    - MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d application postgresql
+    - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
+    - docker-compose logs application
+    - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
+    - docker-compose stop application
+
+    - MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application postgresql
+    - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
+    - docker-compose logs application
+    - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
+
+  after_script:
+    - docker-compose down -v
+
+  before_script: 
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+
+  services:
+    - name: docker:dind
 
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
