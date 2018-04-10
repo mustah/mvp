@@ -21,9 +21,7 @@ spring:
     host: localhost
     username: guest
     password: guest
-    listener:
-      simple:
-        default-requeue-rejected: false
+
 ehcache:
   heap-entries: 1000
   idle-time: 20
@@ -38,6 +36,7 @@ mvp:
       queueName: MVP
       responseExchange: ""
       responseRoutingKey: "mvp.to.metering"
+      requeueRejected: false
   superadmin:
     email: "mvpadmin@elvaco.se"
     password: "changeme"

@@ -12,4 +12,6 @@ public class RabbitConsumerProperties {
   private String queueName = "MVP";
   private String responseExchange = "";
   private String responseRoutingKey = "mvp.to.metering";
+  private Boolean requeueRejected = false;
+
 }
