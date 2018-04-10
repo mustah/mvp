@@ -11,10 +11,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -52,28 +52,11 @@ public final class LogicalMeterHelper {
     ZonedDateTime after,
     ZonedDateTime before
   ) {
-    return physicalMeter.statuses
-      .stream()
-      .filter(status -> StatusType.ACTIVE == status.status)
-      .mapToDouble(status -> {
-        ZonedDateTime startPoint = getStartPoint(
-          status.start,
-          after,
-          physicalMeter.readIntervalMinutes
-        );
-
-        ZonedDateTime endPoint = getEndPoint(
-          status.stop == null ? before : status.stop,
-          before
-        );
-
-        return calculateExpectedReadOuts(
-          physicalMeter.readIntervalMinutes,
-          startPoint,
-          endPoint
-        );
-      })
-      .reduce(0.0, (d1, d2) -> d1 + d2);
+    return calculateExpectedReadOuts(
+      physicalMeter.readIntervalMinutes,
+      after,
+      before
+    );
   }
 
   public static double calculateExpectedReadOuts(
@@ -81,6 +64,10 @@ public final class LogicalMeterHelper {
     ZonedDateTime after,
     ZonedDateTime before
   ) {
+    if (readIntervalMinutes == 0) {
+      return 0;
+    }
+
     return Math.floor((double) Duration.between(after, before).toMinutes() / readIntervalMinutes);
   }
 
@@ -89,7 +76,6 @@ public final class LogicalMeterHelper {
    *
    * @param date     Date to start from
    * @param interval Read interval for the meter
-   *
    * @return
    */
   public static ZonedDateTime getFirstDateMatchingInterval(ZonedDateTime date, Long interval) {
@@ -120,26 +106,19 @@ public final class LogicalMeterHelper {
       .collect(toList());
   }
 
-  /**
-   * Decides whether to use status start date or period as starting point.
-   */
-  private static ZonedDateTime getStartPoint(
-    ZonedDateTime statusStart,
-    ZonedDateTime periodAfter,
-    Long readIntervalMinutes
+  public static CollectionStats getCollectionPercent(
+    List<PhysicalMeter> physicalMeters,
+    ZonedDateTime after,
+    ZonedDateTime before,
+    int expectedQuantityCount
   ) {
-    return getFirstDateMatchingInterval(
-      statusStart.isAfter(periodAfter) ? statusStart : periodAfter,
-      readIntervalMinutes
-    );
-  }
+    double expectedReadouts = 0.0;
+    double actualReadouts = 0.0;
 
-  /**
-   * Decides whether to use status end date or period as end point.
-   */
-  private static ZonedDateTime getEndPoint(ZonedDateTime statusEnd, ZonedDateTime periodBefore) {
-    ZonedDateTime endPoint = statusEnd.isBefore(periodBefore) ? statusEnd : periodBefore;
-
-    return endPoint.isBefore(ZonedDateTime.now()) ? endPoint : ZonedDateTime.now();
+    for (PhysicalMeter physicalMeter : physicalMeters) {
+      expectedReadouts += calculateExpectedReadOuts(physicalMeter, after, before);
+      actualReadouts += physicalMeter.getMeasurementCountOrZero();
+    }
+    return new CollectionStats(actualReadouts, expectedReadouts * expectedQuantityCount);
   }
 }

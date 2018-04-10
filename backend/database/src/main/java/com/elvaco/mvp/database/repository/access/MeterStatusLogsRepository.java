@@ -22,8 +22,9 @@ public class MeterStatusLogsRepository implements MeterStatusLogs {
   }
 
   @Override
-  public void save(MeterStatusLog meterStatusLog) {
-    physicalMeterStatusLogJpaRepository.save(meterStatusLogMapper.toEntity(meterStatusLog));
+  public MeterStatusLog save(MeterStatusLog meterStatusLog) {
+    return meterStatusLogMapper.toDomainModel(physicalMeterStatusLogJpaRepository.save(
+      meterStatusLogMapper.toEntity(meterStatusLog)));
   }
 
   @Override

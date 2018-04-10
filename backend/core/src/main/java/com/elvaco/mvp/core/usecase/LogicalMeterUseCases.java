@@ -6,10 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
-import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -17,9 +15,9 @@ import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
+import com.elvaco.mvp.core.util.LogicalMeterHelper;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -39,29 +37,6 @@ public class LogicalMeterUseCases {
     this.measurements = measurements;
   }
 
-  static Optional<CollectionStats> getCollectionPercent(
-    List<PhysicalMeter> physicalMeters,
-    RequestParameters parameters,
-    int expectedQuantityCount
-  ) {
-    if (parameters.hasName("after") && parameters.hasName("before")) {
-      ZonedDateTime after = ZonedDateTime.parse(parameters.getFirst("after"));
-      ZonedDateTime before = ZonedDateTime.parse(parameters.getFirst("before"));
-
-      double expectedReadouts = 0.0;
-      double actualReadouts = 0.0;
-
-      for (PhysicalMeter physicalMeter : physicalMeters) {
-        expectedReadouts += calculateExpectedReadOuts(physicalMeter, after, before);
-        actualReadouts += physicalMeter.getMeasurementCountOrZero();
-      }
-      return Optional.of(
-        new CollectionStats(actualReadouts, expectedReadouts * expectedQuantityCount)
-      );
-    }
-    return Optional.empty();
-  }
-
   public List<LogicalMeter> findAll(RequestParameters parameters) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream()
@@ -79,7 +54,7 @@ public class LogicalMeterUseCases {
       return logicalMeters.save(logicalMeter);
     }
     throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
-                           + "create this meter.");
+      + "create this meter.");
   }
 
   public List<Measurement> measurements(
@@ -87,8 +62,8 @@ public class LogicalMeterUseCases {
     Supplier<RequestParameters> filter
   ) {
     if (logicalMeter.physicalMeters.isEmpty()
-        || logicalMeter.getQuantities().isEmpty()
-        || !hasTenantAccess(logicalMeter.organisationId)) {
+      || logicalMeter.getQuantities().isEmpty()
+      || !hasTenantAccess(logicalMeter.organisationId)) {
       return emptyList();
     }
     return measurements.findAll(filter.get());
@@ -119,12 +94,17 @@ public class LogicalMeterUseCases {
     LogicalMeter logicalMeter,
     RequestParameters parameters
   ) {
-    int expectedQuantityCount = logicalMeter.meterDefinition.quantities.size();
+    if (!parameters.hasName("after") || !parameters.hasName("before")) {
+      return logicalMeter;
+    }
 
     return logicalMeter.withCollectionPercentage(
-      getCollectionPercent(logicalMeter.physicalMeters, parameters, expectedQuantityCount)
-        .map(a -> a.getCollectionPercentage())
-        .orElse(null)
+      LogicalMeterHelper.getCollectionPercent(
+        logicalMeter.physicalMeters,
+        ZonedDateTime.parse(parameters.getFirst("after")),
+        ZonedDateTime.parse(parameters.getFirst("before")),
+        logicalMeter.meterDefinition.quantities.size()
+      ).getCollectionPercentage()
     );
   }
 
