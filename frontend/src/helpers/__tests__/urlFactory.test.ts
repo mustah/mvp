@@ -15,12 +15,12 @@ describe('urlFactory', () => {
 
   const mockParameterCallbacks: ParameterCallbacks = {
     period: (parameter: EncodedUriParameters) => toApiParameters(dateRange(
-      momentWithTimeZone('2018-04-27').toDate(),
+      momentWithTimeZone('2018-04-27T00:00:00Z').toDate(),
       parameter as Period,
     )),
   };
 
-  const latestUrlParameters = 'after=2018-04-25T22%3A00%3A00.000Z&before=2018-04-26T22%3A00%3A00.000Z';
+  const latestUrlParameters = 'after=2018-04-26T00%3A00%3A00.000Z&before=2018-04-27T00%3A00%3A00.000Z';
 
   describe('calculate uri parameters from selected ids and pagination', () => {
     const selectedParameters = (parameters: Partial<SelectedParameters>): SelectedParameters => {

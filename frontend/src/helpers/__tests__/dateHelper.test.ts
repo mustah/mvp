@@ -12,8 +12,8 @@ describe('dateHelper', () => {
 
       expect(momentWithTimeZone(timePeriod.start).format(pattern)).toEqual('2018-03-22 00:00:00');
       expect(momentWithTimeZone(timePeriod.end).format(pattern)).toEqual('2018-03-22 23:59:59');
-      expect(toApiParameters(timePeriod)).toEqual(['after=2018-03-21T23%3A00%3A00.000Z',
-                                                   'before=2018-03-22T23%3A00%3A00.000Z']);
+      expect(toApiParameters(timePeriod)).toEqual(['after=2018-03-22T00%3A00%3A00.000Z',
+                                                   'before=2018-03-23T00%3A00%3A00.000Z']);
     });
   });
 
@@ -58,26 +58,26 @@ describe('dateHelper', () => {
       });
 
       it('knows about previous 7 days', () => {
-        const march14 = momentWithTimeZone('2013-03-14').toDate();
-        const aWeekEarlier = momentWithTimeZone('2013-03-08').toDate();
+        const march14 = momentWithTimeZone('2013-03-14T00:00:00Z').toDate();
+        const aWeekEarlier = momentWithTimeZone('2013-03-08T00:00:00Z').toDate();
         const {start, end} = dateRange(march14, Period.previous7Days);
         expect(start).toEqual(aWeekEarlier);
         expect(end).toEqual(march14);
       });
 
       it('knows about current week', () => {
-        const friday10thNovember = momentWithTimeZone('2017-11-10').toDate();
+        const friday10thNovember = momentWithTimeZone('2017-11-10T00:00:00Z').toDate();
         const {start} = dateRange(friday10thNovember, Period.currentWeek);
 
-        const monday = momentWithTimeZone('2017-11-06').toDate();
+        const monday = momentWithTimeZone('2017-11-06T00:00:00Z').toDate();
         expect(start.valueOf()).toBeLessThanOrEqual(monday.valueOf());
 
-        const previousSunday = momentWithTimeZone('2017-11-05').toDate();
+        const previousSunday = momentWithTimeZone('2017-11-05T00:00:00Z').toDate();
         expect(start.valueOf()).toBeGreaterThanOrEqual(previousSunday.valueOf());
       });
 
       it('knows about current month', () => {
-        const date = momentWithTimeZone('2017-11-23').toDate();
+        const date = momentWithTimeZone('2017-11-23T00:00:00Z').toDate();
         const {start, end} = dateRange(date, Period.currentMonth);
         expect(momentWithTimeZone(start).format('MM')).toEqual('11');
         expect(momentWithTimeZone(start).format('DD')).toEqual('01');
@@ -86,7 +86,10 @@ describe('dateHelper', () => {
       });
 
       it('knows about last 24 h', () => {
-        const {start, end} = dateRange(momentWithTimeZone('2013-03-13').toDate(), Period.latest);
+        const {start, end} = dateRange(
+          momentWithTimeZone('2013-03-13T00:00:00Z').toDate(),
+          Period.latest,
+        );
         expect(momentWithTimeZone(start).format(pattern)).toEqual('2013-03-12 00:00:00');
         expect(momentWithTimeZone(end).format(pattern)).toEqual('2013-03-12 23:59:59');
       });
