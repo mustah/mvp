@@ -1,6 +1,7 @@
 import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
 import {checkbox, checkboxLabel} from '../../app/themes';
+import {HasContent} from '../../components/content/HasContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
@@ -71,12 +72,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
     const measurements: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
     const hasConfidentPosition: boolean = meterMapMarker.filter(isGeoPositionWithinThreshold).isJust();
 
-    // TODO <HasContent> didn't work here, together with the Maybe
-    const map = hasConfidentPosition ? (
-      <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
-        <ClusterContainer markers={meterMapMarker.get()}/>
-      </Map>
-    ) : <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
+    const noReliablePosition = <h2 style={{padding: 8}}>{firstUpperTranslated('no reliable position')}</h2>;
 
     return (
       <Row>
@@ -126,7 +122,11 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
-            {map}
+            <HasContent hasContent={hasConfidentPosition} fallbackContent={noReliablePosition}>
+              <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
+                <ClusterContainer markers={meterMapMarker.get()}/>
+              </Map>
+            </HasContent>
           </TabContent>
           <TabContent tab={TabName.connectedGateways} selectedTab={selectedTab}>
             <Row>
