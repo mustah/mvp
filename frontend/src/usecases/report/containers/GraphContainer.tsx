@@ -19,7 +19,7 @@ import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {allQuantities} from '../../../state/domain-models-paginated/meter/meterModels';
+import {allQuantities} from '../../../state/ui/graph/measurement/measurementModels';
 import {
   fetchMeasurements,
   mapApiResponseToGraphData,

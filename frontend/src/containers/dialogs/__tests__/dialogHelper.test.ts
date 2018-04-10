@@ -1,7 +1,8 @@
 import {initLanguage} from '../../../i18n/i18n';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {allQuantities, Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
+import {allQuantities} from '../../../state/ui/graph/measurement/measurementModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
 import {RenderableMeasurement} from '../MeterDetailsTabs';
 

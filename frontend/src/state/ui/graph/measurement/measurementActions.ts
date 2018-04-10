@@ -5,7 +5,7 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {RenderableQuantity} from '../../../domain-models-paginated/meter/meterModels';
+import {RenderableQuantity} from './measurementModels';
 import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
