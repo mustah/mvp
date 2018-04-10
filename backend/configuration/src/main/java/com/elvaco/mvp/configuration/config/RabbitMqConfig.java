@@ -72,9 +72,11 @@ class RabbitMqConfig {
     container.setQueueNames(consumerProperties.getQueueName());
     listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
     listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
+    container.setDefaultRequeueRejected(consumerProperties.getRequeueRejected());
     container.setMessageListener(listenerAdapter);
     container.setChannelTransacted(true);
     container.setTransactionManager(transactionManager);
+    container.setAlwaysRequeueWithTxManagerRollback(consumerProperties.getRequeueRejected());
     return container;
   }
 
