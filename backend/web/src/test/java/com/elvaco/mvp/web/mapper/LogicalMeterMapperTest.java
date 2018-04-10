@@ -98,7 +98,7 @@ public class LogicalMeterMapperTest {
     expected.id = meterId;
     expected.created = "2018-02-12 14:14:25";
     expected.statusChanged = "2018-02-12 14:14:25";
-    expected.medium = "Hot water meter";
+    expected.medium = "Hot water";
     expected.status = StatusType.OK;
     expected.location = new LocationDto(
       new IdNamedDto("Kungsbacka"),

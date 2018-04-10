@@ -177,7 +177,6 @@ public class LogicalMeterRepository implements LogicalMeters {
         toSortString(Q.stop)
       )
     );
-
   }
 
   private Optional<LogicalMeter> filterParametersOn(LogicalMeterEntity meter) {

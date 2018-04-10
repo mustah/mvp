@@ -1,7 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +57,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler.METERING_TIMEZONE;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -85,16 +85,17 @@ public class MessageHandlerTest {
     13,
     9,
     0,
-    ZoneId.of("CET")
+    METERING_TIMEZONE
   );
-  private static final LocalDateTime MEASUREMENT_TIMESTAMP = LocalDateTime.parse(
-    "2018-03-07T16:13:09");
+  private static final LocalDateTime MEASUREMENT_TIMESTAMP =
+    LocalDateTime.parse("2018-03-07T16:13:09");
   private static final String DEFAULT_UNIT = "kWh";
   private static final Location DEFAULT_LOCATION = new Location(
     "Sweden",
     "Kungsbacka",
     "Kabelgatan 2T"
   );
+
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
   private LogicalMeters logicalMeters;
@@ -327,7 +328,7 @@ public class MessageHandlerTest {
 
     List<LogicalMeter> meters = logicalMeters.findAll(new MockRequestParameters());
     assertThat(meters).hasSize(1);
-    assertThat(meters.get(0).getMedium()).isEqualTo("Unknown meter");
+    assertThat(meters.get(0).getMedium()).isEqualTo("Unknown medium");
   }
 
   @Test
@@ -381,8 +382,7 @@ public class MessageHandlerTest {
 
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
-    Organisation organisation = organisations.save(newOrganisation("An existing "
-      + "organisation"));
+    Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
     physicalMeters.save(newPhysicalMeter(organisation, DEFAULT_MEDIUM));
 
     messageHandler.handle(newStructureMessage(DEFAULT_MEDIUM));
@@ -496,7 +496,7 @@ public class MessageHandlerTest {
         organisation,
         DEFAULT_ADDRESS,
         DEFAULT_EXTERNAL_ID,
-        "Unknown meter",
+        "Unknown medium",
         "UNKNOWN",
         0
       ).withLogicalMeterId(logicalMeter.id)
@@ -513,37 +513,20 @@ public class MessageHandlerTest {
   }
 
   @Test
-  public void hotWaterMeterIsMappedFromMedium() {
-    assertThat(messageHandler.selectMeterDefinition(DEFAULT_MEDIUM))
-      .isEqualTo(MeterDefinition.HOT_WATER_METER);
+  public void unknownMediumIsMappedFromEmptyValueSet() {
+    MeterDefinition meterDefinition = messageHandler.selectMeterDefinition(emptyList());
+
+    assertThat(meterDefinition).isEqualTo(MeterDefinition.UNKNOWN_METER);
   }
 
   @Test
-  public void districtHeatingMeterIsMappedFromMedium() {
-    assertThat(messageHandler.selectMeterDefinition("District heating meter"))
-      .isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
-  }
-
-  @Test
-  public void unknownMediumIsMappedToUnknownMeterDefinition() {
-    assertThat(messageHandler.selectMeterDefinition("Some unsupported, unknown medium"))
-      .isEqualTo(MeterDefinition.UNKNOWN_METER);
-  }
-
-  @Test
-  public void unknowMediumIsMappedFromEmptyValueSet() {
-    List<ValueDto> districtHeatingMeterValues = emptyList();
-    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
-      MeterDefinition.UNKNOWN_METER);
-  }
-
-  @Test
-  public void unknowMediumIsMappedFromUnknownValueSet() {
-    List<ValueDto> districtHeatingMeterValues = singletonList(
+  public void unknownMediumIsMappedFromUnknownValueSet() {
+    List<ValueDto> values = singletonList(
       new ValueDto(LocalDateTime.now(), 0.0, "MW", "UnknownQuantity")
     );
-    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
-      MeterDefinition.UNKNOWN_METER);
+    MeterDefinition meterDefinition = messageHandler.selectMeterDefinition(values);
+
+    assertThat(meterDefinition).isEqualTo(MeterDefinition.UNKNOWN_METER);
   }
 
   @Test
@@ -557,8 +540,11 @@ public class MessageHandlerTest {
       newValueDto("Volume"),
       newValueDto(DEFAULT_QUANTITY)
     );
-    assertThat(messageHandler.selectMeterDefinition(districtHeatingMeterValues)).isEqualTo(
-      MeterDefinition.DISTRICT_HEATING_METER);
+
+    MeterDefinition meterDefinition = messageHandler.selectMeterDefinition(
+      districtHeatingMeterValues);
+
+    assertThat(meterDefinition).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
   }
 
   @Test
@@ -591,8 +577,8 @@ public class MessageHandlerTest {
 
     List<Measurement> createdMeasurements = measurements.findAll(null);
     assertThat(createdMeasurements).hasSize(1);
-    assertThat(createdMeasurements.get(0).physicalMeter.organisation.slug).isEqualTo(
-      "some-organisation");
+    assertThat(createdMeasurements.get(0).physicalMeter.organisation.slug)
+      .isEqualTo("some-organisation");
   }
 
   @Test
@@ -791,7 +777,6 @@ public class MessageHandlerTest {
 
     assertThat(statuses.get(1).status).isEqualTo(StatusType.ERROR);
     assertThat(statuses.get(1).stop).isNull();
-
   }
 
   private PhysicalMeter newPhysicalMeter(
