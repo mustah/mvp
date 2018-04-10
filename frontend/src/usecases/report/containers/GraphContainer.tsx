@@ -19,6 +19,7 @@ import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {allQuantities} from '../../../state/domain-models-paginated/meter/meterModels';
 import {
   fetchMeasurements,
   mapApiResponseToGraphData,
@@ -27,7 +28,6 @@ import {
 import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
-import {allQuantities} from '../../../state/domain-models-paginated/meter/meterModels';
 import {GraphContents, LineProps} from '../reportModels';
 import './GraphContainer.scss';
 
@@ -64,7 +64,7 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
 
   if (axes.left) {
     components.push((
-      <YAxis key="leftYAxis" label={axes.left} yAxisId="left" />
+      <YAxis key="leftYAxis" label={axes.left} yAxisId="left"/>
     ));
   }
 
@@ -92,9 +92,7 @@ class GraphComponent extends React.Component<Props> {
 
   state: State = {graphContents: emptyGraphContents};
   onChangeTab = () => void(0);
-  changeQuantities = (event, index, values) => {
-    this.props.selectQuantities(values);
-  }
+  changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
   async componentDidMount() {
     const {selectedListItems, period, selectedQuantities} = this.props;
