@@ -41,20 +41,28 @@ public class LogicalMeterUseCases {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters))
       .stream()
       .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .map(logicalMeter ->
-        logicalMeter.withMeasurements(measurements.findLatestValues(
-          logicalMeter.activePhysicalMeter().get().id
-        )))
       .collect(toList());
   }
 
   public Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
+      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
+  }
+
+  public Page<LogicalMeter> findAllWithMeasurements(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
       .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .map(logicalMeter ->
-        logicalMeter.withMeasurements(measurements.findLatestValues(
+      .map(logicalMeter -> {
+        if (!logicalMeter.activePhysicalMeter().isPresent()) {
+          return logicalMeter;
+        }
+        return logicalMeter.withMeasurements(measurements.findLatestValues(
           logicalMeter.activePhysicalMeter().get().id
-        )));
+        ));
+      });
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {

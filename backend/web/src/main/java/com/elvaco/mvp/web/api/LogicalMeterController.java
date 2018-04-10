@@ -69,7 +69,7 @@ public class LogicalMeterController {
   ) {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
     PageableAdapter adapter = new PageableAdapter(pageable);
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
+    Page<LogicalMeter> page = logicalMeterUseCases.findAllWithMeasurements(parameters, adapter);
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(logicalMeterMapper::toDto);
