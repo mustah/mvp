@@ -131,8 +131,8 @@ public class LogicalMeterQueryDslJpaRepository
 
   private Predicate withStatusWithinPeriod(RequestParameters parameters, Predicate predicate) {
     if (parameters.hasName("before")
-      && parameters.hasName("after")
-      && parameters.hasName("status")) {
+        && parameters.hasName("after")
+        && parameters.hasName("status")) {
       ZonedDateTime start = parseDateParam(parameters, "after");
       ZonedDateTime stop = parseDateParam(parameters, "before");
       List<StatusType> statuses = parameters.getValues("status")
@@ -166,7 +166,7 @@ public class LogicalMeterQueryDslJpaRepository
   private JPQLQuery<LogicalMeterEntity> queryOf(Predicate predicate) {
     return createQuery(predicate)
       .select(path)
-      .innerJoin(Q_LOGICAL_METER.location)
+      .leftJoin(Q_LOGICAL_METER.location)
       .fetchJoin();
   }
 }
