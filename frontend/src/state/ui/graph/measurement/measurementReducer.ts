@@ -1,11 +1,6 @@
 import {Action} from '../../../../types/Types';
 import {SAVE_SELECTED_QUANTITIES} from './measurementActions';
-import {Quantity} from './measurementModels';
-
-export interface MeasurementState {
-  isFetching: boolean;
-  selectedQuantities: Quantity[];
-}
+import {MeasurementState, Quantity} from './measurementModels';
 
 export const initialMeasurementState: MeasurementState = {
   isFetching: false,

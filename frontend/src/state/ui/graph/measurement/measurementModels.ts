@@ -47,6 +47,11 @@ export interface MeasurementResponses {
   average: AverageApiResponse;
 }
 
+export interface MeasurementState {
+  isFetching: boolean;
+  selectedQuantities: Quantity[];
+}
+
 export const enum RenderableQuantity {
   volume = 'Volume',
   flow = 'Flow',
