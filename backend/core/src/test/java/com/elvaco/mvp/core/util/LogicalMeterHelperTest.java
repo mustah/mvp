@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.util;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.junit.Test;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinition.HOT_WATER_METER;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeterUuids;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -27,6 +29,33 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterHelperTest {
+
+  @Test
+  public void calculateExpectedReadoutsHourly() {
+    assertThat(calculateExpectedReadOuts(
+      60,
+      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+    )).isEqualTo(24);
+  }
+
+  @Test
+  public void calculateExpectedReadoutsFifteenMinutes() {
+    assertThat(calculateExpectedReadOuts(
+      15,
+      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+    )).isEqualTo(96);
+  }
+
+  @Test
+  public void calculateExpectedReadoutsForZeroInterval() {
+    assertThat(calculateExpectedReadOuts(
+      0,
+      ZonedDateTime.parse("2018-01-01T00:00:00Z"),
+      ZonedDateTime.parse("2018-01-02T00:00:00Z")
+    )).isEqualTo(0);
+  }
 
   @Test
   public void mapMeterQuantitiesToPhysicalMeterUuids_emptyParams() {

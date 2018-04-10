@@ -63,6 +63,10 @@ public final class LogicalMeterHelper {
     ZonedDateTime after,
     ZonedDateTime before
   ) {
+    if (readIntervalMinutes == 0) {
+      return 0;
+    }
+
     return Math.floor((double) Duration.between(after, before).toMinutes() / readIntervalMinutes);
   }
 
