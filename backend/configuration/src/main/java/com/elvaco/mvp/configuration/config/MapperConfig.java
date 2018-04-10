@@ -8,6 +8,7 @@ import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +17,11 @@ class MapperConfig {
 
   @Bean
   LogicalMeterMapper logicalMeterMapper() {
-    return new LogicalMeterMapper(new MeterStatusLogMapper(), new GatewayMapper(), new MeasurementMapper());
+    return new LogicalMeterMapper(
+      new MeterStatusLogMapper(),
+      new GatewayMapper(),
+      new MeasurementMapper()
+    );
   }
 
   @Bean

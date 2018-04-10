@@ -120,10 +120,6 @@ public class MeasurementRepository implements Measurements {
   ) {
     return measurementJpaRepository.findLatestForPhysicalMeter(physicalMeterId)
       .stream()
-      .map(measurementEntity -> {
-        System.out.println("measurementEntity: " + measurementEntity);
-        return measurementEntity;
-      })
       .map(measurementMapper::toDomainModel)
       .collect(toList());
   }

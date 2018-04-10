@@ -13,8 +13,6 @@ public interface LogicalMeters {
 
   Optional<LogicalMeter> findById(UUID id);
 
-  Optional<LogicalMeter> findByIdWithMeasurements(UUID id);
-
   Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id);
 
   Page<LogicalMeter> findAll(RequestParameters parameters, Pageable pageable);

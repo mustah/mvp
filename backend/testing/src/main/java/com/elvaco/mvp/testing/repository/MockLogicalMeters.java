@@ -34,11 +34,6 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   }
 
   @Override
-  public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
-    throw new UnsupportedOperationException("findByIdWithMeasurements not implemented!");
-  }
-
-  @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return filter(isSameOrganisationId(organisationId))
       .filter(isSameId(id))

@@ -40,7 +40,11 @@ public class LogicalMeterMapperTest {
 
   @Before
   public void setUp() {
-    mapper = new LogicalMeterMapper(new MeterStatusLogMapper(), new GatewayMapper());
+    mapper = new LogicalMeterMapper(
+      new MeterStatusLogMapper(),
+      new GatewayMapper(),
+      new MeasurementMapper()
+    );
   }
 
   @Test
@@ -132,9 +136,7 @@ public class LogicalMeterMapperTest {
 
     expected.measurements = MeterDefinition.HOT_WATER_METER.quantities
       .stream()
-      .map(quantity -> {
-        return new MeasurementDto(null, quantity.name, 0.0, "", null);
-      })
+      .map(quantity -> new MeasurementDto(null, quantity.name, 0.0, "", null))
       .collect(toList());
 
     UUID organisationId = ELVACO.id;

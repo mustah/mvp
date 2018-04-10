@@ -72,13 +72,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   }
 
   @Override
-  public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
-    Optional<LogicalMeter> logicalMeter = logicalMeterJpaRepository.findById(id)
-      .flatMap(this::filterParametersOn);
-    return logicalMeter;
-  }
-
-  @Override
   public Optional<LogicalMeter> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return logicalMeterJpaRepository.findBy(organisationId, id)
       .flatMap(this::filterParametersOn);
