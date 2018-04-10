@@ -61,19 +61,6 @@ public class LogicalMeterController {
       .collect(toList());
   }
 
-  @GetMapping("{id}/measurements")
-  public List<MeasurementDto> measurements(@PathVariable UUID id) {
-    // TODO remove this endpoint
-    //throw new RuntimeException("DELETE THIS ENDPOINT");
-    LogicalMeter logicalMeter = logicalMeterUseCases
-      .findById(id)
-      .orElseThrow(() -> new MeterNotFound(id));
-    return logicalMeterUseCases.measurements(logicalMeter, lazyRequestParameters(logicalMeter))
-      .stream()
-      .map(measurementMapper::toDto)
-      .collect(toList());
-  }
-
   @GetMapping
   public org.springframework.data.domain.Page<LogicalMeterDto> logicalMeters(
     @PathVariable Map<String, String> pathVars,
