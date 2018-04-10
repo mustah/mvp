@@ -123,7 +123,7 @@ public class LogicalMeterUseCases {
 
     return logicalMeter.withCollectionPercentage(
       getCollectionPercent(logicalMeter.physicalMeters, parameters, expectedQuantityCount)
-        .map(a -> a.getCollectionPercentage())
+        .map(CollectionStats::getCollectionPercentage)
         .orElse(null)
     );
   }
