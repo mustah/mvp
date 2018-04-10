@@ -68,7 +68,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ZonedDateTime.parse("2001-01-01T11:00:00.00Z");
 
   private final ZonedDateTime meter2FirstMeasurement =
-    ZonedDateTime.parse("2001-01-01T10:15:00.00Z");
+    ZonedDateTime.parse("2001-01-02T00:00:00.00Z");
 
   private final ZonedDateTime statusLogDate = ZonedDateTime.parse("2001-01-01T10:14:00.00Z");
   private PhysicalMeter physicalMeter1;
@@ -176,9 +176,21 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       null
     ));
 
+    PhysicalMeter physicalMeter2Daily = physicalMeters.save(new PhysicalMeter(
+      physicalMeter2.id,
+      physicalMeter2.organisation,
+      physicalMeter2.address,
+      physicalMeter2.externalId,
+      physicalMeter2.medium,
+      physicalMeter2.manufacturer,
+      physicalMeter2.logicalMeterId,
+      1440,
+      null
+    ));
+
     addMeasurements(
       physicalMeter1Hourly,
-      physicalMeter2
+      physicalMeter2Daily
     );
 
     Page<LogicalMeterDto> response = as(context().user)
@@ -792,7 +804,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       createMeasurements(
         meter2FirstMeasurement,
         meter2.readIntervalMinutes,
-        36000,
+        370,
         new PhysicalMeterEntity(meter2.id),
         false
       )
