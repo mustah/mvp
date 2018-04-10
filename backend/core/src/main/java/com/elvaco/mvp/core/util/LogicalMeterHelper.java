@@ -14,7 +14,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -52,28 +51,11 @@ public final class LogicalMeterHelper {
     ZonedDateTime after,
     ZonedDateTime before
   ) {
-    return physicalMeter.statuses
-      .stream()
-      .filter(status -> StatusType.ACTIVE == status.status)
-      .mapToDouble(status -> {
-        ZonedDateTime startPoint = getStartPoint(
-          status.start,
-          after,
-          physicalMeter.readIntervalMinutes
-        );
-
-        ZonedDateTime endPoint = getEndPoint(
-          status.stop == null ? before : status.stop,
-          before
-        );
-
-        return calculateExpectedReadOuts(
-          physicalMeter.readIntervalMinutes,
-          startPoint,
-          endPoint
-        );
-      })
-      .reduce(0.0, (d1, d2) -> d1 + d2);
+    return calculateExpectedReadOuts(
+      physicalMeter.readIntervalMinutes,
+      after,
+      before
+    );
   }
 
   public static double calculateExpectedReadOuts(
