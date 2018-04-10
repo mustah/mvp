@@ -94,10 +94,14 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
-    return findById(id).map(logicalMeter ->
-      logicalMeter.withMeasurements(measurements.findLatestValues(
+    return findById(id).map(logicalMeter -> {
+      if (!logicalMeter.activePhysicalMeter().isPresent()) {
+        return logicalMeter;
+      }
+      return logicalMeter.withMeasurements(measurements.findLatestValues(
         logicalMeter.activePhysicalMeter().get().id
-      )));
+      ));
+    });
   }
 
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(

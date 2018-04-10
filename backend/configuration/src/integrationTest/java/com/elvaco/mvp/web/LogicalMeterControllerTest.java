@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -36,6 +37,7 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -46,15 +48,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinition.DISTRICT_HEATING_METER;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterControllerTest extends IntegrationTest {
 
-  private MeterDefinition districtHeatingMeterDefinition;
   private MeterDefinition hotWaterMeterDefinition;
 
   @Autowired
@@ -81,8 +84,9 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    districtHeatingMeterDefinition = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
-    hotWaterMeterDefinition = meterDefinitions.save(MeterDefinition.HOT_WATER_METER);
+    hotWaterMeterDefinition = meterDefinitions.save(
+      MeterDefinition.HOT_WATER_METER
+    );
 
     anotherOrganisation = organisationJpaRepository.save(
       new OrganisationEntity(
@@ -105,7 +109,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusFiftyPercent() {
-    LogicalMeter districtHeatingMeter = createLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
     PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
@@ -116,7 +120,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     addMeasurementsForMeterQuantities(
       physicalMeter,
       districtHeatingMeter.getQuantities(),
-      start
+      start,
+      1.0
     );
 
     LogicalMeterDto logicalMeterDto = as(context().user)
@@ -132,7 +137,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusTwoOutOfThreeMissing() {
-    LogicalMeter districtHeatingMeter = createLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
     PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
@@ -143,7 +148,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     addMeasurementsForMeterQuantities(
       physicalMeter,
       districtHeatingMeter.getQuantities(),
-      start
+      start,
+      1.0
     );
 
     LogicalMeterDto logicalMeterDto = as(context().user)
@@ -159,7 +165,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void collectionStatusOneHundredPercent() {
-    LogicalMeter districtHeatingMeter = createLogicalMeter(MeterDefinition.DISTRICT_HEATING_METER);
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
     addMeasurementsForMeter(
@@ -170,7 +176,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       districtHeatingMeter.getQuantities(),
       start,
       Duration.ofDays(1),
-      60L
+      60L,
+      1.0
     );
 
     LogicalMeterDto logicalMeterDto = as(context().user)
@@ -503,56 +510,136 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findMeasurementsForLogicalMeter() {
-    LogicalMeter savedLogicalMeter = logicalMeterRepository.save(
-      new LogicalMeter(
-        randomUUID(),
-        "external-id",
-        context().organisation().id,
-        districtHeatingMeterDefinition,
-        UNKNOWN_LOCATION
-      )
+  public void pagedLogicalMeterContainsLatestMeasurements() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+    PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
+    ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
+
+    // NOTE: no DIFFERENCE_TEMPERATURE here
+    addMeasurementsForMeter(
+      physicalMeter,
+      asList(
+        Quantity.ENERGY,
+        Quantity.VOLUME,
+        Quantity.FLOW,
+        Quantity.POWER,
+        Quantity.FORWARD_TEMPERATURE,
+        Quantity.RETURN_TEMPERATURE
+      ).stream().collect(Collectors.toSet()),
+      someDaysAgo,
+      Duration.ofDays(1),
+      60L,
+      1.0
     );
 
-    PhysicalMeter physicalMeter = physicalMeters.save(
-      new PhysicalMeter(
-        randomUUID(),
-        context().organisation(),
-        "111-222-333-444",
-        "external-id",
-        "Some device specific medium name",
-        "ELV",
-        savedLogicalMeter.id,
-        15L,
-        null
-      )
+    addMeasurementsForMeter(
+      physicalMeter,
+      asList(
+        Quantity.POWER
+      ).stream().collect(Collectors.toSet()),
+      ZonedDateTime.now(),
+      Duration.ofDays(1),
+      60L,
+      2.0
     );
 
-    measurementUseCases.save(asList(
-      // We should find these
-      new Measurement(Quantity.VOLUME, 2.0, physicalMeter),
-      new Measurement(Quantity.VOLUME, 3.1, physicalMeter),
-      new Measurement(Quantity.VOLUME, 4.0, physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.0, physicalMeter),
-      new Measurement(Quantity.VOLUME, 5.2, physicalMeter),
+    Page<LogicalMeterDto> page = as(context().user)
+      .getPage("/meters?id=" + districtHeatingMeter.id, LogicalMeterDto.class);
 
-      // ... But not these, as they are of a quantity not defined in the meter definition
-      new Measurement(Quantity.TEMPERATURE, 99, physicalMeter),
-      new Measurement(Quantity.TEMPERATURE, 32, physicalMeter)
-    ));
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    LogicalMeterDto meter = page.getContent().get(0);
 
-    UUID meterId = savedLogicalMeter.id;
+    List<MeasurementDto> measurements = meter.measurements;
 
-    ResponseEntity<List<MeasurementDto>> response = as(context().user)
-      .getList("/meters/" + meterId + "/measurements", MeasurementDto.class);
+    assertThat(measurements)
+      .as("The difference temperature is missing")
+      .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
+      .anyMatch((m) -> m.quantity.equals(Quantity.ENERGY.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.VOLUME.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.POWER.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
+      .noneMatch((m) -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
 
-    List<MeasurementDto> measurementDtos = response.getBody();
-    MeasurementDto measurement = measurementDtos.get(0);
+    List<MeasurementDto> power = measurements
+      .stream()
+      .filter((m) -> m.quantity.equals(Quantity.POWER.name))
+      .collect(toList());
+
+    assertThat(power)
+      .as("Not showing duplicate values for a quantity")
+      .hasSize(1);
+
+    assertThat(power.get(0).value)
+      .as("Only showing the latest value for a quantity")
+      .isEqualTo(2.0);
+  }
+
+  @Test
+  public void singleLogicalMeterContainsLatestMeasurements() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+    PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
+    ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
+
+    // NOTE: no DIFFERENCE_TEMPERATURE here
+    addMeasurementsForMeter(
+      physicalMeter,
+      asList(
+        Quantity.ENERGY,
+        Quantity.VOLUME,
+        Quantity.FLOW,
+        Quantity.POWER,
+        Quantity.FORWARD_TEMPERATURE,
+        Quantity.RETURN_TEMPERATURE
+      ).stream().collect(Collectors.toSet()),
+      someDaysAgo,
+      Duration.ofDays(1),
+      60L,
+      1.0
+    );
+
+    addMeasurementsForMeter(
+      physicalMeter,
+      asList(
+        Quantity.POWER
+      ).stream().collect(Collectors.toSet()),
+      ZonedDateTime.now(),
+      Duration.ofDays(1),
+      60L,
+      2.0
+    );
+
+    ResponseEntity<LogicalMeterDto> response = as(context().user)
+      .get("/meters/" + districtHeatingMeter.id, LogicalMeterDto.class);
+
+    LogicalMeterDto meter = response.getBody();
 
     assertThatStatusIsOk(response);
-    assertThat(measurementDtos).hasSize(5);
-    assertThat(measurement.quantity).isEqualTo(Quantity.VOLUME.name);
-    assertThat(measurement.unit).isEqualTo("m³");
+
+    List<MeasurementDto> measurements = meter.measurements;
+
+    assertThat(measurements)
+      .as("The difference temperature is missing")
+      .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
+      .anyMatch((m) -> m.quantity.equals(Quantity.ENERGY.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.VOLUME.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.POWER.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
+      .anyMatch((m) -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
+      .noneMatch((m) -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
+
+    List<MeasurementDto> power = measurements
+      .stream()
+      .filter((m) -> m.quantity.equals(Quantity.POWER.name))
+      .collect(toList());
+
+    assertThat(power)
+      .as("Not showing duplicate values for a quantity")
+      .hasSize(1);
+
+    assertThat(power.get(0).value)
+      .as("Only showing the latest value for a quantity")
+      .isEqualTo(2.0);
   }
 
   private void addMeasurementsForMeter(
@@ -560,11 +647,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Set<Quantity> quantities,
     ZonedDateTime start,
     Duration periodDuration,
-    Long minuteInterval
+    Long minuteInterval,
+    double value
   ) {
     ZonedDateTime now = start;
     while (now.isBefore(start.plus(periodDuration))) {
-      addMeasurementsForMeterQuantities(physicalMeter, quantities, now);
+      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, value);
       now = now.plusMinutes(minuteInterval);
     }
   }
@@ -572,7 +660,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   private void addMeasurementsForMeterQuantities(
     PhysicalMeter physicalMeter,
     Set<Quantity> quantities,
-    ZonedDateTime when
+    ZonedDateTime when,
+    double value
   ) {
     for (Quantity quantity : quantities) {
       measurementUseCases.save(
@@ -580,7 +669,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
           null,
           when,
           quantity.name,
-          1.0,
+          value,
           quantity.unit,
           physicalMeter
         ))

@@ -19,7 +19,6 @@ import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
 
 import org.junit.Before;
@@ -31,7 +30,6 @@ import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
@@ -134,10 +132,7 @@ public class LogicalMeterMapperTest {
     expected.collectionStatus = "";
     expected.readIntervalMinutes = 15L;
 
-    expected.measurements = MeterDefinition.HOT_WATER_METER.quantities
-      .stream()
-      .map(quantity -> new MeasurementDto(null, quantity.name, 0.0, "", null))
-      .collect(toList());
+    expected.measurements = emptyList();
 
     UUID organisationId = ELVACO.id;
 
