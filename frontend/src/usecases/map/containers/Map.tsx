@@ -5,11 +5,13 @@ import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
 import Control from 'react-leaflet-control';
-import MarkerClusterGroup from 'react-leaflet-markercluster';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
 import {Maybe} from '../../../helpers/Maybe';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
+import {Dictionary} from '../../../types/Types';
+import {MapMarker} from '../mapModels';
+import {metersWithinThreshold} from './clusterHelper';
 import './Map.scss';
 
 interface Props {
@@ -29,12 +31,14 @@ const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
   }
 };
 
-const boundsFromMarkers = (markers: MarkerClusterGroup): Maybe<LatLngTuple[]> => {
-  const bounds = Object.keys(markers).reduce(
-    (sum: any, markerId: string) => {
-      const {latitude, longitude} = markers[markerId];
+const boundsFromMarkers = (markers: Dictionary<MapMarker>): Maybe<LatLngTuple[]> => {
+  const filteredMarkers = metersWithinThreshold(markers);
 
-      if (!isNaN(parseFloat(latitude))) {
+  const bounds = Object.keys(filteredMarkers).reduce(
+    (sum: any, markerId: string) => {
+      const {latitude, longitude} = filteredMarkers[markerId];
+
+      if (!isNaN(latitude)) {
         if (latitude < sum.minLat) {
           sum.minLat = latitude;
         } else if (latitude > sum.maxLat) {
@@ -42,7 +46,7 @@ const boundsFromMarkers = (markers: MarkerClusterGroup): Maybe<LatLngTuple[]> =>
         }
       }
 
-      if (!isNaN(parseFloat(longitude))) {
+      if (!isNaN(longitude)) {
         if (longitude < sum.minLong) {
           sum.minLong = longitude;
         } else if (longitude > sum.maxLong) {
