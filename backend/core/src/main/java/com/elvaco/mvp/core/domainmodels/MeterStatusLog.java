@@ -5,8 +5,10 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @EqualsAndHashCode
+@ToString
 public class MeterStatusLog {
 
   @Nullable
@@ -29,5 +31,19 @@ public class MeterStatusLog {
     this.status = status;
     this.start = start;
     this.stop = stop;
+  }
+
+  MeterStatusLog withStop(ZonedDateTime stopTime) {
+    return new MeterStatusLog(
+      id,
+      physicalMeterId,
+      status,
+      start,
+      stopTime
+    );
+  }
+
+  boolean isActive() {
+    return stop == null;
   }
 }

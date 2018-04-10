@@ -1,8 +1,11 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import lombok.EqualsAndHashCode;
@@ -22,10 +25,10 @@ public class PhysicalMeter implements Identifiable<UUID> {
   @Nullable
   public final UUID logicalMeterId;
   public final String manufacturer;
-  private final List<Measurement> measurements;
   public final long readIntervalMinutes;
   public final Long measurementCount;
   public final List<MeterStatusLog> statuses;
+  private final List<Measurement> measurements;
 
   public PhysicalMeter(
     UUID id,
@@ -130,7 +133,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount
+      measurementCount,
+      statuses
     );
   }
 
@@ -144,7 +148,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount
+      measurementCount,
+      statuses
     );
   }
 
@@ -158,7 +163,8 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount
+      measurementCount,
+      statuses
     );
   }
 
@@ -172,7 +178,48 @@ public class PhysicalMeter implements Identifiable<UUID> {
       manufacturer,
       logicalMeterId,
       readIntervalMinutes,
-      measurementCount
+      measurementCount,
+      statuses
+    );
+  }
+
+  public PhysicalMeter replaceActiveStatus(StatusType status) {
+    return replaceActiveStatus(status, ZonedDateTime.now());
+  }
+
+  PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
+    List<MeterStatusLog> activeSameStatuses = statuses.stream()
+      .filter(MeterStatusLog::isActive)
+      .filter(logEntry -> logEntry.status.equals(status))
+      .collect(Collectors.toList());
+
+    if (activeSameStatuses.size() > 0) {
+      return this;
+    }
+
+    List<MeterStatusLog> newStatuses = statuses.stream()
+      .map(entry -> entry.isActive() ? entry.withStop(when) : entry)
+      .collect(Collectors.toList());
+
+    newStatuses.add(new MeterStatusLog(
+      null,
+      id,
+      status,
+      when,
+      null
+    ));
+
+    return new PhysicalMeter(
+      id,
+      organisation,
+      address,
+      externalId,
+      medium,
+      manufacturer,
+      logicalMeterId,
+      readIntervalMinutes,
+      measurementCount,
+      Collections.unmodifiableList(newStatuses)
     );
   }
 }
