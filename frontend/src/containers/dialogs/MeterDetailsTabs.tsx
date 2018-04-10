@@ -47,15 +47,7 @@ const renderValue = ({value = null, unit}: RenderableMeasurement) => value !== n
 const renderCreated = ({created}: RenderableMeasurement) =>
   created ? formatLabelTimeStamp(created) : firstUpperTranslated('never collected');
 
-const renderStatusCell = (item: MeterStatusChangelog) =>
-  (
-    <Status
-      {...{
-        id: item.name,
-        name: item.name,
-      }}
-    />
-  );
+const renderStatusCell = ({name}: MeterStatusChangelog) => <Status name={name}/>;
 const renderDate = (item: MeterStatusChangelog) => item.start;
 const renderSerial = ({serial}: Gateway) => serial;
 
