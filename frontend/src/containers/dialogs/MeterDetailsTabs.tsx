@@ -20,7 +20,7 @@ import {Meter, MeterStatusChangelog} from '../../state/domain-models-paginated/m
 import {DomainModel} from '../../state/domain-models/domainModels';
 import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
-import {Identifiable} from '../../types/Types';
+import {Children, Identifiable} from '../../types/Types';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
 import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
 import {Map} from '../../usecases/map/containers/Map';
@@ -43,14 +43,15 @@ export interface RenderableMeasurement extends Identifiable {
   created?: number;
 }
 
-const renderQuantity = ({quantity}: RenderableMeasurement) => quantity;
-const renderValue = ({value = null, unit}: RenderableMeasurement) => value !== null && unit ? `${value} ${unit}` : '';
-const renderCreated = ({created}: RenderableMeasurement) =>
+const renderQuantity = ({quantity}: RenderableMeasurement): string => quantity as string;
+const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
+  value !== null && unit ? `${value} ${unit}` : '';
+const renderCreated = ({created}: RenderableMeasurement): string =>
   created ? formatLabelTimeStamp(created) : firstUpperTranslated('never collected');
 
-const renderStatusCell = ({name}: MeterStatusChangelog) => <Status name={name}/>;
-const renderDate = (item: MeterStatusChangelog) => item.start;
-const renderSerial = ({serial}: Gateway) => serial;
+const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
+const renderDate = (item: MeterStatusChangelog): string => item.start;
+const renderSerial = ({serial}: Gateway): string => serial;
 
 export class MeterDetailsTabs extends React.Component<Props, State> {
 

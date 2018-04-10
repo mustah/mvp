@@ -19,13 +19,12 @@ import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
-import {allQuantities} from '../../../state/ui/graph/measurement/measurementModels';
 import {
   fetchMeasurements,
   mapApiResponseToGraphData,
   selectQuantities,
 } from '../../../state/ui/graph/measurement/measurementActions';
-import {Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, uuid} from '../../../types/Types';
 import {GraphContents, LineProps} from '../reportModels';

@@ -5,7 +5,6 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {RenderableQuantity} from './measurementModels';
 import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
@@ -13,6 +12,7 @@ import {
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
+  RenderableQuantity,
 } from './measurementModels';
 
 const colorize =
