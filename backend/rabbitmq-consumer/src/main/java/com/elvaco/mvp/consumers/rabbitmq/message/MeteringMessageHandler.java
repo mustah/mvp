@@ -20,6 +20,7 @@ import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
@@ -30,11 +31,11 @@ import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DISTRICT_HEATING_METER_QUANTITIES;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METER_TO_MVP_QUANTITIES;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
-import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
@@ -43,16 +44,6 @@ import static java.util.stream.Collectors.toList;
 public class MeteringMessageHandler implements MessageHandler {
 
   static final ZoneId METERING_TIMEZONE = ZoneId.of("CET");
-
-  private static final List<String> DISTRICT_HEATING_METER_QUANTITIES = unmodifiableList(asList(
-    "Return temp.",
-    "Difference temp.",
-    "Flow temp.",
-    "Volume flow",
-    "Power",
-    "Volume",
-    "Energy"
-  ));
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final PhysicalMeterUseCases physicalMeterUseCases;
@@ -165,7 +156,7 @@ public class MeteringMessageHandler implements MessageHandler {
             organisation,
             measurementMessage.meter.id,
             facilityId,
-            medium,
+            Medium.UNKNOWN_MEDIUM.medium,
             "UNKNOWN",
             logicalMeter.id,
             0L, // TODO add real interval here!
@@ -192,25 +183,25 @@ public class MeteringMessageHandler implements MessageHandler {
     }
     List<Measurement> measurements = measurementMessage.values
       .stream()
-      .map(
-        valueDto -> measurementUseCases
-          .findForMeterCreatedAt(
-            physicalMeter.id,
-            valueDto.quantity,
-            valueDto.timestamp.atZone(METERING_TIMEZONE)
-          ).orElseGet(() ->
-            new Measurement(
-              null,
-              // Note: Metering stores and treats all values as CET - at least
-              // it's consistent!
-              valueDto.timestamp.atZone(METERING_TIMEZONE),
-              valueDto.quantity,
-              valueDto.value,
-              valueDto.unit,
-              physicalMeter
-            )).withValue(valueDto.value)
-          .withUnit(valueDto.unit)
-          .withQuantity(valueDto.quantity)
+      .map(value -> measurementUseCases
+        .findForMeterCreatedAt(
+          physicalMeter.id,
+          mappedQuantity(value.quantity).name,
+          value.timestamp.atZone(METERING_TIMEZONE)
+        ).orElseGet(() ->
+          new Measurement(
+            null,
+            // Note: Metering stores and treats all values as CET - at least
+            // it's consistent!
+            value.timestamp.atZone(METERING_TIMEZONE),
+            mappedQuantity(value.quantity).name,
+            value.value,
+            value.unit,
+            physicalMeter
+          )
+        ).withValue(value.value)
+        .withUnit(value.unit)
+        .withQuantity(mappedQuantity(value.quantity).name)
       )
       .collect(toList());
 
@@ -244,6 +235,10 @@ public class MeteringMessageHandler implements MessageHandler {
     return isDistrictHeatingMeter
       ? MeterDefinition.DISTRICT_HEATING_METER
       : MeterDefinition.UNKNOWN_METER;
+  }
+
+  private Quantity mappedQuantity(String quantity) {
+    return METER_TO_MVP_QUANTITIES.getOrDefault(quantity, new Quantity(quantity));
   }
 
   private boolean facilityIdIsInvalid(String id) {

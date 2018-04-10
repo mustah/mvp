@@ -1,7 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
@@ -12,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringMessageParserTest {
 
-  MeteringMessageParser meteringMessageParser;
+  private MeteringMessageParser meteringMessageParser;
 
   @Before
   public void setUp() {
@@ -21,7 +20,8 @@ public class MeteringMessageParserTest {
 
   @Test
   public void unitsAreTranslatedFromMetering() {
-    String jsonMessage = "\n"
+    String jsonMessage =
+      "\n"
       + "\n"
       + "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
@@ -106,19 +106,19 @@ public class MeteringMessageParserTest {
       + "\n";
     MeteringMeasurementMessageDto parsedMessage = meteringMessageParser
       .parseMeasurementMessage(jsonMessage).get();
+
     LocalDateTime expectedTimestamp = LocalDateTime.parse("2018-03-28T00:00:00");
-    assertThat(parsedMessage.values).isEqualTo(
-      Arrays.asList(
-        new ValueDto(expectedTimestamp, 98.721, "MWh", "Energy"),
-        new ValueDto(expectedTimestamp, 3089.2, "m^3", "Volume"),
-        new ValueDto(expectedTimestamp, 4.2, "kW", "Power"),
-        new ValueDto(expectedTimestamp, 0.135, "m^3/h", "Volume flow"),
-        new ValueDto(expectedTimestamp, 82, "°C", "Flow temp."),
-        new ValueDto(expectedTimestamp, 55, "°C", "Return temp."),
-        new ValueDto(expectedTimestamp, 27.1, "K", "Difference temp."),
-        new ValueDto(expectedTimestamp, 99, "m³", "Volume"),
-        new ValueDto(expectedTimestamp, 16, "m³/h", "Volume Flow")
-      )
+
+    assertThat(parsedMessage.values).containsExactly(
+      new ValueDto(expectedTimestamp, 98.721, "MWh", "Energy"),
+      new ValueDto(expectedTimestamp, 3089.2, "m^3", "Volume"),
+      new ValueDto(expectedTimestamp, 4.2, "kW", "Power"),
+      new ValueDto(expectedTimestamp, 0.135, "m^3/h", "Volume flow"),
+      new ValueDto(expectedTimestamp, 82, "°C", "Flow temp."),
+      new ValueDto(expectedTimestamp, 55, "°C", "Return temp."),
+      new ValueDto(expectedTimestamp, 27.1, "K", "Difference temp."),
+      new ValueDto(expectedTimestamp, 99, "m³", "Volume"),
+      new ValueDto(expectedTimestamp, 16, "m³/h", "Volume Flow")
     );
   }
 }

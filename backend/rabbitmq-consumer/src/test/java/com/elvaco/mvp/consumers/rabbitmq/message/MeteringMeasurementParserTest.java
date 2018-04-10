@@ -1,19 +1,33 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringMeasurementParserTest {
 
+  private MeteringMessageParser messageParser;
+
+  @Before
+  public void setUp() {
+    messageParser = new MeteringMessageParser();
+  }
+
   @Test
   public void meteringMeasurementMessageIsParsedCorrectly() {
-    String jsonMessage = "{\n"
+    String jsonMessage =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
       + "  \"gateway\": {\n"
       + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
@@ -36,7 +50,6 @@ public class MeteringMeasurementParserTest {
       + "    }\n"
       + "  ]\n"
       + "}";
-    MeteringMessageParser messageParser = new MeteringMessageParser();
     MeteringMeasurementMessageDto parsedMessage =
       messageParser.parseMeasurementMessage(jsonMessage).orElse(null);
 
@@ -61,7 +74,8 @@ public class MeteringMeasurementParserTest {
 
   @Test
   public void measurementMessageMissingGatewayIsOk() {
-    String jsonMessage = "{\n"
+    String jsonMessage =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
       + "  \"meter\": {\n"
       + "    \"id\": \"123456789\"\n"
@@ -81,7 +95,6 @@ public class MeteringMeasurementParserTest {
       + "    }\n"
       + "  ]\n"
       + "}";
-    MeteringMessageParser messageParser = new MeteringMessageParser();
 
     MeteringMeasurementMessageDto parsedMessage =
       messageParser.parseMeasurementMessage(jsonMessage).get();
@@ -91,12 +104,12 @@ public class MeteringMeasurementParserTest {
 
   @Test
   public void parseMalformedMeasurementMessage() {
-    MeteringMessageParser messageParser = new MeteringMessageParser();
     assertThat(messageParser.parseMeasurementMessage("")).isEmpty();
     assertThat(messageParser.parseMeasurementMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseMeasurementMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
 
-    String jsonMessageWithoutValues = "{\n"
+    String jsonMessageWithoutValues =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
       + "  \"gateway\": {\n"
       + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
@@ -112,4 +125,30 @@ public class MeteringMeasurementParserTest {
       + "}";
     assertThat(messageParser.parseMeasurementMessage(jsonMessageWithoutValues)).isEmpty();
   }
+
+  @Test
+  public void parseMeasurementValuesWithReturnTemperatureAndUnitMapping() {
+    String message = parseJsonFile("messages/measurements-return-temp.json");
+
+    MeteringMeasurementMessageDto parsedMessage =
+      messageParser.parseMeasurementMessage(message).get();
+
+    assertThat(parsedMessage.values).containsExactly(
+      new ValueDto(LocalDateTime.parse("2018-03-16T13:07:01"), 0.659, "°C", "Return temp."),
+      new ValueDto(LocalDateTime.parse("2018-03-16T14:07:01"), 0.759, "°C", "Return temp."),
+      new ValueDto(LocalDateTime.parse("2018-03-16T15:07:01"), 37.4, "°C", "Return temp.")
+    );
+  }
+
+  private String parseJsonFile(String file) {
+    return new JsonParser()
+      .parse(new JsonReader(new InputStreamReader(loadResource(file), Charset.forName("UTF-8"))))
+      .getAsJsonObject()
+      .toString();
+  }
+
+  private static InputStream loadResource(String file) {
+    return MeteringMeasurementParserTest.class.getClassLoader().getResourceAsStream(file);
+  }
+
 }

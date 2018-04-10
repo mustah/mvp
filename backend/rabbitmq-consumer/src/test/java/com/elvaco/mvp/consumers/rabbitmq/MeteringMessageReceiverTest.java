@@ -161,7 +161,7 @@ public class MeteringMessageReceiverTest {
     private boolean measurementMessageReceived;
     private boolean alarmMessageReceived;
 
-    MessageHandlerSpy() {
+    private MessageHandlerSpy() {
       structureMessageReceived = false;
       measurementMessageReceived = false;
       alarmMessageReceived = false;
@@ -187,7 +187,7 @@ public class MeteringMessageReceiverTest {
       return Optional.empty();
     }
 
-    boolean nothingReceived() {
+    private boolean nothingReceived() {
       return !(structureMessageReceived || measurementMessageReceived || alarmMessageReceived);
     }
   }

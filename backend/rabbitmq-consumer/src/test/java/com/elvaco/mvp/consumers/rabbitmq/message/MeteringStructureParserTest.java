@@ -2,15 +2,24 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringStructureParserTest {
 
+  private MeteringMessageParser messageParser;
+
+  @Before
+  public void setUp() {
+    messageParser = new MeteringMessageParser();
+  }
+
   @Test
   public void meteringStructureMessageIsParsedCorrectly() {
-    String jsonMessage = "{\n"
+    String jsonMessage =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
       + "  \"facility\": {\n"
       + "    \"id\": \"ABC-123\",\n"
@@ -33,7 +42,6 @@ public class MeteringStructureParserTest {
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
       + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n";
-    MeteringMessageParser messageParser = new MeteringMessageParser();
 
     MeteringMeterStructureMessageDto parsedMessage =
       messageParser.parseStructureMessage(jsonMessage).orElse(null);
@@ -57,11 +65,11 @@ public class MeteringStructureParserTest {
 
   @Test
   public void parseMalformedStructureMessage() {
-    MeteringMessageParser messageParser = new MeteringMessageParser();
     assertThat(messageParser.parseStructureMessage("")).isEmpty();
     assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
-    String jsonMessageMissingGateway = "{\n"
+    String jsonMessageMissingGateway =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
       + "  \"facility\": {\n"
       + "    \"id\": \"ABC-123\",\n"
@@ -81,5 +89,4 @@ public class MeteringStructureParserTest {
       + "}\n";
     assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
   }
-
 }

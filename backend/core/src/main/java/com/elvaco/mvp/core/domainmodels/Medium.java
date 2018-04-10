@@ -53,7 +53,7 @@ public enum Medium {
     Quantity.ENERGY,
     Quantity.VOLUME,
     Quantity.POWER,
-    Quantity.FLOW,
+    Quantity.VOLUME_FLOW,
     Quantity.FORWARD_TEMPERATURE,
     Quantity.RETURN_TEMPERATURE,
     Quantity.DIFFERENCE_TEMPERATURE
@@ -61,7 +61,7 @@ public enum Medium {
 
   private static final Set<Quantity> HEAT_WATER_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
     Quantity.VOLUME,
-    Quantity.FLOW,
+    Quantity.VOLUME_FLOW,
     Quantity.TEMPERATURE
   )));
 

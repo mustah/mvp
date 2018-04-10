@@ -54,9 +54,9 @@ public class DemoDataHelper {
       ),
       new MeasurementEntity(
         created,
-        Quantity.FLOW.name,
+        Quantity.VOLUME_FLOW.name,
         RANDOM.nextDouble(0.0, 3.0),
-        Quantity.FLOW.unit,
+        Quantity.VOLUME_FLOW.unit,
         meter
       ),
       new MeasurementEntity(
