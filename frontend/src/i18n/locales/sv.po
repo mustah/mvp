@@ -243,9 +243,7 @@ msgid "unFlagged"
 msgstr "ej flaggad"
 
 msgid "token missing or invalid"
-msgstr ""
-"du är utloggad, för att du har varit inaktiv för länge. Logga in igen för "
-"att fortsätta."
+msgstr "du är utloggad, för att du har varit inaktiv för länge. Logga in igen för att fortsätta."
 
 msgid "bad credentials"
 msgstr "felaktigt användarnamn eller lösenord"
@@ -317,8 +315,7 @@ msgid "no gateways"
 msgstr "inga gateways"
 
 msgid "{{count}} gateways are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgid "list"
 msgstr "lista"
@@ -390,8 +387,7 @@ msgid "logout"
 msgstr "logga ut"
 
 msgid "{{count}} meters are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
@@ -411,8 +407,7 @@ msgstr "mätare"
 
 msgctxt "°plural"
 msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+msgstr "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
 
 msgctxt "°plural"
 msgid "alarm°"
@@ -420,32 +415,4 @@ msgstr "larm"
 
 msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
-
-#~ msgid "no data for time period"
-#~ msgstr "ingen data inom tidsperiod"
-
-#~ msgid "measured at"
-#~ msgstr "uppmättes"
-
-#~ msgid "measure id"
-#~ msgstr "mät-ID"
-
-#~ msgid "average"
-#~ msgstr "medelvärde"
-
-#~ msgid "n/a"
-#~ msgstr "ej tillämpbar"
-
-#~ msgid "latest snr"
-#~ msgstr "senaste SNR"
-
-#~ msgid "error: {{message}}"
-#~ msgstr "fel: {{message}}"
-
-#~ msgid "overview"
-#~ msgstr "översikt"
-
-#~ msgid "all meters"
-#~ msgstr "alla mätare"
+msgstr "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
