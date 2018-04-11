@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.util.StatusLogEntryHelper;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -27,7 +27,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final String manufacturer;
   public final long readIntervalMinutes;
   public final Long measurementCount;
-  public final List<MeterStatusLog> statuses;
+  public final List<StatusLogEntry<UUID>> statuses;
   private final List<Measurement> measurements;
 
   public PhysicalMeter(
@@ -40,7 +40,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,
     @Nullable Long measurementCount,
-    List<MeterStatusLog> statuses
+    List<StatusLogEntry<UUID>> statuses
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -188,26 +188,14 @@ public class PhysicalMeter implements Identifiable<UUID> {
   }
 
   PhysicalMeter replaceActiveStatus(StatusType status, ZonedDateTime when) {
-    List<MeterStatusLog> activeSameStatuses = statuses.stream()
-      .filter(MeterStatusLog::isActive)
-      .filter(logEntry -> logEntry.status.equals(status))
-      .collect(Collectors.toList());
-
-    if (activeSameStatuses.size() > 0) {
-      return this;
-    }
-
-    List<MeterStatusLog> newStatuses = statuses.stream()
-      .map(entry -> entry.isActive() ? entry.withStop(when) : entry)
-      .collect(Collectors.toList());
-
-    newStatuses.add(new MeterStatusLog(
-      null,
-      id,
-      status,
-      when,
-      null
-    ));
+    List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
+      statuses,
+      new StatusLogEntry<>(
+        id,
+        status,
+        when
+      )
+    );
 
     return new PhysicalMeter(
       id,

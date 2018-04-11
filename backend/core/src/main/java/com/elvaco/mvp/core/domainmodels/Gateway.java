@@ -1,8 +1,11 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.util.StatusLogEntryHelper;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -17,7 +20,7 @@ public class Gateway implements Identifiable<UUID> {
   public final UUID organisationId;
   public final String serial;
   public final String productModel;
-  public final List<GatewayStatusLog> statusLogs;
+  public final List<StatusLogEntry<UUID>> statusLogs;
   public final List<LogicalMeter> meters;
 
   public Gateway(
@@ -35,7 +38,7 @@ public class Gateway implements Identifiable<UUID> {
     String serial,
     String productModel,
     List<LogicalMeter> meters,
-    List<GatewayStatusLog> statusLogs
+    List<StatusLogEntry<UUID>> statusLogs
   ) {
     this.id = id;
     this.organisationId = organisationId;
@@ -58,6 +61,40 @@ public class Gateway implements Identifiable<UUID> {
       productModel,
       meters,
       statusLogs
+    );
+  }
+
+  public StatusLogEntry<UUID> currentStatus() {
+    return statusLogs.stream().findFirst().orElse(new StatusLogEntry<>(
+      null,
+      id,
+      StatusType.UNKNOWN,
+      ZonedDateTime.now(),
+      null
+    ));
+  }
+
+  public Gateway replaceActiveStatus(StatusType status) {
+    return replaceActiveStatus(status, ZonedDateTime.now());
+  }
+
+  private Gateway replaceActiveStatus(StatusType status, ZonedDateTime when) {
+    List<StatusLogEntry<UUID>> newStatuses = StatusLogEntryHelper.replaceActiveStatus(
+      statusLogs,
+      new StatusLogEntry<>(
+        id,
+        status,
+        when
+      )
+    );
+
+    return new Gateway(
+      id,
+      organisationId,
+      serial,
+      productModel,
+      meters,
+      Collections.unmodifiableList(newStatuses)
     );
   }
 }

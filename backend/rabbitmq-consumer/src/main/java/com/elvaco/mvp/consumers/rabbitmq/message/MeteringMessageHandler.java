@@ -102,7 +102,8 @@ public class MeteringMessageHandler implements MessageHandler {
       logicalMeter,
       structureMessage.gateway.id,
       structureMessage.gateway.productModel
-    ).withProductModel(structureMessage.gateway.productModel);
+    ).withProductModel(structureMessage.gateway.productModel)
+      .replaceActiveStatus(StatusType.from(structureMessage.gateway.status));
 
     gatewayUseCases.save(gateway);
 
