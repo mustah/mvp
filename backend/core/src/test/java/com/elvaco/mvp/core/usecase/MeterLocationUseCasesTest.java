@@ -66,7 +66,8 @@ public class MeterLocationUseCasesTest {
     MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(1);
-    assertThat(summary.numCities()).isEqualTo(1);
+    assertThat(summary.numCities()).isEqualTo(0);
+    assertThat(summary.numAddresses()).isEqualTo(0);
   }
 
   @Test
@@ -81,8 +82,8 @@ public class MeterLocationUseCasesTest {
     MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
 
     assertThat(summary.numMeters()).isEqualTo(2);
-    assertThat(summary.numCities()).isEqualTo(2);
-    assertThat(summary.numAddresses()).isEqualTo(2);
+    assertThat(summary.numCities()).isEqualTo(1);
+    assertThat(summary.numAddresses()).isEqualTo(1);
   }
 
   @Test

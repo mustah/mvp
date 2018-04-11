@@ -2,7 +2,9 @@ package com.elvaco.mvp.web;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -44,7 +46,7 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void getSummaryOfMetersShouldReturnWithEmptySummaryInfo() {
+  public void whenNoMetersGetEmptySummaryInfo() {
     ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
       .get("/summary/meters", MeterSummaryDto.class);
 
@@ -64,7 +66,7 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void getSummaryOfMetersShouldHaveTwoMetersOneAddress() {
+  public void metersWithSameAddress() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeter());
 
@@ -76,7 +78,7 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void getSummaryOfMetersShouldHaveTwoMetersTwoAddresses() {
+  public void metersWithDifferentAddresses() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWith(sweden()
                                       .city("kungsbacka")
@@ -90,7 +92,7 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void getSummaryOfMetersShouldHaveThreeMetersTwoCitiesThreeAddresses() {
+  public void metersWithSameCityDifferentStreetAddress() {
     logicalMeters.save(newMeter());
     logicalMeters.save(newMeterWith(sweden()
                                       .city("kungsbacka")
@@ -104,6 +106,21 @@ public class SummaryControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(3, 2, 3));
+  }
+
+  @Test
+  public void metersWithNoLocation() {
+    logicalMeters.save(newMeter());
+    logicalMeters.save(newMeterWithLocation(null));
+    logicalMeters.save(newMeterWith(sweden()
+                                      .city("kungsbacka")
+                                      .streetAddress("drottninggatan 2")));
+
+    ResponseEntity<MeterSummaryDto> response = asSuperAdmin()
+      .get("/summary/meters", MeterSummaryDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(new MeterSummaryDto(3, 2, 2));
   }
 
   @Test
@@ -143,12 +160,16 @@ public class SummaryControllerTest extends IntegrationTest {
   }
 
   private LogicalMeter newMeterWith(LocationBuilder locationBuilder) {
+    return newMeterWithLocation(locationBuilder.build());
+  }
+
+  private LogicalMeter newMeterWithLocation(@Nullable Location location) {
     UUID meterId = randomUUID();
     return new LogicalMeter(
       meterId,
       "externalId-" + meterId,
       context().getOrganisationId(),
-      locationBuilder.build(),
+      location,
       ZonedDateTime.now()
     );
   }
