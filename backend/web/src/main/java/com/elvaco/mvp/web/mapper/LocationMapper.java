@@ -2,6 +2,7 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.Optional;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -32,9 +33,9 @@ public final class LocationMapper {
     return new LocationWithId(
       logicalMeterId,
       coordinate,
-      address.country,
-      address.city,
-      address.street
+      toLowerCaseOrNull(address.country),
+      toLowerCaseOrNull(address.city),
+      toLowerCaseOrNull(address.street)
     );
   }
 
@@ -64,6 +65,17 @@ public final class LocationMapper {
     IdNamedDto city = toCity(location).orElse(UNKNOWN_CITY);
     GeoPositionDto geoPosition = toGeoPositionDto(location);
     return new LocationDto(city, address, geoPosition);
+  }
+
+  @Nullable
+  private static String toLowerCaseOrNull(String str) {
+    return str != null ? trimToNull(str) : null;
+  }
+
+  @Nullable
+  private static String trimToNull(String str) {
+    String trimmed = str.trim();
+    return trimmed.isEmpty() ? null : trimmed.toLowerCase();
   }
 
   private static GeoPositionDto toGeoPositionDto(Location location) {

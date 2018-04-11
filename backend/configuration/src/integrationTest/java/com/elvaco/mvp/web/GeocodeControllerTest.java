@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -67,6 +68,68 @@ public class GeocodeControllerTest extends IntegrationTest {
 
     LocationWithId expected = toLocationWithId(geoResponse, logicalMeterId);
     assertThat(locations.findById(logicalMeterId).get()).isEqualTo(expected);
+  }
+
+  @Test
+  public void saveLocationAsLowercaseStringForLogicalMeter() {
+    UUID logicalMeterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      logicalMeterId,
+      "test-123",
+      context().getOrganisationId(),
+      UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    GeoResponseDto geoResponse = new GeoResponseDto(
+      new AddressDto(
+        "Sweden",
+        "Växjö",
+        "Drottninggatan 3"
+      ),
+      new GeoPositionDto(11.23332, 12.12323, 1.0)
+    );
+    ResponseEntity<?> response = restClient()
+      .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    LocationWithId expected = new LocationWithId(
+      logicalMeterId,
+      new GeoCoordinate(11.23332, 12.12323, 1.0),
+      "sweden",
+      "växjö",
+      "drottninggatan 3"
+    );
+    assertThat(locations.findById(logicalMeterId).get()).isEqualTo(expected);
+  }
+
+  @Test
+  public void doesNotSaveLocationWithNoCountry() {
+    UUID logicalMeterId = randomUUID();
+    logicalMeters.save(new LogicalMeter(
+      logicalMeterId,
+      "test-123",
+      context().getOrganisationId(),
+      UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    GeoResponseDto geoResponse = new GeoResponseDto(
+      new AddressDto(
+        "  ",
+        " ",
+        "Drottninggatan 3"
+      ),
+      new GeoPositionDto(11.23332, 12.12323, 1.0)
+    );
+    ResponseEntity<?> response = restClient()
+      .post("/geocodes/callback/" + logicalMeterId, geoResponse, GeoResponseDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    LocationWithId actual = locations.findById(logicalMeterId).get();
+    assertThat(actual.getCountry()).isNull();
+    assertThat(actual.getCity()).isNull();
   }
 
   @Test
