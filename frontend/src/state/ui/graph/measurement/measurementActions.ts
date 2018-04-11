@@ -83,7 +83,7 @@ export const mapApiResponseToGraphData =
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
     measurement.forEach((meterQuantity: MeasurementApiResponsePart) => {
-      const label: string = meterQuantity.quantity + ': ' + meterQuantity.label;
+      const label: string = `${meterQuantity.quantity} ${meterQuantity.label}`;
       if (!uniqueMeters.has(label)) {
         uniqueMeters.add(label);
         const props: LineProps = {

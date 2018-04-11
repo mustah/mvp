@@ -2,13 +2,15 @@ import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {
+  CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, TooltipProps, XAxis,
+  YAxis,
+} from 'recharts';
 import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../components/content/HasContent';
 import {Period} from '../../../components/dates/dateModels';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
-import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {
@@ -19,6 +21,7 @@ import {
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {Children, Dictionary, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotPropsFromApi} from '../components/ActiveDot';
+import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotPropsFromApi} from '../components/Dot';
 import {GraphContents, LineProps} from '../reportModels';
 
@@ -37,7 +40,7 @@ interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
 }
 
-interface ActivePayload {
+export interface ActivePayload {
   color: any;
   dataKey: uuid;
   fill: any;
@@ -47,6 +50,15 @@ interface ActivePayload {
   strokeWidth: number;
   unit: string;
   value: number;
+}
+
+interface MouseOverProps {
+  isTooltipActive: boolean;
+  chartX: number;
+  chartY: number;
+  activeTooltipIndex: number;
+  activePayload: ActivePayload[];
+
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -87,8 +99,6 @@ const renderGraphContents = (
 
   return components;
 };
-
-const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDate(when);
 
 const emptyGraphContents: GraphContents = {
   axes: {},
@@ -134,7 +144,9 @@ class GraphComponent extends React.Component<Props, State> {
     }
   }
 
-  renderDot = ({dataKey, ...rest}: DotPropsFromApi & {dataKey: uuid}) => {
+  renderActiveDot = (props: ActiveDotPropsFromApi) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
+  renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
+  renderAndStoreDot = ({dataKey, ...rest}: DotPropsFromApi & {dataKey: uuid}) => {
     const {index, cy} = rest;
     this.dots = {
       ...this.dots,
@@ -143,18 +155,16 @@ class GraphComponent extends React.Component<Props, State> {
     return (<Dot {...rest} />);
   }
 
-  renderActiveDot = (props: ActiveDotPropsFromApi) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
-
   resetDots = () => this.dots = {};
 
-  setTooltipPayload = ({chartY, activeTooltipIndex, activePayload}) => {
-    if (chartY) {
+  setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
+    if (isTooltipActive) {
       this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
       this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
     }
   }
 
-  findClosestLine = (index, mouseY): uuid => {
+  findClosestLine = (index: number, mouseY: number): uuid => {
     const activeDots = this.dots[index];
     const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
       .filter(({cy}) => cy || cy === 0)
@@ -163,23 +173,10 @@ class GraphComponent extends React.Component<Props, State> {
     return sortedActiveDots[0].dataKey;
   }
 
-  renderToolTip = (props) => {
-    if (this.tooltipPayload) {
-      return (
-        <div style={{backgroundColor: 'white', border: '1px solid black', padding: 10}}>
-          <div>{formatLabelTimeStamp(props.label)}</div>
-          <div>{`${this.tooltipPayload.dataKey}: ${this.tooltipPayload.value}`}</div>
-        </div>
-      );
-    } else {
-      return null;
-    }
-  }
-
   render() {
     const {selectedQuantities} = this.props;
     const {graphContents} = this.state;
-    const lines = renderGraphContents(graphContents, this.renderDot, this.renderActiveDot);
+    const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
     const {data, legend} = graphContents;
 
     const quantityMenuItem = (quantity: string) => (
@@ -231,7 +228,7 @@ class GraphComponent extends React.Component<Props, State> {
                   dataKey="name"
                   domain={['dataMin', 'dataMax']}
                   scale="time"
-                  tickFormatter={formatTimestamp}
+                  tickFormatter={formatLabelTimeStamp}
                   type="number"
                 />
                 <CartesianGrid strokeDasharray="3 3"/>
@@ -245,7 +242,6 @@ class GraphComponent extends React.Component<Props, State> {
       </div>
     );
   }
-
 }
 
 const mapStateToProps = (
