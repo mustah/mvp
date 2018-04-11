@@ -13,10 +13,10 @@ import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
-import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +48,7 @@ public class LogicalMeterController {
 
   @GetMapping("{id}")
   public LogicalMeterDto logicalMeter(@PathVariable UUID id) {
-    return logicalMeterUseCases.findById(id)
+    return logicalMeterUseCases.findByIdWithMeasurements(id)
       .map(logicalMeterMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
   }
@@ -61,17 +61,6 @@ public class LogicalMeterController {
       .collect(toList());
   }
 
-  @GetMapping("{id}/measurements")
-  public List<MeasurementDto> measurements(@PathVariable UUID id) {
-    LogicalMeter logicalMeter = logicalMeterUseCases
-      .findById(id)
-      .orElseThrow(() -> new MeterNotFound(id));
-    return logicalMeterUseCases.measurements(logicalMeter, lazyRequestParameters(logicalMeter))
-      .stream()
-      .map(measurementMapper::toDto)
-      .collect(toList());
-  }
-
   @GetMapping
   public org.springframework.data.domain.Page<LogicalMeterDto> logicalMeters(
     @PathVariable Map<String, String> pathVars,
@@ -79,7 +68,11 @@ public class LogicalMeterController {
     Pageable pageable
   ) {
     RequestParameters parameters = requestParametersOf(requestParams).setAll(pathVars);
-    return filterLogicalMeterDtos(parameters, pageable);
+    PageableAdapter adapter = new PageableAdapter(pageable);
+    Page<LogicalMeter> page = logicalMeterUseCases.findAllWithMeasurements(parameters, adapter);
+
+    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
+      .map(logicalMeterMapper::toDto);
   }
 
   private Supplier<RequestParameters> lazyRequestParameters(LogicalMeter logicalMeter) {
@@ -98,13 +91,4 @@ public class LogicalMeterController {
     };
   }
 
-  private org.springframework.data.domain.Page<LogicalMeterDto> filterLogicalMeterDtos(
-    RequestParameters parameters,
-    Pageable pageable
-  ) {
-    PageableAdapter adapter = new PageableAdapter(pageable);
-    Page<LogicalMeter> page = logicalMeterUseCases.findAll(parameters, adapter);
-    return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
-      .map(logicalMeterMapper::toDto);
-  }
 }

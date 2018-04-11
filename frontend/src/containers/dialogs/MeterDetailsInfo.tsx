@@ -12,9 +12,7 @@ interface Props {
   meter: Meter;
 }
 
-export const MeterDetailsInfo = (props: Props) => {
-  const {meter} = props;
-
+export const MeterDetailsInfo = ({meter}: Props) => {
   const renderAlarm = () => meter.alarm
     ? <Info label={translate('alarm')} value={meter.alarm}/>
     : null;
@@ -49,7 +47,6 @@ export const MeterDetailsInfo = (props: Props) => {
           />
           <Info label={translate('interval')} value="24h"/>
           <Info label={translate('resolution')} value="1h"/>
-          {/*<Info label={translate('flagged for action')} value={titleOf(gateway.flags)}/>*/}
         </Row>
         <Row>
           <Column>
@@ -72,7 +69,6 @@ export const MeterDetailsInfo = (props: Props) => {
           </Column>
           <Info label={translate('sap id')} value={meter.sapId}/>
           <Info label={translate('facility id')} value={meter.facility}/>
-          <Info label={translate('measure id')} value={meter.measurementId}/>
         </Row>
       </Column>
     </Row>

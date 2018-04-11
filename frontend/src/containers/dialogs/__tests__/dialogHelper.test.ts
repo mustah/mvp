@@ -1,8 +1,12 @@
 import {initLanguage} from '../../../i18n/i18n';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
-import {normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
+import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
+import {DomainModel} from '../../../state/domain-models/domainModels';
+import {allQuantities} from '../../../state/ui/graph/measurement/measurementModels';
+import {meterMeasurementsForTable, normalizedStatusChangelogFor, titleOf} from '../dialogHelper';
+import {RenderableMeasurement} from '../MeterDetailsTabs';
 
-describe('dialogSelectors', () => {
+describe('dialogHelper', () => {
 
   describe('titleOf', () => {
 
@@ -26,7 +30,7 @@ describe('dialogSelectors', () => {
 
   });
 
-  describe('normalized status changelogs for a given gateway', () => {
+  describe('normalizedStatusChangelogFor', () => {
 
     const gateway: Gateway = {
       id: '12032010',
@@ -107,4 +111,171 @@ describe('dialogSelectors', () => {
       });
     });
   });
+
+  describe('meterMeasurementsForTable', () => {
+
+    it('adds missing quantities to meter\'s measurements', () => {
+      const pm = {
+        organisation: {
+          slug: '',
+          name: '',
+          id: '',
+        },
+        identity: '',
+        id: '',
+        medium: 'District heating meter',
+      };
+
+      const meter: Meter = {
+        id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
+        alarm: '',
+        facility: '426',
+        location: {
+          city: {
+            id: 'Perstorp',
+            name: 'Perstorp',
+          },
+          address: {
+            id: 'Bäckavägen 2 A',
+            name: 'Bäckavägen 2 A',
+          },
+          position: {
+            latitude: 56.13955,
+            longitude: 13.39741,
+            confidence: 0.8,
+          },
+        },
+        flags: [],
+        flagged: false,
+        medium: 'District heating meter',
+        manufacturer: 'ELV',
+        statusChanged: '2018-04-04 12:05:23',
+        statusChangelog: [
+          {
+            id: 1,
+            name: 'active',
+            start: '2018-04-04 12:05:23',
+          },
+          {
+            id: 2,
+            name: 'warning',
+            start: '2018-04-04 12:05:23',
+          },
+        ],
+        created: '2018-03-27 12:05:19',
+        status: {
+          id: 'active',
+          name: 'active',
+        },
+        collectionStatus: '313.04347826086956',
+        measurements: [
+          {
+            id: 1,
+            quantity: 'Forward temperature',
+            value: 309.14353148037117,
+            unit: 'K',
+            created: 1523016000,
+            physicalMeter: pm,
+          },
+          {
+            id: 2,
+            quantity: 'Return temperature',
+            value: 306.59347679223913,
+            unit: 'K',
+            created: 1523016000,
+            physicalMeter: pm,
+          },
+          {
+            id: 3,
+            quantity: 'Difference temperature',
+            value: 2.550054688132022,
+            unit: 'K',
+            created: 1523016000,
+            physicalMeter: pm,
+          },
+        ],
+        readIntervalMinutes: 60,
+        gateway: {
+          id: '29836b65-4682-4526-90b2-9d9b7a31f45c',
+          productModel: 'CMi2110',
+          serial: '12031925',
+          status: {
+            id: 'unknown',
+            name: 'unknown',
+          },
+        },
+      };
+
+      const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
+
+      expect(Object.keys(entities).sort()).toEqual(allQuantities.heat.sort());
+
+      expect(result).toHaveLength(allQuantities.heat.length);
+    });
+
+    it('handles meters without any measurements', () => {
+      const meter: Meter = {
+        id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
+        alarm: '',
+        facility: '426',
+        location: {
+          city: {
+            id: 'Perstorp',
+            name: 'Perstorp',
+          },
+          address: {
+            id: 'Bäckavägen 2 A',
+            name: 'Bäckavägen 2 A',
+          },
+          position: {
+            latitude: 56.13955,
+            longitude: 13.39741,
+            confidence: 0.8,
+          },
+        },
+        flags: [],
+        flagged: false,
+        medium: 'District heating meter',
+        manufacturer: 'ELV',
+        statusChanged: '2018-04-04 12:05:23',
+        statusChangelog: [
+          {
+            id: 1,
+            name: 'active',
+            start: '2018-04-04 12:05:23',
+          },
+          {
+            id: 2,
+            name: 'warning',
+            start: '2018-04-04 12:05:23',
+          },
+        ],
+        created: '2018-03-27 12:05:19',
+        status: {
+          id: 'active',
+          name: 'active',
+        },
+        collectionStatus: '313.04347826086956',
+        measurements: [],
+        readIntervalMinutes: 60,
+        gateway: {
+          id: '29836b65-4682-4526-90b2-9d9b7a31f45c',
+          productModel: 'CMi2110',
+          serial: '12031925',
+          status: {
+            id: 'unknown',
+            name: 'unknown',
+          },
+        },
+      };
+
+      const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
+
+      expect(Object.keys(entities).sort()).toEqual(allQuantities.heat.sort());
+
+      expect(result).toHaveLength(allQuantities.heat.length);
+    });
+
+  });
+
 });

@@ -3,7 +3,9 @@ package com.elvaco.mvp.database;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.Period;
+import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,9 +13,9 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
-import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
+
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
@@ -31,8 +33,6 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   MeasurementJpaRepository measurementJpaRepository;
   @Autowired
   PhysicalMeterJpaRepository physicalMeterJpaRepository;
-  @Autowired
-  OrganisationJpaRepository organisationJpaRepository;
 
   @Before
   public void setUp() {
@@ -42,6 +42,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @After
   public void tearDown() {
     physicalMeterJpaRepository.deleteAll();
+    measurementJpaRepository.deleteAll();
   }
 
   @Test
@@ -256,18 +257,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(resultsWithHourResolution).hasSize(1);
     assertThat(resultsWithHourResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithDayResolution).hasSize(1);
     assertThat(resultsWithDayResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithMonthResolution).hasSize(1);
     assertThat(resultsWithMonthResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
 
   }
 
@@ -288,6 +289,40 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(results).hasSize(1);
     assertThat(results.get(0).getUnit()).isEqualTo("W");
+  }
+
+  @Test
+  public void findLatestMeasurementsForPhysicalMeter() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    PhysicalMeterEntity irrelevantMeter = newPhysicalMeterEntity();
+
+    OffsetDateTime olderEnergyTime = OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
+    OffsetDateTime energyTime = OffsetDateTime.parse("2018-02-01T00:00:00+00:00");
+    OffsetDateTime powerTime = OffsetDateTime.parse("2018-03-01T00:00:00+00:00");
+
+    newMeasurement(meter, olderEnergyTime, 1.0, "kWh", "Energy");
+    newMeasurement(meter, energyTime, 2.0, "kWh", "Energy");
+    newMeasurement(meter, powerTime, 3.0, "W", "Power");
+    newMeasurement(irrelevantMeter, energyTime, 4.0, "kWh", "Energy");
+    newMeasurement(irrelevantMeter, powerTime, 5.0, "W", "Power");
+
+    List<MeasurementEntity> measurements = measurementJpaRepository
+      .findLatestForPhysicalMeter(meter.id);
+
+    assertThat(measurements)
+      .as("Measurements are filtered by physical meter")
+      .hasSize(2)
+      .allMatch(m -> m.physicalMeter.id.equals(meter.id))
+      .noneMatch(m -> m.physicalMeter.id.equals(irrelevantMeter.id));
+
+    Comparator<ZonedDateTime> timeZoneInsensitive = (o1, o2) -> o1.isEqual(o2) ? 0 : 1;
+    assertThat(measurements.get(0).created)
+      .usingComparator(timeZoneInsensitive)
+      .isEqualTo(energyTime.toZonedDateTime());
+
+    assertThat(measurements.get(1).created)
+      .usingComparator(timeZoneInsensitive)
+      .isEqualTo(powerTime.toZonedDateTime());
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {

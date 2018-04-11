@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,4 +52,21 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     String quantity,
     ZonedDateTime created
   );
+
+  @Query(nativeQuery = true, value = "SELECT m1.*"
+    + " FROM measurement m1"
+    + " INNER JOIN ("
+    + "     SELECT"
+    + "       MAX(created) as latest,"
+    + "       quantity,"
+    + "       physical_meter_id"
+    + "     FROM measurement"
+    + "     WHERE physical_meter_id = :physical_meter_id"
+    + "     GROUP by physical_meter_id, quantity"
+    + " ) m2"
+    + " ON m1.created = latest"
+    + " AND m1.physical_meter_id = m2.physical_meter_id"
+    + " AND m1.quantity = m2.quantity")
+  List<MeasurementEntity> findLatestForPhysicalMeter(@Param("physical_meter_id") UUID id);
+
 }

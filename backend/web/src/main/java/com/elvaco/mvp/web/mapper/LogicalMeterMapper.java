@@ -22,13 +22,16 @@ public class LogicalMeterMapper {
 
   private final MeterStatusLogMapper meterStatusLogMapper;
   private final GatewayMapper gatewayMapper;
+  private final MeasurementMapper measurementMapper;
 
   public LogicalMeterMapper(
     MeterStatusLogMapper meterStatusLogMapper,
-    GatewayMapper gatewayMapper
+    GatewayMapper gatewayMapper,
+    MeasurementMapper measurementMapper
   ) {
     this.meterStatusLogMapper = meterStatusLogMapper;
     this.gatewayMapper = gatewayMapper;
+    this.measurementMapper = measurementMapper;
   }
 
   public MapMarkerDto toMapMarkerDto(LogicalMeter logicalMeter) {
@@ -76,10 +79,18 @@ public class LogicalMeterMapper {
 
     meterDto.location = toLocationDto(logicalMeter.location);
 
+    meterDto.readIntervalMinutes = logicalMeter.readIntervalMinutes;
+
+    meterDto.measurements = logicalMeter.measurements
+      .stream()
+      .map(measurementMapper::toDto)
+      .collect(toList());
+
     meterDto.statusChangelog = statusLogs
       .stream()
       .map(meterStatusLogMapper::toDto)
       .collect(toList());
+
     return meterDto;
   }
 

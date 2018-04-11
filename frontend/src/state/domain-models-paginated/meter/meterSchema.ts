@@ -10,11 +10,11 @@ export const meterProcessStrategy = (entity: any): schema.StrategyFunction => {
       status,
       gateway: {...entity.gateway, status: {id: gatewayStatus, name: gatewayStatus}},
     };
-  } else {
-    return entity;
   }
+  return entity;
 };
 
 const meter = new schema.Entity('meters', {}, {processStrategy: meterProcessStrategy});
 
 export const meterSchema = {content: [meter]};
+export const measurement = [new schema.Entity('measurements', {}, {idAttribute: 'quantity'})];

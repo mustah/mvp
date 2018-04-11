@@ -25,6 +25,8 @@ public class LogicalMeterDto {
   public String created;
   public StatusType status;
   public String collectionStatus;
+  public List<MeasurementDto> measurements;
+  public Long readIntervalMinutes;
 
   @Nullable
   public GatewayMandatoryDto gateway;

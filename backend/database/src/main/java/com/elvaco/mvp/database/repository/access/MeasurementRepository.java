@@ -114,4 +114,14 @@ public class MeasurementRepository implements Measurements {
       .collect(toList());
   }
 
+  @Override
+  public List<Measurement> findLatestValues(
+    UUID physicalMeterId
+  ) {
+    return measurementJpaRepository.findLatestForPhysicalMeter(physicalMeterId)
+      .stream()
+      .map(measurementMapper::toDomainModel)
+      .collect(toList());
+  }
+
 }

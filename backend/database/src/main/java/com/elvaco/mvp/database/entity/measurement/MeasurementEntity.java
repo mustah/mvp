@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Type;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "measurement")
+@ToString(exclude = "physicalMeter")
 public class MeasurementEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -3650501037709018061L;

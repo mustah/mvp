@@ -7,4 +7,4 @@ interface Props {
 }
 
 export const HasContent = ({hasContent, fallbackContent, children}: Props) =>
-  (hasContent ? children : fallbackContent);
+  hasContent ? children : fallbackContent;

@@ -5,7 +5,6 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {RenderableQuantity} from '../../../../usecases/report/reportHelpers';
 import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
@@ -13,6 +12,7 @@ import {
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
+  RenderableQuantity,
 } from './measurementModels';
 
 const colorize =
@@ -171,7 +171,6 @@ export const fetchMeasurements =
     }
 
     if (selectedListItems.length > 1) {
-      // TODO make sure timePeriod is not a Maybe, coming in Must's future MR
       const averageUrl = makeUrl(
         EndPoints.measurements.concat('/average'),
         measurementUri(quantities, selectedListItems, timePeriod),

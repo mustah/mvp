@@ -49,6 +49,22 @@ public class LogicalMeterUseCases {
       .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters));
   }
 
+  public Page<LogicalMeter> findAllWithMeasurements(
+    RequestParameters parameters,
+    Pageable pageable
+  ) {
+    return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
+      .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
+      .map(logicalMeter -> {
+        if (!logicalMeter.activePhysicalMeter().isPresent()) {
+          return logicalMeter;
+        }
+        return logicalMeter.withMeasurements(measurements.findLatestValues(
+          logicalMeter.activePhysicalMeter().get().id
+        ));
+      });
+  }
+
   public LogicalMeter save(LogicalMeter logicalMeter) {
     if (hasTenantAccess(logicalMeter.organisationId)) {
       return logicalMeters.save(logicalMeter);
@@ -75,6 +91,17 @@ public class LogicalMeterUseCases {
     } else {
       return logicalMeters.findByOrganisationIdAndId(currentUser.getOrganisationId(), id);
     }
+  }
+
+  public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
+    return findById(id).map(logicalMeter -> {
+      if (!logicalMeter.activePhysicalMeter().isPresent()) {
+        return logicalMeter;
+      }
+      return logicalMeter.withMeasurements(measurements.findLatestValues(
+        logicalMeter.activePhysicalMeter().get().id
+      ));
+    });
   }
 
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(

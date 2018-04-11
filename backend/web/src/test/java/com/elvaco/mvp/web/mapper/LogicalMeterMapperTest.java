@@ -20,6 +20,7 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +38,11 @@ public class LogicalMeterMapperTest {
 
   @Before
   public void setUp() {
-    mapper = new LogicalMeterMapper(new MeterStatusLogMapper(), new GatewayMapper());
+    mapper = new LogicalMeterMapper(
+      new MeterStatusLogMapper(),
+      new GatewayMapper(),
+      new MeasurementMapper()
+    );
   }
 
   @Test
@@ -125,6 +130,9 @@ public class LogicalMeterMapperTest {
       formatUtc(statusChanged)
     );
     expected.collectionStatus = "";
+    expected.readIntervalMinutes = 15L;
+
+    expected.measurements = emptyList();
 
     UUID organisationId = ELVACO.id;
 
