@@ -117,7 +117,7 @@ export const Map = (props: Props) => {
     <Column>
       <LeafletMap
         maxZoom={18}
-        minZoom={3}
+        minZoom={0}
         zoom={defaultZoom}
         className="Map"
         scrollWheelZoom={false}
