@@ -27,6 +27,8 @@ import {
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, Dictionary, uuid} from '../../../types/Types';
+import {ActiveDot, ActiveDotPropsFromApi} from '../components/ActiveDot';
+import {Dot, DotPropsFromApi} from '../components/Dot';
 import {GraphContents, LineProps} from '../reportModels';
 
 interface StateToProps {
@@ -60,22 +62,6 @@ type Props = StateToProps & DispatchToProps;
 
 const style: React.CSSProperties = {width: '100%', height: '100%'};
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
-
-const Dot = (props) => {
-  if (props.cy) {
-    return (<circle {...props} r={1.3} fill={props.stroke}/>);
-  } else {
-    return null;
-  }
-};
-
-const ActiveDot = ({dataKey, fill, cx, cy, activeDataKey}) => {
-  if (dataKey === activeDataKey) {
-    return <circle r={3} stroke={fill} cx={cx} cy={cy} fill={fill}/>;
-  } else {
-    return null;
-  }
-};
 
 const renderGraphContents = (
   {lines, axes}: GraphContents,
@@ -161,7 +147,7 @@ class GraphComponent extends React.Component<Props, State> {
     }
   }
 
-  renderDot = ({dataKey, ...rest}) => {
+  renderDot = ({dataKey, ...rest}: DotPropsFromApi & {dataKey: uuid}) => {
     const {index, cy} = rest;
     this.dots = {
       ...this.dots,
@@ -170,17 +156,11 @@ class GraphComponent extends React.Component<Props, State> {
     return (<Dot {...rest} />);
   }
 
-  renderActiveDot = (props) => {
-    return (
-      <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
-    );
-  }
+  renderActiveDot = (props: ActiveDotPropsFromApi) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
 
-  resetDots = () => {
-    this.dots = {};
-  }
+  resetDots = () => this.dots = {};
 
-  setMouseY = ({chartY, activeTooltipIndex, activePayload, ...rest}) => {
+  setMouseY = ({chartY, activeTooltipIndex, activePayload}) => {
     if (chartY) {
       this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
       this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
@@ -303,11 +283,12 @@ class GraphComponent extends React.Component<Props, State> {
 
 }
 
-const mapStateToProps = ({
-                           report: {selectedListItems},
-                           searchParameters: {selection: {selected: {period}}},
-                           ui: {measurements: {selectedQuantities}},
-                         }: RootState): StateToProps =>
+const mapStateToProps = (
+  {
+    report: {selectedListItems},
+    searchParameters: {selection: {selected: {period}}},
+    ui: {measurements: {selectedQuantities}},
+  }: RootState): StateToProps =>
   ({
     selectedListItems,
     period,
