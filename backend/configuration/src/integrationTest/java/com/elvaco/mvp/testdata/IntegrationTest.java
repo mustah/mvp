@@ -43,6 +43,16 @@ public abstract class IntegrationTest {
   private IntegrationTestFixtureContext context;
   private RestClient restClient;
 
+  @After
+  public final void tearDownBase() {
+    restClient().logout();
+    if (context != null) {
+      getIntegrationTestFixtureContextFactory().destroy(context);
+      context = null;
+    }
+    SecurityContextHolder.clearContext();
+  }
+
   protected boolean isPostgresDialect() {
     return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
       .getDialect()
@@ -59,17 +69,7 @@ public abstract class IntegrationTest {
     return context;
   }
 
-  @After
-  public final void tearDownBase() {
-    restClient().logout();
-    if (context != null) {
-      getIntegrationTestFixtureContextFactory().destroy(context);
-      context = null;
-    }
-    SecurityContextHolder.clearContext();
-  }
-
-  public RestClient restClient() {
+  protected RestClient restClient() {
     if (restClient == null) {
       restClient = new RestClient(serverPort);
     }
@@ -82,6 +82,18 @@ public abstract class IntegrationTest {
 
   protected RestClient asOtherUser() {
     return restAsUser(OTHER_USER);
+  }
+
+  protected RestClient asTestUser() {
+    return restAsUser(context().user);
+  }
+
+  protected RestClient asTestAdmin() {
+    return restAsUser(context().admin);
+  }
+
+  protected RestClient asTestSuperAdmin() {
+    return restAsUser(context().superAdmin);
   }
 
   protected RestClient as(User user) {
@@ -115,9 +127,8 @@ public abstract class IntegrationTest {
     return false;
   }
 
-  public String getCallerClassName() {
-    StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-    return stackTraceElements[3].getClassName();
+  private String getCallerClassName() {
+    return Thread.currentThread().getStackTrace()[3].getClassName();
   }
 
   private IntegrationTestFixtureContext newContext(String identifier) {

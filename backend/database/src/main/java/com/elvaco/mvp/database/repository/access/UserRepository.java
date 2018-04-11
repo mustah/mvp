@@ -73,7 +73,9 @@ public class UserRepository implements Users {
 
   @Override
   public List<User> findByRole(Role role) {
-    return userJpaRepository.findByRoles_Role(role.role).stream().map(userMapper::toDomainModel)
+    return userJpaRepository.findByRoles_Role(role.role)
+      .stream()
+      .map(userMapper::toDomainModel)
       .collect(toList());
   }
 

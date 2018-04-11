@@ -103,7 +103,7 @@ public class GatewayControllerTest extends IntegrationTest {
       null
     );
 
-    Page<GatewayDto> response = as(context().superAdmin)
+    Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
         + "?after=" + date.minusDays(30)
@@ -147,7 +147,7 @@ public class GatewayControllerTest extends IntegrationTest {
       null
     );
 
-    Page<GatewayDto> response = as(context().superAdmin)
+    Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways"
         + "?after=" + date.minusDays(60)
@@ -165,7 +165,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Test
   public void fetchAllGatewaysShouldBeEmptyWhenNoGatewaysExists() {
-    Page<GatewayDto> response = as(context().user)
+    Page<GatewayDto> response = asTestUser()
       .getPage("/gateways", GatewayDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0);
@@ -179,7 +179,7 @@ public class GatewayControllerTest extends IntegrationTest {
     saveGateway(dailyPlanet.id);
     saveGateway(context().getOrganisationId());
 
-    Page<GatewayDto> response = as(context().superAdmin)
+    Page<GatewayDto> response = asTestSuperAdmin()
       .getPage(
         "/gateways",
         GatewayDto.class
@@ -243,7 +243,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void superUserCanGetSingleGateway() {
     UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
-    ResponseEntity<GatewayDto> response = as(context().superAdmin)
+    ResponseEntity<GatewayDto> response = asTestSuperAdmin()
       .get("/gateways/" + gatewayId, GatewayDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -254,7 +254,7 @@ public class GatewayControllerTest extends IntegrationTest {
   public void mapDataIncludesGatewaysWithoutLocation() {
     UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
-    ResponseEntity<List<MapMarkerDto>> response = as(context().superAdmin)
+    ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
       .getList("/gateways/map-markers", MapMarkerDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -290,10 +290,10 @@ public class GatewayControllerTest extends IntegrationTest {
       1.0
     );
 
-    ResponseEntity<List<MapMarkerDto>> cityAddressResponse = as(context().superAdmin)
+    ResponseEntity<List<MapMarkerDto>> cityAddressResponse = asTestSuperAdmin()
       .getList("/gateways/map-markers?address=sweden,kungsbacka,super 1", MapMarkerDto.class);
 
-    ResponseEntity<List<MapMarkerDto>> cityResponse = as(context().superAdmin)
+    ResponseEntity<List<MapMarkerDto>> cityResponse = asTestSuperAdmin()
       .getList("/gateways/map-markers?city=sweden,kungsbacka", MapMarkerDto.class);
 
     assertSameMapMarker(cityAddressResponse, mapMarker);

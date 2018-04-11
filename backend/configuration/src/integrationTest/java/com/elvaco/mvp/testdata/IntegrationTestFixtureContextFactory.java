@@ -8,9 +8,10 @@ import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
-
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
+
+import static java.util.UUID.randomUUID;
 
 class IntegrationTestFixtureContextFactory {
 
@@ -29,7 +30,7 @@ class IntegrationTestFixtureContextFactory {
 
   @Transactional
   public IntegrationTestFixtureContext create(String callSiteIdentifier) {
-    UUID contextUuid = UUID.randomUUID();
+    UUID contextUuid = randomUUID();
     OrganisationEntity organisation = organisationJpaRepository.save(
       new OrganisationEntity(
         contextUuid,
@@ -39,34 +40,43 @@ class IntegrationTestFixtureContextFactory {
       )
     );
 
-    User user = new UserBuilder().name("integration-test-user")
+    User user = new UserBuilder()
+      .name("integration-test-user")
       .email(contextUuid.toString() + "@test.com")
       .password("password")
       .organisation(organisationMapper.toDomainModel(organisation))
-      .id(UUID.randomUUID())
+      .id(randomUUID())
       .asUser()
       .build();
     users.create(user);
 
-    User admin = new UserBuilder().name("integration-test-admin")
+    User admin = new UserBuilder()
+      .name("integration-test-admin")
       .email(contextUuid.toString() + "-admin@test.com")
       .password("password")
       .organisation(organisationMapper.toDomainModel(organisation))
-      .id(UUID.randomUUID())
+      .id(randomUUID())
       .asAdmin()
       .build();
     users.create(admin);
 
-    User superAdmin = new UserBuilder().name("integration-test-super-admin")
+    User superAdmin = new UserBuilder()
+      .name("integration-test-super-admin")
       .email(contextUuid.toString() + "-super-admin@test.com")
       .password("password")
       .organisation(organisationMapper.toDomainModel(organisation))
-      .id(UUID.randomUUID())
+      .id(randomUUID())
       .asSuperAdmin()
       .build();
     users.create(superAdmin);
-    return new IntegrationTestFixtureContext(organisation, organisationMapper, user, admin,
-      superAdmin);
+
+    return new IntegrationTestFixtureContext(
+      organisation,
+      organisationMapper,
+      user,
+      admin,
+      superAdmin
+    );
   }
 
   @Transactional
