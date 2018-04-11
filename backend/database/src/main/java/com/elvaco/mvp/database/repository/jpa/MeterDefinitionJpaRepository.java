@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MeterDefinitionJpaRepository
   extends JpaRepository<MeterDefinitionEntity, MeterDefinitionType> {
+
   Optional<MeterDefinitionEntity> findByMedium(String medium);
 }

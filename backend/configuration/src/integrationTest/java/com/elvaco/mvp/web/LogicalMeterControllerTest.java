@@ -81,12 +81,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    districtHeatingMeterDefinition = meterDefinitions.save(
-      MeterDefinition.DISTRICT_HEATING_METER
-    );
-    hotWaterMeterDefinition = meterDefinitions.save(
-      MeterDefinition.HOT_WATER_METER
-    );
+    districtHeatingMeterDefinition = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
+    hotWaterMeterDefinition = meterDefinitions.save(MeterDefinition.HOT_WATER_METER);
 
     anotherOrganisation = organisationJpaRepository.save(
       new OrganisationEntity(
@@ -382,7 +378,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     createLogicalMeter(MeterDefinition.HOT_WATER_METER);
 
     Page<LogicalMeterDto> response = as(context().user)
-      .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
+      .getPage("/meters?medium=Hot water", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
     assertThat(response.getNumberOfElements()).isEqualTo(1);
@@ -434,7 +430,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = restClient()
       .loginWith("me@myorg.com", "secr3t")
       .tokenAuthorization()
-      .getPage("/meters?medium=Hot water meter", LogicalMeterDto.class);
+      .getPage("/meters?medium=Hot water", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1L);
     assertThat(response.getContent().get(0).id).isEqualTo(myMeter.id);

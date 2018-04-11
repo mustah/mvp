@@ -21,15 +21,12 @@ public class MeterDefinitionRepository implements MeterDefinitions {
 
   @Override
   public MeterDefinition save(MeterDefinition meterDefinition) {
-    MeterDefinitionEntity meterDefinitionEntity =
-      meterDefinitionMapper.toEntity(meterDefinition);
+    MeterDefinitionEntity entity = meterDefinitionMapper.toEntity(meterDefinition);
 
     if (meterDefinition.systemOwned) {
-      meterDefinitionJpaRepository.findByMedium(meterDefinition.medium).ifPresent(
-        (existingSystemDefinition -> meterDefinitionEntity.type = existingSystemDefinition.type)
-      );
+      meterDefinitionJpaRepository.findByMedium(meterDefinition.medium)
+        .ifPresent(systemOwned -> entity.type = systemOwned.type);
     }
-    return meterDefinitionMapper.toDomainModel(
-      meterDefinitionJpaRepository.save(meterDefinitionEntity));
+    return meterDefinitionMapper.toDomainModel(meterDefinitionJpaRepository.save(entity));
   }
 }

@@ -21,12 +21,12 @@ public class LogicalMeterTest {
       randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER
     );
-    assertThat(heatingMeter.getMedium()).isEqualTo("District heating meter");
+    assertThat(heatingMeter.getMedium()).isEqualTo("District heating");
 
     LogicalMeter coolingMeter = heatingMeter.withMeterDefinition(
       MeterDefinition.DISTRICT_COOLING_METER
     );
-    assertThat(coolingMeter.getMedium()).isEqualTo("District cooling meter");
+    assertThat(coolingMeter.getMedium()).isEqualTo("District cooling");
   }
 
   @Test

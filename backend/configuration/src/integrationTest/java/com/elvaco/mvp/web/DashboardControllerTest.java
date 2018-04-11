@@ -42,14 +42,18 @@ public class DashboardControllerTest extends IntegrationTest {
   private final MeterDefinitionMapper meterDefinitionMapper = new MeterDefinitionMapper();
   private double measurementCount = 0.0;
   private double measurementFailedCount = 0.0;
-  private ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-  private ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
+  private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
+  private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
+
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
+
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
+
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
+
   @Autowired
   private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
@@ -143,13 +147,13 @@ public class DashboardControllerTest extends IntegrationTest {
     List<PhysicalMeterStatusLogEntity> statuses = physicalMeters
       .stream()
       .map(physicalMeterEntity ->
-             new PhysicalMeterStatusLogEntity(
-               null,
-               physicalMeterEntity.id,
-               startDate,
-               null,
-               statusEntity
-             )).collect(
+        new PhysicalMeterStatusLogEntity(
+          null,
+          physicalMeterEntity.id,
+          startDate,
+          null,
+          statusEntity
+        )).collect(
         toList());
 
     return physicalMeterStatusLogJpaRepository.save(statuses);
@@ -161,27 +165,16 @@ public class DashboardControllerTest extends IntegrationTest {
     long dayCount
   ) {
 
-    for (int x = 0; x < meters.size(); x++) {
+    for (PhysicalMeterEntity meter : meters) {
       measurementJpaRepository.save(createMeasurements(
-        meters.get(x),
+        meter,
         startDate,
-        meters.get(x).readIntervalMinutes,
-        dayCount * 1440 / meters.get(x).readIntervalMinutes
+        meter.readIntervalMinutes,
+        dayCount * 1440 / meter.readIntervalMinutes
       ));
     }
   }
 
-  /**
-   * Creates a list of fake measurements.
-   *
-   * @param physicalMeterEntity Physical meter
-   * @param measurementUnit     Unit of measurement
-   * @param measurementDate     Date of measurement
-   * @param interval            Time in minutes between measurements
-   * @param values              Nr of values to generate
-   *
-   * @return
-   */
   private List<MeasurementEntity> createMeasurements(
     PhysicalMeterEntity physicalMeterEntity,
     ZonedDateTime measurementDate,
