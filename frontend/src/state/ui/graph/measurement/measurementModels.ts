@@ -57,6 +57,12 @@ export const enum RenderableQuantity {
   differenceTemperature = 'Difference temperature',
 }
 
+export const enum Resolution {
+  hour = 'hour',
+  day = 'day',
+  month = 'month',
+}
+
 export const allQuantities = {
   heat: [
     RenderableQuantity.volume,

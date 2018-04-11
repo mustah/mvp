@@ -12,7 +12,7 @@ import {
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
-  RenderableQuantity,
+  RenderableQuantity, Resolution,
 } from './measurementModels';
 
 const colorize =
@@ -150,10 +150,11 @@ export const mapApiResponseToGraphData =
     return graphContents;
   };
 
-const measurementUri = (quantities: Quantity[], meters: uuid[], timePeriod: Period): string =>
+const measurementUri = (quantities: Quantity[], meters: uuid[], timePeriod: Period, resolution: Resolution): string =>
   `quantities=${quantities.join(',')}` +
   `&meters=${meters.join(',')}` +
-  `&${toApiParameters(currentDateRange(timePeriod)).join('&')}`;
+  `&${toApiParameters(currentDateRange(timePeriod)).join('&')}` +
+  `&resolution=${resolution}`;
 
 export const fetchMeasurements =
   async (
@@ -173,7 +174,7 @@ export const fetchMeasurements =
     if (selectedListItems.length > 1) {
       const averageUrl = makeUrl(
         EndPoints.measurements.concat('/average'),
-        measurementUri(quantities, selectedListItems, timePeriod),
+        measurementUri(quantities, selectedListItems, timePeriod, Resolution.hour),
       );
 
       try {
@@ -189,7 +190,7 @@ export const fetchMeasurements =
 
     const measurement = makeUrl(
       EndPoints.measurements,
-      measurementUri(quantities, selectedListItems, timePeriod),
+      measurementUri(quantities, selectedListItems, timePeriod, Resolution.hour),
     );
     try {
       const response = await restClient.get(measurement);
