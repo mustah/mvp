@@ -13,6 +13,7 @@ import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {formatLabelTimeStamp} from '../../helpers/dateHelpers';
+import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {Gateway, GatewayMandatory} from '../../state/domain-models-paginated/gateway/gatewayModels';
@@ -45,7 +46,7 @@ export interface RenderableMeasurement extends Identifiable {
 
 const renderQuantity = ({quantity}: RenderableMeasurement): string => quantity as string;
 const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
-  value !== null && unit ? `${value} ${unit}` : '';
+  value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
 const renderCreated = ({created}: RenderableMeasurement): string =>
   created ? formatLabelTimeStamp(created) : firstUpperTranslated('never collected');
 
