@@ -120,8 +120,8 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void findAllUsers() {
-    ResponseEntity<List> response = asSuperAdmin()
-      .get("/users", List.class);
+    ResponseEntity<List<UserDto>> response = asSuperAdmin()
+      .getList("/users", UserDto.class);
 
     assertThat(response.getBody().size()).isGreaterThanOrEqualTo(3);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -187,7 +187,7 @@ public class UserControllerTest extends IntegrationTest {
   public void regularUserCannotCreateUser() {
     UserWithPasswordDto user = createUserDto("simple@user.com", "test123");
 
-    ResponseEntity<UnauthorizedDto> response = as(context().user).post(
+    ResponseEntity<UnauthorizedDto> response = asTestUser().post(
       "/users",
       user,
       UnauthorizedDto.class
@@ -207,7 +207,7 @@ public class UserControllerTest extends IntegrationTest {
         .build()
     );
 
-    as(context().user).delete("/users/" + user.id);
+    asTestUser().delete("/users/" + user.id);
 
     assertThat(users.findById(user.id).isPresent()).isTrue();
   }
@@ -217,14 +217,14 @@ public class UserControllerTest extends IntegrationTest {
     String email = "another@user.com";
     UserDto user = createUserDto(email);
 
-    as(context().user).put("/users", user);
+    asTestUser().put("/users", user);
 
     assertThat(users.findByEmail(email).isPresent()).isFalse();
   }
 
   @Test
   public void regularUserCanOnlySeeOtherUsersWithinSameOrganisation() {
-    ResponseEntity<List<UserDto>> response = as(context().user).getList("/users", UserDto.class);
+    ResponseEntity<List<UserDto>> response = asTestUser().getList("/users", UserDto.class);
 
     List<String> organisationCodes = response.getBody().stream()
       .map(u -> u.organisation.slug)
@@ -273,7 +273,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCanCreateUserOfSameOrganisation() {
     UserWithPasswordDto user = createUserDto("stranger@danger.us", "hello");
 
-    ResponseEntity<UserDto> response = as(context().admin).post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asTestAdmin().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -286,7 +286,7 @@ public class UserControllerTest extends IntegrationTest {
   public void adminCannotCreateUserOfDifferentOrganisation() {
     UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES);
 
-    ResponseEntity<UserDto> response = as(context().admin).post("/users", user, UserDto.class);
+    ResponseEntity<UserDto> response = asTestAdmin().post("/users", user, UserDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
   }
@@ -301,10 +301,9 @@ public class UserControllerTest extends IntegrationTest {
       .post("/users", createUserDto("my.colleague@elvaco.se"), UserDto.class)
       .getBody();
 
-    ResponseEntity<List<UserDto>> responseList = as(context().admin).getList(
-      "/users",
-      UserDto.class
-    );
+    ResponseEntity<List<UserDto>> responseList = asTestAdmin()
+      .getList("/users", UserDto.class);
+
     assertThat(responseList.getBody()).doesNotContain(batman);
     assertThat(responseList.getBody()).contains(colleague);
   }

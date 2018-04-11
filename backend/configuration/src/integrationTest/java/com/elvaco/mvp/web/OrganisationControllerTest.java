@@ -62,15 +62,15 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = as(context().admin)
-      .get("/organisations/" + context().organisation().id, OrganisationDto.class);
+    ResponseEntity<OrganisationDto> request = asTestAdmin()
+      .get("/organisations/" + context().getOrganisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
   @Test
   public void adminDoesNotFindOtherOrganisationById() {
-    ResponseEntity<OrganisationDto> request = as(context().user)
+    ResponseEntity<OrganisationDto> request = asTestUser()
       .get("/organisations/" + theBeatles.id, OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -78,8 +78,8 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUserDoesNotFindOwnOrganisationById() {
-    ResponseEntity<OrganisationDto> request = as(context().user)
-      .get("/organisations/" + context().organisation().id, OrganisationDto.class);
+    ResponseEntity<OrganisationDto> request = asTestUser()
+      .get("/organisations/" + context().getOrganisationId(), OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
@@ -95,7 +95,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void adminDoesNotFindOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = as(context().user)
+    ResponseEntity<List<OrganisationDto>> request = asTestUser()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -104,7 +104,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
   @Test
   public void regularUsersDoesNotFindOrganisations() {
-    ResponseEntity<List<OrganisationDto>> request = as(context().user)
+    ResponseEntity<List<OrganisationDto>> request = asTestUser()
       .getList("/organisations", OrganisationDto.class);
 
     assertThat(request.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -127,7 +127,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void adminCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
-    ResponseEntity<OrganisationDto> created = as(context().admin)
+    ResponseEntity<OrganisationDto> created = asTestAdmin()
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -136,7 +136,7 @@ public class OrganisationControllerTest extends IntegrationTest {
   @Test
   public void regularUserCannotCreateOrganisation() {
     OrganisationDto input = new OrganisationDto("ich bin wieder hier", "bei-dir");
-    ResponseEntity<OrganisationDto> created = as(context().user)
+    ResponseEntity<OrganisationDto> created = asTestUser()
       .post("/organisations", input, OrganisationDto.class);
 
     assertThat(created.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -172,7 +172,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       "batcave"
     );
 
-    ResponseEntity<UnauthorizedDto> putResponse = as(context().admin)
+    ResponseEntity<UnauthorizedDto> putResponse = asTestAdmin()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
@@ -194,7 +194,7 @@ public class OrganisationControllerTest extends IntegrationTest {
 
     // act
     organisation.slug = "batcave";
-    ResponseEntity<UnauthorizedDto> putResponse = as(context().user)
+    ResponseEntity<UnauthorizedDto> putResponse = asTestUser()
       .put("/organisations", organisation, UnauthorizedDto.class);
 
     // assert
@@ -228,7 +228,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = as(context().admin)
+    ResponseEntity<OrganisationDto> notReallyDeleted = asTestAdmin()
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 
@@ -243,7 +243,7 @@ public class OrganisationControllerTest extends IntegrationTest {
       .get("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(exists.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    ResponseEntity<OrganisationDto> notReallyDeleted = as(context().user)
+    ResponseEntity<OrganisationDto> notReallyDeleted = asTestUser()
       .delete("/organisations/" + secretService.id, OrganisationDto.class);
     assertThat(notReallyDeleted.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 

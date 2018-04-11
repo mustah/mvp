@@ -93,8 +93,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatusNoPeriods() {
-
-    ResponseEntity<DashboardDto> response = as(context().user)
+    ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
         + "?status=active",
@@ -112,8 +111,7 @@ public class DashboardControllerTest extends IntegrationTest {
 
   @Test
   public void findAllWithCollectionStatus() {
-
-    ResponseEntity<DashboardDto> response = as(context().user)
+    ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
         + "?after=" + startDate

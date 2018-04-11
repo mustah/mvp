@@ -73,7 +73,7 @@ public class MeasurementControllerTest extends IntegrationTest {
       "ELV",
       newLogicalMeterEntity(
         "Butter",
-        context().organisation().id,
+        context().getOrganisationId(),
         MeterDefinitionType.TEST_METER_TYPE_1,
         asList(new QuantityEntity(
           null,
@@ -199,7 +199,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementsRetrievableAtEndpoint() {
-    List<MeasurementDto> measurements = as(context().user)
+    List<MeasurementDto> measurements = asTestUser()
       .getList("/measurements?meters=" + butterMeter.logicalMeterId, MeasurementDto.class)
       .getBody();
 
@@ -213,7 +213,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void measurementRetrievableById() {
     Long butterTemperatureId = idOf("Butter temperature");
-    MeasurementDto measurement = as(context().user)
+    MeasurementDto measurement = asTestUser()
       .get("/measurements/" + butterTemperatureId, MeasurementDto.class)
       .getBody();
 
@@ -223,7 +223,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void measurementUnitScaled() {
-    List<MeasurementSeriesDto> measurements = as(context().user)
+    List<MeasurementSeriesDto> measurements = asTestUser()
       .getList(
         "/measurements?quantities=Butter temperature:K"
           + "&meters=" + butterMeter.logicalMeterId,
@@ -239,7 +239,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void canOnlySeeMeasurementsFromMeterBelongingToOrganisation() {
-    List<MeasurementDto> measurements = as(context().user)
+    List<MeasurementDto> measurements = asTestUser()
       .getList(
         "/measurements"
           + "?quantities=Butter temperature:K"
@@ -255,7 +255,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void cannotAccessMeasurementIdOfOtherOrganisationDirectly() {
-    HttpStatus statusCode = as(context().user)
+    HttpStatus statusCode = asTestUser()
       .get("/measurements/" + idOf("Milk temperature"), MeasurementDto.class)
       .getStatusCode();
 
@@ -416,7 +416,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void unknownUnitSuppliedForScaling() {
     assumeTrue(isPostgresDialect());
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
         "/measurements?quantities=Butter temperature:unknownUnit"
           + "&meters=" + allLogicalMeterIds(),
@@ -432,7 +432,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void wrongDimensionForQuantitySuppliedForScaling() {
     assumeTrue(isPostgresDialect());
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
         "/measurements?quantities=Butter temperature:kWh"
           + "&meters=" + allLogicalMeterIds(),
@@ -445,7 +445,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void missingMetersParametersReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
         "/measurements?quantities=Butter temperature:kWh",
         ErrorMessageDto.class

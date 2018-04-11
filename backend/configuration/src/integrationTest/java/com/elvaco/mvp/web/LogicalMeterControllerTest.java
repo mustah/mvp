@@ -124,7 +124,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       1.0
     );
 
-    LogicalMeterDto logicalMeterDto = as(context().user)
+    LogicalMeterDto logicalMeterDto = asTestUser()
       .getPage(
         "/meters"
         + "?after=2001-01-01T00:00:00.00Z"
@@ -152,7 +152,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       1.0
     );
 
-    LogicalMeterDto logicalMeterDto = as(context().user)
+    LogicalMeterDto logicalMeterDto = asTestUser()
       .getPage(
         "/meters"
         + "?after=2001-01-01T00:00:00.00Z"
@@ -180,7 +180,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       1.0
     );
 
-    LogicalMeterDto logicalMeterDto = as(context().user)
+    LogicalMeterDto logicalMeterDto = asTestUser()
       .getPage(
         "/meters"
         + "?after=2001-01-01T01:00:00.00Z"
@@ -195,7 +195,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findById() {
     LogicalMeter logicalMeter = createLogicalMeter();
 
-    ResponseEntity<LogicalMeterDto> response = as(context().user)
+    ResponseEntity<LogicalMeterDto> response = asTestUser()
       .get("/meters/" + logicalMeter.id, LogicalMeterDto.class);
 
     LogicalMeterDto logicalMeterDto = response.getBody();
@@ -228,7 +228,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       ZonedDateTime.parse("2001-01-06T10:14:00Z")
     );
 
-    LogicalMeterDto logicalMeterDto = as(context().user)
+    LogicalMeterDto logicalMeterDto = asTestUser()
       .get("/meters/" + logicalMeter.id, LogicalMeterDto.class).getBody();
 
     assertThat(logicalMeterDto.statusChangelog).containsExactly(
@@ -242,7 +242,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     createLogicalMeter();
     createLogicalMeter();
 
-    Page<LogicalMeterDto> response = as(context().user)
+    Page<LogicalMeterDto> response = asTestUser()
       .getPage("/meters?size=1", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -256,7 +256,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     createLogicalMeter();
     createLogicalMeter();
 
-    Page<LogicalMeterDto> response = as(context().user)
+    Page<LogicalMeterDto> response = asTestUser()
       .getPage("/meters?page=0&size=2", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(3);
@@ -348,7 +348,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       null
     );
 
-    Page<LogicalMeterDto> response = as(context().user)
+    Page<LogicalMeterDto> response = asTestUser()
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
         + "&before=2015-01-01T23:00:00.00Z"
@@ -366,7 +366,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void malformedDateParameter() {
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get(
         "/meters?"
         + "after=NotAValidTimestamp"
@@ -384,7 +384,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     createLogicalMeter();
     createLogicalMeter(MeterDefinition.HOT_WATER_METER);
 
-    Page<LogicalMeterDto> response = as(context().user)
+    Page<LogicalMeterDto> response = asTestUser()
       .getPage("/meters?medium=Hot water", LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(1);
@@ -396,8 +396,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void findsOwnOrganisationsMetersByFilter() {
     createLogicalMeter();
 
-    Page<LogicalMeterDto> response = as(context().user)
-      .getPage("/meters?organisation=" + context().organisation().id, LogicalMeterDto.class);
+    Page<LogicalMeterDto> response = asTestUser()
+      .getPage("/meters?organisation=" + context().getOrganisationId(), LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isGreaterThanOrEqualTo(1L);
   }
@@ -411,7 +411,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = restClient()
       .loginWith(user.email, user.password)
       .tokenAuthorization()
-      .getPage("/meters?organisation=" + context().organisation().id, LogicalMeterDto.class);
+      .getPage("/meters?organisation=" + context().getOrganisationId(), LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(0L);
   }
@@ -429,7 +429,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "not-my-meter",
-      context().organisation().id,
+      context().getOrganisationId(),
       hotWaterMeterDefinition,
       UNKNOWN_LOCATION
     ));
@@ -453,7 +453,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       UNKNOWN_LOCATION
     ));
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get("/meters/" + theirMeter.id, ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
@@ -461,7 +461,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
   @Test
   public void meterNotFound() {
-    ResponseEntity<ErrorMessageDto> response = as(context().user)
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
       .get("/meters/" + randomUUID(), ErrorMessageDto.class);
 
     assertThatStatusIsNotFound(response);
@@ -481,7 +481,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "address"
       )
     ));
-    ResponseEntity<List<MapMarkerDto>> response = as(context().user)
+    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
       .getList("/meters/map-markers", MapMarkerDto.class);
 
     assertThatStatusIsOk(response);
@@ -502,7 +502,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
         "address"
       )
     ));
-    ResponseEntity<List<MapMarkerDto>> response = as(context().user)
+    ResponseEntity<List<MapMarkerDto>> response = asTestUser()
       .getList("/meters/map-markers?city=sweden,varberg", MapMarkerDto.class);
 
     assertThatStatusIsOk(response);
@@ -542,7 +542,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       2.0
     );
 
-    Page<LogicalMeterDto> page = as(context().user)
+    Page<LogicalMeterDto> page = asTestUser()
       .getPage("/meters?id=" + districtHeatingMeter.id, LogicalMeterDto.class);
 
     assertThat(page.getTotalElements()).isEqualTo(1);
@@ -607,7 +607,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       2.0
     );
 
-    ResponseEntity<LogicalMeterDto> response = as(context().user)
+    ResponseEntity<LogicalMeterDto> response = asTestUser()
       .get("/meters/" + districtHeatingMeter.id, LogicalMeterDto.class);
 
     LogicalMeterDto meter = response.getBody();
@@ -732,7 +732,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Function<LogicalMeterDto, String> actual,
     String expected
   ) {
-    Page<LogicalMeterDto> response = as(context().user)
+    Page<LogicalMeterDto> response = asTestUser()
       .getPage(url, LogicalMeterDto.class);
 
     assertThat(response.getTotalElements()).isEqualTo(55);

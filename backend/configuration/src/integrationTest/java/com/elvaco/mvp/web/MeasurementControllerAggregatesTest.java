@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
@@ -64,14 +65,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T06:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T06:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -110,14 +111,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 3.0, "W");
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T06:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T06:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         String.join(",", asList(logicalMeter1.id.toString(), logicalMeter2.id.toString()))
       ), MeasurementSeriesDto.class);
 
@@ -173,14 +174,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       "K"
     );
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name + "," + Quantity.DIFFERENCE_TEMPERATURE.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name + "," + Quantity.DIFFERENCE_TEMPERATURE.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -221,14 +222,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:02Z"), "Power", 4.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:03Z"), "Power", 6.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -259,24 +260,24 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 4.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01+01:00"), "Power", 8.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
     ResponseEntity<List<MeasurementSeriesDto>> responseForNonZuluRequest =
-      as(context().user).getList(
+      asTestUser().getList(
         String.format(
           "/measurements/average"
-            + "?after=2018-03-06T03:00:00.000-02:00"
-            + "&before=2018-03-06T06:59:59.999+01:00"
-            + "&quantities=" + Quantity.POWER.name
-            + "&meters=%s&resolution=hour",
+          + "?after=2018-03-06T03:00:00.000-02:00"
+          + "&before=2018-03-06T06:59:59.999+01:00"
+          + "&quantities=" + Quantity.POWER.name
+          + "&meters=%s&resolution=hour",
           logicalMeter.id.toString()
         ), MeasurementSeriesDto.class);
 
@@ -296,7 +297,6 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
         )
       ));
     assertThat(response.getBody()).isEqualTo(responseForNonZuluRequest.getBody());
-
   }
 
   @Test
@@ -305,14 +305,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
     );
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
-      String.format(
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), ErrorMessageDto.class);
 
@@ -326,14 +326,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
-      String.format(
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=SomeUnknownQuantity"
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=SomeUnknownQuantity"
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), ErrorMessageDto.class);
 
@@ -347,14 +347,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
-      String.format(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -379,14 +379,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 40000.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
-      String.format(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-06T05:59:59.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":kW"
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-06T05:59:59.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":kW"
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -412,14 +412,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 2.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
-      String.format(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=2018-03-06T05:00:00.000Z"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=day",
+        + "?after=2018-03-06T05:00:00.000Z"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=day",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -452,14 +452,14 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     newMeasurement(meter, ZonedDateTime.parse("2018-02-07T05:00:01Z"), "Power", 2.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 4.0, "W");
 
-    ResponseEntity<List<MeasurementSeriesDto>> response = as(context().user).getList(
-      String.format(
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=2018-01-01T05:00:00.000Z"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=month",
+        + "?after=2018-01-01T05:00:00.000Z"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=month",
         logicalMeter.id.toString()
       ), MeasurementSeriesDto.class);
 
@@ -489,59 +489,59 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
   @Test
   public void invalidAverageParameterValuesReturnsHttp400() {
 
-    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
-      String.format(
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=thisIsNotAValidTimestamp"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=month",
-        UUID.randomUUID().toString()
+        + "?after=thisIsNotAValidTimestamp"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=month",
+        randomUUID().toString()
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'after' timestamp: 'thisIsNotAValidTimestamp'.");
 
-    response = as(context().user).get(
-      String.format(
+    response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=thisIsNotAValidTimestamp"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=month",
-        UUID.randomUUID().toString()
+        + "?after=2018-03-07T12:32:05.999Z"
+        + "&before=thisIsNotAValidTimestamp"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=month",
+        randomUUID().toString()
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
       "Invalid 'before' timestamp: 'thisIsNotAValidTimestamp'.");
 
-    response = as(context().user).get(
-      String.format(
+    response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=month",
+        + "?after=2018-03-07T12:32:05.999Z"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=month",
         "NotAValidUUID"
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo("Invalid 'meters' list: 'NotAValidUUID'.");
 
-    response = as(context().user).get(
-      String.format(
+    response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=NotAValidResolution",
-        UUID.randomUUID().toString()
+        + "?after=2018-03-07T12:32:05.999Z"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=NotAValidResolution",
+        randomUUID().toString()
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -551,28 +551,28 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
 
   @Test
   public void missingParametersReturnsHttp400() {
-    ResponseEntity<ErrorMessageDto> response = as(context().user).get(
-      String.format(
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?to=2018-03-07T12:32:05.999Z"
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=hour",
-        UUID.randomUUID().toString()
+        + "?to=2018-03-07T12:32:05.999Z"
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=hour",
+        randomUUID().toString()
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(response.getBody().message).isEqualTo(
       "Missing 'after' parameter.");
 
-    response = as(context().user).get(
-      String.format(
+    response = asTestUser()
+      .get(String.format(
         "/measurements/average"
-          + "?after=2018-03-07T12:32:05.999Z"
-          + "&before=2018-03-07T12:32:05.999Z"
-          + "&meters=%s"
-          + "&resolution=hour",
-        UUID.randomUUID().toString()
+        + "?after=2018-03-07T12:32:05.999Z"
+        + "&before=2018-03-07T12:32:05.999Z"
+        + "&meters=%s"
+        + "&resolution=hour",
+        randomUUID().toString()
       ), ErrorMessageDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -589,13 +589,13 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, now, "Power", 1.0, "W");
 
-    List<MeasurementSeriesDto> response = as(context().user).getList(
-      String.format(
+    List<MeasurementSeriesDto> response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=" + now.toString()
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s"
-          + "&resolution=hour",
+        + "?after=" + now.toString()
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s"
+        + "&resolution=hour",
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody();
 
@@ -619,13 +619,13 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
 
-    MeasurementSeriesDto response = as(context().user).getList(
-      String.format(
+    MeasurementSeriesDto response = asTestUser()
+      .getList(String.format(
         "/measurements/average"
-          + "?after=" + after
-          + "&before=" + before
-          + "&quantities=" + Quantity.POWER.name + ":W"
-          + "&meters=%s",
+        + "?after=" + after
+        + "&before=" + before
+        + "&quantities=" + Quantity.POWER.name + ":W"
+        + "&meters=%s",
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody().get(0);
     assertThat(response.values).hasSize(23);
@@ -645,13 +645,12 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       unit,
       meter
     ));
-
   }
 
   private LogicalMeterEntity newLogicalMeterEntity(MeterDefinitionEntity meterDefinitionEntity) {
-    UUID uuid = UUID.randomUUID();
+    UUID uuid = randomUUID();
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      UUID.randomUUID(),
+      randomUUID(),
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
@@ -660,7 +659,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity(UUID logicalMeterId) {
-    UUID uuid = UUID.randomUUID();
+    UUID uuid = randomUUID();
     return physicalMeterJpaRepository.save(new PhysicalMeterEntity(
       uuid,
       context().organisationEntity,
@@ -672,5 +671,4 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       0
     ));
   }
-
 }
