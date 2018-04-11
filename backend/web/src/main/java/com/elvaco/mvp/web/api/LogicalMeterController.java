@@ -3,10 +3,8 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import com.elvaco.mvp.adapters.spring.PageableAdapter;
-import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
@@ -73,22 +71,6 @@ public class LogicalMeterController {
 
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(logicalMeterMapper::toDto);
-  }
-
-  private Supplier<RequestParameters> lazyRequestParameters(LogicalMeter logicalMeter) {
-    return () -> {
-      RequestParameters parameters = new RequestParametersAdapter();
-
-      logicalMeter.physicalMeters
-        .stream()
-        .filter(m -> m.id != null)
-        .forEach(m -> parameters.add("meterId", m.id.toString()));
-
-      logicalMeter.getQuantities()
-        .forEach(quantity -> parameters.add("quantity", quantity.name));
-
-      return parameters;
-    };
   }
 
 }

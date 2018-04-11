@@ -65,10 +65,10 @@ export const enum Resolution {
 
 export const allQuantities = {
   heat: [
-    RenderableQuantity.volume,
-    RenderableQuantity.flow,
     RenderableQuantity.energy,
+    RenderableQuantity.volume,
     RenderableQuantity.power,
+    RenderableQuantity.flow,
     RenderableQuantity.forwardTemperature,
     RenderableQuantity.returnTemperature,
     RenderableQuantity.differenceTemperature,

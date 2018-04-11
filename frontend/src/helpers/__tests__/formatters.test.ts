@@ -1,30 +1,27 @@
 import {
   FORMAT_DATE_DAY_MONTH,
   FORMAT_DATE_FULL_MINUTE,
-  FORMAT_NUMBER_DEFAULT,
   formatDate,
-  formatNumber,
+  roundMeasurement,
 } from '../formatters';
 
 describe('formatters', () => {
 
-  describe('Format numbers', () => {
+  describe('roundMeasurement', () => {
 
-    test('Without specifying format, result defaults to FORMAT_NUMBER_DEFAULT', () => {
-      expect(formatNumber(1000000.1234)).toEqual(formatNumber(1000000.1234, FORMAT_NUMBER_DEFAULT));
+    test('Measurement is rounded to three decimals', () => {
+      expect(roundMeasurement(304.4410237975271)).toEqual('304.441');
     });
 
-    test('Rounding number', () => {
-      expect(formatNumber(1000000.1234567)).toEqual('1,000,000.1235');
+    test('Measurement is rounded, not truncated', () => {
+      expect(roundMeasurement(304.4419237975271)).toEqual('304.442');
     });
 
-    test('Custom format', () => {
-      expect(formatNumber(1000000.19, '0,0.[0]')).toEqual('1,000,000.2');
+    test('String measurement is almost always returned as is', () => {
+      expect(roundMeasurement('A string value')).toEqual('A string value');
+      expect(roundMeasurement('')).toEqual('0.000');
     });
 
-    test('No rounding within specified format precision\'', () => {
-      expect(formatNumber(1000000.1234)).toEqual('1,000,000.1234');
-    });
   });
 
   describe('Format dates', () => {
