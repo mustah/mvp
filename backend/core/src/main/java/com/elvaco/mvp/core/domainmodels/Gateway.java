@@ -1,7 +1,10 @@
 package com.elvaco.mvp.core.domainmodels;
 
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -58,6 +61,42 @@ public class Gateway implements Identifiable<UUID> {
       productModel,
       meters,
       statusLogs
+    );
+  }
+
+  public Gateway replaceActiveStatus(StatusType status) {
+    return replaceActiveStatus(status, ZonedDateTime.now());
+  }
+
+  public Gateway replaceActiveStatus(StatusType status, ZonedDateTime when) {
+    List<GatewayStatusLog> activeSameStatuses = statusLogs.stream()
+      .filter(GatewayStatusLog::isActive)
+      .filter(logEntry -> logEntry.status.equals(status))
+      .collect(Collectors.toList());
+
+    if (activeSameStatuses.size() > 0) {
+      return this;
+    }
+
+    List<GatewayStatusLog> newStatuses = statusLogs.stream()
+      .map(entry -> entry.isActive() ? entry.withStop(when) : entry)
+      .collect(Collectors.toList());
+
+    newStatuses.add(new GatewayStatusLog(
+      null,
+      id,
+      status,
+      when,
+      null
+    ));
+
+    return new Gateway(
+      id,
+      organisationId,
+      serial,
+      productModel,
+      meters,
+      Collections.unmodifiableList(newStatuses)
     );
   }
 }

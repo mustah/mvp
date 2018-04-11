@@ -20,6 +20,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
@@ -746,7 +747,7 @@ public class MessageHandlerTest {
 
   @Test
   public void meterStatusIsSetForNewMeter() {
-    messageHandler.handle(newStructureMessage(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
 
     List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
@@ -756,8 +757,8 @@ public class MessageHandlerTest {
 
   @Test
   public void sameMeterStatusIsUnchangedForMeter() {
-    messageHandler.handle(newStructureMessage(StatusType.OK));
-    messageHandler.handle(newStructureMessage(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
 
     List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
@@ -767,10 +768,49 @@ public class MessageHandlerTest {
 
   @Test
   public void newMeterStatusChangesStatus() {
-    messageHandler.handle(newStructureMessage(StatusType.OK));
-    messageHandler.handle(newStructureMessage(StatusType.ERROR));
+    messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.ERROR));
 
     List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    assertThat(statuses).hasSize(2);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNotNull();
+
+    assertThat(statuses.get(1).status).isEqualTo(StatusType.ERROR);
+    assertThat(statuses.get(1).stop).isNull();
+  }
+
+  @Test
+  public void newStatusIsSetForGateway() {
+    messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
+
+    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters())
+      .get(0).statusLogs;
+
+    assertThat(statuses).hasSize(1);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNull();
+  }
+
+  @Test
+  public void sameGatewayStatusIsUnchangedForGateway() {
+    messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
+
+    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters()).get(0).statusLogs;
+    assertThat(statuses).hasSize(1);
+    assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
+    assertThat(statuses.get(0).stop).isNull();
+  }
+
+
+  @Test
+  public void newGatewayStatusChangesStatus() {
+    messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
+    messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.ERROR));
+
+    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters()).get(0).statusLogs;
+
     assertThat(statuses).hasSize(2);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNotNull();
@@ -859,6 +899,36 @@ public class MessageHandlerTest {
     );
   }
 
+  private MeteringMeterStructureMessageDto newStructureMessageWithGatewayStatus(
+    StatusType gatewayStatus
+  ) {
+    return newStructureMessage(
+      DEFAULT_MEDIUM,
+      DEFAULT_MANUFACTURER,
+      DEFAULT_ADDRESS,
+      DEFAULT_EXPECTED_INTERVAL,
+      DEFAULT_LOCATION,
+      DEFAULT_EXTERNAL_ID,
+      StatusType.OK,
+      gatewayStatus
+    );
+  }
+
+  private MeteringMeterStructureMessageDto newStructureMessageWithMeterStatus(
+    StatusType meterStatus
+  ) {
+    return newStructureMessage(
+      DEFAULT_MEDIUM,
+      DEFAULT_MANUFACTURER,
+      DEFAULT_ADDRESS,
+      DEFAULT_EXPECTED_INTERVAL,
+      DEFAULT_LOCATION,
+      DEFAULT_EXTERNAL_ID,
+      meterStatus,
+      StatusType.OK
+    );
+  }
+
   private MeteringMeterStructureMessageDto newStructureMessage(
     String medium,
     String physicalMeterId
@@ -869,18 +939,6 @@ public class MessageHandlerTest {
       physicalMeterId,
       DEFAULT_EXPECTED_INTERVAL,
       DEFAULT_LOCATION
-    );
-  }
-
-  private MeteringMeterStructureMessageDto newStructureMessage(StatusType meterStatus) {
-    return newStructureMessage(
-      DEFAULT_MEDIUM,
-      DEFAULT_MANUFACTURER,
-      DEFAULT_ADDRESS,
-      DEFAULT_EXPECTED_INTERVAL,
-      DEFAULT_LOCATION,
-      DEFAULT_EXTERNAL_ID,
-      meterStatus
     );
   }
 
@@ -950,6 +1008,7 @@ public class MessageHandlerTest {
       expectedInterval,
       location,
       externalId,
+      StatusType.OK,
       StatusType.OK
     );
   }
@@ -961,7 +1020,8 @@ public class MessageHandlerTest {
     int expectedInterval,
     Location location,
     String externalId,
-    StatusType meterStatus
+    StatusType meterStatus,
+    StatusType gatewayStatus
   ) {
     return new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
@@ -977,7 +1037,7 @@ public class MessageHandlerTest {
       new GatewayStatusDto(
         DEFAULT_GATEWAY_EXTERNAL_ID,
         DEFAULT_PRODUCT_MODEL,
-        meterStatus.name()
+        gatewayStatus.name()
       )
     );
   }

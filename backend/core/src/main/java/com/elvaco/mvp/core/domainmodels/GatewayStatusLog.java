@@ -41,4 +41,18 @@ public class GatewayStatusLog {
     this.start = start;
     this.stop = stop;
   }
+
+  public boolean isActive() {
+    return stop == null;
+  }
+
+  GatewayStatusLog withStop(ZonedDateTime stopTime) {
+    return new GatewayStatusLog(
+      id,
+      gatewayId,
+      status,
+      start,
+      stopTime
+    );
+  }
 }
