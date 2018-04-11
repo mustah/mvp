@@ -31,7 +31,7 @@ public class Result {
   @JsonProperty("BOUNDARIES")
   private Boundaries boundaries;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("result_number")
   public Integer getResultNumber() {

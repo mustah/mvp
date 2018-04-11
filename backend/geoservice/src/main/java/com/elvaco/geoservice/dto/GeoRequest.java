@@ -4,9 +4,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class GeoRequest {
-  // CallbackUrl is an url containing requestId and access token to post the reply
-  // to. The caller is responsible to provide the details needed to connect the
-  // supplied geo-location and address the Gateway/meter to the location
+
+  /**
+   * CallbackUrl is an url containing requestId and access token to post the reply to. The caller
+   * is responsible to provide the details needed to connect the supplied geo-location and address
+   * the gateway/meter to the location.
+   */
   private URI callbackUrl;
   private URI errorCallbackUrl;
   private AddressDto address;
@@ -34,5 +37,4 @@ public class GeoRequest {
   public void setErrorCallbackUrl(String errorCallbackUrl) throws URISyntaxException {
     this.errorCallbackUrl = new URI(errorCallbackUrl);
   }
-
 }

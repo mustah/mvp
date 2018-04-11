@@ -9,19 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CallbackTestController {
+
   private volatile Object lastResponse;
 
   @RequestMapping(path = "/callback", method = RequestMethod.POST)
   public String callback(@RequestBody GeoResponse response) {
     this.lastResponse = response;
-    System.out.println("Callbackcontroller: " + response);
     return "OK";
   }
 
   @RequestMapping(path = "/error", method = RequestMethod.POST)
   public String callback(@RequestBody ErrorDto response) {
     this.lastResponse = response;
-    System.out.println("Callbackcontroller: " + response);
     return "OK";
   }
 

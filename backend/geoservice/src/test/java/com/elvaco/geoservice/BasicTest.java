@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 public class BasicTest {
 
   @LocalServerPort
-  Integer port;
+  private Integer port;
 
   @Autowired
   private AddressToGeoService addrService;
@@ -50,73 +50,56 @@ public class BasicTest {
   }
 
   @Test
-  public void test2() {
-    Address kabelgatan2t = new Address();
-    kabelgatan2t.setStreet("Kabelgatan 2T");
-    kabelgatan2t.setCity("Kungsbacka");
-    kabelgatan2t.setCountry("Sweden");
+  public void fetchByFullAddressInfo() {
+    Address address = new Address("Kabelgatan 2T", "Kungsbacka", "Sweden");
 
-    GeoLocation geo = addrService.getGeoByAddress(kabelgatan2t);
+    GeoLocation geo = addrService.getGeoByAddress(address);
 
     assertEquals(1, geo.getConfidence(), 0.0);
   }
 
   @Test
-  public void testRoundtrip() throws URISyntaxException {
-    // Arrange
-    AddressDto kabelgatan = new AddressDto();
-    kabelgatan.setStreet("Kabelgatan 2T");
-    kabelgatan.setCity("Kungsbacka");
-    kabelgatan.setCountry("Sweden");
+  public void fetchAndRespondToCallbackUrl() throws URISyntaxException {
     GeoRequest request = new GeoRequest();
-    request.setAddress(kabelgatan);
+    request.setAddress(new AddressDto("Kabelgatan 2T", "Kungsbacka", "Sweden"));
     request.setCallbackUrl("http://localhost:" + port + "/callback");
-    // Act
-    geoController.requestByAddress(request);
-    try {
-      Thread.sleep(2500);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    // Assert
-    GeoResponse response = (GeoResponse) callbackController.getLastResponse();
 
-    assertEquals(1, response.getGeoData().confidence, 0.0);
+    geoController.requestByAddress(request);
+
+    sleep();
+
+    GeoResponse response = (GeoResponse) callbackController.getLastResponse();
+    assertEquals(1, response.geoData.confidence, 0.0);
     assertEquals(
       "Longitude is wrong",
       Double.valueOf("12.0694219774545"),
-      response.getGeoData().longitude
+      response.geoData.longitude
     );
     assertEquals(
       "Latitude is wrong",
       Double.valueOf("57.5052694216628"),
-      response.getGeoData().latitude
+      response.geoData.latitude
     );
   }
 
   @Test
-  public void testNotFound() throws URISyntaxException {
-    // Arrange
+  public void notFound() throws URISyntaxException {
     GeoRequest request = new GeoRequest();
-    AddressDto eriksgatan = new AddressDto();
-    eriksgatan.setStreet("Eriksgatan 435");
-    eriksgatan.setCity("Kungsbacka");
-    eriksgatan.setCountry("Sweden");
-    request.setAddress(eriksgatan);
+    request.setAddress(new AddressDto("Eriksgatan 435", "Kungsbacka", "Sweden"));
     request.setCallbackUrl("http://localhost:" + port + "/callback");
     request.setErrorCallbackUrl("http://localhost:" + port + "/error");
-    // Act
+
     geoController.requestByAddress(request);
-    try {
-      Thread.sleep(2500);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    // Assert
+
+    sleep();
     ErrorDto response = (ErrorDto) callbackController.getLastResponse();
     assertNotNull(response);
-    assertEquals("Error message differ", "No geolocation found", response.getMessage());
+    assertEquals("Error message differ", "No geolocation found", response.message);
+  }
+
+  private static void sleep() {
+    try {
+      Thread.sleep(2500);
+    } catch (InterruptedException ignore) {}
   }
 }

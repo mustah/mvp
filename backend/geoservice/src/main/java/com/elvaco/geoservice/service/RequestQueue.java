@@ -2,6 +2,7 @@ package com.elvaco.geoservice.service;
 
 import javax.transaction.Transactional;
 
+import com.elvaco.geoservice.dto.AddressDto;
 import com.elvaco.geoservice.dto.ErrorDto;
 import com.elvaco.geoservice.dto.GeoRequest;
 import com.elvaco.geoservice.repository.AddressGeoRepository;
@@ -11,96 +12,111 @@ import com.elvaco.geoservice.repository.entity.AddressGeoEntity;
 import com.elvaco.geoservice.repository.entity.CallbackEntity;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
 import com.elvaco.geoservice.repository.entity.GeoRequestEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class RequestQueue {
-  private final Logger logger = LoggerFactory.getLogger(RequestQueue.class);
-  @Autowired
-  AddressToGeoService addressToGeoService;
-  @Autowired
-  CallbackService callbackService;
-  @Autowired
-  GeoRequestRepository requestRepo;
+
+  private final AddressToGeoService addressToGeoService;
+  private final CallbackService callbackService;
+  private final GeoRequestRepository requestRepo;
+  private final AddressGeoRepository addressGeoEntityRepository;
 
   @Autowired
-  AddressGeoRepository addressGeoEntityRepository;
+  public RequestQueue(
+    AddressToGeoService addressToGeoService,
+    CallbackService callbackService,
+    GeoRequestRepository requestRepo,
+    AddressGeoRepository addressGeoEntityRepository
+  ) {
+    this.addressToGeoService = addressToGeoService;
+    this.callbackService = callbackService;
+    this.requestRepo = requestRepo;
+    this.addressGeoEntityRepository = addressGeoEntityRepository;
+  }
 
   @Transactional
   public void enqueueRequest(GeoRequest request) {
-    Address addr = new Address();
-    addr.setStreet(request.getAddress().getStreet());
-    addr.setCity(request.getAddress().getCity());
-    addr.setCountry(request.getAddress().getCountry());
-    AddressGeoEntity result = addressGeoEntityRepository.findByAddress(addr);
+    AddressDto addressDto = request.getAddress();
+    Address address = new Address(
+      addressDto.street,
+      addressDto.city,
+      addressDto.country
+    );
+    AddressGeoEntity result = addressGeoEntityRepository.findByAddress(address);
     if (result != null) {
-
-      CallbackEntity callback = callbackService.enqueueCallback(request.getCallbackUrl(),
-          result.getAddress(), result.getGeoLocation());
-      logger.info(
-          "Found in database. Enqueue result imediatly. CallbackEntity id = " + callback.getId());
-      return;
+      CallbackEntity callback = callbackService.enqueueCallback(
+        request.getCallbackUrl(),
+        result.getAddress(),
+        result.getGeoLocation()
+      );
+      log.info(
+        "Found in database. Enqueue result immediately, with callback id = {}",
+        callback.getId()
+      );
+    } else {
+      GeoRequestEntity entity = new GeoRequestEntity();
+      entity.setCallbackUrl(request.getCallbackUrl());
+      entity.setErrorCallbackUrl(request.getErrorCallbackUrl());
+      entity.setAddress(address);
+      entity = requestRepo.save(entity);
+      log.info("Request was enqueued with callback id = {}", entity.getId());
     }
-    GeoRequestEntity entity = new GeoRequestEntity();
-    entity.setCallbackUrl(request.getCallbackUrl());
-    entity.setErrorCallbackUrl(request.getErrorCallbackUrl());
-
-    entity.setAddress(addr);
-    entity = requestRepo.save(entity);
-    logger.info("Request was enqued with id = " + entity.getId());
   }
 
   @Scheduled(fixedRate = 1000)
   public void popFromQueue() {
-
-    Integer quota = addressToGeoService.getQuota();
-    Integer maxRate = addressToGeoService.getMaxRate();
-
-    Integer numberOfItems = Math.min(quota, maxRate);
+    Integer numberOfItems = numberOfItems();
     if (numberOfItems <= 0) {
       return;
     }
-    Pageable page = new PageRequest(0, numberOfItems);
-    Page<GeoRequestEntity> result = requestRepo.findByOrderByCreatedAsc(page);
 
-    result.forEach((e) -> {
-
-      logger.info("Fetching GEO for request id " + e.getId() + ": " + e.getAddress());
-      // Check database to be sure we have not found this address while enqueued
-      AddressGeoEntity found = addressGeoEntityRepository.findByAddress(e.getAddress());
-      if (found != null) {
-        CallbackEntity callback = callbackService.enqueueCallback(e.getCallbackUrl(),
-            e.getAddress(), found.getGeoLocation());
-        logger.info("Found in database. Enqueue result. CallbackEntity id = " + callback.getId());
-      } else {
-        GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
-        if (geoLocation != null) {
-          AddressGeoEntity entity = new AddressGeoEntity();
-          entity.setAddress(e.getAddress());
-
-          entity.setGeoLocation(geoLocation);
-
-          addressGeoEntityRepository.save(entity);
-          CallbackEntity callback = callbackService.enqueueCallback(e.getCallbackUrl(),
-              e.getAddress(), geoLocation);
-          logger.info(
-              "Geolocation found, result is enqueued with callbackEntity id = " + callback.getId());
+    requestRepo.findByOrderByCreatedAsc(new PageRequest(0, numberOfItems))
+      .forEach(e -> {
+        AddressGeoEntity found = addressGeoEntityRepository.findByAddress(e.getAddress());
+        if (found != null) {
+          CallbackEntity callback = callbackService.enqueueCallback(
+            e.getCallbackUrl(),
+            e.getAddress(),
+            found.getGeoLocation()
+          );
+          log.info("Found in database. Enqueue result. Callback id = {}", callback.getId());
         } else {
-          CallbackEntity callback = callbackService.enqueueCallback(e.getErrorCallbackUrl(),
-              e.getAddress(), new ErrorDto().setErrorCode(1).setMessage("No geolocation found"));
-          logger.warn("No geo location found for " + e.getAddress() + " callbackEntity id = "
-              + callback.getId());
+          GeoLocation geoLocation = addressToGeoService.getGeoByAddress(e.getAddress());
+          if (geoLocation != null) {
+            addressGeoEntityRepository.save(new AddressGeoEntity(e.getAddress(), geoLocation));
+            CallbackEntity callback = callbackService.enqueueCallback(
+              e.getCallbackUrl(),
+              e.getAddress(),
+              geoLocation
+            );
+            log.info(
+              "Geolocation found, result is enqueued with callback id = {}",
+              callback.getId()
+            );
+          } else {
+            CallbackEntity callback = callbackService.enqueueCallback(
+              e.getErrorCallbackUrl(),
+              e.getAddress(),
+              new ErrorDto(1, "No geolocation found", null)
+            );
+            log.warn(
+              "No geo location found for '{}' with callback id = {}",
+              e.getAddress(),
+              callback.getId()
+            );
+          }
         }
-      }
-      requestRepo.delete(e);
-    });
+        requestRepo.delete(e);
+      });
   }
 
+  private Integer numberOfItems() {
+    return Math.min(addressToGeoService.getQuota(), addressToGeoService.getMaxRate());
+  }
 }

@@ -24,7 +24,7 @@ public class LegalCopyright {
   @JsonProperty("privacy_policy")
   private String privacyPolicy;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("copyright_notice")
   public String getCopyrightNotice() {

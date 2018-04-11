@@ -29,7 +29,7 @@ public class Account {
   @JsonProperty("first_used")
   private String firstUsed;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("ip_address")
   public String getIpAddress() {

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 public interface CallbackRepository extends CrudRepository<CallbackEntity, Long> {
+
   @Query("from CallbackEntity where nextRetry <= CURRENT_TIMESTAMP order by nextRetry asc")
   Iterable<CallbackEntity> findByNextRetryBeforeNowOrderByNextRetryAsc();
-
 }

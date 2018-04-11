@@ -1,27 +1,14 @@
 package com.elvaco.geoservice.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class GeoResponse {
-  private AddressDto address;
-  private GeoDataDto geoData;
 
-  public AddressDto getAddress() {
-    return address;
-  }
-
-  public void setAddress(AddressDto address) {
-    this.address = address;
-  }
-
-  public GeoDataDto getGeoData() {
-    return geoData;
-  }
-
-  public void setGeoData(GeoDataDto geoData) {
-    this.geoData = geoData;
-  }
-
-  @Override
-  public String toString() {
-    return address + "\n" + geoData;
-  }
+  public AddressDto address;
+  public GeoDataDto geoData;
 }

@@ -12,7 +12,9 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class GeocodeFarmService implements AddressToGeoService {
+
   private static final String ID = "GeoCodeFarm";
+
   @Value("${geocodeFarm.url}")
   private String url;
 
@@ -22,16 +24,20 @@ public class GeocodeFarmService implements AddressToGeoService {
 
   @Value("${geocodeFarm.quota:250}")
   private Integer quota;
+
   @Value("${geocodeFarm.maxrate:4}")
   private Integer maxRate;
 
   @Override
   public GeoLocation getGeoByAddress(Address address) {
-    RestTemplate restTemplate = new RestTemplate();
-    GeocodingFarmResult json = restTemplate.getForObject(url, GeocodingFarmResult.class,
-        address.getStreet() + " " + address.getCity() + " " + address.getCountry());
+    GeocodingFarmResult result = new RestTemplate()
+      .getForObject(
+        url,
+        GeocodingFarmResult.class,
+        address.street + " " + address.city + " " + address.country
+      );
 
-    return convert(json);
+    return convert(result);
   }
 
   private GeoLocation convert(GeocodingFarmResult source) {
@@ -46,7 +52,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       target.setSource(getId());
     }
     this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())
-        - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
+                 - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
     return target;
   }
 
@@ -54,15 +60,10 @@ public class GeocodeFarmService implements AddressToGeoService {
     switch (accuracy) {
       case "EXACT_MATCH":
         return 1;
-
       case "HIGH_ACCURACY":
         return 0.75;
-
       case "MEDIUM_ACCURACY":
         return 0.5;
-      case "UNKNOWN_ACCURACY":
-        return 0;
-
       default:
         return 0;
     }

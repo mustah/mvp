@@ -1,7 +1,6 @@
 package com.elvaco.geoservice.repository.entity;
 
 import java.net.URI;
-
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Embedded;
@@ -14,9 +13,11 @@ public class GeoRequestEntity extends TimeStampedPersistableObject {
 
   @Embedded
   private Address address;
+
   @Convert(converter = JpaConverterUri.class)
   @Column(length = 1024)
   private URI callbackUrl;
+
   @Convert(converter = JpaConverterUri.class)
   @Column(length = 1024)
   private URI errorCallbackUrl;
@@ -44,5 +45,4 @@ public class GeoRequestEntity extends TimeStampedPersistableObject {
   public void setAddress(Address address) {
     this.address = address;
   }
-
 }
