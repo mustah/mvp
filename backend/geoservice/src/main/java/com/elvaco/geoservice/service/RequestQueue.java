@@ -2,7 +2,6 @@ package com.elvaco.geoservice.service;
 
 import javax.transaction.Transactional;
 
-import com.elvaco.geoservice.dto.AddressDto;
 import com.elvaco.geoservice.dto.ErrorDto;
 import com.elvaco.geoservice.dto.GeoRequest;
 import com.elvaco.geoservice.repository.AddressGeoRepository;
@@ -42,11 +41,10 @@ public class RequestQueue {
 
   @Transactional
   public void enqueueRequest(GeoRequest request) {
-    AddressDto addressDto = request.getAddress();
     Address address = new Address(
-      addressDto.street,
-      addressDto.city,
-      addressDto.country
+      request.getStreet(),
+      request.getCity(),
+      request.getCountry()
     );
     AddressGeoEntity result = addressGeoEntityRepository.findByAddress(address);
     if (result != null) {

@@ -34,7 +34,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       .getForObject(
         url,
         GeocodingFarmResult.class,
-        address.street + " " + address.city + " " + address.country
+        address.street + "," + address.city + "," + address.country
       );
 
     return convert(result);
@@ -45,28 +45,15 @@ public class GeocodeFarmService implements AddressToGeoService {
     if (source.getGeocodingResults().getResults() != null
         && source.getGeocodingResults().getStatus().getResultCount() >= 1) {
       target = new GeoLocation();
-      Result res = source.getGeocodingResults().getResults().get(0);
-      target.setLatitude(res.getCoordinates().getLatitude());
-      target.setLongitude(res.getCoordinates().getLongitude());
-      target.setConfidence(convertAccuracy(res.getAccuracy()));
+      Result result = source.getGeocodingResults().getResults().get(0);
+      target.setLatitude(result.getCoordinates().getLatitude());
+      target.setLongitude(result.getCoordinates().getLongitude());
+      target.setConfidence(Accuracy.from(result.getAccuracy()));
       target.setSource(getId());
     }
     this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())
                  - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
     return target;
-  }
-
-  private double convertAccuracy(String accuracy) {
-    switch (accuracy) {
-      case "EXACT_MATCH":
-        return 1;
-      case "HIGH_ACCURACY":
-        return 0.75;
-      case "MEDIUM_ACCURACY":
-        return 0.5;
-      default:
-        return 0;
-    }
   }
 
   @Override

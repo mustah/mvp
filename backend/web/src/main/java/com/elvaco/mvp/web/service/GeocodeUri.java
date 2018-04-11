@@ -1,7 +1,6 @@
 package com.elvaco.mvp.web.service;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Optional;
 
@@ -54,17 +53,17 @@ class GeocodeUri {
     return this;
   }
 
-  Optional<URI> toUri() {
+  Optional<String> toUriString() {
     try {
       return Optional.of(
         delegate
-          .queryParam("address.country", encode(country))
-          .queryParam("address.city", encode(city))
-          .queryParam("address.street", encode(address))
-          .queryParam("callbackUrl", callbackUrl)
-          .queryParam("errorCallbackUrl", errorCallbackUrl)
+          .queryParam("country", encode(country))
+          .queryParam("city", encode(city))
+          .queryParam("street", encode(address))
+          .queryParam("callbackUrl", encode(callbackUrl))
+          .queryParam("errorCallbackUrl", encode(errorCallbackUrl))
           .build()
-          .toUri()
+          .toUriString()
       );
     } catch (UnsupportedEncodingException e) {
       log.warn("Unable to create url: ", e);

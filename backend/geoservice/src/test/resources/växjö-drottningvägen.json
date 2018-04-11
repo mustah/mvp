@@ -1,0 +1,56 @@
+{
+  "geocoding_results": {
+    "LEGAL_COPYRIGHT": {
+      "copyright_notice": "Copyright (c) 2018 Geocode.Farm - All Rights Reserved.",
+      "copyright_logo": "https:\/\/www.geocode.farm\/images\/logo.png",
+      "terms_of_service": "https:\/\/www.geocode.farm\/policies\/terms-of-service\/",
+      "privacy_policy": "https:\/\/www.geocode.farm\/policies\/privacy-policy\/"
+    },
+    "STATUS": {
+      "access": "FREE_USER, ACCESS_GRANTED",
+      "status": "SUCCESS",
+      "address_provided": "Drottninggatan 1, Växjö, Sweden",
+      "result_count": 1
+    },
+    "ACCOUNT": {
+      "ip_address": "5.150.199.92",
+      "distribution_license": "NONE, UNLICENSED",
+      "usage_limit": "250",
+      "used_today": "2",
+      "used_total": "34",
+      "first_used": "12 Mar 2018"
+    },
+    "RESULTS": [
+      {
+        "result_number": 1,
+        "formatted_address": "Drottningvägen, 363 31 Rottne, Sweden",
+        "accuracy": "MEDIUM_ACCURACY",
+        "ADDRESS": {
+          "street_name": "Drottningvägen",
+          "admin_1": "Kronobergs län",
+          "postal_code": "363 31",
+          "country": "Sweden"
+        },
+        "LOCATION_DETAILS": {
+          "elevation": "UNAVAILABLE",
+          "timezone_long": "UNAVAILABLE",
+          "timezone_short": "Europe\/Stockholm"
+        },
+        "COORDINATES": {
+          "latitude": "57.0294993437130",
+          "longitude": "14.8917824398705"
+        },
+        "BOUNDARIES": {
+          "northeast_latitude": "57.0294993437130",
+          "northeast_longitude": "14.8917824398705",
+          "southwest_latitude": "57.0281499197934",
+          "southwest_longitude": "14.8904388197243"
+        }
+      }
+    ],
+    "STATISTICS": {
+      "https_ssl": "ENABLED, SECURE",
+      "time_taken": "0.076733112335205"
+    }
+  }
+}
