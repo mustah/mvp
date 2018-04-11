@@ -28,6 +28,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -63,12 +64,13 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ConstantConditions")
 public class MessageHandlerTest {
 
-  public static final String DEFAULT_MANUFACTURER = "ELV";
+  private static final String DEFAULT_MANUFACTURER = "ELV";
   private static final String DEFAULT_PRODUCT_MODEL = "CMi2110";
   private static final String DEFAULT_QUANTITY = "Energy";
   private static final String DEFAULT_GATEWAY_EXTERNAL_ID = "123";
@@ -200,9 +202,8 @@ public class MessageHandlerTest {
 
   @Test
   public void updatesExistingGatewayWithUnknownManufacturer() {
-    UUID gatewayId = UUID.randomUUID();
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    UUID gatewayId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
     gateways.save(new Gateway(
       gatewayId,
       organisation.id,
@@ -239,9 +240,8 @@ public class MessageHandlerTest {
 
   @Test
   public void locationIsUpdatedForExistingMeter() {
-    UUID meterId = UUID.randomUUID();
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    UUID meterId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(new LogicalMeter(
       meterId,
       DEFAULT_EXTERNAL_ID,
@@ -352,7 +352,7 @@ public class MessageHandlerTest {
       newOrganisation("An existing organisation", DEFAULT_ORGANISATION_EXTERNAL_ID)
     );
     ZonedDateTime now = ZonedDateTime.now();
-    UUID logicalMeterId = UUID.randomUUID();
+    UUID logicalMeterId = randomUUID();
     PhysicalMeter existingPhysicalMeter = physicalMeters.save(newPhysicalMeter(
       organisation,
       DEFAULT_MEDIUM
@@ -393,9 +393,8 @@ public class MessageHandlerTest {
 
   @Test
   public void measurementIsUpdated() {
-    UUID meterId = UUID.randomUUID();
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    UUID meterId = randomUUID();
+    Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(new LogicalMeter(
       meterId,
       DEFAULT_EXTERNAL_ID,
@@ -413,12 +412,48 @@ public class MessageHandlerTest {
   }
 
   @Test
-  public void measurementForNewQuantityIsNotUpdated() {
-    UUID meterId = UUID.randomUUID();
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+  public void measurementIsMappedToMvpMeasurements() {
+    Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(new LogicalMeter(
-      meterId,
+      randomUUID(),
+      DEFAULT_EXTERNAL_ID,
+      organisation.id,
+      Location.UNKNOWN_LOCATION,
+      ZonedDateTime.now()
+    ));
+
+    MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
+      MessageType.METERING_MEASUREMENT_V_1_0,
+      new GatewayIdDto(DEFAULT_GATEWAY_EXTERNAL_ID),
+      new MeterIdDto(DEFAULT_ADDRESS),
+      new FacilityIdDto(DEFAULT_EXTERNAL_ID),
+      organisation.externalId,
+      "Elvaco Metering",
+      asList(
+        new ValueDto(LocalDateTime.parse("2018-03-16T13:07:01"), 35.0, "°C", "Return temp."),
+        new ValueDto(LocalDateTime.parse("2018-03-16T14:07:01"), 36.7, "°C", "Return temp.")
+      )
+    );
+
+    messageHandler.handle(message);
+
+    List<Measurement> allMeasurements = measurements.findAll(new MockRequestParameters());
+    List<Quantity> quantities = allMeasurements.stream()
+      .map(m -> new Quantity(m.quantity, m.unit))
+      .collect(toList());
+
+    assertThat(allMeasurements).hasSize(2);
+    assertThat(quantities).containsExactly(
+      Quantity.RETURN_TEMPERATURE,
+      Quantity.RETURN_TEMPERATURE
+    );
+  }
+
+  @Test
+  public void measurementForNewQuantityIsNotUpdated() {
+    Organisation organisation = saveDefaultOrganisation();
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
       DEFAULT_EXTERNAL_ID,
       organisation.id,
       Location.UNKNOWN_LOCATION,
@@ -434,8 +469,7 @@ public class MessageHandlerTest {
 
   @Test
   public void addsMeasurementToExistingMeter() {
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
 
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
       newPhysicalMeter(organisation, "Electricity")
@@ -458,8 +492,7 @@ public class MessageHandlerTest {
 
   @Test
   public void createsLogicalMeterForMeasurement() {
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
 
     messageHandler.handle(newMeasurementMessage());
 
@@ -531,18 +564,17 @@ public class MessageHandlerTest {
 
   @Test
   public void districtHeatingMeterIsMappedFromValueQuantities() {
-    List<ValueDto> districtHeatingMeterValues = asList(
+    List<ValueDto> values = asList(
       newValueDto("Return temp."),
       newValueDto("Difference temp."),
       newValueDto("Flow temp."),
       newValueDto("Volume flow"),
       newValueDto("Power"),
       newValueDto("Volume"),
-      newValueDto(DEFAULT_QUANTITY)
+      newValueDto("Energy")
     );
 
-    MeterDefinition meterDefinition = messageHandler.selectMeterDefinition(
-      districtHeatingMeterValues);
+    MeterDefinition meterDefinition = messageHandler.selectMeterDefinition(values);
 
     assertThat(meterDefinition).isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
   }
@@ -550,7 +582,7 @@ public class MessageHandlerTest {
   @Test
   public void usesOrganisationExternalIdForMeasurementMessage() {
     Organisation existingOrganisation = new Organisation(
-      UUID.randomUUID(),
+      randomUUID(),
       "An organisation",
       "an-organisation",
       "An external organisation ID"
@@ -602,7 +634,6 @@ public class MessageHandlerTest {
 
   @Test
   public void expectedIntervalIsUpdatedForCreatedPhysicalMeter() {
-
     messageHandler.handle(newStructureMessage(15));
     messageHandler.handle(newStructureMessage(60));
 
@@ -672,8 +703,7 @@ public class MessageHandlerTest {
 
   @Test
   public void measurementValueForMissingPhysicalMeterTriggersGetReferenceResponse() {
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
     logicalMeters.save(new LogicalMeter(
       randomUUID(),
       DEFAULT_EXTERNAL_ID,
@@ -693,8 +723,7 @@ public class MessageHandlerTest {
   @Test
   public void measurementValueForExistingGatewayDoesNotModifyGateway() {
 
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
     Gateway existingGateway = gateways.save(newGateway(
       organisation.id,
       DEFAULT_GATEWAY_EXTERNAL_ID
@@ -709,8 +738,7 @@ public class MessageHandlerTest {
 
   @Test
   public void measurementValueForExistingGatewayTriggersResponseNotIncludingTheGateway() {
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id, DEFAULT_GATEWAY_EXTERNAL_ID));
 
     assertThat(messageHandler.handle(newMeasurementMessage()).get()).isEqualTo(
@@ -724,8 +752,7 @@ public class MessageHandlerTest {
 
   @Test
   public void measurementValueForExistingEntitiesTriggersNoResponse() {
-    Organisation organisation = organisations.save(
-      newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+    Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id, DEFAULT_GATEWAY_EXTERNAL_ID));
     physicalMeters.save(newPhysicalMeter(
       organisation,
@@ -733,7 +760,7 @@ public class MessageHandlerTest {
     ));
     logicalMeters.save(
       new LogicalMeter(
-        UUID.randomUUID(),
+        randomUUID(),
         DEFAULT_EXTERNAL_ID,
         organisation.id,
         MeterDefinition.HOT_WATER_METER,
@@ -819,12 +846,16 @@ public class MessageHandlerTest {
     assertThat(statuses.get(1).stop).isNull();
   }
 
+  private Organisation saveDefaultOrganisation() {
+    return organisations.save(newOrganisation(DEFAULT_ORGANISATION_EXTERNAL_ID));
+  }
+
   private PhysicalMeter newPhysicalMeter(
     Organisation organisation,
     String defaultMedium
   ) {
     return new PhysicalMeter(
-      UUID.randomUUID(),
+      randomUUID(),
       DEFAULT_ADDRESS,
       DEFAULT_EXTERNAL_ID,
       defaultMedium,
@@ -1070,7 +1101,7 @@ public class MessageHandlerTest {
   }
 
   private Gateway newGateway(UUID organisationId, String serial) {
-    return new Gateway(UUID.randomUUID(), organisationId, serial, DEFAULT_PRODUCT_MODEL);
+    return new Gateway(randomUUID(), organisationId, serial, DEFAULT_PRODUCT_MODEL);
   }
 
   private Organisation newOrganisation(String code) {

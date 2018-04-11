@@ -11,7 +11,7 @@ import lombok.ToString;
 public class Quantity {
 
   public static final Quantity VOLUME = new Quantity("Volume", "m³");
-  public static final Quantity FLOW = new Quantity("Flow", "m³/h");
+  public static final Quantity VOLUME_FLOW = new Quantity("Flow", "m³/h");
   public static final Quantity TEMPERATURE = new Quantity("Temperature", "°C");
   public static final Quantity ENERGY = new Quantity("Energy", "kWh");
   public static final Quantity POWER = new Quantity("Power", "W");

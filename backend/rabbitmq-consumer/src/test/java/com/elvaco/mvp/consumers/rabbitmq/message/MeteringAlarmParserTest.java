@@ -4,11 +4,19 @@ import java.time.LocalDateTime;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeteringAlarmParserTest {
+
+  private MeteringMessageParser messageParser;
+
+  @Before
+  public void setUp() {
+    messageParser = new MeteringMessageParser();
+  }
 
   @Test
   public void meteringAlarmMessageIsParsedCorrectly() {
@@ -32,7 +40,6 @@ public class MeteringAlarmParserTest {
       + "   }\n"
       + "  ]\n"
       + " }\n";
-    MeteringMessageParser messageParser = new MeteringMessageParser();
 
     MeteringAlarmMessageDto parsedMessage =
       messageParser.parseAlarmMessage(jsonMessage).orElse(null);
@@ -56,7 +63,6 @@ public class MeteringAlarmParserTest {
 
   @Test
   public void parseMalformedStructureMessage() {
-    MeteringMessageParser messageParser = new MeteringMessageParser();
     assertThat(messageParser.parseStructureMessage("")).isEmpty();
     assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();

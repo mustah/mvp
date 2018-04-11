@@ -1,7 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
@@ -45,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer.serialize;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeNoException;
 
@@ -115,7 +116,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Test
   public void messagesSentToRabbitAreReceivedAndProcessed() throws InterruptedException,
-    IOException {
+                                                                   IOException {
     MeteringMeterStructureMessageDto messageDto = new MeteringMeterStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
@@ -137,26 +138,23 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Test
   public void responseMessagesForMeasurementMessagesArePublished() throws IOException,
-    InterruptedException {
-    MeteringMeasurementMessageDto messageDto = new MeteringMeasurementMessageDto(
+                                                                          InterruptedException {
+    MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("GATEWAY-123"),
       new MeterIdDto("METER-123"),
       new FacilityIdDto("FACILITY-123"),
       "ORGANISATION-123",
       "test",
-      Collections.emptyList()
+      emptyList()
     );
     TestConsumer consumer = newResponseConsumer();
 
-    publishMessage(serializeDto(messageDto));
+    publishMessage(serializeDto(message));
 
-    byte[] response = consumer.receiveOne();
-    assertThat(response).isNotNull();
-    GetReferenceInfoDto responseDto = deserialize(response, GetReferenceInfoDto.class);
-    assertThat(responseDto).isEqualTo(
-      new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123")
-    );
+    GetReferenceInfoDto responseDto = deserialize(consumer.receiveOne(), GetReferenceInfoDto.class);
+    assertThat(responseDto)
+      .isEqualTo(new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123"));
   }
 
   private TestConsumer newResponseConsumer() throws IOException {
@@ -166,7 +164,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       false,
       true,
       true,
-      Collections.emptyMap()
+      emptyMap()
     );
     channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
     return consumer;
@@ -231,7 +229,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     private final BlockingQueue<Object> receivedMessages;
 
-    TestConsumer(BlockingQueue<Object> receivedMessages) {
+    private TestConsumer(BlockingQueue<Object> receivedMessages) {
       super(channel);
       this.receivedMessages = receivedMessages;
     }
@@ -246,7 +244,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       receivedMessages.add(body);
     }
 
-    byte[] receiveOne() throws InterruptedException {
+    private byte[] receiveOne() throws InterruptedException {
       return (byte[]) receivedMessages.poll(10, TimeUnit.SECONDS);
     }
   }

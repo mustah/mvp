@@ -2,11 +2,12 @@ package com.elvaco.mvp.web;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -37,7 +38,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeterStatusLogDto;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -127,8 +127,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeterDto logicalMeterDto = as(context().user)
       .getPage(
         "/meters"
-          + "?after=2001-01-01T00:00:00.00Z"
-          + "&before=2001-01-01T01:00:00.00Z",
+        + "?after=2001-01-01T00:00:00.00Z"
+        + "&before=2001-01-01T01:00:00.00Z",
         LogicalMeterDto.class
       ).getContent().get(0);
 
@@ -155,8 +155,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeterDto logicalMeterDto = as(context().user)
       .getPage(
         "/meters"
-          + "?after=2001-01-01T00:00:00.00Z"
-          + "&before=2001-01-01T00:45:00.00Z",
+        + "?after=2001-01-01T00:00:00.00Z"
+        + "&before=2001-01-01T00:45:00.00Z",
         LogicalMeterDto.class
       ).getContent().get(0);
 
@@ -183,8 +183,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeterDto logicalMeterDto = as(context().user)
       .getPage(
         "/meters"
-          + "?after=2001-01-01T01:00:00.00Z"
-          + "&before=2001-01-02T00:00:00.00Z",
+        + "?after=2001-01-01T01:00:00.00Z"
+        + "&before=2001-01-02T00:00:00.00Z",
         LogicalMeterDto.class
       ).getContent().get(0);
 
@@ -351,8 +351,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Page<LogicalMeterDto> response = as(context().user)
       .getPage(
         "/meters?after=2005-01-10T01:00:00.00Z"
-          + "&before=2015-01-01T23:00:00.00Z"
-          + "&status=active",
+        + "&before=2015-01-01T23:00:00.00Z"
+        + "&status=active",
         LogicalMeterDto.class
       );
 
@@ -369,8 +369,8 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ResponseEntity<ErrorMessageDto> response = as(context().user)
       .get(
         "/meters?"
-          + "after=NotAValidTimestamp"
-          + "&before=AndNeitherIsThis",
+        + "after=NotAValidTimestamp"
+        + "&before=AndNeitherIsThis",
         ErrorMessageDto.class
       );
 
@@ -515,17 +515,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
     ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
 
-    // NOTE: no DIFFERENCE_TEMPERATURE here
+    Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
+      Quantity.ENERGY,
+      Quantity.VOLUME,
+      Quantity.VOLUME_FLOW,
+      Quantity.POWER,
+      Quantity.FORWARD_TEMPERATURE,
+      Quantity.RETURN_TEMPERATURE
+    ));
+
     addMeasurementsForMeter(
       physicalMeter,
-      asList(
-        Quantity.ENERGY,
-        Quantity.VOLUME,
-        Quantity.FLOW,
-        Quantity.POWER,
-        Quantity.FORWARD_TEMPERATURE,
-        Quantity.RETURN_TEMPERATURE
-      ).stream().collect(Collectors.toSet()),
+      quantitiesWithoutDiffTemperature,
       someDaysAgo,
       Duration.ofDays(1),
       60L,
@@ -534,9 +535,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      asList(
-        Quantity.POWER
-      ).stream().collect(Collectors.toSet()),
+      Collections.singleton(Quantity.POWER),
       ZonedDateTime.now(),
       Duration.ofDays(1),
       60L,
@@ -554,16 +553,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurements)
       .as("The difference temperature is missing")
       .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
-      .anyMatch((m) -> m.quantity.equals(Quantity.ENERGY.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.VOLUME.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.POWER.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
-      .noneMatch((m) -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
+      .anyMatch(m -> m.quantity.equals(Quantity.ENERGY.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.VOLUME.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.POWER.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
+      .noneMatch(m -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
 
     List<MeasurementDto> power = measurements
       .stream()
-      .filter((m) -> m.quantity.equals(Quantity.POWER.name))
+      .filter(m -> m.quantity.equals(Quantity.POWER.name))
       .collect(toList());
 
     assertThat(power)
@@ -581,17 +580,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
     ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
 
-    // NOTE: no DIFFERENCE_TEMPERATURE here
+    Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
+      Quantity.ENERGY,
+      Quantity.VOLUME,
+      Quantity.VOLUME_FLOW,
+      Quantity.POWER,
+      Quantity.FORWARD_TEMPERATURE,
+      Quantity.RETURN_TEMPERATURE
+    ));
+
     addMeasurementsForMeter(
       physicalMeter,
-      asList(
-        Quantity.ENERGY,
-        Quantity.VOLUME,
-        Quantity.FLOW,
-        Quantity.POWER,
-        Quantity.FORWARD_TEMPERATURE,
-        Quantity.RETURN_TEMPERATURE
-      ).stream().collect(Collectors.toSet()),
+      quantitiesWithoutDiffTemperature,
       someDaysAgo,
       Duration.ofDays(1),
       60L,
@@ -600,9 +600,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     addMeasurementsForMeter(
       physicalMeter,
-      asList(
-        Quantity.POWER
-      ).stream().collect(Collectors.toSet()),
+      Collections.singleton(Quantity.POWER),
       ZonedDateTime.now(),
       Duration.ofDays(1),
       60L,
@@ -621,16 +619,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     assertThat(measurements)
       .as("The difference temperature is missing")
       .hasSize(DISTRICT_HEATING_METER.quantities.size() - 1)
-      .anyMatch((m) -> m.quantity.equals(Quantity.ENERGY.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.VOLUME.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.POWER.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
-      .anyMatch((m) -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
-      .noneMatch((m) -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
+      .anyMatch(m -> m.quantity.equals(Quantity.ENERGY.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.VOLUME.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.POWER.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.FORWARD_TEMPERATURE.name))
+      .anyMatch(m -> m.quantity.equals(Quantity.RETURN_TEMPERATURE.name))
+      .noneMatch(m -> m.quantity.equals(Quantity.DIFFERENCE_TEMPERATURE.name));
 
     List<MeasurementDto> power = measurements
       .stream()
-      .filter((m) -> m.quantity.equals(Quantity.POWER.name))
+      .filter(m -> m.quantity.equals(Quantity.POWER.name))
       .collect(toList());
 
     assertThat(power)

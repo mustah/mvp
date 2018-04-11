@@ -1,0 +1,34 @@
+{
+  "message_type": "Elvaco MVP MQ Measurement Message 1.0",
+  "gateway": {
+    "id": "GW-CME3100-123-123"
+  },
+  "meter": {
+    "id": "123123123"
+  },
+  "facility": {
+    "id": "666999"
+  },
+  "organisation_id": "Elvaco AB",
+  "source_system_id": "Elvaco Metering",
+  "values": [
+    {
+      "timestamp": "2018-03-16T13:07:01",
+      "value": 0.659,
+      "unit": "°C",
+      "quantity": "Return temp."
+    },
+    {
+      "timestamp": "2018-03-16T14:07:01",
+      "value": 0.759,
+      "unit": "°C",
+      "quantity": "Return temp."
+    },
+    {
+      "timestamp": "2018-03-16T15:07:01",
+      "value": 37.4,
+      "unit": "Celsius",
+      "quantity": "Return temp."
+    }
+  ]
+}

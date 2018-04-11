@@ -41,7 +41,7 @@ public class LogicalMeterTest {
       Quantity.ENERGY,
       Quantity.VOLUME,
       Quantity.POWER,
-      Quantity.FLOW,
+      Quantity.VOLUME_FLOW,
       Quantity.FORWARD_TEMPERATURE,
       Quantity.RETURN_TEMPERATURE,
       Quantity.DIFFERENCE_TEMPERATURE
@@ -50,7 +50,7 @@ public class LogicalMeterTest {
     LogicalMeter hotWaterMeter = heatingMeter.withMeterDefinition(MeterDefinition.HOT_WATER_METER);
     assertThat(hotWaterMeter.getQuantities()).containsOnly(
       Quantity.VOLUME,
-      Quantity.FLOW,
+      Quantity.VOLUME_FLOW,
       Quantity.TEMPERATURE
     );
   }
@@ -105,7 +105,6 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
-      MeterDefinition.HOT_WATER_METER,
       Collections.singletonList(newPhysicalMeter(organisationId, logicalMeterId, "KAM"))
     );
     assertThat(logicalMeter.getManufacturer()).isEqualTo("KAM");
@@ -118,7 +117,6 @@ public class LogicalMeterTest {
     LogicalMeter logicalMeter = newLogicalMeter(
       logicalMeterId,
       organisationId,
-      MeterDefinition.HOT_WATER_METER,
       asList(
         newPhysicalMeter(organisationId, logicalMeterId, "KAM"),
         newPhysicalMeter(organisationId, logicalMeterId, "ELV")
@@ -149,14 +147,13 @@ public class LogicalMeterTest {
   private LogicalMeter newLogicalMeter(
     UUID id,
     UUID organisationId,
-    MeterDefinition meterDefinition,
     List<PhysicalMeter> physicalMeterList
   ) {
     return new LogicalMeter(
       id,
       "an-external-id",
       organisationId,
-      meterDefinition,
+      MeterDefinition.HOT_WATER_METER,
       UNKNOWN_LOCATION,
       physicalMeterList
     );
