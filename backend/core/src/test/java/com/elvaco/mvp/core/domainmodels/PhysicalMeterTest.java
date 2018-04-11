@@ -18,51 +18,47 @@ public class PhysicalMeterTest {
     ZonedDateTime now = ZonedDateTime.now();
     PhysicalMeter meter = newPhysicalMeterWithStatuses(emptyList());
 
-    List<MeterStatusLog> statuses = meter.replaceActiveStatus(StatusType.OK, now).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.OK, now).statuses;
 
     assertThat(statuses).containsExactly(
-      new MeterStatusLog(null, meter.id, StatusType.OK, now, null)
+      new StatusLogEntry<>(meter.id, StatusType.OK, now)
     );
   }
 
   @Test
   public void replacesDifferentStatus() {
     UUID meterId = randomUUID();
-    MeterStatusLog previousStatus = new MeterStatusLog(
-      null,
+    StatusLogEntry<UUID> previousStatus = new StatusLogEntry<>(
       meterId,
       StatusType.OK,
-      ZonedDateTime.now(),
-      null
+      ZonedDateTime.now()
     );
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(
       previousStatus
     ));
 
     ZonedDateTime now = ZonedDateTime.now();
-    List<MeterStatusLog> statuses = meter.replaceActiveStatus(StatusType.ERROR, now).statuses;
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.ERROR, now).statuses;
 
     assertThat(statuses).containsExactly(
       previousStatus.withStop(now),
-      new MeterStatusLog(null, meterId, StatusType.ERROR, now, null)
+      new StatusLogEntry<>(meterId, StatusType.ERROR, now)
     );
   }
 
   @Test
   public void doesNotReplaceSameStatus() {
     UUID meterId = randomUUID();
-    MeterStatusLog previousStatus = new MeterStatusLog(
-      null,
+    StatusLogEntry<UUID> previousStatus = new StatusLogEntry<>(
       meterId,
       StatusType.OK,
-      ZonedDateTime.now(),
-      null
+      ZonedDateTime.now()
     );
     PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(
       previousStatus
     ));
 
-    List<MeterStatusLog> statuses = meter.replaceActiveStatus(
+    List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(
       StatusType.OK,
       ZonedDateTime.now()
     ).statuses;
@@ -74,7 +70,7 @@ public class PhysicalMeterTest {
 
   private PhysicalMeter newPhysicalMeterWithStatuses(
     UUID meterId,
-    List<MeterStatusLog> statusLogs
+    List<StatusLogEntry<UUID>> statusLogs
   ) {
     return new PhysicalMeter(
       meterId,
@@ -91,7 +87,7 @@ public class PhysicalMeterTest {
   }
 
   private PhysicalMeter newPhysicalMeterWithStatuses(
-    List<MeterStatusLog> statusLogs
+    List<StatusLogEntry<UUID>> statusLogs
   ) {
     return newPhysicalMeterWithStatuses(randomUUID(), statusLogs);
 

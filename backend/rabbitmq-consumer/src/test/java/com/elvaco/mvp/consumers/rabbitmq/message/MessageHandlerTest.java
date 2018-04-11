@@ -20,16 +20,15 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
@@ -749,7 +748,7 @@ public class MessageHandlerTest {
   public void meterStatusIsSetForNewMeter() {
     messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
 
-    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
@@ -760,7 +759,7 @@ public class MessageHandlerTest {
     messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
     messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
 
-    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
@@ -771,7 +770,7 @@ public class MessageHandlerTest {
     messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.OK));
     messageHandler.handle(newStructureMessageWithMeterStatus(StatusType.ERROR));
 
-    List<MeterStatusLog> statuses = physicalMeters.findAll().get(0).statuses;
+    List<StatusLogEntry<UUID>> statuses = physicalMeters.findAll().get(0).statuses;
     assertThat(statuses).hasSize(2);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNotNull();
@@ -784,7 +783,7 @@ public class MessageHandlerTest {
   public void newStatusIsSetForGateway() {
     messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
 
-    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters())
+    List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
       .get(0).statusLogs;
 
     assertThat(statuses).hasSize(1);
@@ -797,19 +796,20 @@ public class MessageHandlerTest {
     messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
     messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
 
-    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters()).get(0).statusLogs;
+    List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
+      .get(0).statusLogs;
     assertThat(statuses).hasSize(1);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);
     assertThat(statuses.get(0).stop).isNull();
   }
-
 
   @Test
   public void newGatewayStatusChangesStatus() {
     messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.OK));
     messageHandler.handle(newStructureMessageWithGatewayStatus(StatusType.ERROR));
 
-    List<GatewayStatusLog> statuses = gateways.findAll(new MockRequestParameters()).get(0).statusLogs;
+    List<StatusLogEntry<UUID>> statuses = gateways.findAll(new MockRequestParameters())
+      .get(0).statusLogs;
 
     assertThat(statuses).hasSize(2);
     assertThat(statuses.get(0).status).isEqualTo(StatusType.OK);

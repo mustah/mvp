@@ -13,10 +13,10 @@ import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
@@ -221,7 +221,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       0L,
       emptyList()
     ));
-    MeterStatusLog logEntry = createStatusLogForMeter(
+    StatusLogEntry<UUID> logEntry = createStatusLogForMeter(
       physicalMeterId,
       StatusType.OK,
       ZonedDateTime.parse("2001-01-01T10:14:00Z"),
@@ -692,13 +692,13 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     return createLogicalMeter(MeterDefinition.UNKNOWN_METER);
   }
 
-  private MeterStatusLog createStatusLogForMeter(
+  private StatusLogEntry<UUID> createStatusLogForMeter(
     UUID physicalMeterId,
     StatusType statusType,
     ZonedDateTime start,
     ZonedDateTime stop
   ) {
-    return meterStatusLogs.save(new MeterStatusLog(
+    return meterStatusLogs.save(new StatusLogEntry<>(
       null,
       physicalMeterId,
       statusType,

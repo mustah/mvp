@@ -4,11 +4,11 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
-import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -66,12 +66,10 @@ class StatusLogsDataLoader {
   private void createGatewayLogMockData() {
     gateways.findAll(new RequestParametersAdapter())
       .stream()
-      .map(gateway -> new GatewayStatusLog(
-        null,
+      .map(gateway -> new StatusLogEntry<>(
         gateway.id,
         nextRandomStatusType(),
-        subtractDays(90),
-        null
+        subtractDays(90)
       ))
       .forEach(gatewayStatusLogs::save);
   }
@@ -79,26 +77,22 @@ class StatusLogsDataLoader {
   private void createMeterStatusLogMockData() {
     int daySeed = 1;
 
-    List<MeterStatusLog> statusLogs = new ArrayList<>();
+    List<StatusLogEntry<UUID>> statusLogs = new ArrayList<>();
     for (PhysicalMeter meter : physicalMeters.findAll()) {
       daySeed++;
       statusLogs.add(
-        new MeterStatusLog(
-          null,
+        new StatusLogEntry<>(
           meter.id,
           ACTIVE,
-          subtractDays(daySeed),
-          null
+          subtractDays(daySeed)
         )
       );
 
       statusLogs.add(
-        new MeterStatusLog(
-          null,
+        new StatusLogEntry<>(
           meter.id,
           nextRandomStatusType(),
-          subtractDays(daySeed),
-          null
+          subtractDays(daySeed)
         )
       );
     }

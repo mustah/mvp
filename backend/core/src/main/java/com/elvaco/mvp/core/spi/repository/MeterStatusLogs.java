@@ -1,12 +1,13 @@
 package com.elvaco.mvp.core.spi.repository;
 
 import java.util.List;
+import java.util.UUID;
 
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 
 public interface MeterStatusLogs {
 
-  MeterStatusLog save(MeterStatusLog meterStatusLog);
+  StatusLogEntry<UUID> save(StatusLogEntry<UUID> meterStatusLog);
 
-  void save(List<MeterStatusLog> meterStatusLogs);
+  void save(List<StatusLogEntry<UUID>> meterStatusLogs);
 }

@@ -2,10 +2,11 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
@@ -50,7 +51,7 @@ public class LogicalMeterMapper {
   }
 
   public LogicalMeterDto toDto(LogicalMeter logicalMeter) {
-    List<MeterStatusLog> statusLogs = getMeterStatusLogs(logicalMeter);
+    List<StatusLogEntry<UUID>> statusLogs = getMeterStatusLogs(logicalMeter);
 
     String created = formatUtc(logicalMeter.created);
     LogicalMeterDto meterDto = new LogicalMeterDto();
@@ -94,14 +95,14 @@ public class LogicalMeterMapper {
     return meterDto;
   }
 
-  private StatusType getCurrentStatus(List<MeterStatusLog> statusLogs) {
+  private StatusType getCurrentStatus(List<StatusLogEntry<UUID>> statusLogs) {
     return statusLogs.stream()
       .findFirst()
       .map(meterStatusLog -> meterStatusLog.status)
       .orElse(StatusType.UNKNOWN);
   }
 
-  private List<MeterStatusLog> getMeterStatusLogs(LogicalMeter logicalMeter) {
+  private List<StatusLogEntry<UUID>> getMeterStatusLogs(LogicalMeter logicalMeter) {
     return logicalMeter.physicalMeters.stream()
       .map(physicalMeter -> physicalMeter.statuses)
       .flatMap(Collection::stream)

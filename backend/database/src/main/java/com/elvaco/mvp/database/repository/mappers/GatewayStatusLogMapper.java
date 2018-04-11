@@ -1,14 +1,16 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
+import java.util.UUID;
+
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 
 public class GatewayStatusLogMapper
-  implements DomainEntityMapper<GatewayStatusLog, GatewayStatusLogEntity> {
+  implements DomainEntityMapper<StatusLogEntry<UUID>, GatewayStatusLogEntity> {
 
   @Override
-  public GatewayStatusLog toDomainModel(GatewayStatusLogEntity entity) {
-    return new GatewayStatusLog(
+  public StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
+    return new StatusLogEntry<>(
       entity.id,
       entity.gatewayId,
       entity.status,
@@ -18,10 +20,10 @@ public class GatewayStatusLogMapper
   }
 
   @Override
-  public GatewayStatusLogEntity toEntity(GatewayStatusLog statusLog) {
+  public GatewayStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {
     return new GatewayStatusLogEntity(
       statusLog.id,
-      statusLog.gatewayId,
+      statusLog.entityId,
       statusLog.status,
       statusLog.start,
       statusLog.stop

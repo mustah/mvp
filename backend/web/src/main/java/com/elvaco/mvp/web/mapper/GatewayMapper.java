@@ -5,8 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.web.dto.GatewayDto;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -26,7 +26,7 @@ public class GatewayMapper {
   public GatewayDto toDto(Gateway gateway) {
     Optional<LogicalMeter> logicalMeter = gateway.meters.stream().findFirst();
 
-    GatewayStatusLog gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+    StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
 
     return new GatewayDto(
       gateway.id,
@@ -40,7 +40,7 @@ public class GatewayMapper {
   }
 
   public GatewayMandatoryDto toGatewayMandatory(Gateway gateway) {
-    GatewayStatusLog gatewayStatusLog = getCurrentStatus(gateway.statusLogs);
+    StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
     return new GatewayMandatoryDto(
       gateway.id,
       gateway.productModel,
@@ -62,7 +62,7 @@ public class GatewayMapper {
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id;
-    mapMarkerDto.status = getCurrentStatus(gateway.statusLogs).status.name;
+    mapMarkerDto.status = gateway.currentStatus().status.name;
     gateway.meters
       .stream()
       .findFirst()
@@ -75,10 +75,6 @@ public class GatewayMapper {
         return coordinate;
       });
     return mapMarkerDto;
-  }
-
-  private GatewayStatusLog getCurrentStatus(List<GatewayStatusLog> statusLogs) {
-    return statusLogs.stream().findFirst().orElse(GatewayStatusLog.NULL_OBJECT);
   }
 
   private List<UUID> connectedMeterIds(Gateway gateway) {

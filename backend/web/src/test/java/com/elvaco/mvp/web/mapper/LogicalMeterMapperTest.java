@@ -4,14 +4,13 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
-import com.elvaco.mvp.core.domainmodels.GatewayStatusLog;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
-import com.elvaco.mvp.core.domainmodels.MeterStatusLog;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.GatewayMandatoryDto;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
@@ -70,7 +69,7 @@ public class LogicalMeterMapperTest {
       0,
       null,
       singletonList(
-        new MeterStatusLog(
+        new StatusLogEntry<>(
           null,
           randomUUID(),
           StatusType.OK,
@@ -162,7 +161,7 @@ public class LogicalMeterMapperTest {
               15,
               null,
               singletonList(
-                new MeterStatusLog(
+                new StatusLogEntry<>(
                   1L,
                   randomUUID(),
                   StatusType.OK,
@@ -179,7 +178,7 @@ public class LogicalMeterMapperTest {
             expected.gateway.productModel,
             emptyList(),
             singletonList(
-              new GatewayStatusLog(
+              new StatusLogEntry<>(
                 1L,
                 randomUUID(),
                 StatusType.OK,
