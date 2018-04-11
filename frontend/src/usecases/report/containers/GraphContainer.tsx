@@ -1,31 +1,22 @@
-import {Paper} from 'material-ui';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {bindActionCreators} from 'redux';
-import {paperStyle} from '../../../app/themes';
 import {HasContent} from '../../../components/content/HasContent';
 import {Period} from '../../../components/dates/dateModels';
-import {Tab} from '../../../components/tabs/components/Tab';
-import {TabContent} from '../../../components/tabs/components/TabContent';
-import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
-import {Tabs} from '../../../components/tabs/components/Tabs';
-import {TabSettings} from '../../../components/tabs/components/TabSettings';
-import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {
   fetchMeasurements,
   mapApiResponseToGraphData,
   selectQuantities,
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {Children, Dictionary, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotPropsFromApi} from '../components/ActiveDot';
 import {Dot, DotPropsFromApi} from '../components/Dot';
@@ -60,7 +51,6 @@ interface ActivePayload {
 
 type Props = StateToProps & DispatchToProps;
 
-const style: React.CSSProperties = {width: '100%', height: '100%'};
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
 const renderGraphContents = (
@@ -98,8 +88,6 @@ const renderGraphContents = (
   return components;
 };
 
-const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
-
 const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDate(when);
 
 const emptyGraphContents: GraphContents = {
@@ -120,7 +108,6 @@ class GraphComponent extends React.Component<Props, State> {
   private tooltipPayload: ActivePayload;
   private activeDataKey;
 
-  onChangeTab = () => void(0);
   changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
   async componentDidMount() {
@@ -160,7 +147,7 @@ class GraphComponent extends React.Component<Props, State> {
 
   resetDots = () => this.dots = {};
 
-  setMouseY = ({chartY, activeTooltipIndex, activePayload}) => {
+  setTooltipPayload = ({chartY, activeTooltipIndex, activePayload}) => {
     if (chartY) {
       this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
       this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
@@ -194,7 +181,6 @@ class GraphComponent extends React.Component<Props, State> {
     const {graphContents} = this.state;
     const lines = renderGraphContents(graphContents, this.renderDot, this.renderActiveDot);
     const {data, legend} = graphContents;
-    const selectedTab: TabName = TabName.graph;
 
     const quantityMenuItem = (quantity: string) => (
       <MenuItem
@@ -217,67 +203,46 @@ class GraphComponent extends React.Component<Props, State> {
     );
 
     return (
-      <Paper style={contentStyle}>
-        <div style={style}>
-          <Tabs>
-            <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
-                <Tab tab={TabName.graph} title={translate('graph')}/>
-                <Tab tab={TabName.table} title={translate('table')}/>
-              </TabHeaders>
-              <TabSettings/>
-            </TabTopBar>
-            <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-              <div style={{padding: '20px 20px 0px'}}>
-                <SelectField
-                  multiple={true}
-                  hintText={firstUpperTranslated('select quantities')}
-                  value={selectedQuantities}
-                  onChange={this.changeQuantities}
-                >
-                  {allQuantities.heat.map(quantityMenuItem)}
-                </SelectField>
-              </div>
-              <HasContent
-                hasContent={data.length > 0}
-                fallbackContent={missingData}
-              >
-                <div>
-                  <ResponsiveContainer width="90%" aspect={2.5}>
-                    <LineChart
-                      width={10}
-                      height={50}
-                      data={data}
-                      margin={margin}
-                      onMouseMove={this.setMouseY}
-                    >
-                      <XAxis
-                        dataKey="name"
-                        domain={['dataMin', 'dataMax']}
-                        scale="time"
-                        tickFormatter={formatTimestamp}
-                        type="number"
-                      />
-                      <CartesianGrid strokeDasharray="3 3"/>
-                      <Tooltip content={this.renderToolTip}/>
-                      <Legend payload={legend}/>
-                      {lines}
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </HasContent>
-            </TabContent>
-            <TabContent tab={TabName.table} selectedTab={selectedTab}>
-              <HasContent
-                hasContent={false}
-                fallbackContent={missingData}
-              >
-                <p>TBD</p>
-              </HasContent>
-            </TabContent>
-          </Tabs>
+      <div>
+        <div style={{padding: '20px 20px 0px'}}>
+          <SelectField
+            multiple={true}
+            hintText={firstUpperTranslated('select quantities')}
+            value={selectedQuantities}
+            onChange={this.changeQuantities}
+          >
+            {allQuantities.heat.map(quantityMenuItem)}
+          </SelectField>
         </div>
-      </Paper>
+        <HasContent
+          hasContent={data.length > 0}
+          fallbackContent={missingData}
+        >
+          <div>
+            <ResponsiveContainer width="90%" aspect={2.5}>
+              <LineChart
+                width={10}
+                height={50}
+                data={data}
+                margin={margin}
+                onMouseMove={this.setTooltipPayload}
+              >
+                <XAxis
+                  dataKey="name"
+                  domain={['dataMin', 'dataMax']}
+                  scale="time"
+                  tickFormatter={formatTimestamp}
+                  type="number"
+                />
+                <CartesianGrid strokeDasharray="3 3"/>
+                <Tooltip content={this.renderToolTip}/>
+                <Legend payload={legend}/>
+                {lines}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </HasContent>
+      </div>
     );
   }
 
