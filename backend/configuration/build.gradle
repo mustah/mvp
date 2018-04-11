@@ -25,7 +25,7 @@ dependencies {
   compile 'org.simpleflatmapper:sfm-csv:3.15.5'
   compile 'org.ehcache:ehcache:3.4.0'
 
-  compileOnly 'org.projectlombok:lombok:1.16.18'
+  compileOnly 'org.projectlombok:lombok:1.16.20'
 
   runtime 'org.liquibase:liquibase-core'
   runtime 'com.h2database:h2'

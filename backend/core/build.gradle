@@ -4,7 +4,7 @@ dependencies {
   compile 'com.google.code.findbugs:jsr305:3.0.2'
   compile 'ch.qos.logback:logback-classic:1.1.11'
 
-  compileOnly 'org.projectlombok:lombok:1.16.18'
+  compileOnly 'org.projectlombok:lombok:1.16.20'
 
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.8.0'
