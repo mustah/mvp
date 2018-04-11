@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Cell, Legend, Pie, PieChart, Tooltip} from 'recharts';
+import {Cell, Legend, LegendPayload, LegendProps, Pie, PieChart, Tooltip} from 'recharts';
 import {FilterParam} from '../../state/search/selection/selectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
@@ -28,20 +28,19 @@ export interface PieChartSelectorProps {
   maxSlices: number;
 }
 
-interface LegendPayload extends PieSlice {
+interface LegendNestedData extends PieSlice {
   payload: PieSlice;
   [key: string]: any;
 }
 
-interface Legend {
+interface LegendData extends LegendPayload {
   color: any;
-  value: string;
-  payload: LegendPayload;
+  payload: LegendNestedData;
   [key: string]: any;
 }
 
-interface RenderLegendProps {
-  payload: Legend[];
+interface RenderLegendProps extends LegendProps {
+  payload: LegendData[];
   [key: string]: any;
 }
 
@@ -59,9 +58,6 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   const margins = {top: 20, right: 0, bottom: 0, left: 0};
   const viewBoxStyle = {x: 1, y: 2, width: 200, height: 200};
 
-  // TODO typing for handling rechart's onClick events is broken, see
-  // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20722
-
   const onPieClick = ({payload: {filterParam}}: PieSliceCallback) => setSelection && setSelection(filterParam);
   const onLegendClick = (filterParam: ItemOrArray<FilterParam>) => setSelection && setSelection(filterParam);
 
@@ -74,7 +70,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
     />);
   const renderLegends = (props: RenderLegendProps) => {
     const {payload} = props;
-    const render = ({color, payload: {value, name, filterParam}}: Legend, i) => {
+    const render = ({color, payload: {value, name, filterParam}}: LegendData, i) => {
       const onClick = () => onLegendClick(filterParam);
       const legendStyle = {height: 10, width: 10, marginRight: 5, backgroundColor: color};
       return (
@@ -91,7 +87,7 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
   return (
     <Widget title={heading}>
       <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110}>
+        <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110} dataKey="PieChart">
           {pieSlices.map(renderCell)}
         </Pie>
         <Tooltip viewBox={viewBoxStyle}/>

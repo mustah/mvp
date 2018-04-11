@@ -138,13 +138,10 @@ export const mapApiResponseToGraphData =
       });
     });
 
-    graphContents.data = Object.keys(byDate).reduce((acc: object[], created) => {
-      acc.push({
+    graphContents.data = Object.keys(byDate).map((created) => ({
         ...byDate[created],
         name: Number(created),
-      });
-      return acc;
-    }, []);
+      })).sort(({name: a}, {name: b}) => a - b);
 
     graphContents.legend = Object.keys(legends).map((legend) => legends[legend]);
     return graphContents;

@@ -90,6 +90,7 @@
     "uglify-js": "^3.2.0"
   },
   "dependencies": {
+    "@types/recharts": "^1.0.18",
     "axios": "^0.17.1",
     "classnames": "^2.2.5",
     "es6-shim": "^0.35.3",

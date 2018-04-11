@@ -26,9 +26,8 @@ import {
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {Children, uuid} from '../../../types/Types';
+import {Children, Dictionary, uuid} from '../../../types/Types';
 import {GraphContents, LineProps} from '../reportModels';
-import './GraphContainer.scss';
 
 interface StateToProps {
   period: Period;
@@ -38,10 +37,23 @@ interface StateToProps {
 
 interface State {
   graphContents: GraphContents;
+  selectedQuantities: string[];
 }
 
 interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
+}
+
+interface ActivePayload {
+  color: any;
+  dataKey: uuid;
+  fill: any;
+  name: uuid;
+  payload: {name: number; [key: string]: number};
+  stroke: any;
+  strokeWidth: number;
+  unit: string;
+  value: number;
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -49,17 +61,41 @@ type Props = StateToProps & DispatchToProps;
 const style: React.CSSProperties = {width: '100%', height: '100%'};
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
-const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
-  const components: Children[] = lines.map((props: LineProps, index: number) => (
-    <Line
-      key={index}
-      yAxisId="left"
-      type="monotone"
-      dot={false}
-      connectNulls={true}
-      {...props}
-    />
-  ));
+const Dot = (props) => {
+  if (props.cy) {
+    return (<circle {...props} r={1.3} fill={props.stroke}/>);
+  } else {
+    return null;
+  }
+};
+
+const ActiveDot = ({dataKey, fill, cx, cy, activeDataKey}) => {
+  if (dataKey === activeDataKey) {
+    return <circle r={3} stroke={fill} cx={cx} cy={cy} fill={fill}/>;
+  } else {
+    return null;
+  }
+};
+
+const renderGraphContents = (
+  {lines, axes}: GraphContents,
+  renderDot: (props) => React.ReactNode,
+  renderActiveDot: (props) => React.ReactNode,
+): Children[] => {
+  const components: Children[] = lines.map((props: LineProps, index: number) => {
+    const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
+    return (
+      <Line
+        key={index}
+        yAxisId="left"
+        type="monotone"
+        connectNulls={true}
+        {...props}
+        activeDot={renderActiveDot}
+        dot={newDot}
+      />
+    );
+  });
 
   if (axes.left) {
     components.push((
@@ -87,9 +123,17 @@ const emptyGraphContents: GraphContents = {
   lines: [],
 };
 
-class GraphComponent extends React.Component<Props> {
+class GraphComponent extends React.Component<Props, State> {
 
-  state: State = {graphContents: emptyGraphContents};
+  state: State = {
+    graphContents: emptyGraphContents,
+    selectedQuantities: [],
+  };
+
+  private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
+  private tooltipPayload: ActivePayload;
+  private activeDataKey;
+
   onChangeTab = () => void(0);
   changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
@@ -105,7 +149,7 @@ class GraphComponent extends React.Component<Props> {
   }
 
   async componentWillReceiveProps({selectedListItems, period, selectedQuantities}: Props) {
-    const somethingChanged = true || period !== this.props.period;
+    const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
     if (somethingChanged) {
       const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
       this.setState({
@@ -113,13 +157,62 @@ class GraphComponent extends React.Component<Props> {
         graphContents: mapApiResponseToGraphData(graphData),
         selectedQuantities,
       });
+      this.resetDots();
+    }
+  }
+
+  renderDot = ({dataKey, ...rest}) => {
+    const {index, cy} = rest;
+    this.dots = {
+      ...this.dots,
+      [index]: {...this.dots[index], [dataKey]: {dataKey, cy}},
+    };
+    return (<Dot {...rest} />);
+  }
+
+  renderActiveDot = (props) => {
+    return (
+      <ActiveDot {...props} activeDataKey={this.activeDataKey}/>
+    );
+  }
+
+  resetDots = () => {
+    this.dots = {};
+  }
+
+  setMouseY = ({chartY, activeTooltipIndex, activePayload, ...rest}) => {
+    if (chartY) {
+      this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
+      this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
+    }
+  }
+
+  findClosestLine = (index, mouseY): uuid => {
+    const activeDots = this.dots[index];
+    const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
+      .filter(({cy}) => cy || cy === 0)
+      .map(({dataKey, cy}) => ({dataKey, cy: Math.abs(cy - mouseY)}))
+      .sort(({cy: a}, {cy: b}) => a - b);
+    return sortedActiveDots[0].dataKey;
+  }
+
+  renderToolTip = (props) => {
+    if (this.tooltipPayload) {
+      return (
+        <div style={{backgroundColor: 'white', border: '1px solid black', padding: 10}}>
+          <div>{formatLabelTimeStamp(props.label)}</div>
+          <div>{`${this.tooltipPayload.dataKey}: ${this.tooltipPayload.value}`}</div>
+        </div>
+      );
+    } else {
+      return null;
     }
   }
 
   render() {
     const {selectedQuantities} = this.props;
     const {graphContents} = this.state;
-    const lines = renderGraphContents(graphContents);
+    const lines = renderGraphContents(graphContents, this.renderDot, this.renderActiveDot);
     const {data, legend} = graphContents;
     const selectedTab: TabName = TabName.graph;
 
@@ -176,6 +269,7 @@ class GraphComponent extends React.Component<Props> {
                       height={50}
                       data={data}
                       margin={margin}
+                      onMouseMove={this.setMouseY}
                     >
                       <XAxis
                         dataKey="name"
@@ -185,7 +279,7 @@ class GraphComponent extends React.Component<Props> {
                         type="number"
                       />
                       <CartesianGrid strokeDasharray="3 3"/>
-                      <Tooltip labelFormatter={formatLabelTimeStamp}/>
+                      <Tooltip content={this.renderToolTip}/>
                       <Legend payload={legend}/>
                       {lines}
                     </LineChart>
@@ -210,10 +304,10 @@ class GraphComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  report: {selectedListItems},
-  searchParameters: {selection: {selected: {period}}},
-  ui: {measurements: {selectedQuantities}},
-}: RootState): StateToProps =>
+                           report: {selectedListItems},
+                           searchParameters: {selection: {selected: {period}}},
+                           ui: {measurements: {selectedQuantities}},
+                         }: RootState): StateToProps =>
   ({
     selectedListItems,
     period,
