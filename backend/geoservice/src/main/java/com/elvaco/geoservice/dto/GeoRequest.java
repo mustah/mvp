@@ -4,7 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.elvaco.geoservice.UriUtils;
+import lombok.Getter;
 
+@Getter
 public class GeoRequest {
 
   /**
@@ -18,40 +20,20 @@ public class GeoRequest {
   private String city;
   private String country;
 
-  public URI getCallbackUrl() {
-    return callbackUrl;
-  }
-
   public void setCallbackUrl(String encodedCallbackUrl) throws URISyntaxException {
     this.callbackUrl = UriUtils.asDecoded(encodedCallbackUrl);
-  }
-
-  public URI getErrorCallbackUrl() {
-    return errorCallbackUrl;
   }
 
   public void setErrorCallbackUrl(String encodedErrorCallbackUrl) throws URISyntaxException {
     this.errorCallbackUrl = UriUtils.asDecoded(encodedErrorCallbackUrl);
   }
 
-  public String getStreet() {
-    return street;
-  }
-
   public void setStreet(String street) {
     this.street = UriUtils.decode(street);
   }
 
-  public String getCity() {
-    return city;
-  }
-
   public void setCity(String city) {
     this.city = UriUtils.decode(city);
-  }
-
-  public String getCountry() {
-    return country;
   }
 
   public void setCountry(String country) {

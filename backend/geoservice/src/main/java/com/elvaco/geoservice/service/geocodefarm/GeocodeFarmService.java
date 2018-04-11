@@ -48,7 +48,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       Result result = source.getGeocodingResults().getResults().get(0);
       target.setLatitude(result.getCoordinates().getLatitude());
       target.setLongitude(result.getCoordinates().getLongitude());
-      target.setConfidence(Accuracy.from(result.getAccuracy()));
+      target.setConfidence(Accuracy.from(result.getAccuracy()).value);
       target.setSource(getId());
     }
     this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())

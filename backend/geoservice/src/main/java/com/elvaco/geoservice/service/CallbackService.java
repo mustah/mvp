@@ -107,7 +107,7 @@ public class CallbackService {
       if (callback.getAttempt() >= maxAttempts - 1) {
         callbackRepository.delete(callback);
         log.error(
-          "To many retries. Could not connect to callback id = {} at {}",
+          "Too many retries. Could not connect to callback id = {} at {}",
           callback.getId(),
           callback.getCallback(),
           e

@@ -4,9 +4,10 @@ import java.util.stream.Stream;
 
 public enum Accuracy {
 
-  EXACT_MATCH(1),
+  EXACT_MATCH(1.0),
   HIGH_ACCURACY(0.75),
-  MEDIUM_ACCURACY(0.5),;
+  MEDIUM_ACCURACY(0.5),
+  NO_MATCH(0.0);
 
   public final double value;
 
@@ -14,11 +15,10 @@ public enum Accuracy {
     this.value = value;
   }
 
-  public static double from(String accuracyResponse) {
+  public static Accuracy from(String accuracyResponse) {
     return Stream.of(values())
       .filter(accuracy -> accuracy.name().equalsIgnoreCase(accuracyResponse))
-      .map(accuracy -> accuracy.value)
       .findFirst()
-      .orElse(0.0);
+      .orElse(NO_MATCH);
   }
 }
