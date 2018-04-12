@@ -4,11 +4,14 @@ import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.NoArgsConstructor;
 
@@ -26,10 +29,19 @@ public class QuantityEntity extends EntityType<Long> {
   public String name;
   public String unit;
 
-  public QuantityEntity(@Nullable Long id, String name, String unit) {
+  @Enumerated(EnumType.ORDINAL)
+  public SeriesDisplayMode seriesDisplayMode;
+
+  public QuantityEntity(
+    @Nullable Long id,
+    String name,
+    String unit,
+    SeriesDisplayMode seriesDisplayMode
+  ) {
     this.id = id;
     this.name = name;
     this.unit = unit;
+    this.seriesDisplayMode = seriesDisplayMode;
   }
 
   @Override

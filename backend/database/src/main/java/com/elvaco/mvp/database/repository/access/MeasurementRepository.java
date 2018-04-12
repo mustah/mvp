@@ -10,12 +10,14 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
+import com.elvaco.mvp.database.util.SqlErrorMapper;
+import org.hibernate.JDBCException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,22 +35,6 @@ public class MeasurementRepository implements Measurements {
     this.measurementJpaRepository = measurementJpaRepository;
     this.queryFilters = queryFilters;
     this.measurementMapper = measurementMapper;
-  }
-
-  @Override
-  public List<Measurement> findAllByScale(String scale, RequestParameters parameters) {
-    return measurementJpaRepository.findAllScaled(scale, queryFilters.toExpression(parameters))
-      .stream()
-      .map(measurementMapper::toDomainModel)
-      .collect(toList());
-  }
-
-  @Override
-  public List<Measurement> findAll(RequestParameters parameters) {
-    return measurementJpaRepository.findAll(queryFilters.toExpression(parameters))
-      .stream()
-      .map(measurementMapper::toDomainModel)
-      .collect(toList());
   }
 
   @Override
@@ -112,6 +98,42 @@ public class MeasurementRepository implements Measurements {
         projection.getInstant()
       ))
       .collect(toList());
+  }
+
+  @Override
+  public List<MeasurementValue> getSeriesForPeriod(
+    UUID meterId,
+    String quantity,
+    String unit,
+    String mode,
+    ZonedDateTime from,
+    ZonedDateTime to
+  ) {
+    try {
+      return measurementJpaRepository.getSeriesForPeriod(
+        meterId,
+        quantity,
+        unit,
+        mode,
+        OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+        OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
+      ).stream()
+        .map(projection -> new MeasurementValue(
+          projection.getValueValue(),
+          projection.getInstant()
+        ))
+        .collect(toList());
+    } catch (DataIntegrityViolationException ex) {
+      Throwable cause = ex.getCause();
+      if (cause instanceof JDBCException) {
+        String sqlErrorMessage = ((JDBCException) cause).getSQLException().getMessage();
+        throw SqlErrorMapper.mapScalingError(
+          unit,
+          sqlErrorMessage
+        ).orElse(ex);
+      }
+      throw ex;
+    }
   }
 
   @Override

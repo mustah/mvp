@@ -11,27 +11,11 @@ import java.util.stream.Collectors;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
 import static java.util.Collections.emptyList;
 
 public class MockMeasurements extends MockRepository<Long, Measurement> implements Measurements {
-
-  @Override
-  public List<Measurement> findAllByScale(
-    String scale, RequestParameters parameters
-  ) {
-    throw new UnsupportedOperationException("findAllByScale not implemented!");
-  }
-
-  @Override
-  public List<Measurement> findAll(RequestParameters parameters) {
-    if (parameters != null && !parameters.isEmpty()) {
-      throw new UnsupportedOperationException("filter params not implemented!");
-    }
-    return allMocks();
-  }
 
   @Override
   public Optional<Measurement> findById(Long id) {
@@ -70,6 +54,13 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
+  ) {
+    return emptyList();
+  }
+
+  @Override
+  public List<MeasurementValue> getSeriesForPeriod(
+    UUID meterId, String quantity, String unit, String mode, ZonedDateTime from, ZonedDateTime to
   ) {
     return emptyList();
   }

@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -68,5 +67,28 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     + " AND m1.physical_meter_id = m2.physical_meter_id"
     + " AND m1.quantity = m2.quantity")
   List<MeasurementEntity> findLatestForPhysicalMeter(@Param("physical_meter_id") UUID id);
+
+  @Query(nativeQuery = true, value = "select"
+    + "  cast (unit_at("
+    + "    case when :mode = 'consumption'"
+    + "    then"
+    + "      value - lag(value) over (order by created)"
+    + "    else value"
+    + "    end, :unit) as TEXT) as value,"
+    + "  created as when"
+    + "  from measurement"
+    + "  where created >= cast(:from AS TIMESTAMPTZ)"
+    + "  and created <= cast(:to AS TIMESTAMPTZ)"
+    + "  and physical_meter_id = :meter_id"
+    + "  and quantity = :quantity"
+  )
+  List<MeasurementValueProjection> getSeriesForPeriod(
+    @Param("meter_id") UUID physicalMeterId,
+    @Param("quantity") String quantity,
+    @Param("unit") String unit,
+    @Param("mode") String mode,
+    @Param("from") OffsetDateTime from,
+    @Param("to") OffsetDateTime to
+  );
 
 }

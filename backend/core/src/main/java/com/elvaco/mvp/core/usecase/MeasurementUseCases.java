@@ -11,10 +11,7 @@ import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.Measurements;
-
-import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
 
 public class MeasurementUseCases {
 
@@ -24,17 +21,6 @@ public class MeasurementUseCases {
   public MeasurementUseCases(AuthenticatedUser currentUser, Measurements measurements) {
     this.currentUser = currentUser;
     this.measurements = measurements;
-  }
-
-  public List<Measurement> findAll(String scale, RequestParameters parameters) {
-    if (scale != null) {
-      return measurements.findAllByScale(
-        scale,
-        setCurrentUsersOrganisationId(currentUser, parameters)
-      );
-    } else {
-      return measurements.findAll(setCurrentUsersOrganisationId(currentUser, parameters));
-    }
   }
 
   public Optional<Measurement> findById(Long id) {
@@ -69,6 +55,17 @@ public class MeasurementUseCases {
     TemporalResolution resolution
   ) {
     return measurements.getAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
+  }
+
+  public List<MeasurementValue> seriesForPeriod(
+    UUID meterId,
+    String quantity,
+    String unit,
+    String mode,
+    ZonedDateTime from,
+    ZonedDateTime to
+  ) {
+    return measurements.getSeriesForPeriod(meterId, quantity, unit, mode, from, to);
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {

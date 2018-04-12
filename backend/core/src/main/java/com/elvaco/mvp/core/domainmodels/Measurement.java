@@ -23,7 +23,14 @@ public class Measurement implements Identifiable<Long> {
     double value,
     PhysicalMeter physicalMeter
   ) {
-    this(null, ZonedDateTime.now(), quantity.name, value, quantity.unit, physicalMeter);
+    this(
+      null,
+      ZonedDateTime.now(),
+      quantity.name,
+      value,
+      quantity.defaultPresentationUnit(),
+      physicalMeter
+    );
   }
 
   public Measurement(

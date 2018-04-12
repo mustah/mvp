@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -64,6 +65,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
+    assumeTrue(isPostgresDialect());
     butterMeter = new PhysicalMeterEntity(
       randomUUID(),
       context().organisationEntity,
@@ -78,11 +80,13 @@ public class MeasurementControllerTest extends IntegrationTest {
         asList(new QuantityEntity(
           null,
           "Butter temperature",
-          "°C"
+          "°C",
+          SeriesDisplayMode.READOUT
         ), new QuantityEntity(
           null,
           "Left to walk",
-          "m"
+          "m",
+          SeriesDisplayMode.READOUT
         ))
       ).id,
       15
@@ -111,7 +115,8 @@ public class MeasurementControllerTest extends IntegrationTest {
         singletonList(new QuantityEntity(
           null,
           "Milk temperature",
-          "°C"
+          "°C",
+          SeriesDisplayMode.READOUT
         ))
       ).id,
       15
@@ -131,11 +136,13 @@ public class MeasurementControllerTest extends IntegrationTest {
         asList(new QuantityEntity(
           null,
           "Heat",
-          "°C"
+          "°C",
+          SeriesDisplayMode.READOUT
         ), new QuantityEntity(
           null,
           "LightsaberPower",
-          "kW"
+          "kW",
+          SeriesDisplayMode.READOUT
         ))
       ).id,
       15
@@ -188,6 +195,10 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @After
   public void tearDown() {
+    if (!isPostgresDialect()) {
+      return;
+    }
+
     measurementJpaRepository.deleteAll();
     physicalMeterRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
@@ -250,7 +261,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
     List<String> names = measurements.stream().map(m -> m.quantity).collect(toList());
 
-    assertThat(names).doesNotContain("Elvco");
+    assertThat(names).doesNotContain("Elvaco");
   }
 
   @Test

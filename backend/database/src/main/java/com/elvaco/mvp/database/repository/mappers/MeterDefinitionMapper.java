@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
 
@@ -36,10 +37,22 @@ public class MeterDefinitionMapper
   }
 
   private Quantity toQuantity(QuantityEntity quantityEntity) {
-    return new Quantity(quantityEntity.id, quantityEntity.name, quantityEntity.unit);
+    return new Quantity(
+      quantityEntity.id,
+      quantityEntity.name,
+      new QuantityPresentationInformation(
+        quantityEntity.unit,
+        quantityEntity.seriesDisplayMode
+      )
+    );
   }
 
   private QuantityEntity toQuantityEntity(Quantity quantity) {
-    return new QuantityEntity(quantity.id, quantity.name, quantity.unit);
+    return new QuantityEntity(
+      quantity.id,
+      quantity.name,
+      quantity.defaultPresentationUnit(),
+      quantity.defaultSeriesDisplayMode()
+    );
   }
 }

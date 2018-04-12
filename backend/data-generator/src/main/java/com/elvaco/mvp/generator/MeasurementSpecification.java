@@ -42,7 +42,7 @@ class MeasurementSpecification {
           value.when.atZone(start.getZone()),
           quantity.name,
           value.value,
-          quantity.unit,
+          quantity.defaultPresentationUnit(),
           physicalMeter
         ));
       }

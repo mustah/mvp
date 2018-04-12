@@ -80,7 +80,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getBody()).isEqualTo(
       singletonList(new MeasurementSeriesDto(
         Quantity.POWER.name,
-        Quantity.POWER.unit,
+        Quantity.POWER.defaultPresentationUnit(),
         "average",
         asList(
           new MeasurementValueDto(
@@ -127,7 +127,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       singletonList(
         new MeasurementSeriesDto(
           Quantity.POWER.name,
-          Quantity.POWER.unit,
+          Quantity.POWER.defaultPresentationUnit(),
           "average",
           asList(
             new MeasurementValueDto(
@@ -189,7 +189,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
     assertThat(response.getBody()).containsExactlyInAnyOrder(
       new MeasurementSeriesDto(
         Quantity.POWER.name,
-        Quantity.POWER.unit,
+        Quantity.POWER.defaultPresentationUnit(),
         "average",
         singletonList(
           new MeasurementValueDto(
@@ -200,7 +200,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       ),
       new MeasurementSeriesDto(
         Quantity.DIFFERENCE_TEMPERATURE.name,
-        Quantity.DIFFERENCE_TEMPERATURE.unit,
+        Quantity.DIFFERENCE_TEMPERATURE.defaultPresentationUnit(),
         "average",
         singletonList(
           new MeasurementValueDto(
@@ -238,7 +238,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       singletonList(
         new MeasurementSeriesDto(
           Quantity.POWER.name,
-          Quantity.POWER.unit,
+          Quantity.POWER.defaultPresentationUnit(),
           "average",
           singletonList(
             new MeasurementValueDto(
@@ -286,7 +286,7 @@ public class MeasurementControllerAggregatesTest extends IntegrationTest {
       singletonList(
         new MeasurementSeriesDto(
           Quantity.POWER.name,
-          Quantity.POWER.unit,
+          Quantity.POWER.defaultPresentationUnit(),
           "average",
           singletonList(
             new MeasurementValueDto(

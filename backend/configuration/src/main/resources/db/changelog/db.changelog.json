@@ -53,6 +53,24 @@
           }
         ]
       }
+    },
+    {
+      "changeSet": {
+        "id": "Add series display mode column to quantity table",
+        "author": "Anton Löfgren",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/add_series_display_mode_column_to_quantity.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
     }
   ]
 }

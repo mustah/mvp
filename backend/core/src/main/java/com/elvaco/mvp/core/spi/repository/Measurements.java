@@ -9,13 +9,8 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
-import com.elvaco.mvp.core.spi.data.RequestParameters;
 
 public interface Measurements {
-
-  List<Measurement> findAllByScale(String scale, RequestParameters parameters);
-
-  List<Measurement> findAll(RequestParameters parameters);
 
   Optional<Measurement> findById(Long id);
 
@@ -32,6 +27,15 @@ public interface Measurements {
     TemporalResolution resolution
   );
 
+  List<MeasurementValue> getSeriesForPeriod(
+    UUID meterId,
+    String quantity,
+    String unit,
+    String mode,
+    ZonedDateTime from,
+    ZonedDateTime to
+  );
+
   Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
     UUID physicalMeterId,
     String quantity,
@@ -41,4 +45,5 @@ public interface Measurements {
   List<Measurement> findLatestValues(
     UUID physicalMeterId
   );
+
 }

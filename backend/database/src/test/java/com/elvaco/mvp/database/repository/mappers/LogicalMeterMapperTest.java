@@ -10,6 +10,8 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -102,7 +104,11 @@ public class LogicalMeterMapperTest {
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "speed-o-meter",
-          singleton(new Quantity(1L, "Speed", "mps")),
+          singleton(new Quantity(
+            1L,
+            "Speed",
+            new QuantityPresentationInformation("mps", SeriesDisplayMode.READOUT)
+          )),
           false
         ),
         emptyList()
@@ -139,7 +145,11 @@ public class LogicalMeterMapperTest {
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "My energy meter",
-          singleton(new Quantity(1L, "Energy", "kWh")),
+          singleton(new Quantity(
+            1L,
+            "Energy",
+            new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
+          )),
           false
         ),
         emptyList()
@@ -176,7 +186,11 @@ public class LogicalMeterMapperTest {
         new MeterDefinition(
           MeterDefinitionType.UNKNOWN_METER_TYPE,
           "Energy meter",
-          singleton(new Quantity(1L, "Energy", "kWh")),
+          singleton(new Quantity(
+            1L,
+            "Energy",
+            new QuantityPresentationInformation("kWh", SeriesDisplayMode.READOUT)
+          )),
           false
         ),
         emptyList()
@@ -196,7 +210,7 @@ public class LogicalMeterMapperTest {
   ) {
     return new MeterDefinitionEntity(
       MeterDefinitionType.UNKNOWN_METER_TYPE,
-      singleton(new QuantityEntity(1L, quantityName, quantityUnit)),
+      singleton(new QuantityEntity(1L, quantityName, quantityUnit, SeriesDisplayMode.READOUT)),
       name,
       false
     );
