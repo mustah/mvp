@@ -20,10 +20,10 @@ import {
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {Children, Dictionary, uuid} from '../../../types/Types';
-import {ActiveDot, ActiveDotPropsFromApi} from '../components/ActiveDot';
+import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
-import {Dot, DotPropsFromApi} from '../components/Dot';
-import {GraphContents, LineProps} from '../reportModels';
+import {Dot, DotReChartProps} from '../components/Dot';
+import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
 
 interface StateToProps {
   period: Period;
@@ -40,24 +40,12 @@ interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
 }
 
-export interface ActivePayload {
-  color: any;
-  dataKey: uuid;
-  fill: any;
-  name: uuid;
-  payload: {name: number; [key: string]: number};
-  stroke: any;
-  strokeWidth: number;
-  unit: string;
-  value: number;
-}
-
 interface MouseOverProps {
   isTooltipActive: boolean;
   chartX: number;
   chartY: number;
   activeTooltipIndex: number;
-  activePayload: ActivePayload[];
+  activePayload: ActiveDataPoint[];
 
 }
 
@@ -115,7 +103,7 @@ class GraphComponent extends React.Component<Props, State> {
   };
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
-  private tooltipPayload: ActivePayload;
+  private tooltipPayload: ActiveDataPoint;
   private activeDataKey;
 
   changeQuantities = (event, index, values) => this.props.selectQuantities(values);
@@ -144,9 +132,9 @@ class GraphComponent extends React.Component<Props, State> {
     }
   }
 
-  renderActiveDot = (props: ActiveDotPropsFromApi) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
+  renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
   renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
-  renderAndStoreDot = ({dataKey, ...rest}: DotPropsFromApi & {dataKey: uuid}) => {
+  renderAndStoreDot = ({dataKey, ...rest}: DotReChartProps & {dataKey: uuid}) => {
     const {index, cy} = rest;
     this.dots = {
       ...this.dots,
@@ -168,8 +156,8 @@ class GraphComponent extends React.Component<Props, State> {
     const activeDots = this.dots[index];
     const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
       .filter(({cy}) => cy || cy === 0)
-      .map(({dataKey, cy}) => ({dataKey, cy: Math.abs(cy - mouseY)}))
-      .sort(({cy: a}, {cy: b}) => a - b);
+      .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
+      .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
     return sortedActiveDots[0].dataKey;
   }
 
