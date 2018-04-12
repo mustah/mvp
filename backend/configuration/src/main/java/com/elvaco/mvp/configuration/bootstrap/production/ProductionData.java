@@ -2,6 +2,7 @@ package com.elvaco.mvp.configuration.bootstrap.production;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
@@ -49,6 +50,7 @@ public class ProductionData implements ProductionDataProvider {
       "System Administrator",
       superAdminEmail,
       superAdminPassword,
+      Language.sv,
       ELVACO,
       singletonList(Role.SUPER_ADMIN)
     );

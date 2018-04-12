@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.usecase;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenFactory;
@@ -80,6 +81,24 @@ public class UserUseCasesTest extends IntegrationTest {
     assertThat(tokenService.getToken(authenticatedUser.getToken()).isPresent()).isFalse();
   }
 
+  @Test
+  public void updateLanguageForUser() {
+    authenticateSuperAdminUser();
+
+    User user = userUseCases.create(newUser("password", "test@me.com")).get();
+
+    User updatedUser = UserBuilder.from(user)
+      .name("Clark Kent")
+      .language(Language.sv)
+      .build();
+
+    User confirmedUpdatedUser = userUseCases.update(updatedUser).get();
+
+    assertThat(user.language).isEqualTo(Language.en);
+    assertThat(updatedUser.language).isEqualTo(Language.sv);
+    assertThat(confirmedUpdatedUser.language).isEqualTo(Language.sv);
+  }
+
   private AuthenticatedUser saveUserToTokenService(User user) {
     AuthenticatedUser authenticatedUser = new MockAuthenticatedUser(user, randomUUID().toString());
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
@@ -91,6 +110,7 @@ public class UserUseCasesTest extends IntegrationTest {
       .name("john doh")
       .email(email)
       .password(rawPassword)
+      .language(Language.en)
       .organisationElvaco()
       .roles(ADMIN, USER)
       .build();

@@ -3,7 +3,7 @@ import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
-import {initLanguage} from '../../../../i18n/i18n';
+import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {IdNamed} from '../../../../types/Types';
@@ -17,7 +17,12 @@ import MockAdapter = require('axios-mock-adapter');
 const configureMockStore = configureStore([thunk]);
 
 describe('selectionApiActions', () => {
-  initLanguage({code: 'en', name: 'english'});
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
   let mockRestClient: MockAdapter;
   let store;
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);

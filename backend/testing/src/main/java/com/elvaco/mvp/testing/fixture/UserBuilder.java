@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -23,6 +24,7 @@ public final class UserBuilder {
   private String email;
   @Nullable
   private String password;
+  private Language language;
   private Organisation organisation;
   private List<Role> roles = emptyList();
 
@@ -34,6 +36,7 @@ public final class UserBuilder {
       .name(user.name)
       .email(user.email)
       .password(user.password)
+      .language(user.language)
       .organisation(user.organisation)
       .roles(user.roles);
   }
@@ -55,6 +58,11 @@ public final class UserBuilder {
 
   public UserBuilder password(@Nullable String password) {
     this.password = password;
+    return this;
+  }
+
+  public UserBuilder language(Language language) {
+    this.language = language;
     return this;
   }
 
@@ -94,6 +102,7 @@ public final class UserBuilder {
       name,
       email,
       password,
+      language,
       organisation,
       roles
     );

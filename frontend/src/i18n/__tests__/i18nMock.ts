@@ -21,4 +21,4 @@ export const initTranslations = ({code, translation}: Translations) => {
     });
 };
 
-export default i18n;
+export const i18nMock = i18n;

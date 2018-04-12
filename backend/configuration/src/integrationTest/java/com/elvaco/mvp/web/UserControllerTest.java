@@ -3,6 +3,7 @@ package com.elvaco.mvp.web;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.exception.Unauthorized;
@@ -149,6 +150,7 @@ public class UserControllerTest extends IntegrationTest {
         .name("First Name")
         .email("t@b.com")
         .password("ttt123")
+        .language(Language.en)
         .organisationElvaco()
         .asUser()
         .build()
@@ -171,6 +173,7 @@ public class UserControllerTest extends IntegrationTest {
         .name("john doh")
         .email("noo@b.com")
         .password("test123")
+        .language(Language.en)
         .organisationElvaco()
         .roles(ADMIN, USER)
         .build()
@@ -202,6 +205,7 @@ public class UserControllerTest extends IntegrationTest {
         .name("Someu Ser")
         .email("thisguy@users.net")
         .password("hunter2")
+        .language(Language.en)
         .organisationElvaco()
         .asUser()
         .build()
@@ -331,6 +335,7 @@ public class UserControllerTest extends IntegrationTest {
       created.id,
       "Wayne, Bruce",
       created.email,
+      Language.en,
       created.organisation,
       created.roles
     );
@@ -353,6 +358,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Ninja Code";
     user.email = email;
     user.password = "secret stuff";
+    user.language = Language.en;
     user.organisation = organisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
@@ -363,6 +369,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = password;
+    user.language = Language.en;
     user.organisation = organisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
@@ -373,6 +380,7 @@ public class UserControllerTest extends IntegrationTest {
     user.name = "Bruce Wayne";
     user.email = email;
     user.password = "i am batman";
+    user.language = Language.en;
     user.organisation = organisationMapper.toDto(organisation);
     user.roles = singletonList(USER.role);
     return user;

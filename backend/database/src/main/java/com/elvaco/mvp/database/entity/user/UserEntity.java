@@ -6,6 +6,8 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Email;
@@ -37,6 +40,10 @@ public class UserEntity extends EntityType<UUID> {
   @Column(nullable = false)
   public String password;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  public Language language;
+
   @ManyToOne(optional = false)
   @JoinColumn(name = "organisationId", nullable = false)
   public OrganisationEntity organisation;
@@ -56,6 +63,7 @@ public class UserEntity extends EntityType<UUID> {
     String name,
     String email,
     String password,
+    Language language,
     OrganisationEntity organisation,
     Collection<RoleEntity> roles
   ) {
@@ -63,6 +71,7 @@ public class UserEntity extends EntityType<UUID> {
     this.name = name;
     this.email = email;
     this.password = password;
+    this.language = language;
     this.organisation = organisation;
     this.roles = roles;
   }

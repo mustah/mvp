@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
@@ -34,6 +35,7 @@ public class OrganisationRepositoryTest extends IntegrationTest {
       "user",
       "user@org.com",
       "asdf",
+      Language.en,
       organisationEntity,
       singletonList(RoleEntity.user())
     ));

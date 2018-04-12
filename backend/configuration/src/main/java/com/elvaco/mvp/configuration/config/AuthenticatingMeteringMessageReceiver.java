@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.MeteringMessageReceiver;
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.web.security.MvpUserDetails;
@@ -29,6 +30,7 @@ class AuthenticatingMeteringMessageReceiver {
         + "RabbitMQ Consumer",
       "noone@example.com",
       "",
+      Language.sv,
       ELVACO,
       Collections.singletonList(
         Role.SUPER_ADMIN

@@ -1,5 +1,6 @@
 package com.elvaco.mvp.testing.fixture;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
@@ -25,6 +26,7 @@ public final class UserTestData {
     .name("Clark Kent")
     .email("clark@dailyplanet.org")
     .password("KalEl")
+    .language(Language.en)
     .organisation(DAILY_PLANET)
     .asAdmin()
     .build();
@@ -36,6 +38,7 @@ public final class UserTestData {
       .name("Jimmy Olsen")
       .email("jimy@dailyplanet.org")
       .password("jimols")
+      .language(Language.en)
       .organisation(organisation)
       .asUser()
       .build();

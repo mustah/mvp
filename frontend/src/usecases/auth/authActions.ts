@@ -7,6 +7,7 @@ import {makeToken} from '../../services/authService';
 import {EndPoints} from '../../services/endPoints';
 import {authenticate, restClient, restClientWith} from '../../services/restClient';
 import {User} from '../../state/domain-models/user/userModels';
+import {changeLanguage} from '../../state/language/languageActions';
 import {payloadActionOf} from '../../types/Types';
 import {Authorized, AuthState, Unauthorized} from './authModels';
 
@@ -38,6 +39,7 @@ export const login = (username: string, password: string) => {
       const basicToken = makeToken(username, password);
       const {data: {user, token}} = await authenticate(basicToken).get(EndPoints.authenticate);
       restClientWith(token);
+      await dispatch(changeLanguage(user.language));
       dispatch(loginSuccess({token, user}));
     } catch (error) {
       const {response: {data}} = error;

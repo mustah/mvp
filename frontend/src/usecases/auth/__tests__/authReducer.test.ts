@@ -12,6 +12,7 @@ describe('authReducer', () => {
     id: 1,
     name: 'clark',
     email: 'ck@dailyplanet.net',
+    language: 'en',
     organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
     roles: [Role.USER],
   };

@@ -2,6 +2,7 @@ package com.elvaco.mvp.testdata;
 
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
@@ -44,6 +45,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-user")
       .email(contextUuid.toString() + "@test.com")
       .password("password")
+      .language(Language.en)
       .organisation(organisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asUser()
@@ -54,6 +56,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-admin")
       .email(contextUuid.toString() + "-admin@test.com")
       .password("password")
+      .language(Language.en)
       .organisation(organisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asAdmin()
@@ -64,6 +67,7 @@ class IntegrationTestFixtureContextFactory {
       .name("integration-test-super-admin")
       .email(contextUuid.toString() + "-super-admin@test.com")
       .password("password")
+      .language(Language.en)
       .organisation(organisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asSuperAdmin()

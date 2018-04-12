@@ -26,11 +26,14 @@ import {fetchOrganisations} from '../../../state/domain-models/organisation/orga
 import {getOrganisations} from '../../../state/domain-models/organisation/organisationSelectors';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
+import {Language} from '../../../state/language/languageModels';
+import {getLanguages} from '../../../state/language/languageSelectors';
 import {ClearError, ErrorResponse, OnClick, Fetch, uuid, FetchSingle} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
+  languages: Language[];
   users: ObjectsById<User>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
@@ -62,7 +65,15 @@ class UserEdit extends React.Component<Props, {}> {
 
   render() {
     const {
-      modifyUser, organisations, roles, users, match: {params: {userId}}, isFetching, error, clearError,
+      modifyUser,
+      organisations,
+      roles,
+      users,
+      match: {params: {userId}},
+      isFetching,
+      error,
+      clearError,
+      languages,
     } = this.props;
 
     return (
@@ -82,6 +93,7 @@ class UserEdit extends React.Component<Props, {}> {
                 possibleRoles={roles}
                 isEditSelf={false}
                 user={users[userId]}
+                languages={languages}
               />
             </WrapperIndent>
           </Loader>
@@ -98,6 +110,7 @@ const mapStateToProps = ({auth: {user}, domainModels: {users, organisations}}: R
   error: getError(users),
   organisations: getOrganisations(organisations),
   roles: getRoles(user!),
+  languages: getLanguages(),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

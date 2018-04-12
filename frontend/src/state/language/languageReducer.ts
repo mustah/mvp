@@ -1,20 +1,20 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../types/Types';
 import {CHANGE_LANGUAGE} from './languageActions';
-import {Language, LanguageState, supportedLanguages} from './languageModels';
+import {LanguageCode, LanguageState, languages} from './languageModels';
 
 const initialState: LanguageState = {
-  language: supportedLanguages.sv,
+  language: languages.sv.code,
 };
 
-type ActionTypes = Action<Language> & EmptyAction<string>;
+type ActionTypes = Action<LanguageCode> | EmptyAction<string>;
 
 export const language = (state: LanguageState = initialState, action: ActionTypes) => {
   switch (action.type) {
     case CHANGE_LANGUAGE:
       return {
         ...state,
-        language: (action as Action<Language>).payload,
+        language: (action as Action<LanguageCode>).payload,
       };
     default:
       return state;

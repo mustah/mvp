@@ -3,7 +3,7 @@ import {normalize} from 'normalizr';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {makeMeterDto, MeterDto} from '../../../../__tests__/testDataFactory';
-import {initLanguage} from '../../../../i18n/i18n';
+import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../../reducers/rootReducer';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
@@ -18,7 +18,12 @@ import {Meter, MetersState} from '../meterModels';
 import {meterSchema} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
-initLanguage({code: 'en', name: 'english'});
+initTranslations({
+  code: 'en',
+  translation: {
+    test: 'no translations will default to key',
+  },
+});
 const configureMockStore = configureStore([thunk]);
 let store;
 let mockRestClient;

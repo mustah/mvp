@@ -4,6 +4,8 @@ import {PaginatedDomainModelsState} from '../state/domain-models-paginated/pagin
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
+import {LanguageState} from '../state/language/languageModels';
+import {language} from '../state/language/languageReducer';
 import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
@@ -14,8 +16,6 @@ import {LOGOUT_USER} from '../usecases/auth/authActions';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
-import {LanguageState} from '../usecases/main-menu/languageModels';
-import {language} from '../usecases/main-menu/languageReducer';
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';

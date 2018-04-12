@@ -17,9 +17,7 @@ interface StateToProps {
   pathname: string;
 }
 
-const MvpMainMenu = ({pathname}: StateToProps) => {
-
-  return (
+const MvpMainMenu = ({pathname}: StateToProps) => (
     <MainMenuWrapper>
         <Column>
           <Link to={routes.dashboard} className="link">
@@ -54,7 +52,6 @@ const MvpMainMenu = ({pathname}: StateToProps) => {
         </Column>
     </MainMenuWrapper>
   );
-};
 
 const mapStateToProps = ({routing}: RootState): StateToProps => {
   return {

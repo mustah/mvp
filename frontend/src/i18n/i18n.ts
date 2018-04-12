@@ -1,14 +1,14 @@
 import * as i18n from 'i18next';
 import * as Backend from 'i18next-xhr-backend';
-import {Language} from '../usecases/main-menu/languageModels';
+import {LanguageCode} from '../state/language/languageModels';
 
 const {i18nextConfig} = require('./i18nextConfig');
 
-export const initLanguage = (language: Language) => {
+export const initLanguage = (language: LanguageCode) => {
   i18n
     .use(Backend)
     .init({
-      lng: language.code,
+      lng: language,
       debug: false,
       ...i18nextConfig,
       backend: {

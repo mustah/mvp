@@ -1,4 +1,4 @@
-import {initTranslations} from '../../i18n/__tests__/i18n-testdata';
+import {initTranslations} from '../../i18n/__tests__/i18nMock';
 import {ParameterName} from '../../state/search/selection/selectionModels';
 import {getTranslationOrName, statusTranslation, translatedErrorMessage} from '../translations';
 

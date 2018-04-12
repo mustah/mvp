@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -718,6 +719,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .name("Me")
       .email("me@myorg.com")
       .password("secr3t")
+      .language(Language.en)
       .organisation(new Organisation(
         anotherOrganisation.id,
         anotherOrganisation.name,

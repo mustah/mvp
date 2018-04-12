@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
-import {initLanguage} from '../../../i18n/i18n';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {RootState} from '../../../reducers/rootReducer';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient, restClientWith} from '../../../services/restClient';
@@ -193,11 +193,17 @@ describe('selectionTreeApiActions', () => {
   describe('invalid token', () => {
 
     it('dispatches a logout action if token is invalid', async () => {
-      initLanguage({code: 'en', name: 'english'});
+      initTranslations({
+        code: 'en',
+        translation: {
+          test: 'no translations will default to key',
+        },
+      });
       const user: User = {
         id: 1,
         name: 'al',
         email: 'al@la.se',
+        language: 'en',
         organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
         roles: [],
       };
