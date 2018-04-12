@@ -1,6 +1,7 @@
 package com.elvaco.mvp.web.service;
 
-import java.net.URI;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -102,19 +103,48 @@ public class GeocodeSpringServiceTest {
     geocodeService.fetchCoordinates(LocationWithId.from(location, logicalMeterId));
 
     assertThat(httpClientMock.url).isEqualTo(
-      "http://geoservice.com:8080/byAddress?"
-      + "address.country=sweden&address.city=stockholm&address.street=drottninggatan+1"
+      "http://geoservice.com:8080/address?"
+      + "country=sweden&city=stockholm&street=drottninggatan 1"
       + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
       + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId);
   }
 
-  private static class HttpClientMock implements Function<URI, String> {
+  @Test
+  public void encodedLocationInformation() {
+    GeocodeService geocodeService = new GeocodeSpringService(
+      "http://mvp.com",
+      "http://geoservice.com:8080",
+      httpClientMock
+    );
+
+    Location location = new LocationBuilder()
+      .country("sweden")
+      .city("växjö")
+      .streetAddress("drottingvägen 1")
+      .build();
+
+    UUID logicalMeterId = randomUUID();
+
+    geocodeService.fetchCoordinates(LocationWithId.from(location, logicalMeterId));
+
+    assertThat(httpClientMock.url).isEqualTo(
+      "http://geoservice.com:8080/address?"
+      + "country=sweden&city=växjö&street=drottingvägen 1"
+      + "&callbackUrl=http://mvp.com/api/v1/geocodes/callback/" + logicalMeterId
+      + "&errorCallbackUrl=http://mvp.com/api/v1/geocodes/error/" + logicalMeterId);
+  }
+
+  private static class HttpClientMock implements Function<String, String> {
 
     private String url;
 
     @Override
-    public String apply(URI uri) {
-      url = uri.toString();
+    public String apply(String url) {
+      try {
+        this.url = URLDecoder.decode(url, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
       return HttpStatus.OK.name();
     }
   }

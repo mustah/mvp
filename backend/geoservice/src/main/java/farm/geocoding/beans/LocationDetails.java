@@ -22,7 +22,7 @@ public class LocationDetails {
   @JsonProperty("timezone_short")
   private String timezoneShort;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("elevation")
   public String getElevation() {

@@ -1,6 +1,5 @@
 package com.elvaco.mvp.configuration.config;
 
-import java.net.URI;
 import java.util.function.Function;
 
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
@@ -13,8 +12,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 class ServiceConfig {
 
-  private static final Function<URI, String> HTTP_GET_CLIENT = uri ->
-    new RestTemplate().getForObject(uri, String.class);
+  private static final Function<String, String> HTTP_GET_CLIENT = url ->
+    new RestTemplate().getForObject(url, String.class);
 
   @Bean
   GeocodeService geocodeService(

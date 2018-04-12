@@ -2,7 +2,6 @@ package com.elvaco.geoservice.repository.entity;
 
 import java.net.URI;
 import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -12,14 +11,18 @@ import com.elvaco.geoservice.repository.converter.JpaConverterUri;
 
 @Entity
 public class CallbackEntity extends TimeStampedPersistableObject {
-  Integer attempt;
+
+  private Integer attempt;
+
   @Convert(converter = JpaConverterUri.class)
   @Column(length = 1024)
-  URI callback;
+  private URI callback;
+
   @Convert(converter = JpaConverterJson.class)
   @Column(length = 1024)
-  Object payload;
-  LocalDateTime nextRetry;
+  private Object payload;
+
+  private LocalDateTime nextRetry;
 
   public URI getCallback() {
     return callback;
@@ -52,5 +55,4 @@ public class CallbackEntity extends TimeStampedPersistableObject {
   public void setAttempt(Integer attempt) {
     this.attempt = attempt;
   }
-
 }

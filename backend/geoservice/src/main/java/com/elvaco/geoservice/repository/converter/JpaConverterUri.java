@@ -10,11 +10,11 @@ public class JpaConverterUri implements AttributeConverter<URI, String> {
 
   @Override
   public String convertToDatabaseColumn(URI entityValue) {
-    return (entityValue == null) ? null : entityValue.toString();
+    return entityValue != null ? entityValue.toString() : null;
   }
 
   @Override
   public URI convertToEntityAttribute(String databaseValue) {
-    return (StringUtils.hasLength(databaseValue) ? URI.create(databaseValue.trim()) : null);
+    return StringUtils.hasLength(databaseValue) ? URI.create(databaseValue.trim()) : null;
   }
 }

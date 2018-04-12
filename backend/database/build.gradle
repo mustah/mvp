@@ -20,7 +20,7 @@ dependencies {
   compile 'com.querydsl:querydsl-apt:4.2.1:jpa'
   compile 'com.querydsl:querydsl-jpa:4.2.1'
 
-  compileOnly 'org.projectlombok:lombok:1.16.18'
+  compileOnly 'org.projectlombok:lombok:1.16.20'
 
   testCompile 'junit:junit:4.12'
   testCompile 'org.assertj:assertj-core:3.8.0'

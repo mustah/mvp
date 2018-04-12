@@ -20,9 +20,10 @@ public class MockedGeoService {
       resource = "/wallsväg.json";
     } else if (addr.startsWith("Fasanvägen")) {
       resource = "/fasanvägen.json";
+    } else if (addr.startsWith("Drottningvägen")) {
+      resource = "/växjö-drottningvägen.json";
     }
     InputStream is = MockedGeoService.class.getResourceAsStream(resource);
     return IOUtils.toString(is, Charset.forName("UTF-8"));
   }
-
 }

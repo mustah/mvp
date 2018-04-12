@@ -20,7 +20,7 @@ public class Statistics {
   @JsonProperty("time_taken")
   private String timeTaken;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("https_ssl")
   public String getHttpsSsl() {

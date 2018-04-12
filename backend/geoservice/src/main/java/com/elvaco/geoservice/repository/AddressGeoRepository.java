@@ -7,5 +7,4 @@ import org.springframework.data.repository.CrudRepository;
 public interface AddressGeoRepository extends CrudRepository<AddressGeoEntity, Long> {
 
   AddressGeoEntity findByAddress(Address address);
-
 }

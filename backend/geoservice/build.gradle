@@ -8,15 +8,17 @@ jar {
 }
 
 dependencies {
-  compile "org.springframework.boot:spring-boot-starter-web"
-  compile "org.springframework.boot:spring-boot-starter-data-jpa"
-  compile "org.liquibase:liquibase-core"
-  compile "org.hibernate:hibernate-java8"
-  compile "com.h2database:h2"
-  compile "org.postgresql:postgresql"
-  compile "com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8"
-  compile "commons-io:commons-io:2.6"
+  compile 'org.springframework.boot:spring-boot-starter-web'
+  compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+  compile 'org.liquibase:liquibase-core'
+  compile 'org.hibernate:hibernate-java8'
+  compile 'com.h2database:h2'
+  compile 'org.postgresql:postgresql'
+  compile 'commons-io:commons-io:2.6'
 
-  testCompile "junit:junit"
-  testCompile "org.springframework.boot:spring-boot-starter-test"
+  compileOnly 'org.projectlombok:lombok:1.16.20'
+
+  testCompile 'junit:junit'
+  testCompile 'org.assertj:assertj-core:3.9.0'
+  testCompile 'org.springframework.boot:spring-boot-starter-test'
 }

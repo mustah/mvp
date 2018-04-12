@@ -25,7 +25,7 @@ public class Boundaries {
   @JsonProperty("southwest_longitude")
   private String southwestLongitude;
   @JsonIgnore
-  private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+  private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
   @JsonProperty("northeast_latitude")
   public String getNortheastLatitude() {

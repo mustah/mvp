@@ -1,6 +1,5 @@
 package com.elvaco.mvp.web.service;
 
-import java.net.URI;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -17,19 +16,19 @@ public class GeocodeSpringService implements GeocodeService {
 
   private final String mvpUrl;
   private final String geoServiceUrl;
-  private final Function<URI, String> httpClient;
+  private final Function<String, String> httpClient;
 
   @Async
   @Override
   public void fetchCoordinates(LocationWithId location) {
     if (location.hasNoCoordinates() && location.isKnown()) {
-      GeocodeUri.of(geoServiceUrl.trim() + "/byAddress")
+      GeocodeUri.of(geoServiceUrl.trim() + "/address")
         .countryParam(location.getCountry())
         .cityParam(location.getCity())
         .addressParam(location.getAddress())
         .callbackUrl(callbackUrl(location.getId(), CALLBACK_URL))
         .errorCallbackUrl(callbackUrl(location.getId(), ERROR_CALLBACK_URL))
-        .toUri()
+        .toUriString()
         .map(httpClient);
     }
   }

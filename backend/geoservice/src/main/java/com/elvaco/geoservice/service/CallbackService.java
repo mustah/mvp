@@ -12,8 +12,7 @@ import com.elvaco.geoservice.repository.CallbackRepository;
 import com.elvaco.geoservice.repository.entity.Address;
 import com.elvaco.geoservice.repository.entity.CallbackEntity;
 import com.elvaco.geoservice.repository.entity.GeoLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -21,31 +20,37 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Component
 public class CallbackService {
-  private final Logger logger = LoggerFactory.getLogger(CallbackService.class);
+
+  private final CallbackRepository callbackRepository;
+  private final Integer maxAttempts;
 
   @Autowired
-  CallbackRepository callbackRepository;
-  @Value("${callback.retries:5}")
-  private Integer maxAttempts;
+  public CallbackService(
+    CallbackRepository callbackRepository,
+    @Value("${callback.retries:5}") Integer maxAttempts
+  ) {
+    this.callbackRepository = callbackRepository;
+    this.maxAttempts = maxAttempts;
+  }
 
   @Async
   public CallbackEntity enqueueCallback(URI callbackUrl, Address address, GeoLocation geo) {
     // TODO: Add to callback queue
-    GeoResponse response = new GeoResponse();
-    AddressDto addr = new AddressDto();
-    addr.setStreet(address.getStreet());
-    addr.setCity(address.getCity());
-    addr.setCountry(address.getCountry());
-    response.setAddress(addr);
-    GeoDataDto g = new GeoDataDto(
-      Double.valueOf(geo.getLongitude()),
-      Double.valueOf(geo.getLatitude()),
-      geo.getConfidence()
+    GeoResponse response = new GeoResponse(
+      new AddressDto(
+        address.street,
+        address.city,
+        address.country
+      ),
+      new GeoDataDto(
+        Double.valueOf(geo.getLongitude()),
+        Double.valueOf(geo.getLatitude()),
+        geo.getConfidence()
+      )
     );
-
-    response.setGeoData(g);
 
     CallbackEntity callback = new CallbackEntity();
     callback.setCallback(callbackUrl);
@@ -54,17 +59,13 @@ public class CallbackService {
     callback.setPayload(response);
 
     callback = callbackRepository.save(callback);
-    logger.info("Callback enqueued = " + callbackUrl);
+    log.info("Callback enqueued = " + callbackUrl);
     return callback;
   }
 
   @Async
   public CallbackEntity enqueueCallback(URI callbackUrl, Address address, ErrorDto error) {
-    AddressDto addr = new AddressDto();
-    addr.setStreet(address.getStreet());
-    addr.setCity(address.getCity());
-    addr.setCountry(address.getCountry());
-    error.setAddress(addr);
+    error.address = new AddressDto(address.street, address.city, address.country);
 
     CallbackEntity callback = new CallbackEntity();
     callback.setCallback(callbackUrl);
@@ -73,37 +74,44 @@ public class CallbackService {
     callback.setPayload(error);
 
     callback = callbackRepository.save(callback);
-    logger.info("Error Callback enqueued = " + callbackUrl);
+    log.info("Error Callback enqueued = " + callbackUrl);
     return callback;
   }
 
   @Transactional
   public void popFromQueue(CallbackEntity callback) {
     RestTemplate template = new RestTemplate();
-
     try {
-      logger.info("Trying callback id = " + callback.getId() + " url = " + callback.getCallback()
-                  + ", attempt = " + (callback.getAttempt() + 1));
-
-      String result = template.postForObject(callback.getCallback(), callback.getPayload(),
-                                             String.class
+      log.info(
+        "Trying callback id = {}, url = {}, attempt = {}",
+        callback.getId(),
+        callback.getCallback(),
+        (callback.getAttempt() + 1)
       );
-      logger.info("Callback id = " + callback.getId() + " result = " + result);
+
+      String result = template.postForObject(
+        callback.getCallback(),
+        callback.getPayload(),
+        String.class
+      );
+      log.info("Callback id = {} result = ", callback.getId(), result);
       callbackRepository.delete(callback);
     } catch (RuntimeException e) {
-      logger.warn("Callback id = " + callback.getId() + " failed.", e);
+      log.warn("Callback id = {} failed.", callback.getId(), e);
 
       callback.setAttempt(callback.getAttempt() + 1);
-      callback.setNextRetry(LocalDateTime.now()
-                              .plusNanos(1000 * 1000 * (long) java.lang.Math.pow(
-                                1 * 100,
-                                callback.getAttempt()
-                              )));
+      long nanos = 1000 * 1000 * (long) Math.pow(100, callback.getAttempt());
+      callback.setNextRetry(LocalDateTime.now().plusNanos(nanos));
       callbackRepository.save(callback);
+
       if (callback.getAttempt() >= maxAttempts - 1) {
         callbackRepository.delete(callback);
-        logger.error("To many retries. Bailing out... could not connect to callback id = "
-                     + callback.getId() + " at " + callback.getCallback(), e);
+        log.error(
+          "Too many retries. Could not connect to callback id = {} at {}",
+          callback.getId(),
+          callback.getCallback(),
+          e
+        );
       }
     }
   }
