@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.dialect.types;
 
 public enum Types {
 
+  PropertyCollection("property-collection"),
   MeasurementUnit("measurement-unit");
 
   private final String name;
