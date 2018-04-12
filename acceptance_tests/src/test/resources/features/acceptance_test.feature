@@ -9,8 +9,8 @@ Feature:
         Then I should see '<context>'
 
     Examples:
-        |user|password|context|
-        |blackbox-test@elvaco.se|Räksmörgås|urval|
+        | user                    | password   | context |
+        | blackbox-test@elvaco.se | Räksmörgås | urval   |
 
     Scenario Outline: Deny login to MVP
         Given I am on the login page
@@ -18,5 +18,5 @@ Feature:
         Then I should not see '<context>'
 
     Examples:
-        |user|password|context|
-        |blackbox-test@elvaco.se|nope|urval|
+        | user                    | password | context |
+        | blackbox-test@elvaco.se | nope     | urval   |
