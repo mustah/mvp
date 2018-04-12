@@ -8,7 +8,7 @@ import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
-
+import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -57,5 +57,10 @@ class MapperConfig {
   @Bean
   SelectionTreeMapper selectionTreeMapper() {
     return new SelectionTreeMapper();
+  }
+
+  @Bean
+  UserSelectionDtoMapper userSelectionMapper() {
+    return new UserSelectionDtoMapper();
   }
 }

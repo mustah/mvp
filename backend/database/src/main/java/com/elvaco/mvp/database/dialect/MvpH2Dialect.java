@@ -1,9 +1,9 @@
 package com.elvaco.mvp.database.dialect;
 
 import com.elvaco.mvp.database.dialect.types.Types;
+import com.elvaco.mvp.database.dialect.types.h2.H2JsonFieldType;
 import com.elvaco.mvp.database.dialect.types.h2.H2MeasurementUnitType;
-import com.elvaco.mvp.database.dialect.types.h2.H2PropertyCollectionType;
-import com.elvaco.mvp.database.entity.meter.PropertyCollection;
+import com.elvaco.mvp.database.entity.meter.JsonField;
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
@@ -31,9 +31,9 @@ public class MvpH2Dialect extends H2Dialect {
     ServiceRegistry serviceRegistry
   ) {
     typeContributions.contributeType(
-      new H2PropertyCollectionType(),
-      Types.PropertyCollection.toString(),
-      PropertyCollection.class.getCanonicalName()
+      new H2JsonFieldType(),
+      Types.JsonField.toString(),
+      JsonField.class.getCanonicalName()
     );
     typeContributions.contributeType(
       new H2MeasurementUnitType(),

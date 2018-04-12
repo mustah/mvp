@@ -8,6 +8,7 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Settings;
+import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
@@ -18,6 +19,7 @@ import com.elvaco.mvp.core.usecase.MeterLocationUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
+import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.core.usecase.UserUseCases;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +36,7 @@ class UseCaseConfig {
   private final Gateways gateways;
   private final PhysicalMeters physicalMeters;
   private final TokenService tokenService;
+  private final UserSelections userSelections;
 
   @Autowired
   UseCaseConfig(
@@ -44,7 +47,8 @@ class UseCaseConfig {
     Organisations organisations,
     Gateways gateways,
     PhysicalMeters physicalMeters,
-    TokenService tokenService
+    TokenService tokenService,
+    UserSelections userSelections
   ) {
     this.users = users;
     this.logicalMeters = logicalMeters;
@@ -54,6 +58,7 @@ class UseCaseConfig {
     this.gateways = gateways;
     this.physicalMeters = physicalMeters;
     this.tokenService = tokenService;
+    this.userSelections = userSelections;
   }
 
   @Bean
@@ -102,5 +107,10 @@ class UseCaseConfig {
   @Bean
   DashboardUseCases dashboardUseCases(AuthenticatedUser currentUser) {
     return new DashboardUseCases(currentUser, logicalMeters);
+  }
+
+  @Bean
+  UserSelectionUseCases selectionUseCases(AuthenticatedUser currentUser) {
+    return new UserSelectionUseCases(currentUser, userSelections);
   }
 }

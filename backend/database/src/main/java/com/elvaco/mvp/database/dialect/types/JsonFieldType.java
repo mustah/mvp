@@ -2,19 +2,18 @@ package com.elvaco.mvp.database.dialect.types;
 
 import java.io.Serializable;
 
-import com.elvaco.mvp.database.entity.meter.PropertyCollection;
-
+import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
 import org.hibernate.type.SerializationException;
 import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
 
-public abstract class PropertyCollectionType implements UserType {
+public abstract class JsonFieldType implements UserType {
 
   @Override
-  public Class<PropertyCollection> returnedClass() {
-    return PropertyCollection.class;
+  public Class<JsonField> returnedClass() {
+    return JsonField.class;
   }
 
   @Override
@@ -31,22 +30,22 @@ public abstract class PropertyCollectionType implements UserType {
   }
 
   @Override
-  public boolean isMutable() {
-    return true;
-  }
-
-  @Override
   public Object deepCopy(Object value) throws HibernateException {
     if (value == null) {
       return null;
     }
 
-    if (!(value instanceof PropertyCollection)) {
+    if (!(value instanceof JsonField)) {
       return null;
     }
 
-    ObjectNode copyProperties = ((PropertyCollection) value).getJson().deepCopy();
-    return new PropertyCollection(copyProperties);
+    ObjectNode copyJson = ((JsonField) value).getJson().deepCopy();
+    return new JsonField(copyJson);
+  }
+
+  @Override
+  public boolean isMutable() {
+    return true;
   }
 
   @Override

@@ -131,6 +131,3 @@ CREATE TABLE IF NOT EXISTS physical_meter_status_log (
   status TEXT,
   physical_meter_id UUID REFERENCES physical_meter (id)
 );
-
-GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO ${application_user};
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO ${application_user};

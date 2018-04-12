@@ -11,6 +11,7 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import tec.uom.se.format.SimpleUnitFormat;
 import tec.uom.se.quantity.Quantities;
@@ -20,19 +21,10 @@ import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 
 @SuppressWarnings("WeakerAccess") // Used by H2 DB
 @Slf4j
+@UtilityClass
 public final class CompatibilityFunctions {
 
   private static final Map<String, Unit<?>> CUSTOM_TYPES = new HashMap<>();
-
-  static {
-    SimpleUnitFormat.getInstance().alias(Units.CELSIUS, "Celsius");
-    SimpleUnitFormat.getInstance().alias(Units.KELVIN, "Kelvin");
-    /* Necessary hack, because UOM's unit parser doesn't approve of
-    this unit format.*/
-    CUSTOM_TYPES.put("m3", Units.CUBIC_METRE);
-  }
-
-  private CompatibilityFunctions() {}
 
   public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     Quantity<?> sourceQuantity;
@@ -151,5 +143,13 @@ public final class CompatibilityFunctions {
       "left type: " + lhs.getNodeType().toString()
       + ", right type:" + rhs.getNodeType().toString()
     );
+  }
+
+  static {
+    SimpleUnitFormat.getInstance().alias(Units.CELSIUS, "Celsius");
+    SimpleUnitFormat.getInstance().alias(Units.KELVIN, "Kelvin");
+    /* Necessary hack, because UOM's unit parser doesn't approve of
+    this unit format.*/
+    CUSTOM_TYPES.put("m3", Units.CUBIC_METRE);
   }
 }

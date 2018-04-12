@@ -7,7 +7,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -40,11 +39,6 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
-  public String getToken() {
-    return token;
-  }
-
-  @Override
   public boolean isSuperAdmin() {
     return user.isSuperAdmin;
   }
@@ -62,6 +56,16 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   @Override
   public UUID getOrganisationId() {
     return user.organisation.id;
+  }
+
+  @Override
+  public String getToken() {
+    return token;
+  }
+
+  @Override
+  public UUID getUserId() {
+    return user.id;
   }
 
   @Override
