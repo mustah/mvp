@@ -1,34 +1,29 @@
-import {Paper} from 'material-ui';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
+import {
+  CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, TooltipProps, XAxis,
+  YAxis,
+} from 'recharts';
 import {bindActionCreators} from 'redux';
-import {paperStyle} from '../../../app/themes';
 import {HasContent} from '../../../components/content/HasContent';
 import {Period} from '../../../components/dates/dateModels';
-import {Tab} from '../../../components/tabs/components/Tab';
-import {TabContent} from '../../../components/tabs/components/TabContent';
-import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
-import {Tabs} from '../../../components/tabs/components/Tabs';
-import {TabSettings} from '../../../components/tabs/components/TabSettings';
-import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
-import {unixTimestampMillisecondsToDate} from '../../../helpers/formatters';
 import {RootState} from '../../../reducers/rootReducer';
-import {firstUpperTranslated, translate} from '../../../services/translationService';
+import {firstUpperTranslated} from '../../../services/translationService';
 import {
   fetchMeasurements,
   mapApiResponseToGraphData,
   selectQuantities,
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
-import {TabName} from '../../../state/ui/tabs/tabsModels';
-import {Children, uuid} from '../../../types/Types';
-import {GraphContents, LineProps} from '../reportModels';
-import './GraphContainer.scss';
+import {Children, Dictionary, uuid} from '../../../types/Types';
+import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
+import {CustomizedTooltip} from '../components/CustomizedTooltip';
+import {Dot, DotReChartProps} from '../components/Dot';
+import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
 
 interface StateToProps {
   period: Period;
@@ -38,28 +33,45 @@ interface StateToProps {
 
 interface State {
   graphContents: GraphContents;
+  selectedQuantities: string[];
 }
 
 interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
 }
 
+interface MouseOverProps {
+  isTooltipActive: boolean;
+  chartX: number;
+  chartY: number;
+  activeTooltipIndex: number;
+  activePayload: ActiveDataPoint[];
+
+}
+
 type Props = StateToProps & DispatchToProps;
 
-const style: React.CSSProperties = {width: '100%', height: '100%'};
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
 
-const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
-  const components: Children[] = lines.map((props: LineProps, index: number) => (
-    <Line
-      key={index}
-      yAxisId="left"
-      type="monotone"
-      dot={false}
-      connectNulls={true}
-      {...props}
-    />
-  ));
+const renderGraphContents = (
+  {lines, axes}: GraphContents,
+  renderDot: (props) => React.ReactNode,
+  renderActiveDot: (props) => React.ReactNode,
+): Children[] => {
+  const components: Children[] = lines.map((props: LineProps, index: number) => {
+    const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
+    return (
+      <Line
+        key={index}
+        yAxisId="left"
+        type="monotone"
+        connectNulls={true}
+        {...props}
+        activeDot={renderActiveDot}
+        dot={newDot}
+      />
+    );
+  });
 
   if (axes.left) {
     components.push((
@@ -76,10 +88,6 @@ const renderGraphContents = ({lines, axes}: GraphContents): Children[] => {
   return components;
 };
 
-const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
-
-const formatTimestamp = (when: number): string => unixTimestampMillisecondsToDate(when);
-
 const emptyGraphContents: GraphContents = {
   axes: {},
   data: [],
@@ -87,10 +95,17 @@ const emptyGraphContents: GraphContents = {
   lines: [],
 };
 
-class GraphComponent extends React.Component<Props> {
+class GraphComponent extends React.Component<Props, State> {
 
-  state: State = {graphContents: emptyGraphContents};
-  onChangeTab = () => void(0);
+  state: State = {
+    graphContents: emptyGraphContents,
+    selectedQuantities: [],
+  };
+
+  private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
+  private tooltipPayload: ActiveDataPoint;
+  private activeDataKey;
+
   changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
   async componentDidMount() {
@@ -105,7 +120,7 @@ class GraphComponent extends React.Component<Props> {
   }
 
   async componentWillReceiveProps({selectedListItems, period, selectedQuantities}: Props) {
-    const somethingChanged = true || period !== this.props.period;
+    const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
     if (somethingChanged) {
       const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
       this.setState({
@@ -113,15 +128,44 @@ class GraphComponent extends React.Component<Props> {
         graphContents: mapApiResponseToGraphData(graphData),
         selectedQuantities,
       });
+      this.resetDots();
     }
+  }
+
+  renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
+  renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
+  renderAndStoreDot = ({dataKey, ...rest}: DotReChartProps & {dataKey: uuid}) => {
+    const {index, cy} = rest;
+    this.dots = {
+      ...this.dots,
+      [index]: {...this.dots[index], [dataKey]: {dataKey, cy}},
+    };
+    return (<Dot {...rest} />);
+  }
+
+  resetDots = () => this.dots = {};
+
+  setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
+    if (isTooltipActive) {
+      this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
+      this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
+    }
+  }
+
+  findClosestLine = (index: number, mouseY: number): uuid => {
+    const activeDots = this.dots[index];
+    const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
+      .filter(({cy}) => cy || cy === 0)
+      .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
+      .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
+    return sortedActiveDots[0].dataKey;
   }
 
   render() {
     const {selectedQuantities} = this.props;
     const {graphContents} = this.state;
-    const lines = renderGraphContents(graphContents);
+    const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
     const {data, legend} = graphContents;
-    const selectedTab: TabName = TabName.graph;
 
     const quantityMenuItem = (quantity: string) => (
       <MenuItem
@@ -144,76 +188,56 @@ class GraphComponent extends React.Component<Props> {
     );
 
     return (
-      <Paper style={contentStyle}>
-        <div style={style}>
-          <Tabs>
-            <TabTopBar>
-              <TabHeaders selectedTab={selectedTab} onChangeTab={this.onChangeTab}>
-                <Tab tab={TabName.graph} title={translate('graph')}/>
-                <Tab tab={TabName.table} title={translate('table')}/>
-              </TabHeaders>
-              <TabSettings/>
-            </TabTopBar>
-            <TabContent tab={TabName.graph} selectedTab={selectedTab}>
-              <div style={{padding: '20px 20px 0px'}}>
-                <SelectField
-                  multiple={true}
-                  hintText={firstUpperTranslated('select quantities')}
-                  value={selectedQuantities}
-                  onChange={this.changeQuantities}
-                >
-                  {allQuantities.heat.map(quantityMenuItem)}
-                </SelectField>
-              </div>
-              <HasContent
-                hasContent={data.length > 0}
-                fallbackContent={missingData}
-              >
-                <div>
-                  <ResponsiveContainer width="90%" aspect={2.5}>
-                    <LineChart
-                      width={10}
-                      height={50}
-                      data={data}
-                      margin={margin}
-                    >
-                      <XAxis
-                        dataKey="name"
-                        domain={['dataMin', 'dataMax']}
-                        scale="time"
-                        tickFormatter={formatTimestamp}
-                        type="number"
-                      />
-                      <CartesianGrid strokeDasharray="3 3"/>
-                      <Tooltip labelFormatter={formatLabelTimeStamp}/>
-                      <Legend payload={legend}/>
-                      {lines}
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </HasContent>
-            </TabContent>
-            <TabContent tab={TabName.table} selectedTab={selectedTab}>
-              <HasContent
-                hasContent={false}
-                fallbackContent={missingData}
-              >
-                <p>TBD</p>
-              </HasContent>
-            </TabContent>
-          </Tabs>
+      <div>
+        <div style={{padding: '20px 20px 0px'}}>
+          <SelectField
+            multiple={true}
+            hintText={firstUpperTranslated('select quantities')}
+            value={selectedQuantities}
+            onChange={this.changeQuantities}
+          >
+            {allQuantities.heat.map(quantityMenuItem)}
+          </SelectField>
         </div>
-      </Paper>
+        <HasContent
+          hasContent={data.length > 0}
+          fallbackContent={missingData}
+        >
+          <div>
+            <ResponsiveContainer width="90%" aspect={2.5}>
+              <LineChart
+                width={10}
+                height={50}
+                data={data}
+                margin={margin}
+                onMouseMove={this.setTooltipPayload}
+              >
+                <XAxis
+                  dataKey="name"
+                  domain={['dataMin', 'dataMax']}
+                  scale="time"
+                  tickFormatter={formatLabelTimeStamp}
+                  type="number"
+                />
+                <CartesianGrid strokeDasharray="3 3"/>
+                <Tooltip content={this.renderToolTip}/>
+                <Legend payload={legend}/>
+                {lines}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </HasContent>
+      </div>
     );
   }
-
 }
 
-const mapStateToProps = ({
-  report: {selectedListItems},
-  searchParameters: {selection: {selected: {period}}},
-  ui: {measurements: {selectedQuantities}},
-}: RootState): StateToProps =>
+const mapStateToProps = (
+  {
+    report: {selectedListItems},
+    searchParameters: {selection: {selected: {period}}},
+    ui: {measurements: {selectedQuantities}},
+  }: RootState): StateToProps =>
   ({
     selectedListItems,
     period,

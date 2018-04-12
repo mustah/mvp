@@ -1,3 +1,4 @@
+import {LegendPayload} from 'recharts';
 import {IndicatorType} from '../../components/indicators/indicatorWidgetModels';
 import {Status, uuid} from '../../types/Types';
 
@@ -18,10 +19,8 @@ export interface LineProps {
   strokeWidth?: number;
 }
 
-export interface ProprietaryLegendProps {
+export interface ProprietaryLegendProps extends LegendPayload {
   color: string;
-  value: string | number;
-  type: 'line';
 }
 
 export interface GraphContents {
@@ -38,6 +37,18 @@ export interface Indicator {
   subtitle: string;
   value: number;
   unit: string; // Unit is what we are measuring the value in, like "kWh", "m^3"
+}
+
+export interface ActiveDataPoint {
+  color: any;
+  dataKey: uuid;
+  fill: any;
+  name: uuid;
+  payload: {name: number; [key: string]: number};
+  stroke: any;
+  strokeWidth: number;
+  unit: string;
+  value: number;
 }
 
 // TODO[!must!] create this in redux later!

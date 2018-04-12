@@ -23,7 +23,7 @@ const colorize =
 const colorizeAverage = colorize({
   [RenderableQuantity.volume as string]: '#5555ff',
   [RenderableQuantity.flow as string]: '#ff99ff',
-  [RenderableQuantity.energy as string]: '#55dd55',
+  [RenderableQuantity.energy as string]: '#439c43',
   [RenderableQuantity.power as string]: '#00aaaa',
   [RenderableQuantity.forwardTemperature as string]: '#843939',
   [RenderableQuantity.returnTemperature as string]: '#a7317d',
@@ -40,7 +40,7 @@ const colorizeMeters = colorize({
   [RenderableQuantity.differenceTemperature as string]: '#0084e6',
 });
 
-const thickStroke: number = 3;
+const thickStroke: number = 2;
 
 export const mapApiResponseToGraphData =
   ({measurement, average}: MeasurementResponses): GraphContents => {
@@ -82,22 +82,22 @@ export const mapApiResponseToGraphData =
         }), {});
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
-    measurement.forEach((meterQuantity: MeasurementApiResponsePart) => {
-      const label: string = meterQuantity.quantity + ': ' + meterQuantity.label;
-      if (!uniqueMeters.has(label)) {
-        uniqueMeters.add(label);
+    measurement.forEach(({quantity, label, values, unit}: MeasurementApiResponsePart) => {
+      const dataKey: string = `${quantity} ${label}`;
+      if (!uniqueMeters.has(dataKey)) {
+        uniqueMeters.add(dataKey);
         const props: LineProps = {
-          dataKey: label,
-          key: `line-${label}`,
-          name: label,
-          stroke: colorizeMeters(meterQuantity.quantity as RenderableQuantity),
+          dataKey,
+          key: `line-${dataKey}`,
+          name: dataKey,
+          stroke: colorizeMeters(quantity as RenderableQuantity),
           strokeWidth: average.length > 0 ? 1 : thickStroke,
         };
         graphContents.lines.push(props);
 
       }
 
-      meterQuantity.values.forEach(({when, value}) => {
+      values.forEach(({when, value}) => {
         const created: number = when * 1000;
         if (!firstTimestamp || created < firstTimestamp) {
           firstTimestamp = created;
@@ -105,28 +105,28 @@ export const mapApiResponseToGraphData =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        byDate[created][label] = value;
+        byDate[created][dataKey] = value;
       });
 
       if (!graphContents.axes.left) {
-        graphContents.axes.left = meterQuantity.unit;
-      } else if (graphContents.axes.left !== meterQuantity.unit && !graphContents.axes.right) {
-        graphContents.axes.right = meterQuantity.unit;
+        graphContents.axes.left = unit;
+      } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
+        graphContents.axes.right = unit;
       }
     });
 
-    average.forEach((averageQuantity: AverageApiResponsePart) => {
-      const label: string = averageQuantity.quantity;
+    average.forEach(({quantity, values}: AverageApiResponsePart) => {
+      const dataKey: string = `Average ${quantity}`;
       const props: LineProps = {
-        dataKey: label,
-        key: `average-${averageQuantity.quantity}`,
-        name: `Average ${averageQuantity.quantity}`,
-        stroke: colorizeAverage(averageQuantity.quantity as RenderableQuantity),
+        dataKey,
+        key: `average-${quantity}`,
+        name: dataKey,
+        stroke: colorizeAverage(quantity as RenderableQuantity),
         strokeWidth: thickStroke,
       };
       graphContents.lines.push(props);
 
-      averageQuantity.values.forEach(({when, value}) => {
+      values.forEach(({when, value}) => {
         const created: number = when * 1000;
         if (created < firstTimestamp) {
           return;
@@ -134,17 +134,14 @@ export const mapApiResponseToGraphData =
         if (!byDate[created]) {
           byDate[created] = {};
         }
-        byDate[created][label] = value;
+        byDate[created][dataKey] = value;
       });
     });
 
-    graphContents.data = Object.keys(byDate).reduce((acc: object[], created) => {
-      acc.push({
+    graphContents.data = Object.keys(byDate).map((created) => ({
         ...byDate[created],
         name: Number(created),
-      });
-      return acc;
-    }, []);
+      })).sort(({name: createdA}, {name: createdB}) => createdA - createdB);
 
     graphContents.legend = Object.keys(legends).map((legend) => legends[legend]);
     return graphContents;

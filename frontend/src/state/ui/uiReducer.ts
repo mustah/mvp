@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux';
 import {sideMenu, SideMenuState} from '../../usecases/sidemenu/sideMenuReducer';
-import {measurements, MeasurementState} from './graph/measurement/measurementReducer';
+import {MeasurementState} from './graph/measurement/measurementModels';
+import {measurements} from './graph/measurement/measurementReducer';
 import {indicator, IndicatorState} from './indicator/indicatorReducer';
 import {MessageState} from './message/messageModels';
 import {message} from './message/messageReducer';
