@@ -84,3 +84,7 @@ nbproject/private/
 nbbuild/
 nbdist/
 .nb-gradle/
+
+
+### acceptance_tests ###
+acceptance_tests/target
