@@ -6,6 +6,10 @@ configurations {
   }
 }
 
+test {
+  exclude '**acceptance_tests/*'
+}
+
 task cucumber() {
   dependsOn assemble, compileTestJava
   doLast {
