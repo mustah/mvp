@@ -6,7 +6,13 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-import org.openqa.selenium.*;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,16 +24,16 @@ public class StepDefinitions {
 
   WebDriver driver;
   WebDriverWait wait;
-  String mvp_server = new String();
+  String mvpServer = new String();
 
   @Before
   public void setUp() {
     if (System.getenv("MVP_SERVER") != null) {
-      mvp_server = System.getenv("MVP_SERVER");
+      mvpServer = System.getenv("MVP_SERVER");
     } else {
-      mvp_server = "http://localhost:4444";
+      mvpServer = "http://localhost:4444";
     }
-    System.out.println("MVP_SERVER: " + mvp_server);
+    System.out.println("MVP_SERVER: " + mvpServer);
 
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--headless");
@@ -48,7 +54,7 @@ public class StepDefinitions {
 
   @Given("I am on the login page")
   public void givenIAmOnTheLoginPage() throws Throwable {
-    driver.get(mvp_server);
+    driver.get(mvpServer);
     assertThat(driver.getTitle()).isEqualTo("Elvaco");
   }
 

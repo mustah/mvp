@@ -187,6 +187,18 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
+test:acceptance_test:
+  <<: *cache_gradle_read_only
+  stage: test
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-integration"
+    when: on_failure
+    paths:
+      - target/cucumber
+    expire_in: 7 days
+  script:
+    - MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber
+
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
   only:
