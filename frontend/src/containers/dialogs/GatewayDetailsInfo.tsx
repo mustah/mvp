@@ -6,7 +6,6 @@ import {Status} from '../../components/status/Status';
 import {MainTitle} from '../../components/texts/Titles';
 import {translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
-import {titleOf} from './dialogHelper';
 import {Info} from './Info';
 
 interface Props {
@@ -14,7 +13,7 @@ interface Props {
 }
 
 export const GatewayDetailsInfo = ({gateway}: Props) => {
-  const {location: {city, address}, serial, productModel, status, flags} = gateway;
+  const {location: {city, address}, serial, productModel, status} = gateway;
   const gatewayImage = imagePathFor('cme2110.jpg');
 
   return (
@@ -45,7 +44,6 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
               value={<Status name={status.name}/>}
             />
             <Info label={translate('interval')} value={'24h'}/>
-            <Info label={translate('flagged for action')} value={titleOf(flags)}/>
           </Row>
         </Column>
       </Row>

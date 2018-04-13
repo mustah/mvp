@@ -23,7 +23,6 @@ import {
   getPaginatedEntities,
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {Flag} from '../../state/domain-models/flag/flagModels';
 import {getPaginatedMeterParameters} from '../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
@@ -96,9 +95,6 @@ class MeterList extends React.Component<Props> {
     const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
     const renderCityName = ({location: {city}}: Meter) => city ? city.name : null;
     const renderAddressName = ({location: {address}}: Meter) => address ? address.name : null;
-    const renderFlags = ({flags}: Meter) => flags
-      ? flags.map((flag: Flag) => flag.title).join(', ')
-      : null;
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;
@@ -151,10 +147,6 @@ class MeterList extends React.Component<Props> {
               <TableColumn
                 header={<TableHead>{translate('status change')}</TableHead>}
                 renderCell={renderStatusChanged}
-              />
-              <TableColumn
-                header={<TableHead>{translate('flags')}</TableHead>}
-                renderCell={renderFlags}
               />
               <TableColumn
                 header={<TableHead className="actionDropdown">{' '}</TableHead>}

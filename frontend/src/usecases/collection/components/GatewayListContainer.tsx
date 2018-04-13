@@ -22,7 +22,6 @@ import {
   getPaginatedEntities,
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {Flag} from '../../../state/domain-models/flag/flagModels';
 import {getPaginatedGatewayParameters} from '../../../state/search/selection/selectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
@@ -84,7 +83,6 @@ class GatewayList extends React.Component<Props> {
     const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
     const renderCity = ({location: {city}}: Gateway) => city.name;
     const renderAddress = ({location: {address}}: Gateway) => address.name;
-    const renderFlags = ({flags}: Gateway) => flags.map((flag: Flag) => flag.title).join(', ');
     const renderActionDropdown = ({id, productModel}: Gateway) =>
       <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
     const renderStatusChanged = ({statusChanged}: Gateway) => statusChanged || <Separator/>;
@@ -127,10 +125,6 @@ class GatewayList extends React.Component<Props> {
               <TableColumn
                 header={<TableHead>{translate('status change')}</TableHead>}
                 renderCell={renderStatusChanged}
-              />
-              <TableColumn
-                header={<TableHead>{translate('flags')}</TableHead>}
-                renderCell={renderFlags}
               />
               <TableColumn
                 header={<TableHead className="actionDropdown">{' '}</TableHead>}
