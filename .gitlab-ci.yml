@@ -197,7 +197,9 @@ test:acceptance_test:
       - target/cucumber
     expire_in: 7 days
   script:
-    - MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber
+    - wget http://chromedriver.storage.googleapis.com/2.37/chromedriver_linux64.zip
+    - unzip chromedriver_linux64.zip
+    - CHROME_WEBDRIVER=$(echo `pwd`/chromedriver) MVP_SERVER="https://mvpstaging.elvaco.se" ./gradlew cucumber
 
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
