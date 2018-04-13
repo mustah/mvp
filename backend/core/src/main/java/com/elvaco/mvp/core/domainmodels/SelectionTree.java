@@ -15,13 +15,13 @@ public class SelectionTree {
   public void addToSelectionTree(LogicalMeter logicalMeter) {
     Location location = logicalMeter.location;
 
-    String countryName = location.getCountryOrUnknown();
-    String cityName = location.getCityOrUnknown();
-    String addressName = location.getAddressOrUnknown();
+    String country = location.getCountryOrUnknown();
+    String city = location.getCityOrUnknown();
+    String address = location.getAddressOrUnknown();
 
-    String cityId = countryName.concat(",").concat(cityName);
-    addCity(cityId, cityName)
-      .addAddress(addressName)
+    String cityId = country.concat(",").concat(city);
+    addCity(cityId, city)
+      .addAddress(address)
       .addMeter(logicalMeter.id, logicalMeter.externalId);
   }
 

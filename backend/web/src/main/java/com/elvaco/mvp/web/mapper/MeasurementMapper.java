@@ -27,8 +27,8 @@ public class MeasurementMapper {
   }
 
   public List<MeasurementSeriesDto> toSeries(List<LabeledMeasurementValue> foundMeasurements) {
-    Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements = new
-      LinkedHashMap<>();
+    Map<LabeledQuantity, List<LabeledMeasurementValue>> quantityMeasurements =
+      new LinkedHashMap<>();
     for (LabeledMeasurementValue measurement : foundMeasurements) {
       Quantity quantity = measurement.quantity;
       LabeledQuantity key = new LabeledQuantity(quantity, measurement.label);
@@ -64,7 +64,7 @@ public class MeasurementMapper {
     Quantity quantity;
     String label;
 
-    LabeledQuantity(Quantity quantity, String label) {
+    private LabeledQuantity(Quantity quantity, String label) {
       this.quantity = quantity;
       this.label = label;
     }

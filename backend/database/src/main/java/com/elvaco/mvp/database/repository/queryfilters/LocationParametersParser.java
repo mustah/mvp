@@ -37,7 +37,6 @@ final class LocationParametersParser {
         parameters.addAddress(addressParam.address);
       });
     return parameters;
-
   }
 
   static List<CityParam> toCityParams(List<String> cityIds) {

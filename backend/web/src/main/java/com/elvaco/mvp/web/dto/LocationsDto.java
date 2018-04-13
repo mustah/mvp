@@ -17,8 +17,10 @@ public class LocationsDto {
     return countries.computeIfAbsent(country, Country::new);
   }
 
-  public void addLocation(String countryName, String cityName, String addressName) {
-    this.addCountry(countryName).addCity(cityName).addAddress(addressName);
+  public void addLocation(String country, String city, String address) {
+    addCountry(country)
+      .addCity(city)
+      .addAddress(address);
   }
 
   public Country getCountry(String name) {

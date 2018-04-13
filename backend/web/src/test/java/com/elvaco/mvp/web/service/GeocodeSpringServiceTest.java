@@ -50,7 +50,7 @@ public class GeocodeSpringServiceTest {
 
   @Test
   public void shouldNotFetchWhenLocationIsMissingCity() {
-    Location location = new LocationBuilder().country("sweden").streetAddress("main 1").build();
+    Location location = new LocationBuilder().country("sweden").address("main 1").build();
 
     geocodeService.fetchCoordinates(LocationWithId.from(location, randomUUID()));
 
@@ -62,7 +62,7 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("stockholm")
-      .streetAddress("drottninggatan 1")
+      .address("drottninggatan 1")
       .latitude(1.2)
       .longitude(2.1)
       .build();
@@ -95,7 +95,7 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("stockholm")
-      .streetAddress("drottninggatan 1")
+      .address("drottninggatan 1")
       .build();
 
     UUID logicalMeterId = randomUUID();
@@ -120,7 +120,7 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("växjö")
-      .streetAddress("drottingvägen 1")
+      .address("drottingvägen 1")
       .build();
 
     UUID logicalMeterId = randomUUID();

@@ -76,7 +76,7 @@ public class MeterLocationUseCasesTest {
       newMeter(),
       newMeterWith(sweden()
                      .city("kungsbacka")
-                     .streetAddress("drottninggatan 2"))
+                     .address("drottninggatan 2"))
     ));
 
     MeterSummary summary = useCases.findAllForSummaryInfo(parameters);
@@ -90,7 +90,7 @@ public class MeterLocationUseCasesTest {
   public void haTwoMetersButOneLocation() {
     LocationBuilder drottningGatan = sweden()
       .city("kungsbacka")
-      .streetAddress("drottninggatan 2");
+      .address("drottninggatan 2");
     MeterLocationUseCases useCases = useCasesWith(asList(
       newMeterWith(drottningGatan),
       newMeterWith(drottningGatan)
@@ -108,7 +108,7 @@ public class MeterLocationUseCasesTest {
     MeterLocationUseCases useCases = useCasesWith(singletonList(
       newMeterWith(sweden()
                      .city("kungsbacka")
-                     .streetAddress("drottinggatan 1"))
+                     .address("drottinggatan 1"))
     ));
 
     MeterSummary summary = useCases.findAllForSummaryInfo(parameters);

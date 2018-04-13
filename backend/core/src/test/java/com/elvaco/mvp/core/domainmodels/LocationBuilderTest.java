@@ -37,6 +37,31 @@ public class LocationBuilderTest {
       .confidence(9999.0);
     assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(builder::build)
       .withMessageContaining("Confidence should be between 0.0 and 1.0");
+  }
 
+  @Test
+  public void valuesAreTrimmedToNull() {
+    Location location = new LocationBuilder()
+      .country("  ")
+      .city("   ")
+      .address("")
+      .build();
+
+    assertThat(location.getCountry()).isNull();
+    assertThat(location.getCity()).isNull();
+    assertThat(location.getAddress()).isNull();
+  }
+
+  @Test
+  public void valuesAreTrimmed() {
+    Location location = new LocationBuilder()
+      .country(" sweden ")
+      .city(" kungsbacka  ")
+      .address(" kabelgatan 1   ")
+      .build();
+
+    assertThat(location.getCountry()).isEqualTo("sweden");
+    assertThat(location.getCity()).isEqualTo("kungsbacka");
+    assertThat(location.getAddress()).isEqualTo("kabelgatan 1");
   }
 }

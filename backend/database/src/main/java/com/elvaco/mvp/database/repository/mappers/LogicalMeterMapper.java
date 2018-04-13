@@ -11,29 +11,18 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+@RequiredArgsConstructor
 public class LogicalMeterMapper {
 
   private final MeterDefinitionMapper meterDefinitionMapper;
-  private final LocationMapper locationMapper;
   private final PhysicalMeterMapper physicalMeterMapper;
   private final GatewayMapper gatewayMapper;
-
-  public LogicalMeterMapper(
-    MeterDefinitionMapper meterDefinitionMapper,
-    LocationMapper locationMapper,
-    PhysicalMeterMapper physicalMeterMapper,
-    GatewayMapper gatewayMapper
-  ) {
-    this.meterDefinitionMapper = meterDefinitionMapper;
-    this.locationMapper = locationMapper;
-    this.physicalMeterMapper = physicalMeterMapper;
-    this.gatewayMapper = gatewayMapper;
-  }
 
   public LogicalMeter toDomainModel(LogicalMeterEntity logicalMeterEntity) {
     List<PhysicalMeter> physicalMeters = logicalMeterEntity.physicalMeters
@@ -73,7 +62,7 @@ public class LogicalMeterMapper {
       meterDefinitionMapper.toEntity(logicalMeter.meterDefinition)
     );
 
-    logicalMeterEntity.location = locationMapper.toEntity(logicalMeter.id, logicalMeter.location);
+    logicalMeterEntity.location = LocationMapper.toEntity(logicalMeter.id, logicalMeter.location);
 
     logicalMeterEntity.physicalMeters = logicalMeter.physicalMeters
       .stream()
@@ -93,7 +82,7 @@ public class LogicalMeterMapper {
       entity.getId(),
       entity.externalId,
       entity.organisationId,
-      locationMapper.toDomainModel(entity.location),
+      LocationMapper.toDomainModel(entity.location),
       entity.created
     );
   }
@@ -106,7 +95,7 @@ public class LogicalMeterMapper {
       logicalMeterEntity.id,
       logicalMeterEntity.externalId,
       logicalMeterEntity.organisationId,
-      locationMapper.toDomainModel(logicalMeterEntity.location),
+      LocationMapper.toDomainModel(logicalMeterEntity.location),
       logicalMeterEntity.created,
       physicalMeters,
       meterDefinitionMapper.toDomainModel(logicalMeterEntity.meterDefinition),

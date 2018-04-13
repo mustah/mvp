@@ -28,6 +28,7 @@ import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
 import com.elvaco.mvp.database.repository.queryfilters.LogicalMeterQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.PhysicalMeterStatusLogQueryFilters;
 import com.querydsl.core.types.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -36,30 +37,17 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class LogicalMeterRepository implements LogicalMeters {
 
   private static final QPhysicalMeterStatusLogEntity Q =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
+  private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+  private final MeasurementJpaRepository measurementJpaRepository;
   private final LogicalMeterMapper logicalMeterMapper;
   private final LogicalMeterSortingMapper sortingMapper;
-  private final MeasurementJpaRepository measurementJpaRepository;
-
-  public LogicalMeterRepository(
-    LogicalMeterJpaRepository logicalMeterJpaRepository,
-    PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
-    LogicalMeterSortingMapper sortingMapper,
-    LogicalMeterMapper logicalMeterMapper,
-    MeasurementJpaRepository measurementJpaRepository
-  ) {
-    this.logicalMeterJpaRepository = logicalMeterJpaRepository;
-    this.sortingMapper = sortingMapper;
-    this.logicalMeterMapper = logicalMeterMapper;
-    this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
-    this.measurementJpaRepository = measurementJpaRepository;
-  }
 
   private static String toSortString(Object sortProperty) {
     return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");

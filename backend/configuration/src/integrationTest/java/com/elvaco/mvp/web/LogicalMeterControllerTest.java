@@ -12,6 +12,7 @@ import java.util.function.Function;
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
@@ -475,12 +476,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "my-mapped-meter",
       context().getOrganisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new Location(
-        new GeoCoordinate(11.0, 22.0),
-        "country",
-        "city",
-        "address"
-      )
+      new LocationBuilder()
+        .coordinate(new GeoCoordinate(11.0, 22.0))
+        .country("country")
+        .city("city")
+        .address("address")
+        .build()
     ));
     ResponseEntity<List<MapMarkerDto>> response = asTestUser()
       .getList("/meters/map-markers", MapMarkerDto.class);
@@ -496,12 +497,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       "my-mapped-meter",
       context().getOrganisationId(),
       MeterDefinition.UNKNOWN_METER,
-      new Location(
-        new GeoCoordinate(11.0, 22.0),
-        "sweden",
-        "varberg",
-        "address"
-      )
+      new LocationBuilder()
+        .coordinate(new GeoCoordinate(11.0, 22.0))
+        .country("sweden")
+        .city("varberg")
+        .address("address")
+        .build()
     ));
     ResponseEntity<List<MapMarkerDto>> response = asTestUser()
       .getList("/meters/map-markers?city=sweden,varberg", MapMarkerDto.class);

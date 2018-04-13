@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.repository.Locations;
@@ -94,13 +95,14 @@ public class GeocodeControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    LocationWithId expected = new LocationWithId(
-      logicalMeterId,
-      new GeoCoordinate(11.23332, 12.12323, 1.0),
-      "sweden",
-      "växjö",
-      "drottninggatan 3"
-    );
+    LocationWithId expected = new LocationBuilder()
+      .id(logicalMeterId)
+      .coordinate(new GeoCoordinate(11.23332, 12.12323, 1.0))
+      .country("sweden")
+      .city("växjö")
+      .address("drottninggatan 3")
+      .buildLocationWithId();
+
     assertThat(locations.findById(logicalMeterId).get()).isEqualTo(expected);
   }
 

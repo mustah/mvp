@@ -12,7 +12,7 @@ public class LocationWithId extends Location implements Identifiable<UUID> {
 
   private final UUID logicalMeterId;
 
-  public LocationWithId(
+  protected LocationWithId(
     UUID logicalMeterId,
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,

@@ -9,28 +9,22 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableConfigurationProperties(RabbitConsumerProperties.class)
 class RabbitMqConfig {
 
   private final RabbitConsumerProperties consumerProperties;
-
-  @Autowired
-  RabbitMqConfig(
-    RabbitConsumerProperties consumerProperties
-  ) {
-    this.consumerProperties = consumerProperties;
-  }
 
   @Bean
   Queue queue() {

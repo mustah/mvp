@@ -13,6 +13,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringResponseDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -62,7 +63,11 @@ public class MeteringMessageHandler implements MessageHandler {
       return Optional.empty();
     }
 
-    Location location = new Location(facility.country, facility.city, facility.address);
+    Location location = new LocationBuilder()
+      .country(facility.country)
+      .city(facility.city)
+      .address(facility.address)
+      .build();
 
     LogicalMeter logicalMeter = logicalMeterUseCases
       .findByOrganisationIdAndExternalId(organisation.id, facility.id)

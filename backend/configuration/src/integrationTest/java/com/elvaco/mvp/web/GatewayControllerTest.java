@@ -269,7 +269,7 @@ public class GatewayControllerTest extends IntegrationTest {
     LocationBuilder location = new LocationBuilder()
       .country("sweden")
       .city("kungsbacka")
-      .streetAddress("super 1")
+      .address("super 1")
       .latitude(1.234)
       .longitude(2.3323);
 

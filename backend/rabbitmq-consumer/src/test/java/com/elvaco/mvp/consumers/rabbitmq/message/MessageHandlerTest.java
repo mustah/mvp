@@ -90,11 +90,11 @@ public class MessageHandlerTest {
   private static final LocalDateTime MEASUREMENT_TIMESTAMP =
     LocalDateTime.parse("2018-03-07T16:13:09");
   private static final String DEFAULT_UNIT = "kWh";
-  private static final Location DEFAULT_LOCATION = new Location(
-    "Sweden",
-    "Kungsbacka",
-    "Kabelgatan 2T"
-  );
+  private static final Location DEFAULT_LOCATION = new LocationBuilder()
+    .country("Sweden")
+    .city("Kungsbacka")
+    .address("Kabelgatan 2T")
+    .build();
 
   private PhysicalMeters physicalMeters;
   private Organisations organisations;
@@ -174,7 +174,7 @@ public class MessageHandlerTest {
       logicalMeter.id,
       DEFAULT_EXTERNAL_ID,
       organisation.id,
-      new Location("Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      new LocationBuilder().country("Sweden").city("Kungsbacka").address("Kabelgatan 2T").build(),
       logicalMeter.created,
       singletonList(savedPhysicalMeter),
       MeterDefinition.HOT_WATER_METER,
@@ -251,7 +251,11 @@ public class MessageHandlerTest {
 
     ));
 
-    Location newLocation = new Location("", "Växjö", "Gatvägen 41");
+    Location newLocation = new LocationBuilder()
+      .country("")
+      .city("Växjö")
+      .address("Gatvägen 41")
+      .build();
     messageHandler.handle(newStructureMessage(newLocation));
 
     assertThat(logicalMeters.findById(meterId).get().location).isEqualTo(newLocation);
@@ -338,7 +342,7 @@ public class MessageHandlerTest {
     LocationWithId expectedLocationWithId = new LocationBuilder()
       .country("Sweden")
       .city("Kungsbacka")
-      .streetAddress("Kabelgatan 2T")
+      .address("Kabelgatan 2T")
       .id(geocodeService.requestId)
       .buildLocationWithId();
 

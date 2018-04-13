@@ -50,12 +50,12 @@ public class LocationEntity extends EntityType<UUID> {
     UUID logicalMeterId,
     String country,
     String city,
-    String streetAddress
+    String address
   ) {
     this.logicalMeterId = logicalMeterId;
     this.country = country;
     this.city = city;
-    this.streetAddress = streetAddress;
+    this.streetAddress = address;
   }
 
   public boolean hasCoordinates() {

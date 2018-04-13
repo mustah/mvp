@@ -10,6 +10,7 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
+import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
@@ -32,12 +33,12 @@ public class LogicalMeterQueryDslJpaRepository
   extends BaseQueryDslRepository<LogicalMeterEntity, UUID>
   implements LogicalMeterJpaRepository {
 
-  private static final QLogicalMeterEntity Q_LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
+  private static final QLogicalMeterEntity LOGICAL_METER = QLogicalMeterEntity.logicalMeterEntity;
 
-  private static final QPhysicalMeterStatusLogEntity Q_STATUS_LOG =
+  private static final QPhysicalMeterStatusLogEntity STATUS_LOG =
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
-  private static final QPhysicalMeterEntity Q_PHYSICAL_METER =
+  private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
 
   @Autowired
@@ -68,7 +69,6 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate,
     Pageable pageable
   ) {
-
     Predicate predicateWithStatusPeriod = queryOfStatusPeriod(parameters, predicate);
 
     JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery(predicateWithStatusPeriod)
@@ -84,7 +84,7 @@ public class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findByOrganisationId(UUID organisationId) {
-    return findAll(Q_LOGICAL_METER.organisationId.eq(organisationId));
+    return findAll(LOGICAL_METER.organisationId.eq(organisationId));
   }
 
   @Override
@@ -97,8 +97,8 @@ public class LogicalMeterQueryDslJpaRepository
     UUID organisationId,
     String externalId
   ) {
-    Predicate predicate = Q_LOGICAL_METER.organisationId.eq(organisationId)
-      .and(Q_LOGICAL_METER.externalId.eq(externalId));
+    Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
+      .and(LOGICAL_METER.externalId.eq(externalId));
     return Optional.ofNullable(fetchOne(predicate));
   }
 
@@ -107,26 +107,19 @@ public class LogicalMeterQueryDslJpaRepository
     UUID organisationId,
     UUID id
   ) {
-    Predicate predicate = Q_LOGICAL_METER.organisationId.eq(organisationId)
-      .and(Q_LOGICAL_METER.id.eq(id));
+    Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
+      .and(LOGICAL_METER.id.eq(id));
     return Optional.ofNullable(fetchOne(predicate));
   }
 
-  private Predicate queryOfStatusPeriod(
-    RequestParameters parameters,
-    Predicate predicate
-  ) {
-    JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-    Predicate newPredicate = withStatusWithinPeriod(parameters, predicate);
+  private Predicate queryOfStatusPeriod(RequestParameters parameters, Predicate predicate) {
+    JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
+      .select(LOGICAL_METER.id).from(path)
+      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
+      .where(withStatusWithinPeriod(parameters, predicate));
 
-    JPAQuery<UUID> queryIds = queryFactory.select(
-      Q_LOGICAL_METER.id
-    ).from(path)
-      .leftJoin(Q_LOGICAL_METER.physicalMeters, Q_PHYSICAL_METER)
-      .leftJoin(Q_PHYSICAL_METER.statusLogs, Q_STATUS_LOG)
-      .where(newPredicate);
-
-    return Q_LOGICAL_METER.id.in(queryIds);
+    return LOGICAL_METER.id.in(queryIds);
   }
 
   private Predicate withStatusWithinPeriod(RequestParameters parameters, Predicate predicate) {
@@ -141,10 +134,10 @@ public class LogicalMeterQueryDslJpaRepository
         .collect(toList());
 
       return (
-        (Q_STATUS_LOG.stop.isNull().or(Q_STATUS_LOG.stop.after(start)))
+        (STATUS_LOG.stop.isNull().or(STATUS_LOG.stop.after(start)))
           .and(
-            Q_STATUS_LOG.start.before(stop)
-          ).and(Q_STATUS_LOG.status.in(statuses)))
+            STATUS_LOG.start.before(stop)
+          ).and(STATUS_LOG.status.in(statuses)))
         .and(predicate);
     } else {
       return predicate;
@@ -166,7 +159,7 @@ public class LogicalMeterQueryDslJpaRepository
   private JPQLQuery<LogicalMeterEntity> queryOf(Predicate predicate) {
     return createQuery(predicate)
       .select(path)
-      .leftJoin(Q_LOGICAL_METER.location)
+      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
       .fetchJoin();
   }
 }

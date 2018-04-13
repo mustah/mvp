@@ -82,7 +82,7 @@ public class SelectionTreeControllerTest extends IntegrationTest {
     Location location = new LocationBuilder()
       .country(country)
       .city(city)
-      .streetAddress(address)
+      .address(address)
       .build();
     return new LogicalMeter(
       id,
