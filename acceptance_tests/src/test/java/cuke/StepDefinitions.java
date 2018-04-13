@@ -25,6 +25,7 @@ public class StepDefinitions {
   WebDriver driver;
   WebDriverWait wait;
   String mvpServer = new String();
+  String chromeWebDriverLocation = new String();
 
   @Before
   public void setUp() {
@@ -34,6 +35,11 @@ public class StepDefinitions {
       mvpServer = "http://localhost:4444";
     }
     System.out.println("MVP_SERVER: " + mvpServer);
+
+    if (System.getenv("CHROME_WEBDRIVER") != null) {
+      chromeWebDriverLocation = System.getenv("CHROME_WEBDRIVER");
+      System.setProperty("webdriver.chrome.driver", chromeWebDriverLocation);
+    }
 
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--headless");
