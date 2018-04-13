@@ -34,7 +34,7 @@ public class GeocodeFarmService implements AddressToGeoService {
       .getForObject(
         url,
         GeocodingFarmResult.class,
-        address.street + "," + address.city + "," + address.country
+        address.street + " " + address.city + " " + address.country
       );
 
     return convert(result);
