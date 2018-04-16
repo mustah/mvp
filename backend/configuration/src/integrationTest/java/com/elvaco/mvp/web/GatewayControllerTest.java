@@ -269,7 +269,7 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void mapDataIncludesGatewaysWithCityAndAddressLocation() {
+  public void mapMarkersIncludesGatewaysWithCityAndAddressLocation() {
     Gateway gateway = saveGateway(dailyPlanet.id);
 
     LocationBuilder location = new LocationBuilder()
@@ -307,7 +307,7 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findGatewayMapMarkersWithUnknownLocation() {
+  public void findGatewayMapMarkers_WithUnknownCity() {
     Gateway gateway = saveGateway(dailyPlanet.id);
 
     LocationBuilder unknownLocation = unknownLocationBuilder();
@@ -330,14 +330,14 @@ public class GatewayControllerTest extends IntegrationTest {
     );
 
     ResponseEntity<List<MapMarkerDto>> response = asTestSuperAdmin()
-      .getList("/gateways/map-markers?address=unknown,unknown", MapMarkerDto.class);
+      .getList("/gateways/map-markers?city=unknown,unknown", MapMarkerDto.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).containsExactly(mapMarker);
   }
 
   @Test
-  public void findGatewaysWithUnknownLocation() {
+  public void findGateways_WithUnknownCity() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
@@ -353,13 +353,13 @@ public class GatewayControllerTest extends IntegrationTest {
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
-      .getPage("/gateways?address=unknown,unknown", GatewayDto.class);
+      .getPage("/gateways?city=unknown,unknown", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(2);
   }
 
   @Test
-  public void findGatewaysWithUnknownLocationAndWithKnownLocation() {
+  public void findGateways_WithUnknownAndKnownCity() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
     Gateway gateway3 = saveGateway(dailyPlanet.id);
@@ -391,13 +391,13 @@ public class GatewayControllerTest extends IntegrationTest {
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
-      .getPage("/gateways?address=unknown,unknown&address=sweden,kungsbacka", GatewayDto.class);
+      .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
 
     assertThat(content.getContent()).hasSize(3);
   }
 
   @Test
-  public void findGatewaysWithCompleteAddressInfo_ButLowConfidence() {
+  public void findGateways_WithCompleteAddressInfoButLowConfidence() {
     Gateway gateway1 = saveGateway(dailyPlanet.id);
     Gateway gateway2 = saveGateway(dailyPlanet.id);
 
@@ -433,7 +433,7 @@ public class GatewayControllerTest extends IntegrationTest {
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
-      .getPage("/gateways?address=unknown,unknown&address=sweden,kungsbacka", GatewayDto.class);
+      .getPage("/gateways?city=unknown,unknown&city=sweden,kungsbacka", GatewayDto.class);
 
     StatusLogEntry<UUID> status1 = gateway1.currentStatus();
     StatusLogEntry<UUID> status2 = gateway2.currentStatus();
@@ -467,6 +467,47 @@ public class GatewayControllerTest extends IntegrationTest {
           singletonList(meterId2)
         )
       ));
+  }
+
+  @Test
+  public void findGateways_WithUnknownAddress() {
+    Gateway gateway1 = saveGateway(dailyPlanet.id);
+    Gateway gateway2 = saveGateway(dailyPlanet.id);
+    Location unknownAddress = new LocationBuilder()
+      .country("sweden")
+      .city("kungsbacka")
+      .longitude(1.3333)
+      .latitude(1.12345)
+      .build();
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "external-1234",
+      dailyPlanet.id,
+      unknownAddress,
+      singletonList(gateway1),
+      ZonedDateTime.now()
+    ));
+
+    logicalMeters.save(new LogicalMeter(
+      randomUUID(),
+      "external-1235",
+      dailyPlanet.id,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(1.3333)
+        .latitude(1.12345)
+        .build(),
+      singletonList(gateway2),
+      ZonedDateTime.now()
+    ));
+
+    Page<GatewayDto> content = asTestSuperAdmin()
+      .getPage("/gateways?address=unknown,unknown,unknown", GatewayDto.class);
+
+    assertThat(content.getContent()).hasSize(1);
   }
 
   private void assertGatewayStatus(
@@ -520,8 +561,6 @@ public class GatewayControllerTest extends IntegrationTest {
 
   private static LocationBuilder unknownLocationBuilder() {
     return new LocationBuilder()
-      .country("unknown")
-      .city("unknown")
       .latitude(1.234)
       .longitude(2.3323);
   }

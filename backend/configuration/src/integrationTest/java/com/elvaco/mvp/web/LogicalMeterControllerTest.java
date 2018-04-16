@@ -11,7 +11,6 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Language;
-import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
@@ -512,29 +511,29 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMeters_WithUnknownLocation() {
+  public void findAllMeters_WithUnknownCity() {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().getOrganisationId(),
       MeterDefinition.UNKNOWN_METER,
-      Location.UNKNOWN_LOCATION
+      UNKNOWN_LOCATION
     ));
 
     Page<LogicalMeterDto> result = asTestUser()
-      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+      .getPage("/meters?city=unknown,unknown", LogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(1);
   }
 
   @Test
-  public void findAllMeters_IncludeMetersWith_UnknownLocation() {
+  public void findAllMeters_IncludeMetersWith_UnknownCity() {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().getOrganisationId(),
       MeterDefinition.UNKNOWN_METER,
-      Location.UNKNOWN_LOCATION
+      UNKNOWN_LOCATION
     ));
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
@@ -552,19 +551,19 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     Page<LogicalMeterDto> result = asTestUser()
-      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+      .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", LogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(2);
   }
 
   @Test
-  public void findAllMeters_IncludeMetersWith_UnknownLocation_AndLowConfidence() {
+  public void findAllMeters_IncludeMetersWith_UnknownCity_AndLowConfidence() {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
       context().getOrganisationId(),
       MeterDefinition.UNKNOWN_METER,
-      Location.UNKNOWN_LOCATION
+      UNKNOWN_LOCATION
     ));
 
     logicalMeterRepository.save(new LogicalMeter(
@@ -598,9 +597,46 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     ));
 
     Page<LogicalMeterDto> result = asTestUser()
-      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+      .getPage("/meters?city=unknown,unknown&city=sweden,kungsbacka", LogicalMeterDto.class);
 
     assertThat(result.getContent()).hasSize(3);
+  }
+
+  @Test
+  public void findAllMeters_WithUnknownAddress() {
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "123-123-123",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(11.123)
+        .latitude(12.345)
+        .confidence(0.75)
+        .build()
+    ));
+
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "123-456",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .longitude(11.123456)
+        .latitude(12.345789)
+        .confidence(0.77)
+        .build()
+    ));
+
+    Page<LogicalMeterDto> result = asTestUser()
+      .getPage("/meters?address=unknown,unknown,unknown", LogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(1);
   }
 
   @Test
@@ -776,7 +812,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       meterId.toString(),
       context().getOrganisationId(),
       meterDefinition,
-      Location.UNKNOWN_LOCATION
+      UNKNOWN_LOCATION
     ));
   }
 

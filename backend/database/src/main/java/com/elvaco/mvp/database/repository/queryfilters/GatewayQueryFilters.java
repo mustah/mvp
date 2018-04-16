@@ -53,6 +53,8 @@ public class GatewayQueryFilters extends QueryFilters {
     LocationExpressions locationExpressions = newLocationExpressions();
     return new BooleanBuilder()
       .and(locationExpressions.address(parameters))
+      .or(locationExpressions.unknownAddress(parameters))
+      .or(locationExpressions.hasLowConfidence(parameters))
       .getValue();
   }
 

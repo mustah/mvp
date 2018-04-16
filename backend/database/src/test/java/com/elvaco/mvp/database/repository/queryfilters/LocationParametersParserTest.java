@@ -177,9 +177,21 @@ public class LocationParametersParserTest {
   @Test
   public void createAddressParameters_IgnoresDuplicates() {
     Parameters parameters = toAddressParameters(asList("a,b,c", "a,b,d", "a,a,c"));
+    assertThat(parameters.hasUnknownAddresses).isFalse();
     assertThat(parameters.countries).containsExactly("a");
     assertThat(parameters.cities).containsExactly("a", "b");
     assertThat(parameters.addresses).containsExactly("c", "d");
+    assertThat(parameters.hasAddresses()).isTrue();
+  }
+
+  @Test
+  public void createUnknownAddressParameters() {
+    Parameters parameters = toAddressParameters(singletonList("sweden,kungsbacka,unknown"));
+    assertThat(parameters.hasUnknownAddresses).isTrue();
+    assertThat(parameters.addresses).isEmpty();
+    assertThat(parameters.countries).containsExactly("sweden");
+    assertThat(parameters.cities).containsExactly("kungsbacka");
+    assertThat(parameters.hasAddresses()).isFalse();
   }
 
   private static List<AddressParam> toSingleAddressParam(String s) {

@@ -25,6 +25,11 @@ class LocationExpressions {
   }
 
   @Nullable
+  Predicate unknownAddress(Parameters parameters) {
+    return parameters.hasUnknownAddresses ? location.streetAddress.isNull() : null;
+  }
+
+  @Nullable
   Predicate countriesAndCities(Parameters parameters) {
     if (parameters.hasCities()) {
       return location.country.toLowerCase().in(parameters.countries)
