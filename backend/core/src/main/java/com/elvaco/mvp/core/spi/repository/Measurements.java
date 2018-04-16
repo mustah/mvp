@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 
 public interface Measurements {
@@ -31,7 +32,7 @@ public interface Measurements {
     UUID meterId,
     String quantity,
     String unit,
-    String mode,
+    SeriesDisplayMode mode,
     ZonedDateTime from,
     ZonedDateTime to
   );

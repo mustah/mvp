@@ -153,7 +153,7 @@ public class MeasurementController {
           meter.id,
           entry.getKey().name,
           entry.getKey().defaultPresentationUnit(),
-          "default",
+          entry.getKey().defaultSeriesDisplayMode(),
           after,
           before
         );

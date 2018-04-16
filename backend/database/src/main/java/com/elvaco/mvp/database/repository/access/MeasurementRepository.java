@@ -9,12 +9,12 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
-import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import org.hibernate.JDBCException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -102,7 +102,7 @@ public class MeasurementRepository implements Measurements {
     UUID meterId,
     String quantity,
     String unit,
-    String mode,
+    SeriesDisplayMode mode,
     ZonedDateTime from,
     ZonedDateTime to
   ) {
@@ -111,7 +111,7 @@ public class MeasurementRepository implements Measurements {
         meterId,
         quantity,
         unit,
-        mode,
+        mode.toString(),
         OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
         OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
       ).stream()

@@ -37,6 +37,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -87,7 +88,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Autowired
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
-  private OrganisationEntity wayneIndustriesEntity;
+  private OrganisationEntity otherOrganisation;
   private MeterDefinitionMapper meterDefinitionMapper;
 
   @Before
@@ -95,8 +96,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     assumeTrue(isPostgresDialect());
 
     meterDefinitionMapper = new MeterDefinitionMapper();
-    meterDefinitionJpaRepository.save(meterDefinitionMapper.toEntity(BUTTER_METER_DEFINITION));
-    wayneIndustriesEntity = organisationJpaRepository.save(
+    otherOrganisation = organisationJpaRepository.save(
       new OrganisationEntity(
         randomUUID(),
         "Wayne Industries",
@@ -115,7 +115,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     measurementJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
-    organisationJpaRepository.delete(wayneIndustriesEntity);
+    organisationJpaRepository.delete(otherOrganisation);
   }
 
   @Test
@@ -169,7 +169,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void canNotSeeMeasurementsFromMeterBelongingToOtherOrganisation() {
-    PhysicalMeterEntity otherOrganisationsMeter = newButterMeterBelongingTo(wayneIndustriesEntity);
+    PhysicalMeterEntity otherOrganisationsMeter = newButterMeterBelongingTo(otherOrganisation);
 
     newButterTemperatureMeasurement(otherOrganisationsMeter);
 
@@ -186,7 +186,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void cannotAccessMeasurementIdOfOtherOrganisationDirectly() {
     Long measurementId = newButterTemperatureMeasurement(
-      newButterMeterBelongingTo(wayneIndustriesEntity)
+      newButterMeterBelongingTo(otherOrganisation)
     ).id;
 
     HttpStatus statusCode = asTestUser()
@@ -199,7 +199,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void superAdminCanAccessAnyMeasurementDirectly() {
     Long firstOrganisationsMeasurementId = newButterTemperatureMeasurement(
-      newButterMeterBelongingTo(wayneIndustriesEntity)
+      newButterMeterBelongingTo(otherOrganisation)
     ).id;
 
     Long secondOrganisationsMeasurementId = newButterTemperatureMeasurement(
@@ -221,7 +221,7 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void superAdminCanSeeAllMeasurements() {
-    PhysicalMeterEntity firstOrganisationsMeter = newButterMeterBelongingTo(wayneIndustriesEntity);
+    PhysicalMeterEntity firstOrganisationsMeter = newButterMeterBelongingTo(otherOrganisation);
     newButterTemperatureMeasurement(
       firstOrganisationsMeter
     );
@@ -469,9 +469,8 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void averageOfOneMeterTwoHours() {
-    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
-    );
+    LogicalMeterEntity logicalMeter = newLogicalMeterEntity(MeterDefinition.DISTRICT_HEATING_METER);
+
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
@@ -508,16 +507,14 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   @Test
   public void averageOfTwoMetersTwoHours() {
-    LogicalMeterEntity logicalMeter1 = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
-    );
+    LogicalMeterEntity logicalMeter1 = newLogicalMeterEntity(MeterDefinition
+      .DISTRICT_HEATING_METER);
     PhysicalMeterEntity meter1 = newPhysicalMeterEntity(logicalMeter1.id);
     newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
     newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 2.0, "W");
 
-    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
-    );
+    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(MeterDefinition
+      .DISTRICT_HEATING_METER);
     PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 3.0, "W");
     newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Power", 4.0, "W");
@@ -556,7 +553,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageForMultipleQuantities() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 2.0, "W");
@@ -626,7 +623,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageOfOneMeterOneHour() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 2.0, "W");
@@ -663,7 +660,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void timeZoneInformationIsConsidered() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T03:00:01-02:00"), "Power", 1.0, "W");
@@ -713,7 +710,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageForNoPhysicalMeters() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
 
     ResponseEntity<ErrorMessageDto> response = asTestUser()
@@ -733,7 +730,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageForUndefinedQuantity() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
@@ -754,7 +751,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageWithNoMatchingMeasurements() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     newPhysicalMeterEntity(logicalMeter.id);
 
@@ -785,7 +782,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void allowsOverridingDefinitionsPresentationUnit() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 40000.0, "W");
@@ -816,7 +813,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageWithDayResolution() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
@@ -856,7 +853,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   @Test
   public void averageWithMonthResolution() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-01-06T05:00:01Z"), "Power", 1.0, "W");
@@ -995,7 +992,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   public void toTimestampDefaultsToNow() {
     ZonedDateTime now = ZonedDateTime.now();
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, now, "Power", 1.0, "W");
@@ -1025,7 +1022,7 @@ public class MeasurementControllerTest extends IntegrationTest {
     ZonedDateTime after = ZonedDateTime.parse("2018-02-01T01:12:00Z");
     ZonedDateTime before = ZonedDateTime.parse("2018-02-01T23:59:10Z");
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER)
+      MeterDefinition.DISTRICT_HEATING_METER
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, after.plusHours(2), "Power", 1.0, "W");
@@ -1040,6 +1037,46 @@ public class MeasurementControllerTest extends IntegrationTest {
         logicalMeter.getId()
       ), MeasurementSeriesDto.class).getBody().get(0);
     assertThat(response.values).hasSize(23);
+  }
+
+  @Test
+  public void consumptionSeriesIsDisplayedWithConsumptionValues() {
+    ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:12:00Z");
+    LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
+
+      new MeterDefinition(MeterDefinitionType.UNKNOWN_METER_TYPE, "Consumption of things",
+        singleton(
+          new Quantity(
+            "Volume consumption",
+            new QuantityPresentationInformation("m³", SeriesDisplayMode.CONSUMPTION)
+          )
+        ),
+        false
+      )
+    );
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.id);
+    newMeasurement(meter, when, "Volume consumption", 25.0, "m³");
+    newMeasurement(meter, when.plusHours(1), "Volume consumption", 35.0, "m³");
+    newMeasurement(meter, when.plusHours(2), "Volume consumption", 55.0, "m³");
+
+    MeasurementSeriesDto seriesDto = asTestUser()
+      .getList(String.format(
+        "/measurements?quantities=Volume consumption&meters=%s", consumptionMeter.getId()
+      ), MeasurementSeriesDto.class).getBody().get(0);
+
+    assertThat(seriesDto).isEqualTo(
+      new MeasurementSeriesDto("Volume consumption", "m³", meter.externalId,
+        asList(
+          new MeasurementValueDto(when.toInstant(), null),
+          new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
+          new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
+        )
+      )
+    );
+  }
+
+  private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
+    return meterDefinitionJpaRepository.save(meterDefinitionMapper.toEntity(meterDefinition));
   }
 
   private MeasurementEntity newButterEnergyMeasurement(
@@ -1086,10 +1123,11 @@ public class MeasurementControllerTest extends IntegrationTest {
     ));
   }
 
-  private LogicalMeterEntity newLogicalMeterEntity(MeterDefinitionEntity meterDefinitionEntity) {
+  private LogicalMeterEntity newLogicalMeterEntity(MeterDefinition meterDefinition) {
     UUID uuid = randomUUID();
+    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
     return logicalMeterJpaRepository.save(new LogicalMeterEntity(
-      randomUUID(),
+      uuid,
       uuid.toString(),
       context().organisationEntity.id,
       ZonedDateTime.now(),
@@ -1099,28 +1137,26 @@ public class MeasurementControllerTest extends IntegrationTest {
 
   private PhysicalMeterEntity newButterMeterBelongingTo(OrganisationEntity organisationEntity) {
     return newPhysicalMeterEntity(
-      meterDefinitionMapper.toEntity(
-        BUTTER_METER_DEFINITION
-      ),
+      BUTTER_METER_DEFINITION,
       organisationEntity
     );
   }
 
   private PhysicalMeterEntity newButterMeter() {
     return newPhysicalMeterEntity(
-      meterDefinitionMapper.toEntity(
-        BUTTER_METER_DEFINITION
-      ));
+      BUTTER_METER_DEFINITION
+    );
   }
 
-  private PhysicalMeterEntity newPhysicalMeterEntity(MeterDefinitionEntity meterDefinitionEntity) {
-    return newPhysicalMeterEntity(meterDefinitionEntity, context().organisationEntity);
+  private PhysicalMeterEntity newPhysicalMeterEntity(MeterDefinition meterDefinition) {
+    return newPhysicalMeterEntity(meterDefinition, context().organisationEntity);
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity(
-    MeterDefinitionEntity meterDefinitionEntity,
+    MeterDefinition meterDefinition,
     OrganisationEntity organisationEntity
   ) {
+    MeterDefinitionEntity meterDefinitionEntity = saveMeterDefinition(meterDefinition);
     UUID logicalMeterId = randomUUID();
     logicalMeterJpaRepository.save(new LogicalMeterEntity(
       logicalMeterId,

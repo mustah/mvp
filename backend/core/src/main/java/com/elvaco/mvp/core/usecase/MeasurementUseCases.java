@@ -9,6 +9,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -61,7 +62,7 @@ public class MeasurementUseCases {
     UUID meterId,
     String quantity,
     String unit,
-    String mode,
+    SeriesDisplayMode mode,
     ZonedDateTime from,
     ZonedDateTime to
   ) {

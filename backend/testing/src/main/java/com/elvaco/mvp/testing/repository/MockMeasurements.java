@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 
@@ -60,7 +61,12 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
 
   @Override
   public List<MeasurementValue> getSeriesForPeriod(
-    UUID meterId, String quantity, String unit, String mode, ZonedDateTime from, ZonedDateTime to
+    UUID meterId,
+    String quantity,
+    String unit,
+    SeriesDisplayMode mode,
+    ZonedDateTime from,
+    ZonedDateTime to
   ) {
     return emptyList();
   }
