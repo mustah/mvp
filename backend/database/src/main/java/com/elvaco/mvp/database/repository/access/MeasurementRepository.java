@@ -24,16 +24,13 @@ import static java.util.stream.Collectors.toList;
 public class MeasurementRepository implements Measurements {
 
   private final MeasurementJpaRepository measurementJpaRepository;
-  private final QueryFilters queryFilters;
   private final MeasurementMapper measurementMapper;
 
   public MeasurementRepository(
     MeasurementJpaRepository measurementJpaRepository,
-    QueryFilters queryFilters,
     MeasurementMapper measurementMapper
   ) {
     this.measurementJpaRepository = measurementJpaRepository;
-    this.queryFilters = queryFilters;
     this.measurementMapper = measurementMapper;
   }
 
