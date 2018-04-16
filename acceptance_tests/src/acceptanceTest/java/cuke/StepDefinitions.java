@@ -1,20 +1,22 @@
 package cuke;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Optional;
+
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -22,29 +24,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 
-  WebDriver driver;
-  WebDriverWait wait;
-  String mvpServer = new String();
-  String chromeWebDriverLocation = new String();
+  private WebDriver driver;
+  private WebDriverWait waitDriver;
+  private String mvpServer;
 
   @Before
-  public void setUp() {
-    if (System.getenv("MVP_SERVER") != null) {
-      mvpServer = System.getenv("MVP_SERVER");
-    } else {
-      mvpServer = "http://localhost:4444";
-    }
+  public void setUp() throws MalformedURLException {
+    mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
+      .orElse("http://localhost:4444");
     System.out.println("MVP_SERVER: " + mvpServer);
 
-    if (System.getenv("CHROME_WEBDRIVER") != null) {
-      chromeWebDriverLocation = System.getenv("CHROME_WEBDRIVER");
-      System.setProperty("webdriver.chrome.driver", chromeWebDriverLocation);
-    }
+    String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
+      .orElse("http://localhost:5555/wd/hub");
 
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--headless");
-    driver = new ChromeDriver(options);
-    wait = new WebDriverWait(driver, 10);
+    driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
+    waitDriver = new WebDriverWait(driver, 10);
   }
 
   @After
@@ -65,16 +61,15 @@ public class StepDefinitions {
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String user, String passwd) throws Throwable {
+  public void whenILoginAsUserWithPassword(String username, String password) throws Throwable {
+    waitDriver.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
+    WebElement emailElement = driver.findElement(By.id("email"));
+    emailElement.clear();
+    emailElement.sendKeys(username);
 
-    wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
-    WebElement email = driver.findElement(By.id("email"));
-    email.clear();
-    email.sendKeys(user);
-
-    WebElement password = driver.findElement(By.id("password"));
-    password.clear();
-    password.sendKeys(passwd);
+    WebElement passwordElement = driver.findElement(By.id("password"));
+    passwordElement.clear();
+    passwordElement.sendKeys(password);
 
     driver.findElement(By.tagName("form"))
       .findElement(By.tagName("button"))

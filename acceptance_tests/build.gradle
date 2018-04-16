@@ -6,17 +6,33 @@ configurations {
   }
 }
 
-test {
-  exclude '**acceptance_tests/*'
+idea {
+  module {
+    testSourceDirs += file('src/acceptanceTest/java')
+  }
 }
 
-task cucumber() {
-  dependsOn assemble, compileTestJava
+sourceSets {
+  acceptanceTest {
+    java {
+      compileClasspath += test.compileClasspath
+      runtimeClasspath += test.runtimeClasspath
+      srcDir file('src/acceptanceTest/java')
+    }
+    resources.srcDir file('src/acceptanceTest/resources')
+  }
+}
+
+task cucumber(type: Test, dependsOn: 'test', group: 'verification') {
+  dependsOn assemble, compileAcceptanceTestJava
+  testClassesDir = sourceSets.acceptanceTest.output.classesDir
+  classpath = sourceSets.acceptanceTest.runtimeClasspath
+
   doLast {
     javaexec {
       main = "cucumber.api.cli.Main"
-      classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-      args = ['--plugin', 'pretty', '--plugin', 'html:target/cucumber', '--tags', 'not @wip', '--glue', 'cuke', 'src/test/resources/features']
+      classpath = configurations.cucumberRuntime + sourceSets.acceptanceTest.output
+      args = ['--plugin', 'pretty', '--plugin', 'html:target/cucumber', '--tags', 'not @wip', '--glue', 'cuke', 'src/acceptanceTest/resources/features']
     }
   }
 }
