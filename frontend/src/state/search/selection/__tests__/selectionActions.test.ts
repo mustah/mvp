@@ -12,8 +12,6 @@ import {
   SELECT_SAVED_SELECTION,
   selectPeriod,
   selectSavedSelection,
-  SET_SELECTION,
-  setSelection,
   toggleParameterInSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
@@ -140,20 +138,6 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: SELECT_PERIOD, payload: period},
-      ]);
-    });
-  });
-
-  describe('set selection action', () => {
-    it('set the selection of one parameter id', () => {
-      const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
-      const payload: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
-      store = configureMockStore(rootState);
-
-      store.dispatch(setSelection(payload));
-
-      expect(store.getActions()).toEqual([
-        {type: SET_SELECTION, payload},
       ]);
     });
   });

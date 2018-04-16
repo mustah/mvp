@@ -1,4 +1,4 @@
-import {SET_SELECTION} from '../../../search/selection/selectionActions';
+import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {changePaginationPage, paginationUpdateMetaData} from '../paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
 import {initialPaginationState, limit, pagination} from '../paginationReducer';
@@ -101,7 +101,10 @@ describe('paginationReducer', () => {
         gateways: {size: limit, totalPages: 10, totalElements: 10, useCases: {}},
       };
 
-      expect(pagination(paginatedState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({
+      expect(pagination(
+        paginatedState,
+        mockSelectionAction,
+      )).toEqual({
         ...initialPaginationState,
       });
     });

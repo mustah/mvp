@@ -1,7 +1,7 @@
+import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
-import {SET_SELECTION} from '../../search/selection/selectionActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
@@ -243,7 +243,7 @@ describe('paginatedDomainModelsReducer', () => {
             ...initialPaginatedDomain<Gateway>(),
           },
         },
-        {type: SET_SELECTION, payload: 'irrelevant'},
+        mockSelectionAction,
       )).toEqual({meters: initialPaginatedDomain(), gateways: initialPaginatedDomain()});
     });
   });

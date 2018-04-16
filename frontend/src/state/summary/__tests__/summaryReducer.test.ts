@@ -5,7 +5,6 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
   SET_CURRENT_SELECTION,
 } from '../../search/selection/selectionActions';
 import {makeActionsOf, RequestHandler} from '../summaryApiActions';
@@ -98,13 +97,16 @@ describe('summaryReducer', () => {
         payload,
       };
 
-      expect(summary(state, {type: SELECT_SAVED_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: ADD_PARAMETER_TO_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: DESELECT_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: SET_CURRENT_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: RESET_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: SET_SELECTION})).toEqual(initialState);
-      expect(summary(state, {type: SELECT_PERIOD})).toEqual(initialState);
+      [
+        SELECT_SAVED_SELECTION,
+        ADD_PARAMETER_TO_SELECTION,
+        DESELECT_SELECTION,
+        SET_CURRENT_SELECTION,
+        RESET_SELECTION,
+        SELECT_PERIOD,
+      ].forEach((actionThatResets: string) => {
+        expect(summary(state, {type: actionThatResets})).toEqual(initialState);
+      });
     });
   });
 

@@ -6,7 +6,6 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
   SET_CURRENT_SELECTION,
 } from '../../search/selection/selectionActions';
 import {makeActionsOf, RequestHandler} from '../../summary/summaryApiActions';
@@ -130,7 +129,6 @@ describe('selectionTreeReducer', () => {
       expect(selectionTree(state, {type: DESELECT_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: SET_CURRENT_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: RESET_SELECTION})).toEqual(initialState);
-      expect(selectionTree(state, {type: SET_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: SELECT_PERIOD})).toEqual(initialState);
     });
   });

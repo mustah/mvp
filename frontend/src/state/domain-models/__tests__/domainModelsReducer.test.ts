@@ -1,11 +1,12 @@
 import {normalize} from 'normalizr';
+import {mockSelectionAction} from '../../../__tests__/testActions';
 import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, IdNamed} from '../../../types/Types';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
-import {SET_SELECTION} from '../../search/selection/selectionActions';
+import {ADD_PARAMETER_TO_SELECTION} from '../../search/selection/selectionActions';
 import {ParameterName} from '../../search/selection/selectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {
@@ -41,7 +42,7 @@ describe('domainModelsReducer', () => {
       };
 
       expect(domainModels(populatedCitiesState as DomainModelsState, {
-        type: SET_SELECTION, payload: {
+        type: ADD_PARAMETER_TO_SELECTION, payload: {
           id: 1,
           parameter: ParameterName.cities,
         },
@@ -314,7 +315,7 @@ describe('domainModelsReducer', () => {
         organisations: {...initialState.organisations, isFetching: true},
       };
 
-      expect(domainModels(nonInitialState, {type: SET_SELECTION, payload: 'irrelevant'})).toEqual({
+      expect(domainModels(nonInitialState, mockSelectionAction)).toEqual({
         ...initialState,
         countries: {...nonInitialState.countries},
         cities: {...nonInitialState.cities},

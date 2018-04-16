@@ -19,13 +19,12 @@ export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
 const addParameterToSelection = createPayloadAction<string, SelectionParameter>(ADD_PARAMETER_TO_SELECTION);
 const deselectParameterInSelection = createPayloadAction<string, SelectionParameter>(DESELECT_SELECTION);
+export const resetSelection = createEmptyAction(RESET_SELECTION);
 export const saveSelection = createPayloadAction<string, SelectionState>(SAVE_SELECTION);
+export const selectPeriod = createPayloadAction<string, Period>(SELECT_PERIOD);
+export const setCurrentSelection = createPayloadAction<string, SelectionState>(SET_CURRENT_SELECTION);
 
-const resetSelectionAction = createEmptyAction(RESET_SELECTION);
-const selectPeriodAction = createPayloadAction<string, Period>(SELECT_PERIOD);
 const selectSavedSelectionAction = createPayloadAction<string, SelectionState>(SELECT_SAVED_SELECTION);
-const setSelectionAction = createPayloadAction<string, SelectionParameter>(SET_SELECTION);
-const setCurrentSelectionAction = createPayloadAction<string, SelectionState>(SET_CURRENT_SELECTION);
 
 export const closeSelectionPage = () => (dispatch) => {
   dispatch(routerActions.goBack());
@@ -53,16 +52,3 @@ export const toggleParameterInSelection = (selectionParameter: SelectionParamete
       .map(() => dispatch(deselectParameterInSelection(selectionParameter)))
       .orElseGet(() => dispatch(addParameterToSelection(selectionParameter)));
   };
-
-export const setCurrentSelection = (payload: SelectionState) => (dispatch) => {
-  dispatch(setCurrentSelectionAction(payload));
-};
-export const resetSelection = () => (dispatch) => {
-  dispatch(resetSelectionAction());
-};
-export const setSelection = (payload: SelectionParameter) => (dispatch) => {
-  dispatch(setSelectionAction(payload));
-};
-export const selectPeriod = (payload: Period) => (dispatch) => {
-  dispatch(selectPeriodAction(payload));
-};
