@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SeriesDisplayModeTest {
 
   @Test
-  public void testStringifying() {
+  public void toStringOfName() {
     assertThat(SeriesDisplayMode.UNKNOWN.toString()).isEqualTo("unknown");
     assertThat(SeriesDisplayMode.CONSUMPTION.toString()).isEqualTo("consumption");
     assertThat(SeriesDisplayMode.READOUT.toString()).isEqualTo("readout");

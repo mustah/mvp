@@ -1,6 +1,5 @@
 package com.elvaco.mvp.database.entity.meter;
 
-import javax.annotation.Nullable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -13,9 +12,11 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.EntityType;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "quantity")
@@ -31,18 +32,6 @@ public class QuantityEntity extends EntityType<Long> {
 
   @Enumerated(EnumType.ORDINAL)
   public SeriesDisplayMode seriesDisplayMode;
-
-  public QuantityEntity(
-    @Nullable Long id,
-    String name,
-    String unit,
-    SeriesDisplayMode seriesDisplayMode
-  ) {
-    this.id = id;
-    this.name = name;
-    this.unit = unit;
-    this.seriesDisplayMode = seriesDisplayMode;
-  }
 
   @Override
   public Long getId() {

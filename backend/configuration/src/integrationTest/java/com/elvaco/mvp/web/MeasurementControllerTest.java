@@ -72,7 +72,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   );
   public static final double EXPECTED_BUTTER_TEMPERATURE_CELSIUS = 12.44;
   public static final double EXPECTED_BUTTER_TEMPERATURE_KELVIN = 285.59;  // 12.44 Celsius
-  public static final Offset<Double> ASSERT_VALUE_EPSILON = within(0.0000000000001);
+  public static final Offset<Double> ASSERT_VALUE_EPSILON = within(0.000_000_000_000_1);
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
