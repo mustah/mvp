@@ -19,7 +19,7 @@ public interface Measurements {
 
   Collection<Measurement> save(Collection<Measurement> measurement);
 
-  List<MeasurementValue> getAverageForPeriod(
+  List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
     String quantity,
     String unit,
@@ -28,7 +28,7 @@ public interface Measurements {
     TemporalResolution resolution
   );
 
-  List<MeasurementValue> getSeriesForPeriod(
+  List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
     String quantity,
     String unit,

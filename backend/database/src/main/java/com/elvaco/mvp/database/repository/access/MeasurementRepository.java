@@ -73,7 +73,7 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<MeasurementValue> getAverageForPeriod(
+  public List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
     String quantity,
     String unit,
@@ -91,14 +91,14 @@ public class MeasurementRepository implements Measurements {
       OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
     ).stream()
       .map(projection -> new MeasurementValue(
-        projection.getValueValue(),
+        projection.getDoubleValue(),
         projection.getInstant()
       ))
       .collect(toList());
   }
 
   @Override
-  public List<MeasurementValue> getSeriesForPeriod(
+  public List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
     String quantity,
     String unit,

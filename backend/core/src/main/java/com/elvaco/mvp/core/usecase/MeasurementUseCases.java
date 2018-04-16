@@ -55,7 +55,7 @@ public class MeasurementUseCases {
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurements.getAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
+    return measurements.findAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
   }
 
   public List<MeasurementValue> seriesForPeriod(
@@ -66,7 +66,7 @@ public class MeasurementUseCases {
     ZonedDateTime from,
     ZonedDateTime to
   ) {
-    return measurements.getSeriesForPeriod(meterId, quantity, unit, mode, from, to);
+    return measurements.findSeriesForPeriod(meterId, quantity, unit, mode, from, to);
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {

@@ -48,7 +48,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  public List<MeasurementValue> getAverageForPeriod(
+  public List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
     String quantity,
     String unit,
@@ -60,7 +60,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  public List<MeasurementValue> getSeriesForPeriod(
+  public List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
     String quantity,
     String unit,
