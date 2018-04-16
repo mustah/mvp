@@ -2,7 +2,7 @@ import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 
 export interface LanguageState {
-  language: LanguageCode;
+  language: {code: LanguageCode};
 }
 
 export type LanguageCode = 'sv' | 'en';

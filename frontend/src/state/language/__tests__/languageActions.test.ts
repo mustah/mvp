@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import {i18nMock, initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../services/restClient';
 import {CHANGE_LANGUAGE, changeLanguage} from '../languageActions';
-import {languages} from '../languageModels';
+import {languages, LanguageState} from '../languageModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('languageActions', () => {
@@ -14,7 +14,8 @@ describe('languageActions', () => {
   const initialLanguage = languages.en.code;
 
   beforeEach(() => {
-    store = configureMockStore({language: {language: initialLanguage}});
+    const initialLanguageState: LanguageState = {language: {code: initialLanguage}};
+    store = configureMockStore({language: initialLanguageState});
     mockRestClient = new MockAdapter(axios);
     authenticate('test');
     initTranslations({

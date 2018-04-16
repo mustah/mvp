@@ -4,7 +4,7 @@ import {CHANGE_LANGUAGE} from './languageActions';
 import {LanguageCode, LanguageState, languages} from './languageModels';
 
 const initialState: LanguageState = {
-  language: languages.sv.code,
+  language: {code: languages.en.code},
 };
 
 type ActionTypes = Action<LanguageCode> | EmptyAction<string>;
@@ -14,7 +14,7 @@ export const language = (state: LanguageState = initialState, action: ActionType
     case CHANGE_LANGUAGE:
       return {
         ...state,
-        language: (action as Action<LanguageCode>).payload,
+        language: {code: (action as Action<LanguageCode>).payload},
       };
     default:
       return state;

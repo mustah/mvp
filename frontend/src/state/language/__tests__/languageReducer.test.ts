@@ -3,17 +3,17 @@ import {LanguageState} from '../languageModels';
 import {language} from '../languageReducer';
 
 describe('languageReducer', () => {
-  it('has initialState swedish', () => {
+  it('has initialState english', () => {
     const initialState: LanguageState = language(undefined, {type: 'unknown'});
 
-    const expected: LanguageState = {language: 'sv'};
+    const expected: LanguageState = {language: {code: 'en'}};
     expect(initialState).toEqual(expected);
   });
 
   it('sets language', () => {
     const initialState: LanguageState = language(undefined, {type: 'unknown'});
 
-    const expected: LanguageState = {language: 'en'};
-    expect(language(initialState, {type: CHANGE_LANGUAGE, payload: 'en'})).toEqual(expected);
+    const expected: LanguageState = {language: {code: 'sv'}};
+    expect(language(initialState, {type: CHANGE_LANGUAGE, payload: 'sv'})).toEqual(expected);
   });
 });
