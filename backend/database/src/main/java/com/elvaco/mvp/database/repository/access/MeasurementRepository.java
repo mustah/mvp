@@ -116,7 +116,7 @@ public class MeasurementRepository implements Measurements {
         OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
       ).stream()
         .map(projection -> new MeasurementValue(
-          projection.getValueValue(),
+          projection.getDoubleValue(),
           projection.getInstant()
         ))
         .collect(toList());

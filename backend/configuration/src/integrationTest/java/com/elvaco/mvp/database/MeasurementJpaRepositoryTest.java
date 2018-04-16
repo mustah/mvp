@@ -77,7 +77,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
         singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
 
     assertThat(results).hasSize(2);
-    assertThat(results).allMatch(v -> v.getValueValue() == 2.0);
+    assertThat(results).allMatch(v -> v.getDoubleValue() == 2.0);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(1);
-    assertThat(results.get(0).getValueValue()).isEqualTo(0.002);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(0.002);
   }
 
   @Test
@@ -117,8 +117,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValueValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getValueValue()).isEqualTo(4.0);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
+    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
   }
 
   @Test
@@ -139,8 +139,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValueValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getValueValue()).isEqualTo(4.0);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
+    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
   }
 
   @Test
@@ -367,8 +367,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(result).hasSize(3);
     assertThat(result.get(0).getValue()).isNull();
-    assertThat(result.get(1).getValueValue()).isEqualTo(0.001);
-    assertThat(result.get(2).getValueValue()).isEqualTo(0.001);
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(0.001);
+    assertThat(result.get(2).getDoubleValue()).isEqualTo(0.001);
   }
 
   @Test
