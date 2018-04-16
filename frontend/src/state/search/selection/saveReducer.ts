@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {SAVE_SELECTION, UPDATE_SELECTION} from './selectionActions';
+import {SAVE_SELECTION, SET_CURRENT_SELECTION} from './selectionActions';
 import {SelectionState} from './selectionModels';
 
 const updateSelectionById = (state: SelectionState[], {payload}: Action<SelectionState>): SelectionState[] => {
@@ -20,7 +20,7 @@ export const saved = (state: SelectionState[] = [], action: ActionTypes): Select
     case SAVE_SELECTION:
       const payload: SelectionState = action.payload;
       return [payload, ...state];
-    case UPDATE_SELECTION:
+    case SET_CURRENT_SELECTION:
       return updateSelectionById(state, action);
     default:
       return state;

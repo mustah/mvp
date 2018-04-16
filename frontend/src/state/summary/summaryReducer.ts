@@ -1,15 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {
-  ADD_SELECTION,
-  DESELECT_SELECTION,
-  RESET_SELECTION,
-  SELECT_PERIOD,
-  SELECT_SAVED_SELECTION,
-  SET_SELECTION,
-  UPDATE_SELECTION,
-} from '../search/selection/selectionActions';
+import {selectionWasChanged} from '../domain-models/domainModelsReducer';
 import {failureAction, requestAction, successAction} from './summaryApiActions';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
@@ -25,18 +17,10 @@ type ActionTypes =
   | Action<ErrorResponse>;
 
 const resetReducer = (state: SummaryState, action: ActionTypes): SummaryState => {
-  switch (action.type) {
-    case SELECT_SAVED_SELECTION:
-    case ADD_SELECTION:
-    case DESELECT_SELECTION:
-    case UPDATE_SELECTION:
-    case RESET_SELECTION:
-    case SET_SELECTION:
-    case SELECT_PERIOD:
-      return {...initialState};
-    default:
-      return state;
+  if (selectionWasChanged(action.type)) {
+    return {...initialState};
   }
+  return state;
 };
 
 export const summary = (state: SummaryState = initialState, action: ActionTypes): SummaryState => {

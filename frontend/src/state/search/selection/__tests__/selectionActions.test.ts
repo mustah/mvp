@@ -5,16 +5,14 @@ import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
   DESELECT_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   selectPeriod,
   selectSavedSelection,
-  SET_SELECTION,
-  setSelection,
-  toggleSelection,
+  toggleParameterInSelection,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
 import {initialState} from '../selectionReducer';
@@ -97,20 +95,21 @@ describe('selectionActions', () => {
       const parameter: SelectionParameter = {...selection, parameter: ParameterName.cities};
       store = configureMockStore(rootStateNoSaved);
 
-      store.dispatch(toggleSelection(parameter));
+      store.dispatch(toggleParameterInSelection(parameter));
 
       expect(store.getActions()).toEqual([
-        {type: ADD_SELECTION, payload: parameter},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: parameter},
       ]);
     });
 
     it('deselects selected city', () => {
       const selection = {selected: {...initialState, [ParameterName.cities]: [stockholm.id]}};
-      const stateWithSelection = {searchParameters: {selection, saved: []}};
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
+
+      const stateWithSelection = {searchParameters: {selection, saved: []}};
       store = configureMockStore(stateWithSelection);
 
-      store.dispatch(toggleSelection(payload));
+      store.dispatch(toggleParameterInSelection(payload));
 
       expect(store.getActions()).toEqual([
         {type: DESELECT_SELECTION, payload},
@@ -122,12 +121,12 @@ describe('selectionActions', () => {
       const p2: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
       store = configureMockStore(rootStateNoSaved);
 
-      store.dispatch(toggleSelection(p1));
-      store.dispatch(toggleSelection(p2));
+      store.dispatch(toggleParameterInSelection(p1));
+      store.dispatch(toggleParameterInSelection(p2));
 
       expect(store.getActions()).toEqual([
-        {type: ADD_SELECTION, payload: p1},
-        {type: ADD_SELECTION, payload: p2},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: p1},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: p2},
       ]);
     });
 
@@ -139,20 +138,6 @@ describe('selectionActions', () => {
 
       expect(store.getActions()).toEqual([
         {type: SELECT_PERIOD, payload: period},
-      ]);
-    });
-  });
-
-  describe('set selection action', () => {
-    it('set the selection of one parameter id', () => {
-      const rootState = {searchParameters: {selection: {...initialState}, saved: []}};
-      const payload: SelectionParameter = {parameter: ParameterName.cities, ...gothenburg};
-      store = configureMockStore(rootState);
-
-      store.dispatch(setSelection(payload));
-
-      expect(store.getActions()).toEqual([
-        {type: SET_SELECTION, payload},
       ]);
     });
   });

@@ -2,21 +2,14 @@ import {combineReducers} from 'redux';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
-import {
-  ADD_SELECTION,
-  DESELECT_SELECTION,
-  RESET_SELECTION,
-  SELECT_PERIOD,
-  SELECT_SAVED_SELECTION,
-  SET_SELECTION,
-  UPDATE_SELECTION,
-} from '../search/selection/selectionActions';
+import {selectionWasChanged} from '../domain-models/domainModelsReducer';
 import {Meter} from './meter/meterModels';
 import {
   HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
-  PaginatedDomainModelsState, SingleEntityFailure,
+  PaginatedDomainModelsState,
+  SingleEntityFailure,
 } from './paginatedDomainModels';
 import {
   domainModelPaginatedClearError,
@@ -128,7 +121,7 @@ type ActionTypes<T extends Identifiable> =
   | Action<T | T[]>
   | Action<SingleEntityFailure>;
 
-export const reducerFor = <T extends Identifiable>(
+const reducerFor = <T extends Identifiable>(
   entity: keyof PaginatedDomainModelsState,
   endPoint: EndPoints,
 ) =>
@@ -136,6 +129,11 @@ export const reducerFor = <T extends Identifiable>(
     state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> => {
+
+    if (selectionWasChanged(action.type)) {
+      return {...initialPaginatedDomain<T>()};
+    }
+
     switch (action.type) {
       case domainModelsPaginatedRequest(endPoint):
         return setRequest(state, action as Action<number>);
@@ -151,14 +149,6 @@ export const reducerFor = <T extends Identifiable>(
         return addEntities(state, action as Action<T | T[]>);
       case domainModelsPaginatedEntityFailure(endPoint):
         return entityFailure(state, action as Action<SingleEntityFailure>);
-      case SELECT_SAVED_SELECTION:
-      case ADD_SELECTION:
-      case DESELECT_SELECTION:
-      case UPDATE_SELECTION:
-      case RESET_SELECTION:
-      case SET_SELECTION:
-      case SELECT_PERIOD:
-        return {...initialPaginatedDomain<T>()};
       default:
         return state;
     }

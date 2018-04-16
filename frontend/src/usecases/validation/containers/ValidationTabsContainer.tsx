@@ -18,7 +18,6 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {setSelection} from '../../../state/search/selection/selectionActions';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {changeTabValidation} from '../../../state/ui/tabs/tabsActions';
 import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '../../../state/ui/tabs/tabsModels';
@@ -136,7 +135,6 @@ const mapStateToProps =
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   changeTab: changeTabValidation,
-  setSelection,
   closeClusterDialog,
   clearError: clearErrorMeterMapMarkers,
   fetchMeterMapMarkers,

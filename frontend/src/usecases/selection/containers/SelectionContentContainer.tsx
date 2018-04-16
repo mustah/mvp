@@ -14,7 +14,7 @@ import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
-import {toggleSelection} from '../../../state/search/selection/selectionActions';
+import {toggleParameterInSelection} from '../../../state/search/selection/selectionActions';
 import {
   LookupState,
   OnSelectParameter,
@@ -139,7 +139,7 @@ const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootStat
 };
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  toggleSelection,
+  toggleSelection: toggleParameterInSelection,
   fetchSelections,
   clearError: clearErrorSelections,
 }, dispatch);

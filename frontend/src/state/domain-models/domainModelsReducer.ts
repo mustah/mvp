@@ -4,13 +4,12 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
-  UPDATE_SELECTION,
+  SET_CURRENT_SELECTION,
 } from '../search/selection/selectionActions';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
@@ -154,22 +153,23 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
+export const selectionWasChanged = (actionType: string) => [
+  SELECT_SAVED_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
+  DESELECT_SELECTION,
+  SET_CURRENT_SELECTION,
+  RESET_SELECTION,
+  SELECT_PERIOD,
+].includes(actionType);
+
 const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
-  switch (action.type) {
-    case SELECT_SAVED_SELECTION:
-    case ADD_SELECTION:
-    case DESELECT_SELECTION:
-    case UPDATE_SELECTION:
-    case RESET_SELECTION:
-    case SET_SELECTION:
-    case SELECT_PERIOD:
-      return {...initialDomain<T>()};
-    default:
-      return state;
+  if (selectionWasChanged(action.type)) {
+    return {...initialDomain<T>()};
   }
+  return state;
 };
 
 export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);
