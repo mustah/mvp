@@ -1,5 +1,6 @@
 import {ErrorResponse, Identifiable, IdNamed, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
+import {UserSelection} from '../search/selection/selectionModels';
 import {Address} from './location/locationModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';
@@ -42,6 +43,7 @@ export interface DomainModelsState {
   gatewayMapMarkers: NormalizedState<MapMarker>;
   users: UserState;
   organisations: NormalizedState<Organisation>;
+  userSelections: NormalizedState<UserSelection>;
 }
 
 export const enum RequestType {

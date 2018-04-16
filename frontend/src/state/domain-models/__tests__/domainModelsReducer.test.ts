@@ -17,7 +17,14 @@ import {
   postRequestOf,
   putRequestOf,
 } from '../domainModelsActions';
-import {addresses, cities, domainModels, gatewayMapMarkers, initialDomain, users} from '../domainModelsReducer';
+import {
+  addresses,
+  cities,
+  domainModels,
+  gatewayMapMarkers,
+  initialDomain,
+  users,
+} from '../domainModelsReducer';
 import {selectionsSchema} from '../selections/selectionsSchemas';
 import {Role, User, UserState} from '../user/userModels';
 
@@ -87,7 +94,11 @@ describe('domainModelsReducer', () => {
             name: 'kungsgatan',
             parentId: 'sweden,stockholm',
           },
-          'finland,vasa,kungsgatan': {id: 'finland,vasa,kungsgatan', name: 'kungsgatan', parentId: 'finland,vasa'},
+          'finland,vasa,kungsgatan': {
+            id: 'finland,vasa,kungsgatan',
+            name: 'kungsgatan',
+            parentId: 'finland,vasa',
+          },
         },
         result: [
           'sweden,göteborg,kungsgatan',
@@ -301,6 +312,7 @@ describe('domainModelsReducer', () => {
         meterMapMarkers: initialDomain(),
         users: initialDomain(),
         organisations: initialDomain(),
+        userSelections: initialDomain(),
       };
       const nonInitialState: DomainModelsState = {
         countries: {...initialState.countries, isFetching: true},
@@ -313,6 +325,7 @@ describe('domainModelsReducer', () => {
         meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
         users: {...initialState.users, isFetching: true},
         organisations: {...initialState.organisations, isFetching: true},
+        userSelections: initialDomain(),
       };
 
       expect(domainModels(nonInitialState, mockSelectionAction)).toEqual({

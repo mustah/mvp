@@ -34,7 +34,7 @@ public class UserSelectionEntity extends EntityType<UUID> {
   public String name;
 
   @Column(nullable = false)
-  public JsonField data;
+  public JsonField selectionParameters;
 
   @Column(nullable = false)
   public UUID organisationId;

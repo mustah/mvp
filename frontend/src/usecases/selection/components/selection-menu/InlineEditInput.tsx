@@ -5,13 +5,13 @@ import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {OnSelectSelection, SelectionState} from '../../../../state/search/selection/selectionModels';
+import {OnSelectSelection, UserSelection} from '../../../../state/search/selection/selectionModels';
 import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
 
 interface Props {
   isChanged: boolean;
-  selection: SelectionState;
+  selection: UserSelection;
   saveSelection: OnSelectSelection;
   updateSelection: OnSelectSelection;
   resetSelection: OnClick;

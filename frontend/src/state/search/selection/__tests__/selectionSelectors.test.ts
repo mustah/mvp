@@ -26,7 +26,7 @@ import {
   ParameterName,
   SelectionListItem,
   SelectionParameter,
-  SelectionState,
+  UserSelection,
 } from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 import {
@@ -46,7 +46,7 @@ describe('selectionSelectors', () => {
   const vasa: IdNamed = cityEntities['finland,vasa'];
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const initialSearchParameterState = {selection: {...initialState}, saved: []};
+  const initialSearchParameterState = {selection: {...initialState}};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
     pagination: getPagination({
@@ -132,14 +132,13 @@ describe('selectionSelectors', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: SelectionState = selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
+      const state: UserSelection = selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
 
       const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
         selection: state,
-        saved: [],
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -153,11 +152,11 @@ describe('selectionSelectors', () => {
     it('has two selected cities', () => {
       const payloadGot: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
       const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const prevState: SelectionState = selection(
+      const prevState: UserSelection = selection(
         initialState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadGot},
       );
-      const state: SelectionState = selection(
+      const state: UserSelection = selection(
         prevState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
       );
@@ -167,7 +166,6 @@ describe('selectionSelectors', () => {
         mockParameterCallbacks,
       )({
         selection: state,
-        saved: [],
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -189,7 +187,7 @@ describe('selectionSelectors', () => {
     });
 
     it('get selected period', () => {
-      const state: SelectionState = selection(
+      const state: UserSelection = selection(
         initialState,
         {type: SELECT_PERIOD, payload: Period.currentWeek},
       );

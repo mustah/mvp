@@ -11,8 +11,9 @@ import static java.util.UUID.randomUUID;
 public class SettingUseCases {
 
   private static final String DEMO_DATA_LOADED = "Demo data loaded";
-  private static final String DEMO_USERS_LOADED = "Demo users loaded";
   private static final String DEMO_MEASUREMENTS_LOADED = "Demo measurements loaded";
+  private static final String DEMO_USERS_LOADED = "Demo users loaded";
+  private static final String DEMO_USER_SELECTIONS_LOADED = "Demo user selections loaded";
   private static final String TRUE = "true";
   private static final String FALSE = "false";
 
@@ -34,6 +35,10 @@ public class SettingUseCases {
     return isSettingTrue(DEMO_MEASUREMENTS_LOADED);
   }
 
+  public boolean isDemoUserSelectionDataLoaded() {
+    return isSettingTrue(DEMO_USER_SELECTIONS_LOADED);
+  }
+
   public void setDemoDataLoaded() {
     setSettingTrue(DEMO_DATA_LOADED);
   }
@@ -44,6 +49,10 @@ public class SettingUseCases {
 
   public void setDemoMeasurementsLoaded() {
     setSettingTrue(DEMO_MEASUREMENTS_LOADED);
+  }
+
+  public void setDemoUserSelectionsLoaded() {
+    setSettingTrue(DEMO_USER_SELECTIONS_LOADED);
   }
 
   public Setting save(Setting setting) {

@@ -49,23 +49,23 @@ public class UserSelectionJpaRepositoryTest extends IntegrationTest {
     assertThat(saved.id).isNotNull();
     assertThat(saved.ownerUserId).isEqualTo(entityToSave.ownerUserId);
     assertThat(saved.name).isEqualTo(entityToSave.name);
-    assertThat(saved.data).isEqualTo(entityToSave.data);
+    assertThat(saved.selectionParameters).isEqualTo(entityToSave.selectionParameters);
     assertThat(saved.organisationId).isEqualTo(entityToSave.organisationId);
 
     UserSelectionEntity fetchedInitialFromDb = userSelectionJpaRepository.findOne(saved.id);
-    assertThat(fetchedInitialFromDb.data).isEqualTo(originalData);
+    assertThat(fetchedInitialFromDb.selectionParameters).isEqualTo(originalData);
 
     JsonField newData = new JsonField(
       (ObjectNode) OBJECT_MAPPER.readTree("{\"city\": \"Rolfstorp\"}")
     );
-    saved.data = newData;
+    saved.selectionParameters = newData;
 
     UserSelectionEntity modifiedAndSaved = userSelectionJpaRepository.save(saved);
 
     assertThat(modifiedAndSaved.id).isEqualTo(saved.id);
-    assertThat(modifiedAndSaved.data).isEqualTo(newData);
+    assertThat(modifiedAndSaved.selectionParameters).isEqualTo(newData);
 
     UserSelectionEntity fetchedUpdatedFromDb = userSelectionJpaRepository.findOne(saved.id);
-    assertThat(fetchedUpdatedFromDb.data).isEqualTo(newData);
+    assertThat(fetchedUpdatedFromDb.selectionParameters).isEqualTo(newData);
   }
 }
