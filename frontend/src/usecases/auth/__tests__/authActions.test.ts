@@ -11,6 +11,7 @@ import {DomainModelsState} from '../../../state/domain-models/domainModels';
 import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {Role, User} from '../../../state/domain-models/user/userModels';
 import {CHANGE_LANGUAGE} from '../../../state/language/languageActions';
+import {LanguageState} from '../../../state/language/languageModels';
 import {
   AUTH_SET_USER_INFO,
   authSetUser,
@@ -32,9 +33,10 @@ describe('authActions', () => {
     const initialState: Partial<DomainModelsState> = {
       users: {...initialDomain()},
     };
+    const initialLanguageState: LanguageState = {language: {code: 'en'}};
     store = configureMockStore({
       domainModels: initialState,
-      language: {language: 'en'},
+      language: initialLanguageState,
     });
     mockRestClient = new MockAdapter(axios);
     window.location.reload = () => void(0);

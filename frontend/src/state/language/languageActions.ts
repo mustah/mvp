@@ -12,7 +12,7 @@ const reloadPage = () => window.location.reload();
 export const changeLanguage = (language: LanguageCode, onComplete: Callback = reloadPage) => {
   return (dispatch, getState: GetState) => {
     const {language: stateLanguage} = getState().language;
-    if (stateLanguage !== language || getI18nLanguage() !== language) {
+    if (stateLanguage.code !== language || getI18nLanguage() !== language) {
       changeTranslationLanguage(language, () => {
         dispatch(changeLanguageRequest(language));
         onComplete();

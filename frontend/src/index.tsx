@@ -25,7 +25,7 @@ persistStore<AppState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchP
   if (!error) {
     const {auth: {token}, language: {language}}: RootState = appStore.getState()!;
     restClientWith(token);
-    initLanguage(language);
+    initLanguage(language.code);
   }
 });
 
