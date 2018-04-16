@@ -7,6 +7,7 @@ stages:
   - test
   - publish
   - deploy
+  - smoketest
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
@@ -186,6 +187,24 @@ test:unit_and_IT:
     expire_in: 7 days
   script:
     - gradle check -x systemTest
+
+acceptance:
+  <<: *cache_gradle_read_only
+  services:
+    - name: selenium/standalone-chrome
+      alias: selenium_chrome_container_url
+  stage: smoketest
+  only:
+    - /^release-.*$/
+    - tags
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-cucumber"
+    when: always
+    paths:
+      - acceptance_tests/target/cucumber
+    expire_in: 7 days
+  script:
+    - CHROME_URL="http://selenium_chrome_container_url:4444/wd/hub" MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber
 
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
