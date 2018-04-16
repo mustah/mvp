@@ -91,7 +91,7 @@ public class Quantity {
   }
 
   @Nullable
-  public String defaultPresentationUnit() {
+  public String presentationUnit() {
     return presentationInformation.getUnit().orElse(null);
   }
 
@@ -99,7 +99,7 @@ public class Quantity {
     return new Quantity(id, name, presentationInformation.withUnit(unit));
   }
 
-  public SeriesDisplayMode defaultSeriesDisplayMode() {
+  public SeriesDisplayMode seriesDisplayMode() {
     return presentationInformation.getSeriesDisplayMode();
   }
 

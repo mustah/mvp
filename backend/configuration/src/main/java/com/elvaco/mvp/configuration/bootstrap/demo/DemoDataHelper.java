@@ -35,49 +35,49 @@ public class DemoDataHelper {
         created,
         Quantity.FORWARD_TEMPERATURE.name,
         tempIn,
-        Quantity.FORWARD_TEMPERATURE.defaultPresentationUnit(),
+        Quantity.FORWARD_TEMPERATURE.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.RETURN_TEMPERATURE.name,
         tempOut,
-        Quantity.RETURN_TEMPERATURE.defaultPresentationUnit(),
+        Quantity.RETURN_TEMPERATURE.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.DIFFERENCE_TEMPERATURE.name,
         tempIn - tempOut,
-        Quantity.DIFFERENCE_TEMPERATURE.defaultPresentationUnit(),
+        Quantity.DIFFERENCE_TEMPERATURE.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.VOLUME_FLOW.name,
         RANDOM.nextDouble(0.0, 3.0),
-        Quantity.VOLUME_FLOW.defaultPresentationUnit(),
+        Quantity.VOLUME_FLOW.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.POWER.name,
         RANDOM.nextDouble(100.0, 200.0),
-        Quantity.POWER.defaultPresentationUnit(),
+        Quantity.POWER.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.ENERGY.name,
         RANDOM.nextDouble(1000.0, 3000.0),
-        Quantity.ENERGY.defaultPresentationUnit(),
+        Quantity.ENERGY.presentationUnit(),
         meter
       ),
       new MeasurementEntity(
         created,
         Quantity.VOLUME.name,
         RANDOM.nextDouble(1.0, 3.0),
-        Quantity.VOLUME.defaultPresentationUnit(),
+        Quantity.VOLUME.presentationUnit(),
         meter
       )
     );

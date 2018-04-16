@@ -38,12 +38,12 @@ public final class LogicalMeterHelper {
           continue;
         }
         Quantity meterQuantity = meter.getQuantity(quantity.name).get();
-        if (quantity.defaultPresentationUnit() == null
-          && meterQuantity.defaultPresentationUnit() != null) {
-          quantity = quantity.withUnit(meterQuantity.defaultPresentationUnit());
+        if (quantity.presentationUnit() == null
+          && meterQuantity.presentationUnit() != null) {
+          quantity = quantity.withUnit(meterQuantity.presentationUnit());
         }
-        if (quantity.defaultSeriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)) {
-          quantity = quantity.withSeriesDisplayMode(meterQuantity.defaultSeriesDisplayMode());
+        if (quantity.seriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)) {
+          quantity = quantity.withSeriesDisplayMode(meterQuantity.seriesDisplayMode());
         }
         physicalMeters.addAll(meter.physicalMeters);
       }

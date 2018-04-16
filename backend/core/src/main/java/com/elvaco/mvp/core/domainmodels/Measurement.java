@@ -28,7 +28,7 @@ public class Measurement implements Identifiable<Long> {
       ZonedDateTime.now(),
       quantity.name,
       value,
-      quantity.defaultPresentationUnit(),
+      quantity.presentationUnit(),
       physicalMeter
     );
   }

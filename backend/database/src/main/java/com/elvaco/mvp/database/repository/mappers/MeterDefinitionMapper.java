@@ -51,8 +51,8 @@ public class MeterDefinitionMapper
     return new QuantityEntity(
       quantity.id,
       quantity.name,
-      quantity.defaultPresentationUnit(),
-      quantity.defaultSeriesDisplayMode()
+      quantity.presentationUnit(),
+      quantity.seriesDisplayMode()
     );
   }
 }

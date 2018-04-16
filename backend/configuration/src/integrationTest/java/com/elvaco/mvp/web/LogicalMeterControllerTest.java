@@ -669,7 +669,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
           when,
           quantity.name,
           value,
-          quantity.defaultPresentationUnit(),
+          quantity.presentationUnit(),
           physicalMeter
         ))
       );
