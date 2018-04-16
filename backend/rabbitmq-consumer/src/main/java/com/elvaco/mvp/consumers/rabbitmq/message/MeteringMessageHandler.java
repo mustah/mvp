@@ -111,7 +111,7 @@ public class MeteringMessageHandler implements MessageHandler {
 
     physicalMeterUseCases.save(physicalMeter);
 
-    geocodeService.fetchCoordinates(LocationWithId.from(meter.location, meter.id));
+    geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
 
     return Optional.empty();
   }

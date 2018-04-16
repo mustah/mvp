@@ -23,7 +23,7 @@ public class LocationWithId extends Location implements Identifiable<UUID> {
     this.logicalMeterId = logicalMeterId;
   }
 
-  public static LocationWithId from(Location location, UUID logicalMeterId) {
+  public static LocationWithId of(Location location, UUID logicalMeterId) {
     return new LocationWithId(
       logicalMeterId,
       location.getCoordinate(),
