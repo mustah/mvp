@@ -4,13 +4,13 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-  UPDATE_SELECTION,
+  SET_CURRENT_SELECTION,
 } from '../search/selection/selectionActions';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
@@ -160,9 +160,9 @@ const resetStateReducer = <T extends Identifiable>(
 ): NormalizedState<T> => {
   switch (action.type) {
     case SELECT_SAVED_SELECTION:
-    case ADD_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
-    case UPDATE_SELECTION:
+    case SET_CURRENT_SELECTION:
     case RESET_SELECTION:
     case SET_SELECTION:
     case SELECT_PERIOD:

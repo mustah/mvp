@@ -20,7 +20,7 @@ import {selectionsSchema} from '../../../domain-models/selections/selectionsSche
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
 import {getPagination} from '../../../ui/pagination/paginationSelectors';
-import {ADD_SELECTION, SELECT_PERIOD} from '../selectionActions';
+import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../selectionActions';
 import {
   LookupState,
   ParameterName,
@@ -100,7 +100,7 @@ describe('selectionSelectors', () => {
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_SELECTION, payload}),
+      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: domainModels(normalizedSelections) as DomainModelsState,
     };
 
@@ -121,7 +121,7 @@ describe('selectionSelectors', () => {
     notCity.cities = cities(initialDomainModelState, {type: 'unknown'});
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_SELECTION, payload}),
+      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: notCity as DomainModelsState,
     };
 
@@ -132,7 +132,7 @@ describe('selectionSelectors', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: SelectionState = selection(initialState, {type: ADD_SELECTION, payload});
+      const state: SelectionState = selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
 
       const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
@@ -155,11 +155,11 @@ describe('selectionSelectors', () => {
       const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const prevState: SelectionState = selection(
         initialState,
-        {type: ADD_SELECTION, payload: payloadGot},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: payloadGot},
       );
       const state: SelectionState = selection(
         prevState,
-        {type: ADD_SELECTION, payload: payloadSto},
+        {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
       );
 
       const uriParameters: EncodedUriParameters = composePaginatedCombiner(
@@ -204,7 +204,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       const state: LookupState = {
-        selection: selection(initialState, {type: ADD_SELECTION, payload}),
+        selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
         domainModels: domainModels(normalizedSelections) as DomainModelsState,
       };
 

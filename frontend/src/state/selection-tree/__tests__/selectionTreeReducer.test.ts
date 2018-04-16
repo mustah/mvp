@@ -1,13 +1,13 @@
 import {normalize} from 'normalizr';
 import {EndPoints} from '../../../services/endPoints';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-  UPDATE_SELECTION,
+  SET_CURRENT_SELECTION,
 } from '../../search/selection/selectionActions';
 import {makeActionsOf, RequestHandler} from '../../summary/summaryApiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from '../selectionTreeModels';
@@ -126,9 +126,9 @@ describe('selectionTreeReducer', () => {
       };
 
       expect(selectionTree(state, {type: SELECT_SAVED_SELECTION})).toEqual(initialState);
-      expect(selectionTree(state, {type: ADD_SELECTION})).toEqual(initialState);
+      expect(selectionTree(state, {type: ADD_PARAMETER_TO_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: DESELECT_SELECTION})).toEqual(initialState);
-      expect(selectionTree(state, {type: UPDATE_SELECTION})).toEqual(initialState);
+      expect(selectionTree(state, {type: SET_CURRENT_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: RESET_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: SET_SELECTION})).toEqual(initialState);
       expect(selectionTree(state, {type: SELECT_PERIOD})).toEqual(initialState);

@@ -1,8 +1,8 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
 import {
-  ADD_SELECTION, DESELECT_SELECTION, RESET_SELECTION, SELECT_PERIOD,
-  SELECT_SAVED_SELECTION, SET_SELECTION, UPDATE_SELECTION,
+  ADD_PARAMETER_TO_SELECTION, DESELECT_SELECTION, RESET_SELECTION, SELECT_PERIOD,
+  SELECT_SAVED_SELECTION, SET_SELECTION, SET_CURRENT_SELECTION,
 } from '../../search/selection/selectionActions';
 import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
@@ -46,9 +46,9 @@ export const pagination = (state: PaginationState = initialPaginationState, acti
     case PAGINATION_UPDATE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
     case SELECT_SAVED_SELECTION:
-    case ADD_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
     case DESELECT_SELECTION:
-    case UPDATE_SELECTION:
+    case SET_CURRENT_SELECTION:
     case RESET_SELECTION:
     case SET_SELECTION:
     case SELECT_PERIOD:

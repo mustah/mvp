@@ -1,6 +1,6 @@
 import {Period} from '../../../../components/dates/dateModels';
 import {saved} from '../saveReducer';
-import {SAVE_SELECTION, UPDATE_SELECTION} from '../selectionActions';
+import {SAVE_SELECTION, SET_CURRENT_SELECTION} from '../selectionActions';
 import {SelectionState} from '../selectionModels';
 
 describe('selectionReducer', () => {
@@ -56,7 +56,7 @@ describe('selectionReducer', () => {
 
     it('update name of the selection', () => {
       let state = saved([], {type: SAVE_SELECTION, payload: mockPayload});
-      state = saved(state, {type: UPDATE_SELECTION, payload: {...mockPayload, name: 'test'}});
+      state = saved(state, {type: SET_CURRENT_SELECTION, payload: {...mockPayload, name: 'test'}});
 
       expect(state).toEqual([{...mockPayload, name: 'test'}]);
     });

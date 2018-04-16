@@ -9,7 +9,7 @@ import {
   resetSelection,
   saveSelection,
   selectSavedSelection,
-  updateSelection,
+  setCurrentSelection,
 } from '../../../state/search/selection/selectionActions';
 import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
@@ -58,7 +58,7 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeSelectionPage,
   saveSelection,
-  updateSelection,
+  updateSelection: setCurrentSelection,
   resetSelection,
   selectSavedSelection,
 }, dispatch);

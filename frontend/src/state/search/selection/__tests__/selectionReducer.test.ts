@@ -1,7 +1,7 @@
 import {Period} from '../../../../components/dates/dateModels';
 import {IdNamed} from '../../../../types/Types';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
@@ -46,7 +46,7 @@ describe('selectionReducer', () => {
         parameter: ParameterName.cities,
       };
 
-      expect(selection(state, {type: ADD_SELECTION, payload: selectionParameters})).toEqual({
+      expect(selection(state, {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters})).toEqual({
         ...initialState,
         isChanged: true,
         selected: {
@@ -68,11 +68,11 @@ describe('selectionReducer', () => {
       };
 
       const intermediateState: SelectionState = selection(initialState, {
-        type: ADD_SELECTION,
+        type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParameterItem,
       });
       const finalState: SelectionState = selection(intermediateState, {
-        type: ADD_SELECTION,
+        type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParametersArray,
       });
 

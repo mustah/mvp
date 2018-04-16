@@ -2,14 +2,14 @@ import {EmptyAction} from 'react-redux-typescript';
 import {Period} from '../../../components/dates/dateModels';
 import {Action, uuid} from '../../../types/Types';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SAVE_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-  UPDATE_SELECTION,
+  SET_CURRENT_SELECTION,
 } from './selectionActions';
 import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
 
@@ -93,7 +93,7 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
   switch (action.type) {
     case RESET_SELECTION:
       return {...initialState};
-    case ADD_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
       return addSelected(state, action as Action<SelectionParameter>);
     case SET_SELECTION:
       return setSelected(state, action as Action<SelectionParameter>);
@@ -101,7 +101,7 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
       return removeSelected(state, action as Action<SelectionParameter>);
     case SELECT_PERIOD:
       return updatePeriod(state, action as Action<Period>);
-    case UPDATE_SELECTION:
+    case SET_CURRENT_SELECTION:
     case SAVE_SELECTION:
     case SELECT_SAVED_SELECTION:
       return selectSaved(state, action as Action<SelectionState>);

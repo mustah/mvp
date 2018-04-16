@@ -3,13 +3,13 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {
-  ADD_SELECTION,
+  ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-  UPDATE_SELECTION,
+  SET_CURRENT_SELECTION,
 } from '../search/selection/selectionActions';
 import {Meter} from './meter/meterModels';
 import {
@@ -152,9 +152,9 @@ export const reducerFor = <T extends Identifiable>(
       case domainModelsPaginatedEntityFailure(endPoint):
         return entityFailure(state, action as Action<SingleEntityFailure>);
       case SELECT_SAVED_SELECTION:
-      case ADD_SELECTION:
+      case ADD_PARAMETER_TO_SELECTION:
       case DESELECT_SELECTION:
-      case UPDATE_SELECTION:
+      case SET_CURRENT_SELECTION:
       case RESET_SELECTION:
       case SET_SELECTION:
       case SELECT_PERIOD:
