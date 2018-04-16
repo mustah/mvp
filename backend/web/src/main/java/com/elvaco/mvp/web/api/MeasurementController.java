@@ -11,13 +11,13 @@ import java.util.UUID;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.MeasurementValue;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
-import com.elvaco.mvp.core.util.LogicalMeterHelper;
 import com.elvaco.mvp.core.util.ResolutionHelper;
 import com.elvaco.mvp.web.dto.MeasurementDto;
 import com.elvaco.mvp.web.dto.MeasurementSeriesDto;
@@ -25,13 +25,13 @@ import com.elvaco.mvp.web.exception.MeasurementNotFound;
 import com.elvaco.mvp.web.exception.QuantityNotFound;
 import com.elvaco.mvp.web.mapper.LabeledMeasurementValue;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.mapMeterQuantitiesToPhysicalMeters;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
@@ -84,8 +84,8 @@ public class MeasurementController {
       resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
     }
 
-    Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
-      .mapMeterQuantitiesToPhysicalMeterUuids(
+    Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
+      mapMeterQuantitiesToPhysicalMeters(
         logicalMeters,
         quantities
       );
@@ -95,12 +95,12 @@ public class MeasurementController {
     }
 
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
-    for (Map.Entry<Quantity, List<UUID>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
+    for (Map.Entry<Quantity, List<PhysicalMeter>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
       Quantity quantity = entry.getKey();
       foundMeasurements.addAll(measurementUseCases.averageForPeriod(
-        entry.getValue(),
+        entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
         quantity.name,
-        quantity.unit,
+        quantity.presentationUnit(),
         after,
         before,
         resolution
@@ -129,41 +129,44 @@ public class MeasurementController {
     // measurements, which is a bit too much.
     List<LogicalMeter> logicalMeters = getLogicalMetersByIds(meters);
 
+    if (before == null) {
+      before = ZonedDateTime.now();
+    }
+
+    if (after == null) {
+      after = ZonedDateTime.parse("1970-01-01T00:00:00Z");
+    }
+
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
       .orElseGet(() -> logicalMeters.stream()
         .flatMap(logicalMeter -> logicalMeter.getQuantities().stream())
         .collect(toSet()));
 
-    Map<Quantity, List<UUID>> quantityToPhysicalMeterIdMap = LogicalMeterHelper
-      .mapMeterQuantitiesToPhysicalMeterUuids(logicalMeters, quantities);
-
-    List<Measurement> foundMeasurements = new ArrayList<>();
-    for (Map.Entry<Quantity, List<UUID>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
-      RequestParameters requestParams = new RequestParametersAdapter();
-      requestParams.setAll(
-        "meterId",
-        entry.getValue()
-          .stream()
-          .map(UUID::toString)
-          .collect(toList())
-      );
-      requestParams.add("quantity", entry.getKey().name);
-      if (after != null) {
-        requestParams.add("after", after.toString());
+    List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
+    Set<Map.Entry<Quantity, List<PhysicalMeter>>> entries = mapMeterQuantitiesToPhysicalMeters(
+      logicalMeters,
+      quantities
+    ).entrySet();
+    for (Map.Entry<Quantity, List<PhysicalMeter>> entry : entries) {
+      for (PhysicalMeter meter : entry.getValue()) {
+        List<MeasurementValue> series = measurementUseCases.seriesForPeriod(
+          meter.id,
+          entry.getKey().name,
+          entry.getKey().presentationUnit(),
+          entry.getKey().seriesDisplayMode(),
+          after,
+          before
+        );
+        foundMeasurements.addAll(series.stream()
+          .map(measurementValue -> new LabeledMeasurementValue(
+            meter.externalId,
+            measurementValue.when,
+            measurementValue.value,
+            entry.getKey()
+          )).collect(toList()));
       }
-
-      if (before != null) {
-        requestParams.add("before", before.toString());
-      }
-
-      foundMeasurements.addAll(
-        measurementUseCases.findAll(entry.getKey().unit, requestParams)
-      );
     }
-
-    return measurementMapper.toSeries(foundMeasurements.stream()
-      .map(LabeledMeasurementValue::from)
-      .collect(toList()));
+    return measurementMapper.toSeries(foundMeasurements);
   }
 
   private Set<Quantity> getQuantitiesFromQuantityUnitList(List<String> quantityAndUnitList) {

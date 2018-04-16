@@ -4,10 +4,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
-import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -18,7 +16,6 @@ import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.util.LogicalMeterHelper;
 
 import static com.elvaco.mvp.core.security.OrganisationFilter.setCurrentUsersOrganisationId;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 public class LogicalMeterUseCases {
@@ -71,18 +68,6 @@ public class LogicalMeterUseCases {
     }
     throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
       + "create this meter.");
-  }
-
-  public List<Measurement> measurements(
-    LogicalMeter logicalMeter,
-    Supplier<RequestParameters> filter
-  ) {
-    if (logicalMeter.physicalMeters.isEmpty()
-      || logicalMeter.getQuantities().isEmpty()
-      || !hasTenantAccess(logicalMeter.organisationId)) {
-      return emptyList();
-    }
-    return measurements.findAll(filter.get());
   }
 
   public Optional<LogicalMeter> findById(UUID id) {

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -26,23 +26,28 @@ public final class LogicalMeterHelper {
   private static final int DAY_INTERVAL = 1440;
   private static final int HOUR_INTERVAL = 60;
 
-  public static Map<Quantity, List<UUID>> mapMeterQuantitiesToPhysicalMeterUuids(
+  public static Map<Quantity, List<PhysicalMeter>> mapMeterQuantitiesToPhysicalMeters(
     List<LogicalMeter> logicalMeters,
     Set<Quantity> quantities
   ) {
-    Map<Quantity, List<UUID>> physicalMeterQuantityMap = new HashMap<>();
+    Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
     quantities.forEach((quantity) -> {
-      List<UUID> physicalMeterIds = new ArrayList<>();
+      List<PhysicalMeter> physicalMeters = new ArrayList<>();
       for (LogicalMeter meter : logicalMeters) {
-        Optional<Quantity> meterQuantity = meter.getQuantity(quantity.name);
-        if (meterQuantity.isPresent()) {
-          if (!quantity.unit().isPresent() && meterQuantity.get().unit().isPresent()) {
-            quantity = quantity.withUnit(meterQuantity.get().unit);
-          }
-          physicalMeterIds.addAll(getPhysicalMeterIds(meter));
+        if (!meter.getQuantity(quantity.name).isPresent()) {
+          continue;
         }
+        Quantity meterQuantity = meter.getQuantity(quantity.name).get();
+        if (quantity.presentationUnit() == null
+          && meterQuantity.presentationUnit() != null) {
+          quantity = quantity.withUnit(meterQuantity.presentationUnit());
+        }
+        if (quantity.seriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)) {
+          quantity = quantity.withSeriesDisplayMode(meterQuantity.seriesDisplayMode());
+        }
+        physicalMeters.addAll(meter.physicalMeters);
       }
-      physicalMeterQuantityMap.put(quantity, physicalMeterIds);
+      physicalMeterQuantityMap.put(quantity, physicalMeters);
     });
     return physicalMeterQuantityMap;
   }

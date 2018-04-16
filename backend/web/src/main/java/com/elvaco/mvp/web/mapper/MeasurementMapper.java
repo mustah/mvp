@@ -44,7 +44,7 @@ public class MeasurementMapper {
       LabeledQuantity key = entry.getKey();
       series.add(
         new MeasurementSeriesDto(
-          key.quantity.name, key.quantity.unit, key.label,
+          key.quantity.name, key.quantity.presentationUnit(), key.label,
           entry.getValue()
             .stream()
             .map(measurement -> new MeasurementValueDto(

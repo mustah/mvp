@@ -29,7 +29,6 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -37,7 +36,6 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
-import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
@@ -65,7 +63,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ConstantConditions")
@@ -103,7 +100,7 @@ public class MessageHandlerTest {
   private Organisations organisations;
   private LogicalMeters logicalMeters;
   private Gateways gateways;
-  private Measurements measurements;
+  private MockMeasurements measurements;
   private MeteringMessageHandler messageHandler;
   private MockGeocodeService geocodeService;
 
@@ -409,7 +406,7 @@ public class MessageHandlerTest {
     messageHandler.handle(newMeasurementMessage("Wattage", "W", 1.0));
     messageHandler.handle(newMeasurementMessage("Wattage", "W", 2.0));
 
-    List<Measurement> actual = measurements.findAll(new MockRequestParameters());
+    List<Measurement> actual = measurements.allMocks();
     assertThat(actual).hasSize(1);
     assertThat(actual.get(0).value).isEqualTo(2.0);
   }
@@ -440,15 +437,10 @@ public class MessageHandlerTest {
 
     messageHandler.handle(message);
 
-    List<Measurement> allMeasurements = measurements.findAll(new MockRequestParameters());
-    List<Quantity> quantities = allMeasurements.stream()
-      .map(m -> new Quantity(m.quantity, m.unit))
-      .collect(toList());
-
+    List<Measurement> allMeasurements = measurements.allMocks();
     assertThat(allMeasurements).hasSize(2);
-    assertThat(quantities).containsExactly(
-      Quantity.RETURN_TEMPERATURE,
-      Quantity.RETURN_TEMPERATURE
+    assertThat(allMeasurements).allMatch(measurement ->
+      measurement.quantity.equals("Return temperature") && measurement.unit.equals("°C")
     );
   }
 
@@ -466,7 +458,7 @@ public class MessageHandlerTest {
     messageHandler.handle(newMeasurementMessage("Wattage", "W", 1.0));
     messageHandler.handle(newMeasurementMessage("Flow", "m³/s", 2.0));
 
-    List<Measurement> actual = measurements.findAll(new MockRequestParameters());
+    List<Measurement> actual = measurements.allMocks();
     assertThat(actual).hasSize(2);
   }
 
@@ -488,7 +480,7 @@ public class MessageHandlerTest {
       "kWh",
       expectedPhysicalMeter
     );
-    List<Measurement> createdMeasurements = measurements.findAll(null);
+    List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }
@@ -537,7 +529,7 @@ public class MessageHandlerTest {
         0
       ).withLogicalMeterId(logicalMeter.id)
     );
-    List<Measurement> createdMeasurements = measurements.findAll(null);
+    List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0)).isEqualTo(expectedMeasurement);
   }
@@ -598,8 +590,7 @@ public class MessageHandlerTest {
 
     messageHandler.handle(message);
 
-    List<Measurement> createdMeasurements = measurements.findAll(null);
-    assertThat(createdMeasurements).hasSize(1);
+    List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements.get(0).physicalMeter.organisation)
       .isEqualTo(existingOrganisation);
   }
@@ -610,7 +601,7 @@ public class MessageHandlerTest {
 
     messageHandler.handle(message);
 
-    List<Measurement> createdMeasurements = measurements.findAll(null);
+    List<Measurement> createdMeasurements = measurements.allMocks();
     assertThat(createdMeasurements).hasSize(1);
     assertThat(createdMeasurements.get(0).physicalMeter.organisation.slug)
       .isEqualTo("some-organisation");
@@ -649,14 +640,14 @@ public class MessageHandlerTest {
   public void measurementUnitIsUpdated() {
     messageHandler.handle(newMeasurementMessage("kW", 1.0));
 
-    List<Measurement> all = measurements.findAll(null);
+    List<Measurement> all = measurements.allMocks();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).unit).isEqualTo("kW");
     assertThat(all.get(0).value).isEqualTo(1.0);
 
     messageHandler.handle(newMeasurementMessage("MW", 1.0));
 
-    all = measurements.findAll(null);
+    all = measurements.allMocks();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).unit).isEqualTo("MW");
     assertThat(all.get(0).value).isEqualTo(1.0);
@@ -682,13 +673,13 @@ public class MessageHandlerTest {
   public void measurementValueIsUpdated() {
     messageHandler.handle(newMeasurementMessage(1.0));
 
-    List<Measurement> all = measurements.findAll(null);
+    List<Measurement> all = measurements.allMocks();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).value).isEqualTo(1.0);
 
     messageHandler.handle(newMeasurementMessage(2.0));
 
-    all = measurements.findAll(null);
+    all = measurements.allMocks();
     assertThat(all).hasSize(1);
     assertThat(all.get(0).value).isEqualTo(2.0);
   }

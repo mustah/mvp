@@ -4,24 +4,24 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.Period;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
@@ -54,7 +54,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "hour",
         "Energy",
         "W",
@@ -74,10 +74,10 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
+        singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
 
     assertThat(results).hasSize(2);
-    assertThat(results).allMatch(v -> v.getValueValue() == 2.0);
+    assertThat(results).allMatch(v -> v.getDoubleValue() == 2.0);
   }
 
   @Test
@@ -87,7 +87,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "hour",
         "Energy",
         "kW",
@@ -96,7 +96,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(1);
-    assertThat(results.get(0).getValueValue()).isEqualTo(0.002);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(0.002);
   }
 
   @Test
@@ -108,7 +108,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "day",
         "Energy",
         "W",
@@ -117,8 +117,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValueValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getValueValue()).isEqualTo(4.0);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
+    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
   }
 
   @Test
@@ -130,7 +130,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "month",
         "Energy",
         "W",
@@ -139,8 +139,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       );
 
     assertThat(results).hasSize(2);
-    assertThat(results.get(0).getValueValue()).isEqualTo(2.0);
-    assertThat(results.get(1).getValueValue()).isEqualTo(4.0);
+    assertThat(results.get(0).getDoubleValue()).isEqualTo(2.0);
+    assertThat(results.get(1).getDoubleValue()).isEqualTo(4.0);
   }
 
   @Test
@@ -152,7 +152,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id), "hour", "Energy", "W", START_TIME, twoHoursLater);
+        singletonList(meter.id), "hour", "Energy", "W", START_TIME, twoHoursLater);
 
     assertThat(results).hasSize(3);
     assertThat(results.get(0).getValue()).isEqualTo("2 W");
@@ -172,7 +172,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
+        singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
 
     assertThat(results).hasSize(2);
     assertThat(results.get(0).getValue()).isEqualTo("51 W");
@@ -188,7 +188,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(firstMeter.id),
+        singletonList(firstMeter.id),
         "hour",
         "Energy",
         "W",
@@ -208,7 +208,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "hour",
         "A",
         "W",
@@ -227,7 +227,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> resultsWithHourResolution = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "hour",
         "Energy",
         "W",
@@ -237,7 +237,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> resultsWithDayResolution = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "day",
         "Energy",
         "W",
@@ -247,7 +247,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> resultsWithMonthResolution = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "month",
         "Energy",
         "W",
@@ -279,7 +279,7 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        Collections.singletonList(meter.id),
+        singletonList(meter.id),
         "hour",
         "Energy",
         "W",
@@ -323,6 +323,67 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
     assertThat(measurements.get(1).created)
       .usingComparator(timeZoneInsensitive)
       .isEqualTo(powerTime.toZonedDateTime());
+  }
+
+  @Test
+  public void seriesInDefaultMode() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "kWh", "Energy");
+
+    List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
+      meter.id,
+      "Energy",
+      "MWh",
+      "default",
+      START_TIME,
+      START_TIME.plusMinutes(1)
+    );
+
+    assertThat(result).hasSize(2);
+    assertThat(result.get(0).getMeasurementUnit().get()).isEqualTo(new MeasurementUnit(
+      "MWh",
+      0.001
+    ));
+  }
+
+  @Test
+  public void seriesInConsumptionMode() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME.minusMinutes(1), 0.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "kWh", "Energy");
+
+    List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
+      meter.id,
+      "Energy",
+      "MWh",
+      "consumption",
+      START_TIME.minusMinutes(1),
+      START_TIME.plusMinutes(1)
+    );
+
+    assertThat(result).hasSize(3);
+    assertThat(result.get(0).getValue()).isNull();
+    assertThat(result.get(1).getDoubleValue()).isEqualTo(0.001);
+    assertThat(result.get(2).getDoubleValue()).isEqualTo(0.001);
+  }
+
+  @Test
+  public void emptySeries() {
+    PhysicalMeterEntity physicalMeterEntity = newPhysicalMeterEntity();
+
+    List<MeasurementValueProjection> result = measurementJpaRepository.getSeriesForPeriod(
+      physicalMeterEntity.id,
+      "Energy",
+      "MW",
+      "default",
+      START_TIME,
+      START_TIME.plus(Duration.ofSeconds(1))
+    );
+    assertThat(result).isEmpty();
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {

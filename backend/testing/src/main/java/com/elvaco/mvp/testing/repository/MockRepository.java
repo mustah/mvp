@@ -13,6 +13,10 @@ abstract class MockRepository<K, V extends Identifiable<K>> {
 
   private final Map<K, V> repository = new HashMap<>();
 
+  public final List<V> allMocks() {
+    return new ArrayList<>(repository.values());
+  }
+
   protected abstract V copyWithId(K id, V entity);
 
   protected abstract K generateId();
@@ -35,10 +39,6 @@ abstract class MockRepository<K, V extends Identifiable<K>> {
 
   final Stream<V> filter(Predicate<V> predicate) {
     return allMocks().stream().filter(predicate);
-  }
-
-  final List<V> allMocks() {
-    return new ArrayList<>(repository.values());
   }
 
   final long nextId() {

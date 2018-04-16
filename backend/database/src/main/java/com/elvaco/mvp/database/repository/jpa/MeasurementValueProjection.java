@@ -32,7 +32,7 @@ public interface MeasurementValueProjection {
   }
 
   @Nullable
-  default Double getValueValue() {
+  default Double getDoubleValue() {
     return getMeasurementUnit().map(MeasurementUnit::getValue).orElse(null);
   }
 

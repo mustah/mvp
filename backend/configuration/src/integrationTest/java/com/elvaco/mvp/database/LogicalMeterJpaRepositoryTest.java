@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
+import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
@@ -46,7 +47,7 @@ public class LogicalMeterJpaRepositoryTest extends IntegrationTest {
     MeterDefinitionEntity meterDefinitionEntity = meterDefinitionJpaRepository.save(
       new MeterDefinitionEntity(
         MeterDefinitionType.UNKNOWN_METER_TYPE,
-        singleton(new QuantityEntity(null, "Speed", "m/s")),
+        singleton(new QuantityEntity(null, "Speed", "m/s", SeriesDisplayMode.READOUT)),
         "My meter definition",
         false
       ));
