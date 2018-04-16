@@ -6,6 +6,7 @@ import javax.persistence.EntityManagerFactory;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
@@ -101,10 +102,9 @@ public abstract class IntegrationTest {
   }
 
   protected User createUserIfNotPresent(User user) {
-    if (!users.findByEmail(user.email).isPresent()) {
-      users.create(user);
-    }
-    return user;
+    return users
+      .findByEmail(user.email)
+      .orElseGet(() -> users.create(user));
   }
 
   protected RestClient restAsUser(User user) {

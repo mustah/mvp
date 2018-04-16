@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER_PASSWORD;
 import static com.elvaco.mvp.core.fixture.DomainModels.RANDOM_ELVACO_USER;
+import static com.elvaco.mvp.core.fixture.DomainModels.RANDOM_ELVACO_USER_PASSWORD;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +30,7 @@ public class AuthControllerTest extends IntegrationTest {
     User user = createUserIfNotPresent(ELVACO_SUPER_ADMIN_USER);
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.getUsername(), user.password)
+      .loginWith(user.getUsername(), ELVACO_SUPER_ADMIN_USER_PASSWORD)
       .get("/authenticate", UserTokenDto.class);
 
     UserTokenDto body = response.getBody();
@@ -73,7 +75,7 @@ public class AuthControllerTest extends IntegrationTest {
     User user = createUserIfNotPresent(RANDOM_ELVACO_USER);
 
     ResponseEntity<UserTokenDto> response = restClient()
-      .loginWith(user.getUsername(), user.password)
+      .loginWith(user.getUsername(), RANDOM_ELVACO_USER_PASSWORD)
       .get("/authenticate", UserTokenDto.class);
 
     String token = response.getBody().token;
@@ -117,18 +119,19 @@ public class AuthControllerTest extends IntegrationTest {
 
   @Test
   public void basicAuthIsSufficientForEndpointAccess() {
+    String password = "test";
     User user = createUserIfNotPresent(
       new UserBuilder()
         .name("basic-auth-user")
         .email("basic@auth.se")
-        .password("test")
+        .password(password)
         .language(Language.en)
         .organisationElvaco()
         .asUser()
         .build()
     );
 
-    ResponseEntity<?> response = restClient().loginWith(user.getUsername(), user.password)
+    ResponseEntity<?> response = restClient().loginWith(user.getUsername(), password)
       .get("/meters/", Object.class);
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

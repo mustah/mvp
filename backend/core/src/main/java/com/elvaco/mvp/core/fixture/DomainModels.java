@@ -21,55 +21,61 @@ public final class DomainModels {
       "wayne-industries"
     );
 
+  public static final String OTHER_ADMIN_USER_PASSWORD = "elvis123";
   public static final User OTHER_ADMIN_USER = new User(
     "Elvis Cohan",
     "elvis.cohan@wayne.com",
-    "elvis123",
+    OTHER_ADMIN_USER_PASSWORD,
     Language.en,
     WAYNE_INDUSTRIES,
     singletonList(ADMIN)
   );
 
+  public static final String OTHER_USER_PASSWORD = "erik123";
   public static final User OTHER_USER = new User(
     "Erik Karlsson",
     "erikar@wayne.se",
-    "erik123",
+    OTHER_USER_PASSWORD,
     Language.en,
     WAYNE_INDUSTRIES,
     singletonList(USER)
   );
 
+  public static final String ELVACO_ADMIN_USER_PASSWORD = "peter123";
   public static final User ELVACO_ADMIN_USER = new User(
     "Peter Eriksson",
     "peteri@elvaco.se",
-    "peter123",
+    ELVACO_ADMIN_USER_PASSWORD,
     Language.en,
     ELVACO,
     singletonList(ADMIN)
   );
 
+  public static final String ELVACO_USER_PASSWORD = "stefan123";
   public static final User ELVACO_USER = new User(
     "Stefan Stefanson",
     "steste@elvaco.se",
-    "stefan123",
+    ELVACO_USER_PASSWORD,
     Language.en,
     ELVACO,
     singletonList(USER)
   );
 
+  public static final String OTHER_ELVACO_USER_PASSWORD = "eva123";
   public static final User OTHER_ELVACO_USER = new User(
     "Eva Nilsson",
     "evanil@elvaco.se",
-    "eva123",
+    OTHER_ELVACO_USER_PASSWORD,
     Language.en,
     ELVACO,
     singletonList(USER)
   );
 
+  public static final String ELVACO_SUPER_ADMIN_USER_PASSWORD = "admin123";
   public static final User ELVACO_SUPER_ADMIN_USER = new User(
     "Super Admin",
     "superadmin@elvaco.se",
-    "admin123",
+    ELVACO_SUPER_ADMIN_USER_PASSWORD,
     Language.en,
     ELVACO,
     singletonList(SUPER_ADMIN)
@@ -84,10 +90,11 @@ public final class DomainModels {
     singletonList(SUPER_ADMIN)
   );
 
+  public static final String RANDOM_ELVACO_USER_PASSWORD = "yes-random";
   public static final User RANDOM_ELVACO_USER = new User(
     "Random User",
     "random@user.tld",
-    "yes-random",
+    RANDOM_ELVACO_USER_PASSWORD,
     Language.en,
     ELVACO,
     singletonList(ADMIN)

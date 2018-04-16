@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.core.spi.repository.Settings;
+import com.elvaco.mvp.core.spi.repository.UserSelections;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.database.repository.access.GatewayRepository;
 import com.elvaco.mvp.database.repository.access.GatewayStatusLogsRepository;
@@ -26,6 +27,7 @@ import com.elvaco.mvp.database.repository.access.PhysicalMetersRepository;
 import com.elvaco.mvp.database.repository.access.RoleRepository;
 import com.elvaco.mvp.database.repository.access.SettingRepository;
 import com.elvaco.mvp.database.repository.access.UserRepository;
+import com.elvaco.mvp.database.repository.access.UserSelectionRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LocationJpaRepository;
@@ -38,6 +40,7 @@ import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepositor
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
@@ -51,6 +54,7 @@ import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.SettingMapper;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
+import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +79,7 @@ class DataProviderConfig {
   private final GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
+  private final UserSelectionJpaRepository userSelectionJpaRepository;
 
   @Autowired
   DataProviderConfig(
@@ -90,7 +95,8 @@ class DataProviderConfig {
     PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
     GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository,
     GatewayJpaRepository gatewayJpaRepository,
-    RoleJpaRepository roleJpaRepository
+    RoleJpaRepository roleJpaRepository,
+    UserSelectionJpaRepository userSelectionJpaRepository
   ) {
     this.userJpaRepository = userJpaRepository;
     this.settingJpaRepository = settingJpaRepository;
@@ -105,6 +111,7 @@ class DataProviderConfig {
     this.gatewayStatusLogJpaRepository = gatewayStatusLogJpaRepository;
     this.gatewayJpaRepository = gatewayJpaRepository;
     this.roleJpaRepository = roleJpaRepository;
+    this.userSelectionJpaRepository = userSelectionJpaRepository;
   }
 
   @Bean
@@ -191,6 +198,13 @@ class DataProviderConfig {
       new GatewayWithMetersMapper(newLogicalMeterMapper(), new GatewayStatusLogMapper()),
       gatewayStatusLogJpaRepository,
       new GatewayStatusLogQueryFilters()
+    );
+  }
+
+  @Bean
+  UserSelections selections() {
+    return new UserSelectionRepository(
+      userSelectionJpaRepository, new UserSelectionEntityMapper()
     );
   }
 

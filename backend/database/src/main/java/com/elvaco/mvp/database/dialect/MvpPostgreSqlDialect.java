@@ -1,7 +1,9 @@
 package com.elvaco.mvp.database.dialect;
 
 import com.elvaco.mvp.database.dialect.types.Types;
+import com.elvaco.mvp.database.dialect.types.postgresql.PostgreSqlJsonFieldType;
 import com.elvaco.mvp.database.dialect.types.postgresql.PostgreSqlMeasurementUnitType;
+import com.elvaco.mvp.database.entity.meter.JsonField;
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.PostgreSQL94Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
@@ -27,6 +29,11 @@ public class MvpPostgreSqlDialect extends PostgreSQL94Dialect {
     ServiceRegistry serviceRegistry
   ) {
     super.contributeTypes(typeContributions, serviceRegistry);
+    typeContributions.contributeType(
+      new PostgreSqlJsonFieldType(),
+      Types.JsonField.toString(),
+      JsonField.class.getCanonicalName()
+    );
     typeContributions.contributeType(
       new PostgreSqlMeasurementUnitType(),
       Types.MeasurementUnit.toString()

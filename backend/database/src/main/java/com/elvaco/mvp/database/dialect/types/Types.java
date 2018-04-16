@@ -2,6 +2,7 @@ package com.elvaco.mvp.database.dialect.types;
 
 public enum Types {
 
+  JsonField("json-field"),
   MeasurementUnit("measurement-unit");
 
   private final String name;

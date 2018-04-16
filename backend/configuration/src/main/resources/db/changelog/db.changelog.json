@@ -38,6 +38,24 @@
     },
     {
       "changeSet": {
+        "id": "Persist selection",
+        "author": "Daniel Svensson",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/persist_selection.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
         "id": "Add language to user",
         "author": "Alexander Laas",
         "changes": [
@@ -64,6 +82,24 @@
               "dbms": "postgresql",
               "encoding": "utf8",
               "path": "sql/add_series_display_mode_column_to_quantity.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
+        "id": "Grant mvp db user privileges SHOULD ALWAYS BE EXECUTED LAST",
+        "author": "Daniel Svensson",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/db_privileges.sql",
               "relativeToChangelogFile": true,
               "splitStatements": false,
               "stripComments": true

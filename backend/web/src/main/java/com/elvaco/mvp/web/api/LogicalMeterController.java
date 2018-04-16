@@ -13,8 +13,6 @@ import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
-import com.elvaco.mvp.web.mapper.MeasurementMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -31,17 +29,14 @@ public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
   private final LogicalMeterMapper logicalMeterMapper;
-  private final MeasurementMapper measurementMapper;
 
   @Autowired
   LogicalMeterController(
     LogicalMeterMapper logicalMeterMapper,
-    LogicalMeterUseCases logicalMeterUseCases,
-    MeasurementMapper measurementMapper
+    LogicalMeterUseCases logicalMeterUseCases
   ) {
     this.logicalMeterMapper = logicalMeterMapper;
     this.logicalMeterUseCases = logicalMeterUseCases;
-    this.measurementMapper = measurementMapper;
   }
 
   @GetMapping("{id}")
@@ -72,5 +67,4 @@ public class LogicalMeterController {
     return new PageImpl<>(page.getContent(), pageable, page.getTotalElements())
       .map(logicalMeterMapper::toDto);
   }
-
 }

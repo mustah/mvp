@@ -38,12 +38,17 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
-  public String getUsername() {
-    return user.getUsername();
+  public String getToken() {
+    return token;
   }
 
   @Override
-  public String getToken() {
-    return token;
+  public UUID getUserId() {
+    return user.id;
+  }
+
+  @Override
+  public String getUsername() {
+    return user.getUsername();
   }
 }
