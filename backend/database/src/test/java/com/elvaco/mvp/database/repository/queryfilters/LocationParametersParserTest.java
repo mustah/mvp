@@ -141,7 +141,27 @@ public class LocationParametersParserTest {
   public void createCityParameters_IgnoresDuplicates() {
     Parameters parameters = toCityParameters(asList("aBc,bEER", "abc,def", "pepsi,bEer"));
     assertThat(parameters.countries).containsExactly("abc", "pepsi");
+    assertThat(parameters.hasUnknownCountries).isFalse();
     assertThat(parameters.cities).containsExactly("def", "beer");
+    assertThat(parameters.addresses).isEmpty();
+  }
+
+  @Test
+  public void createCityParams_WithUnknownCountries() {
+    Parameters parameters = toCityParameters(asList("unknown,bEER", " unknown ,def"));
+    assertThat(parameters.hasUnknownCountries).isTrue();
+    assertThat(parameters.cities).containsExactly("def", "beer");
+    assertThat(parameters.countries).isEmpty();
+    assertThat(parameters.addresses).isEmpty();
+  }
+
+  @Test
+  public void createCityParams_WithUnknownCountriesAndCities() {
+    Parameters parameters = toCityParameters(asList("unknown,kungsbacka", " unknown , unknown"));
+    assertThat(parameters.hasUnknownCountries).isTrue();
+    assertThat(parameters.hasUnknownCities).isTrue();
+    assertThat(parameters.cities).containsExactly("kungsbacka");
+    assertThat(parameters.countries).isEmpty();
     assertThat(parameters.addresses).isEmpty();
   }
 

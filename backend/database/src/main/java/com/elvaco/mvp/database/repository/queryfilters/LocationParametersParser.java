@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN;
 import static java.util.stream.Collectors.toList;
 
 final class LocationParametersParser {
@@ -90,6 +91,9 @@ final class LocationParametersParser {
     final Set<String> cities;
     final Set<String> addresses;
 
+    boolean hasUnknownCountries;
+    boolean hasUnknownCities;
+
     private Parameters() {
       this.countries = new HashSet<>();
       this.cities = new HashSet<>();
@@ -105,11 +109,19 @@ final class LocationParametersParser {
     }
 
     private void addCountry(String country) {
-      countries.add(country);
+      if (UNKNOWN.equalsIgnoreCase(country)) {
+        hasUnknownCountries = true;
+      } else {
+        countries.add(country);
+      }
     }
 
     private void addCity(String city) {
-      cities.add(city);
+      if (UNKNOWN.equalsIgnoreCase(city)) {
+        hasUnknownCities = true;
+      } else {
+        cities.add(city);
+      }
     }
 
     private void addAddress(String address) {

@@ -1,10 +1,11 @@
 package com.elvaco.mvp.core.util;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import lombok.experimental.UtilityClass;
+
+import static java.util.stream.Collectors.toList;
 
 @UtilityClass
 public class StatusLogEntryHelper {
@@ -16,15 +17,15 @@ public class StatusLogEntryHelper {
     List<StatusLogEntry<T>> activeSameStatuses = currentStatuses.stream()
       .filter(StatusLogEntry::isActive)
       .filter(logEntry -> logEntry.status.equals(newActiveStatus.status))
-      .collect(Collectors.toList());
+      .collect(toList());
 
-    if (activeSameStatuses.size() > 0) {
+    if (!activeSameStatuses.isEmpty()) {
       return currentStatuses;
     }
 
     List<StatusLogEntry<T>> newStatuses = currentStatuses.stream()
       .map(entry -> entry.isActive() ? entry.withStop(newActiveStatus.start) : entry)
-      .collect(Collectors.toList());
+      .collect(toList());
 
     newStatuses.add(newActiveStatus);
     return newStatuses;

@@ -22,7 +22,7 @@ describe('clusterHelper', () => {
     status: Status.warning,
     latitude: 57.505412,
     longitude: 12.069374,
-    confidence: 0.7,
+    confidence: 0.76,
   };
 
   const markers: Dictionary<MapMarker> = {
@@ -81,16 +81,15 @@ describe('clusterHelper', () => {
       status: Status.warning,
       latitude: 57.505412,
       longitude: 12.069374,
-      confidence: 0.6,
+      confidence: 0.70,
     };
 
-    it('it should accept confidence of 0.7 and above', () => {
+    it('it should accept confidence of 0.75 and above', () => {
       expect(isGeoPositionWithinThreshold(mapMarker1 as MapMarker)).toBe(true);
       expect(isGeoPositionWithinThreshold(mapMarker2 as MapMarker)).toBe(true);
-      expect(isGeoPositionWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
     });
 
-    it('it should not accept confidence less than 0.7', () => {
+    it('it should not accept confidence less than 0.75', () => {
       expect(isGeoPositionWithinThreshold(mapMarker3 as MapMarker)).toBe(false);
     });
   });

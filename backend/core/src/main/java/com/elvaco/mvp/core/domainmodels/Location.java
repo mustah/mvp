@@ -11,7 +11,7 @@ public class Location {
 
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
 
-  private static final String UNKNOWN = "unknown";
+  public static final String UNKNOWN = "unknown";
 
   private final String address;
   private final String city;

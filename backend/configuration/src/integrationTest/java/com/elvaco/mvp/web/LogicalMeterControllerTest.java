@@ -491,7 +491,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void findAllMapDataForLogicalMetersWithParameters() {
+  public void findAllMapMarkersForLogicalMetersWithParameters() {
     logicalMeterRepository.save(new LogicalMeter(
       randomUUID(),
       "my-mapped-meter",
@@ -509,6 +509,98 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     assertThatStatusIsOk(response);
     assertThat(response.getBody().size()).isEqualTo(1);
+  }
+
+  @Test
+  public void findAllMeters_WithUnknownLocation() {
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "my-mapped-meter",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      Location.UNKNOWN_LOCATION
+    ));
+
+    Page<LogicalMeterDto> result = asTestUser()
+      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(1);
+  }
+
+  @Test
+  public void findAllMeters_IncludeMetersWith_UnknownLocation() {
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "my-mapped-meter",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      Location.UNKNOWN_LOCATION
+    ));
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "123-123-123",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(11.123)
+        .latitude(12.345)
+        .confidence(0.78)
+        .build()
+    ));
+
+    Page<LogicalMeterDto> result = asTestUser()
+      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(2);
+  }
+
+  @Test
+  public void findAllMeters_IncludeMetersWith_UnknownLocation_AndLowConfidence() {
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "my-mapped-meter",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      Location.UNKNOWN_LOCATION
+    ));
+
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "123-123-123",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(11.123)
+        .latitude(12.345)
+        .confidence(0.75)
+        .build()
+    ));
+
+    logicalMeterRepository.save(new LogicalMeter(
+      randomUUID(),
+      "123-456",
+      context().getOrganisationId(),
+      MeterDefinition.UNKNOWN_METER,
+      new LocationBuilder()
+        .country("sweden")
+        .city("kungsbacka")
+        .address("kabelgatan 1")
+        .longitude(11.123456)
+        .latitude(12.345789)
+        .confidence(0.74)
+        .build()
+    ));
+
+    Page<LogicalMeterDto> result = asTestUser()
+      .getPage("/meters?address=unknown,unknown", LogicalMeterDto.class);
+
+    assertThat(result.getContent()).hasSize(3);
   }
 
   @Test
