@@ -1,4 +1,4 @@
-import {initLanguage} from '../../../i18n/i18n';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
 import {DomainModel} from '../../../state/domain-models/domainModels';
@@ -11,7 +11,12 @@ describe('dialogHelper', () => {
   describe('titleOf', () => {
 
     beforeEach(() => {
-      initLanguage({code: 'en', name: 'english'});
+      initTranslations({
+        code: 'en',
+        translation: {
+          test: 'no translations will default to key',
+        },
+      });
     });
 
     it('prints out default message when no flags are available', () => {

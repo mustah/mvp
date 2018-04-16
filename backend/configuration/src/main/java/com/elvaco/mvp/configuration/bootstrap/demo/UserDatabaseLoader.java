@@ -2,6 +2,7 @@ package com.elvaco.mvp.configuration.bootstrap.demo;
 
 import java.util.List;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Organisations;
@@ -85,6 +86,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "Emil Tirén",
         "emitir@elvaco.se",
         "emil123",
+        Language.sv,
         ELVACO,
         asList(USER, ADMIN, SUPER_ADMIN)
       ),
@@ -92,6 +94,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "Hanna Sjöstedt",
         "hansjo@elvaco.se",
         "hanna123",
+        Language.en,
         ELVACO,
         asList(USER, ADMIN)
       ),
@@ -99,6 +102,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "User Fake",
         "user@wayne.se",
         "user123",
+        Language.sv,
         WAYNE_INDUSTRIES,
         singletonList(USER)
       ),
@@ -107,6 +111,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "Anna Johansson",
         "annjoh@wayne.se",
         "anna123",
+        Language.sv,
         WAYNE_INDUSTRIES,
         singletonList(USER)
       ),
@@ -114,6 +119,7 @@ class UserDatabaseLoader implements CommandLineRunner {
         "Maria Svensson",
         "marsve@wayne.se",
         "maria123",
+        Language.sv,
         WAYNE_INDUSTRIES,
         singletonList(USER)
       ),

@@ -3,6 +3,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
+import {changeLanguage} from '../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
 import {EndPoints} from '../../../services/endPoints';
 import {
@@ -52,8 +53,9 @@ export const modifyUser = putRequest<User>(EndPoints.users, {
 
 export const modifyProfile = putRequest<User>(EndPoints.users, {
   afterSuccess: (user: User, dispatch: Dispatch<RootState>) => {
-    dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
     dispatch(authSetUser(user));
+    dispatch(changeLanguage(user.language));
+    dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
   },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(

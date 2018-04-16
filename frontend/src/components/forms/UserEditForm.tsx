@@ -1,7 +1,9 @@
 import * as React from 'react';
+import {Overwrite} from 'react-redux-typescript';
 import {firstUpperTranslated} from '../../services/translationService';
 import {Organisation} from '../../state/domain-models/organisation/organisationModels';
 import {Role, User} from '../../state/domain-models/user/userModels';
+import {Language} from '../../state/language/languageModels';
 import {IdNamed, uuid} from '../../types/Types';
 import {ButtonSave} from '../buttons/ButtonSave';
 import {SelectFieldInput} from '../inputs/InputSelectable';
@@ -13,18 +15,12 @@ interface UserFormProps {
   onSubmit: (event: any) => void;
   organisations: Organisation[];
   possibleRoles: Role[];
+  languages: Language[];
   isEditSelf: boolean;
   user?: User;
 }
 
-interface State {
-  id?: uuid;
-  name: string;
-  email: string;
-  organisation: Organisation;
-  roles: Role[];
-  password: string;
-}
+type State = Overwrite<User, {id?: uuid; password: string}>;
 
 export class UserEditForm extends React.Component<UserFormProps, State> {
 
@@ -38,6 +34,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
         email: '',
         organisation: {id: '', slug: '', name: ''},
         roles: [Role.USER],
+        language: 'en',
         password: '',
       };
     }
@@ -46,6 +43,7 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   organisationById = (orgId: uuid): Organisation => this.props.organisations.filter(({id}) => id === orgId)[0];
   changeOrganisation = (event, index, value) => this.setState({organisation: this.organisationById(value)});
   changeRoles = (event, index, value) => this.setState({roles: value});
+  changeLanguage = (event, index, value) => this.setState({language: value});
   onChange = (event) => this.setState({[event.target.id]: event.target.value});
   wrappedSubmit = (event) => {
     event.preventDefault();
@@ -53,24 +51,34 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
   }
 
   componentWillReceiveProps({user}: UserFormProps) {
-    if (user) {
+    if (user && user !== this.props.user) {
       this.setState({...user, password: ''});
     }
   }
 
+  shouldComponentUpdate({user: nextUser, organisations: nextOrganisations}: UserFormProps, nextState: State) {
+    const {user, organisations} = this.props;
+    return user !== nextUser || organisations !== nextOrganisations || nextState !== this.state;
+  }
+
   render() {
-    const {organisations, possibleRoles, isEditSelf, user} = this.props;
-    const {name, email, organisation, roles, password} = this.state;
+    const {organisations, possibleRoles, languages, isEditSelf, user} = this.props;
+    const {name, email, organisation, roles, password, language} = this.state;
 
     const nameLabel = firstUpperTranslated('name');
     const emailLabel = firstUpperTranslated('email');
     const organisationLabel = firstUpperTranslated('organisation');
     const rolesLabel = firstUpperTranslated('user roles');
+    const languageLabel = firstUpperTranslated('user language');
     const newPasswordLabel = isEditSelf ?
       firstUpperTranslated('new password') : firstUpperTranslated('password');
 
     const organisationOptions: IdNamed[] = organisations.map(({id, name}: Organisation) => ({id, name}));
     const roleOptions: IdNamed[] = possibleRoles.map((role) => ({id: role, name: role.toString()}));
+    const languageOptions: IdNamed[] = languages.map(({code, name}) => ({
+      id: code,
+      name,
+    }));
 
     const passwordElement = user ? null : (
       <TextFieldInput
@@ -118,6 +126,14 @@ export class UserEditForm extends React.Component<UserFormProps, State> {
             onChange={this.changeRoles}
             value={roles}
             disabled={isEditSelf}
+          />
+          <SelectFieldInput
+            options={languageOptions}
+            floatingLabelText={languageLabel}
+            hintText={languageLabel}
+            id="language"
+            onChange={this.changeLanguage}
+            value={language}
           />
           {passwordElement}
           <ButtonSave

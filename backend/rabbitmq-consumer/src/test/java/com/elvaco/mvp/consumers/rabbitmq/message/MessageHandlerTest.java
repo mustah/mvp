@@ -20,6 +20,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
@@ -113,6 +114,7 @@ public class MessageHandlerTest {
       .name("super-admin")
       .email("super@admin.io")
       .password("password")
+      .language(Language.en)
       .organisationElvaco()
       .asSuperAdmin()
       .build();
@@ -122,6 +124,7 @@ public class MessageHandlerTest {
         .name("mock user")
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
+        .language(Language.en)
         .organisation(new Organisation(randomUUID(), "some organisation",
           DEFAULT_ORGANISATION_EXTERNAL_ID
         ))

@@ -25,6 +25,7 @@ public class UserMapper implements DomainEntityMapper<User, UserEntity> {
       userEntity.name,
       userEntity.email,
       userEntity.password,
+      userEntity.language,
       organisationMapper.toDomainModel(userEntity.organisation),
       rolesOf(userEntity.roles)
     );
@@ -37,6 +38,7 @@ public class UserMapper implements DomainEntityMapper<User, UserEntity> {
       user.name,
       user.email,
       user.password,
+      user.language,
       organisationMapper.toEntity(user.organisation),
       rolesOf(user.roles)
     );

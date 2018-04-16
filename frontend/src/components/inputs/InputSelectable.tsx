@@ -14,7 +14,7 @@ interface SelectFieldInputProps extends ClassNamed {
   hintText: string;
   multiple?: boolean;
   onChange: (...args) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export const SelectFieldInput = ({className, options, ...props}: SelectFieldInputProps) => {

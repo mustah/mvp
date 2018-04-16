@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -121,6 +122,7 @@ public class AuthControllerTest extends IntegrationTest {
         .name("basic-auth-user")
         .email("basic@auth.se")
         .password("test")
+        .language(Language.en)
         .organisationElvaco()
         .asUser()
         .build()

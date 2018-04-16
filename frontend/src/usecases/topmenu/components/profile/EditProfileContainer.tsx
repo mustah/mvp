@@ -10,18 +10,21 @@ import {MainTitle} from '../../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../../containers/MvpPageContainer';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {Fetch} from '../../../../types/Types';
-import {modifyProfile} from '../../../../state/domain-models/user/userApiActions';
 import {Organisation} from '../../../../state/domain-models/organisation/organisationModels';
 import {fetchOrganisations} from '../../../../state/domain-models/organisation/organisationsApiActions';
 import {getOrganisations} from '../../../../state/domain-models/organisation/organisationSelectors';
+import {modifyProfile} from '../../../../state/domain-models/user/userApiActions';
 import {Role, User} from '../../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../../state/domain-models/user/userSelectors';
+import {Language} from '../../../../state/language/languageModels';
+import {getLanguages} from '../../../../state/language/languageSelectors';
+import {Fetch} from '../../../../types/Types';
 
 interface StateToProps {
   user: User;
   organisations: Organisation[];
   roles: Role[];
+  languages: Language[];
 }
 
 interface DispatchToProps {
@@ -42,7 +45,7 @@ class EditProfile extends React.Component<Props> {
   }
 
   render() {
-    const {user, organisations, roles, modifyProfile} = this.props;
+    const {user, organisations, roles, modifyProfile, languages} = this.props;
     // TODO: Add validation for fields.
     return (
       <MvpPageContainer>
@@ -59,6 +62,7 @@ class EditProfile extends React.Component<Props> {
               possibleRoles={roles}
               isEditSelf={true}
               user={user}
+              languages={languages}
             />
           </Column>
         </Paper>
@@ -71,7 +75,8 @@ const mapStateToProps = ({auth: {user}, domainModels: {organisations}}: RootStat
   user: user!,
   organisations: getOrganisations(organisations),
   roles: getRoles(user!),
-}); // TODO: Perhaps use a selector instead of using the "!" null protection for user.
+  languages: getLanguages(),
+}); // TODO: Perhaps use a selector with a Maybe instead of using the "!" null protection for user.
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   modifyProfile,

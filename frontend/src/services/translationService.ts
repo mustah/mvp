@@ -17,3 +17,5 @@ const firstUpper = (original: string): string =>
 
 export const firstUpperTranslated = (key: string, options?: TranslationOptions): string =>
   firstUpper(translate(key, options));
+
+export const getI18nLanguage = (): string => i18n.language;

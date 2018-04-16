@@ -17,6 +17,7 @@ public class User implements Identifiable<UUID>, Usernamed {
   public final String email;
   @Nullable
   public final String password;
+  public final Language language;
   public final Organisation organisation;
   public final List<Role> roles;
   public final boolean isAdmin;
@@ -27,6 +28,7 @@ public class User implements Identifiable<UUID>, Usernamed {
     String name,
     String email,
     @Nullable String password,
+    Language language,
     Organisation organisation,
     List<Role> roles
   ) {
@@ -34,6 +36,7 @@ public class User implements Identifiable<UUID>, Usernamed {
     this.name = name;
     this.email = email;
     this.password = password;
+    this.language = language;
     this.organisation = organisation;
     this.roles = unmodifiableList(roles);
     this.isSuperAdmin = roles.contains(Role.SUPER_ADMIN);
@@ -44,18 +47,19 @@ public class User implements Identifiable<UUID>, Usernamed {
     String name,
     String email,
     String password,
+    Language language,
     Organisation organisation,
     List<Role> roles
   ) {
-    this(randomUUID(), name, email, password, organisation, roles);
+    this(randomUUID(), name, email, password, language, organisation, roles);
   }
 
   public User withPassword(String password) {
-    return new User(id, name, email, password, organisation, roles);
+    return new User(id, name, email, password, language, organisation, roles);
   }
 
   public User withName(String name) {
-    return new User(id, name, email, password, organisation, roles);
+    return new User(id, name, email, password, language, organisation, roles);
   }
 
   @Override

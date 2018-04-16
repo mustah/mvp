@@ -4,8 +4,13 @@ import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
+import {authenticate} from '../../../services/restClient';
+import {DomainModelsState} from '../../../state/domain-models/domainModels';
+import {initialDomain} from '../../../state/domain-models/domainModelsReducer';
 import {Role, User} from '../../../state/domain-models/user/userModels';
+import {CHANGE_LANGUAGE} from '../../../state/language/languageActions';
 import {
   AUTH_SET_USER_INFO,
   authSetUser,
@@ -18,31 +23,51 @@ import {
 } from '../authActions';
 import {Unauthorized} from '../authModels';
 
-const middlewares = [thunk];
-const mockStore = configureStore(middlewares);
+const configureMockStore = configureStore([thunk]);
 
 describe('authActions', () => {
+  const windowReload = window.location.reload;
+
+  beforeEach(() => {
+    const initialState: Partial<DomainModelsState> = {
+      users: {...initialDomain()},
+    };
+    store = configureMockStore({
+      domainModels: initialState,
+      language: {language: 'en'},
+    });
+    mockRestClient = new MockAdapter(axios);
+    window.location.reload = () => void(0);
+    authenticate('test');
+    initTranslations({
+      code: 'en',
+      translation: {
+        test: 'no translations will default to key',
+      },
+    });
+  });
+
+  afterEach(() => {
+    mockRestClient.reset();
+    window.location.reload = windowReload;
+  });
 
   const user: User = {
     id: 1,
     name: 'clark',
     email: 'ck@dailyplanet.net',
+    language: 'en',
     organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
     roles: [Role.USER],
   };
   let mockRestClient;
   let store;
 
-  beforeEach(() => {
-    store = mockStore({});
-    mockRestClient = new MockAdapter(axios);
-  });
-
   describe('authorized users', () => {
 
     const token = '123-123-123';
 
-    const dispatchLogin = async () => {
+    const dispatchLogin = async (user: User) => {
       const username = 'the.batman@dc.com';
       const password = 'test1234';
 
@@ -53,7 +78,7 @@ describe('authActions', () => {
     };
 
     it('dispatches the login action', async () => {
-      await dispatchLogin();
+      await dispatchLogin(user);
 
       expect(store.getActions()).toEqual([
         loginRequest(),
@@ -61,8 +86,27 @@ describe('authActions', () => {
       ]);
     });
 
+    it('logs in and changes language when user language differs from current language', async () => {
+      const user: User = {
+        id: 1,
+        name: 'clark',
+        email: 'ck@dailyplanet.net',
+        language: 'sv',
+        organisation: {id: 'daily planet', name: 'daily planet', slug: 'daily-planet'},
+        roles: [Role.USER],
+      };
+
+      await dispatchLogin(user);
+
+      expect(store.getActions()).toEqual([
+        loginRequest(),
+        {type: CHANGE_LANGUAGE, payload: 'sv'},
+        loginSuccess({token, user}),
+      ]);
+    });
+
     it('logs out logged in user', async () => {
-      store = mockStore({auth: {user, isAuthenticated: true}});
+      store = configureMockStore({auth: {user, isAuthenticated: true}});
 
       await store.dispatch(logout());
 
@@ -73,7 +117,7 @@ describe('authActions', () => {
     });
 
     it('does not logout unauthorized user', async () => {
-      store = mockStore({auth: {user, isAuthenticated: false}});
+      store = configureMockStore({auth: {user, isAuthenticated: false}});
 
       await store.dispatch(logout());
 
@@ -139,7 +183,7 @@ describe('authActions', () => {
 
     it('can logout user without any side effect', async () => {
       mockRestClient.onGet(EndPoints.logout).reply(204);
-      store = mockStore({auth: {user, isAuthenticated: true}});
+      store = configureMockStore({auth: {user, isAuthenticated: true}});
 
       await store.dispatch(logout());
 

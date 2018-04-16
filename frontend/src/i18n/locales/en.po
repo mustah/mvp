@@ -215,6 +215,15 @@ msgstr "status change"
 msgid "flags"
 msgstr "flags"
 
+msgid "english"
+msgstr "english"
+
+msgid "swedish"
+msgstr "swedish"
+
+msgid "user language"
+msgstr "user language"
+
 msgid "ok"
 msgstr "OK"
 

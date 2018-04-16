@@ -35,6 +35,24 @@
           }
         ]
       }
+    },
+    {
+      "changeSet": {
+        "id": "Add language to user",
+        "author": "Alexander Laas",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/add_language_to_user.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
     }
   ]
 }

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {initLanguage} from '../../../../i18n/i18n';
+import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
@@ -16,7 +16,12 @@ const configureMockStore = configureStore([thunk]);
 
 describe('organisationsApiActions', () => {
 
-  initLanguage({code: 'en', name: 'english'});
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
 
   const createOrganisation = postRequestOf<Organisation>(EndPoints.organisations);
 

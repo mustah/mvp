@@ -1,5 +1,6 @@
 package com.elvaco.mvp.core.fixture;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.User;
 
@@ -24,6 +25,7 @@ public final class DomainModels {
     "Elvis Cohan",
     "elvis.cohan@wayne.com",
     "elvis123",
+    Language.en,
     WAYNE_INDUSTRIES,
     singletonList(ADMIN)
   );
@@ -32,6 +34,7 @@ public final class DomainModels {
     "Erik Karlsson",
     "erikar@wayne.se",
     "erik123",
+    Language.en,
     WAYNE_INDUSTRIES,
     singletonList(USER)
   );
@@ -40,6 +43,7 @@ public final class DomainModels {
     "Peter Eriksson",
     "peteri@elvaco.se",
     "peter123",
+    Language.en,
     ELVACO,
     singletonList(ADMIN)
   );
@@ -48,6 +52,7 @@ public final class DomainModels {
     "Stefan Stefanson",
     "steste@elvaco.se",
     "stefan123",
+    Language.en,
     ELVACO,
     singletonList(USER)
   );
@@ -56,6 +61,7 @@ public final class DomainModels {
     "Eva Nilsson",
     "evanil@elvaco.se",
     "eva123",
+    Language.en,
     ELVACO,
     singletonList(USER)
   );
@@ -64,6 +70,7 @@ public final class DomainModels {
     "Super Admin",
     "superadmin@elvaco.se",
     "admin123",
+    Language.en,
     ELVACO,
     singletonList(SUPER_ADMIN)
   );
@@ -72,6 +79,7 @@ public final class DomainModels {
     "Developer",
     "user@domain.tld",
     "complicated_password",
+    Language.en,
     ELVACO,
     singletonList(SUPER_ADMIN)
   );
@@ -80,6 +88,7 @@ public final class DomainModels {
     "Random User",
     "random@user.tld",
     "yes-random",
+    Language.en,
     ELVACO,
     singletonList(ADMIN)
   );

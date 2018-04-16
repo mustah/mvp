@@ -16,11 +16,14 @@ import {getOrganisations} from '../../../state/domain-models/organisation/organi
 import {addUser} from '../../../state/domain-models/user/userApiActions';
 import {Role} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
+import {Language} from '../../../state/language/languageModels';
+import {getLanguages} from '../../../state/language/languageSelectors';
 import {OnClick, Fetch} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
   roles: Role[];
+  languages: Language[];
 }
 
 interface DispatchToProps {
@@ -41,7 +44,7 @@ class UserAdd extends React.Component<Props> {
   }
 
   render() {
-    const {addUser, organisations, roles} = this.props;
+    const {addUser, organisations, roles, languages} = this.props;
     return (
       <PageComponent isSideMenuOpen={false}>
         <Row className="space-between">
@@ -57,6 +60,7 @@ class UserAdd extends React.Component<Props> {
               onSubmit={addUser}
               possibleRoles={roles}
               isEditSelf={false}
+              languages={languages}
             />
           </WrapperIndent>
         </Paper>
@@ -69,6 +73,7 @@ class UserAdd extends React.Component<Props> {
 const mapStateToProps = ({domainModels: {organisations}, auth: {user}}: RootState): StateToProps => ({
   organisations: getOrganisations(organisations),
   roles: getRoles(user!),
+  languages: getLanguages(),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

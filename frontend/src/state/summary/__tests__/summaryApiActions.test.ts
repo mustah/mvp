@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import {routes} from '../../../app/routes';
 import {InvalidToken} from '../../../exceptions/InvalidToken';
 import {makeUrl} from '../../../helpers/urlFactory';
-import {initLanguage} from '../../../i18n/i18n';
+import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../services/endPoints';
 import {restClient, restClientWith} from '../../../services/restClient';
 import {EncodedUriParameters, ErrorResponse} from '../../../types/Types';
@@ -18,7 +18,12 @@ import MockAdapter = require('axios-mock-adapter');
 
 describe('summaryApiActions', () => {
 
-  initLanguage({code: 'en', name: 'english'});
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
 
   let store;
   let mockRestClient;
@@ -36,6 +41,7 @@ describe('summaryApiActions', () => {
         id: 1,
         name: 'al',
         email: 'al@la.se',
+        language: 'en',
         organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
         roles: [],
       };

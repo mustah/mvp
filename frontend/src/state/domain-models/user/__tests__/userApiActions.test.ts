@@ -1,10 +1,11 @@
 import axios from 'axios';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {initLanguage} from '../../../../i18n/i18n';
+import {initTranslations} from '../../../../i18n/__tests__/i18nMock';
 import {EndPoints} from '../../../../services/endPoints';
 import {authenticate} from '../../../../services/restClient';
 import {authSetUser} from '../../../../usecases/auth/authActions';
+import {CHANGE_LANGUAGE} from '../../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../../ui/message/messageActions';
 import {DomainModelsState} from '../../domainModels';
 import {deleteRequestOf, getEntityRequestOf, postRequestOf, putRequestOf} from '../../domainModelsActions';
@@ -17,7 +18,20 @@ const configureMockStore = configureStore([thunk]);
 
 describe('userApiActions', () => {
 
-  initLanguage({code: 'en', name: 'english'});
+  const translationsEN = {
+    code: 'en',
+    translation: {
+      'successfully updated profile': 'successfully updated profile',
+    },
+  };
+  const translationsSW = {
+    code: 'sv',
+    translation: {
+      'successfully updated profile': 'updaterade profilen',
+    },
+  };
+
+  initTranslations(translationsEN);
 
   const createUser = postRequestOf<User>(EndPoints.users);
   const updateUser = putRequestOf<User>(EndPoints.users);
@@ -27,16 +41,24 @@ describe('userApiActions', () => {
   let mockRestClient: MockAdapter;
   let store;
 
+  const windowReload = window.location.reload;
+
   beforeEach(() => {
     const initialState: Partial<DomainModelsState> = {
       users: {...initialDomain()},
     };
-    store = configureMockStore({domainModels: initialState});
+    store = configureMockStore({
+      domainModels: initialState,
+      language: {language: 'en'},
+    });
     mockRestClient = new MockAdapter(axios);
+    window.location.reload = () => void(0);
     authenticate('test');
   });
+
   afterEach(() => {
     mockRestClient.reset();
+    window.location.reload = windowReload;
   });
 
   describe('add new user', () => {
@@ -82,6 +104,7 @@ describe('userApiActions', () => {
       id: 1,
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
+      language: 'sv',
       organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
       roles: [Role.USER, Role.ADMIN],
     };
@@ -120,6 +143,7 @@ describe('userApiActions', () => {
       id: 1,
       name: 'Alexander Laas',
       email: 'alexander.laas@elvaco.se',
+      language: 'sv',
       organisation: {id: 1, slug: 'elvaco', name: 'elvaco'},
       roles: [Role.USER, Role.ADMIN],
     };
@@ -135,13 +159,15 @@ describe('userApiActions', () => {
     };
 
     it('sends a put request to backend and get the user back', async () => {
+      initTranslations(translationsSW);
       await putUserWithResponseOk(updatedUser);
 
       expect(store.getActions()).toEqual([
         updateUser.request(),
         updateUser.success(updatedUser),
-        showSuccessMessage(`Successfully updated profile`),
         authSetUser(updatedUser),
+        {type: CHANGE_LANGUAGE, payload: 'sv'},
+        showSuccessMessage('Updaterade profilen'),
       ]);
     });
     it('sends a put request to backend and an error back', async () => {
@@ -168,6 +194,7 @@ describe('userApiActions', () => {
       id: 3,
       name: 'Eva',
       organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
+      language: 'sv',
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };
@@ -199,6 +226,7 @@ describe('userApiActions', () => {
       id: 3,
       name: 'Eva',
       organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
+      language: 'sv',
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };
@@ -229,6 +257,7 @@ describe('userApiActions', () => {
         fetchUserEntity.failure(errorResponse),
       ]);
     });
+
     it('doesnt fetch if is already in cache', async () => {
       store = configureMockStore({
         domainModels: {

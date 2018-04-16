@@ -175,6 +175,7 @@ describe('domainModelsReducer', () => {
       id: 3,
       name: 'Eva',
       organisation: {id: 1, name: 'elvaco', slug: 'elvaco'},
+      language: 'en',
       roles: [Role.USER],
       email: 'eva@elvaco.se',
     };

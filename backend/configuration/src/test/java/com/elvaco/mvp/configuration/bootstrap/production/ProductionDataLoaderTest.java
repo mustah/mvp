@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -53,10 +54,9 @@ public class ProductionDataLoaderTest {
         "superadmin",
         "superadmin@elvaco.se",
         "password",
+        Language.en,
         organisations.get(0),
-        singletonList(
-
-          Role.SUPER_ADMIN)
+        singletonList(Role.SUPER_ADMIN)
       ),
       organisations
     );

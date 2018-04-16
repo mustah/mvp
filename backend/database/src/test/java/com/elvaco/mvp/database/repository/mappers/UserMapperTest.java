@@ -1,5 +1,6 @@
 package com.elvaco.mvp.database.repository.mappers;
 
+import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
@@ -54,6 +55,7 @@ public class UserMapperTest {
       user.name,
       user.email,
       "letmein",
+      Language.en,
       new OrganisationEntity(
         user.organisation.id,
         user.organisation.name,
@@ -80,6 +82,7 @@ public class UserMapperTest {
       "John Doh",
       "a@b.com",
       "letmein",
+      Language.en,
       ELVACO_ENTITY,
       asList(user(), superAdmin())
     );

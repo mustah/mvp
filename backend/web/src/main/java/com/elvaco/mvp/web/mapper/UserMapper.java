@@ -23,6 +23,7 @@ public class UserMapper {
       user.id,
       user.name,
       user.email,
+      user.language,
       organisationMapper.toDto(user.organisation),
       user.roles
         .stream()
@@ -37,6 +38,7 @@ public class UserMapper {
       userDto.name,
       userDto.email,
       null,
+      userDto.language,
       organisationMapper.toDomainModel(userDto.organisation),
       rolesOf(userDto.roles)
     );
@@ -48,6 +50,7 @@ public class UserMapper {
       userDto.name,
       userDto.email,
       userDto.password,
+      userDto.language,
       organisationMapper.toDomainModel(userDto.organisation),
       rolesOf(userDto.roles)
     );
