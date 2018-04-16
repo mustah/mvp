@@ -50,12 +50,13 @@ interface DispatchToProps {
 type Props = StateToProps & DispatchToProps;
 
 class SelectionContent extends React.Component<Props> {
+
   componentDidMount() {
     this.props.fetchSelections();
   }
 
-  componentWillReceiveProps(props: Props) {
-    props.fetchSelections();
+  componentWillReceiveProps({fetchSelections}: Props) {
+    fetchSelections();
   }
 
   render() {

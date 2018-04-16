@@ -37,7 +37,7 @@ interface State {
 
 const filterBy = (list: SelectionListItem[], exp: string) => {
   const regExp = new RegExp(exp, 'i');
-  return list.filter((value: IdNamed) => regExp.test(value.name));
+  return list.filter(({name}: IdNamed) => regExp.test(name));
 };
 
 const selectedOptions = (list: SelectionListItem[]) => list.filter((item: SelectionListItem) => item.selected).length;
@@ -65,7 +65,7 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
 
     const rowHeight = this.props.rowHeight;
     const visibleItems = this.props.visibleItems;
-    const entries = filteredList.length;
+    const numEntries = filteredList.length;
 
     const selected = selectedOptions(list);
     const selectedOverview = selected && selected + ' / ' + list.length || firstUpperTranslated('all');
@@ -92,9 +92,9 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
             <SearchBox value={searchText} onUpdateSearch={this.whenSearchUpdate}/>
             <Row>
               <List
-                height={entries > visibleItems ? visibleItems * rowHeight : entries * rowHeight}
+                height={numEntries > visibleItems ? visibleItems * rowHeight : numEntries * rowHeight}
                 overscanRowCount={10}
-                rowCount={entries}
+                rowCount={numEntries}
                 rowHeight={rowHeight}
                 rowRenderer={this.rowRenderer}
                 width={240}
