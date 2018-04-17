@@ -6,18 +6,17 @@ Feature:
     Scenario Outline: Login to MVP
         Given I am on the login page
         When I login as user '<user>' and password '<password>'
-        Then I should see '<context>'
+        Then I should be logged in as '<user>'
 
-    Examples:
-        | user                 | password | context   |
-        | vaxjo@vaxjoenergi.se | vaxjo    | dashboard |
+        Examples:
+            | user                 | password |
+            | vaxjo@vaxjoenergi.se | vaxjo    |
 
-    @wip
     Scenario Outline: Deny login to MVP
         Given I am on the login page
         When I login as user '<user>' and password '<password>'
-        Then I should not see '<context>'
+        Then I should see error message '<message>'
 
-    Examples:
-        | user                    | password | context |
-        | blackbox-test@elvaco.se | nope     | dashboard |
+        Examples:
+            | user                    | password | message                               |
+            | blackbox-test@elvaco.se | nope     | Felaktigt användarnamn eller lösenord |

@@ -25,15 +25,15 @@ sourceSets {
 
 task cucumber(type: Test, dependsOn: 'test', group: 'verification') {
   dependsOn assemble, compileAcceptanceTestJava
-  testClassesDir = sourceSets.acceptanceTest.output.classesDir
+
+  testClassesDirs = sourceSets.acceptanceTest.output.classesDirs
   classpath = sourceSets.acceptanceTest.runtimeClasspath
 
-  doLast {
-    javaexec {
-      main = "cucumber.api.cli.Main"
-      classpath = configurations.cucumberRuntime + sourceSets.acceptanceTest.output
-      args = ['--plugin', 'pretty', '--plugin', 'html:target/cucumber', '--tags', 'not @wip', '--glue', 'cuke', 'src/acceptanceTest/resources/features']
-    }
+  testLogging {
+    events "started", "passed", "skipped", "failed", "standard_out"
+    showExceptions true
+    showStackTraces true
+    exceptionFormat 'full'
   }
 }
 
