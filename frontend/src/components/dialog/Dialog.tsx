@@ -14,6 +14,7 @@ export const Dialog = ({children, isOpen, close}: Props) => {
 
   return (
     <MaterialDialog
+      className="Dialog-root"
       contentClassName="Dialog"
       actions={actions}
       autoScrollBodyContent={true}
