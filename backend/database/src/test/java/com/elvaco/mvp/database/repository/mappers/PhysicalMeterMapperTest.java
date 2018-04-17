@@ -10,11 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class PhysicalMeterMapperTest {
 
-  private final PhysicalMeterMapper physicalMeterMapper = new PhysicalMeterMapper(
-    new OrganisationMapper(),
-    new MeterStatusLogMapper()
-  );
-
   @Test
   public void mapping() {
     PhysicalMeter physicalMeter = new PhysicalMeter(
@@ -27,12 +22,12 @@ public class PhysicalMeterMapperTest {
       15
     );
 
-    PhysicalMeterEntity physicalMeterEntity = physicalMeterMapper.toEntity(physicalMeter);
+    PhysicalMeterEntity physicalMeterEntity = PhysicalMeterMapper.toEntity(physicalMeter);
 
     assertThat(physicalMeterEntity.address).isEqualTo("567890");
     assertThat(physicalMeterEntity.externalId).isEqualTo("external-id");
     assertThat(physicalMeterEntity.medium).isEqualTo("My Medium");
     assertThat(physicalMeterEntity.manufacturer).isEqualTo("ELV");
-    assertThat(physicalMeterMapper.toDomainModel(physicalMeterEntity)).isEqualTo(physicalMeter);
+    assertThat(PhysicalMeterMapper.toDomainModel(physicalMeterEntity)).isEqualTo(physicalMeter);
   }
 }

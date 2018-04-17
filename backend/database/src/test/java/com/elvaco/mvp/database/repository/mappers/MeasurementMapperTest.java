@@ -13,10 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementMapperTest {
 
-  private final MeasurementMapper measurementMapper = new MeasurementMapper(
-    new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper())
-  );
-
   @Test
   public void mapping() {
     PhysicalMeter physicalMeter = new PhysicalMeter(
@@ -29,10 +25,10 @@ public class MeasurementMapperTest {
       15
     );
     Measurement measurement = new Measurement(Quantity.VOLUME, 2.0, physicalMeter);
-    MeasurementEntity entity = measurementMapper.toEntity(measurement);
+    MeasurementEntity entity = MeasurementMapper.toEntity(measurement);
     assertThat(entity.quantity).isEqualTo("Volume");
     assertThat(entity.value).isEqualTo(MeasurementUnit.from("2.0 m³"));
-    Measurement actual = measurementMapper.toDomainModel(entity);
+    Measurement actual = MeasurementMapper.toDomainModel(entity);
     assertThat(actual).isEqualTo(measurement);
   }
 }

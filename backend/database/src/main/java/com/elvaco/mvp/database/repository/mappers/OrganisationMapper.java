@@ -2,16 +2,16 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
+import lombok.experimental.UtilityClass;
 
-public class OrganisationMapper implements DomainEntityMapper<Organisation, OrganisationEntity> {
+@UtilityClass
+public class OrganisationMapper {
 
-  @Override
-  public Organisation toDomainModel(OrganisationEntity entity) {
+  public static Organisation toDomainModel(OrganisationEntity entity) {
     return new Organisation(entity.id, entity.name, entity.slug);
   }
 
-  @Override
-  public OrganisationEntity toEntity(Organisation domainModel) {
+  public static OrganisationEntity toEntity(Organisation domainModel) {
     return new OrganisationEntity(
       domainModel.id,
       domainModel.name,

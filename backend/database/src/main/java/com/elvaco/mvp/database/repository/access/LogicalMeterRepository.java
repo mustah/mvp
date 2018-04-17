@@ -46,7 +46,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
-  private final LogicalMeterMapper logicalMeterMapper;
   private final LogicalMeterSortingMapper sortingMapper;
 
   private static String toSortString(Object sortProperty) {
@@ -93,7 +92,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
     Page<LogicalMeter> page = new PageAdapter<>(
       logicalMeterEntities.map(
-        logicalMeter -> logicalMeterMapper.toDomainModel(
+        logicalMeter -> LogicalMeterMapper.toDomainModel(
           logicalMeter, mapStatus, mapMeasurementCount
         )
       ));
@@ -112,8 +111,8 @@ public class LogicalMeterRepository implements LogicalMeters {
 
   @Override
   public LogicalMeter save(LogicalMeter logicalMeter) {
-    LogicalMeterEntity entity = logicalMeterMapper.toEntity(logicalMeter);
-    return logicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
+    LogicalMeterEntity entity = LogicalMeterMapper.toEntity(logicalMeter);
+    return LogicalMeterMapper.toDomainModel(logicalMeterJpaRepository.save(entity));
   }
 
   @Override
@@ -122,14 +121,14 @@ public class LogicalMeterRepository implements LogicalMeters {
     String externalId
   ) {
     return logicalMeterJpaRepository.findBy(organisationId, externalId)
-      .map(logicalMeterMapper::toDomainModel);
+      .map(LogicalMeterMapper::toDomainModel);
   }
 
   @Override
   public List<LogicalMeter> findByOrganisationId(UUID organisationId) {
     return logicalMeterJpaRepository.findByOrganisationId(organisationId)
       .stream()
-      .map(logicalMeterMapper::toDomainModel)
+      .map(LogicalMeterMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -137,7 +136,7 @@ public class LogicalMeterRepository implements LogicalMeters {
   public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
     return logicalMeterJpaRepository.findAll(parameters, toPredicate(parameters))
       .stream()
-      .map(logicalMeterMapper::justLocationModel)
+      .map(LogicalMeterMapper::justLocationModel)
       .collect(toList());
   }
 
@@ -184,7 +183,7 @@ public class LogicalMeterRepository implements LogicalMeters {
 
     return meters
       .stream()
-      .map(logicalMeterEntity -> logicalMeterMapper.toDomainModel(
+      .map(logicalMeterEntity -> LogicalMeterMapper.toDomainModel(
         logicalMeterEntity,
         mappedStatuses,
         meterCounts

@@ -6,17 +6,14 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.spi.repository.Roles;
 import com.elvaco.mvp.database.entity.user.RoleEntity;
 import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class RoleRepository implements Roles {
 
   private final RoleJpaRepository roleJpaRepository;
-
-  public RoleRepository(RoleJpaRepository roleJpaRepository) {
-
-    this.roleJpaRepository = roleJpaRepository;
-  }
 
   @Override
   public List<Role> save(List<Role> roles) {

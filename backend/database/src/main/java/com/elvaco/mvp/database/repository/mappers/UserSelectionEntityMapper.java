@@ -4,12 +4,12 @@ import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.experimental.UtilityClass;
 
-public class UserSelectionEntityMapper
-  implements DomainEntityMapper<UserSelection, UserSelectionEntity> {
+@UtilityClass
+public class UserSelectionEntityMapper {
 
-  @Override
-  public UserSelection toDomainModel(UserSelectionEntity entity) {
+  public static UserSelection toDomainModel(UserSelectionEntity entity) {
     return new UserSelection(
       entity.id,
       entity.ownerUserId,
@@ -19,8 +19,7 @@ public class UserSelectionEntityMapper
     );
   }
 
-  @Override
-  public UserSelectionEntity toEntity(UserSelection model) {
+  public static UserSelectionEntity toEntity(UserSelection model) {
     return new UserSelectionEntity(
       model.id,
       model.ownerUserId,

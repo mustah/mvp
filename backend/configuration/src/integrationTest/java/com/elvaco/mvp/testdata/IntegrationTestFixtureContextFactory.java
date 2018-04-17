@@ -18,14 +18,12 @@ class IntegrationTestFixtureContextFactory {
 
   private final OrganisationJpaRepository organisationJpaRepository;
   private final Users users;
-  private final OrganisationMapper organisationMapper;
 
   IntegrationTestFixtureContextFactory(
     OrganisationJpaRepository organisationJpaRepository,
     Users users
   ) {
     this.organisationJpaRepository = organisationJpaRepository;
-    this.organisationMapper = new OrganisationMapper();
     this.users = users;
   }
 
@@ -46,7 +44,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(organisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asUser()
       .build();
@@ -57,7 +55,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "-admin@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(organisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asAdmin()
       .build();
@@ -68,7 +66,7 @@ class IntegrationTestFixtureContextFactory {
       .email(contextUuid.toString() + "-super-admin@test.com")
       .password("password")
       .language(Language.en)
-      .organisation(organisationMapper.toDomainModel(organisation))
+      .organisation(OrganisationMapper.toDomainModel(organisation))
       .id(randomUUID())
       .asSuperAdmin()
       .build();
@@ -76,7 +74,6 @@ class IntegrationTestFixtureContextFactory {
 
     return new IntegrationTestFixtureContext(
       organisation,
-      organisationMapper,
       user,
       admin,
       superAdmin

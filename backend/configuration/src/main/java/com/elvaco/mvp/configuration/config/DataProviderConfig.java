@@ -41,19 +41,7 @@ import com.elvaco.mvp.database.repository.jpa.RoleJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.SettingJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
-import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
-import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogMapper;
-import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
-import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
-import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
-import com.elvaco.mvp.database.repository.mappers.MeterDefinitionMapper;
-import com.elvaco.mvp.database.repository.mappers.MeterStatusLogMapper;
-import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
-import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
-import com.elvaco.mvp.database.repository.mappers.SettingMapper;
-import com.elvaco.mvp.database.repository.mappers.UserMapper;
-import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
 import lombok.RequiredArgsConstructor;
@@ -85,7 +73,6 @@ class DataProviderConfig {
   Users users() {
     return new UserRepository(
       userJpaRepository,
-      new UserMapper(new OrganisationMapper()),
       passwordEncoder::encode
     );
   }
@@ -93,8 +80,7 @@ class DataProviderConfig {
   @Bean
   Settings settings() {
     return new SettingRepository(
-      settingJpaRepository,
-      new SettingMapper()
+      settingJpaRepository
     );
   }
 
@@ -104,7 +90,6 @@ class DataProviderConfig {
       logicalMeterJpaRepository,
       physicalMeterStatusLogJpaRepository,
       measurementJpaRepository,
-      newLogicalMeterMapper(),
       new LogicalMeterSortingMapper()
     );
   }
@@ -117,24 +102,21 @@ class DataProviderConfig {
   @Bean
   Measurements measurements() {
     return new MeasurementRepository(
-      measurementJpaRepository,
-      new MeasurementMapper(newPhysicalMeterMapper())
+      measurementJpaRepository
     );
   }
 
   @Bean
   PhysicalMeters physicalMeters() {
     return new PhysicalMetersRepository(
-      physicalMeterJpaRepository,
-      newPhysicalMeterMapper()
+      physicalMeterJpaRepository
     );
   }
 
   @Bean
   Organisations organisations() {
     return new OrganisationRepository(
-      organisationJpaRepository,
-      new OrganisationMapper()
+      organisationJpaRepository
     );
   }
 
@@ -153,7 +135,7 @@ class DataProviderConfig {
 
   @Bean
   MeterDefinitions meterDefinitions() {
-    return new MeterDefinitionRepository(meterDefinitionJpaRepository, new MeterDefinitionMapper());
+    return new MeterDefinitionRepository(meterDefinitionJpaRepository);
   }
 
   @Bean
@@ -161,45 +143,29 @@ class DataProviderConfig {
     return new GatewayRepository(
       gatewayJpaRepository,
       new GatewayQueryFilters(),
-      new GatewayMapper(new GatewayStatusLogMapper()),
-      new GatewayWithMetersMapper(newLogicalMeterMapper(), new GatewayStatusLogMapper()),
-      gatewayStatusLogJpaRepository,
-      new GatewayStatusLogQueryFilters()
+      new GatewayStatusLogQueryFilters(),
+      gatewayStatusLogJpaRepository
     );
   }
 
   @Bean
   UserSelections selections() {
     return new UserSelectionRepository(
-      userSelectionJpaRepository, new UserSelectionEntityMapper()
+      userSelectionJpaRepository
     );
   }
 
   @Bean
   MeterStatusLogs meterStatusLog() {
     return new MeterStatusLogsRepository(
-      physicalMeterStatusLogJpaRepository,
-      new MeterStatusLogMapper()
+      physicalMeterStatusLogJpaRepository
     );
   }
 
   @Bean
   GatewayStatusLogs gatewayStatusLogs() {
     return new GatewayStatusLogsRepository(
-      gatewayStatusLogJpaRepository,
-      new GatewayStatusLogMapper()
+      gatewayStatusLogJpaRepository
     );
-  }
-
-  private LogicalMeterMapper newLogicalMeterMapper() {
-    return new LogicalMeterMapper(
-      new MeterDefinitionMapper(),
-      newPhysicalMeterMapper(),
-      new GatewayMapper(new GatewayStatusLogMapper())
-    );
-  }
-
-  private PhysicalMeterMapper newPhysicalMeterMapper() {
-    return new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper());
   }
 }

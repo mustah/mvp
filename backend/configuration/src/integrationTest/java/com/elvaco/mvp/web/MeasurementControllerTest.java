@@ -90,13 +90,11 @@ public class MeasurementControllerTest extends IntegrationTest {
   private MeterDefinitionJpaRepository meterDefinitionJpaRepository;
 
   private OrganisationEntity otherOrganisation;
-  private MeterDefinitionMapper meterDefinitionMapper;
 
   @Before
   public void setUp() {
     assumeTrue(isPostgresDialect());
 
-    meterDefinitionMapper = new MeterDefinitionMapper();
     otherOrganisation = organisationJpaRepository.save(
       new OrganisationEntity(
         randomUUID(),
@@ -1113,7 +1111,7 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
-    return meterDefinitionJpaRepository.save(meterDefinitionMapper.toEntity(meterDefinition));
+    return meterDefinitionJpaRepository.save(MeterDefinitionMapper.toEntity(meterDefinition));
   }
 
   private MeasurementEntity newButterEnergyMeasurement(

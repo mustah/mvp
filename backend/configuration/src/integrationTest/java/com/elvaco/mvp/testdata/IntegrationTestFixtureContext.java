@@ -13,16 +13,13 @@ public class IntegrationTestFixtureContext {
   public final User user;
   public final User admin;
   public final User superAdmin;
-  private final OrganisationMapper organisationMapper;
 
   IntegrationTestFixtureContext(
     OrganisationEntity organisation,
-    OrganisationMapper organisationMapper,
     User user,
     User admin,
     User superAdmin
   ) {
-    this.organisationMapper = organisationMapper;
     this.organisationEntity = organisation;
     this.user = user;
     this.admin = admin;
@@ -30,7 +27,7 @@ public class IntegrationTestFixtureContext {
   }
 
   public Organisation organisation() {
-    return organisationMapper.toDomainModel(organisationEntity);
+    return OrganisationMapper.toDomainModel(organisationEntity);
   }
 
   public UUID getOrganisationId() {

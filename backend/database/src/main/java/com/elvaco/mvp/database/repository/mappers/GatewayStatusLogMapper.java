@@ -4,12 +4,12 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
+import lombok.experimental.UtilityClass;
 
-public class GatewayStatusLogMapper
-  implements DomainEntityMapper<StatusLogEntry<UUID>, GatewayStatusLogEntity> {
+@UtilityClass
+public class GatewayStatusLogMapper {
 
-  @Override
-  public StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
+  public static StatusLogEntry<UUID> toDomainModel(GatewayStatusLogEntity entity) {
     return new StatusLogEntry<>(
       entity.id,
       entity.gatewayId,
@@ -19,8 +19,7 @@ public class GatewayStatusLogMapper
     );
   }
 
-  @Override
-  public GatewayStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {
+  public static GatewayStatusLogEntity toEntity(StatusLogEntry<UUID> statusLog) {
     return new GatewayStatusLogEntity(
       statusLog.id,
       statusLog.entityId,

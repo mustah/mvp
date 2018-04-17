@@ -5,7 +5,6 @@ import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.entity.user.UserEntity;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
@@ -21,17 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserMapperTest {
 
-  private UserMapper userMapper;
-
-  @Before
-  public void setUp() {
-    userMapper = new UserMapper(new OrganisationMapper());
-  }
-
   @Test
   public void mapsUserEntityWithMoreThanOneRole() {
     UserEntity userEntity = createUserEntity();
-    User user = userMapper.toDomainModel(userEntity);
+    User user = UserMapper.toDomainModel(userEntity);
 
     assertThat(user.getId()).isEqualTo(userEntity.getId());
     assertThat(user.roles).containsExactly(USER, SUPER_ADMIN);
@@ -39,7 +31,7 @@ public class UserMapperTest {
 
   @Test
   public void mappingUserDtoToEntityShouldHavePassword() {
-    UserEntity userEntity = userMapper.toEntity(createUser());
+    UserEntity userEntity = UserMapper.toEntity(createUser());
 
     assertThat(userEntity.password).isEqualTo("letmein");
   }
@@ -48,7 +40,7 @@ public class UserMapperTest {
   public void mapUserDtoToEntity() {
     User user = createUser();
 
-    UserEntity userEntity = userMapper.toEntity(user);
+    UserEntity userEntity = UserMapper.toEntity(user);
 
     assertThat(userEntity).isEqualTo(new UserEntity(
       user.id,

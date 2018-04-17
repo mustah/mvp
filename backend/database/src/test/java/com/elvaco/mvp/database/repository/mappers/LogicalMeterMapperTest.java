@@ -16,7 +16,6 @@ import com.elvaco.mvp.database.entity.meter.LocationEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.MeterDefinitionEntity;
 import com.elvaco.mvp.database.entity.meter.QuantityEntity;
-import org.junit.Before;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -29,17 +28,6 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogicalMeterMapperTest {
-
-  private LogicalMeterMapper logicalMeterMapper;
-
-  @Before
-  public void setUp() {
-    logicalMeterMapper = new LogicalMeterMapper(
-      new MeterDefinitionMapper(),
-      new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper()),
-      new GatewayMapper(new GatewayStatusLogMapper())
-    );
-  }
 
   @Test
   public void mapsPhysicalMeters() {
@@ -60,10 +48,10 @@ public class LogicalMeterMapperTest {
       ))
     );
 
-    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(logicalMeter);
+    LogicalMeterEntity logicalMeterEntity = LogicalMeterMapper.toEntity(logicalMeter);
 
     assertThat(logicalMeterEntity.physicalMeters).hasSize(1);
-    assertThat(logicalMeterMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
+    assertThat(LogicalMeterMapper.toDomainModel(logicalMeterEntity)).isEqualTo(logicalMeter);
   }
 
   @Test
@@ -82,7 +70,7 @@ public class LogicalMeterMapperTest {
     );
     logicalMeterEntity.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
-    LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = LogicalMeterMapper.toDomainModel(logicalMeterEntity);
 
     Location expectedLocation = new LocationBuilder()
       .latitude(3.1)
@@ -131,7 +119,7 @@ public class LogicalMeterMapperTest {
         newMeterDefinitionEntity("Energy", "kWh", "My energy meter")
       );
 
-    LogicalMeter logicalMeter = logicalMeterMapper.toDomainModel(logicalMeterEntity);
+    LogicalMeter logicalMeter = LogicalMeterMapper.toDomainModel(logicalMeterEntity);
 
     assertThat(logicalMeter).isEqualTo(
       new LogicalMeter(
@@ -170,7 +158,7 @@ public class LogicalMeterMapperTest {
     );
     logicalMeterEntityExpected.location = new LocationEntity(meterId, 3.1, 2.1, 1.0);
 
-    LogicalMeterEntity logicalMeterEntity = logicalMeterMapper.toEntity(
+    LogicalMeterEntity logicalMeterEntity = LogicalMeterMapper.toEntity(
       new LogicalMeter(
         meterId,
         "an-external-id",

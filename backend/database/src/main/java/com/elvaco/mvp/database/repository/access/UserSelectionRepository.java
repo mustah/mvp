@@ -16,7 +16,6 @@ import static java.util.stream.Collectors.toList;
 public class UserSelectionRepository implements UserSelections {
 
   private final UserSelectionJpaRepository userSelectionJpaRepository;
-  private final UserSelectionEntityMapper mapper;
 
   @Override
   public Optional<UserSelection> findByIdAndOwnerUserIdAndOrganisationId(
@@ -29,7 +28,7 @@ public class UserSelectionRepository implements UserSelections {
       ownerUserId,
       organisationId
     )
-      .map(mapper::toDomainModel);
+      .map(UserSelectionEntityMapper::toDomainModel);
   }
 
   @Override
@@ -42,11 +41,12 @@ public class UserSelectionRepository implements UserSelections {
       organisationId
     )
       .stream()
-      .map(mapper::toDomainModel)
+      .map(UserSelectionEntityMapper::toDomainModel)
       .collect(toList());
   }
 
   public UserSelection save(UserSelection userSelection) {
-    return mapper.toDomainModel(userSelectionJpaRepository.save(mapper.toEntity(userSelection)));
+    return UserSelectionEntityMapper.toDomainModel(userSelectionJpaRepository.save(
+      UserSelectionEntityMapper.toEntity(userSelection)));
   }
 }

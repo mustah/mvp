@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserSelectionControllerTest extends IntegrationTest {
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
   private static final UserSelectionDtoMapper DTO_MAPPER = new UserSelectionDtoMapper();
-  private static final UserSelectionEntityMapper ENTITY_MAPPER = new UserSelectionEntityMapper();
 
   @Autowired
   private UserSelectionJpaRepository repository;
@@ -315,6 +314,6 @@ public class UserSelectionControllerTest extends IntegrationTest {
       user.organisation.id
     ));
 
-    return DTO_MAPPER.toDto(ENTITY_MAPPER.toDomainModel(entity));
+    return DTO_MAPPER.toDto(UserSelectionEntityMapper.toDomainModel(entity));
   }
 }
