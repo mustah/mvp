@@ -10,7 +10,6 @@ import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
-import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {formatLabelTimeStamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
@@ -86,7 +85,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
               <Tab tab={TabName.map} title={translate('map')}/>
               <Tab tab={TabName.connectedGateways} title={translate('gateways')}/>
             </TabHeaders>
-            <TabSettings/>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
             <Table {...measurements}>

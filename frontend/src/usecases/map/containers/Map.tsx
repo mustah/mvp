@@ -7,11 +7,8 @@ import {Map as LeafletMap, MapProps, TileLayer} from 'react-leaflet';
 import Control from 'react-leaflet-control';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
-import {Maybe} from '../../../helpers/Maybe';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {Dictionary} from '../../../types/Types';
-import {MapMarker} from '../mapModels';
-import {metersWithinThreshold} from './clusterHelper';
+import {boundsFromMarkers} from './clusterHelper';
 import './Map.scss';
 
 interface Props {
@@ -29,53 +26,6 @@ const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
   } else {
     target.scrollWheelZoom.enable();
   }
-};
-
-const boundsFromMarkers = (markers: Dictionary<MapMarker>): Maybe<LatLngTuple[]> => {
-  const filteredMarkers = metersWithinThreshold(markers);
-
-  const bounds = Object.keys(filteredMarkers).reduce(
-    (sum: any, markerId: string) => {
-      const {latitude, longitude} = filteredMarkers[markerId];
-
-      if (!isNaN(latitude)) {
-        if (latitude < sum.minLat) {
-          sum.minLat = latitude;
-        } else if (latitude > sum.maxLat) {
-          sum.maxLat = latitude;
-        }
-      }
-
-      if (!isNaN(longitude)) {
-        if (longitude < sum.minLong) {
-          sum.minLong = longitude;
-        } else if (longitude > sum.maxLong) {
-          sum.maxLong = longitude;
-        }
-      }
-
-      return sum;
-    }, {
-      minLat: 9999,
-      maxLat: -9999,
-      minLong: 9999,
-      maxLong: -9999,
-    },
-  );
-
-  const changedBounds = Object.keys(bounds)
-    .filter((bound) =>
-      !Number.isNaN(bounds[bound])
-      && bounds[bound] !== 9999
-      && bounds[bound] !== -9999);
-  if (changedBounds.length !== 4) {
-    return Maybe.nothing();
-  }
-
-  return Maybe.just([
-    [bounds.minLat as number, bounds.minLong as number] as LatLngTuple,
-    [bounds.maxLat as number, bounds.maxLong as number] as LatLngTuple,
-  ]);
 };
 
 const defaultCenter: LatLngTuple = [62.3919741, 15.0685715];

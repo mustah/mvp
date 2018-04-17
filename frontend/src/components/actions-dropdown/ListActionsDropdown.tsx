@@ -1,4 +1,3 @@
-import Divider from 'material-ui/Divider';
 import * as React from 'react';
 import {routes} from '../../app/routes';
 import {history} from '../../index';
@@ -21,9 +20,6 @@ export const ListActionsDropdown = ({item: {id}, selectEntryAdd}: Props) => {
       selectEntryAdd(id);
     };
     return ([
-      <ActionMenuItem name={translate('export to Excel (.csv)')} key={`0-${id}`} onClick={onClick}/>,
-      <ActionMenuItem name={translate('export to JSON')} key={`1-${id}`} onClick={onClick}/>,
-      <Divider key={`2-${id}`}/>,
       <ActionMenuItem name={translate('add to report')} onClick={onAddToReport} key={`3-${id}`}/>,
     ]);
   };

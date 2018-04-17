@@ -1,5 +1,6 @@
 import * as Leaflet from 'leaflet';
 import {imagePathFor} from '../../../app/routes';
+import {Maybe} from '../../../helpers/Maybe';
 import {Dictionary, Status} from '../../../types/Types';
 import {MapMarker, Marker} from '../mapModels';
 
@@ -47,4 +48,60 @@ export const makeLeafletCompatibleMarkersFrom = (markers: Dictionary<MapMarker> 
     .map((key: string) => mapMarkers[key])
     .filter(isGeoPositionWithinThreshold)
     .map(makeMarker);
+};
+
+interface MarkerBounds {
+  minLat: number;
+  maxLat: number;
+  minLong: number;
+  maxLong: number;
+}
+
+export const boundsFromMarkers = (markers: Dictionary<MapMarker>): Maybe<Leaflet.LatLngTuple[]> => {
+  const filteredMarkers = metersWithinThreshold(markers);
+
+  const bounds = Object.keys(filteredMarkers)
+    .reduce(
+      (sum: MarkerBounds, markerId: string) => {
+        const {latitude, longitude} = filteredMarkers[markerId];
+
+        if (!isNaN(latitude)) {
+          if (latitude < sum.minLat) {
+            sum.minLat = latitude;
+          } else if (latitude > sum.maxLat) {
+            sum.maxLat = latitude;
+          }
+        }
+
+        if (!isNaN(longitude)) {
+          if (longitude < sum.minLong) {
+            sum.minLong = longitude;
+          } else if (longitude > sum.maxLong) {
+            sum.maxLong = longitude;
+          }
+        }
+
+        return sum;
+      },
+      {
+        minLat: 9999,
+        maxLat: -9999,
+        minLong: 9999,
+        maxLong: -9999,
+      },
+    );
+
+  const changedBounds = Object.keys(bounds)
+    .filter((bound) =>
+      !Number.isNaN(bounds[bound])
+      && bounds[bound] !== 9999
+      && bounds[bound] !== -9999);
+  if (changedBounds.length !== 4) {
+    return Maybe.nothing();
+  }
+
+  return Maybe.just([
+    [bounds.minLat as number, bounds.minLong as number] as Leaflet.LatLngTuple,
+    [bounds.maxLat as number, bounds.maxLong as number] as Leaflet.LatLngTuple,
+  ]);
 };

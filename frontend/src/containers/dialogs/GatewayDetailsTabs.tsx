@@ -8,7 +8,6 @@ import {Tab} from '../../components/tabs/components/Tab';
 import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
-import {TabSettings} from '../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
@@ -56,7 +55,6 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               <Tab tab={TabName.values} title={translate('meter')}/>
               <Tab tab={TabName.map} title={translate('map')}/>
             </TabHeaders>
-            <TabSettings/>
           </TabTopBar>
           <TabContent tab={TabName.values} selectedTab={selectedTab}>
             <Table result={gateway.meterIds} entities={meters}>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
+import {locationNameTranslation} from '../../../../helpers/translations';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
@@ -15,15 +16,17 @@ interface RenderProps {
 
 export const renderSelectionTreeCities = ({id, selectionTree, ...other}: RenderProps) => {
   const city = selectionTree.entities.cities[id];
-  const clusters = city.clusters.sort().map((id) => renderSelectionTreeClusters({...other, selectionTree, id}));
+  const clusters = city.clusters.sort()
+    .map((id) => renderSelectionTreeClusters({...other, selectionTree, id}));
   return renderSelectableListItem({
     ...other,
     id,
     selectable: true,
-    primaryText: city.name,
+    primaryText: locationNameTranslation(city.name),
     nestedItems: clusters,
   });
 };
+
 const renderSelectionTreeClusters = ({id, selectionTree, ...other}: RenderProps) => {
   const cluster = selectionTree.entities.clusters[id];
   const addresses = cluster.addresses.sort().map((id) => renderSelectionTreeAddresses({...other, selectionTree, id}));
@@ -35,6 +38,7 @@ const renderSelectionTreeClusters = ({id, selectionTree, ...other}: RenderProps)
     nestedItems: addresses,
   });
 };
+
 const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps) => {
   const address = selectionTree.entities.addresses[id];
   const meters = address.meters.sort().map((id) => renderSelectionTreeMeters({...other, selectionTree, id}));
@@ -42,10 +46,11 @@ const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps
     ...other,
     id,
     selectable: true,
-    primaryText: address.name,
+    primaryText: locationNameTranslation(address.name),
     nestedItems: meters,
   });
 };
+
 const renderSelectionTreeMeters = ({id, selectionTree, ...other}: RenderProps) => {
   const meter = selectionTree.entities.meters[id];
   return renderSelectableListItem({
@@ -67,10 +72,16 @@ interface Props {
   nestedItems?: Array<React.ReactElement<any>>;
 }
 
-const renderSelectableListItem = (
-  {
-    id, primaryText, openListItems, toggleExpand, toggleSelect, selectedListItems, selectable, nestedItems,
-  }: Props) => {
+const renderSelectableListItem = ({
+  id,
+  primaryText,
+  openListItems,
+  toggleExpand,
+  toggleSelect,
+  selectedListItems,
+  selectable,
+  nestedItems,
+}: Props) => {
   const onToggleExpand = nestedItems ? () => toggleExpand(id) : () => null;
   const onToggleSelect = selectable ? () => toggleSelect(id) : () => null;
 
