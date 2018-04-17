@@ -37,6 +37,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -1211,7 +1212,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
-      0
+      0,
+      emptySet()
     ));
   }
 
@@ -1225,7 +1227,8 @@ public class MeasurementControllerTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
-      0
+      0,
+      emptySet()
     ));
   }
 

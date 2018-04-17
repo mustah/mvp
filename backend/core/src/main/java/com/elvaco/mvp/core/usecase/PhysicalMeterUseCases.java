@@ -19,11 +19,11 @@ public class PhysicalMeterUseCases {
   }
 
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    if (hasTenantAccess(physicalMeter)) {
-      return physicalMeters.save(physicalMeter);
+    if (!hasTenantAccess(physicalMeter)) {
+      throw new Unauthorized(String.format("User '%s' is not allowed to "
+        + "update physical meter with ID %s", authenticatedUser.getUsername(), physicalMeter.id));
     }
-    throw new Unauthorized("User '" + authenticatedUser.getUsername() + "' is not allowed to "
-                             + "update this physical meter");
+    return physicalMeters.save(physicalMeter);
   }
 
   public Optional<PhysicalMeter> findByOrganisationIdAndExternalIdAndAddress(

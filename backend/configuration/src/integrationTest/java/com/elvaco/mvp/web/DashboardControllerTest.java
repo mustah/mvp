@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.ACTIVE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptySet;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,11 +41,10 @@ public class DashboardControllerTest extends IntegrationTest {
 
   private final Random random = new Random();
   private final MeterDefinitionMapper meterDefinitionMapper = new MeterDefinitionMapper();
-  private double measurementCount = 0.0;
-  private double measurementFailedCount = 0.0;
   private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
-
+  private double measurementCount = 0.0;
+  private double measurementFailedCount = 0.0;
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
 
@@ -96,7 +96,7 @@ public class DashboardControllerTest extends IntegrationTest {
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
-        + "?status=active",
+          + "?status=active",
         DashboardDto.class
       );
 
@@ -114,9 +114,9 @@ public class DashboardControllerTest extends IntegrationTest {
     ResponseEntity<DashboardDto> response = asTestUser()
       .get(
         "/dashboards/current"
-        + "?after=" + startDate
-        + "&before=" + beforeDate
-        + "&status=active",
+          + "?after=" + startDate
+          + "&before=" + beforeDate
+          + "&status=active",
         DashboardDto.class
       );
 
@@ -223,7 +223,8 @@ public class DashboardControllerTest extends IntegrationTest {
       "",
       "",
       logicalMeterId,
-      readInterval
+      readInterval,
+      emptySet()
     ));
   }
 }

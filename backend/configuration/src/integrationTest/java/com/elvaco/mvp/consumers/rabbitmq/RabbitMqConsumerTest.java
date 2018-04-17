@@ -27,8 +27,10 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -71,10 +73,16 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Autowired
+  PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+
+  @Autowired
   LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
   GatewayJpaRepository gatewayJpaRepository;
+
+  @Autowired
+  GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
   @Autowired
   LogicalMeters logicalMeters;
@@ -107,8 +115,10 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       connection.close();
     }
 
+    physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
+    gatewayStatusLogJpaRepository.deleteAll();
     gatewayJpaRepository.deleteAll();
     organisations.findBySlug("some-organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));

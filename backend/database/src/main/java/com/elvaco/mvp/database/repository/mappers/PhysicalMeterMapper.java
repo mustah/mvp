@@ -1,14 +1,14 @@
 package com.elvaco.mvp.database.repository.mappers;
 
-import java.util.List;
+import java.util.Collection;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, PhysicalMeterEntity> {
 
@@ -29,14 +29,15 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
   }
 
   public PhysicalMeter toDomainModel(
-    PhysicalMeterEntity entity, @Nullable Long measurementCount) {
-    return toDomainModel(entity, measurementCount, emptyList());
+    PhysicalMeterEntity entity, @Nullable Long measurementCount
+  ) {
+    return toDomainModel(entity, measurementCount, entity.statusLogs);
   }
 
   public PhysicalMeter toDomainModel(
     PhysicalMeterEntity entity,
     @Nullable Long measurementCount,
-    List<PhysicalMeterStatusLogEntity> statuses
+    Collection<PhysicalMeterStatusLogEntity> statuses
   ) {
     return new PhysicalMeter(
       entity.id,
@@ -62,7 +63,8 @@ public class PhysicalMeterMapper implements DomainEntityMapper<PhysicalMeter, Ph
       domainModel.medium,
       domainModel.manufacturer,
       domainModel.logicalMeterId,
-      domainModel.readIntervalMinutes
+      domainModel.readIntervalMinutes,
+      domainModel.statuses.stream().map(meterStatusLogMapper::toEntity).collect(toSet())
     );
   }
 }
