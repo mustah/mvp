@@ -3,6 +3,7 @@ package cuke;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
@@ -17,15 +18,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 
   private WebDriver driver;
-  private WebDriverWait waitDriver;
   private String mvpServer;
 
   @Before
@@ -40,7 +38,7 @@ public class StepDefinitions {
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--headless");
     driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
-    waitDriver = new WebDriverWait(driver, 10);
+    driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
 
   @After
@@ -62,7 +60,6 @@ public class StepDefinitions {
 
   @When("I login as user '(.*)' and password '(.*)'")
   public void whenILoginAsUserWithPassword(String username, String password) throws Throwable {
-    waitDriver.until(ExpectedConditions.visibilityOfElementLocated(By.id("email")));
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
     emailElement.sendKeys(username);
@@ -76,18 +73,18 @@ public class StepDefinitions {
       .click();
   }
 
-  @Then("I should see '(.*)'")
-  public void thenIShouldSee(String context) throws Throwable {
-    assertThat(driver.getPageSource().contains(context)).isTrue();
+  @Then("I should be logged in as '(.*)'")
+  public void thenIShouldBeLoggedInAs(String username) throws Throwable {
+    assertElementHasText("Profile", username);
   }
 
-  @Then("I should not see '(.*)'")
-  public void thenIShouldNotSee(String context) throws Throwable {
-    assertThat(driver.getPageSource().contains(context)).isFalse();
+  @Then("I should see error message '(.*)'")
+  public void thenIShouldSeeErrorMessage(String text) throws Throwable {
+    assertElementHasText("Error-message", text);
   }
 
-  @Then("I sleep for '(.*)' seconds")
-  public void thenISleepForSeconds(Integer seconds) throws Throwable {
-    Thread.sleep(seconds * 1000);
+  private void assertElementHasText(String className, String text) {
+    WebElement contextElement = driver.findElement(By.className(className));
+    assertThat(contextElement.getText()).isEqualTo(text);
   }
 }
