@@ -1075,6 +1075,42 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
   }
 
+  @Test
+  public void consumptionIsIncludedForFirstValueInPeriodWhenPreviousValueExists() {
+    ZonedDateTime when = ZonedDateTime.parse("2018-02-01T01:12:00Z");
+    LogicalMeterEntity consumptionMeter = newLogicalMeterEntity(
+
+      new MeterDefinition(MeterDefinitionType.UNKNOWN_METER_TYPE, "Consumption of things",
+        singleton(
+          new Quantity(
+            "Volume consumption",
+            new QuantityPresentationInformation("m³", SeriesDisplayMode.CONSUMPTION)
+          )
+        ),
+        false
+      )
+    );
+    PhysicalMeterEntity meter = newPhysicalMeterEntity(consumptionMeter.id);
+    newMeasurement(meter, when, "Volume consumption", 25.0, "m³");
+    newMeasurement(meter, when.plusHours(1), "Volume consumption", 35.0, "m³");
+    newMeasurement(meter, when.plusHours(2), "Volume consumption", 55.0, "m³");
+
+    MeasurementSeriesDto seriesDto = asTestUser()
+      .getList(String.format(
+        "/measurements?quantities=Volume consumption&meters=%s"
+          + "&after=%s", consumptionMeter.getId(), when.plusHours(1).minusMinutes(1)
+      ), MeasurementSeriesDto.class).getBody().get(0);
+
+    assertThat(seriesDto).isEqualTo(
+      new MeasurementSeriesDto("Volume consumption", "m³", meter.externalId,
+        asList(
+          new MeasurementValueDto(when.plusHours(1).toInstant(), 10.0),
+          new MeasurementValueDto(when.plusHours(2).toInstant(), 20.0)
+        )
+      )
+    );
+  }
+
   private MeterDefinitionEntity saveMeterDefinition(MeterDefinition meterDefinition) {
     return meterDefinitionJpaRepository.save(meterDefinitionMapper.toEntity(meterDefinition));
   }

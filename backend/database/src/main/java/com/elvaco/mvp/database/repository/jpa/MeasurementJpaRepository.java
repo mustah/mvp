@@ -72,7 +72,16 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     + "  cast (unit_at("
     + "    case when :mode = 'consumption'"
     + "    then"
-    + "      value - lag(value) over (order by created)"
+    + "      value - coalesce("
+    // If we have a previous value, diff against that ...
+    + "        lag(value) over (order by created),"
+    // ... Otherwise, pick the latest value in the series _before_ this period, and diff against
+    // _that_, to avoid surprising null consumptions at the beginning of a period
+    + "        (select value from measurement"
+    + "          where quantity = :quantity and"
+    + "          physical_meter_id = :meter_id and"
+    + "          created < cast(:from AS TIMESTAMPTZ)"
+    + "          order by created desc limit 1))"
     + "    else value"
     + "    end, :unit) as TEXT) as value,"
     + "  created as when"
