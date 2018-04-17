@@ -6,18 +6,24 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableSet;
 
 @NoArgsConstructor
 @ToString(exclude = "meters")
@@ -44,17 +50,24 @@ public class GatewayEntity extends EntityType<UUID> {
   @Fetch(FetchMode.SUBSELECT)
   public Set<LogicalMeterEntity> meters;
 
+  @OrderBy("stop desc, start desc")
+  @OneToMany(mappedBy = "gatewayId", fetch = FetchType.LAZY)
+  @Cascade(value = CascadeType.MERGE)
+  public Set<GatewayStatusLogEntity> statusLogs;
+
   public GatewayEntity(
     UUID id,
     UUID organisationId,
     String serial,
-    String productModel
+    String productModel,
+    Set<GatewayStatusLogEntity> statusLogs
   ) {
     this.id = id;
     this.organisationId = organisationId;
     this.serial = serial;
     this.productModel = productModel;
     this.meters = emptySet();
+    this.statusLogs = unmodifiableSet(statusLogs);
   }
 
   @Override

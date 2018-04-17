@@ -90,7 +90,7 @@ public class GatewayRepository implements Gateways {
   @Override
   public Gateway save(Gateway gateway) {
     GatewayEntity entity = repository.save(mapper.toEntity(gateway));
-    return gatewayWithMetersMapper.toDomainModel(entity);
+    return mapper.toDomainModel(entity);
   }
 
   @Override

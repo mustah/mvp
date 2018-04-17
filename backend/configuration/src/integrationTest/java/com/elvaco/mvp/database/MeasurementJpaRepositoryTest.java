@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -396,7 +397,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "",
       "",
       null,
-      0
+      0,
+      emptySet()
     ));
   }
 

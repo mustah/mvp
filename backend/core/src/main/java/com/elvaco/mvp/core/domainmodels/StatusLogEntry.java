@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode
 @AllArgsConstructor
-public class StatusLogEntry<T> {
+public class StatusLogEntry<T> implements Identifiable<Long> {
 
   @Nullable
   public final Long id;
@@ -34,5 +34,10 @@ public class StatusLogEntry<T> {
       start,
       stopTime
     );
+  }
+
+  @Override
+  public Long getId() {
+    return id;
   }
 }

@@ -161,7 +161,7 @@ class DataProviderConfig {
     return new GatewayRepository(
       gatewayJpaRepository,
       new GatewayQueryFilters(),
-      new GatewayMapper(),
+      new GatewayMapper(new GatewayStatusLogMapper()),
       new GatewayWithMetersMapper(newLogicalMeterMapper(), new GatewayStatusLogMapper()),
       gatewayStatusLogJpaRepository,
       new GatewayStatusLogQueryFilters()
@@ -195,7 +195,7 @@ class DataProviderConfig {
     return new LogicalMeterMapper(
       new MeterDefinitionMapper(),
       newPhysicalMeterMapper(),
-      new GatewayMapper()
+      new GatewayMapper(new GatewayStatusLogMapper())
     );
   }
 

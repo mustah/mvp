@@ -106,7 +106,7 @@ public class LogicalMeterMapper {
   private List<Gateway> toGateways(Set<GatewayEntity> gateways) {
     return gateways
       .stream()
-      .map(gatewayMapper::toDomainModel)
+      .map(gatewayMapper::toDomainModelWithoutStatusLogs)
       .collect(toList());
   }
 }

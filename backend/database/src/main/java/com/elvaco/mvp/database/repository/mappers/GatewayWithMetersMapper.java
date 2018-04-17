@@ -12,7 +12,6 @@ import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
 
 public class GatewayWithMetersMapper {
@@ -46,7 +45,14 @@ public class GatewayWithMetersMapper {
   }
 
   public Gateway toDomainModel(GatewayEntity entity) {
-    return toDomainModel(entity, emptyMap());
+    return new Gateway(
+      entity.id,
+      entity.organisationId,
+      entity.serial,
+      entity.productModel,
+      toLogicalMeters(entity.meters),
+      entity.statusLogs.stream().map(gatewayStatusLogMapper::toDomainModel).collect(toList())
+    );
   }
 
   private List<LogicalMeter> toLogicalMeters(Set<LogicalMeterEntity> meters) {

@@ -19,6 +19,10 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import static java.util.Collections.unmodifiableSet;
 
 @NoArgsConstructor
 @Entity
@@ -45,6 +49,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
 
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY)
+  @Cascade(value = CascadeType.MERGE)
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public UUID logicalMeterId;
@@ -63,7 +68,8 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     String medium,
     String manufacturer,
     @Nullable UUID logicalMeterId,
-    long readIntervalMinutes
+    long readIntervalMinutes,
+    Set<PhysicalMeterStatusLogEntity> statusLogs
   ) {
     this.id = id;
     this.organisation = organisation;
@@ -73,6 +79,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
     this.readIntervalMinutes = readIntervalMinutes;
+    this.statusLogs = unmodifiableSet(statusLogs);
   }
 
   @Override
