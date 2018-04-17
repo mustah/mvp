@@ -24,6 +24,7 @@ server {
     ssl_prefer_server_ciphers on;
 
     access_log            /var/log/nginx/{{ fqdn }}.access.log;
+    error_log             /var/log/nginx/{{ fqdn }}.error.log;
 
     location / {
 
