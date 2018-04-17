@@ -3,7 +3,7 @@ import {Row} from '../../layouts/row/Row';
 import {TabHeadersProps} from './TabHeaders';
 
 export interface TabTopBarProps {
-  children: Array<React.ReactElement<TabHeadersProps>>;
+  children: Array<React.ReactElement<TabHeadersProps>> | React.ReactElement<TabHeadersProps>;
 }
 
 export const TabTopBar = (props: TabTopBarProps) => {

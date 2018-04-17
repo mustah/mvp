@@ -15,7 +15,6 @@ import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
-import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
@@ -65,7 +64,6 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
                 <Tab tab={TabName.graph} title={translate('graph')}/>
                 <Tab tab={TabName.table} title={translate('table')}/>
               </TabHeaders>
-              <TabSettings/>
             </TabTopBar>
             <TabContent tab={TabName.graph} selectedTab={selectedTab}>
               <GraphContainer/>

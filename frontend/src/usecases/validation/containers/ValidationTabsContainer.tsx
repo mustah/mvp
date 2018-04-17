@@ -8,7 +8,6 @@ import {Tab} from '../../../components/tabs/components/Tab';
 import {TabContent} from '../../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../../components/tabs/components/Tabs';
-import {TabSettings} from '../../../components/tabs/components/TabSettings';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
@@ -95,7 +94,6 @@ class ValidationTabs extends React.Component<Props> {
             <Tab tab={TabName.list} title={translate('list')}/>
             <Tab tab={TabName.map} title={translate('map')}/>
           </TabHeaders>
-          <TabSettings/>
         </TabTopBar>
         <TabContent tab={TabName.list} selectedTab={selectedTab}>
           <MeterListContainer componentId={'validationMeterList'}/>

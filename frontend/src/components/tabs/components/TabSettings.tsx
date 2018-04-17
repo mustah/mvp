@@ -6,6 +6,7 @@ import {ActionsDropdown} from '../../actions-dropdown/ActionsDropdown';
 import {Column} from '../../layouts/column/Column';
 import {TabUnderline} from './TabUnderliner';
 
+// TODO[!must!] please keep this file, since it will be used when export functionality is in place
 export const TabSettings = () => {
 
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => [
