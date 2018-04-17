@@ -149,8 +149,9 @@ public class LocationParametersParserTest {
   @Test
   public void createCityParams_WithUnknownCountries() {
     Parameters parameters = toCityParameters(asList("unknown,bEER", " unknown ,def"));
-    assertThat(parameters.hasUnknownCountries).isTrue();
     assertThat(parameters.cities).containsExactly("def", "beer");
+    assertThat(parameters.hasUnknownCountries).isTrue();
+    assertThat(parameters.hasUnknownAddresses).isFalse();
     assertThat(parameters.countries).isEmpty();
     assertThat(parameters.addresses).isEmpty();
   }
