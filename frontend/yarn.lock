@@ -52,9 +52,9 @@
   dependencies:
     "@types/geojson" "*"
 
-"@types/material-ui@^0.20.2":
-  version "0.20.2"
-  resolved "https://registry.yarnpkg.com/@types/material-ui/-/material-ui-0.20.2.tgz#c7274841b188f047162afa3ce22912ae64734d19"
+"@types/material-ui@0.20.7":
+  version "0.20.7"
+  resolved "https://registry.yarnpkg.com/@types/material-ui/-/material-ui-0.20.7.tgz#2c93f9a8f9531779b2b33efd6caf354c5852319e"
   dependencies:
     "@types/react" "*"
     "@types/react-addons-linked-state-mixin" "*"

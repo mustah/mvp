@@ -11,9 +11,13 @@
 /*
  !important is needed for changes to override the material style
  */
-.Dialog {
-  width: 70% !important;
-  max-width: 1000px !important;
+.Dialog-root {
+  padding-top: 100px !important; // workaround that centers the top position of the dialog
+
+  .Dialog {
+    width: 70% !important;
+    max-width: 1000px !important;
+  }
 }
 
 .TextField, .SelectField {
