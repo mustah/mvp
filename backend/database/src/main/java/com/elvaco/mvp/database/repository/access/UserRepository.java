@@ -11,43 +11,34 @@ import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class UserRepository implements Users {
 
   private final UserJpaRepository userJpaRepository;
-  private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
-
-  public UserRepository(
-    UserJpaRepository userJpaRepository,
-    UserMapper userMapper,
-    PasswordEncoder passwordEncoder
-  ) {
-    this.userJpaRepository = userJpaRepository;
-    this.userMapper = userMapper;
-    this.passwordEncoder = passwordEncoder;
-  }
 
   @Override
   public List<User> findAll() {
     return userJpaRepository.findAll()
       .stream()
-      .map(userMapper::toDomainModel)
+      .map(UserMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<User> findByEmail(String email) {
     return userJpaRepository.findByEmail(email)
-      .map(userMapper::toDomainModel);
+      .map(UserMapper::toDomainModel);
   }
 
   @Override
   public Optional<User> findById(UUID id) {
     return Optional.ofNullable(userJpaRepository.findOne(id))
-      .map(userMapper::toDomainModel);
+      .map(UserMapper::toDomainModel);
   }
 
   @Override
@@ -58,12 +49,12 @@ public class UserRepository implements Users {
   @Override
   public User create(User user) {
     User userWithPassword = user.withPassword(passwordEncoder.encode(user.password));
-    return userMapper.toDomainModel(userJpaRepository.save(userMapper.toEntity(userWithPassword)));
+    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(userWithPassword)));
   }
 
   @Override
   public User update(User user) {
-    return userMapper.toDomainModel(userJpaRepository.save(userMapper.toEntity(user)));
+    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(user)));
   }
 
   @Override
@@ -75,7 +66,7 @@ public class UserRepository implements Users {
   public List<User> findByRole(Role role) {
     return userJpaRepository.findByRoles_Role(role.role)
       .stream()
-      .map(userMapper::toDomainModel)
+      .map(UserMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -84,7 +75,7 @@ public class UserRepository implements Users {
     return userJpaRepository
       .findByOrganisationId(organisationId)
       .stream()
-      .map(userMapper::toDomainModel)
+      .map(UserMapper::toDomainModel)
       .collect(toList());
   }
 }

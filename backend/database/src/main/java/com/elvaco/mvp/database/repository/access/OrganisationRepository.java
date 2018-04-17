@@ -9,40 +9,33 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.OrganisationMapper;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class OrganisationRepository implements Organisations {
 
   private final OrganisationJpaRepository organisationJpaRepository;
-  private final OrganisationMapper organisationMapper;
-
-  public OrganisationRepository(
-    OrganisationJpaRepository organisationJpaRepository,
-    OrganisationMapper organisationMapper
-  ) {
-    this.organisationJpaRepository = organisationJpaRepository;
-    this.organisationMapper = organisationMapper;
-  }
 
   @Override
   public List<Organisation> findAll() {
     return organisationJpaRepository.findAll()
       .stream()
-      .map(organisationMapper::toDomainModel)
+      .map(OrganisationMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public Optional<Organisation> findById(UUID id) {
     return Optional.ofNullable(organisationJpaRepository.findOne(id))
-      .map(organisationMapper::toDomainModel);
+      .map(OrganisationMapper::toDomainModel);
   }
 
   @Override
   public Organisation save(Organisation organisation) {
-    OrganisationEntity entity = organisationMapper.toEntity(organisation);
-    return organisationMapper.toDomainModel(organisationJpaRepository.save(entity));
+    OrganisationEntity entity = OrganisationMapper.toEntity(organisation);
+    return OrganisationMapper.toDomainModel(organisationJpaRepository.save(entity));
   }
 
   @Override
@@ -53,12 +46,12 @@ public class OrganisationRepository implements Organisations {
   @Override
   public Optional<Organisation> findBySlug(String slug) {
     return organisationJpaRepository.findBySlug(slug)
-      .map(organisationMapper::toDomainModel);
+      .map(OrganisationMapper::toDomainModel);
   }
 
   @Override
   public Optional<Organisation> findByExternalId(String externalId) {
     return organisationJpaRepository.findByExternalId(externalId)
-      .map(organisationMapper::toDomainModel);
+      .map(OrganisationMapper::toDomainModel);
   }
 }

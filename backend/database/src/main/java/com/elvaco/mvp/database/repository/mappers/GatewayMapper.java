@@ -2,18 +2,16 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.database.entity.gateway.GatewayEntity;
-import lombok.AllArgsConstructor;
+import lombok.experimental.UtilityClass;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
-@AllArgsConstructor
-public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity> {
+@UtilityClass
+public class GatewayMapper {
 
-  private final GatewayStatusLogMapper gatewayStatusLogMapper;
-
-  Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
+  static Gateway toDomainModelWithoutStatusLogs(GatewayEntity entity) {
     return new Gateway(
       entity.id,
       entity.organisationId,
@@ -24,26 +22,24 @@ public class GatewayMapper implements DomainEntityMapper<Gateway, GatewayEntity>
     );
   }
 
-  @Override
-  public Gateway toDomainModel(GatewayEntity entity) {
+  public static Gateway toDomainModel(GatewayEntity entity) {
     return new Gateway(
       entity.id,
       entity.organisationId,
       entity.serial,
       entity.productModel,
       emptyList(),
-      entity.statusLogs.stream().map(gatewayStatusLogMapper::toDomainModel).collect(toList())
+      entity.statusLogs.stream().map(GatewayStatusLogMapper::toDomainModel).collect(toList())
     );
   }
 
-  @Override
-  public GatewayEntity toEntity(Gateway domainModel) {
+  public static GatewayEntity toEntity(Gateway domainModel) {
     return new GatewayEntity(
       domainModel.id,
       domainModel.organisationId,
       domainModel.serial,
       domainModel.productModel,
-      domainModel.statusLogs.stream().map(gatewayStatusLogMapper::toEntity).collect(toSet())
+      domainModel.statusLogs.stream().map(GatewayStatusLogMapper::toEntity).collect(toSet())
     );
   }
 }

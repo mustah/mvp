@@ -2,16 +2,16 @@ package com.elvaco.mvp.database.repository.mappers;
 
 import com.elvaco.mvp.core.domainmodels.Setting;
 import com.elvaco.mvp.database.entity.setting.SettingEntity;
+import lombok.experimental.UtilityClass;
 
-public class SettingMapper implements DomainEntityMapper<Setting, SettingEntity> {
+@UtilityClass
+public class SettingMapper {
 
-  @Override
-  public Setting toDomainModel(SettingEntity entity) {
+  public static Setting toDomainModel(SettingEntity entity) {
     return new Setting(entity.id, entity.name, entity.value);
   }
 
-  @Override
-  public SettingEntity toEntity(Setting domainModel) {
+  public static SettingEntity toEntity(Setting domainModel) {
     return new SettingEntity(domainModel.getId(), domainModel.name, domainModel.value);
   }
 }

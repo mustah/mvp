@@ -40,7 +40,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DashboardControllerTest extends IntegrationTest {
 
   private final Random random = new Random();
-  private final MeterDefinitionMapper meterDefinitionMapper = new MeterDefinitionMapper();
   private final ZonedDateTime startDate = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
   private final ZonedDateTime beforeDate = ZonedDateTime.parse("2001-01-11T00:00:00.00Z");
   private double measurementCount = 0.0;
@@ -60,7 +59,7 @@ public class DashboardControllerTest extends IntegrationTest {
   @Before
   public void setUp() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
-      meterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
+      MeterDefinitionMapper.toEntity(MeterDefinition.DISTRICT_HEATING_METER),
       startDate
     );
 

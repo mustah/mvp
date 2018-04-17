@@ -20,41 +20,25 @@ import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
 import com.elvaco.mvp.database.repository.queryfilters.QueryFilters;
 import com.querydsl.core.types.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class GatewayRepository implements Gateways {
 
   private final GatewayJpaRepository repository;
   private final QueryFilters gatewayQueryFilters;
   private final QueryFilters gatewayStatusLogQueryFilters;
-  private final GatewayMapper mapper;
-  private final GatewayWithMetersMapper gatewayWithMetersMapper;
   private final GatewayStatusLogJpaRepository statusLogJpaRepository;
-
-  public GatewayRepository(
-    GatewayJpaRepository repository,
-    QueryFilters gatewayQueryFilters,
-    GatewayMapper mapper,
-    GatewayWithMetersMapper gatewayWithMetersMapper,
-    GatewayStatusLogJpaRepository statusLogJpaRepository,
-    QueryFilters gatewayStatusLogQueryFilters
-  ) {
-    this.repository = repository;
-    this.gatewayQueryFilters = gatewayQueryFilters;
-    this.mapper = mapper;
-    this.gatewayWithMetersMapper = gatewayWithMetersMapper;
-    this.statusLogJpaRepository = statusLogJpaRepository;
-    this.gatewayStatusLogQueryFilters = gatewayStatusLogQueryFilters;
-  }
 
   @Override
   public List<Gateway> findAll(RequestParameters parameters) {
     return repository.findAll(toPredicate(parameters))
       .stream()
-      .map(gatewayWithMetersMapper::toDomainModel)
+      .map(GatewayWithMetersMapper::toDomainModel)
       .collect(toList());
   }
 
@@ -72,7 +56,7 @@ public class GatewayRepository implements Gateways {
       .findAllGroupedByGatewayId(toStatusPredicate(all.getContent(), parameters));
 
     return new PageAdapter<>(
-      all.map((entity) -> gatewayWithMetersMapper.toDomainModel(entity, statusLogMap))
+      all.map((entity) -> GatewayWithMetersMapper.toDomainModel(entity, statusLogMap))
     );
   }
 
@@ -89,8 +73,8 @@ public class GatewayRepository implements Gateways {
 
   @Override
   public Gateway save(Gateway gateway) {
-    GatewayEntity entity = repository.save(mapper.toEntity(gateway));
-    return mapper.toDomainModel(entity);
+    GatewayEntity entity = repository.save(GatewayMapper.toEntity(gateway));
+    return GatewayMapper.toDomainModel(entity);
   }
 
   @Override
@@ -99,7 +83,7 @@ public class GatewayRepository implements Gateways {
       organisationId,
       productModel,
       serial
-    ).map(mapper::toDomainModel);
+    ).map(GatewayMapper::toDomainModel);
   }
 
   @Override
@@ -107,18 +91,18 @@ public class GatewayRepository implements Gateways {
     return repository.findByOrganisationIdAndSerial(
       organisationId,
       serial
-    ).map(mapper::toDomainModel);
+    ).map(GatewayMapper::toDomainModel);
   }
 
   @Override
   public Optional<Gateway> findById(UUID id) {
-    return repository.findById(id).map(gatewayWithMetersMapper::toDomainModel);
+    return repository.findById(id).map(GatewayWithMetersMapper::toDomainModel);
   }
 
   @Override
   public Optional<Gateway> findByOrganisationIdAndId(UUID organisationId, UUID id) {
     return repository.findByOrganisationIdAndId(organisationId, id)
-      .map(gatewayWithMetersMapper::toDomainModel);
+      .map(GatewayWithMetersMapper::toDomainModel);
   }
 
   private List<Gateway> toGateways(
@@ -127,7 +111,7 @@ public class GatewayRepository implements Gateways {
   ) {
     return gatewayEntities
       .stream()
-      .map(gateway -> gatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
+      .map(gateway -> GatewayWithMetersMapper.toDomainModel(gateway, statusLogMap))
       .collect(toList());
   }
 

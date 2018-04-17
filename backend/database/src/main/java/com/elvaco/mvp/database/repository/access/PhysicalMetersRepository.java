@@ -10,42 +10,34 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.PhysicalMeterMapper;
+import lombok.RequiredArgsConstructor;
 
 import static java.util.stream.Collectors.toList;
 
+@RequiredArgsConstructor
 public class PhysicalMetersRepository implements PhysicalMeters {
 
   private final PhysicalMeterJpaRepository jpaRepository;
-  private final PhysicalMeterMapper physicalMeterMapper;
-
-  public PhysicalMetersRepository(
-    PhysicalMeterJpaRepository jpaRepository,
-    PhysicalMeterMapper physicalMeterMapper
-  ) {
-    this.jpaRepository = jpaRepository;
-    this.physicalMeterMapper = physicalMeterMapper;
-
-  }
 
   @Override
   public List<PhysicalMeter> findByMedium(String medium) {
     return jpaRepository.findByMedium(medium)
       .stream()
-      .map(physicalMeterMapper::toDomainModel)
+      .map(PhysicalMeterMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public List<PhysicalMeter> findAll() {
     return StreamSupport.stream(jpaRepository.findAll().spliterator(), false)
-      .map(physicalMeterMapper::toDomainModel)
+      .map(PhysicalMeterMapper::toDomainModel)
       .collect(toList());
   }
 
   @Override
   public PhysicalMeter save(PhysicalMeter physicalMeter) {
-    PhysicalMeterEntity entity = jpaRepository.save(physicalMeterMapper.toEntity(physicalMeter));
-    return physicalMeterMapper.toDomainModel(entity);
+    PhysicalMeterEntity entity = jpaRepository.save(PhysicalMeterMapper.toEntity(physicalMeter));
+    return PhysicalMeterMapper.toDomainModel(entity);
   }
 
   @Override
@@ -58,6 +50,6 @@ public class PhysicalMetersRepository implements PhysicalMeters {
       organisationId,
       externalId,
       address
-    ).map(physicalMeterMapper::toDomainModel);
+    ).map(PhysicalMeterMapper::toDomainModel);
   }
 }
