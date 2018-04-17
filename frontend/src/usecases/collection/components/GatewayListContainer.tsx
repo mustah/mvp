@@ -108,10 +108,12 @@ class GatewayList extends React.Component<Props> {
               />
               <TableColumn
                 header={<TableHead>{translate('city')}</TableHead>}
+                cellClassName={'first-uppercase'}
                 renderCell={renderCity}
               />
               <TableColumn
                 header={<TableHead>{translate('address')}</TableHead>}
+                cellClassName={'first-uppercase'}
                 renderCell={renderAddress}
               />
               <TableColumn

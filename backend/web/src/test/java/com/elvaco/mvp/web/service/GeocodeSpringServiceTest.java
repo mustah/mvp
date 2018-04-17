@@ -34,7 +34,7 @@ public class GeocodeSpringServiceTest {
 
   @Test
   public void shouldNotFetchWhenLocationIsUnknown() {
-    geocodeService.fetchCoordinates(LocationWithId.from(UNKNOWN_LOCATION, randomUUID()));
+    geocodeService.fetchCoordinates(LocationWithId.of(UNKNOWN_LOCATION, randomUUID()));
 
     assertThat(httpClientMock.url).isNull();
   }
@@ -43,16 +43,16 @@ public class GeocodeSpringServiceTest {
   public void shouldNotFetchWhenLocationIsMissingAddress() {
     Location location = new LocationBuilder().country("sweden").city("stockholm").build();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, randomUUID()));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
 
     assertThat(httpClientMock.url).isNull();
   }
 
   @Test
   public void shouldNotFetchWhenLocationIsMissingCity() {
-    Location location = new LocationBuilder().country("sweden").streetAddress("main 1").build();
+    Location location = new LocationBuilder().country("sweden").address("main 1").build();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, randomUUID()));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
 
     assertThat(httpClientMock.url).isNull();
   }
@@ -62,12 +62,12 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("stockholm")
-      .streetAddress("drottninggatan 1")
+      .address("drottninggatan 1")
       .latitude(1.2)
       .longitude(2.1)
       .build();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, randomUUID()));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
 
     assertThat(httpClientMock.url).isNull();
   }
@@ -79,7 +79,7 @@ public class GeocodeSpringServiceTest {
       .longitude(2.1)
       .build();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, randomUUID()));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, randomUUID()));
 
     assertThat(httpClientMock.url).isNull();
   }
@@ -95,12 +95,12 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("stockholm")
-      .streetAddress("drottninggatan 1")
+      .address("drottninggatan 1")
       .build();
 
     UUID logicalMeterId = randomUUID();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, logicalMeterId));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, logicalMeterId));
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"
@@ -120,12 +120,12 @@ public class GeocodeSpringServiceTest {
     Location location = new LocationBuilder()
       .country("sweden")
       .city("växjö")
-      .streetAddress("drottingvägen 1")
+      .address("drottingvägen 1")
       .build();
 
     UUID logicalMeterId = randomUUID();
 
-    geocodeService.fetchCoordinates(LocationWithId.from(location, logicalMeterId));
+    geocodeService.fetchCoordinates(LocationWithId.of(location, logicalMeterId));
 
     assertThat(httpClientMock.url).isEqualTo(
       "http://geoservice.com:8080/address?"

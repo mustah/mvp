@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -63,10 +64,6 @@ public abstract class QueryFilters {
   }
 
   private Predicate applyAndPredicates(List<Predicate> predicates) {
-    BooleanExpression predicate = (BooleanExpression) predicates.remove(0);
-    for (Predicate right : predicates) {
-      predicate = predicate.and(right);
-    }
-    return predicate;
+    return ExpressionUtils.allOf(predicates);
   }
 }

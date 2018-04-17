@@ -20,7 +20,7 @@ public class SelectionsDto {
     this.alarms = METER_ALARMS;
   }
 
-  public void addLocation(String country, String city, String streetAddress) {
-    locations.addLocation(country, city, streetAddress);
+  public void addLocation(String country, String city, String address) {
+    locations.addLocation(country, city, address);
   }
 }

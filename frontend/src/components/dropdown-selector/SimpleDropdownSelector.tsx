@@ -6,17 +6,15 @@ import './DropdownSelector.scss';
 
 export const SimpleDropdownSelector = (props: DropdownProps) => {
 
-  const renderLabel = (index: number, filteredList: SelectionListItem[]) => {
+  const renderLabelAtIndex = (index: number, filteredList: SelectionListItem[]) => {
     const {name} = filteredList[index];
-    return (
-      <Normal>{name}</Normal>
-    );
+    return <Normal>{name}</Normal>;
   };
 
   return (
     <DropdownSelector
       {...props}
-      renderLabel={renderLabel}
+      renderLabel={renderLabelAtIndex}
       rowHeight={30}
       visibleItems={10}
     />

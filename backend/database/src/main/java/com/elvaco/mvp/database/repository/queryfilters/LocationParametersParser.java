@@ -7,16 +7,18 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.experimental.UtilityClass;
 
+import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN;
 import static java.util.stream.Collectors.toList;
 
-final class LocationParametersParser {
+@UtilityClass
+class LocationParametersParser {
 
   private static final String DELIMITER = ",";
-
-  private LocationParametersParser() {}
 
   static Parameters toCityParameters(List<String> cityIds) {
     Parameters parameters = new Parameters();
@@ -37,7 +39,6 @@ final class LocationParametersParser {
         parameters.addAddress(addressParam.address);
       });
     return parameters;
-
   }
 
   static List<CityParam> toCityParams(List<String> cityIds) {
@@ -91,6 +92,10 @@ final class LocationParametersParser {
     final Set<String> cities;
     final Set<String> addresses;
 
+    boolean hasUnknownCountries;
+    boolean hasUnknownCities;
+    boolean hasUnknownAddresses;
+
     private Parameters() {
       this.countries = new HashSet<>();
       this.cities = new HashSet<>();
@@ -106,31 +111,40 @@ final class LocationParametersParser {
     }
 
     private void addCountry(String country) {
-      countries.add(country);
+      if (UNKNOWN.equalsIgnoreCase(country)) {
+        hasUnknownCountries = true;
+      } else {
+        countries.add(country);
+      }
     }
 
     private void addCity(String city) {
-      cities.add(city);
+      if (UNKNOWN.equalsIgnoreCase(city)) {
+        hasUnknownCities = true;
+      } else {
+        cities.add(city);
+      }
     }
 
     private void addAddress(String address) {
-      addresses.add(address);
+      if (UNKNOWN.equalsIgnoreCase(address)) {
+        hasUnknownAddresses = true;
+      } else {
+        addresses.add(address);
+      }
     }
   }
 
+  @AllArgsConstructor
   @ToString
   @EqualsAndHashCode
   static class CityParam {
 
     final String country;
     final String city;
-
-    CityParam(String country, String city) {
-      this.country = country;
-      this.city = city;
-    }
   }
 
+  @AllArgsConstructor
   @EqualsAndHashCode
   @ToString
   static class AddressParam {
@@ -138,11 +152,5 @@ final class LocationParametersParser {
     final String country;
     final String city;
     final String address;
-
-    AddressParam(String country, String city, String address) {
-      this.country = country;
-      this.city = city;
-      this.address = address;
-    }
   }
 }

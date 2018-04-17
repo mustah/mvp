@@ -15,8 +15,7 @@ import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
-import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_ADDRESS;
-import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_CITY;
+import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_LOCATION;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
@@ -86,14 +85,14 @@ public class GatewayMapper {
 
   private IdNamedDto toCity(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(LocationMapper::toCity)
-      .orElse(UNKNOWN_CITY);
+      .map(LocationMapper::toCity)
+      .orElse(UNKNOWN_LOCATION);
   }
 
   private IdNamedDto toAddress(Optional<LogicalMeter> logicalMeter) {
     return logicalMeter.map(meter -> meter.location)
-      .flatMap(LocationMapper::toAddress)
-      .orElse(UNKNOWN_ADDRESS);
+      .map(LocationMapper::toAddress)
+      .orElse(UNKNOWN_LOCATION);
   }
 
   private GeoPositionDto toGeoPosition(Optional<LogicalMeter> logicalMeter) {

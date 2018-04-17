@@ -9,33 +9,36 @@ import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.database.entity.meter.LocationEntity;
 
+import lombok.experimental.UtilityClass;
+
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 
+@UtilityClass
 public class LocationMapper {
 
-  public Location toDomainModel(LocationEntity entity) {
+  public static Location toDomainModel(LocationEntity entity) {
     return entity != null
       ? new LocationBuilder()
       .country(entity.country)
       .city(entity.city)
-      .streetAddress(entity.streetAddress)
+      .address(entity.streetAddress)
       .coordinate(toGeoCoordinate(entity))
       .build()
       : UNKNOWN_LOCATION;
   }
 
-  public LocationWithId toLocationWithId(LocationEntity entity) {
+  public static LocationWithId toLocationWithId(LocationEntity entity) {
     return new LocationBuilder()
       .id(entity.logicalMeterId)
       .country(entity.country)
       .city(entity.city)
-      .streetAddress(entity.streetAddress)
+      .address(entity.streetAddress)
       .coordinate(toGeoCoordinate(entity))
       .buildLocationWithId();
   }
 
   @Nullable
-  public LocationEntity toEntity(UUID logicalMeterId, @Nullable Location location) {
+  public static LocationEntity toEntity(UUID logicalMeterId, @Nullable Location location) {
     if (location != null) {
       LocationEntity entity = new LocationEntity(
         logicalMeterId,
@@ -55,12 +58,12 @@ public class LocationMapper {
     }
   }
 
-  public LocationEntity toEntity(LocationWithId location) {
+  public static LocationEntity toEntity(LocationWithId location) {
     return toEntity(location.getId(), location);
   }
 
   @Nullable
-  private GeoCoordinate toGeoCoordinate(LocationEntity entity) {
+  private static GeoCoordinate toGeoCoordinate(LocationEntity entity) {
     return entity.hasCoordinates()
       ? new GeoCoordinate(entity.latitude, entity.longitude, entity.confidence)
       : null;

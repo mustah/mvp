@@ -36,7 +36,6 @@ public class LogicalMeterMapperTest {
   public void setUp() {
     logicalMeterMapper = new LogicalMeterMapper(
       new MeterDefinitionMapper(),
-      new LocationMapper(),
       new PhysicalMeterMapper(new OrganisationMapper(), new MeterStatusLogMapper()),
       new GatewayMapper()
     );

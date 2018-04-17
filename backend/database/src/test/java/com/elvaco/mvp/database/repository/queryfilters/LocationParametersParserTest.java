@@ -141,7 +141,28 @@ public class LocationParametersParserTest {
   public void createCityParameters_IgnoresDuplicates() {
     Parameters parameters = toCityParameters(asList("aBc,bEER", "abc,def", "pepsi,bEer"));
     assertThat(parameters.countries).containsExactly("abc", "pepsi");
+    assertThat(parameters.hasUnknownCountries).isFalse();
     assertThat(parameters.cities).containsExactly("def", "beer");
+    assertThat(parameters.addresses).isEmpty();
+  }
+
+  @Test
+  public void createCityParams_WithUnknownCountries() {
+    Parameters parameters = toCityParameters(asList("unknown,bEER", " unknown ,def"));
+    assertThat(parameters.cities).containsExactly("def", "beer");
+    assertThat(parameters.hasUnknownCountries).isTrue();
+    assertThat(parameters.hasUnknownAddresses).isFalse();
+    assertThat(parameters.countries).isEmpty();
+    assertThat(parameters.addresses).isEmpty();
+  }
+
+  @Test
+  public void createCityParams_WithUnknownCountriesAndCities() {
+    Parameters parameters = toCityParameters(asList("unknown,kungsbacka", " unknown , unknown"));
+    assertThat(parameters.hasUnknownCountries).isTrue();
+    assertThat(parameters.hasUnknownCities).isTrue();
+    assertThat(parameters.cities).containsExactly("kungsbacka");
+    assertThat(parameters.countries).isEmpty();
     assertThat(parameters.addresses).isEmpty();
   }
 
@@ -157,9 +178,21 @@ public class LocationParametersParserTest {
   @Test
   public void createAddressParameters_IgnoresDuplicates() {
     Parameters parameters = toAddressParameters(asList("a,b,c", "a,b,d", "a,a,c"));
+    assertThat(parameters.hasUnknownAddresses).isFalse();
     assertThat(parameters.countries).containsExactly("a");
     assertThat(parameters.cities).containsExactly("a", "b");
     assertThat(parameters.addresses).containsExactly("c", "d");
+    assertThat(parameters.hasAddresses()).isTrue();
+  }
+
+  @Test
+  public void createUnknownAddressParameters() {
+    Parameters parameters = toAddressParameters(singletonList("sweden,kungsbacka,unknown"));
+    assertThat(parameters.hasUnknownAddresses).isTrue();
+    assertThat(parameters.addresses).isEmpty();
+    assertThat(parameters.countries).containsExactly("sweden");
+    assertThat(parameters.cities).containsExactly("kungsbacka");
+    assertThat(parameters.hasAddresses()).isFalse();
   }
 
   private static List<AddressParam> toSingleAddressParam(String s) {

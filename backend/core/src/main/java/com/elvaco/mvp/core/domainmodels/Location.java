@@ -11,14 +11,14 @@ public class Location {
 
   public static final Location UNKNOWN_LOCATION = new Location(null, null, null, null);
 
-  private static final String UNKNOWN = "unknown";
+  public static final String UNKNOWN = "unknown";
 
   private final String address;
   private final String city;
   private final String country;
   private final GeoCoordinate coordinate;
 
-  public Location(
+  protected Location(
     @Nullable GeoCoordinate coordinate,
     @Nullable String country,
     @Nullable String city,
@@ -28,14 +28,6 @@ public class Location {
     this.country = country;
     this.city = city;
     this.address = address;
-  }
-
-  public Location(
-    @Nullable String country,
-    @Nullable String city,
-    @Nullable String address
-  ) {
-    this(null, country, city, address);
   }
 
   @Nullable

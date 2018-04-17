@@ -22,11 +22,11 @@ import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.core.usecase.SettingUseCases;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleflatmapper.csv.CsvMapper;
 import org.simpleflatmapper.csv.CsvMapperFactory;
 import org.simpleflatmapper.csv.CsvParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -41,36 +41,22 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toMap;
 
 @Slf4j
+@RequiredArgsConstructor
 @Order(3)
 @Profile("demo")
 @Component
 class CsvDemoDataLoader implements CommandLineRunner {
 
   private static final String DELIMITER = " :: ";
+
   private final LogicalMeters logicalMeters;
   private final PhysicalMeters physicalMeters;
   private final MeterDefinitions meterDefinitions;
   private final Gateways gateways;
   private final SettingUseCases settingUseCases;
   private final StatusLogsDataLoader statusLogsDataLoader;
-  private int daySeed = 1;
 
-  @Autowired
-  CsvDemoDataLoader(
-    LogicalMeters logicalMeters,
-    PhysicalMeters physicalMeters,
-    MeterDefinitions meterDefinitions,
-    Gateways gateways,
-    SettingUseCases settingUseCases,
-    StatusLogsDataLoader statusLogsDataLoader
-  ) {
-    this.logicalMeters = logicalMeters;
-    this.physicalMeters = physicalMeters;
-    this.gateways = gateways;
-    this.meterDefinitions = meterDefinitions;
-    this.settingUseCases = settingUseCases;
-    this.statusLogsDataLoader = statusLogsDataLoader;
-  }
+  private int daySeed = 1;
 
   @Transactional
   @Override
@@ -114,7 +100,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
               randomUUID(),
               csvData.facilityId,
               ELVACO.id,
-              locationMap.get(csvData.address),
+              locationMap.get(csvData.address.toLowerCase()),
               addDays(),
               emptyList(),
               meterDefinition,
@@ -151,7 +137,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
           ));
       });
   }
-  
+
   private ZonedDateTime addDays() {
     return ZonedDateTime.now().minusDays(daySeed++);
   }
@@ -176,7 +162,7 @@ class CsvDemoDataLoader implements CommandLineRunner {
   private static LocationBuilder parseKeyToLocation(String s) {
     String[] parts = s.split(DELIMITER);
     return new LocationBuilder()
-      .streetAddress(parts[0].trim())
+      .address(parts[0].trim())
       .city(parts[1].trim())
       .country(parts[2].trim());
   }
@@ -197,20 +183,11 @@ class CsvDemoDataLoader implements CommandLineRunner {
     return new GeoCoordinate(geoPosition.latitude, geoPosition.longitude, geoPosition.confidence);
   }
 
+  @RequiredArgsConstructor
   private static class Parameters {
 
     private final LogicalMeter logicalMeter;
     private final PhysicalMeter physicalMeter;
     private final Gateway gateway;
-
-    private Parameters(
-      LogicalMeter logicalMeter,
-      PhysicalMeter physicalMeter,
-      Gateway gateway
-    ) {
-      this.logicalMeter = logicalMeter;
-      this.physicalMeter = physicalMeter;
-      this.gateway = gateway;
-    }
   }
 }

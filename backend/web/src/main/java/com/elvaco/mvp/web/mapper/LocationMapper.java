@@ -2,53 +2,53 @@ package com.elvaco.mvp.web.mapper;
 
 import java.util.Optional;
 import java.util.UUID;
-import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.domainmodels.GeoCoordinate;
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LocationWithId;
 import com.elvaco.mvp.web.dto.GeoPositionDto;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.LocationDto;
 import com.elvaco.mvp.web.dto.geoservice.AddressDto;
 import com.elvaco.mvp.web.dto.geoservice.GeoResponseDto;
+import lombok.experimental.UtilityClass;
 
 import static java.util.Objects.nonNull;
 
-public final class LocationMapper {
+@UtilityClass
+public class LocationMapper {
 
-  static final IdNamedDto UNKNOWN_CITY = new IdNamedDto("Unknown city");
-  static final IdNamedDto UNKNOWN_ADDRESS = new IdNamedDto("Unknown address");
-
-  private LocationMapper() {}
+  static final IdNamedDto UNKNOWN_LOCATION = new IdNamedDto("unknown");
 
   public static LocationWithId toLocationWithId(GeoResponseDto geoResponse, UUID logicalMeterId) {
     AddressDto address = geoResponse.address;
     GeoPositionDto geoData = geoResponse.geoData;
-    GeoCoordinate coordinate = new GeoCoordinate(
-      geoData.latitude,
-      geoData.longitude,
-      geoData.confidence
-    );
-    return new LocationWithId(
-      logicalMeterId,
-      coordinate,
-      toLowerCaseOrNull(address.country),
-      toLowerCaseOrNull(address.city),
-      toLowerCaseOrNull(address.street)
-    );
+    return new LocationBuilder()
+      .id(logicalMeterId)
+      .country(address.country)
+      .city(address.city)
+      .address(address.street)
+      .coordinate(new GeoCoordinate(
+        geoData.latitude,
+        geoData.longitude,
+        geoData.confidence
+      ))
+      .buildLocationWithId();
   }
 
-  static Optional<IdNamedDto> toCity(Location location) {
+  static IdNamedDto toCity(Location location) {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getCity()))
-      .map(l -> new IdNamedDto(l.getCity()));
+      .map(l -> new IdNamedDto(l.getCity()))
+      .orElse(UNKNOWN_LOCATION);
   }
 
-  static Optional<IdNamedDto> toAddress(Location location) {
+  static IdNamedDto toAddress(Location location) {
     return Optional.ofNullable(location)
       .filter(l -> nonNull(l.getAddress()))
-      .map(l -> new IdNamedDto(l.getAddress()));
+      .map(l -> new IdNamedDto(l.getAddress()))
+      .orElse(UNKNOWN_LOCATION);
   }
 
   static Optional<GeoPositionDto> toGeoPosition(Location location) {
@@ -61,21 +61,7 @@ public final class LocationMapper {
   }
 
   static LocationDto toLocationDto(Location location) {
-    IdNamedDto address = toAddress(location).orElse(UNKNOWN_ADDRESS);
-    IdNamedDto city = toCity(location).orElse(UNKNOWN_CITY);
-    GeoPositionDto geoPosition = toGeoPositionDto(location);
-    return new LocationDto(city, address, geoPosition);
-  }
-
-  @Nullable
-  private static String toLowerCaseOrNull(String str) {
-    return str != null ? trimToNull(str) : null;
-  }
-
-  @Nullable
-  private static String trimToNull(String str) {
-    String trimmed = str.trim();
-    return trimmed.isEmpty() ? null : trimmed.toLowerCase();
+    return new LocationDto(toCity(location), toAddress(location), toGeoPositionDto(location));
   }
 
   private static GeoPositionDto toGeoPositionDto(Location location) {

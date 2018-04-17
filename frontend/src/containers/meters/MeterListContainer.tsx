@@ -122,10 +122,12 @@ class MeterList extends React.Component<Props> {
               />
               <TableColumn
                 header={<TableHead>{translate('city')}</TableHead>}
+                cellClassName={'first-uppercase'}
                 renderCell={renderCityName}
               />
               <TableColumn
                 header={<TableHead>{translate('address')}</TableHead>}
+                cellClassName={'first-uppercase'}
                 renderCell={renderAddressName}
               />
               <TableColumn

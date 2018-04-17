@@ -34,7 +34,7 @@ export const metersWithinThreshold = (markers: Dictionary<MapMarker>): MapMarker
 
 export const isGeoPositionWithinThreshold =
   ({latitude, longitude, confidence}: MapMarker) =>
-    latitude !== undefined && longitude !== undefined && confidence >= 0.7;
+    latitude !== undefined && longitude !== undefined && confidence >= 0.75;
 
 export const isMapMarker = (markers: Dictionary<MapMarker> | MapMarker): markers is MapMarker =>
   (markers as MapMarker).status !== undefined &&

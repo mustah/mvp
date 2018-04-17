@@ -1,7 +1,6 @@
 package com.elvaco.mvp.core.domainmodels;
 
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,13 +64,15 @@ public class Gateway implements Identifiable<UUID> {
   }
 
   public StatusLogEntry<UUID> currentStatus() {
-    return statusLogs.stream().findFirst().orElse(new StatusLogEntry<>(
-      null,
-      id,
-      StatusType.UNKNOWN,
-      ZonedDateTime.now(),
-      null
-    ));
+    return statusLogs.stream()
+      .findFirst()
+      .orElse(new StatusLogEntry<>(
+        null,
+        id,
+        StatusType.UNKNOWN,
+        ZonedDateTime.now(),
+        null
+      ));
   }
 
   public Gateway replaceActiveStatus(StatusType status) {
@@ -94,7 +95,7 @@ public class Gateway implements Identifiable<UUID> {
       serial,
       productModel,
       meters,
-      Collections.unmodifiableList(newStatuses)
+      unmodifiableList(newStatuses)
     );
   }
 }

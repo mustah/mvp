@@ -10,6 +10,7 @@ type RenderCellCallback = (value: any) => Children;
 export interface TableColumnProps {
   header: React.ReactElement<TableHeadProps>;
   renderCell: RenderCellCallback;
+  cellClassName?: string;
 }
 
 interface TableProps {
@@ -34,7 +35,8 @@ export const Table = ({result, entities, children}: TableProps) => {
 
   const renderCell = (onRenderCell: RenderCellCallback, id: uuid, index: number) => {
     const item = entities[id];
-    return <td key={`cell-${id}-${index}`}>{onRenderCell(item)}</td>;
+    const className = columns[index].props.cellClassName;
+    return <td key={`cell-${id}-${index}`} className={className}>{onRenderCell(item)}</td>;
   };
   const renderRow = (id: uuid) => (
     <tr key={id}>

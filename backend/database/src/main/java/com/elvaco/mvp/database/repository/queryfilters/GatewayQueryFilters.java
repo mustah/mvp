@@ -6,8 +6,8 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.database.entity.gateway.QGatewayEntity;
-import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.Parameters;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 
 import static com.elvaco.mvp.database.repository.queryfilters.LocationParametersParser.toAddressParameters;
@@ -40,22 +40,25 @@ public class GatewayQueryFilters extends QueryFilters {
 
   @Nullable
   private Predicate whereCity(Parameters parameters) {
-    if (parameters.hasCities()) {
-      QLogicalMeterEntity logicalMeter = Q.meters.any();
-      return logicalMeter.location.country.toLowerCase().in(parameters.countries)
-        .and(logicalMeter.location.city.toLowerCase().in(parameters.cities));
-    }
-    return null;
+    LocationExpressions locationExpressions = newLocationExpressions();
+    return new BooleanBuilder()
+      .and(locationExpressions.countriesAndCities(parameters))
+      .or(locationExpressions.unknownCities(parameters))
+      .or(locationExpressions.hasLowConfidence(parameters))
+      .getValue();
   }
 
   @Nullable
   private Predicate whereAddress(Parameters parameters) {
-    if (parameters.hasAddresses()) {
-      QLogicalMeterEntity logicalMeter = Q.meters.any();
-      return logicalMeter.location.country.toLowerCase().in(parameters.countries)
-        .and(logicalMeter.location.city.toLowerCase().in(parameters.cities))
-        .and(logicalMeter.location.streetAddress.toLowerCase().in(parameters.addresses));
-    }
-    return null;
+    LocationExpressions locationExpressions = newLocationExpressions();
+    return new BooleanBuilder()
+      .and(locationExpressions.address(parameters))
+      .or(locationExpressions.unknownAddress(parameters))
+      .or(locationExpressions.hasLowConfidence(parameters))
+      .getValue();
+  }
+
+  private static LocationExpressions newLocationExpressions() {
+    return new LocationExpressions(Q.meters.any().location);
   }
 }

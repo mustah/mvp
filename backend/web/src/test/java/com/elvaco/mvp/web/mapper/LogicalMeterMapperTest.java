@@ -105,8 +105,8 @@ public class LogicalMeterMapperTest {
     expected.medium = "Hot water";
     expected.status = StatusType.OK;
     expected.location = new LocationDto(
-      new IdNamedDto("Kungsbacka"),
-      new IdNamedDto("Kabelgatan 2T"),
+      new IdNamedDto("kungsbacka"),
+      new IdNamedDto("kabelgatan 2t"),
       new GeoPositionDto(57.5052592, 56.123, 1.0)
     );
     expected.manufacturer = "ELV";
@@ -142,8 +142,8 @@ public class LogicalMeterMapperTest {
           "an-external-id",
           organisationId,
           new LocationBuilder()
-            .city("Kungsbacka")
-            .streetAddress("Kabelgatan 2T")
+            .city("kungsbacka")
+            .address("kabelgatan 2t")
             .latitude(57.5052592)
             .longitude(56.123)
             .confidence(1.0)

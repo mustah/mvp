@@ -1,27 +1,31 @@
 import * as React from 'react';
+import {dropDownStyle} from '../../app/themes';
+import {translate} from '../../services/translationService';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {SelectionListItem} from '../../state/search/selection/selectionModels';
 import {IdNamed} from '../../types/Types';
-import {dropDownStyle} from '../../app/themes';
 import {Normal} from '../texts/Texts';
-import './DropdownSelector.scss';
 import {DropdownProps, DropdownSelector} from './DropdownSelector';
+import './DropdownSelector.scss';
 
 interface MultiDropdownSelectorProps extends DropdownProps {
   parentSelectionLookup: ObjectsById<IdNamed>;
   parentIdentifier: string;
 }
 
-export const MultiDropdownSelector = (props: MultiDropdownSelectorProps) => {
+const unknown = 'unknown';
 
+export const MultiDropdownSelector = (props: MultiDropdownSelectorProps) => {
   const {parentIdentifier, parentSelectionLookup, ...DropdownProps} = props;
 
   const renderLabel = (index: number, filteredList: SelectionListItem[]) => {
     const {name} = filteredList[index];
     const parentId = filteredList[index][parentIdentifier];
+    const {name: parentName} = parentSelectionLookup[parentId];
+    const translatedName = parentName === unknown ? translate(unknown) : parentName;
     return ([
       <Normal key={1}>{name}</Normal>,
-      <div key={2} style={dropDownStyle.parentStyle}>{parentSelectionLookup[parentId].name}</div>,
+      <div className="first-uppercase" key={2} style={dropDownStyle.parentStyle}>{translatedName}</div>,
     ]);
   };
 

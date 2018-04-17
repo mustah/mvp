@@ -44,7 +44,6 @@ import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.GatewayMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayStatusLogMapper;
 import com.elvaco.mvp.database.repository.mappers.GatewayWithMetersMapper;
-import com.elvaco.mvp.database.repository.mappers.LocationMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
@@ -57,12 +56,13 @@ import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import com.elvaco.mvp.database.repository.mappers.UserSelectionEntityMapper;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayQueryFilters;
 import com.elvaco.mvp.database.repository.queryfilters.GatewayStatusLogQueryFilters;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@RequiredArgsConstructor
 @Configuration
 class DataProviderConfig {
 
@@ -80,39 +80,6 @@ class DataProviderConfig {
   private final GatewayJpaRepository gatewayJpaRepository;
   private final RoleJpaRepository roleJpaRepository;
   private final UserSelectionJpaRepository userSelectionJpaRepository;
-
-  @Autowired
-  DataProviderConfig(
-    PasswordEncoder passwordEncoder,
-    UserJpaRepository userJpaRepository,
-    SettingJpaRepository settingJpaRepository,
-    LocationJpaRepository locationJpaRepository,
-    MeasurementJpaRepository measurementJpaRepository,
-    LogicalMeterJpaRepository logicalMeterJpaRepository,
-    PhysicalMeterJpaRepository physicalMeterJpaRepository,
-    MeterDefinitionJpaRepository meterDefinitionJpaRepository,
-    OrganisationJpaRepository organisationJpaRepository,
-    PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository,
-    GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository,
-    GatewayJpaRepository gatewayJpaRepository,
-    RoleJpaRepository roleJpaRepository,
-    UserSelectionJpaRepository userSelectionJpaRepository
-  ) {
-    this.userJpaRepository = userJpaRepository;
-    this.settingJpaRepository = settingJpaRepository;
-    this.locationJpaRepository = locationJpaRepository;
-    this.measurementJpaRepository = measurementJpaRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.logicalMeterJpaRepository = logicalMeterJpaRepository;
-    this.physicalMeterJpaRepository = physicalMeterJpaRepository;
-    this.meterDefinitionJpaRepository = meterDefinitionJpaRepository;
-    this.organisationJpaRepository = organisationJpaRepository;
-    this.physicalMeterStatusLogJpaRepository = physicalMeterStatusLogJpaRepository;
-    this.gatewayStatusLogJpaRepository = gatewayStatusLogJpaRepository;
-    this.gatewayJpaRepository = gatewayJpaRepository;
-    this.roleJpaRepository = roleJpaRepository;
-    this.userSelectionJpaRepository = userSelectionJpaRepository;
-  }
 
   @Bean
   Users users() {
@@ -136,15 +103,15 @@ class DataProviderConfig {
     return new LogicalMeterRepository(
       logicalMeterJpaRepository,
       physicalMeterStatusLogJpaRepository,
-      new LogicalMeterSortingMapper(),
+      measurementJpaRepository,
       newLogicalMeterMapper(),
-      measurementJpaRepository
+      new LogicalMeterSortingMapper()
     );
   }
 
   @Bean
   Locations locations() {
-    return new LocationRepository(locationJpaRepository, new LocationMapper());
+    return new LocationRepository(locationJpaRepository);
   }
 
   @Bean
@@ -227,7 +194,6 @@ class DataProviderConfig {
   private LogicalMeterMapper newLogicalMeterMapper() {
     return new LogicalMeterMapper(
       new MeterDefinitionMapper(),
-      new LocationMapper(),
       newPhysicalMeterMapper(),
       new GatewayMapper()
     );

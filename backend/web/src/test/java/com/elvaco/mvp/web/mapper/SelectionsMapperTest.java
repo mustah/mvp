@@ -30,22 +30,22 @@ public class SelectionsMapperTest {
       new LocationBuilder()
         .country("sweden")
         .city("stockholm")
-        .streetAddress("kungsgatan 1")
+        .address("kungsgatan 1")
         .build(),
       new LocationBuilder()
         .country("sweden")
         .city("stockholm")
-        .streetAddress("kungsgatan 2")
+        .address("kungsgatan 2")
         .build(),
       new LocationBuilder()
         .country("unknown")
         .city("new york")
-        .streetAddress("wall street")
+        .address("wall street")
         .build(),
       new LocationBuilder()
         .country("finland")
         .city("vasa")
-        .streetAddress("street 1")
+        .address("street 1")
         .build()
     ).forEach(location -> mapper.addToDto(location, selections));
 
