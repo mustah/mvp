@@ -1,9 +1,10 @@
 import * as React from 'react';
+import {ItemOrArray} from '../../../types/Types';
 import {Row} from '../../layouts/row/Row';
 import {TabHeadersProps} from './TabHeaders';
 
 export interface TabTopBarProps {
-  children: Array<React.ReactElement<TabHeadersProps>> | React.ReactElement<TabHeadersProps>;
+  children: ItemOrArray<React.ReactElement<TabHeadersProps>>;
 }
 
 export const TabTopBar = (props: TabTopBarProps) => {
