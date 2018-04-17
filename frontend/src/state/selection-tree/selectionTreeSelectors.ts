@@ -1,11 +1,14 @@
 import {createSelector} from 'reselect';
+import {locationNameTranslation} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {
   AddressWithMeters,
   CityWithClusters,
   ClusterWithAddresses,
-  SelectionTree, SelectionTreeEntities, SelectionTreeResult,
+  SelectionTree,
+  SelectionTreeEntities,
+  SelectionTreeResult,
   SelectionTreeState,
 } from './selectionTreeModels';
 
@@ -15,14 +18,16 @@ const addOrInitialCluster = (
   cityClusters: ObjectsById<ClusterWithAddresses>,
 ): ObjectsById<ClusterWithAddresses> => {
 
-  const clusterId = `${cityId}:${address.name[0]}`;
-  const cityClusterName = `${address.name[0].toUpperCase()}...`;
+  const translatedName = locationNameTranslation(address.name);
+  const firstLetter = translatedName[0];
+  const clusterId = `${cityId}:${firstLetter}`;
+  const cityClusterName = `${firstLetter.toUpperCase()}...`;
   const cityCluster = cityClusters[clusterId];
 
   return {
     ...cityClusters,
-    [clusterId]: cityCluster ?
-      {
+    [clusterId]: cityCluster
+      ? {
         ...cityCluster,
         name: `${cityClusterName}(${cityCluster.addresses.length + 1})`,
         addresses: [...cityCluster.addresses, address.id],
@@ -41,12 +46,15 @@ export const getSelectionTree =
 
       const createClustersByCity = (cityId: uuid): ObjectsById<ClusterWithAddresses> => {
         const city = cities[cityId];
-        const cityClusters: ObjectsById<ClusterWithAddresses> =
-          city.addresses
-            .map((id) => addresses[id])
-            .reduce((clusters, address) => addOrInitialCluster(address, city.id, clusters), {});
+        const cityClusters: ObjectsById<ClusterWithAddresses> = city.addresses
+          .map((id) => addresses[id])
+          .reduce((clusters, address) => addOrInitialCluster(address, city.id, clusters), {});
 
-        citiesWithClusters[cityId] = {id: city.id, name: city.name, clusters: Object.keys(cityClusters)};
+        citiesWithClusters[cityId] = {
+          id: city.id,
+          name: city.name,
+          clusters: Object.keys(cityClusters),
+        };
 
         return cityClusters;
       };
