@@ -204,7 +204,7 @@ acceptance:
       - acceptance_tests/target/cucumber
     expire_in: 7 days
   script:
-    - CHROME_URL="http://selenium_chrome_container_url:4444/wd/hub" MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber
+    - CHROME_URL="http://selenium_chrome_container_url:4444/wd/hub" MVP_SERVER="https://mvpstaging.elvaco.se" gradle cucumber '-Pno-docker'
 
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory

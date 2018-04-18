@@ -1,4 +1,4 @@
-Feature:
+Feature: Acceptance test
     As a developer
     I want to be able to login
     So that I see that the site works
@@ -6,11 +6,11 @@ Feature:
     Scenario Outline: Login to MVP
         Given I am on the login page
         When I login as user '<user>' and password '<password>'
-        Then I should be logged in as '<user>'
+        Then I should be logged in as '<displayname>'
 
         Examples:
-            | user                 | password |
-            | vaxjo@vaxjoenergi.se | vaxjo    |
+            | user                 | password | displayname          |
+            | vaxjo@vaxjoenergi.se | vaxjo    | vaxjo@vaxjoenergi.se |
 
     Scenario Outline: Deny login to MVP
         Given I am on the login page
@@ -19,4 +19,4 @@ Feature:
 
         Examples:
             | user                    | password | message                               |
-            | blackbox-test@elvaco.se | nope     | Felaktigt användarnamn eller lösenord |
+            | blackbox-test@elvaco.se | nope     | Bad credentials |

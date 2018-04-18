@@ -1,7 +1,9 @@
 package cuke;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -16,6 +18,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -27,17 +30,25 @@ public class StepDefinitions {
   private String mvpServer;
 
   @Before
-  public void setUp() throws MalformedURLException {
+  public void setUp() throws MalformedURLException, UnknownHostException {
     mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
-      .orElse("http://localhost:4444");
+      .orElse("http://" + getHostName() + ":4444");
     System.out.println("MVP_SERVER: " + mvpServer);
 
-    String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
-      .orElse("http://localhost:5555/wd/hub");
+    String localBrowser = Optional.ofNullable(System.getenv("LOCAL_BROWSER"))
+      .orElse(null);
 
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
-    driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
+    if (localBrowser != null) {
+      driver = new ChromeDriver(options);
+    } else {
+      options.addArguments("--headless");
+      String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
+        .orElse("http://localhost:5555/wd/hub");
+
+      driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
+    }
+
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
 
@@ -47,19 +58,19 @@ public class StepDefinitions {
       final byte[] screenshot = ((TakesScreenshot) driver)
         .getScreenshotAs(OutputType.BYTES);
       scenario.write("URL at failure: " + driver.getCurrentUrl());
-      scenario.embed(screenshot, "image/png"); //stick it in the report
+      scenario.embed(screenshot, "image/png");
     }
     driver.quit();
   }
 
   @Given("I am on the login page")
-  public void givenIAmOnTheLoginPage() throws Throwable {
+  public void givenIAmOnTheLoginPage() {
     driver.get(mvpServer);
     assertThat(driver.getTitle()).isEqualTo("Elvaco");
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String username, String password) throws Throwable {
+  public void whenILoginAsUserWithPassword(String username, String password) {
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
     emailElement.sendKeys(username);
@@ -74,17 +85,22 @@ public class StepDefinitions {
   }
 
   @Then("I should be logged in as '(.*)'")
-  public void thenIShouldBeLoggedInAs(String username) throws Throwable {
-    assertElementHasText("Profile", username);
+  public void thenIShouldBeLoggedInAs(String username) {
+    assertClassElementHasText("Profile", username);
   }
 
   @Then("I should see error message '(.*)'")
-  public void thenIShouldSeeErrorMessage(String text) throws Throwable {
-    assertElementHasText("Error-message", text);
+  public void thenIShouldSeeErrorMessage(String text) {
+    assertClassElementHasText("Error-message", text);
   }
 
-  private void assertElementHasText(String className, String text) {
+  private void assertClassElementHasText(String className, String text) {
     WebElement contextElement = driver.findElement(By.className(className));
     assertThat(contextElement.getText()).isEqualTo(text);
+  }
+
+  private String getHostName() throws UnknownHostException {
+    InetAddress hostName = InetAddress.getLocalHost();
+    return hostName.getCanonicalHostName();
   }
 }
