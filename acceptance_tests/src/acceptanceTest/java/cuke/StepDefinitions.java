@@ -1,7 +1,9 @@
 package cuke;
 
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -27,9 +29,9 @@ public class StepDefinitions {
   private String mvpServer;
 
   @Before
-  public void setUp() throws MalformedURLException {
+  public void setUp() throws MalformedURLException, UnknownHostException {
     mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
-      .orElse("http://localhost:4444");
+      .orElse("http://" + getHostName() + ":4444");
     System.out.println("MVP_SERVER: " + mvpServer);
 
     String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
@@ -87,4 +89,9 @@ public class StepDefinitions {
     WebElement contextElement = driver.findElement(By.className(className));
     assertThat(contextElement.getText()).isEqualTo(text);
   }
+
+  private String getHostName() throws UnknownHostException {
+      InetAddress iAddress = InetAddress.getLocalHost();
+      return iAddress.getCanonicalHostName();
+    }
 }
