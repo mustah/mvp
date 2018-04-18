@@ -26,6 +26,14 @@ sourceSets {
 }
 
 task cucumber(type: Test, dependsOn: 'test', group: 'verification') {
+  doFirst {
+    if (!project.hasProperty('no-docker')) {
+      exec {
+        executable "docker-compose"
+        args "up", "-d", "google-chrome"
+      }
+    }
+  }
   dependsOn assemble, compileAcceptanceTestJava
 
   testClassesDirs = sourceSets.acceptanceTest.output.classesDirs
