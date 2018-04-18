@@ -9,7 +9,7 @@ import com.elvaco.mvp.database.dialect.types.MeasurementUnitType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.postgresql.util.PGobject;
 
 public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
@@ -23,7 +23,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
   public Object nullSafeGet(
     ResultSet rs,
     String[] names,
-    SessionImplementor session,
+    SharedSessionContractImplementor session,
     Object owner
   ) throws HibernateException, SQLException {
     PGobject value = (PGobject) rs.getObject(names[0]);
@@ -38,7 +38,7 @@ public class PostgreSqlMeasurementUnitType extends MeasurementUnitType {
     PreparedStatement st,
     Object value,
     int index,
-    SessionImplementor session
+    SharedSessionContractImplementor session
   ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != MeasurementUnit.class) {
       st.setNull(index, Types.OTHER);

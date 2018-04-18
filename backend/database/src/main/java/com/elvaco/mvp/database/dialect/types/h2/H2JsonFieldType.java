@@ -12,7 +12,7 @@ import com.elvaco.mvp.database.dialect.types.JsonFieldType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.SerializationException;
 
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
@@ -26,7 +26,7 @@ public class H2JsonFieldType extends JsonFieldType {
 
   @Override
   public Object nullSafeGet(
-    ResultSet rs, String[] names, SessionImplementor session, Object
+    ResultSet rs, String[] names, SharedSessionContractImplementor session, Object
     owner
   ) throws HibernateException, SQLException {
     Clob value = rs.getClob(names[0]);
@@ -43,7 +43,7 @@ public class H2JsonFieldType extends JsonFieldType {
 
   @Override
   public void nullSafeSet(
-    PreparedStatement st, Object value, int index, SessionImplementor
+    PreparedStatement st, Object value, int index, SharedSessionContractImplementor
     session
   ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != JsonField.class) {

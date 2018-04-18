@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 import org.springframework.util.ObjectUtils;
 
@@ -39,14 +39,14 @@ public abstract class MeasurementUnitType implements UserType {
   public abstract Object nullSafeGet(
     ResultSet rs,
     String[] names,
-    SessionImplementor session,
+    SharedSessionContractImplementor session,
     Object owner
   ) throws HibernateException, SQLException;
 
   @Override
   public abstract void nullSafeSet(
     PreparedStatement st, Object value, int index,
-    SessionImplementor session
+    SharedSessionContractImplementor session
   ) throws HibernateException, SQLException;
 
   @Override
