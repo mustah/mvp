@@ -1,5 +1,11 @@
 import {Period} from '../../../../components/dates/dateModels';
+import {EndPoints} from '../../../../services/endPoints';
 import {IdNamed} from '../../../../types/Types';
+import {
+  domainModelsDeleteSuccess,
+  domainModelsPostSuccess,
+  domainModelsPutSuccess,
+} from '../../../domain-models/domainModelsActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -180,7 +186,71 @@ describe('selectionReducer', () => {
         isChanged: true,
         selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
       };
+
       expect(state).toEqual(expected);
     });
   });
+
+  describe('saveSelection', () => {
+
+    it('selects newly created selection', () => {
+      const newSelection: UserSelection = {
+        id: 999,
+        name: 'test 999',
+        selectionParameters: {
+          period: Period.currentMonth,
+        },
+        isChanged: false,
+      };
+
+      const state = selection(
+        initialState,
+        {type: domainModelsPostSuccess(EndPoints.userSelections), payload: newSelection},
+      );
+      expect(state).toEqual(newSelection);
+    });
+
+  });
+
+  describe('updateSelection', () => {
+
+    it('selects newly updated selection', () => {
+      const newSelection: UserSelection = {
+        id: 999,
+        name: 'test 999',
+        selectionParameters: {
+          period: Period.currentMonth,
+        },
+        isChanged: false,
+      };
+
+      const state = selection(
+        initialState,
+        {type: domainModelsPutSuccess(EndPoints.userSelections), payload: newSelection},
+      );
+      expect(state).toEqual(newSelection);
+    });
+
+  });
+
+  describe('deleteUserSelection', () => {
+
+    it('resets to initial selection if currently selected selection is deleted', () => {
+      const newSelection: UserSelection = {
+        id: 999,
+        name: 'test 999',
+        selectionParameters: {
+          period: Period.currentMonth,
+        },
+        isChanged: false,
+      };
+
+      const state = selection(
+        newSelection,
+        {type: domainModelsDeleteSuccess(EndPoints.userSelections), payload: newSelection},
+      );
+      expect(state).toEqual(initialState);
+    });
+  });
+
 });

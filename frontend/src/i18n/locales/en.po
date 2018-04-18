@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-17 16:37+0200\n"
+"POT-Creation-Date: 2018-04-18 16:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,12 +16,6 @@ msgstr "admin"
 
 msgid "metering"
 msgstr "metering"
-
-msgid "export to Excel (.csv)"
-msgstr "export to Excel (.csv)"
-
-msgid "export to JSON"
-msgstr "export to JSON"
 
 msgid "add to report"
 msgstr "add to report"
@@ -304,6 +298,12 @@ msgstr "failed to create selection: {{error}}"
 msgid "failed to update selection: {{error}}"
 msgstr "failed to update selection: {{error}}"
 
+msgid "deleted selection"
+msgstr "deleted selection"
+
+msgid "failed to delete selection: {{error}}"
+msgstr "failed to delete selection: {{error}}"
+
 msgid "users"
 msgstr "users"
 
@@ -342,12 +342,6 @@ msgstr "list"
 
 msgid "all meters in selection"
 msgstr "all meters in selection"
-
-msgid "edit"
-msgstr "edit"
-
-msgid "delete"
-msgstr "delete"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -394,6 +388,9 @@ msgstr "filter"
 msgid "no saved selections"
 msgstr "no saved selections"
 
+msgid "delete user selection"
+msgstr "delete selection"
+
 msgid "saved selections"
 msgstr "saved selections"
 
@@ -436,6 +433,18 @@ msgstr "alarms"
 msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
 msgstr "{{count}} meters are not displayed in the map due to low accuracy"
+
+#~ msgid "export to Excel (.csv)"
+#~ msgstr "export to Excel (.csv)"
+
+#~ msgid "export to JSON"
+#~ msgstr "export to JSON"
+
+#~ msgid "edit"
+#~ msgstr "edit"
+
+#~ msgid "delete"
+#~ msgstr "delete"
 
 #~ msgid "flags"
 #~ msgstr "flags"

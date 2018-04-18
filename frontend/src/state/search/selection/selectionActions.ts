@@ -8,7 +8,7 @@ import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse, uuid} from '../../../types/Types';
 import {NormalizedState} from '../../domain-models/domainModels';
-import {fetchIfNeeded, postRequest, putRequest} from '../../domain-models/domainModelsActions';
+import {deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../../domain-models/domainModelsActions';
 import {showFailMessage} from '../../ui/message/messageActions';
 import {FilterParam, SelectionParameter, UserSelection} from './selectionModels';
 import {userSelectionSchema} from './selectionSchema';
@@ -67,9 +67,6 @@ export const toggleParameterInSelection = (selectionParameter: SelectionParamete
   };
 
 export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections, {
-  afterSuccess: (domainModel: UserSelection, dispatch: Dispatch<RootState>) => {
-    dispatch(selectSavedSelection(domainModel.id));
-  },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to create selection: {{error}}',
@@ -79,12 +76,18 @@ export const saveSelection = postRequest<UserSelection>(EndPoints.userSelections
 });
 
 export const updateSelection = putRequest<UserSelection>(EndPoints.userSelections, {
-  afterSuccess: (domainModel: UserSelection, dispatch: Dispatch<RootState>) => {
-    dispatch(selectSavedSelection(domainModel.id));
-  },
   afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to update selection: {{error}}',
+      {error: error.message},
+    )));
+  },
+});
+
+export const deleteUserSelection = deleteRequest<UserSelection>(EndPoints.userSelections, {
+  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    dispatch(showFailMessage(firstUpperTranslated(
+      'failed to delete selection: {{error}}',
       {error: error.message},
     )));
   },

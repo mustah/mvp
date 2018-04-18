@@ -90,8 +90,7 @@ export const listItemStyle: React.CSSProperties = {
 
 export const listItemStyleSelected: React.CSSProperties = {
   ...listItemStyle,
-  fontWeight: 'bold',
-  fontStyle: 'italic',
+  ...sideBarStyles.selected,
 };
 
 export const menuItemInnerDivStyle: React.CSSProperties = {

@@ -1,6 +1,12 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Period} from '../../../components/dates/dateModels';
+import {EndPoints} from '../../../services/endPoints';
 import {Action, uuid} from '../../../types/Types';
+import {
+  domainModelsDeleteSuccess,
+  domainModelsPostSuccess,
+  domainModelsPutSuccess,
+} from '../../domain-models/domainModelsActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -102,7 +108,12 @@ export const selection = (state: UserSelection = initialState, action: ActionTyp
       return updatePeriod(state, action as Action<Period>);
     case SET_CURRENT_SELECTION:
     case SELECT_SAVED_SELECTION:
+    case domainModelsPostSuccess(EndPoints.userSelections):
+    case domainModelsPutSuccess(EndPoints.userSelections):
       return selectSaved(state, action as Action<UserSelection>);
+    case domainModelsDeleteSuccess(EndPoints.userSelections):
+      const payload: UserSelection = (action as Action<UserSelection>).payload;
+      return payload.id === state.id ? initialState : state;
     default:
       return state;
   }

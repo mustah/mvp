@@ -13,14 +13,22 @@ import {
   sideBarHeaderStyle,
   sideBarStyles,
 } from '../../../../app/themes';
+import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
+import {Row} from '../../../../components/layouts/row/Row';
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
-import {fetchUserSelections, selectSavedSelection} from '../../../../state/search/selection/selectionActions';
+import {
+  deleteUserSelection,
+  fetchUserSelections,
+  resetSelection,
+  selectSavedSelection,
+} from '../../../../state/search/selection/selectionActions';
 import {UserSelection} from '../../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../../state/search/selection/selectionSelectors';
 import {Callback, OnClick, uuid} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
+import {SavedSelectionActionsDropdown} from '../../components/savedSelections/SavedSelectionActionsDropdown';
 
 interface StateToProps {
   selection: UserSelection;
@@ -28,11 +36,23 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
+  deleteUserSelection: any; // TODO
   fetchUserSelections: Callback;
+  resetSelection: any; // TODO
   selectSavedSelection: OnClick;
 }
 
-class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
+interface State {
+  isDeleteDialogOpen: boolean;
+  selectionToDelete?: uuid;
+}
+
+class SavedSelections extends React.Component<StateToProps & DispatchToProps, State> {
+
+  state: State = {isDeleteDialogOpen: false};
+  openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, selectionToDelete: id});
+  closeDialog = () => this.setState({isDeleteDialogOpen: false});
+  deleteSelectedUser = () => this.props.deleteUserSelection(this.state.selectionToDelete!);
 
   componentDidMount() {
     this.props.fetchUserSelections();
@@ -42,8 +62,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
     const {savedSelections, selectSavedSelection, selection} = this.props;
 
     const innerDivStyle: React.CSSProperties = {
-      ...sideBarStyles.padding,
-      ...sideBarStyles.selected,
+      padding: 0,
     };
 
     const renderListItem = (id: uuid) => {
@@ -52,16 +71,24 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
       const style: React.CSSProperties = item.id === selection.id
         ? listItemStyleSelected
         : listItemStyle;
+
       return (
         <ListItem
-          onClick={onSelectSelection}
           style={style}
           innerDivStyle={innerDivStyle}
           hoverColor={sideBarStyles.onHover.color}
-          primaryText={item.name}
           value={item}
           key={item.id}
-        />
+        >
+          <Row className="space-between">
+            <Row style={{paddingTop: '6px'}} className="flex-1" onClick={onSelectSelection}>
+              {item.name}
+            </Row>
+            <Row style={{transform: 'scale(0.8)', paddingRight: '13px'}}>
+              <SavedSelectionActionsDropdown id={item.id} confirmDelete={this.openDialog}/>
+            </Row>
+          </Row>
+        </ListItem>
       );
     };
 
@@ -81,6 +108,11 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
           nestedListStyle={nestedListItemStyle}
         />
         <Divider style={dividerStyle}/>
+        <ConfirmDialog
+          isOpen={this.state.isDeleteDialogOpen}
+          close={this.closeDialog}
+          confirm={this.deleteSelectedUser}
+        />
       </List>
     );
   }
@@ -96,6 +128,8 @@ const mapStateToProps = ({searchParameters, domainModels: {userSelections}}: Roo
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectSavedSelection,
   fetchUserSelections,
+  deleteUserSelection,
+  resetSelection,
 }, dispatch);
 
 export const SavedSelectionsContainer =
