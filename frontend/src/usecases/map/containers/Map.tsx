@@ -8,7 +8,7 @@ import Control from 'react-leaflet-control';
 import * as Leaflet from '../../../../node_modules/@types/react-leaflet/node_modules/@types/leaflet';
 import {Column} from '../../../components/layouts/column/Column';
 import {GeoPosition} from '../../../state/domain-models/location/locationModels';
-import {boundsFromMarkers} from './clusterHelper';
+import {boundsFromMarkers} from '../helper/mapHelper';
 import './Map.scss';
 
 interface Props {
@@ -17,7 +17,8 @@ interface Props {
   defaultZoom?: number;
   viewCenter?: GeoPosition;
   children?: React.ReactElement<any>;
-  someAreHidden?: string;
+  lowConfidenceText?: string;
+  boundOptions?: Leaflet.FitBoundsOptions;
 }
 
 const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
@@ -30,15 +31,15 @@ const toggleScrollWheelZoom = ({target}: Leaflet.LeafletMouseEvent): void => {
 
 const defaultCenter: LatLngTuple = [62.3919741, 15.0685715];
 
-export const Map = (props: Props) => {
-  const {
-    height,
-    width,
-    defaultZoom = 4,
-    viewCenter,
-    children,
-    someAreHidden,
-  } = props;
+export const Map = ({
+  height,
+  width,
+  defaultZoom = 7,
+  viewCenter,
+  children,
+  lowConfidenceText,
+  boundOptions = {padding: [100, 100]},
+}: Props) => {
 
   const style = {height, width};
 
@@ -48,8 +49,9 @@ export const Map = (props: Props) => {
     centerProps.center = [viewCenter.latitude, viewCenter.longitude];
   } else if (children && children.props && children.props.markers) {
     const bounds = boundsFromMarkers(children.props.markers);
-    if (bounds.isJust()) {
-      centerProps.bounds = bounds.get();
+    if (bounds) {
+      centerProps.bounds = bounds;
+      centerProps.boundsOptions = boundOptions;
     } else {
       centerProps.center = defaultCenter;
     }
@@ -57,11 +59,13 @@ export const Map = (props: Props) => {
     centerProps.center = defaultCenter;
   }
 
-  const noticeAboutHidden = someAreHidden ? (
-    <Control position="topright" className="low-confidence-container">
-      <p>{someAreHidden}</p>
-    </Control>
-  ) : null;
+  const renderMarkersWithLowConfidenceInfoText = lowConfidenceText
+    ? (
+      <Control position="topright" className="LowConfidence">
+        <p>{lowConfidenceText}</p>
+      </Control>
+    )
+    : null;
 
   return (
     <Column>
@@ -75,7 +79,7 @@ export const Map = (props: Props) => {
         style={style}
         {...centerProps}
       >
-        {noticeAboutHidden}
+        {renderMarkersWithLowConfidenceInfoText}
         <TileLayer url="https://{s}.tile.openstreetmap.se/hydda/full/{z}/{x}/{y}.png"/>
         {children}
       </LeafletMap>

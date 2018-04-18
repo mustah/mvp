@@ -5,12 +5,12 @@
   margin-right: $lg-space;
   margin-bottom: $lg-space;
 
-  a {
-    text-decoration: none;
+  &.MapWidget {
+    padding-bottom: 0;
   }
 
-  .Content {
-    padding: 0 $space;
+  a {
+    text-decoration: none;
   }
 
   .PopoverMenu {
