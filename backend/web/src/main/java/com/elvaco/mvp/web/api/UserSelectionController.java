@@ -3,6 +3,7 @@ package com.elvaco.mvp.web.api;
 import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.usecase.UserSelectionUseCases;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
 import com.elvaco.mvp.web.exception.UserSelectionNotFound;
@@ -10,6 +11,7 @@ import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +57,15 @@ public class UserSelectionController {
       .orElseThrow(() -> new UserSelectionNotFound(userSelectionDto.id));
 
     return mapper.toDto(useCases.save(mapper.toDomainModel(userSelectionDto)));
+  }
+
+  @DeleteMapping("{id}")
+  public UserSelectionDto deleteSelection(@PathVariable UUID id) {
+    UserSelection userSelection = useCases.findByIdForCurrentUser(id)
+      .orElseThrow(() -> new UserSelectionNotFound(id));
+
+    useCases.delete(userSelection);
+
+    return mapper.toDto(userSelection);
   }
 }

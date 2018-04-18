@@ -7,7 +7,6 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.UserSelection;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.UserSelections;
-
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -17,6 +16,7 @@ public class UserSelectionUseCases {
 
   public Optional<UserSelection> findByIdForCurrentUser(UUID id) {
     return userSelections.findByIdAndOwnerUserIdAndOrganisationId(
+
       id,
       currentUser.getUserId(),
       currentUser.getOrganisationId()
@@ -32,8 +32,14 @@ public class UserSelectionUseCases {
 
   public UserSelection save(UserSelection userSelection) {
     return userSelections.save(userSelection
-      .withUserId(currentUser.getUserId())
-      .withOrganisationId(currentUser.getOrganisationId())
+                                 .withUserId(currentUser.getUserId())
+                                 .withOrganisationId(currentUser.getOrganisationId())
     );
+  }
+
+  public void delete(UserSelection userSelection) {
+    if (currentUser.getUserId().equals(userSelection.ownerUserId)) {
+      userSelections.delete(userSelection);
+    }
   }
 }
