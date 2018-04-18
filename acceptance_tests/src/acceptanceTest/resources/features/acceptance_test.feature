@@ -1,4 +1,4 @@
-Feature:
+Feature: Acceptance test
     As a developer
     I want to be able to login
     So that I see that the site works
