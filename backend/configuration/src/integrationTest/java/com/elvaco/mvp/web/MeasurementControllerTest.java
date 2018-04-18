@@ -663,9 +663,9 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T03:00:01-02:00"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T04:00:01-01:00"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 4.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:00:01+01:00"), "Power", 8.0, "W");
+    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T04:01:01-01:00"), "Power", 2.0, "W");
+    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:02:01Z"), "Power", 4.0, "W");
+    newMeasurement(meter, ZonedDateTime.parse("2018-03-06T06:03:01+01:00"), "Power", 8.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
       String.format(
@@ -816,8 +816,8 @@ public class MeasurementControllerTest extends IntegrationTest {
     );
     PhysicalMeterEntity meter = newPhysicalMeterEntity(logicalMeter.id);
     newMeasurement(meter, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Power", 1.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 2.0, "W");
-    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:01Z"), "Power", 4.0, "W");
+    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:02Z"), "Power", 2.0, "W");
+    newMeasurement(meter, ZonedDateTime.parse("2018-03-07T05:00:03Z"), "Power", 4.0, "W");
 
     ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser()
       .getList(String.format(

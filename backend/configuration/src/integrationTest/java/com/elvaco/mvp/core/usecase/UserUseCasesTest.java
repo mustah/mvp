@@ -3,17 +3,12 @@ package com.elvaco.mvp.core.usecase;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
-import com.elvaco.mvp.core.spi.security.TokenFactory;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
-import com.elvaco.mvp.web.security.AuthenticationToken;
-import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
@@ -25,9 +20,6 @@ public class UserUseCasesTest extends IntegrationTest {
 
   @Autowired
   private TokenService tokenService;
-
-  @Autowired
-  private TokenFactory tokenFactory;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -117,18 +109,14 @@ public class UserUseCasesTest extends IntegrationTest {
   }
 
   private void authenticateSuperAdminUser() {
-    AuthenticatedUser authenticatedUser = new MvpUserDetails(
+    authenticate(
       new UserBuilder()
         .name("Integration test user")
         .email("noone@nowhere")
         .password("nopass")
         .organisationElvaco()
         .asSuperAdmin()
-        .build(),
-      tokenFactory.newToken()
+        .build()
     );
-    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
-    SecurityContextHolder.getContext().setAuthentication(authentication);
   }
 }
