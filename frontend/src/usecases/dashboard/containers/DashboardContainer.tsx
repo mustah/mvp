@@ -12,20 +12,20 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getEntitiesDomainModels, getError} from '../../../state/domain-models/domainModelsSelectors';
+import {DomainModel} from '../../../state/domain-models/domainModels';
+import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
-import {MapWidgetsContainer} from '../components/widgets/MapWidgetsContainer';
+import {MapWidgetContainer} from './MapWidgetContainer';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
 import {fetchDashboard} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 
 interface StateToProps {
   dashboard?: DashboardModel;
-  meterMapMarkers: ObjectsById<MapMarker>;
+  meterMapMarkers: DomainModel<MapMarker>;
   isFetching: boolean;
   error: Maybe<ErrorResponse>;
   parameters: EncodedUriParameters;
@@ -67,7 +67,7 @@ class DashboardContainerComponent extends React.Component<Props> {
         <Loader isFetching={isFetching} error={error} clearError={clearError}>
           <Column>
             {dashboard && <OverviewWidgets widgets={dashboard.widgets}/>}
-            <MapWidgetsContainer markers={meterMapMarkers}/>
+            <MapWidgetContainer markers={meterMapMarkers}/>
           </Column>
         </Loader>
       </MvpPageContainer>
@@ -82,7 +82,7 @@ const mapStateToProps = ({
 }: RootState): StateToProps => ({
   dashboard: dashboard.record,
   parameters: getMeterParameters(searchParameters),
-  meterMapMarkers: getEntitiesDomainModels(meterMapMarkers),
+  meterMapMarkers: getDomainModel(meterMapMarkers),
   isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),
 });

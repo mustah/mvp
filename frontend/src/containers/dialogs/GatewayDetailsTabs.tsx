@@ -17,7 +17,7 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {Map} from '../../usecases/map/containers/Map';
 import {MapMarker} from '../../usecases/map/mapModels';
 
@@ -81,7 +81,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               hasContent={hasConfidentPosition}
               fallbackContent={<MissingDataTitle title={firstUpperTranslated('no reliable position')}/>}
             >
-              <Map height={400} viewCenter={gateway.location.position} defaultZoom={7}>
+              <Map height={400} viewCenter={gateway.location.position}>
                 <ClusterContainer markers={gatewayMapMarker.get()}/>
               </Map>
             </HasContent>

@@ -7,7 +7,7 @@ import {imagePathFor} from '../../../app/routes';
 import {Dictionary} from '../../../types/Types';
 import {openClusterDialog} from '../mapActions';
 import {MapMarker, Marker} from '../mapModels';
-import {makeLeafletCompatibleMarkersFrom} from './clusterHelper';
+import {makeLeafletCompatibleMarkersFrom} from '../helper/clusterHelper';
 
 interface DispatchToProps {
   openClusterDialog: (marker: Marker) => void;

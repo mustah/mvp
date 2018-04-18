@@ -22,7 +22,7 @@ import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable} from '../../types/Types';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/containers/clusterHelper';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {Map} from '../../usecases/map/containers/Map';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
@@ -123,7 +123,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
           </TabContent>
           <TabContent tab={TabName.map} selectedTab={selectedTab}>
             <HasContent hasContent={hasConfidentPosition} fallbackContent={noReliablePosition}>
-              <Map height={400} viewCenter={meter.location.position} defaultZoom={7}>
+              <Map height={400} viewCenter={meter.location.position}>
                 <ClusterContainer markers={meterMapMarker.get()}/>
               </Map>
             </HasContent>

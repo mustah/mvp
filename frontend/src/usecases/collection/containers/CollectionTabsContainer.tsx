@@ -24,9 +24,9 @@ import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {metersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
 import {clearErrorGatewayMapMarkers, fetchGatewayMapMarkers} from '../../map/gatewayMapMarkerApiActions';
+import {gatewayLowConfidenceTextInfo} from '../../map/helper/mapHelper';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
@@ -78,19 +78,6 @@ class CollectionTabs extends React.Component<Props> {
       </Dialog>
     );
 
-    const noGatewaysFallbackContent =
-      <MissingDataTitle title={firstUpperTranslated('no gateways')}/>;
-
-    const gatewaysWithoutConfidence =
-      gatewayMapMarkers.result.length - metersWithinThreshold(gatewayMapMarkers.entities).length;
-
-    const someAreHidden = gatewaysWithoutConfidence
-      ? firstUpperTranslated(
-        '{{count}} gateways are not displayed in the map due to low accuracy',
-        {count: gatewaysWithoutConfidence},
-      )
-      : undefined;
-
     return (
       <Tabs>
         <TabTopBar>
@@ -107,12 +94,9 @@ class CollectionTabs extends React.Component<Props> {
             <div>
               <HasContent
                 hasContent={gatewayMapMarkers.result.length > 0}
-                fallbackContent={noGatewaysFallbackContent}
+                fallbackContent={<MissingDataTitle title={firstUpperTranslated('no gateways')}/>}
               >
-                <Map
-                  defaultZoom={7}
-                  someAreHidden={someAreHidden}
-                >
+                <Map lowConfidenceText={gatewayLowConfidenceTextInfo(gatewayMapMarkers)}>
                   <ClusterContainer markers={gatewayMapMarkers.entities}/>
                 </Map>
               </HasContent>

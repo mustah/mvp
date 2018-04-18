@@ -23,8 +23,8 @@ import {TabName, TabsContainerDispatchToProps, TabsContainerStateToProps} from '
 import {getSelectedTab} from '../../../state/ui/tabs/tabsSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch, OnClick, uuid} from '../../../types/Types';
 import {ClusterContainer} from '../../map/containers/ClusterContainer';
-import {metersWithinThreshold} from '../../map/containers/clusterHelper';
 import {Map} from '../../map/containers/Map';
+import {meterLowConfidenceTextInfo} from '../../map/helper/mapHelper';
 import {closeClusterDialog} from '../../map/mapActions';
 import {MapMarker} from '../../map/mapModels';
 import {getSelectedMapMarker} from '../../map/mapSelectors';
@@ -75,18 +75,6 @@ class ValidationTabs extends React.Component<Props> {
       </Dialog>
     );
 
-    const noMetersFallbackContent = <MissingDataTitle title={firstUpperTranslated('no meters')}/>;
-
-    const metersWithoutConfidence =
-      meterMapMarkers.result.length - metersWithinThreshold(meterMapMarkers.entities).length;
-
-    const someAreHidden = metersWithoutConfidence
-      ? firstUpperTranslated(
-        '{{count}} meters are not displayed in the map due to low accuracy',
-        {count: metersWithoutConfidence},
-      )
-      : undefined;
-
     return (
       <Tabs>
         <TabTopBar>
@@ -103,12 +91,9 @@ class ValidationTabs extends React.Component<Props> {
             <div>
               <HasContent
                 hasContent={meterMapMarkers.result.length > 0}
-                fallbackContent={noMetersFallbackContent}
+                fallbackContent={<MissingDataTitle title={firstUpperTranslated('no meters')}/>}
               >
-                <Map
-                  defaultZoom={7}
-                  someAreHidden={someAreHidden}
-                >
+                <Map lowConfidenceText={meterLowConfidenceTextInfo(meterMapMarkers)}>
                   <ClusterContainer markers={meterMapMarkers.entities}/>
                 </Map>
               </HasContent>

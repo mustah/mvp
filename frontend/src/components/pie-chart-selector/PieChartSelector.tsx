@@ -3,7 +3,7 @@ import {Cell, Legend, LegendPayload, LegendProps, Pie, PieChart, Tooltip} from '
 import {FilterParam} from '../../state/search/selection/selectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
-import {ColumnCenter} from '../layouts/column/Column';
+import {ColumnCenter, ColumnContent} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {splitDataIntoSlices} from './pieChartHelper';
 import './PieChartSelector.scss';
@@ -30,22 +30,26 @@ export interface PieChartSelectorProps {
 
 interface LegendNestedData extends PieSlice {
   payload: PieSlice;
+
   [key: string]: any;
 }
 
 interface LegendData extends LegendPayload {
   color: any;
   payload: LegendNestedData;
+
   [key: string]: any;
 }
 
 interface RenderLegendProps extends LegendProps {
   payload: LegendData[];
+
   [key: string]: any;
 }
 
 interface PieSliceCallback {
   payload: PieSlice;
+
   [key: string]: any;
 }
 
@@ -86,18 +90,20 @@ export const PieChartSelector = (props: PieChartSelectorProps) => {
 
   return (
     <Widget title={heading}>
-      <PieChart width={240} height={300}>
-        <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110} dataKey="PieChart">
-          {pieSlices.map(renderCell)}
-        </Pie>
-        <Tooltip viewBox={viewBoxStyle}/>
-        <Legend
-          margin={margins}
-          align={'left'}
-          content={renderLegends}
-          layout={'vertical'}
-        />
-      </PieChart>
+      <ColumnContent>
+        <PieChart width={240} height={300}>
+          <Pie onClick={onPieClick} data={pieSlices} animationDuration={500} cy={110} dataKey="PieChart">
+            {pieSlices.map(renderCell)}
+          </Pie>
+          <Tooltip viewBox={viewBoxStyle}/>
+          <Legend
+            margin={margins}
+            align={'left'}
+            content={renderLegends}
+            layout={'vertical'}
+          />
+        </PieChart>
+      </ColumnContent>
     </Widget>
   );
 };
