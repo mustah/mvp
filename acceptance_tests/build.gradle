@@ -35,7 +35,7 @@ task cucumber(type: Test, dependsOn: 'test', group: 'verification') {
     }
   }
   dependsOn assemble, compileAcceptanceTestJava
-
+  delete "${buildDir}/resources"
   testClassesDirs = sourceSets.acceptanceTest.output.classesDirs
   classpath = sourceSets.acceptanceTest.runtimeClasspath
 

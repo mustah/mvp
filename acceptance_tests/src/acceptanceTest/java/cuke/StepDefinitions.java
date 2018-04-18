@@ -58,19 +58,19 @@ public class StepDefinitions {
       final byte[] screenshot = ((TakesScreenshot) driver)
         .getScreenshotAs(OutputType.BYTES);
       scenario.write("URL at failure: " + driver.getCurrentUrl());
-      scenario.embed(screenshot, "image/png"); //stick it in the report
+      scenario.embed(screenshot, "image/png");
     }
     driver.quit();
   }
 
   @Given("I am on the login page")
-  public void givenIAmOnTheLoginPage() throws Throwable {
+  public void givenIAmOnTheLoginPage() {
     driver.get(mvpServer);
     assertThat(driver.getTitle()).isEqualTo("Elvaco");
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String username, String password) throws Throwable {
+  public void whenILoginAsUserWithPassword(String username, String password) {
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
     emailElement.sendKeys(username);
@@ -85,12 +85,12 @@ public class StepDefinitions {
   }
 
   @Then("I should be logged in as '(.*)'")
-  public void thenIShouldBeLoggedInAs(String username) throws Throwable {
+  public void thenIShouldBeLoggedInAs(String username) {
     assertClassElementHasText("Profile", username);
   }
 
   @Then("I should see error message '(.*)'")
-  public void thenIShouldSeeErrorMessage(String text) throws Throwable {
+  public void thenIShouldSeeErrorMessage(String text) {
     assertClassElementHasText("Error-message", text);
   }
 
@@ -100,7 +100,7 @@ public class StepDefinitions {
   }
 
   private String getHostName() throws UnknownHostException {
-      InetAddress iAddress = InetAddress.getLocalHost();
-      return iAddress.getCanonicalHostName();
-    }
+    InetAddress hostName = InetAddress.getLocalHost();
+    return hostName.getCanonicalHostName();
+  }
 }
