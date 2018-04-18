@@ -28,7 +28,7 @@ services:
     ports:
       - "${DOCKER_GEOSERVICE_DB_PORT:-5432:5432}"
   rabbitmq:
-      image: rabbitmq:management
-      ports:
-          - "15672:15672"
-          - "5672:5672"
+    image: rabbitmq:management
+    ports:
+      - "15672:15672"
+      - "5672:5672"
