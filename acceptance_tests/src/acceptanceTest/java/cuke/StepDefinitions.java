@@ -75,15 +75,15 @@ public class StepDefinitions {
 
   @Then("I should be logged in as '(.*)'")
   public void thenIShouldBeLoggedInAs(String username) throws Throwable {
-    assertElementHasText("Profile", username);
+    assertClassElementHasText("Profile", username);
   }
 
   @Then("I should see error message '(.*)'")
   public void thenIShouldSeeErrorMessage(String text) throws Throwable {
-    assertElementHasText("Error-message", text);
+    assertClassElementHasText("Error-message", text);
   }
 
-  private void assertElementHasText(String className, String text) {
+  private void assertClassElementHasText(String className, String text) {
     WebElement contextElement = driver.findElement(By.className(className));
     assertThat(contextElement.getText()).isEqualTo(text);
   }
