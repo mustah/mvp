@@ -10,7 +10,7 @@ import com.elvaco.mvp.database.dialect.types.JsonFieldType;
 import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.type.SerializationException;
 import org.postgresql.util.PGobject;
 
@@ -27,7 +27,7 @@ public class PostgreSqlJsonFieldType extends JsonFieldType {
   public Object nullSafeGet(
     ResultSet rs,
     String[] names,
-    SessionImplementor session,
+    SharedSessionContractImplementor session,
     Object owner
   ) throws HibernateException, SQLException {
     PGobject value = (PGobject) rs.getObject(names[0]);
@@ -46,7 +46,7 @@ public class PostgreSqlJsonFieldType extends JsonFieldType {
     PreparedStatement st,
     Object value,
     int index,
-    SessionImplementor session
+    SharedSessionContractImplementor session
   ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != JsonField.class) {
       st.setNull(index, Types.OTHER);
