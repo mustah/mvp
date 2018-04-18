@@ -1,12 +1,21 @@
 import {mockSelectionAction} from '../../../../__tests__/testActions';
 import {changePaginationPage, paginationUpdateMetaData} from '../paginationActions';
-import {PaginationChangePayload, PaginationMetadataPayload, PaginationState} from '../paginationModels';
+import {
+  PaginationChangePayload,
+  PaginationMetadataPayload,
+  PaginationState,
+} from '../paginationModels';
 import {initialPaginationState, limit, pagination} from '../paginationReducer';
 
 describe('paginationReducer', () => {
 
   const paginatedState: Readonly<PaginationState> = {
-    meters: {size: limit, totalPages: 10, totalElements: 100, useCases: {component1: {page: 0}, component2: {page: 0}}},
+    meters: {
+      size: limit,
+      totalPages: 10,
+      totalElements: 100,
+      useCases: {component1: {page: 0}, component2: {page: 0}},
+    },
     gateways: {
       size: limit,
       totalPages: 10,
@@ -60,7 +69,12 @@ describe('paginationReducer', () => {
     };
 
     expect(pagination(paginatedState, paginationUpdateMetaData(payload))).toEqual({
-      meters: {size: limit, totalPages: 200, totalElements: 2000, useCases: {validationList: {page: 1}}},
+      meters: {
+        size: limit,
+        totalPages: 200,
+        totalElements: 2000,
+        useCases: {validationList: {page: 1}},
+      },
       gateways: {size: limit, totalPages: -1, totalElements: -1, useCases: {}},
     });
 
@@ -87,7 +101,10 @@ describe('paginationReducer', () => {
     it('only changes requestedPage for the targeted component', () => {
       const expectedState: PaginationState = {
         ...paginatedState,
-        meters: {...paginatedState.meters, useCases: {...paginatedState.meters.useCases, test: {page: 10}}},
+        meters: {
+          ...paginatedState.meters,
+          useCases: {...paginatedState.meters.useCases, test: {page: 10}},
+        },
       };
 
       expect(pagination(paginatedState, changePaginationPage(payload))).toEqual(expectedState);
@@ -97,7 +114,12 @@ describe('paginationReducer', () => {
   describe('reset pagination', () => {
     it('sets pagination to initialState when getting the reset action', () => {
       const paginatedState: PaginationState = {
-        meters: {size: limit, totalPages: 1, totalElements: 1, useCases: {validationList: {page: 1}}},
+        meters: {
+          size: limit,
+          totalPages: 1,
+          totalElements: 1,
+          useCases: {validationList: {page: 1}},
+        },
         gateways: {size: limit, totalPages: 10, totalElements: 10, useCases: {}},
       };
 

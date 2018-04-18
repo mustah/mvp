@@ -33,29 +33,32 @@ export type OnSelectParameter = (searchParameters: SelectionParameter) => void;
  * }
  */
 export interface SelectedParameters {
-  meterIds?: uuid[];
-  cities?: uuid[];
   addresses?: uuid[];
-  meterStatuses?: uuid[];
-  gatewayStatuses?: uuid[];
   alarms?: uuid[];
+  cities?: uuid[];
+  gatewayStatuses?: uuid[];
   manufacturers?: uuid[];
-  productModels?: uuid[];
+  meterIds?: uuid[];
+  meterStatuses?: uuid[];
   period: Period;
+  productModels?: uuid[];
 }
 
-export interface SelectionState extends IdNamed {
-  selected: SelectedParameters;
+export interface UserSelection extends IdNamed {
+  selectionParameters: SelectedParameters;
   isChanged: boolean;
 }
 
+// TODO remove LookupState
 export interface LookupState {
-  selection: SelectionState;
+  // TODO do not use this 'selection', use the SearchParameterState instead
+  // TODO maybe rename to currentUserSelection
+  selection: UserSelection;
   domainModels: DomainModelsState;
 }
 
 export type OnSelectPeriod = (period: Period) => void;
 
-export type OnSelectSelection = (selection: SelectionState) => void;
+export type OnSelectSelection = (selection: UserSelection) => void;
 
 export type SelectionListItem = SelectionEntity & {selected: boolean};

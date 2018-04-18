@@ -9,15 +9,15 @@ import {
   resetSelection,
   saveSelection,
   selectSavedSelection,
-  setCurrentSelection,
+  updateSelection,
 } from '../../../state/search/selection/selectionActions';
-import {OnSelectSelection, SelectionState} from '../../../state/search/selection/selectionModels';
+import {OnSelectSelection, UserSelection} from '../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../state/search/selection/selectionSelectors';
 import {OnClick, OnClickWithId} from '../../../types/Types';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 
 interface StateToProps {
-  selection: SelectionState;
+  selection: UserSelection;
 }
 
 interface DispatchToProps {
@@ -58,7 +58,7 @@ const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   closeSelectionPage,
   saveSelection,
-  updateSelection: setCurrentSelection,
+  updateSelection,
   resetSelection,
   selectSavedSelection,
 }, dispatch);

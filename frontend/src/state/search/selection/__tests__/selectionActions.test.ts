@@ -3,6 +3,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
+import {RootState} from '../../../../reducers/rootReducer';
 import {IdNamed} from '../../../../types/Types';
 import {
   ADD_PARAMETER_TO_SELECTION,
@@ -14,7 +15,7 @@ import {
   selectSavedSelection,
   toggleParameterInSelection,
 } from '../selectionActions';
-import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
+import {ParameterName, SelectionParameter} from '../selectionModels';
 import {initialState} from '../selectionReducer';
 
 const configureMockStore = configureStore([thunk]);
@@ -36,18 +37,34 @@ describe('selectionActions', () => {
     id: 21,
     name: 'test 21',
   };
-  const saved: SelectionState[] = [
-    {
-      ...initialState,
-      id: 1,
-      name: 'test 1',
+
+  const rootState = {
+    searchParameters: {selection: {...initialState}},
+    domainModels: {
+      userSelections: {
+        entities: {
+          1: {
+            ...initialState,
+            id: 1,
+            name: 'test 1',
+          },
+          21: {
+            ...savedSelection21,
+          },
+        },
+        result: [1, 21],
+      },
     },
-    savedSelection21,
-  ];
-  const rootState = {searchParameters: {selection: {...initialState}, saved}};
+  };
   const rootStateNoSaved = {
     ...rootState,
-    searchParameters: {...rootState.searchParameters, saved: []},
+    searchParameters: {...rootState.searchParameters},
+    domainModels: {
+      userSelections: {
+        entities: {},
+        result: [],
+      },
+    },
   };
 
   describe('close selection page', () => {
@@ -74,7 +91,6 @@ describe('selectionActions', () => {
     });
 
     it('does not dispatch if the selection cannot be found', () => {
-
       store = configureMockStore(rootState);
 
       store.dispatch(selectSavedSelection({
@@ -103,12 +119,20 @@ describe('selectionActions', () => {
     });
 
     it('deselects selected city', () => {
-      const selection = {selected: {...initialState, [ParameterName.cities]: [stockholm.id]}};
-      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-
-      const stateWithSelection = {searchParameters: {selection, saved: []}};
+      const stateWithSelection: Partial<RootState> = {
+        searchParameters: {
+          selection: {
+            ...initialState,
+            selectionParameters: {
+              ...initialState.selectionParameters,
+              [ParameterName.cities]: [stockholm.id],
+            },
+          },
+        },
+      };
       store = configureMockStore(stateWithSelection);
 
+      const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       store.dispatch(toggleParameterInSelection(payload));
 
       expect(store.getActions()).toEqual([
@@ -141,4 +165,5 @@ describe('selectionActions', () => {
       ]);
     });
   });
+
 });

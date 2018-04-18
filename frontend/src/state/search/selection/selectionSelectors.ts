@@ -9,20 +9,14 @@ import {
   PaginatedParametersCombiner,
   ParameterCallbacks,
 } from '../../../helpers/urlFactory';
-import {EncodedUriParameters, IdNamed, uuid} from '../../../types/Types';
+import {EncodedUriParameters, uuid} from '../../../types/Types';
 import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
 import {Pagination} from '../../ui/pagination/paginationModels';
-import {SearchParameterState} from '../searchParameterReducer';
-import {
-  LookupState,
-  ParameterName,
-  SelectedParameters,
-  SelectionListItem,
-  SelectionState,
-} from './selectionModels';
+import {SearchParameterState} from '../searchParameterModels';
+import {LookupState, ParameterName, SelectedParameters, UserSelection, SelectionListItem} from './selectionModels';
 import {initialState} from './selectionReducer';
 
-const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selected;
+const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selectionParameters;
 
 const getSelectionGroup = (entityType: string) =>
   (state: LookupState): DomainModel<SelectionEntity> => state.domainModels[entityType];
@@ -97,7 +91,7 @@ const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
   (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
 const getSelectedParameters = (state: SearchParameterState): SelectedParameters =>
-  state.selection.selected;
+  state.selection.selectionParameters;
 
 export const getCities = getList(ParameterName.cities);
 export const getAddresses = getList(ParameterName.addresses);
@@ -136,14 +130,9 @@ export const getGatewayParameters =
     encodedUriParametersForAllGateways,
   );
 
-export const getSelectedPeriod = createSelector<SelectionState, SelectedParameters, Period>(
-  (selection: SelectionState) => selection.selected,
-  (selected: SelectedParameters) => selected.period! || initialState.selected.period,
+export const getSelectedPeriod = createSelector<UserSelection, SelectedParameters, Period>(
+  (selection: UserSelection) => selection.selectionParameters,
+  (selected: SelectedParameters) => selected.period! || initialState.selectionParameters.period,
 );
 
-export const getSavedSelections = createSelector<SearchParameterState, SelectionState[], IdNamed[]>(
-  (state: SearchParameterState) => state.saved,
-  (selectionState: SelectionState[]) => selectionState.map(({id, name}) => ({id, name})),
-);
-
-export const getSelection = (state: SearchParameterState): SelectionState => state.selection;
+export const getSelection = (state: SearchParameterState): UserSelection => state.selection;

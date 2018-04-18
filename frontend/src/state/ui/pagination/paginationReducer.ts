@@ -2,7 +2,12 @@ import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
 import {selectionWasChanged} from '../../domain-models/domainModelsReducer';
 import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
-import {PaginationChangePayload, PaginationMetadataPayload, PaginationModel, PaginationState} from './paginationModels';
+import {
+  PaginationChangePayload,
+  PaginationMetadataPayload,
+  PaginationModel,
+  PaginationState,
+} from './paginationModels';
 
 export const limit = 20;
 
@@ -18,14 +23,20 @@ export const initialPaginationState: PaginationState = {
   gateways: {...initialPaginationModel},
 };
 
-type ActionTypes = Action<PaginationMetadataPayload> | Action<PaginationChangePayload> | EmptyAction<string>;
+type ActionTypes =
+  Action<PaginationMetadataPayload>
+  | Action<PaginationChangePayload>
+  | EmptyAction<string>;
 
 const requestPage = (
   state: PaginationState,
   {payload: {entityType, componentId, page}}: Action<PaginationChangePayload>,
 ): PaginationState => ({
   ...state,
-  [entityType]: {...state[entityType], useCases: {...state[entityType]!.useCases, [componentId]: {page}}},
+  [entityType]: {
+    ...state[entityType],
+    useCases: {...state[entityType]!.useCases, [componentId]: {page}},
+  },
 });
 
 const updateMetaData = (
@@ -36,7 +47,10 @@ const updateMetaData = (
   [entityType]: {useCases: {}, size: limit, ...state[entityType], totalElements, totalPages},
 });
 
-export const pagination = (state: PaginationState = initialPaginationState, action: ActionTypes) => {
+export const pagination = (
+  state: PaginationState = initialPaginationState,
+  action: ActionTypes,
+) => {
   if (selectionWasChanged(action.type)) {
     return {...initialPaginationState};
   }

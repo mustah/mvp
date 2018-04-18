@@ -92,6 +92,24 @@
     },
     {
       "changeSet": {
+        "id": "Rename data column to selection_parameters",
+        "author": "Carl Helmertz",
+        "changes": [
+          {
+            "sqlFile": {
+              "dbms": "postgresql",
+              "encoding": "utf8",
+              "path": "sql/rename_selection_data.sql",
+              "relativeToChangelogFile": true,
+              "splitStatements": false,
+              "stripComments": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "changeSet": {
         "id": "Grant mvp db user privileges",
         "author": "Daniel Svensson",
         "runOrder": "last",

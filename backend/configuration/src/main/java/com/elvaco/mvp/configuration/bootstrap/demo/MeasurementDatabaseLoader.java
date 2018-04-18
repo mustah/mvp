@@ -19,6 +19,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Order(5)
@@ -44,6 +45,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
   }
 
   @Override
+  @Transactional
   public void run(String... args) {
     if (settingUseCases.isDemoMeasurementsLoaded()) {
       log.info("Demo measurements seems to already be loaded - skipping!");

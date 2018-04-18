@@ -44,7 +44,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     UserSelectionDto selection1 = createSelection(
       context.user,
       "Kungsbacka",
-      "{\"test\":\"some json data here\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
     ResponseEntity<UserSelectionDto> response = as(context.user)
@@ -52,7 +52,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().id).isEqualTo(selection1.id);
-    assertThat(response.getBody().data).isEqualTo(selection1.data);
+    assertThat(response.getBody().selectionParameters).isEqualTo(selection1.selectionParameters);
   }
 
   @Test
@@ -62,13 +62,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
     UserSelectionDto selection1 = createSelection(
       context.user,
       "Kungsbacka",
-      "{\"test\":\"some json data here\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
     UserSelectionDto selection2 = createSelection(
       context.user,
       "Varberg",
-      "{\"test\":\"some json data here2\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here2\"}")
     );
 
     ResponseEntity<List<UserSelectionDto>> response = as(context.user)
@@ -77,9 +77,11 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody().size()).isEqualTo(2);
     assertThat(response.getBody().get(0).id).isEqualTo(selection1.id);
-    assertThat(response.getBody().get(0).data).isEqualTo(selection1.data);
+    assertThat(response.getBody().get(0).selectionParameters)
+      .isEqualTo(selection1.selectionParameters);
     assertThat(response.getBody().get(1).id).isEqualTo(selection2.id);
-    assertThat(response.getBody().get(1).data).isEqualTo(selection2.data);
+    assertThat(response.getBody().get(1).selectionParameters)
+      .isEqualTo(selection2.selectionParameters);
   }
 
   @Test
@@ -89,13 +91,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
     UserSelectionDto selection1 = createSelection(
       context.user,
       "Kungsbacka",
-      "{\"test\":\"some json data here\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"some json data here\"}")
     );
 
     UserSelectionDto selection2 = createSelection(
       context.admin,
       "Kungsbacka",
-      "{\"test\":\"Json stuff here\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"test\":\"Json stuff here\"}")
     );
 
     ResponseEntity<List<UserSelectionDto>> responseFindAll = as(context.admin)
@@ -104,7 +106,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
     assertThat(responseFindAll.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(responseFindAll.getBody().size()).isEqualTo(1);
     assertThat(responseFindAll.getBody().get(0).id).isEqualTo(selection2.id);
-    assertThat(responseFindAll.getBody().get(0).data).isEqualTo(selection2.data);
+    assertThat(responseFindAll.getBody().get(0).selectionParameters)
+      .isEqualTo(selection2.selectionParameters);
 
     ResponseEntity<UserSelectionDto> responseFindOne = as(context.admin)
       .get("/user/selections/" + selection1.id, UserSelectionDto.class);
@@ -113,8 +116,8 @@ public class UserSelectionControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void userCanCreateSelection() {
-    String data = "{\"city\":\"Varberg\"}";
+  public void userCanCreateSelection() throws IOException {
+    ObjectNode data = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
 
     UserSelectionDto userSelectionDto = new UserSelectionDto(
       null,
@@ -140,13 +143,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(selection).isPresent();
-    assertThat(selection.get().data.asJsonString()).isEqualTo(data);
+    assertThat(selection.get().selectionParameters.getJson()).isEqualTo(data);
   }
 
   @Test
   public void userCanUpdateSelection() throws IOException {
-    String originalData = "{\"city\":\"Varberg\"}";
-    String newData = "{\"city\":\"Rolfstorp\"}";
+    ObjectNode originalData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
+    ObjectNode newData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
 
     UserSelectionDto userSelectionDto = createSelection(
       context().user,
@@ -154,7 +157,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       originalData
     );
 
-    userSelectionDto.data = newData;
+    userSelectionDto.selectionParameters = newData;
 
     ResponseEntity<UserSelectionDto> response = as(context().user).put(
       "/user/selections",
@@ -166,7 +169,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(updatedThroughApi.id).isNotNull();
-    assertThat(updatedThroughApi.data).isEqualTo(newData);
+    assertThat(updatedThroughApi.selectionParameters).isEqualTo(newData);
 
     Optional<UserSelectionEntity> selectionInDatabase = repository
       .findByIdAndOwnerUserIdAndOrganisationId(
@@ -176,13 +179,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
       );
 
     assertThat(selectionInDatabase).isPresent();
-    assertThat(selectionInDatabase.get().data.asJsonString()).isEqualTo(newData);
+    assertThat(selectionInDatabase.get().selectionParameters.getJson()).isEqualTo(newData);
   }
 
   @Test
   public void userCanNotOverwriteOtherUsersSelection() throws IOException {
-    final String originalData = "{\"city\":\"Varberg\"}";
-    final String changedData = "{\"city\":\"Rolfstorp\"}";
+    final ObjectNode originalData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
+    final ObjectNode changedData = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Rolfstorp\"}");
 
     UserSelectionDto userSelectionDto = createSelection(
       context().user,
@@ -190,7 +193,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
       originalData
     );
 
-    userSelectionDto.data = changedData;
+    userSelectionDto.selectionParameters = changedData;
 
     ResponseEntity<ErrorMessageDto> put = as(context().admin).put(
       "/user/selections",
@@ -208,70 +211,15 @@ public class UserSelectionControllerTest extends IntegrationTest {
       );
 
     assertThat(selectionUser).isPresent();
-    assertThat(selectionUser.get().data.asJsonString()).isEqualTo(originalData);
+    assertThat(selectionUser.get().selectionParameters.getJson()).isEqualTo(originalData);
   }
 
   @Test
-  public void savingSelectionRequiresValidJson() {
-    UserSelectionDto userSelectionDto = new UserSelectionDto(
-      null,
-      context().user.id,
-      "My selection",
-      "{ \"invalid json\"}",
-      context().user.organisation.id
-    );
-
-    ResponseEntity<ErrorMessageDto> post = as(context().user).post(
-      "/user/selections",
-      userSelectionDto,
-      ErrorMessageDto.class
-    );
-
-    assertThat(post.getBody().message)
-      .isEqualTo("String is not valid JSON: " + userSelectionDto.data);
-
-    assertThat(post.getStatusCode())
-      .as("Should not be possible to save selections with invalid JSON data")
-      .isEqualTo(HttpStatus.BAD_REQUEST);
-  }
-
-  @Test
-  public void updatingSelectionRequiresValidJson() throws IOException {
-    String originalData = "{\"city\":\"Varberg\"}";
-    UserSelectionDto userSelectionDto = createSelection(
-      context().user,
-      "My selection",
-      originalData
-    );
-
-    userSelectionDto.data = "{bad json}";
-
-    ResponseEntity<ErrorMessageDto> response = as(context().user).put(
-      "/user/selections",
-      userSelectionDto,
-      ErrorMessageDto.class
-    );
-
-    assertThat(response.getBody().message)
-      .isEqualTo("String is not valid JSON: " + userSelectionDto.data);
-
-    assertThat(response.getStatusCode())
-      .as("Should not be possible to update selections with invalid JSON data")
-      .isEqualTo(HttpStatus.BAD_REQUEST);
-
-    UserSelectionEntity selectionInDb = repository.findOne(userSelectionDto.id);
-
-    assertThat(selectionInDb.data.asJsonString())
-      .as("Selection data should not be updated with bad json")
-      .isEqualTo(originalData);
-  }
-
-  @Test
-  public void loggedInUserIsOwnerIndependentOfUserInPayloadWhenCreating() {
+  public void loggedInUserIsOwnerIndependentOfUserInPayloadWhenCreating() throws IOException {
     User userInPayload = context().user;
     User apiUser = context().admin;
 
-    String selectionJson = "{\"city\":\"Varberg\"}";
+    ObjectNode selectionJson = (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}");
     UserSelectionDto userSelectionDto = new UserSelectionDto(
       null,
       userInPayload.id,
@@ -297,7 +245,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     );
 
     assertThat(selection).isPresent();
-    assertThat(selection.get().data.asJsonString()).isEqualTo(selectionJson);
+    assertThat(selection.get().selectionParameters.getJson()).isEqualTo(selectionJson);
   }
 
   @Test
@@ -305,7 +253,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     UserSelectionDto userSelectionDto = createSelection(
       context().user,
       "My selection",
-      "{\"city\":\"Varberg\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
     ResponseEntity<UserSelectionDto> post = as(context().user).delete(
@@ -322,7 +270,7 @@ public class UserSelectionControllerTest extends IntegrationTest {
     UserSelectionDto adminsSelectionDto = createSelection(
       context().admin,
       "Admins selection",
-      "{\"city\":\"Varberg\"}"
+      (ObjectNode) OBJECT_MAPPER.readTree("{\"city\":\"Varberg\"}")
     );
 
     ResponseEntity<ErrorMessageDto> post = as(context().user).delete(
@@ -340,13 +288,13 @@ public class UserSelectionControllerTest extends IntegrationTest {
   private UserSelectionDto createSelection(
     User user,
     String name,
-    String jsonData
+    ObjectNode jsonData
   ) throws IOException {
     UserSelectionEntity entity = repository.save(new UserSelectionEntity(
       UUID.randomUUID(),
       user.id,
       name,
-      new JsonField((ObjectNode) OBJECT_MAPPER.readTree(jsonData)),
+      new JsonField(jsonData),
       user.organisation.id
     ));
 

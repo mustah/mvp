@@ -7,16 +7,16 @@ import {
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
 } from '../selectionActions';
-import {ParameterName, SelectionParameter, SelectionState} from '../selectionModels';
+import {ParameterName, SelectionParameter, UserSelection} from '../selectionModels';
 import {initialState, selection} from '../selectionReducer';
 
 describe('selectionReducer', () => {
 
-  const mockPayload: SelectionState = {
+  const mockPayload: UserSelection = {
     id: 5,
     name: 'something else',
     isChanged: false,
-    selected: {
+    selectionParameters: {
       cities: ['sweden,gothenburg', 'sweden,stockholm'],
       addresses: [1, 2, 3],
       period: Period.latest,
@@ -39,21 +39,22 @@ describe('selectionReducer', () => {
   describe('update current selection', () => {
 
     it('adds to selected list', () => {
-      const state = {...initialState};
+      const state: UserSelection = {...initialState};
       const stockholm: IdNamed = {id: 'sweden,stockholm', name: 'stockholm'};
       const selectionParameters: SelectionParameter = {
         ...stockholm,
         parameter: ParameterName.cities,
       };
 
-      expect(selection(state, {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters})).toEqual({
+      const expected: UserSelection = {
         ...initialState,
         isChanged: true,
-        selected: {
-          ...state.selected,
+        selectionParameters: {
+          ...state.selectionParameters,
           cities: [stockholm.id],
         },
-      });
+      };
+      expect(selection(state, {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters})).toEqual(expected);
     });
 
     it('adds array of filterParams to selected list', () => {
@@ -67,23 +68,24 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: SelectionState = selection(initialState, {
+      const intermediateState: UserSelection = selection(initialState, {
         type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParameterItem,
       });
-      const finalState: SelectionState = selection(intermediateState, {
+      const finalState: UserSelection = selection(intermediateState, {
         type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParametersArray,
       });
 
-      expect(finalState).toEqual({
+      const expected: UserSelection = {
         ...intermediateState,
         isChanged: true,
-        selected: {
-          ...intermediateState.selected,
+        selectionParameters: {
+          ...intermediateState.selectionParameters,
           cities: [gothenburg.id, stockholm.id, malmo.id],
         },
-      });
+      };
+      expect(finalState).toEqual(expected);
     });
 
     it('set filterParam as selected list', () => {
@@ -94,25 +96,26 @@ describe('selectionReducer', () => {
         ...stockholm,
       };
 
-      const intermediateState: SelectionState = selection(initialState, {
+      const intermediateState: UserSelection = selection(initialState, {
           type: SET_SELECTION,
           payload: selectionParameterInitial,
         })
       ;
-      const finalState: SelectionState = selection(intermediateState, {
+      const finalState: UserSelection = selection(intermediateState, {
           type: SET_SELECTION,
           payload: selectionParametersFinal,
         })
       ;
 
-      expect(finalState).toEqual({
+      const expected: UserSelection = {
         ...intermediateState,
         isChanged: true,
-        selected: {
-          ...intermediateState.selected,
+        selectionParameters: {
+          ...intermediateState.selectionParameters,
           cities: [stockholm.id],
         },
-      });
+      };
+      expect(finalState).toEqual(expected);
     });
 
     it('set array of filterParams as selected list', () => {
@@ -126,23 +129,24 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: SelectionState = selection(initialState, {
+      const intermediateState: UserSelection = selection(initialState, {
         type: SET_SELECTION,
         payload: selectionParameterInitial,
       });
-      const finalState: SelectionState = selection(intermediateState, {
+      const finalState: UserSelection = selection(intermediateState, {
         type: SET_SELECTION,
         payload: selectionParametersFinal,
       });
 
-      expect(finalState).toEqual({
+      const expected: UserSelection = {
         ...intermediateState,
         isChanged: true,
-        selected: {
-          ...intermediateState.selected,
+        selectionParameters: {
+          ...intermediateState.selectionParameters,
           cities: [stockholm.id, malmo.id],
         },
-      });
+      };
+      expect(finalState).toEqual(expected);
     });
 
   });
@@ -170,12 +174,13 @@ describe('selectionReducer', () => {
 
       const state = selection(mockPayload, {type: DESELECT_SELECTION, payload: parameter});
 
-      expect(state).toEqual({
+      const expected: UserSelection = {
         id: 5,
         name: 'something else',
         isChanged: true,
-        selected: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
-      });
+        selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
+      };
+      expect(state).toEqual(expected);
     });
   });
 });

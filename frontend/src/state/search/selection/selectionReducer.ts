@@ -5,19 +5,18 @@ import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
-  SAVE_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
   SET_CURRENT_SELECTION,
+  SET_SELECTION,
 } from './selectionActions';
-import {FilterParam, SelectionParameter, SelectionState} from './selectionModels';
+import {FilterParam, SelectionParameter, UserSelection} from './selectionModels';
 
-export const initialState: SelectionState = {
+export const initialState: UserSelection = {
   id: -1,
   name: 'all',
   isChanged: false,
-  selected: {
+  selectionParameters: {
     cities: [],
     addresses: [],
     meterStatuses: [],
@@ -29,55 +28,55 @@ export const initialState: SelectionState = {
   },
 };
 
-const addSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
-  const selectedIds = new Set<FilterParam>(state.selected[parameter] as FilterParam[]);
+const addSelected = (state: UserSelection, {payload: {parameter, id}}: Action<SelectionParameter>): UserSelection => {
+  const selectedIds = new Set<FilterParam>(state.selectionParameters[parameter] as FilterParam[]);
   Array.isArray(id) ? id.forEach((filterParam) => selectedIds.add(filterParam)) : selectedIds.add(id);
   return {
     ...state,
     isChanged: true,
-    selected: {
-      ...state.selected,
+    selectionParameters: {
+      ...state.selectionParameters,
       [parameter]: Array.from(selectedIds),
     },
   };
 };
 
-const setSelected = (state: SelectionState, {payload: {parameter, id}}: Action<SelectionParameter>): SelectionState => {
+const setSelected = (state: UserSelection, {payload: {parameter, id}}: Action<SelectionParameter>): UserSelection => {
   const selected = Array.isArray(id) ? [...id] : [id];
   return {
     ...state,
     isChanged: true,
-    selected: {
-      ...state.selected,
+    selectionParameters: {
+      ...state.selectionParameters,
       [parameter]: selected,
     },
   };
 };
 
-const selectSaved = (state: SelectionState, {payload}: Action<SelectionState>): SelectionState => ({
+const selectSaved = (state: UserSelection, {payload}: Action<UserSelection>): UserSelection => ({
   ...state,
   ...payload,
   isChanged: false,
 });
 
-const updatePeriod = (state: SelectionState, {payload}: Action<Period>): SelectionState => (
+const updatePeriod = (state: UserSelection, {payload}: Action<Period>): UserSelection => (
   {
     ...state,
     isChanged: true,
-    selected: {
-      ...state.selected,
+    selectionParameters: {
+      ...state.selectionParameters,
       period: payload,
     },
   });
 
-const removeSelected = (state: SelectionState, {payload}: Action<SelectionParameter>): SelectionState => {
+const removeSelected = (state: UserSelection, {payload}: Action<SelectionParameter>): UserSelection => {
   const {parameter, id} = payload;
-  const selectedIds = state.selected[parameter]! as uuid[];
+  const selectedIds = state.selectionParameters[parameter]! as uuid[];
   return {
     ...state,
     isChanged: true,
-    selected: {
-      ...state.selected,
+    selectionParameters: {
+      ...state.selectionParameters,
       [parameter]: selectedIds.filter((selectedId) => selectedId !== id),
     },
   };
@@ -86,10 +85,10 @@ const removeSelected = (state: SelectionState, {payload}: Action<SelectionParame
 type ActionTypes =
   | EmptyAction<string>
   | Action<SelectionParameter>
-  | Action<SelectionState>
+  | Action<UserSelection>
   | Action<Period>;
 
-export const selection = (state: SelectionState = initialState, action: ActionTypes): SelectionState => {
+export const selection = (state: UserSelection = initialState, action: ActionTypes): UserSelection => {
   switch (action.type) {
     case RESET_SELECTION:
       return {...initialState};
@@ -102,9 +101,8 @@ export const selection = (state: SelectionState = initialState, action: ActionTy
     case SELECT_PERIOD:
       return updatePeriod(state, action as Action<Period>);
     case SET_CURRENT_SELECTION:
-    case SAVE_SELECTION:
     case SELECT_SAVED_SELECTION:
-      return selectSaved(state, action as Action<SelectionState>);
+      return selectSaved(state, action as Action<UserSelection>);
     default:
       return state;
   }

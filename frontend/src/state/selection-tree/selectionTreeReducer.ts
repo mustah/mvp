@@ -30,7 +30,10 @@ const resetReducer = (state: SelectionTreeState, action: ActionTypes): Selection
   return state;
 };
 
-export const selectionTree = (state: SelectionTreeState = initialState, action: ActionTypes): SelectionTreeState => {
+export const selectionTree = (
+  state: SelectionTreeState = initialState,
+  action: ActionTypes,
+): SelectionTreeState => {
   switch (action.type) {
     case requestAction(EndPoints.selectionTree):
       return {

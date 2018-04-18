@@ -5,10 +5,18 @@ import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
-import {HasPageNumber, NormalizedPaginated, NormalizedPaginatedState} from '../paginatedDomainModels';
+import {
+  HasPageNumber,
+  NormalizedPaginated,
+  NormalizedPaginatedState,
+} from '../paginatedDomainModels';
 import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
-import {initialPaginatedDomain, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
+import {
+  initialPaginatedDomain,
+  meters,
+  paginatedDomainModels,
+} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
   const initialState: MetersState = initialPaginatedDomain<Meter>();

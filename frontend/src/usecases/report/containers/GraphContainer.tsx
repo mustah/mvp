@@ -235,7 +235,7 @@ class GraphComponent extends React.Component<Props, State> {
 const mapStateToProps = (
   {
     report: {selectedListItems},
-    searchParameters: {selection: {selected: {period}}},
+    searchParameters: {selection: {selectionParameters: {period}}},
     ui: {measurements: {selectedQuantities}},
   }: RootState): StateToProps =>
   ({

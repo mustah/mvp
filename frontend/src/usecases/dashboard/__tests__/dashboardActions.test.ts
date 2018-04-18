@@ -4,7 +4,7 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../components/dates/dateModels';
 import {authenticate} from '../../../services/restClient';
-import {SearchParameterState} from '../../../state/search/searchParameterReducer';
+import {SearchParameterState} from '../../../state/search/searchParameterModels';
 import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
 import {EncodedUriParameters} from '../../../types/Types';
 import {DASHBOARD_SUCCESS, dashboardRequest, fetchDashboard} from '../dashboardActions';
@@ -30,14 +30,13 @@ describe('dashboardActions', () => {
     const getSelectionWithResponseOk = async () => {
       const parameters: SearchParameterState = {
         selection: {
-          selected: {
+          selectionParameters: {
             period: Period.currentMonth,
           },
           isChanged: false,
           id: -1,
           name: '',
         },
-        saved: [],
       };
       const encoded: EncodedUriParameters = getMeterParameters(parameters);
 

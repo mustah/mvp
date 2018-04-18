@@ -12,7 +12,7 @@ public class UserSelection {
   public final UUID id;
   public final UUID ownerUserId;
   public final String name;
-  public final JsonNode data;
+  public final JsonNode selectionParameters;
   public final UUID organisationId;
 
   public UserSelection withUserId(UUID userId) {
@@ -20,7 +20,7 @@ public class UserSelection {
       id,
       userId,
       name,
-      data,
+      selectionParameters,
       organisationId
     );
   }
@@ -30,7 +30,7 @@ public class UserSelection {
       id,
       ownerUserId,
       name,
-      data,
+      selectionParameters,
       newOrganisationId
     );
   }

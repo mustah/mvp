@@ -4,7 +4,7 @@ import {bindActionCreators} from 'redux';
 import {RootState} from '../reducers/rootReducer';
 import {isSelectionPage} from '../selectors/routerSelectors';
 import {resetSelection, selectSavedSelection} from '../state/search/selection/selectionActions';
-import {SelectionState} from '../state/search/selection/selectionModels';
+import {UserSelection} from '../state/search/selection/selectionModels';
 import {getSelection} from '../state/search/selection/selectionSelectors';
 import {isSideMenuOpen} from '../state/ui/uiSelectors';
 import {OnClick, OnClickWithId} from '../types/Types';
@@ -16,7 +16,7 @@ interface StateToProps {
   children?: React.ReactNode;
   isSelectionPage: boolean;
   isSideMenuOpen: boolean;
-  selection: SelectionState;
+  selection: UserSelection;
 }
 
 interface DispatchToProps {

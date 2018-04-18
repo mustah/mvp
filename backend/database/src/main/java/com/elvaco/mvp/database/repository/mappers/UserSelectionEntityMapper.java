@@ -14,7 +14,7 @@ public class UserSelectionEntityMapper {
       entity.id,
       entity.ownerUserId,
       entity.name,
-      entity.data.getJson(),
+      entity.selectionParameters.getJson(),
       entity.organisationId
     );
   }
@@ -24,7 +24,7 @@ public class UserSelectionEntityMapper {
       model.id,
       model.ownerUserId,
       model.name,
-      new JsonField((ObjectNode) model.data),
+      new JsonField((ObjectNode) model.selectionParameters),
       model.organisationId
     );
   }
