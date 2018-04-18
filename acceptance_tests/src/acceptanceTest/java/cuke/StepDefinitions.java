@@ -18,6 +18,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -34,12 +35,20 @@ public class StepDefinitions {
       .orElse("http://" + getHostName() + ":4444");
     System.out.println("MVP_SERVER: " + mvpServer);
 
-    String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
-      .orElse("http://localhost:5555/wd/hub");
+    String localBrowser = Optional.ofNullable(System.getenv("LOCAL_BROWSER"))
+      .orElse(null);
 
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
-    driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
+    if (localBrowser != null) {
+      driver = new ChromeDriver(options);
+    } else {
+      options.addArguments("--headless");
+      String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
+        .orElse("http://localhost:5555/wd/hub");
+
+      driver = new RemoteWebDriver(new URL(seleniumChromeStandaloneUrl), options);
+    }
+
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
 
