@@ -15,7 +15,6 @@ import com.elvaco.mvp.testdata.IntegrationTestFixtureContext;
 import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UserSelectionDto;
 import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.After;
@@ -299,6 +298,43 @@ public class UserSelectionControllerTest extends IntegrationTest {
 
     assertThat(selection).isPresent();
     assertThat(selection.get().data.asJsonString()).isEqualTo(selectionJson);
+  }
+
+  @Test
+  public void userCanDeleteOwnedSelections() throws IOException {
+    UserSelectionDto userSelectionDto = createSelection(
+      context().user,
+      "My selection",
+      "{\"city\":\"Varberg\"}"
+    );
+
+    ResponseEntity<UserSelectionDto> post = as(context().user).delete(
+      "/user/selections/" + userSelectionDto.id,
+      UserSelectionDto.class
+    );
+
+    assertThat(post.getBody()).isEqualTo(userSelectionDto);
+    assertThat(repository.findOne(userSelectionDto.id)).isNull();
+  }
+
+  @Test
+  public void userCanNotDeleteOtherUsersSelections() throws IOException {
+    UserSelectionDto adminsSelectionDto = createSelection(
+      context().admin,
+      "Admins selection",
+      "{\"city\":\"Varberg\"}"
+    );
+
+    ResponseEntity<ErrorMessageDto> post = as(context().user).delete(
+      "/user/selections/" + adminsSelectionDto.id,
+      ErrorMessageDto.class
+    );
+
+    assertThat(post.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    assertThat(post.getBody().message)
+      .isEqualTo("Unable to find user selection with ID '" + adminsSelectionDto.id + "'");
+
+    assertThat(repository.findOne(adminsSelectionDto.id)).isNotNull();
   }
 
   private UserSelectionDto createSelection(

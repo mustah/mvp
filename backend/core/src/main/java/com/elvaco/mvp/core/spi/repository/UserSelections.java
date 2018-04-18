@@ -16,4 +16,6 @@ public interface UserSelections {
   List<UserSelection> findByOwnerUserIdAndOrganisationId(UUID ownerUserId, UUID organisationId);
 
   UserSelection save(UserSelection userSelection);
+
+  void delete(UserSelection userSelection);
 }

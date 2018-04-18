@@ -49,4 +49,9 @@ public class UserSelectionRepository implements UserSelections {
     return UserSelectionEntityMapper.toDomainModel(userSelectionJpaRepository.save(
       UserSelectionEntityMapper.toEntity(userSelection)));
   }
+
+  @Override
+  public void delete(UserSelection userSelection) {
+    userSelectionJpaRepository.delete(userSelection.id);
+  }
 }
