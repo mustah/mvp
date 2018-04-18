@@ -9,7 +9,7 @@ import com.elvaco.mvp.database.dialect.types.MeasurementUnitType;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 
 public class H2MeasurementUnitType extends MeasurementUnitType {
   @Override
@@ -21,7 +21,7 @@ public class H2MeasurementUnitType extends MeasurementUnitType {
   public Object nullSafeGet(
     ResultSet rs,
     String[] names,
-    SessionImplementor session,
+    SharedSessionContractImplementor session,
     Object owner
   ) throws HibernateException, SQLException {
     String value = rs.getString(names[0]);
@@ -33,7 +33,7 @@ public class H2MeasurementUnitType extends MeasurementUnitType {
 
   @Override
   public void nullSafeSet(
-    PreparedStatement st, Object value, int index, SessionImplementor
+    PreparedStatement st, Object value, int index, SharedSessionContractImplementor
     session
   ) throws HibernateException, SQLException {
     if (value == null || value.getClass() != MeasurementUnit.class) {
