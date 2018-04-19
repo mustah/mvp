@@ -42,7 +42,6 @@ public class StepDefinitions {
     if (localBrowser != null) {
       driver = new ChromeDriver(options);
     } else {
-      options.addArguments("--headless");
       String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
         .orElse("http://localhost:5555/wd/hub");
 
