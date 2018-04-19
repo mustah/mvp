@@ -7,12 +7,18 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Password;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.core.spi.security.PasswordEncoder;
+import com.elvaco.mvp.database.entity.user.UserEntity;
 import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.elvaco.mvp.database.repository.mappers.UserMapper.toDomainModel;
+import static com.elvaco.mvp.database.repository.mappers.UserMapper.toEntity;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -48,13 +54,21 @@ public class UserRepository implements Users {
 
   @Override
   public User create(User user) {
-    User userWithPassword = user.withPassword(passwordEncoder.encode(user.password));
-    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(userWithPassword)));
+    try {
+      UserEntity entity = toEntity(user.withPassword(passwordEncoder.encode(user.password)));
+      return toDomainModel(userJpaRepository.save(entity));
+    } catch (DataIntegrityViolationException e) {
+      if (e.getCause() instanceof ConstraintViolationException) {
+        throw new EmailAddressAlreadyExists();
+      } else {
+        throw e;
+      }
+    }
   }
 
   @Override
   public User update(User user) {
-    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(user)));
+    return toDomainModel(userJpaRepository.save(toEntity(user)));
   }
 
   @Override

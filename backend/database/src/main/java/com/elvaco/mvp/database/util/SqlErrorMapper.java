@@ -5,14 +5,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.elvaco.mvp.core.exception.UnitConversionError;
+import lombok.experimental.UtilityClass;
 
-public final class SqlErrorMapper {
+@UtilityClass
+public class SqlErrorMapper {
 
-  private static Pattern DIMENSION_MISMATCH_ERROR_RE =
+  private static final Pattern DIMENSION_MISMATCH_ERROR_RE =
     Pattern.compile("^.*dimension mismatch in \"@\" operation: \"\\d+\\.\\d+ (.*)\",.*$");
-  private static Pattern UNKNOWN_UNIT_ERROR_RE = Pattern.compile(".*unit .* is not known.*");
 
-  private SqlErrorMapper() {}
+  private static final Pattern UNKNOWN_UNIT_ERROR_RE =
+    Pattern.compile(".*unit .* is not known.*");
 
   public static Optional<RuntimeException> mapScalingError(
     String scale,

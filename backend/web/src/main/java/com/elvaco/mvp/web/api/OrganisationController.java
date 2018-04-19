@@ -8,7 +8,7 @@ import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.web.dto.OrganisationDto;
 import com.elvaco.mvp.web.exception.OrganisationNotFound;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,35 +18,28 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import static com.elvaco.mvp.web.mapper.OrganisationMapper.toDomainModel;
+import static com.elvaco.mvp.web.mapper.OrganisationMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
+@AllArgsConstructor
 @RestApi("/api/v1/organisations")
 public class OrganisationController {
 
   private final OrganisationUseCases organisationUseCases;
-  private final OrganisationMapper organisationMapper;
-
-  @Autowired
-  OrganisationController(
-    OrganisationUseCases organisationUseCases,
-    OrganisationMapper organisationMapper
-  ) {
-    this.organisationUseCases = organisationUseCases;
-    this.organisationMapper = organisationMapper;
-  }
 
   @GetMapping
   public List<OrganisationDto> allOrganisations() {
     return organisationUseCases.findAll()
       .stream()
-      .map(organisationMapper::toDto)
+      .map(OrganisationMapper::toDto)
       .collect(toList());
   }
 
   @GetMapping("{id}")
   public OrganisationDto organisationById(@PathVariable UUID id) {
     return organisationUseCases.findById(id)
-      .map(organisationMapper::toDto)
+      .map(OrganisationMapper::toDto)
       .orElseThrow(() -> new OrganisationNotFound(id));
   }
 
@@ -54,17 +47,13 @@ public class OrganisationController {
   public ResponseEntity<OrganisationDto> createOrganisation(
     @RequestBody OrganisationDto organisation
   ) {
-    OrganisationDto responseModel = organisationMapper.toDto(
-      organisationUseCases.create(organisationMapper.toDomainModel(organisation))
-    );
+    OrganisationDto responseModel = toDto(organisationUseCases.create(toDomainModel(organisation)));
     return ResponseEntity.status(HttpStatus.CREATED).body(responseModel);
   }
 
   @PutMapping
   public OrganisationDto updateOrganisation(@RequestBody OrganisationDto organisation) {
-    return organisationMapper.toDto(
-      organisationUseCases.update(organisationMapper.toDomainModel(organisation))
-    );
+    return toDto(organisationUseCases.update(toDomainModel(organisation)));
   }
 
   @DeleteMapping("{id}")
@@ -73,6 +62,6 @@ public class OrganisationController {
       .orElseThrow(() -> new OrganisationNotFound(id));
     // TODO delete should actually not remove the entity, just mark it as deleted.
     organisationUseCases.delete(organisation);
-    return organisationMapper.toDto(organisation);
+    return toDto(organisation);
   }
 }

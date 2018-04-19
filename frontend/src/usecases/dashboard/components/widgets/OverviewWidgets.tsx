@@ -17,12 +17,14 @@ interface Props {
 export const OverviewWidgets = (props: Props) => {
   const {widgets} = props;
 
-  const collectionWidget: WidgetModel = widgets.length > 0 ? widgets[0] : {
-    type: IndicatorType.collection,
-    total: 0,
-    status: Status.ok,
-    pending: 0,
-  };
+  const collectionWidget: WidgetModel = widgets.length
+    ? widgets[0]
+    : {
+      type: IndicatorType.collection,
+      status: Status.ok,
+      total: 0,
+      pending: 0,
+    };
 
   return (
     <Row className="OverviewWidgets">

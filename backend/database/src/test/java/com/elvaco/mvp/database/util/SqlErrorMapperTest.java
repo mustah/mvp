@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("ConstantConditions")
 public class SqlErrorMapperTest {
 
-  @SuppressWarnings("ConstantConditions")
   @Test
   public void mapsDimensionMismatchError() {
     Optional<RuntimeException> exc = SqlErrorMapper.mapScalingError("K", "ERROR: "
@@ -20,7 +20,6 @@ public class SqlErrorMapperTest {
     assertThat(exc.get()).isInstanceOf(UnitConversionError.class);
   }
 
-  @SuppressWarnings("ConstantConditions")
   @Test
   public void mapsUnknownUnitError() {
     Optional<RuntimeException> exc = SqlErrorMapper.mapScalingError("K", "ERROR:  unit "

@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
@@ -38,13 +39,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
 
-  private final OrganisationMapper organisationMapper = new OrganisationMapper();
-
   @Autowired
   private Users users;
-
-  @Autowired
-  private UserMapper userMapper;
 
   @Autowired
   private Organisations organisations;
@@ -155,7 +151,7 @@ public class UserControllerTest extends IntegrationTest {
         .asUser()
         .build()
     );
-    UserDto userDto = userMapper.toDto(user);
+    UserDto userDto = UserMapper.toDto(user);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
@@ -274,6 +270,23 @@ public class UserControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void createNewUserWithExistingEmail() {
+    UserWithPasswordDto firstUser = createUserDto("first@user.com", "first user");
+
+    ResponseEntity<UserDto> response = asSuperAdmin().post("/users", firstUser, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    UserWithPasswordDto secondUser = createUserDto("first@user.com", "second user");
+
+    ResponseEntity<ErrorMessageDto> errorResponse = asSuperAdmin()
+      .post("/users", secondUser, ErrorMessageDto.class);
+
+    assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(errorResponse.getBody().message).isEqualTo("Email address already exists");
+  }
+
+  @Test
   public void adminCanCreateUserOfSameOrganisation() {
     UserWithPasswordDto user = createUserDto("stranger@danger.us", "hello");
 
@@ -359,7 +372,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "secret stuff";
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -370,7 +383,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = password;
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }
@@ -381,7 +394,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "i am batman";
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(organisation);
+    user.organisation = OrganisationMapper.toDto(organisation);
     user.roles = singletonList(USER.role);
     return user;
   }

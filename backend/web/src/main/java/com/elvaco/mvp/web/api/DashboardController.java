@@ -6,31 +6,26 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
 import com.elvaco.mvp.web.dto.WidgetDto;
 import com.elvaco.mvp.web.dto.WidgetType;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
+@RequiredArgsConstructor
 @RestApi("/api/v1/dashboards")
 public class DashboardController {
-  private final DashboardUseCases dashboardUseCases;
 
-  @Autowired
-  DashboardController(
-    DashboardUseCases dashboardUseCases
-  ) {
-    this.dashboardUseCases = dashboardUseCases;
-  }
+  private final DashboardUseCases dashboardUseCases;
 
   @GetMapping("current")
   public DashboardDto getAllDashboards(
@@ -49,12 +44,13 @@ public class DashboardController {
 
   private Optional<WidgetDto> getCollectionWidget(RequestParameters parameters) {
     return dashboardUseCases.getMeasurementsStatistics(parameters)
-      .map(collectionStats -> new WidgetDto(
-             WidgetType.COLLECTION.name,
-             collectionStats.expected,
-             OK.name,
-             collectionStats.expected - collectionStats.actual
-           )
+      .map(collectionStats ->
+        new WidgetDto(
+          WidgetType.COLLECTION.name,
+          StatusType.OK.name,
+          collectionStats.expected,
+          collectionStats.expected - collectionStats.actual
+        )
       );
   }
 }

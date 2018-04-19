@@ -1,22 +1,14 @@
 package com.elvaco.mvp.web.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
 public class WidgetDto {
+
   public String type;
-  public double total;
   public String status;
+  public double total;
   public double pending;
-
-  public WidgetDto() {}
-
-  public WidgetDto(
-    String type,
-    double total,
-    String status,
-    double pending
-  ) {
-    this.type = type;
-    this.total = total;
-    this.status = status;
-    this.pending = pending;
-  }
 }

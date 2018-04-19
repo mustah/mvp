@@ -2,16 +2,18 @@ package com.elvaco.mvp.web.mapper;
 
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.web.dto.OrganisationDto;
+import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;
 
+@UtilityClass
 public class OrganisationMapper {
 
-  public OrganisationDto toDto(Organisation organisation) {
+  public static OrganisationDto toDto(Organisation organisation) {
     return new OrganisationDto(organisation.id, organisation.name, organisation.slug);
   }
 
-  public Organisation toDomainModel(OrganisationDto organisationDto) {
+  public static Organisation toDomainModel(OrganisationDto organisationDto) {
     return new Organisation(
       organisationDto.id != null ? organisationDto.id : randomUUID(),
       organisationDto.name,

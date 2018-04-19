@@ -4,10 +4,8 @@ import com.elvaco.mvp.web.mapper.GatewayMapper;
 import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import com.elvaco.mvp.web.mapper.MeasurementMapper;
 import com.elvaco.mvp.web.mapper.MeterStatusLogMapper;
-import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.SelectionTreeMapper;
 import com.elvaco.mvp.web.mapper.SelectionsMapper;
-import com.elvaco.mvp.web.mapper.UserMapper;
 import com.elvaco.mvp.web.mapper.UserSelectionDtoMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,16 +20,6 @@ class MapperConfig {
       new GatewayMapper(),
       new MeasurementMapper()
     );
-  }
-
-  @Bean
-  OrganisationMapper organisationMapper() {
-    return new OrganisationMapper();
-  }
-
-  @Bean
-  UserMapper userMapper() {
-    return new UserMapper(new OrganisationMapper());
   }
 
   @Bean

@@ -51,11 +51,11 @@ public class ApiExceptionHandlerTest {
   }
 
   @ResponseStatus(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED)
-  static class BandwidthExceededException extends Exception {
+  private static class BandwidthExceededException extends Exception {
 
     private static final long serialVersionUID = 1;
 
-    BandwidthExceededException(String message) {
+    private BandwidthExceededException(String message) {
       super(message);
     }
   }

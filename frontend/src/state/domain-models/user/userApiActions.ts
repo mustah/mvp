@@ -1,11 +1,11 @@
 import {Dispatch} from 'react-redux';
 import {RootState} from '../../../reducers/rootReducer';
+import {EndPoints} from '../../../services/endPoints';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {ErrorResponse} from '../../../types/Types';
 import {authSetUser} from '../../../usecases/auth/authActions';
 import {changeLanguage} from '../../language/languageActions';
 import {showFailMessage, showSuccessMessage} from '../../ui/message/messageActions';
-import {EndPoints} from '../../../services/endPoints';
 import {
   clearError,
   deleteRequest,
@@ -28,10 +28,10 @@ export const addUser = postRequest<User>(EndPoints.users, {
       {...user},
     )));
   },
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to create user: {{error}}',
-      {error: error.message},
+      {error: firstUpperTranslated(message.toLowerCase())},
     )));
   },
 });
@@ -43,10 +43,10 @@ export const modifyUser = putRequest<User>(EndPoints.users, {
       {...user},
     )));
   },
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to update user: {{error}}',
-      {error: error.message},
+      {error: firstUpperTranslated(message.toLowerCase())},
     )));
   },
 });
@@ -57,10 +57,10 @@ export const modifyProfile = putRequest<User>(EndPoints.users, {
     dispatch(changeLanguage(user.language));
     dispatch(showSuccessMessage(firstUpperTranslated('successfully updated profile', {...user})));
   },
-  afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+  afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
     dispatch(showFailMessage(firstUpperTranslated(
       'failed to update profile: {{error}}',
-      {error: error.message},
+      {error: firstUpperTranslated(message.toLowerCase())},
     )));
   },
 });
@@ -74,10 +74,10 @@ export const deleteUser = deleteRequest<User>(EndPoints.users, {
         )),
       );
     },
-    afterFailure: (error: ErrorResponse, dispatch: Dispatch<RootState>) => {
+    afterFailure: ({message}: ErrorResponse, dispatch: Dispatch<RootState>) => {
       dispatch(showFailMessage(firstUpperTranslated(
         'failed to delete the user: {{error}}',
-        {error: error.message},
+        {error: firstUpperTranslated(message.toLowerCase())},
       )));
     },
   },
