@@ -2,6 +2,7 @@ import {
   FORMAT_DATE_DAY_MONTH,
   FORMAT_DATE_FULL_MINUTE,
   formatDate,
+  round,
   roundMeasurement,
 } from '../formatters';
 
@@ -20,6 +21,27 @@ describe('formatters', () => {
     test('String measurement is almost always returned as is', () => {
       expect(roundMeasurement('A string value')).toEqual('A string value');
       expect(roundMeasurement('')).toEqual('0.000');
+    });
+
+  });
+
+  describe('round', () => {
+
+    test('Round to three decimals', () => {
+      expect(round(304.4410237975271, '0.000')).toEqual('304.441');
+    });
+
+    test('Round to two decimals', () => {
+      expect(round(304.4410237975271, '0.00')).toEqual('304.44');
+    });
+
+    test('Round does not truncate', () => {
+      expect(round(4.05, '0.0')).toEqual('4.1');
+    });
+
+    test('String measurement is almost always returned as is', () => {
+      expect(round('A string value', '0.0')).toEqual('A string value');
+      expect(round('', '0.0')).toEqual('0.0');
     });
 
   });

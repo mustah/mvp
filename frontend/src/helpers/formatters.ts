@@ -3,11 +3,20 @@ import * as numeral from 'numeral';
 
 export const FORMAT_DATE_DAY_MONTH = 'DD/MM';
 export const FORMAT_DATE_FULL_MINUTE = 'YY-MM-DD hh:mm';
+export const FORMAT_COLLECTION_PERCENT = '0.0';
+const FORMAT_MEASUREMENT = '0.000';
 
 export const formatDate = (date: Date, format?: string): string =>
   moment(date).format(format || FORMAT_DATE_DAY_MONTH);
+
+export const roundCollectionPercentage = (num: number | string): string =>
+  round(num, FORMAT_COLLECTION_PERCENT) + '%';
+
 export const roundMeasurement = (num: number | string): string =>
-  isNaN(Number(num)) ? num : numeral(num).format('0.000');
+  round(num, FORMAT_MEASUREMENT);
+
+export const round = (num: number | string, format: string): string =>
+  isNaN(Number(num)) ? num : numeral(num).format(format);
 
 export const unixTimestampMillisecondsToDate = (timestamp: number): string =>
   formatDate(new Date(timestamp), FORMAT_DATE_FULL_MINUTE);
