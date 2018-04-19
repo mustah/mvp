@@ -14,7 +14,10 @@ import {MissingDataTitle} from '../../components/texts/Titles';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {
+  clearErrorMeters,
+  fetchMeters,
+} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {
   getPageError,
@@ -76,8 +79,6 @@ class MeterList extends React.Component<Props> {
     fetchMeterMapMarkers(parameters);
   }
 
-  clearError = () => this.props.clearError({page: this.props.pagination.page});
-
   render() {
     const {
       result,
@@ -101,6 +102,14 @@ class MeterList extends React.Component<Props> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
+    const renderCollectionPercentage = ({collectionStatus}: Meter) => collectionStatus + '%';
+    const collectionPercentageHeader = (
+      <TableHead
+        className="number"
+      >
+        {translate('collection percentage')}
+      </TableHead>
+    );
 
     const changePage = (page: number) => changePaginationPage({
       entityType,
@@ -143,6 +152,11 @@ class MeterList extends React.Component<Props> {
                 renderCell={renderGatewaySerial}
               />
               <TableColumn
+                cellClassName="number"
+                header={collectionPercentageHeader}
+                renderCell={renderCollectionPercentage}
+              />
+              <TableColumn
                 header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
                 renderCell={renderStatusCell}
               />
@@ -161,6 +175,8 @@ class MeterList extends React.Component<Props> {
       </Loader>
     );
   }
+
+  clearError = () => this.props.clearError({page: this.props.pagination.page});
 }
 
 const mapStateToProps = (

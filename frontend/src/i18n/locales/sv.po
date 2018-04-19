@@ -212,6 +212,9 @@ msgstr "gateway"
 msgid "status change"
 msgstr "statusförändring"
 
+msgid "collection percentage"
+msgstr "collection"
+
 msgid "unknown"
 msgstr "okänd"
 
