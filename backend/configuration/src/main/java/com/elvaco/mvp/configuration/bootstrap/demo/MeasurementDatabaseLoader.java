@@ -30,7 +30,7 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
   private static final int DAYS_TO_ADD = 10;
   private final PhysicalMeters physicalMeters;
   private final SettingUseCases settingUseCases;
-  private ThreadLocalRandom random = ThreadLocalRandom.current();
+  private final ThreadLocalRandom random = ThreadLocalRandom.current();
 
   @Autowired
   private MeasurementJpaRepositoryImpl measurementJpaRepository;
