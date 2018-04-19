@@ -11,6 +11,7 @@ import {TabContent} from '../../components/tabs/components/TabContent';
 import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
+import {Normal} from '../../components/texts/Texts';
 import {formatLabelTimeStamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
@@ -22,8 +23,8 @@ import {Quantity} from '../../state/ui/graph/measurement/measurementModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {Children, Identifiable} from '../../types/Types';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {Map} from '../../usecases/map/containers/Map';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {meterMeasurementsForTable, normalizedStatusChangelogFor} from './dialogHelper';
 
@@ -46,8 +47,10 @@ export interface RenderableMeasurement extends Identifiable {
 const renderQuantity = ({quantity}: RenderableMeasurement): string => quantity as string;
 const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
   value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
-const renderCreated = ({created}: RenderableMeasurement): string =>
-  created ? formatLabelTimeStamp(created) : firstUpperTranslated('never collected');
+const renderCreated = ({created}: RenderableMeasurement): Children =>
+  created
+    ? formatLabelTimeStamp(created)
+    : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
 const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
 const renderDate = (item: MeterStatusChangelog): string => item.start;

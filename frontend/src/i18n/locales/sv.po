@@ -174,7 +174,7 @@ msgid "facility id"
 msgstr "anläggnings-ID"
 
 msgid "never collected"
-msgstr "har aldrig insamlats"
+msgstr "ej insamlad"
 
 msgid "latest value"
 msgstr "senaste"
