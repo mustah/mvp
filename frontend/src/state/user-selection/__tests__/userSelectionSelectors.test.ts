@@ -27,16 +27,10 @@ import {
   SelectionListItem,
   SelectionParameter,
   UserSelection,
-  UserSelectionState
+  UserSelectionState,
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
-import {
-  composePaginatedCombiner,
-  getCities,
-  getSelectedPeriod,
-  getSelection,
-  UriLookupStatePaginated,
-} from '../userSelectionSelectors';
+import {composePaginatedCombiner, getCities, getSelection, UriLookupStatePaginated} from '../userSelectionSelectors';
 
 describe('userSelectionSelectors', () => {
 
@@ -186,8 +180,8 @@ describe('userSelectionSelectors', () => {
   describe('get selected period', () => {
 
     it('there is a default period', () => {
-      expect(getSelectedPeriod(initialState.userSelection))
-        .toEqual(initialState.userSelection.selectionParameters.period);
+      expect(initialState.userSelection.selectionParameters.period)
+        .toEqual(Period.latest);
     });
 
     it('get selected period', () => {
@@ -196,7 +190,7 @@ describe('userSelectionSelectors', () => {
         {type: SELECT_PERIOD, payload: Period.currentWeek},
       );
 
-      expect(getSelectedPeriod(state.userSelection)).toBe(Period.currentWeek);
+      expect(state.userSelection.selectionParameters.period).toBe(Period.currentWeek);
     });
   });
 

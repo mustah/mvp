@@ -1,5 +1,4 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {Period} from '../../components/dates/dateModels';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
   encodedUriParametersForAllGateways,
@@ -18,7 +17,7 @@ import {
   SelectedParameters,
   SelectionListItem,
   UserSelection,
-  UserSelectionState
+  UserSelectionState,
 } from './userSelectionModels';
 
 const getSelectedIds = (state: LookupState): SelectedParameters =>
@@ -135,10 +134,5 @@ export const getGatewayParameters =
     getSelectedParameters,
     encodedUriParametersForAllGateways,
   );
-
-export const getSelectedPeriod = createSelector<UserSelection, SelectedParameters, Period>(
-  (selection: UserSelection) => selection.selectionParameters,
-  (selected: SelectedParameters) => selected.period,
-);
 
 export const getSelection = (state: UserSelectionState): UserSelection => state.userSelection;
