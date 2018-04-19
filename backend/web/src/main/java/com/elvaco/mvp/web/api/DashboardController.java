@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.adapters.spring.RequestParametersAdapter;
+import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.DashboardUseCases;
 import com.elvaco.mvp.web.dto.DashboardDto;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
@@ -44,10 +44,11 @@ public class DashboardController {
 
   private Optional<WidgetDto> getCollectionWidget(RequestParameters parameters) {
     return dashboardUseCases.getMeasurementsStatistics(parameters)
-      .map(collectionStats -> new WidgetDto(
+      .map(collectionStats ->
+        new WidgetDto(
           WidgetType.COLLECTION.name,
+          StatusType.OK.name,
           collectionStats.expected,
-          OK.name,
           collectionStats.expected - collectionStats.actual
         )
       );

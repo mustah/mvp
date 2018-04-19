@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.spi.repository.Users;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
+import com.elvaco.mvp.web.dto.ErrorMessageDto;
 import com.elvaco.mvp.web.dto.UnauthorizedDto;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserTokenDto;
@@ -266,6 +267,23 @@ public class UserControllerTest extends IntegrationTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     assertThat(savedUser.id).isNotNull();
     assertThat(savedUser.name).isEqualTo(user.name);
+  }
+
+  @Test
+  public void createNewUserWithExistingEmail() {
+    UserWithPasswordDto firstUser = createUserDto("first@user.com", "first user");
+
+    ResponseEntity<UserDto> response = asSuperAdmin().post("/users", firstUser, UserDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+    UserWithPasswordDto secondUser = createUserDto("first@user.com", "second user");
+
+    ResponseEntity<ErrorMessageDto> errorResponse = asSuperAdmin()
+      .post("/users", secondUser, ErrorMessageDto.class);
+
+    assertThat(errorResponse.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    assertThat(errorResponse.getBody().message).isEqualTo("Email address already exists");
   }
 
   @Test

@@ -271,6 +271,9 @@ msgstr "skapade användaren {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "misslyckades med att skapa användare: {{error}}"
 
+msgid "email address already exists"
+msgstr "e-postadressen finns redan"
+
 msgid "successfully updated user {{name}} ({{email}})"
 msgstr "uppdaterade användare {{name}} ({{email}}"
 

@@ -271,6 +271,9 @@ msgstr "successfully created the user {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "failed to create user: {{error}}"
 
+msgid "email address already exists"
+msgstr "email address already exists"
+
 msgid "successfully updated user {{name}} ({{email}})"
 msgstr "successfully updated user {{name}} ({{email}})"
 
