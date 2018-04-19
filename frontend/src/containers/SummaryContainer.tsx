@@ -6,7 +6,7 @@ import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
-import {getMeterParameters} from '../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../state/user-selection/userSelectionSelectors';
 import {fetchSummary} from '../state/summary/summaryApiActions';
 import {SelectionSummary} from '../state/summary/summaryModels';
 import {getSelectionSummary} from '../state/summary/summarySelection';

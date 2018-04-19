@@ -1,13 +1,12 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {Period} from '../../../components/dates/dateModels';
-import {EndPoints} from '../../../services/endPoints';
-import {Action, uuid} from '../../../types/Types';
+import {Period} from '../../components/dates/dateModels';
+import {EndPoints} from '../../services/endPoints';
+import {Action, uuid} from '../../types/Types';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,
   domainModelsPutSuccess,
-} from '../../domain-models/domainModelsActions';
-import {UserSelectionState} from '../searchParameterModels';
+} from '../domain-models/domainModelsActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -15,8 +14,8 @@ import {
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-} from './selectionActions';
-import {FilterParam, SelectionParameter, UserSelection} from './selectionModels';
+} from './userSelectionActions';
+import {FilterParam, SelectionParameter, UserSelection, UserSelectionState} from './userSelectionModels';
 
 export const initialState: UserSelectionState = {
   userSelection: {

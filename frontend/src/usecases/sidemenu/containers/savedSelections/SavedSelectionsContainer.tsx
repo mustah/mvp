@@ -22,9 +22,9 @@ import {
   deleteUserSelection,
   fetchUserSelections,
   selectSavedSelection,
-} from '../../../../state/search/selection/selectionActions';
-import {UserSelection} from '../../../../state/search/selection/selectionModels';
-import {getSelection} from '../../../../state/search/selection/selectionSelectors';
+} from '../../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
+import {getSelection} from '../../../../state/user-selection/userSelectionSelectors';
 import {Callback, CallbackSingle, OnClick, uuid} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
 import {SavedSelectionActionsDropdown} from '../../components/savedSelections/SavedSelectionActionsDropdown';

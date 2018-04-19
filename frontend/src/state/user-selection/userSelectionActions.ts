@@ -1,18 +1,18 @@
 import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Dispatch} from 'redux';
-import {Period} from '../../../components/dates/dateModels';
-import {Maybe} from '../../../helpers/Maybe';
-import {GetState, RootState} from '../../../reducers/rootReducer';
-import {EndPoints} from '../../../services/endPoints';
-import {firstUpperTranslated} from '../../../services/translationService';
-import {ErrorResponse, uuid} from '../../../types/Types';
-import {NormalizedState} from '../../domain-models/domainModels';
-import {deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../../domain-models/domainModelsActions';
-import {showFailMessage} from '../../ui/message/messageActions';
-import {FilterParam, SelectionParameter, UserSelection} from './selectionModels';
-import {userSelectionSchema} from './selectionSchema';
-import {getSelection} from './selectionSelectors';
+import {Period} from '../../components/dates/dateModels';
+import {Maybe} from '../../helpers/Maybe';
+import {GetState, RootState} from '../../reducers/rootReducer';
+import {EndPoints} from '../../services/endPoints';
+import {firstUpperTranslated} from '../../services/translationService';
+import {ErrorResponse, uuid} from '../../types/Types';
+import {NormalizedState} from '../domain-models/domainModels';
+import {deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
+import {showFailMessage} from '../ui/message/messageActions';
+import {FilterParam, SelectionParameter, UserSelection} from './userSelectionModels';
+import {userSelectionSchema} from './userSelectionSchema';
+import {getSelection} from './userSelectionSelectors';
 
 export const SELECT_PERIOD = 'SELECT_PERIOD';
 

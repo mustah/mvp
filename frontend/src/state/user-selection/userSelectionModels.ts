@@ -1,7 +1,6 @@
-import {Period} from '../../../components/dates/dateModels';
-import {IdNamed, ItemOrArray, uuid} from '../../../types/Types';
-import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
-import {UserSelectionState} from '../searchParameterModels';
+import {Period} from '../../components/dates/dateModels';
+import {IdNamed, ItemOrArray, uuid} from '../../types/Types';
+import {DomainModelsState, SelectionEntity} from '../domain-models/domainModels';
 
 export const enum ParameterName {
   countries = 'countries',
@@ -46,6 +45,10 @@ export interface SelectedParameters {
 export interface UserSelection extends IdNamed {
   selectionParameters: SelectedParameters;
   isChanged: boolean;
+}
+
+export interface UserSelectionState {
+  userSelection: UserSelection;
 }
 
 export interface LookupState {

@@ -4,7 +4,7 @@ import {PieChartSelector, PieChartSelectorProps} from '../../../components/pie-c
 import {Maybe} from '../../../helpers/Maybe';
 import {translate} from '../../../services/translationService';
 import {MeterDataSummary} from '../../../state/domain-models-paginated/meter/meterModels';
-import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/search/selection/selectionModels';
+import {FilterParam, OnSelectParameter, ParameterName} from '../../../state/user-selection/userSelectionModels';
 import {ItemOrArray} from '../../../types/Types';
 
 // TODO: Perhaps move this to themes and make customizable.

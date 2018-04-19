@@ -9,8 +9,8 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-} from '../search/selection/selectionActions';
-import {UserSelection} from '../search/selection/selectionModels';
+} from '../user-selection/userSelectionActions';
+import {UserSelection} from '../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
   domainModelsClearError,

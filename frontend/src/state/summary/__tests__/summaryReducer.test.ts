@@ -5,7 +5,7 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-} from '../../search/selection/selectionActions';
+} from '../../user-selection/userSelectionActions';
 import {makeActionsOf, RequestHandler} from '../summaryApiActions';
 import {SelectionSummary, SummaryState} from '../summaryModels';
 import {initialState, summary} from '../summaryReducer';

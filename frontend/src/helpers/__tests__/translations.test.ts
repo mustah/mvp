@@ -1,5 +1,5 @@
 import {initTranslations} from '../../i18n/__tests__/i18nMock';
-import {ParameterName} from '../../state/search/selection/selectionModels';
+import {ParameterName} from '../../state/user-selection/userSelectionModels';
 import {getTranslationOrName, statusTranslation, translatedErrorMessage} from '../translations';
 
 describe('translations', () => {

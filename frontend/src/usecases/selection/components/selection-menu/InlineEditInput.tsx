@@ -5,7 +5,7 @@ import {ButtonLink} from '../../../../components/buttons/ButtonLink';
 import {Row, RowBottom} from '../../../../components/layouts/row/Row';
 import {idGenerator} from '../../../../helpers/idGenerator';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {OnSelectSelection, UserSelection} from '../../../../state/search/selection/selectionModels';
+import {OnSelectSelection, UserSelection} from '../../../../state/user-selection/userSelectionModels';
 import {IdNamed, OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 import './InlineEditInput.scss';
 

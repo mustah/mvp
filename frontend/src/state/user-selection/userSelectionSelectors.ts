@@ -1,6 +1,6 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {Period} from '../../../components/dates/dateModels';
-import {getTranslationOrName} from '../../../helpers/translations';
+import {Period} from '../../components/dates/dateModels';
+import {getTranslationOrName} from '../../helpers/translations';
 import {
   encodedUriParametersForAllGateways,
   encodedUriParametersForAllMeters,
@@ -8,12 +8,18 @@ import {
   encodedUriParametersForMeters,
   PaginatedParametersCombiner,
   ParameterCallbacks,
-} from '../../../helpers/urlFactory';
-import {EncodedUriParameters, uuid} from '../../../types/Types';
-import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
-import {Pagination} from '../../ui/pagination/paginationModels';
-import {UserSelectionState} from '../searchParameterModels';
-import {LookupState, ParameterName, SelectedParameters, SelectionListItem, UserSelection} from './selectionModels';
+} from '../../helpers/urlFactory';
+import {EncodedUriParameters, uuid} from '../../types/Types';
+import {DomainModel, SelectionEntity} from '../domain-models/domainModels';
+import {Pagination} from '../ui/pagination/paginationModels';
+import {
+  LookupState,
+  ParameterName,
+  SelectedParameters,
+  SelectionListItem,
+  UserSelection,
+  UserSelectionState
+} from './userSelectionModels';
 
 const getSelectedIds = (state: LookupState): SelectedParameters =>
   state.userSelection.userSelection.selectionParameters;

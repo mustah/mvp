@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {SelectionListItem} from '../../state/search/selection/selectionModels';
+import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {Normal} from '../texts/Texts';
 import {DropdownProps, DropdownSelector} from './DropdownSelector';
 import './DropdownSelector.scss';

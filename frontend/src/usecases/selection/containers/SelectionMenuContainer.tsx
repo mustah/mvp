@@ -10,9 +10,9 @@ import {
   saveSelection,
   selectSavedSelection,
   updateSelection,
-} from '../../../state/search/selection/selectionActions';
-import {OnSelectSelection, UserSelection} from '../../../state/search/selection/selectionModels';
-import {getSelection} from '../../../state/search/selection/selectionSelectors';
+} from '../../../state/user-selection/userSelectionActions';
+import {OnSelectSelection, UserSelection} from '../../../state/user-selection/userSelectionModels';
+import {getSelection} from '../../../state/user-selection/userSelectionSelectors';
 import {OnClick, OnClickWithId} from '../../../types/Types';
 import {InlineEditInput} from '../components/selection-menu/InlineEditInput';
 

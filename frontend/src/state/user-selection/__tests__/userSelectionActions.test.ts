@@ -1,11 +1,10 @@
 import {routerActions} from 'react-router-redux';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-import {testData} from '../../../../__tests__/testDataFactory';
-import {Period} from '../../../../components/dates/dateModels';
-import {RootState} from '../../../../reducers/rootReducer';
-import {IdNamed} from '../../../../types/Types';
-import {UserSelectionState} from '../../searchParameterModels';
+import {testData} from '../../../__tests__/testDataFactory';
+import {Period} from '../../../components/dates/dateModels';
+import {RootState} from '../../../reducers/rootReducer';
+import {IdNamed} from '../../../types/Types';
 import {
   ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
@@ -15,13 +14,13 @@ import {
   selectPeriod,
   selectSavedSelection,
   toggleParameterInSelection,
-} from '../selectionActions';
-import {ParameterName, SelectionParameter} from '../selectionModels';
-import {initialState} from '../selectionReducer';
+} from '../userSelectionActions';
+import {ParameterName, SelectionParameter, UserSelectionState} from '../userSelectionModels';
+import {initialState} from '../userSelectionReducer';
 
 const configureMockStore = configureStore([thunk]);
 
-describe('selectionActions', () => {
+describe('userSelectionActions', () => {
 
   const country = testData.selections.locations.countries[0];
   const gothenburg: IdNamed = {name: country.cities[0].name, id: 'got'};

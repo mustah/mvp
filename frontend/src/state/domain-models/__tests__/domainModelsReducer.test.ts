@@ -6,8 +6,8 @@ import {Action, IdNamed} from '../../../types/Types';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
-import {ADD_PARAMETER_TO_SELECTION} from '../../search/selection/selectionActions';
-import {ParameterName} from '../../search/selection/selectionModels';
+import {ADD_PARAMETER_TO_SELECTION} from '../../user-selection/userSelectionActions';
+import {ParameterName} from '../../user-selection/userSelectionModels';
 import {DomainModelsState, Normalized, NormalizedState, SelectionEntity} from '../domainModels';
 import {
   deleteRequestOf,

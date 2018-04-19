@@ -1,6 +1,6 @@
 import {ErrorResponse, Identifiable, IdNamed, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
-import {UserSelection} from '../search/selection/selectionModels';
+import {UserSelection} from '../user-selection/userSelectionModels';
 import {Address} from './location/locationModels';
 import {Organisation} from './organisation/organisationModels';
 import {UserState} from './user/userModels';

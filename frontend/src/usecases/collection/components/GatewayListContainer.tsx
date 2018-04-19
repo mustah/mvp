@@ -22,7 +22,7 @@ import {
   getPaginatedEntities,
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getPaginatedGatewayParameters} from '../../../state/search/selection/selectionSelectors';
+import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';

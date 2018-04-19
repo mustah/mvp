@@ -5,7 +5,7 @@ import * as React from 'react';
 import {List, ListRowProps} from 'react-virtualized';
 import {dropDownStyle} from '../../app/themes';
 import {firstUpperTranslated} from '../../services/translationService';
-import {SelectionListItem} from '../../state/search/selection/selectionModels';
+import {SelectionListItem} from '../../state/user-selection/userSelectionModels';
 import {Children, IdNamed} from '../../types/Types';
 import {IconDropDown} from '../icons/IconDropDown';
 import {Column} from '../layouts/column/Column';

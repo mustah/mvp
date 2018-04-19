@@ -14,7 +14,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';

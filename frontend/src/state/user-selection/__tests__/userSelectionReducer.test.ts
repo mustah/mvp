@@ -1,23 +1,22 @@
-import {Period} from '../../../../components/dates/dateModels';
-import {EndPoints} from '../../../../services/endPoints';
-import {IdNamed} from '../../../../types/Types';
+import {Period} from '../../../components/dates/dateModels';
+import {EndPoints} from '../../../services/endPoints';
+import {IdNamed} from '../../../types/Types';
 import {
   domainModelsDeleteSuccess,
   domainModelsPostSuccess,
   domainModelsPutSuccess,
-} from '../../../domain-models/domainModelsActions';
-import {UserSelectionState} from '../../searchParameterModels';
+} from '../../domain-models/domainModelsActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
   SET_SELECTION,
-} from '../selectionActions';
-import {ParameterName, SelectionParameter, UserSelection} from '../selectionModels';
-import {initialState, userSelection} from '../selectionReducer';
+} from '../userSelectionActions';
+import {ParameterName, SelectionParameter, UserSelection, UserSelectionState} from '../userSelectionModels';
+import {initialState, userSelection} from '../userSelectionReducer';
 
-describe('selectionReducer', () => {
+describe('userSelectionReducer', () => {
 
   const mockPayload: UserSelection = {
     id: 5,

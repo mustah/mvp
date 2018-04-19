@@ -1,12 +1,12 @@
 import {normalize} from 'normalizr';
-import {testData} from '../../../../__tests__/testDataFactory';
-import {Period} from '../../../../components/dates/dateModels';
-import {dateRange, momentWithTimeZone, toApiParameters} from '../../../../helpers/dateHelpers';
-import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../../helpers/urlFactory';
-import {EndPoints} from '../../../../services/endPoints';
-import {EncodedUriParameters, IdNamed} from '../../../../types/Types';
-import {DomainModelsState, Normalized, SelectionEntity} from '../../../domain-models/domainModels';
-import {getRequestOf} from '../../../domain-models/domainModelsActions';
+import {testData} from '../../../__tests__/testDataFactory';
+import {Period} from '../../../components/dates/dateModels';
+import {dateRange, momentWithTimeZone, toApiParameters} from '../../../helpers/dateHelpers';
+import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../helpers/urlFactory';
+import {EndPoints} from '../../../services/endPoints';
+import {EncodedUriParameters, IdNamed} from '../../../types/Types';
+import {DomainModelsState, Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {getRequestOf} from '../../domain-models/domainModelsActions';
 import {
   addresses,
   alarms,
@@ -15,24 +15,30 @@ import {
   initialDomain,
   meterStatuses,
   users,
-} from '../../../domain-models/domainModelsReducer';
-import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
-import {User} from '../../../domain-models/user/userModels';
-import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
-import {getPagination} from '../../../ui/pagination/paginationSelectors';
-import {UserSelectionState} from '../../searchParameterModels';
-import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../selectionActions';
-import {LookupState, ParameterName, SelectionListItem, SelectionParameter, UserSelection} from '../selectionModels';
-import {initialState, userSelection} from '../selectionReducer';
+} from '../../domain-models/domainModelsReducer';
+import {selectionsSchema} from '../../domain-models/selections/selectionsSchemas';
+import {User} from '../../domain-models/user/userModels';
+import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
+import {getPagination} from '../../ui/pagination/paginationSelectors';
+import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../userSelectionActions';
+import {
+  LookupState,
+  ParameterName,
+  SelectionListItem,
+  SelectionParameter,
+  UserSelection,
+  UserSelectionState
+} from '../userSelectionModels';
+import {initialState, userSelection} from '../userSelectionReducer';
 import {
   composePaginatedCombiner,
   getCities,
   getSelectedPeriod,
   getSelection,
   UriLookupStatePaginated,
-} from '../selectionSelectors';
+} from '../userSelectionSelectors';
 
-describe('selectionSelectors', () => {
+describe('userSelectionSelectors', () => {
 
   const normalizedSelections = normalize(testData.selections, selectionsSchema);
   const {cities: cityEntities} = normalizedSelections.entities;
