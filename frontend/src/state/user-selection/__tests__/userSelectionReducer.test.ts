@@ -1,4 +1,5 @@
-import {Period} from '../../../components/dates/dateModels';
+import {DateRange, Period} from '../../../components/dates/dateModels';
+import {momentWithTimeZone} from '../../../helpers/dateHelpers';
 import {EndPoints} from '../../../services/endPoints';
 import {IdNamed} from '../../../types/Types';
 import {
@@ -11,7 +12,7 @@ import {
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_SAVED_SELECTION,
-  SET_SELECTION,
+  SET_SELECTION, setCustomDateRange,
 } from '../userSelectionActions';
 import {ParameterName, SelectionParameter, UserSelection, UserSelectionState} from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
@@ -25,7 +26,7 @@ describe('userSelectionReducer', () => {
     selectionParameters: {
       cities: ['sweden,gothenburg', 'sweden,stockholm'],
       addresses: [1, 2, 3],
-      period: Period.latest,
+      dateRange: {period: Period.latest},
     },
   };
 
@@ -77,6 +78,26 @@ describe('userSelectionReducer', () => {
         {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters},
       );
       expect(actual).toEqual(expected);
+    });
+
+    it('sets custom date range', () => {
+      const initialState: UserSelectionState = userSelection(undefined, {type: 'whatever'});
+      const start: Date = momentWithTimeZone('2018-12-09').toDate();
+      const end: Date = momentWithTimeZone('2018-12-24').toDate();
+      const dateRange: DateRange = {start, end};
+
+      const expected: UserSelectionState = {
+        userSelection: {
+          ...initialState.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...initialState.userSelection.selectionParameters,
+            dateRange: {period: Period.custom, customDateRange: {start, end}},
+          },
+        },
+      };
+
+      expect(userSelection(initialState, setCustomDateRange(dateRange))).toEqual(expected);
     });
 
     it('adds array of filterParams to selected list', () => {
@@ -210,7 +231,7 @@ describe('userSelectionReducer', () => {
           id: 5,
           name: 'something else',
           isChanged: true,
-          selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
+          selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], dateRange: {period: Period.latest}},
         },
       };
 
@@ -225,7 +246,7 @@ describe('userSelectionReducer', () => {
         id: 999,
         name: 'test 999',
         selectionParameters: {
-          period: Period.currentMonth,
+          dateRange: {period: Period.currentMonth},
         },
         isChanged: false,
       };
@@ -253,7 +274,7 @@ describe('userSelectionReducer', () => {
         id: 999,
         name: 'test 999',
         selectionParameters: {
-          period: Period.currentMonth,
+          dateRange: {period: Period.currentMonth},
         },
         isChanged: false,
       };
@@ -281,7 +302,7 @@ describe('userSelectionReducer', () => {
         id: 999,
         name: 'test 999',
         selectionParameters: {
-          period: Period.currentMonth,
+          dateRange: {period: Period.currentMonth},
         },
         isChanged: false,
       };

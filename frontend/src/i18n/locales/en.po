@@ -68,6 +68,9 @@ msgstr "current week"
 msgid "last 7 days"
 msgstr "last 7 days"
 
+msgid "custom period"
+msgstr "custom period"
+
 msgid "are you sure you want to delete this item"
 msgstr "are you sure you want to delete this item"
 

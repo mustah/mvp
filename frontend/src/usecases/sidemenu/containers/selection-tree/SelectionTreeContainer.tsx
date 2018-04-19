@@ -9,6 +9,7 @@ import {
   sideBarHeaderStyle,
   sideBarStyles,
 } from '../../../../app/themes';
+import {now} from '../../../../helpers/dateHelpers';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
 import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
@@ -80,15 +81,23 @@ class SelectionTreeComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps =
-  ({report, userSelection, selectionTree, ui: {selectionTree: selectionTreeUi}}: RootState): StateToProps => {
-    return {
-      selectionTree: getSelectionTree(selectionTree),
-      openListItems: getOpenListItems(selectionTreeUi),
-      selectedListItems: getSelectedListItems(report),
-      parameters: getMeterParameters(userSelection),
-    };
+const mapStateToProps = (
+  {
+    report,
+    userSelection: {userSelection},
+    selectionTree,
+    ui: {selectionTree: selectionTreeUi},
+  }: RootState): StateToProps => {
+  return {
+    selectionTree: getSelectionTree(selectionTree),
+    openListItems: getOpenListItems(selectionTreeUi),
+    selectedListItems: getSelectedListItems(report),
+    parameters: getMeterParameters({
+      userSelection,
+      now: now(),
+    }),
   };
+};
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   toggleExpand: selectionTreeToggleId,

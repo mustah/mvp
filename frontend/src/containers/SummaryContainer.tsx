@@ -4,6 +4,7 @@ import {bindActionCreators} from 'redux';
 import {Row} from '../components/layouts/row/Row';
 import {Summary} from '../components/summary/Summary';
 import '../components/summary/Summary.scss';
+import {now} from '../helpers/dateHelpers';
 import {RootState} from '../reducers/rootReducer';
 import {translate} from '../services/translationService';
 import {getMeterParameters} from '../state/user-selection/userSelectionSelectors';
@@ -46,9 +47,12 @@ class SummaryComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({userSelection, summary}: RootState): StateToProps => ({
+const mapStateToProps = ({userSelection: {userSelection}, summary}: RootState): StateToProps => ({
   selectionSummary: getSelectionSummary(summary),
-  parameters: getMeterParameters(userSelection),
+  parameters: getMeterParameters({
+    userSelection,
+    now: now(),
+  }),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

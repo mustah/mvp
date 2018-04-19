@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {Period} from '../../../../../components/dates/dateModels';
+import {Maybe} from '../../../../../helpers/Maybe';
 import {authenticate} from '../../../../../services/restClient';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
@@ -210,12 +211,12 @@ describe('measurementActions', () => {
     });
 
     it('returns empty data if no quantities are not provided', async () => {
-      const response = await fetchMeasurements([], ['123abc'], Period.currentMonth);
+      const response = await fetchMeasurements([], ['123abc'], Period.currentMonth, Maybe.nothing());
       expect(response).toEqual(emptyResponses);
     });
 
     it('returns empty data if no meter ids are provided', async () => {
-      const response = await fetchMeasurements(['Power'], [], Period.currentMonth);
+      const response = await fetchMeasurements(['Power'], [], Period.currentMonth, Maybe.nothing());
       expect(response).toEqual(emptyResponses);
     });
 
@@ -229,7 +230,7 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth);
+      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth, Maybe.nothing());
       expect(requestedUrls.length).toEqual(1);
       expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
     });
@@ -244,7 +245,7 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth);
+      await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth, Maybe.nothing());
       expect(requestedUrls.length).toEqual(2);
       expect(requestedUrls[0]).toMatch(
         /\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
@@ -311,7 +312,8 @@ describe('measurementActions', () => {
         }
       });
 
-      const responses = await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth);
+      const responses =
+        await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth, Maybe.nothing());
       expect(requestedUrls.length).toEqual(2);
 
       const graphData = mapApiResponseToGraphData(responses);

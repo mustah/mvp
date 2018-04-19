@@ -12,6 +12,7 @@ import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {MeterDetailsContainer} from '../../../containers/dialogs/MeterDetailsContainer';
 import {MeterListContainer} from '../../../containers/meters/MeterListContainer';
+import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -107,11 +108,14 @@ class ValidationTabs extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({ui, userSelection, map, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
+  ({ui, userSelection: {userSelection}, map, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
-    parameters: getMeterParameters(userSelection),
+    parameters: getMeterParameters({
+      userSelection,
+      now: now(),
+    }),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
   });

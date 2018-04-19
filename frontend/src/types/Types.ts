@@ -27,6 +27,8 @@ export type ItemOrArray<T> = T | T[];
 
 export type Children = ItemOrArray<React.ReactNode>;
 
+export type PickValue<T, P extends keyof T> = T[P];
+
 /**
  * Is a payload action with action type of <code>string</code> and payload of type <code><P></code>.
  */

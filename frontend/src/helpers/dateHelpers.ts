@@ -1,28 +1,22 @@
 import * as moment from 'moment-timezone';
 import {DateRange, Period} from '../components/dates/dateModels';
+import {EncodedUriParameters} from '../types/Types';
+import {Maybe} from './Maybe';
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
-
-export const timezoneUtc = 'UTC';
+const timezoneUtc = 'UTC';
 
 // TODO: This should more general or change name to momentWithTimeZoneStockholm
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
   moment(input).tz(timezoneUtc);
-
-export const toApiParameters = ({start, end}: DateRange): string[] => {
-  return [
-    `after=${encodeURIComponent(start.toISOString())}`,
-    `before=${encodeURIComponent(momentWithTimeZone(end).add(1, 'ms').toISOString())}`,
-  ];
-};
 
 /**
  * Calculate absolute start- and end dates based on an input date and a relative time period.
  *
  * We work with Date and Period, to not expose moment() to our application.
  */
-export const dateRange = (date: Date, period: Period): DateRange => {
-  const zonedDate = momentWithTimeZone(date);
+const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
+  const zonedDate = momentWithTimeZone(now);
   switch (period) {
     case Period.currentMonth:
       return {
@@ -45,6 +39,11 @@ export const dateRange = (date: Date, period: Period): DateRange => {
         start: prevMonth.startOf('month').toDate(),
         end: prevMonth.endOf('month').toDate(),
       };
+    case Period.custom:
+      return customDateRange.map(({start, end}) => ({
+        start: momentWithTimeZone(start).startOf('day').toDate(),
+        end: momentWithTimeZone(end).endOf('day').toDate(),
+      })).orElse({start: zonedDate.toDate(), end: zonedDate.toDate()});
     case Period.latest:
     default:
       const yesterday = zonedDate.clone().subtract(1, 'days');
@@ -55,17 +54,42 @@ export const dateRange = (date: Date, period: Period): DateRange => {
   }
 };
 
-const now = (): moment.Moment => moment().tz(timezoneUtc);
+export const now = (): Date => moment().tz(timezoneUtc).toDate();
 
-export const currentDateRange = (period: Period): DateRange => dateRange(now().toDate(), period);
+const currentDateRange = (
+  now: Date,
+  period: Period,
+  customDateRange: Maybe<DateRange>,
+): DateRange => dateRange(now, period, customDateRange);
+
+const toApiParameters = ({start, end}: DateRange): EncodedUriParameters[] => {
+  return [
+    `after=${encodeURIComponent(start.toISOString())}`,
+    `before=${encodeURIComponent(momentWithTimeZone(end).add(1, 'ms').toISOString())}`,
+  ];
+};
+
+export interface CurrentPeriod {
+  now: Date;
+  period: Period;
+  customDateRange: Maybe<DateRange>;
+}
+
+export const toPeriodApiParameters = (
+  {
+    now,
+    period,
+    customDateRange,
+  }: CurrentPeriod): EncodedUriParameters[] =>
+  toApiParameters(currentDateRange(now, period, customDateRange));
 
 const yyyymmdd = 'YYYY-MM-DD';
 
-export const toFriendlyIso8601 = ({start, end}: DateRange): string =>
+const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentWithTimeZone(start).format(yyyymmdd)} - ${momentWithTimeZone(end).format(yyyymmdd)}`;
 
-export const prettyRange = (period: Period): string =>
-  toFriendlyIso8601(dateRange(now().toDate(), period));
+export const prettyRange = ({now, period, customDateRange}: CurrentPeriod): string =>
+  toFriendlyIso8601(currentDateRange(now, period, customDateRange));
 
 export const formatLabelTimeStamp = (input: moment.MomentInput): string =>
   momentWithTimeZone(input).format('MMM D, HH:mm');

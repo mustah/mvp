@@ -1,5 +1,5 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {Period} from '../../components/dates/dateModels';
+import {DateRange, Period} from '../../components/dates/dateModels';
 import {EndPoints} from '../../services/endPoints';
 import {Action, uuid} from '../../types/Types';
 import {
@@ -12,7 +12,7 @@ import {
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
-  SELECT_SAVED_SELECTION,
+  SELECT_SAVED_SELECTION, SET_CUSTOM_DATE_RANGE,
   SET_SELECTION,
 } from './userSelectionActions';
 import {FilterParam, SelectionParameter, UserSelection, UserSelectionState} from './userSelectionModels';
@@ -30,7 +30,7 @@ export const initialState: UserSelectionState = {
       alarms: [],
       manufacturers: [],
       productModels: [],
-      period: Period.latest,
+      dateRange: {period: Period.latest},
     },
   },
 };
@@ -88,7 +88,10 @@ const updatePeriod = (state: UserSelectionState, {payload}: Action<Period>): Use
       isChanged: true,
       selectionParameters: {
         ...state.userSelection.selectionParameters,
-        period: payload,
+        dateRange: {
+          ...state.userSelection.selectionParameters.dateRange,
+          period: payload,
+        },
       },
     },
   });
@@ -113,7 +116,8 @@ type ActionTypes =
   | EmptyAction<string>
   | Action<SelectionParameter>
   | Action<UserSelection>
-  | Action<Period>;
+  | Action<Period>
+  | Action<DateRange>;
 
 export const userSelection = (state: UserSelectionState = initialState, action: ActionTypes): UserSelectionState => {
   switch (action.type) {
@@ -127,6 +131,22 @@ export const userSelection = (state: UserSelectionState = initialState, action: 
       return removeSelected(state, action as Action<SelectionParameter>);
     case SELECT_PERIOD:
       return updatePeriod(state, action as Action<Period>);
+    case SET_CUSTOM_DATE_RANGE:
+      return {
+        ...state,
+        userSelection: {
+          ...state.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...state.userSelection.selectionParameters,
+            dateRange: {
+              ...state.userSelection.selectionParameters.dateRange,
+              period: Period.custom,
+              customDateRange: (action as Action<DateRange>).payload,
+            },
+          },
+        },
+      };
     case SELECT_SAVED_SELECTION:
     case domainModelsPostSuccess(EndPoints.userSelections):
     case domainModelsPutSuccess(EndPoints.userSelections):

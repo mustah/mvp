@@ -19,7 +19,8 @@
       "material-ui",
       "moment-timezone",
       "leaflet",
-      "leaflet.markercluster"
+      "leaflet.markercluster",
+      "react-dates"
     ],
     "no-shadowed-variable": false,
     "no-implicit-dependencies": [

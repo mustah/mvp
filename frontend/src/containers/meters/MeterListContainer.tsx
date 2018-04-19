@@ -11,6 +11,7 @@ import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {MissingDataTitle} from '../../components/texts/Titles';
+import {now} from '../../helpers/dateHelpers';
 import {roundCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
@@ -183,7 +184,7 @@ class MeterList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {userSelection, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
+  {userSelection: {userSelection}, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
 
@@ -196,7 +197,8 @@ const mapStateToProps = (
     result: getPageResult(meters, page),
     parameters: getPaginatedMeterParameters({
       pagination: paginationData,
-      ...userSelection,
+      userSelection,
+      now: now(),
     }),
     isFetching: getPageIsFetching(meters, page),
     pagination: paginationData,

@@ -1,12 +1,11 @@
-import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
 import {routerActions} from 'react-router-redux';
 import {Dispatch} from 'redux';
-import {Period} from '../../components/dates/dateModels';
+import {DateRange, Period} from '../../components/dates/dateModels';
 import {Maybe} from '../../helpers/Maybe';
 import {GetState, RootState} from '../../reducers/rootReducer';
 import {EndPoints} from '../../services/endPoints';
 import {firstUpperTranslated} from '../../services/translationService';
-import {ErrorResponse, uuid} from '../../types/Types';
+import {emptyActionOf, ErrorResponse, payloadActionOf, uuid} from '../../types/Types';
 import {NormalizedState} from '../domain-models/domainModels';
 import {deleteRequest, fetchIfNeeded, postRequest, putRequest} from '../domain-models/domainModelsActions';
 import {showFailMessage} from '../ui/message/messageActions';
@@ -21,15 +20,16 @@ export const SET_SELECTION = 'SET_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
+export const SET_CUSTOM_DATE_RANGE = 'SET_CUSTOM_DATE_RANGE';
 
-const addParameterToSelection = createPayloadAction<string, SelectionParameter>(
+const addParameterToSelection = payloadActionOf<SelectionParameter>(
   ADD_PARAMETER_TO_SELECTION);
-const deselectParameterInSelection = createPayloadAction<string, SelectionParameter>(
+const deselectParameterInSelection = payloadActionOf<SelectionParameter>(
   DESELECT_SELECTION);
-export const resetSelection = createEmptyAction(RESET_SELECTION);
-export const selectPeriod = createPayloadAction<string, Period>(SELECT_PERIOD);
+export const resetSelection = emptyActionOf(RESET_SELECTION);
+export const selectPeriod = payloadActionOf<Period>(SELECT_PERIOD);
 
-const selectSavedSelectionAction = createPayloadAction<string, UserSelection>(SELECT_SAVED_SELECTION);
+const selectSavedSelectionAction = payloadActionOf<UserSelection>(SELECT_SAVED_SELECTION);
 
 export const closeSelectionPage = () => (dispatch) => {
   dispatch(routerActions.goBack());
@@ -40,6 +40,8 @@ export const fetchUserSelections = fetchIfNeeded<UserSelection>(
   userSelectionSchema,
   'userSelections',
 );
+
+export const setCustomDateRange = payloadActionOf<DateRange>(SET_CUSTOM_DATE_RANGE);
 
 export const selectSavedSelection = (selectedId: uuid) =>
   (dispatch, getState: GetState) => {

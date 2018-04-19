@@ -16,6 +16,8 @@ import {AppState, RootState} from './reducers/rootReducer';
 import {restClientWith} from './services/restClient';
 import {onTranslationInitialized} from './services/translationService';
 import {storeFactory} from './store/configureStore';
+import 'react-dates/initialize'; // Needs to be imported in beginning of application in order for styling to work.
+import 'react-dates/lib/css/_datepicker.css';
 
 export const history: History = createHashHistory();
 

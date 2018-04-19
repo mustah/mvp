@@ -1,32 +1,44 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {Period} from '../components/dates/dateModels';
+import {DateRange, Period} from '../components/dates/dateModels';
 import {PeriodSelection} from '../components/dates/PeriodSelection';
 import '../components/summary/Summary.scss';
+import {Maybe} from '../helpers/Maybe';
 import {RootState} from '../reducers/rootReducer';
-import {selectPeriod} from '../state/user-selection/userSelectionActions';
-import {OnSelectPeriod} from '../state/user-selection/userSelectionModels';
+import {selectPeriod, setCustomDateRange} from '../state/user-selection/userSelectionActions';
+import {OnSelectCustomDateRange, OnSelectPeriod} from '../state/user-selection/userSelectionModels';
+import {getSelectedPeriod} from '../state/user-selection/userSelectionSelectors';
 
 interface StateToProps {
   period: Period;
+  customDateRange: Maybe<DateRange>;
 }
 
 interface DispatchToProps {
   selectPeriod: OnSelectPeriod;
+  setCustomDateRange: OnSelectCustomDateRange;
 }
 
-const PeriodComponent = (props: StateToProps & DispatchToProps) => {
-  const {selectPeriod, period} = props;
-  return (<PeriodSelection selectPeriod={selectPeriod} period={period}/>);
-};
+const PeriodComponent =
+  ({selectPeriod, period, setCustomDateRange, customDateRange}: StateToProps & DispatchToProps) => (
+    <PeriodSelection
+      selectPeriod={selectPeriod}
+      period={period}
+      setCustomDateRange={setCustomDateRange}
+      customDateRange={customDateRange}
+    />);
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectPeriod,
+  setCustomDateRange,
 }, dispatch);
 
-const mapStateToProps = ({userSelection: {userSelection: {selectionParameters: {period}}}}: RootState): StateToProps =>
-  ({period});
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
+  return {
+  ...getSelectedPeriod(userSelection),
+  };
+};
 
 export const PeriodContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(PeriodComponent);
