@@ -38,13 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserControllerTest extends IntegrationTest {
 
-  private final OrganisationMapper organisationMapper = new OrganisationMapper();
-
   @Autowired
   private Users users;
-
-  @Autowired
-  private UserMapper userMapper;
 
   @Autowired
   private Organisations organisations;
@@ -155,7 +150,7 @@ public class UserControllerTest extends IntegrationTest {
         .asUser()
         .build()
     );
-    UserDto userDto = userMapper.toDto(user);
+    UserDto userDto = UserMapper.toDto(user);
     assertThat(userDto.name).isNotEqualTo(newName);
     userDto.name = newName;
 
@@ -359,7 +354,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "secret stuff";
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role, SUPER_ADMIN.role);
     return user;
   }
@@ -370,7 +365,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = password;
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(context().organisation());
+    user.organisation = OrganisationMapper.toDto(context().organisation());
     user.roles = asList(USER.role, ADMIN.role);
     return user;
   }
@@ -381,7 +376,7 @@ public class UserControllerTest extends IntegrationTest {
     user.email = email;
     user.password = "i am batman";
     user.language = Language.en;
-    user.organisation = organisationMapper.toDto(organisation);
+    user.organisation = OrganisationMapper.toDto(organisation);
     user.roles = singletonList(USER.role);
     return user;
   }

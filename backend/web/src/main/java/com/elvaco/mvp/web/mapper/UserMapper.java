@@ -6,57 +6,57 @@ import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
+import lombok.experimental.UtilityClass;
 
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
+@UtilityClass
 public class UserMapper {
 
-  private final OrganisationMapper organisationMapper;
-
-  public UserMapper(OrganisationMapper organisationMapper) {
-    this.organisationMapper = organisationMapper;
-  }
-
-  public UserDto toDto(User user) {
+  public static UserDto toDto(User user) {
     return new UserDto(
       user.id,
       user.name,
       user.email,
       user.language,
-      organisationMapper.toDto(user.organisation),
-      user.roles
-        .stream()
-        .map(r -> r.role)
-        .collect(toList())
+      OrganisationMapper.toDto(user.organisation),
+      toRoles(user.roles)
     );
   }
 
-  public User toDomainModel(UserDto userDto) {
+  public static User toDomainModel(UserDto userDto) {
     return new User(
       userDto.id != null ? userDto.id : randomUUID(),
       userDto.name,
       userDto.email,
       null,
       userDto.language,
-      organisationMapper.toDomainModel(userDto.organisation),
-      rolesOf(userDto.roles)
+      OrganisationMapper.toDomainModel(userDto.organisation),
+      rolesFrom(userDto.roles)
     );
   }
 
-  public User toDomainModel(UserWithPasswordDto userDto) {
+  public static User toDomainModel(UserWithPasswordDto userDto) {
     return new User(
       userDto.id != null ? userDto.id : randomUUID(),
       userDto.name,
       userDto.email,
       userDto.password,
       userDto.language,
-      organisationMapper.toDomainModel(userDto.organisation),
-      rolesOf(userDto.roles)
+      OrganisationMapper.toDomainModel(userDto.organisation),
+      rolesFrom(userDto.roles)
     );
   }
 
-  private List<Role> rolesOf(List<String> roles) {
+  private static List<String> toRoles(List<Role> roles) {
+    return roles
+      .stream()
+      .map(r -> r.role)
+      .collect(toList());
+  }
+
+  private static List<Role> rolesFrom(List<String> roles) {
     return roles.stream()
       .map(Role::new)
       .collect(toList());

@@ -9,7 +9,7 @@ import com.elvaco.mvp.web.dto.UserDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.exception.UserNotFound;
 import com.elvaco.mvp.web.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,47 +19,43 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import static com.elvaco.mvp.web.mapper.UserMapper.toDomainModel;
+import static com.elvaco.mvp.web.mapper.UserMapper.toDto;
 import static java.util.stream.Collectors.toList;
 
+@AllArgsConstructor
 @RestApi("/api/v1/users")
 public class UserController {
 
   private final UserUseCases userUseCases;
-  private final UserMapper userMapper;
-
-  @Autowired
-  UserController(UserUseCases userUseCases, UserMapper userMapper) {
-    this.userUseCases = userUseCases;
-    this.userMapper = userMapper;
-  }
 
   @GetMapping
   public List<UserDto> allUsers() {
     return userUseCases.findAll()
       .stream()
-      .map(userMapper::toDto)
+      .map(UserMapper::toDto)
       .collect(toList());
   }
 
   @GetMapping("{id}")
   public UserDto userById(@PathVariable UUID id) {
     return userUseCases.findById(id)
-      .map(userMapper::toDto)
+      .map(UserMapper::toDto)
       .orElseThrow(() -> UserNotFound.withId(id));
   }
 
   @PostMapping
   public ResponseEntity<UserDto> createUser(@RequestBody UserWithPasswordDto user) {
-    return userUseCases.create(userMapper.toDomainModel(user))
-      .map(userMapper::toDto)
+    return userUseCases.create(toDomainModel(user))
+      .map(UserMapper::toDto)
       .map(userDto -> ResponseEntity.status(HttpStatus.CREATED).body(userDto))
       .orElseGet(ResponseEntity.status(HttpStatus.FORBIDDEN)::build);
   }
 
   @PutMapping
   public UserDto updateUser(@RequestBody UserDto user) {
-    return userUseCases.update(userMapper.toDomainModel(user))
-      .map(userMapper::toDto)
+    return userUseCases.update(toDomainModel(user))
+      .map(UserMapper::toDto)
       .orElseThrow(() -> UserNotFound.withId(user.id));
   }
 
@@ -67,8 +63,7 @@ public class UserController {
   public UserDto deleteUser(@PathVariable UUID id) {
     User user = userUseCases.findById(id)
       .orElseThrow(() -> UserNotFound.withId(id));
-    // TODO[!must!] delete should actually not remove the entity, just mark it as deleted.
     userUseCases.delete(user);
-    return userMapper.toDto(user);
+    return toDto(user);
   }
 }
