@@ -47,9 +47,9 @@ describe('userSelectionSelectors', () => {
   const vasa: IdNamed = cityEntities['finland,vasa'];
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const initialSearchParameterState: UserSelectionState = {...initialState};
+  const initialUserSelectionState: UserSelectionState = {...initialState};
   const initialUriLookupState: UriLookupStatePaginated = {
-    ...initialSearchParameterState,
+    ...initialUserSelectionState,
     pagination: getPagination({
       entityType: 'meters',
       componentId: 'test',
@@ -89,7 +89,7 @@ describe('userSelectionSelectors', () => {
   });
 
   it('can find user selection in user selection state', () => {
-    const userSelection: UserSelection = getSelection(initialSearchParameterState);
+    const userSelection: UserSelection = getSelection(initialUserSelectionState);
     expect(userSelection).toEqual(initialState.userSelection);
   });
 

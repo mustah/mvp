@@ -62,4 +62,4 @@ export type OnSelectSelection = (selection: UserSelection) => void;
 
 export type SelectionListItem = SelectionEntity & {selected: boolean};
 
-export type OnSelectParameter = (searchParameters: SelectionParameter) => void;
+export type OnSelectParameter = (selectionParameter: SelectionParameter) => void;
