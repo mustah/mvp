@@ -34,17 +34,6 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
-    UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
-  ) {
-    return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
-      physicalMeterId, quantity, created
-    ).map(MeasurementMapper::toDomainModel);
-  }
-
-  @Override
   public Measurement save(Measurement measurement) {
     return MeasurementMapper.toDomainModel(
       measurementJpaRepository.save(
@@ -127,13 +116,21 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<Measurement> findLatestValues(
-    UUID physicalMeterId
+  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
+    UUID physicalMeterId,
+    String quantity,
+    ZonedDateTime created
   ) {
+    return measurementJpaRepository.findByPhysicalMeterIdAndQuantityAndCreated(
+      physicalMeterId, quantity, created
+    ).map(MeasurementMapper::toDomainModel);
+  }
+
+  @Override
+  public List<Measurement> findLatestValues(UUID physicalMeterId) {
     return measurementJpaRepository.findLatestForPhysicalMeter(physicalMeterId)
       .stream()
       .map(MeasurementMapper::toDomainModel)
       .collect(toList());
   }
-
 }

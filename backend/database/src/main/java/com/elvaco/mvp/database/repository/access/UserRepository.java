@@ -13,6 +13,8 @@ import com.elvaco.mvp.database.repository.jpa.UserJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.UserMapper;
 import lombok.RequiredArgsConstructor;
 
+import static com.elvaco.mvp.database.repository.mappers.UserMapper.toDomainModel;
+import static com.elvaco.mvp.database.repository.mappers.UserMapper.toEntity;
 import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
@@ -49,12 +51,12 @@ public class UserRepository implements Users {
   @Override
   public User create(User user) {
     User userWithPassword = user.withPassword(passwordEncoder.encode(user.password));
-    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(userWithPassword)));
+    return toDomainModel(userJpaRepository.save(toEntity(userWithPassword)));
   }
 
   @Override
   public User update(User user) {
-    return UserMapper.toDomainModel(userJpaRepository.save(UserMapper.toEntity(user)));
+    return toDomainModel(userJpaRepository.save(toEntity(user)));
   }
 
   @Override
