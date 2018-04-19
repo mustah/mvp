@@ -1,6 +1,7 @@
 import {Period} from '../../../components/dates/dateModels';
 import {IdNamed, ItemOrArray, uuid} from '../../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../../domain-models/domainModels';
+import {UserSelectionState} from '../searchParameterModels';
 
 export const enum ParameterName {
   countries = 'countries',
@@ -21,8 +22,6 @@ export interface SelectionParameter {
   name?: string;
   parameter: ParameterName;
 }
-
-export type OnSelectParameter = (searchParameters: SelectionParameter) => void;
 
 /**
  * After https://github.com/Microsoft/TypeScript/issues/13042 is resolved, we can replace the repetitive definitions
@@ -49,11 +48,8 @@ export interface UserSelection extends IdNamed {
   isChanged: boolean;
 }
 
-// TODO remove LookupState
 export interface LookupState {
-  // TODO do not use this 'selection', use the SearchParameterState instead
-  // TODO maybe rename to currentUserSelection
-  selection: UserSelection;
+  userSelection: UserSelectionState;
   domainModels: DomainModelsState;
 }
 
@@ -62,3 +58,5 @@ export type OnSelectPeriod = (period: Period) => void;
 export type OnSelectSelection = (selection: UserSelection) => void;
 
 export type SelectionListItem = SelectionEntity & {selected: boolean};
+
+export type OnSelectParameter = (searchParameters: SelectionParameter) => void;

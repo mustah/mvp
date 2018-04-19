@@ -20,15 +20,10 @@ import {selectionsSchema} from '../../../domain-models/selections/selectionsSche
 import {User} from '../../../domain-models/user/userModels';
 import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
 import {getPagination} from '../../../ui/pagination/paginationSelectors';
+import {UserSelectionState} from '../../searchParameterModels';
 import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../selectionActions';
-import {
-  LookupState,
-  ParameterName,
-  SelectionListItem,
-  SelectionParameter,
-  UserSelection,
-} from '../selectionModels';
-import {initialState, selection} from '../selectionReducer';
+import {LookupState, ParameterName, SelectionListItem, SelectionParameter, UserSelection} from '../selectionModels';
+import {initialState, userSelection} from '../selectionReducer';
 import {
   composePaginatedCombiner,
   getCities,
@@ -46,7 +41,7 @@ describe('selectionSelectors', () => {
   const vasa: IdNamed = cityEntities['finland,vasa'];
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const initialSearchParameterState = {selection: {...initialState}};
+  const initialSearchParameterState: UserSelectionState = {...initialState};
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialSearchParameterState,
     pagination: getPagination({
@@ -87,8 +82,9 @@ describe('selectionSelectors', () => {
     users: users(initialDomain<User>(), {type: 'none'}),
   });
 
-  it('has entities', () => {
-    expect(getSelection({...initialSearchParameterState})).toEqual(initialState);
+  it('can find user selection in user selection state', () => {
+    const userSelection: UserSelection = getSelection(initialSearchParameterState);
+    expect(userSelection).toEqual(initialState.userSelection);
   });
 
   it('encode the initial, empty, selection', () => {
@@ -100,7 +96,7 @@ describe('selectionSelectors', () => {
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+      userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: domainModels(normalizedSelections) as DomainModelsState,
     };
 
@@ -110,7 +106,8 @@ describe('selectionSelectors', () => {
       {selected: false, ...vasa},
     ];
 
-    expect(getCities(state)).toEqual(stockholmSelected);
+    const actual: SelectionListItem[] = getCities(state);
+    expect(actual).toEqual(stockholmSelected);
   });
 
   it('get entities for undefined entity type', () => {
@@ -121,7 +118,7 @@ describe('selectionSelectors', () => {
     notCity.cities = cities(initialDomainModelState, {type: 'unknown'});
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+      userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: notCity as DomainModelsState,
     };
 
@@ -132,13 +129,13 @@ describe('selectionSelectors', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: UserSelection = selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
+      const state: UserSelectionState = userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
 
       const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
-        selection: state,
+        ...state,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -152,11 +149,11 @@ describe('selectionSelectors', () => {
     it('has two selected cities', () => {
       const payloadGot: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
       const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const prevState: UserSelection = selection(
+      const prevState: UserSelectionState = userSelection(
         initialState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadGot},
       );
-      const state: UserSelection = selection(
+      const state: UserSelectionState = userSelection(
         prevState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
       );
@@ -165,7 +162,7 @@ describe('selectionSelectors', () => {
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
-        selection: state,
+        ...state,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -183,16 +180,17 @@ describe('selectionSelectors', () => {
   describe('get selected period', () => {
 
     it('there is a default period', () => {
-      expect(getSelectedPeriod(initialState)).toEqual(expect.anything());
+      expect(getSelectedPeriod(initialState.userSelection))
+        .toEqual(initialState.userSelection.selectionParameters.period);
     });
 
     it('get selected period', () => {
-      const state: UserSelection = selection(
+      const state: UserSelectionState = userSelection(
         initialState,
         {type: SELECT_PERIOD, payload: Period.currentWeek},
       );
 
-      expect(getSelectedPeriod(state)).toBe(Period.currentWeek);
+      expect(getSelectedPeriod(state.userSelection)).toBe(Period.currentWeek);
     });
   });
 
@@ -202,7 +200,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       const state: LookupState = {
-        selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+        userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
         domainModels: domainModels(normalizedSelections) as DomainModelsState,
       };
 

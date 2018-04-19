@@ -107,11 +107,11 @@ class ValidationTabs extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({ui, searchParameters, map, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
+  ({ui, userSelection, map, domainModels: {meterMapMarkers}}: RootState): StateToProps => ({
     selectedTab: getSelectedTab(ui.tabs.validation),
     meterMapMarkers: getDomainModel(meterMapMarkers),
     selectedMarker: getSelectedMapMarker(map),
-    parameters: getMeterParameters(searchParameters),
+    parameters: getMeterParameters(userSelection),
     error: getError(meterMapMarkers),
     isFetching: meterMapMarkers.isFetching,
   });

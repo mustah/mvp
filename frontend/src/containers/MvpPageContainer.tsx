@@ -53,9 +53,9 @@ const MvpPageComponent = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToProps => {
+const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => {
   return {
-    selection: getSelection(searchParameters),
+    selection: getSelection(userSelection),
     isSelectionPage: isSelectionPage(routing),
     isSideMenuOpen: isSideMenuOpen(ui),
   };

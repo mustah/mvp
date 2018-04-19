@@ -81,12 +81,12 @@ class SelectionTreeComponent extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({report, searchParameters, selectionTree, ui: {selectionTree: selectionTreeUi}}: RootState): StateToProps => {
+  ({report, userSelection, selectionTree, ui: {selectionTree: selectionTreeUi}}: RootState): StateToProps => {
     return {
       selectionTree: getSelectionTree(selectionTree),
       openListItems: getOpenListItems(selectionTreeUi),
       selectedListItems: getSelectedListItems(report),
-      parameters: getMeterParameters(searchParameters),
+      parameters: getMeterParameters(userSelection),
     };
   };
 

@@ -10,7 +10,7 @@ import {fetchMeterEntities} from '../../state/domain-models-paginated/meter/mete
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {getMetersByGateway} from '../../state/domain-models-paginated/meter/meterSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {FetchSingle, uuid} from '../../types/Types';
+import {CallbackSingle, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {getMapMarker} from '../../usecases/map/mapSelectors';
 import './GatewayDetailsContainer.scss';
@@ -22,7 +22,7 @@ interface OwnProps {
 }
 
 interface DispatchToProps {
-  fetchGateway: FetchSingle;
+  fetchGateway: CallbackSingle;
   fetchMeterEntities: (ids: uuid[]) => void;
 }
 

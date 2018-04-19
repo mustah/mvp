@@ -1,5 +1,5 @@
 import {UserSelection} from './selection/selectionModels';
 
-export interface SearchParameterState {
-  selection: UserSelection;
+export interface UserSelectionState {
+  userSelection: UserSelection;
 }

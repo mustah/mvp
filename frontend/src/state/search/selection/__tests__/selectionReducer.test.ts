@@ -6,6 +6,7 @@ import {
   domainModelsPostSuccess,
   domainModelsPutSuccess,
 } from '../../../domain-models/domainModelsActions';
+import {UserSelectionState} from '../../searchParameterModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -14,7 +15,7 @@ import {
   SET_SELECTION,
 } from '../selectionActions';
 import {ParameterName, SelectionParameter, UserSelection} from '../selectionModels';
-import {initialState, selection} from '../selectionReducer';
+import {initialState, userSelection} from '../selectionReducer';
 
 describe('selectionReducer', () => {
 
@@ -29,6 +30,10 @@ describe('selectionReducer', () => {
     },
   };
 
+  const mockPayloadState: UserSelectionState = {
+    userSelection: {...mockPayload},
+  };
+
   const gothenburg: IdNamed = {id: 'sweden,gothenburg', name: 'gothenburg'};
   const stockholm: IdNamed = {id: 'sweden,stockholm', name: 'stockholm'};
   const malmo: IdNamed = {id: 'sweden,malmo', name: 'malmo'};
@@ -36,31 +41,43 @@ describe('selectionReducer', () => {
   describe('select saved selections', () => {
 
     it('replaces current selection', () => {
-      const state = selection(initialState, {type: SELECT_SAVED_SELECTION, payload: mockPayload});
+      const state: UserSelectionState = userSelection(
+        initialState,
+        {type: SELECT_SAVED_SELECTION, payload: mockPayload},
+      );
 
-      expect(state).toEqual({...mockPayload, isChanged: false});
+      const expectedState: UserSelectionState = {userSelection: {...mockPayload, isChanged: false}};
+      expect(state).toEqual(expectedState);
     });
   });
 
   describe('update current selection', () => {
 
     it('adds to selected list', () => {
-      const state: UserSelection = {...initialState};
+      const state: UserSelectionState = {...initialState};
       const stockholm: IdNamed = {id: 'sweden,stockholm', name: 'stockholm'};
       const selectionParameters: SelectionParameter = {
         ...stockholm,
         parameter: ParameterName.cities,
       };
 
-      const expected: UserSelection = {
+      const expected: UserSelectionState = {
         ...initialState,
-        isChanged: true,
-        selectionParameters: {
-          ...state.selectionParameters,
-          cities: [stockholm.id],
+        userSelection: {
+          ...initialState.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...state.userSelection.selectionParameters,
+            cities: [stockholm.id],
+          },
         },
       };
-      expect(selection(state, {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters})).toEqual(expected);
+
+      const actual: UserSelectionState = userSelection(
+        state,
+        {type: ADD_PARAMETER_TO_SELECTION, payload: selectionParameters},
+      );
+      expect(actual).toEqual(expected);
     });
 
     it('adds array of filterParams to selected list', () => {
@@ -74,21 +91,24 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: UserSelection = selection(initialState, {
+      const intermediateState: UserSelectionState = userSelection(initialState, {
         type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParameterItem,
       });
-      const finalState: UserSelection = selection(intermediateState, {
+      const finalState: UserSelectionState = userSelection(intermediateState, {
         type: ADD_PARAMETER_TO_SELECTION,
         payload: selectionParametersArray,
       });
 
-      const expected: UserSelection = {
+      const expected: UserSelectionState = {
         ...intermediateState,
-        isChanged: true,
-        selectionParameters: {
-          ...intermediateState.selectionParameters,
-          cities: [gothenburg.id, stockholm.id, malmo.id],
+        userSelection: {
+          ...intermediateState.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...intermediateState.userSelection.selectionParameters,
+            cities: [gothenburg.id, stockholm.id, malmo.id],
+          },
         },
       };
       expect(finalState).toEqual(expected);
@@ -102,23 +122,26 @@ describe('selectionReducer', () => {
         ...stockholm,
       };
 
-      const intermediateState: UserSelection = selection(initialState, {
+      const intermediateState: UserSelectionState = userSelection(initialState, {
           type: SET_SELECTION,
           payload: selectionParameterInitial,
         })
       ;
-      const finalState: UserSelection = selection(intermediateState, {
+      const finalState: UserSelectionState = userSelection(intermediateState, {
           type: SET_SELECTION,
           payload: selectionParametersFinal,
         })
       ;
 
-      const expected: UserSelection = {
+      const expected: UserSelectionState = {
         ...intermediateState,
-        isChanged: true,
-        selectionParameters: {
-          ...intermediateState.selectionParameters,
-          cities: [stockholm.id],
+        userSelection: {
+          ...intermediateState.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...intermediateState.userSelection.selectionParameters,
+            cities: [stockholm.id],
+          },
         },
       };
       expect(finalState).toEqual(expected);
@@ -135,21 +158,24 @@ describe('selectionReducer', () => {
         ],
       };
 
-      const intermediateState: UserSelection = selection(initialState, {
+      const intermediateState: UserSelectionState = userSelection(initialState, {
         type: SET_SELECTION,
         payload: selectionParameterInitial,
       });
-      const finalState: UserSelection = selection(intermediateState, {
+      const finalState: UserSelectionState = userSelection(intermediateState, {
         type: SET_SELECTION,
         payload: selectionParametersFinal,
       });
 
-      const expected: UserSelection = {
+      const expected: UserSelectionState = {
         ...intermediateState,
-        isChanged: true,
-        selectionParameters: {
-          ...intermediateState.selectionParameters,
-          cities: [stockholm.id, malmo.id],
+        userSelection: {
+          ...intermediateState.userSelection,
+          isChanged: true,
+          selectionParameters: {
+            ...intermediateState.userSelection.selectionParameters,
+            cities: [stockholm.id, malmo.id],
+          },
         },
       };
       expect(finalState).toEqual(expected);
@@ -160,11 +186,11 @@ describe('selectionReducer', () => {
   describe('reset selection', () => {
 
     it('resets current selection', () => {
-      let state = selection(initialState, {type: SELECT_SAVED_SELECTION, payload: mockPayload});
+      let state: UserSelectionState = userSelection(initialState, {type: SELECT_SAVED_SELECTION, payload: mockPayload});
 
       expect(state).not.toEqual(initialState);
 
-      state = selection(state, {type: RESET_SELECTION});
+      state = userSelection(state, {type: RESET_SELECTION});
 
       expect(state).toEqual(initialState);
     });
@@ -178,13 +204,15 @@ describe('selectionReducer', () => {
         ...gothenburg,
       };
 
-      const state = selection(mockPayload, {type: DESELECT_SELECTION, payload: parameter});
+      const state: UserSelectionState = userSelection(mockPayloadState, {type: DESELECT_SELECTION, payload: parameter});
 
-      const expected: UserSelection = {
-        id: 5,
-        name: 'something else',
-        isChanged: true,
-        selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
+      const expected: UserSelectionState = {
+        userSelection: {
+          id: 5,
+          name: 'something else',
+          isChanged: true,
+          selectionParameters: {cities: ['sweden,stockholm'], addresses: [1, 2, 3], period: Period.latest},
+        },
       };
 
       expect(state).toEqual(expected);
@@ -203,11 +231,18 @@ describe('selectionReducer', () => {
         isChanged: false,
       };
 
-      const state = selection(
+      const state: UserSelectionState = userSelection(
         initialState,
         {type: domainModelsPostSuccess(EndPoints.userSelections), payload: newSelection},
       );
-      expect(state).toEqual(newSelection);
+
+      const expected: UserSelectionState = {
+        userSelection: {
+          ...newSelection,
+        },
+      };
+
+      expect(state).toEqual(expected);
     });
 
   });
@@ -224,11 +259,18 @@ describe('selectionReducer', () => {
         isChanged: false,
       };
 
-      const state = selection(
+      const state: UserSelectionState = userSelection(
         initialState,
         {type: domainModelsPutSuccess(EndPoints.userSelections), payload: newSelection},
       );
-      expect(state).toEqual(newSelection);
+
+      const expected: UserSelectionState = {
+        userSelection: {
+          ...newSelection,
+        },
+      };
+
+      expect(state).toEqual(expected);
     });
 
   });
@@ -236,7 +278,7 @@ describe('selectionReducer', () => {
   describe('deleteUserSelection', () => {
 
     it('resets to initial selection if currently selected selection is deleted', () => {
-      const newSelection: UserSelection = {
+      const currentSelection: UserSelection = {
         id: 999,
         name: 'test 999',
         selectionParameters: {
@@ -245,9 +287,15 @@ describe('selectionReducer', () => {
         isChanged: false,
       };
 
-      const state = selection(
-        newSelection,
-        {type: domainModelsDeleteSuccess(EndPoints.userSelections), payload: newSelection},
+      const currentState: UserSelectionState = {
+        userSelection: {
+          ...currentSelection,
+        },
+      };
+
+      const state: UserSelectionState = userSelection(
+        currentState,
+        {type: domainModelsDeleteSuccess(EndPoints.userSelections), payload: currentSelection},
       );
       expect(state).toEqual(initialState);
     });

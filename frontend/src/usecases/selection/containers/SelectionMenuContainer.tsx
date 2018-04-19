@@ -49,9 +49,9 @@ export const SelectionMenu = (props: StateToProps & DispatchToProps) => {
   );
 };
 
-const mapStateToProps = ({searchParameters}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection}: RootState): StateToProps => {
   return {
-    selection: getSelection(searchParameters),
+    selection: getSelection(userSelection),
   };
 };
 

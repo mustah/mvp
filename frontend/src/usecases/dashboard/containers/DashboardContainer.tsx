@@ -77,11 +77,11 @@ class DashboardContainerComponent extends React.Component<Props> {
 
 const mapStateToProps = ({
   dashboard,
-  searchParameters,
+  userSelection,
   domainModels: {meterMapMarkers},
 }: RootState): StateToProps => ({
   dashboard: dashboard.record,
-  parameters: getMeterParameters(searchParameters),
+  parameters: getMeterParameters(userSelection),
   meterMapMarkers: getDomainModel(meterMapMarkers),
   isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),

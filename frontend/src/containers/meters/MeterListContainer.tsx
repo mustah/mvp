@@ -180,7 +180,7 @@ class MeterList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {searchParameters, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
+  {userSelection, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
 
@@ -193,7 +193,7 @@ const mapStateToProps = (
     result: getPageResult(meters, page),
     parameters: getPaginatedMeterParameters({
       pagination: paginationData,
-      ...searchParameters,
+      ...userSelection,
     }),
     isFetching: getPageIsFetching(meters, page),
     pagination: paginationData,

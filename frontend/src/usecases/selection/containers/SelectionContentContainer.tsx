@@ -121,10 +121,10 @@ class SelectionContent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps => {
   const lookupState: LookupState = {
     domainModels,
-    selection,
+    userSelection,
   };
   const {cities, addresses, alarms} = domainModels;
 

@@ -142,7 +142,7 @@ class GatewayList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {searchParameters, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
+  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
   const entityType: EntityTypes = 'gateways';
@@ -154,7 +154,7 @@ const mapStateToProps = (
     result: getPageResult(gateways, page),
     encodedUriParametersForGateways: getPaginatedGatewayParameters({
       pagination: paginationData,
-      ...searchParameters,
+      ...userSelection,
     }),
     isFetching: getPageIsFetching(gateways, page),
     pagination: paginationData,

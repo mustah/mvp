@@ -9,16 +9,9 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_CURRENT_SELECTION,
 } from '../search/selection/selectionActions';
 import {UserSelection} from '../search/selection/selectionModels';
-import {
-  DomainModelsState,
-  Normalized,
-  NormalizedState,
-  ObjectsById,
-  SelectionEntity,
-} from './domainModels';
+import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
 import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
@@ -164,7 +157,6 @@ export const selectionWasChanged = (actionType: string) => [
   SELECT_SAVED_SELECTION,
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
-  SET_CURRENT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
 ].includes(actionType);

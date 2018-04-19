@@ -46,9 +46,9 @@ class SummaryComponent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({searchParameters, summary}: RootState): StateToProps => ({
+const mapStateToProps = ({userSelection, summary}: RootState): StateToProps => ({
   selectionSummary: getSelectionSummary(summary),
-  parameters: getMeterParameters(searchParameters),
+  parameters: getMeterParameters(userSelection),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({

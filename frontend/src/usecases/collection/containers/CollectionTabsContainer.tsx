@@ -113,12 +113,12 @@ const mapStateToProps = ({
   ui: {pagination, tabs},
   map,
   domainModels: {gatewayMapMarkers},
-  searchParameters,
+  userSelection,
 }: RootState): StateToProps => {
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
-    parameters: getGatewayParameters(searchParameters),
+    parameters: getGatewayParameters(userSelection),
     selectedMarker: getSelectedMapMarker(map),
     isFetching: gatewayMapMarkers.isFetching,
     error: getError(gatewayMapMarkers),

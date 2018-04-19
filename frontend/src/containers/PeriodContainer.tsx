@@ -26,9 +26,9 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectPeriod,
 }, dispatch);
 
-const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
   return {
-    period: getSelectedPeriod(selection),
+    period: getSelectedPeriod(userSelection),
   };
 };
 

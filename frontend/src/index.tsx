@@ -21,7 +21,8 @@ export const history: History = createHashHistory();
 
 const appStore: Store<AppState> = storeFactory(history);
 
-persistStore<AppState>(appStore, {whitelist: ['auth', 'language', 'ui', 'searchParameters']}, (error?: any) => {
+const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection'];
+persistStore<AppState>(appStore, {whitelist}, (error?: any) => {
   if (!error) {
     const {auth: {token}, language: {language}}: RootState = appStore.getState()!;
     restClientWith(token);

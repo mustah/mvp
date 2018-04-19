@@ -5,6 +5,7 @@ import {testData} from '../../../../__tests__/testDataFactory';
 import {Period} from '../../../../components/dates/dateModels';
 import {RootState} from '../../../../reducers/rootReducer';
 import {IdNamed} from '../../../../types/Types';
+import {UserSelectionState} from '../../searchParameterModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
   closeSelectionPage,
@@ -38,8 +39,9 @@ describe('selectionActions', () => {
     name: 'test 21',
   };
 
+  const userSelection: UserSelectionState = {...initialState};
   const rootState = {
-    searchParameters: {selection: {...initialState}},
+    userSelection,
     domainModels: {
       userSelections: {
         entities: {
@@ -58,7 +60,7 @@ describe('selectionActions', () => {
   };
   const rootStateNoSaved = {
     ...rootState,
-    searchParameters: {...rootState.searchParameters},
+    userSelection: {...rootState.userSelection},
     domainModels: {
       userSelections: {
         entities: {},
@@ -120,11 +122,11 @@ describe('selectionActions', () => {
 
     it('deselects selected city', () => {
       const stateWithSelection: Partial<RootState> = {
-        searchParameters: {
-          selection: {
-            ...initialState,
+        userSelection: {
+          userSelection: {
+            ...initialState.userSelection,
             selectionParameters: {
-              ...initialState.selectionParameters,
+              ...initialState.userSelection.selectionParameters,
               [ParameterName.cities]: [stockholm.id],
             },
           },

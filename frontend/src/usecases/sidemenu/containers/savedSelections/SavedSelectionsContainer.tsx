@@ -21,12 +21,11 @@ import {NormalizedState} from '../../../../state/domain-models/domainModels';
 import {
   deleteUserSelection,
   fetchUserSelections,
-  resetSelection,
   selectSavedSelection,
 } from '../../../../state/search/selection/selectionActions';
 import {UserSelection} from '../../../../state/search/selection/selectionModels';
 import {getSelection} from '../../../../state/search/selection/selectionSelectors';
-import {Callback, OnClick, uuid} from '../../../../types/Types';
+import {Callback, CallbackSingle, OnClick, uuid} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
 import {SavedSelectionActionsDropdown} from '../../components/savedSelections/SavedSelectionActionsDropdown';
 
@@ -36,9 +35,8 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  deleteUserSelection: any; // TODO
+  deleteUserSelection: CallbackSingle;
   fetchUserSelections: Callback;
-  resetSelection: any; // TODO
   selectSavedSelection: OnClick;
 }
 
@@ -118,9 +116,9 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
   }
 }
 
-const mapStateToProps = ({searchParameters, domainModels: {userSelections}}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection, domainModels: {userSelections}}: RootState): StateToProps => {
   return {
-    selection: getSelection(searchParameters),
+    selection: getSelection(userSelection),
     savedSelections: userSelections,
   };
 };
@@ -129,7 +127,6 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectSavedSelection,
   fetchUserSelections,
   deleteUserSelection,
-  resetSelection,
 }, dispatch);
 
 export const SavedSelectionsContainer =

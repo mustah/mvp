@@ -19,7 +19,6 @@ export const SELECT_PERIOD = 'SELECT_PERIOD';
 export const ADD_PARAMETER_TO_SELECTION = 'ADD_PARAMETER_TO_SELECTION';
 export const SET_SELECTION = 'SET_SELECTION';
 export const DESELECT_SELECTION = 'DESELECT_SELECTION';
-export const SET_CURRENT_SELECTION = 'SET_CURRENT_SELECTION';
 export const RESET_SELECTION = 'RESET_SELECTION';
 export const SELECT_SAVED_SELECTION = 'SELECT_SAVED_SELECTION';
 
@@ -58,7 +57,7 @@ export const selectSavedSelection = (selectedId: uuid) =>
 export const toggleParameterInSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: GetState) => {
     const {parameter, id} = selectionParameter;
-    const selected = getSelection(getState().searchParameters).selectionParameters[parameter];
+    const selected = getSelection(getState().userSelection).selectionParameters[parameter];
 
     Maybe.maybe<Period | FilterParam[]>(selected)
       .filter((value: Period | FilterParam[]) => Array.isArray(value) && value.includes(id as FilterParam))

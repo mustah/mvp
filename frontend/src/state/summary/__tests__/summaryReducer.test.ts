@@ -5,7 +5,6 @@ import {
   RESET_SELECTION,
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
-  SET_CURRENT_SELECTION,
 } from '../../search/selection/selectionActions';
 import {makeActionsOf, RequestHandler} from '../summaryApiActions';
 import {SelectionSummary, SummaryState} from '../summaryModels';
@@ -101,7 +100,6 @@ describe('summaryReducer', () => {
         SELECT_SAVED_SELECTION,
         ADD_PARAMETER_TO_SELECTION,
         DESELECT_SELECTION,
-        SET_CURRENT_SELECTION,
         RESET_SELECTION,
         SELECT_PERIOD,
       ].forEach((actionThatResets: string) => {
