@@ -27,13 +27,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StepDefinitions {
 
   private WebDriver driver;
-  private String mvpServer;
+  private String mvpServerFinal;
+  private String mvpApiServer;
 
   @Before
   public void setUp() throws MalformedURLException, UnknownHostException {
-    mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
-      .orElse("http://" + getHostName() + ":4444");
-    System.out.println("MVP_SERVER: " + mvpServer);
+    String mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
+      .orElse(getHostName());
+    String mvpPort = Optional.ofNullable(System.getenv("MVP_WEB_PORT"))
+      .orElse("4444");
+    String mvpApiPort = Optional.ofNullable(System.getenv("MVP_API_PORT"))
+      .orElse("8080");
+
+    mvpServerFinal = mvpServer + ":" + mvpPort;
+    mvpApiServer = mvpServer + ":" + mvpApiPort;
+
+    System.out.println("MVP_WEB_SERVER: " + mvpServerFinal);
+    System.out.println("MVP_API_SERVER: " + mvpApiServer);
 
     String localBrowser = Optional.ofNullable(System.getenv("LOCAL_BROWSER"))
       .orElse(null);
@@ -64,7 +74,7 @@ public class StepDefinitions {
 
   @Given("I am on the login page")
   public void givenIAmOnTheLoginPage() {
-    driver.get(mvpServer);
+    driver.get(mvpServerFinal);
     assertThat(driver.getTitle()).isEqualTo("Elvaco");
   }
 
