@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const MeterListItem = ({meter}: Props) => (
-  <OpenDialogInfoButton label={meter.facility}>
+  <OpenDialogInfoButton label={meter.facility} autoScrollBodyContent={true}>
     <MeterDetailsContainer meterId={meter.id}/>
   </OpenDialogInfoButton>
 );

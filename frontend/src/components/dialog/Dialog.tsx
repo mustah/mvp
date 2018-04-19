@@ -6,18 +6,18 @@ import {ButtonClose} from '../buttons/DialogButtons';
 interface Props {
   children: Children;
   isOpen: boolean;
+  autoScrollBodyContent: boolean;
   close: OnClick;
 }
 
-export const Dialog = ({children, isOpen, close}: Props) => {
+export const Dialog = ({children, isOpen, close, autoScrollBodyContent}: Props) => {
   const actions = [(<ButtonClose onClick={close}/>)];
-
   return (
     <MaterialDialog
       className="Dialog-root"
       contentClassName="Dialog"
       actions={actions}
-      autoScrollBodyContent={true}
+      autoScrollBodyContent={autoScrollBodyContent}
       onRequestClose={close}
       open={isOpen}
     >

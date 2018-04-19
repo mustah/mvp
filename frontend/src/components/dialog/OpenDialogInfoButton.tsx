@@ -6,6 +6,7 @@ import {Dialog} from './Dialog';
 interface Props {
   label: string | number;
   children: Children;
+  autoScrollBodyContent: boolean;
 }
 
 interface State {
@@ -28,10 +29,11 @@ export class OpenDialogInfoButton extends React.Component<Props, State> {
 
   renderDialog = (): Children => {
     const {isOpen} = this.state;
+    const {autoScrollBodyContent, children} = this.props;
 
     return isOpen && (
-      <Dialog isOpen={isOpen} close={this.close}>
-        {this.props.children}
+      <Dialog isOpen={isOpen} close={this.close} autoScrollBodyContent={autoScrollBodyContent}>
+        {children}
       </Dialog>
     );
   }

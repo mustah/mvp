@@ -17,8 +17,8 @@ import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {ObjectsById} from '../../state/domain-models/domainModels';
 import {TabName} from '../../state/ui/tabs/tabsModels';
 import {ClusterContainer} from '../../usecases/map/containers/ClusterContainer';
-import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {Map} from '../../usecases/map/containers/Map';
+import {isGeoPositionWithinThreshold} from '../../usecases/map/helper/mapHelper';
 import {MapMarker} from '../../usecases/map/mapModels';
 
 interface Props {
@@ -43,6 +43,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
     const renderStatusCell = (meter: Meter) => <Status name={meter.status.name}/>;
     const renderFacility = ({facility}: Meter) => facility;
+    const renderMeterId = ({id}: Meter) => id;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderMedium = ({medium}: Meter) => medium;
     const hasConfidentPosition: boolean = gatewayMapMarker.filter(isGeoPositionWithinThreshold).isJust();
@@ -56,11 +57,15 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               <Tab tab={TabName.map} title={translate('map')}/>
             </TabHeaders>
           </TabTopBar>
-          <TabContent tab={TabName.values} selectedTab={selectedTab}>
+          <TabContent tab={TabName.values} selectedTab={selectedTab} className="Scrollable-Table">
             <Table result={gateway.meterIds} entities={meters}>
               <TableColumn
-                header={<TableHead className="first">{translate('meter')}</TableHead>}
+                header={<TableHead>{translate('facility id')}</TableHead>}
                 renderCell={renderFacility}
+              />
+              <TableColumn
+                header={<TableHead>{translate('meter')}</TableHead>}
+                renderCell={renderMeterId}
               />
               <TableColumn
                 header={<TableHead>{translate('manufacturer')}</TableHead>}

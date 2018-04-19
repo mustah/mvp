@@ -70,7 +70,7 @@ class ValidationTabs extends React.Component<Props> {
     } = this.props;
 
     const dialog = selectedMarker.isJust() && (
-      <Dialog isOpen={true} close={closeClusterDialog}>
+      <Dialog isOpen={true} close={closeClusterDialog} autoScrollBodyContent={true}>
         <MeterDetailsContainer meterId={selectedMarker.get()}/>
       </Dialog>
     );

@@ -73,7 +73,7 @@ class CollectionTabs extends React.Component<Props> {
     } = this.props;
 
     const dialog = selectedMarker.isJust() && (
-      <Dialog isOpen={true} close={closeClusterDialog}>
+      <Dialog isOpen={true} close={closeClusterDialog} autoScrollBodyContent={false}>
         <GatewayDetailsContainer gatewayId={selectedMarker.get()}/>
       </Dialog>
     );
