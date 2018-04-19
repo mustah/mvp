@@ -35,7 +35,7 @@ type Props = StateToProps & DispatchToProps & OwnProps;
 const MapWidget = ({markers, map, closeClusterDialog}: Props) => {
 
   const dialog = map.selectedMarker && map.isClusterDialogOpen && (
-    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog}>
+    <Dialog isOpen={map.isClusterDialogOpen} close={closeClusterDialog} autoScrollBodyContent={true}>
       <MeterDetailsContainer meterId={map.selectedMarker}/>
     </Dialog>
   );
