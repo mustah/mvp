@@ -37,8 +37,8 @@ const SelectionContainerComponent = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToProps => {
-  const title = selection.id === -1 ? translate('selection') : selection.name;
+const mapStateToProps = ({userSelection: {userSelection}}: RootState): StateToProps => {
+  const title = userSelection.id === -1 ? translate('selection') : userSelection.name;
   return {
     title,
   };

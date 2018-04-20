@@ -6,7 +6,7 @@ import {RootState} from '../../reducers/rootReducer';
 import {fetchMeter} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {getMeter} from '../../state/domain-models-paginated/meter/meterSelectors';
-import {FetchSingle, uuid} from '../../types/Types';
+import {CallbackWithId, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {getMapMarker} from '../../usecases/map/mapSelectors';
 import './MeterDetailsContainer.scss';
@@ -23,7 +23,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchMeter: FetchSingle;
+  fetchMeter: CallbackWithId;
 }
 
 type MeterDetailsContainerProps = StateToProps & DispatchToProps & OwnProps;

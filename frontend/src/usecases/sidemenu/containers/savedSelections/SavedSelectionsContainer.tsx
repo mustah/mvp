@@ -4,6 +4,7 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import './SavedSelectionsContainer.scss';
 import {
   dividerStyle,
   listItemStyle,
@@ -13,14 +14,21 @@ import {
   sideBarHeaderStyle,
   sideBarStyles,
 } from '../../../../app/themes';
+import {ConfirmDialog} from '../../../../components/dialog/DeleteConfirmDialog';
+import {Row} from '../../../../components/layouts/row/Row';
 import {RootState} from '../../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../../services/translationService';
 import {NormalizedState} from '../../../../state/domain-models/domainModels';
-import {fetchUserSelections, selectSavedSelection} from '../../../../state/search/selection/selectionActions';
-import {UserSelection} from '../../../../state/search/selection/selectionModels';
-import {getSelection} from '../../../../state/search/selection/selectionSelectors';
-import {Callback, OnClick, uuid} from '../../../../types/Types';
+import {
+  deleteUserSelection,
+  fetchUserSelections,
+  selectSavedSelection,
+} from '../../../../state/user-selection/userSelectionActions';
+import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
+import {getSelection} from '../../../../state/user-selection/userSelectionSelectors';
+import {Callback, CallbackWithId, OnClick, uuid} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
+import {SavedSelectionActionsDropdown} from '../../components/savedSelections/SavedSelectionActionsDropdown';
 
 interface StateToProps {
   selection: UserSelection;
@@ -28,11 +36,25 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
+  deleteUserSelection: CallbackWithId;
   fetchUserSelections: Callback;
   selectSavedSelection: OnClick;
 }
 
-class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
+interface State {
+  isDeleteDialogOpen: boolean;
+  selectionToDelete?: uuid;
+}
+
+class SavedSelections extends React.Component<StateToProps & DispatchToProps, State> {
+
+  state: State = {isDeleteDialogOpen: false};
+
+  openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, selectionToDelete: id});
+
+  closeDialog = () => this.setState({isDeleteDialogOpen: false});
+
+  deleteSelectedUser = () => this.props.deleteUserSelection(this.state.selectionToDelete!);
 
   componentDidMount() {
     this.props.fetchUserSelections();
@@ -42,8 +64,7 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
     const {savedSelections, selectSavedSelection, selection} = this.props;
 
     const innerDivStyle: React.CSSProperties = {
-      ...sideBarStyles.padding,
-      ...sideBarStyles.selected,
+      padding: 0,
     };
 
     const renderListItem = (id: uuid) => {
@@ -52,16 +73,24 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
       const style: React.CSSProperties = item.id === selection.id
         ? listItemStyleSelected
         : listItemStyle;
+
       return (
         <ListItem
-          onClick={onSelectSelection}
           style={style}
           innerDivStyle={innerDivStyle}
           hoverColor={sideBarStyles.onHover.color}
-          primaryText={item.name}
           value={item}
           key={item.id}
-        />
+        >
+          <Row className="space-between">
+            <Row className="UserSelectionName flex-1" onClick={onSelectSelection}>
+              {item.name}
+            </Row>
+            <Row className="UserSelectionAction">
+              <SavedSelectionActionsDropdown id={item.id} openConfirmDialog={this.openDialog}/>
+            </Row>
+          </Row>
+        </ListItem>
       );
     };
 
@@ -81,14 +110,19 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps> {
           nestedListStyle={nestedListItemStyle}
         />
         <Divider style={dividerStyle}/>
+        <ConfirmDialog
+          isOpen={this.state.isDeleteDialogOpen}
+          close={this.closeDialog}
+          confirm={this.deleteSelectedUser}
+        />
       </List>
     );
   }
 }
 
-const mapStateToProps = ({searchParameters, domainModels: {userSelections}}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection, domainModels: {userSelections}}: RootState): StateToProps => {
   return {
-    selection: getSelection(searchParameters),
+    selection: getSelection(userSelection),
     savedSelections: userSelections,
   };
 };
@@ -96,6 +130,7 @@ const mapStateToProps = ({searchParameters, domainModels: {userSelections}}: Roo
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectSavedSelection,
   fetchUserSelections,
+  deleteUserSelection,
 }, dispatch);
 
 export const SavedSelectionsContainer =

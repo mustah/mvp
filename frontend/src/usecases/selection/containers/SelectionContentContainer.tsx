@@ -14,20 +14,20 @@ import {translate} from '../../../services/translationService';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
 import {getError} from '../../../state/domain-models/domainModelsSelectors';
 import {clearErrorSelections, fetchSelections} from '../../../state/domain-models/selections/selectionsApiActions';
-import {toggleParameterInSelection} from '../../../state/search/selection/selectionActions';
+import {toggleParameterInSelection} from '../../../state/user-selection/userSelectionActions';
 import {
   LookupState,
   OnSelectParameter,
   ParameterName,
   SelectionListItem,
-} from '../../../state/search/selection/selectionModels';
+} from '../../../state/user-selection/userSelectionModels';
 import {
   getAddresses,
   getCities,
   getCitiesSelection,
   getGatewayStatuses,
   getMeterStatuses,
-} from '../../../state/search/selection/selectionSelectors';
+} from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
 
@@ -121,10 +121,10 @@ class SelectionContent extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({searchParameters: {selection}, domainModels}: RootState): StateToProps => {
+const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps => {
   const lookupState: LookupState = {
     domainModels,
-    selection,
+    userSelection,
   };
   const {cities, addresses, alarms} = domainModels;
 

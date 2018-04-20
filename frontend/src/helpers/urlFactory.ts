@@ -1,5 +1,5 @@
 import {Period} from '../components/dates/dateModels';
-import {SelectedParameters} from '../state/search/selection/selectionModels';
+import {SelectedParameters} from '../state/user-selection/userSelectionModels';
 import {Pagination} from '../state/ui/pagination/paginationModels';
 import {EncodedUriParameters, uuid} from '../types/Types';
 import {currentDateRange, toApiParameters} from './dateHelpers';

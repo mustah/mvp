@@ -160,26 +160,30 @@ export const postRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCal
 export const putRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
   const requestFunc = (requestData: T) => restClient.put(makeUrl(endPoint), requestData);
 
-  return (requestData: T) => (dispatch) => asyncRequest<T, T>({
-    ...putRequestOf<T>(endPoint),
-    requestFunc,
-    requestData,
-    ...requestCallbacks,
-    dispatch,
-  });
+  return (requestData: T) =>
+    (dispatch) =>
+      asyncRequest<T, T>({
+        ...putRequestOf<T>(endPoint),
+        requestFunc,
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
 };
 
 export const deleteRequest = <T>(endPoint: EndPoints, requestCallbacks: RequestCallbacks<T>) => {
   const requestFunc = (requestData: uuid) =>
     restClient.delete(makeUrl(`${endPoint}/${encodeURIComponent(requestData.toString())}`));
 
-  return (requestData: uuid) => (dispatch) => asyncRequest<uuid, T>({
-    ...deleteRequestOf<T>(endPoint),
-    requestFunc,
-    requestData,
-    ...requestCallbacks,
-    dispatch,
-  });
+  return (requestData: uuid) =>
+    (dispatch) =>
+      asyncRequest<uuid, T>({
+        ...deleteRequestOf<T>(endPoint),
+        requestFunc,
+        requestData,
+        ...requestCallbacks,
+        dispatch,
+      });
 };
 
 const makeRequestActionsOf = <T>(

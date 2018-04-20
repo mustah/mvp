@@ -14,7 +14,7 @@ import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {DomainModel} from '../../../state/domain-models/domainModels';
 import {getDomainModel, getError} from '../../../state/domain-models/domainModelsSelectors';
-import {getMeterParameters} from '../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../types/Types';
 import {MapMarker} from '../../map/mapModels';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
@@ -77,11 +77,11 @@ class DashboardContainerComponent extends React.Component<Props> {
 
 const mapStateToProps = ({
   dashboard,
-  searchParameters,
+  userSelection,
   domainModels: {meterMapMarkers},
 }: RootState): StateToProps => ({
   dashboard: dashboard.record,
-  parameters: getMeterParameters(searchParameters),
+  parameters: getMeterParameters(userSelection),
   meterMapMarkers: getDomainModel(meterMapMarkers),
   isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),

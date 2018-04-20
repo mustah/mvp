@@ -1,13 +1,12 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {RootState} from '../reducers/rootReducer';
-import {selectPeriod} from '../state/search/selection/selectionActions';
-import {OnSelectPeriod} from '../state/search/selection/selectionModels';
-import {getSelectedPeriod} from '../state/search/selection/selectionSelectors';
 import {Period} from '../components/dates/dateModels';
 import {PeriodSelection} from '../components/dates/PeriodSelection';
 import '../components/summary/Summary.scss';
+import {RootState} from '../reducers/rootReducer';
+import {selectPeriod} from '../state/user-selection/userSelectionActions';
+import {OnSelectPeriod} from '../state/user-selection/userSelectionModels';
 
 interface StateToProps {
   period: Period;
@@ -26,11 +25,8 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectPeriod,
 }, dispatch);
 
-const mapStateToProps = ({searchParameters: {selection}}: RootState): StateToProps => {
-  return {
-    period: getSelectedPeriod(selection),
-  };
-};
+const mapStateToProps = ({userSelection: {userSelection: {selectionParameters: {period}}}}: RootState): StateToProps =>
+  ({period});
 
 export const PeriodContainer =
   connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(PeriodComponent);

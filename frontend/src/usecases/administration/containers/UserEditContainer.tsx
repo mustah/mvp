@@ -28,7 +28,7 @@ import {Role, User} from '../../../state/domain-models/user/userModels';
 import {getRoles} from '../../../state/domain-models/user/userSelectors';
 import {Language} from '../../../state/language/languageModels';
 import {getLanguages} from '../../../state/language/languageSelectors';
-import {ClearError, ErrorResponse, OnClick, Fetch, uuid, FetchSingle} from '../../../types/Types';
+import {ClearError, ErrorResponse, OnClick, Fetch, uuid, CallbackWithId} from '../../../types/Types';
 
 interface StateToProps {
   organisations: Organisation[];
@@ -40,7 +40,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  fetchUser: FetchSingle;
+  fetchUser: CallbackWithId;
   fetchOrganisations: Fetch;
   modifyUser: OnClick;
   clearError: ClearError;

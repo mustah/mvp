@@ -11,7 +11,7 @@ import {
 } from '../../../../app/themes';
 import {RootState} from '../../../../reducers/rootReducer';
 import {translate} from '../../../../services/translationService';
-import {getMeterParameters} from '../../../../state/search/selection/selectionSelectors';
+import {getMeterParameters} from '../../../../state/user-selection/userSelectionSelectors';
 import {fetchSelectionTree} from '../../../../state/selection-tree/selectionTreeApiActions';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {getSelectionTree} from '../../../../state/selection-tree/selectionTreeSelectors';
@@ -81,12 +81,12 @@ class SelectionTreeComponent extends React.Component<Props> {
 }
 
 const mapStateToProps =
-  ({report, searchParameters, selectionTree, ui: {selectionTree: selectionTreeUi}}: RootState): StateToProps => {
+  ({report, userSelection, selectionTree, ui: {selectionTree: selectionTreeUi}}: RootState): StateToProps => {
     return {
       selectionTree: getSelectionTree(selectionTree),
       openListItems: getOpenListItems(selectionTreeUi),
       selectedListItems: getSelectedListItems(report),
-      parameters: getMeterParameters(searchParameters),
+      parameters: getMeterParameters(userSelection),
     };
   };
 

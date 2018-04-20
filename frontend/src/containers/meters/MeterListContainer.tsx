@@ -26,7 +26,7 @@ import {
   getPaginatedEntities,
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {getPaginatedMeterParameters} from '../../state/search/selection/selectionSelectors';
+import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
@@ -180,7 +180,7 @@ class MeterList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {searchParameters, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
+  {userSelection, paginatedDomainModels: {meters}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
 
@@ -193,7 +193,7 @@ const mapStateToProps = (
     result: getPageResult(meters, page),
     parameters: getPaginatedMeterParameters({
       pagination: paginationData,
-      ...searchParameters,
+      ...userSelection,
     }),
     isFetching: getPageIsFetching(meters, page),
     pagination: paginationData,

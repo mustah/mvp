@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-17 16:38+0200\n"
+"POT-Creation-Date: 2018-04-18 16:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -16,12 +16,6 @@ msgstr "admin"
 
 msgid "metering"
 msgstr "mätning"
-
-msgid "export to Excel (.csv)"
-msgstr "exportera till Excel (.csv)"
-
-msgid "export to JSON"
-msgstr "exportera till JSON"
 
 msgid "add to report"
 msgstr "lägg till i rapport"
@@ -304,6 +298,12 @@ msgstr "kunde inte skapa urval: {{error}}"
 msgid "failed to update selection: {{error}}"
 msgstr "kunde inte uppdatera urval: {{error}}"
 
+msgid "deleted selection"
+msgstr "tog bort urval"
+
+msgid "failed to delete selection: {{error}}"
+msgstr "kunde inte ta bort urval: {{error}}"
+
 msgid "users"
 msgstr "användare"
 
@@ -343,12 +343,6 @@ msgstr "lista"
 
 msgid "all meters in selection"
 msgstr "alla mätare i urvalet"
-
-msgid "edit"
-msgstr "redigera"
-
-msgid "delete"
-msgstr "ta bort"
 
 msgid "dashboard"
 msgstr "dashboard"
@@ -395,6 +389,9 @@ msgstr "filtrera"
 msgid "no saved selections"
 msgstr "inga sparade urval"
 
+msgid "delete user selection"
+msgstr "ta bort urval"
+
 msgid "saved selections"
 msgstr "sparade urval"
 
@@ -440,6 +437,18 @@ msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+
+#~ msgid "export to Excel (.csv)"
+#~ msgstr "exportera till Excel (.csv)"
+
+#~ msgid "export to JSON"
+#~ msgstr "exportera till JSON"
+
+#~ msgid "edit"
+#~ msgstr "redigera"
+
+#~ msgid "delete"
+#~ msgstr "ta bort"
 
 #~ msgid "flags"
 #~ msgstr "flaggor"

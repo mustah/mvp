@@ -3,9 +3,9 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {RootState} from '../reducers/rootReducer';
 import {isSelectionPage} from '../selectors/routerSelectors';
-import {resetSelection, selectSavedSelection} from '../state/search/selection/selectionActions';
-import {UserSelection} from '../state/search/selection/selectionModels';
-import {getSelection} from '../state/search/selection/selectionSelectors';
+import {resetSelection, selectSavedSelection} from '../state/user-selection/userSelectionActions';
+import {UserSelection} from '../state/user-selection/userSelectionModels';
+import {getSelection} from '../state/user-selection/userSelectionSelectors';
 import {isSideMenuOpen} from '../state/ui/uiSelectors';
 import {OnClick, OnClickWithId} from '../types/Types';
 import {SelectionMenuSummary} from '../usecases/selection/components/selection-menu/SelectionMenuSummary';
@@ -53,9 +53,9 @@ const MvpPageComponent = (props: Props) => {
   );
 };
 
-const mapStateToProps = ({routing, ui, searchParameters}: RootState): StateToProps => {
+const mapStateToProps = ({routing, ui, userSelection}: RootState): StateToProps => {
   return {
-    selection: getSelection(searchParameters),
+    selection: getSelection(userSelection),
     isSelectionPage: isSelectionPage(routing),
     isSideMenuOpen: isSideMenuOpen(ui),
   };

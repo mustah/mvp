@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Cell, Legend, LegendPayload, LegendProps, Pie, PieChart, Tooltip} from 'recharts';
-import {FilterParam} from '../../state/search/selection/selectionModels';
+import {FilterParam} from '../../state/user-selection/userSelectionModels';
 import {ItemOrArray, uuid} from '../../types/Types';
 import {Widget} from '../../usecases/dashboard/components/widgets/Widget';
 import {ColumnCenter, ColumnContent} from '../layouts/column/Column';

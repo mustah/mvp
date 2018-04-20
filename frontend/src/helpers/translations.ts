@@ -1,7 +1,7 @@
 import {firstUpperTranslated, translate} from '../services/translationService';
 import {GatewayDataSummaryKey} from '../state/domain-models-paginated/gateway/gatewayModels';
 import {MeterDataSummaryKey} from '../state/domain-models-paginated/meter/meterModels';
-import {ParameterName} from '../state/search/selection/selectionModels';
+import {ParameterName} from '../state/user-selection/userSelectionModels';
 import {Status} from '../types/Types';
 import {texts} from './texts';
 

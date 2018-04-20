@@ -1,12 +1,12 @@
 import {normalize} from 'normalizr';
-import {testData} from '../../../../__tests__/testDataFactory';
-import {Period} from '../../../../components/dates/dateModels';
-import {dateRange, momentWithTimeZone, toApiParameters} from '../../../../helpers/dateHelpers';
-import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../../helpers/urlFactory';
-import {EndPoints} from '../../../../services/endPoints';
-import {EncodedUriParameters, IdNamed} from '../../../../types/Types';
-import {DomainModelsState, Normalized, SelectionEntity} from '../../../domain-models/domainModels';
-import {getRequestOf} from '../../../domain-models/domainModelsActions';
+import {testData} from '../../../__tests__/testDataFactory';
+import {Period} from '../../../components/dates/dateModels';
+import {dateRange, momentWithTimeZone, toApiParameters} from '../../../helpers/dateHelpers';
+import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../helpers/urlFactory';
+import {EndPoints} from '../../../services/endPoints';
+import {EncodedUriParameters, IdNamed} from '../../../types/Types';
+import {DomainModelsState, Normalized, SelectionEntity} from '../../domain-models/domainModels';
+import {getRequestOf} from '../../domain-models/domainModelsActions';
 import {
   addresses,
   alarms,
@@ -15,29 +15,24 @@ import {
   initialDomain,
   meterStatuses,
   users,
-} from '../../../domain-models/domainModelsReducer';
-import {selectionsSchema} from '../../../domain-models/selections/selectionsSchemas';
-import {User} from '../../../domain-models/user/userModels';
-import {initialPaginationState, limit} from '../../../ui/pagination/paginationReducer';
-import {getPagination} from '../../../ui/pagination/paginationSelectors';
-import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../selectionActions';
+} from '../../domain-models/domainModelsReducer';
+import {selectionsSchema} from '../../domain-models/selections/selectionsSchemas';
+import {User} from '../../domain-models/user/userModels';
+import {initialPaginationState, limit} from '../../ui/pagination/paginationReducer';
+import {getPagination} from '../../ui/pagination/paginationSelectors';
+import {ADD_PARAMETER_TO_SELECTION, SELECT_PERIOD} from '../userSelectionActions';
 import {
   LookupState,
   ParameterName,
   SelectionListItem,
   SelectionParameter,
   UserSelection,
-} from '../selectionModels';
-import {initialState, selection} from '../selectionReducer';
-import {
-  composePaginatedCombiner,
-  getCities,
-  getSelectedPeriod,
-  getSelection,
-  UriLookupStatePaginated,
-} from '../selectionSelectors';
+  UserSelectionState,
+} from '../userSelectionModels';
+import {initialState, userSelection} from '../userSelectionReducer';
+import {composePaginatedCombiner, getCities, getSelection, UriLookupStatePaginated} from '../userSelectionSelectors';
 
-describe('selectionSelectors', () => {
+describe('userSelectionSelectors', () => {
 
   const normalizedSelections = normalize(testData.selections, selectionsSchema);
   const {cities: cityEntities} = normalizedSelections.entities;
@@ -46,9 +41,9 @@ describe('selectionSelectors', () => {
   const vasa: IdNamed = cityEntities['finland,vasa'];
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
-  const initialSearchParameterState = {selection: {...initialState}};
+  const initialUserSelectionState: UserSelectionState = {...initialState};
   const initialUriLookupState: UriLookupStatePaginated = {
-    ...initialSearchParameterState,
+    ...initialUserSelectionState,
     pagination: getPagination({
       entityType: 'meters',
       componentId: 'test',
@@ -87,8 +82,9 @@ describe('selectionSelectors', () => {
     users: users(initialDomain<User>(), {type: 'none'}),
   });
 
-  it('has entities', () => {
-    expect(getSelection({...initialSearchParameterState})).toEqual(initialState);
+  it('can find user selection in user selection state', () => {
+    const userSelection: UserSelection = getSelection(initialUserSelectionState);
+    expect(userSelection).toEqual(initialState.userSelection);
   });
 
   it('encode the initial, empty, selection', () => {
@@ -100,7 +96,7 @@ describe('selectionSelectors', () => {
     const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+      userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: domainModels(normalizedSelections) as DomainModelsState,
     };
 
@@ -110,7 +106,8 @@ describe('selectionSelectors', () => {
       {selected: false, ...vasa},
     ];
 
-    expect(getCities(state)).toEqual(stockholmSelected);
+    const actual: SelectionListItem[] = getCities(state);
+    expect(actual).toEqual(stockholmSelected);
   });
 
   it('get entities for undefined entity type', () => {
@@ -121,7 +118,7 @@ describe('selectionSelectors', () => {
     notCity.cities = cities(initialDomainModelState, {type: 'unknown'});
 
     const state: LookupState = {
-      selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+      userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
       domainModels: notCity as DomainModelsState,
     };
 
@@ -132,13 +129,13 @@ describe('selectionSelectors', () => {
 
     it('has selected city search parameter', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const state: UserSelection = selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
+      const state: UserSelectionState = userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
 
       const uriParameters: EncodedUriParameters = composePaginatedCombiner(
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
-        selection: state,
+        ...state,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -152,11 +149,11 @@ describe('selectionSelectors', () => {
     it('has two selected cities', () => {
       const payloadGot: SelectionParameter = {...gothenburg, parameter: ParameterName.cities};
       const payloadSto: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
-      const prevState: UserSelection = selection(
+      const prevState: UserSelectionState = userSelection(
         initialState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadGot},
       );
-      const state: UserSelection = selection(
+      const state: UserSelectionState = userSelection(
         prevState,
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
       );
@@ -165,7 +162,7 @@ describe('selectionSelectors', () => {
         encodedUriParametersForMeters,
         mockParameterCallbacks,
       )({
-        selection: state,
+        ...state,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
@@ -183,16 +180,17 @@ describe('selectionSelectors', () => {
   describe('get selected period', () => {
 
     it('there is a default period', () => {
-      expect(getSelectedPeriod(initialState)).toEqual(expect.anything());
+      expect(initialState.userSelection.selectionParameters.period)
+        .toEqual(Period.latest);
     });
 
     it('get selected period', () => {
-      const state: UserSelection = selection(
+      const state: UserSelectionState = userSelection(
         initialState,
         {type: SELECT_PERIOD, payload: Period.currentWeek},
       );
 
-      expect(getSelectedPeriod(state)).toBe(Period.currentWeek);
+      expect(state.userSelection.selectionParameters.period).toBe(Period.currentWeek);
     });
   });
 
@@ -202,7 +200,7 @@ describe('selectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
 
       const state: LookupState = {
-        selection: selection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
+        userSelection: userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload}),
         domainModels: domainModels(normalizedSelections) as DomainModelsState,
       };
 

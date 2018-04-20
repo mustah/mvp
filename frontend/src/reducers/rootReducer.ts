@@ -6,11 +6,11 @@ import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {LanguageState} from '../state/language/languageModels';
 import {language} from '../state/language/languageReducer';
-import {SearchParameterState} from '../state/search/searchParameterModels';
+import {UserSelectionState} from '../state/user-selection/userSelectionModels';
+import {userSelection} from '../state/user-selection/userSelectionReducer';
 import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
-import {searchParameters} from '../state/search/searchParameterReducer';
 import {summary} from '../state/summary/summaryReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
 import {LOGOUT_USER} from '../usecases/auth/authActions';
@@ -31,7 +31,7 @@ export interface RootState {
   routing: RouterState;
   report: ReportState;
   language: LanguageState;
-  searchParameters: SearchParameterState;
+  userSelection: UserSelectionState;
   ui: UiState;
   map: MapState;
 }
@@ -48,7 +48,7 @@ const appReducer = combineReducers<AppState>({
   routing,
   report,
   language,
-  searchParameters,
+  userSelection,
   summary,
   selectionTree,
   ui,

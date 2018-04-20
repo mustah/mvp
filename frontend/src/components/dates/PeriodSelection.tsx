@@ -3,7 +3,7 @@ import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
 import {prettyRange} from '../../helpers/dateHelpers';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {OnSelectPeriod} from '../../state/search/selection/selectionModels';
+import {OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
 import {Period} from './dateModels';

@@ -1,6 +1,5 @@
 import {createSelector, OutputSelector} from 'reselect';
-import {Period} from '../../../components/dates/dateModels';
-import {getTranslationOrName} from '../../../helpers/translations';
+import {getTranslationOrName} from '../../helpers/translations';
 import {
   encodedUriParametersForAllGateways,
   encodedUriParametersForAllMeters,
@@ -8,15 +7,21 @@ import {
   encodedUriParametersForMeters,
   PaginatedParametersCombiner,
   ParameterCallbacks,
-} from '../../../helpers/urlFactory';
-import {EncodedUriParameters, uuid} from '../../../types/Types';
-import {DomainModel, SelectionEntity} from '../../domain-models/domainModels';
-import {Pagination} from '../../ui/pagination/paginationModels';
-import {SearchParameterState} from '../searchParameterModels';
-import {LookupState, ParameterName, SelectedParameters, UserSelection, SelectionListItem} from './selectionModels';
-import {initialState} from './selectionReducer';
+} from '../../helpers/urlFactory';
+import {EncodedUriParameters, uuid} from '../../types/Types';
+import {DomainModel, SelectionEntity} from '../domain-models/domainModels';
+import {Pagination} from '../ui/pagination/paginationModels';
+import {
+  LookupState,
+  ParameterName,
+  SelectedParameters,
+  SelectionListItem,
+  UserSelection,
+  UserSelectionState,
+} from './userSelectionModels';
 
-const getSelectedIds = (state: LookupState): SelectedParameters => state.selection.selectionParameters;
+const getSelectedIds = (state: LookupState): SelectedParameters =>
+  state.userSelection.userSelection.selectionParameters;
 
 const getSelectionGroup = (entityType: string) =>
   (state: LookupState): DomainModel<SelectionEntity> => state.domainModels[entityType];
@@ -90,8 +95,8 @@ const getList = (entityType: ParameterName): ListSelector =>
 const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
   (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
-const getSelectedParameters = (state: SearchParameterState): SelectedParameters =>
-  state.selection.selectionParameters;
+const getSelectedParameters = (state: UserSelectionState): SelectedParameters =>
+  state.userSelection.selectionParameters;
 
 export const getCities = getList(ParameterName.cities);
 export const getAddresses = getList(ParameterName.addresses);
@@ -99,7 +104,7 @@ export const getAlarms = getList(ParameterName.alarms);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export interface UriLookupStatePaginated extends SearchParameterState {
+export interface UriLookupStatePaginated extends UserSelectionState {
   pagination: Pagination;
 }
 
@@ -119,20 +124,15 @@ export const getPaginatedGatewayParameters =
   composePaginatedCombiner(encodedUriParametersForGateways);
 
 export const getMeterParameters =
-  createSelector<SearchParameterState, SelectedParameters, EncodedUriParameters>(
+  createSelector<UserSelectionState, SelectedParameters, EncodedUriParameters>(
     getSelectedParameters,
     encodedUriParametersForAllMeters,
   );
 
 export const getGatewayParameters =
-  createSelector<SearchParameterState, SelectedParameters, EncodedUriParameters>(
+  createSelector<UserSelectionState, SelectedParameters, EncodedUriParameters>(
     getSelectedParameters,
     encodedUriParametersForAllGateways,
   );
 
-export const getSelectedPeriod = createSelector<UserSelection, SelectedParameters, Period>(
-  (selection: UserSelection) => selection.selectionParameters,
-  (selected: SelectedParameters) => selected.period! || initialState.selectionParameters.period,
-);
-
-export const getSelection = (state: SearchParameterState): UserSelection => state.selection;
+export const getSelection = (state: UserSelectionState): UserSelection => state.userSelection;

@@ -6,7 +6,7 @@ import {IconSelection} from '../../../../components/icons/IconSelection';
 import {Row, RowCenter} from '../../../../components/layouts/row/Row';
 import {Bold, Normal} from '../../../../components/texts/Texts';
 import {firstUpperTranslated, translate} from '../../../../services/translationService';
-import {UserSelection} from '../../../../state/search/selection/selectionModels';
+import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
 import {OnClick, OnClickWithId, uuid} from '../../../../types/Types';
 
 interface Props {

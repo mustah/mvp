@@ -22,7 +22,7 @@ import {
   getPaginatedEntities,
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getPaginatedGatewayParameters} from '../../../state/search/selection/selectionSelectors';
+import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
@@ -142,7 +142,7 @@ class GatewayList extends React.Component<Props> {
 }
 
 const mapStateToProps = (
-  {searchParameters, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
+  {userSelection, paginatedDomainModels: {gateways}, ui: {pagination}}: RootState,
   {componentId}: OwnProps,
 ): StateToProps => {
   const entityType: EntityTypes = 'gateways';
@@ -154,7 +154,7 @@ const mapStateToProps = (
     result: getPageResult(gateways, page),
     encodedUriParametersForGateways: getPaginatedGatewayParameters({
       pagination: paginationData,
-      ...searchParameters,
+      ...userSelection,
     }),
     isFetching: getPageIsFetching(gateways, page),
     pagination: paginationData,
