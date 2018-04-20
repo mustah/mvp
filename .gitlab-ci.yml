@@ -236,10 +236,15 @@ test:upgrade:
     DOCKER_DRIVER: overlay2
     MVP_UPGRADE_FROM_TAG: production
     MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_SLUG}
-
   stage: test
   dependencies:
     - gradle:build
+  after_script:
+    - docker-compose down -v
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  services:
+    - name: docker:dind
   script:
     - MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d application postgresql
     - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
@@ -252,14 +257,7 @@ test:upgrade:
     - docker-compose logs application
     - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
 
-  after_script:
-    - docker-compose down -v
 
-  before_script: 
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-
-  services:
-    - name: docker:dind
 
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
@@ -300,9 +298,9 @@ post-deploy:tag-production-docker:
     - shell
   only:
     - tags
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   script:
     - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG}
     - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
