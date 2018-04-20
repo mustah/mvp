@@ -11,6 +11,7 @@ import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
 import {MissingDataTitle} from '../../components/texts/Titles';
+import {roundCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
@@ -102,7 +103,9 @@ class MeterList extends React.Component<Props> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
-    const renderCollectionPercentage = ({collectionStatus}: Meter) => collectionStatus + '%';
+    const renderCollectionStatus = ({collectionStatus}: Meter) =>
+      roundCollectionPercentage(collectionStatus);
+
     const collectionPercentageHeader = (
       <TableHead
         className="number"
@@ -154,7 +157,7 @@ class MeterList extends React.Component<Props> {
               <TableColumn
                 cellClassName="number"
                 header={collectionPercentageHeader}
-                renderCell={renderCollectionPercentage}
+                renderCell={renderCollectionStatus}
               />
               <TableColumn
                 header={<TableHead className="TableHead-status">{translate('status')}</TableHead>}
