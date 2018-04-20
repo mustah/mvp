@@ -1,0 +1,14 @@
+{
+  "message_type": "Elvaco MVP MQ Measurement Message 1.0",
+  "organisation_id": "Blaue Energi",
+  "source_system_id": "Elvaco Metering",
+  "jobId": "342843",
+  "facility": {
+    "id": "151068"
+  },
+  "gateway": {},
+  "meter": {
+    "id": "31295"
+  },
+  "values": []
+}

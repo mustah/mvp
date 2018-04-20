@@ -53,6 +53,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -66,7 +67,7 @@ import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("ConstantConditions")
-public class MessageHandlerTest {
+public class MeteringMessageHandlerTest {
 
   private static final String DEFAULT_MANUFACTURER = "ELV";
   private static final String DEFAULT_PRODUCT_MODEL = "CMi2110";
@@ -223,6 +224,26 @@ public class MessageHandlerTest {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
       null,
+      new MeterIdDto(DEFAULT_EXTERNAL_ID),
+      new FacilityIdDto(DEFAULT_EXTERNAL_ID),
+      DEFAULT_ORGANISATION_EXTERNAL_ID,
+      "Test source system",
+      emptyList()
+    );
+
+    messageHandler.handle(message);
+
+    assertThat(gateways.findAll(null)).isEmpty();
+    assertThat(organisations.findAll()).hasSize(1);
+    assertThat(physicalMeters.findAll()).hasSize(1);
+    assertThat(logicalMeters.findAll(new MockRequestParameters())).hasSize(1);
+  }
+
+  @Test
+  public void survivesEmptyGatewayFieldInMeasurementMessage() {
+    MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
+      MessageType.METERING_MEASUREMENT_V_1_0,
+      new GatewayIdDto(null),
       new MeterIdDto(DEFAULT_EXTERNAL_ID),
       new FacilityIdDto(DEFAULT_EXTERNAL_ID),
       DEFAULT_ORGANISATION_EXTERNAL_ID,

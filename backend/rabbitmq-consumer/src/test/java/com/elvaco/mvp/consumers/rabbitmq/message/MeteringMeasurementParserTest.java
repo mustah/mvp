@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
+
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import org.junit.Before;
@@ -28,35 +29,34 @@ public class MeteringMeasurementParserTest {
   public void meteringMeasurementMessageIsParsedCorrectly() {
     String jsonMessage =
       "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
-      + "  \"gateway\": {\n"
-      + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
-      + "  },\n"
-      + "  \"meter\": {\n"
-      + "    \"id\": \"123456789\"\n"
-      + "  },\n"
-      + "  \"facility\": {\n"
-      + "    \"id\": \"42402519\"\n"
-      + "  },\n"
-      + "  \"organisation_id\": \"Elvaco AB\",\n"
-      + "  \"source_system_id\": \"Elvaco Metering\",\n"
-      + "  \"values\": [\n"
-      + "    {\n"
-      + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
-      + "      \"value\": 0.659,\n"
-      + "      \"unit\": \"wH\",\n"
-      + "      \"quantity\": \"power\",\n"
-      + "      \"status\": \"OK\"\n"
-      + "    }\n"
-      + "  ]\n"
-      + "}";
+        + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+        + "  \"gateway\": {\n"
+        + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
+        + "  },\n"
+        + "  \"meter\": {\n"
+        + "    \"id\": \"123456789\"\n"
+        + "  },\n"
+        + "  \"facility\": {\n"
+        + "    \"id\": \"42402519\"\n"
+        + "  },\n"
+        + "  \"organisation_id\": \"Elvaco AB\",\n"
+        + "  \"source_system_id\": \"Elvaco Metering\",\n"
+        + "  \"values\": [\n"
+        + "    {\n"
+        + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+        + "      \"value\": 0.659,\n"
+        + "      \"unit\": \"wH\",\n"
+        + "      \"quantity\": \"power\",\n"
+        + "      \"status\": \"OK\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}";
     MeteringMeasurementMessageDto parsedMessage =
       messageParser.parseMeasurementMessage(jsonMessage).orElse(null);
 
     assertThat(parsedMessage).isNotNull();
     assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_MEASUREMENT_V_1_0);
-    assertThat(parsedMessage.gateway).isNotNull();
-    assertThat(parsedMessage.gateway.id).isEqualTo("GW-CME3100-XXYYZZ");
+    assertThat(parsedMessage.gateway().get().id).isEqualTo("GW-CME3100-XXYYZZ");
     assertThat(parsedMessage.meter).isNotNull();
     assertThat(parsedMessage.meter.id).isEqualTo("123456789");
     assertThat(parsedMessage.facility).isNotNull();
@@ -104,8 +104,7 @@ public class MeteringMeasurementParserTest {
 
     assertThat(parsedMessage).isNotNull();
     assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_MEASUREMENT_V_1_0);
-    assertThat(parsedMessage.gateway).isNotNull();
-    assertThat(parsedMessage.gateway.id).isEqualTo("GW-CME3100-XXYYZZ");
+    assertThat(parsedMessage.gateway().get().id).isEqualTo("GW-CME3100-XXYYZZ");
     assertThat(parsedMessage.meter).isNotNull();
     assertThat(parsedMessage.meter.id).isEqualTo("123456789");
     assertThat(parsedMessage.facility).isNotNull();
@@ -125,30 +124,30 @@ public class MeteringMeasurementParserTest {
   public void measurementMessageMissingGatewayIsOk() {
     String jsonMessage =
       "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
-      + "  \"meter\": {\n"
-      + "    \"id\": \"123456789\"\n"
-      + "  },\n"
-      + "  \"facility\": {\n"
-      + "    \"id\": \"42402519\"\n"
-      + "  },\n"
-      + "  \"organisation_id\": \"Elvaco AB\",\n"
-      + "  \"source_system_id\": \"Elvaco Metering\",\n"
-      + "  \"values\": [\n"
-      + "    {\n"
-      + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
-      + "      \"value\": 0.659,\n"
-      + "      \"unit\": \"wH\",\n"
-      + "      \"quantity\": \"power\",\n"
-      + "      \"status\": \"OK\"\n"
-      + "    }\n"
-      + "  ]\n"
-      + "}";
+        + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+        + "  \"meter\": {\n"
+        + "    \"id\": \"123456789\"\n"
+        + "  },\n"
+        + "  \"facility\": {\n"
+        + "    \"id\": \"42402519\"\n"
+        + "  },\n"
+        + "  \"organisation_id\": \"Elvaco AB\",\n"
+        + "  \"source_system_id\": \"Elvaco Metering\",\n"
+        + "  \"values\": [\n"
+        + "    {\n"
+        + "      \"timestamp\": \"2018-03-16T13:07:01\",\n"
+        + "      \"value\": 0.659,\n"
+        + "      \"unit\": \"wH\",\n"
+        + "      \"quantity\": \"power\",\n"
+        + "      \"status\": \"OK\"\n"
+        + "    }\n"
+        + "  ]\n"
+        + "}";
 
     MeteringMeasurementMessageDto parsedMessage =
       messageParser.parseMeasurementMessage(jsonMessage).get();
 
-    assertThat(parsedMessage.gateway).isNull();
+    assertThat(parsedMessage.gateway()).isNotPresent();
   }
 
   @Test
@@ -159,19 +158,19 @@ public class MeteringMeasurementParserTest {
 
     String jsonMessageWithoutValues =
       "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
-      + "  \"gateway\": {\n"
-      + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
-      + "  },\n"
-      + "  \"meter\": {\n"
-      + "    \"id\": \"123456789\"\n"
-      + "  },\n"
-      + "  \"facility\": {\n"
-      + "    \"id\": \"42402519\"\n"
-      + "  },\n"
-      + "  \"organisation_id\": \"Elvaco AB\",\n"
-      + "  \"source_system_id\": \"Elvaco Metering\"\n"
-      + "}";
+        + "  \"message_type\": \"Elvaco MVP MQ Measurement Message 1.0\",\n"
+        + "  \"gateway\": {\n"
+        + "    \"id\": \"GW-CME3100-XXYYZZ\"\n"
+        + "  },\n"
+        + "  \"meter\": {\n"
+        + "    \"id\": \"123456789\"\n"
+        + "  },\n"
+        + "  \"facility\": {\n"
+        + "    \"id\": \"42402519\"\n"
+        + "  },\n"
+        + "  \"organisation_id\": \"Elvaco AB\",\n"
+        + "  \"source_system_id\": \"Elvaco Metering\"\n"
+        + "}";
     assertThat(messageParser.parseMeasurementMessage(jsonMessageWithoutValues)).isEmpty();
   }
 
@@ -187,6 +186,16 @@ public class MeteringMeasurementParserTest {
       new ValueDto(LocalDateTime.parse("2018-03-16T14:07:01"), 0.759, "°C", "Return temp."),
       new ValueDto(LocalDateTime.parse("2018-03-16T15:07:01"), 37.4, "°C", "Return temp.")
     );
+  }
+
+  @Test
+  public void parseWithEmptyGatewayField() {
+    String message = parseJsonFile("messages/measurements-empty-gateway-field.json");
+
+    MeteringMeasurementMessageDto parsedMessage =
+      messageParser.parseMeasurementMessage(message).get();
+
+    assertThat(parsedMessage.gateway()).isNotPresent();
   }
 
   private String parseJsonFile(String file) {
