@@ -49,12 +49,11 @@ public class StepDefinitions {
       .orElse("4444");
     String apiPort = Optional.ofNullable(System.getenv("MVP_API_PORT"))
       .orElse("8080");
-    useLocalBrowser = Optional.ofNullable(System.getenv("LOCAL_BROWSER"))
-      .orElse(null);
     mvpAdminUsername = Optional.ofNullable(System.getenv("MVP_ADMIN_USERNAME"))
       .orElse("mvpadmin@elvaco.se");
     mvpAdminPassword = Optional.ofNullable(System.getenv("MVP_ADMIN_PASSWORD"))
       .orElse("changeme");
+    useLocalBrowser = System.getenv("LOCAL_BROWSER");
 
     mvpServer = server + ":" + webPort;
     mvpApiServer = server + ":" + apiPort;
