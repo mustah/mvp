@@ -55,4 +55,5 @@ dependencies {
   testCompile 'org.assertj:assertj-core:3.9.1'
   testCompile 'org.seleniumhq.selenium:selenium-java:3.11.0'
   testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:3.11.0'
+  testCompile 'com.mashape.unirest:unirest-java:1.4.9'
 }

@@ -4,9 +4,15 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import cucumber.api.DataTable;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
@@ -21,6 +27,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import support.ApiRequestHelper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,21 +35,38 @@ public class StepDefinitions {
 
   private WebDriver driver;
   private String mvpServer;
+  private String mvpApiServer;
+  private String mvpAdminUsername;
+  private String mvpAdminPassword;
+  private String useLocalBrowser;
+  private List<JsonNode> organisations;
+  private ApiRequestHelper api;
+
+  private void getEnvironmentOptions() throws UnknownHostException {
+    String server = Optional.ofNullable(System.getenv("MVP_SERVER"))
+      .orElse("http://" + getHostName());
+    String webPort = Optional.ofNullable(System.getenv("MVP_WEB_PORT"))
+      .orElse("4444");
+    String apiPort = Optional.ofNullable(System.getenv("MVP_API_PORT"))
+      .orElse("8080");
+    mvpAdminUsername = Optional.ofNullable(System.getenv("MVP_ADMIN_USERNAME"))
+      .orElse("mvpadmin@elvaco.se");
+    mvpAdminPassword = Optional.ofNullable(System.getenv("MVP_ADMIN_PASSWORD"))
+      .orElse("changeme");
+    useLocalBrowser = System.getenv("LOCAL_BROWSER");
+
+    mvpServer = server + ":" + webPort;
+    mvpApiServer = server + ":" + apiPort;
+  }
 
   @Before
-  public void setUp() throws MalformedURLException, UnknownHostException {
-    mvpServer = Optional.ofNullable(System.getenv("MVP_SERVER"))
-      .orElse("http://" + getHostName() + ":4444");
-    System.out.println("MVP_SERVER: " + mvpServer);
-
-    String localBrowser = Optional.ofNullable(System.getenv("LOCAL_BROWSER"))
-      .orElse(null);
+  public void beforeScenario() throws MalformedURLException, UnknownHostException {
+    getEnvironmentOptions();
 
     ChromeOptions options = new ChromeOptions();
-    if (localBrowser != null) {
+    if (useLocalBrowser != null) {
       driver = new ChromeDriver(options);
     } else {
-      options.addArguments("--headless");
       String seleniumChromeStandaloneUrl = Optional.ofNullable(System.getenv("CHROME_URL"))
         .orElse("http://localhost:5555/wd/hub");
 
@@ -50,10 +74,16 @@ public class StepDefinitions {
     }
 
     driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
+    System.out.println("MVP_WEB_SERVER: " + mvpServer);
+    System.out.println("MVP_API_SERVER: " + mvpApiServer);
+    api = new ApiRequestHelper(mvpApiServer, mvpAdminUsername, mvpAdminPassword);
+    organisations = new ArrayList<>();
   }
 
   @After
-  public void tearDown(Scenario scenario) {
+  public void afterScenario(Scenario scenario) {
+    api.deleteOrganisations(organisations);
     if (scenario.isFailed()) {
       final byte[] screenshot = ((TakesScreenshot) driver)
         .getScreenshotAs(OutputType.BYTES);
@@ -63,6 +93,26 @@ public class StepDefinitions {
     driver.quit();
   }
 
+  @Given("the following companies exist")
+  public void givenTheFollowingCompaniesExist(DataTable table) throws UnirestException {
+    List<Map<String, String>> data = table.asMaps(String.class, String.class);
+    for (Map<String, String> row : data) {
+      JsonNode organisation = api.createOrganisation(row.get("company"), row.get("slug"));
+      organisations.add(organisation);
+    }
+  }
+
+  @Given("the following users exist")
+  public void givenTheFollowingUsersExist(DataTable table) throws UnirestException {
+    List<Map<String,String>> data = table.asMaps(String.class, String.class);
+    for (Map<String, String> row: data) {
+      api.createUser(row.get("name"),
+        row.get("email"),
+        row.get("password"),
+        api.findOrganisationByName(row.get("organisation"), organisations));
+    }
+  }
+
   @Given("I am on the login page")
   public void givenIAmOnTheLoginPage() {
     driver.get(mvpServer);
@@ -70,10 +120,10 @@ public class StepDefinitions {
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String username, String password) {
+  public void whenILoginAsUserWithPassword(String email, String password) {
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
-    emailElement.sendKeys(username);
+    emailElement.sendKeys(email);
 
     WebElement passwordElement = driver.findElement(By.id("password"));
     passwordElement.clear();
