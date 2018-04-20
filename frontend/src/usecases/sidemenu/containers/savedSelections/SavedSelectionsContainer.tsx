@@ -25,7 +25,7 @@ import {
 } from '../../../../state/user-selection/userSelectionActions';
 import {UserSelection} from '../../../../state/user-selection/userSelectionModels';
 import {getSelection} from '../../../../state/user-selection/userSelectionSelectors';
-import {Callback, CallbackSingle, OnClick, uuid} from '../../../../types/Types';
+import {Callback, CallbackWithId, OnClick, uuid} from '../../../../types/Types';
 import {NoSavedSelections} from '../../components/savedSelections/NoSavedSelections';
 import {SavedSelectionActionsDropdown} from '../../components/savedSelections/SavedSelectionActionsDropdown';
 
@@ -35,7 +35,7 @@ interface StateToProps {
 }
 
 interface DispatchToProps {
-  deleteUserSelection: CallbackSingle;
+  deleteUserSelection: CallbackWithId;
   fetchUserSelections: Callback;
   selectSavedSelection: OnClick;
 }
