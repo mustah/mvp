@@ -80,6 +80,9 @@ variables:
 
 .deploy:staging: &deploy_staging
   <<: *auto_deploy
+  environment:
+    name: staging
+    url: https://mvpstaging.elvaco.se
   script:
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
@@ -90,6 +93,9 @@ variables:
 
 .deploy:production: &deploy_production
   <<: *auto_deploy
+  environment:
+    name: production
+    url: https://mvp.elvaco.se
   script:
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
