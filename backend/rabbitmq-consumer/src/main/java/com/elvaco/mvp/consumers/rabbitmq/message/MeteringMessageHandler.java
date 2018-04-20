@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
@@ -29,6 +30,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -169,23 +171,26 @@ public class MeteringMessageHandler implements MessageHandler {
           );
         }
       );
+
     Optional<Gateway> optionalGateway = Optional.empty();
-    if (measurementMessage.gateway != null) {
+    if (measurementMessage.gateway().isPresent()) {
+      GatewayIdDto gatewayIdDto = measurementMessage.gateway().get();
       optionalGateway = Optional.of(gatewayUseCases.findBy(
         organisation.id,
-        measurementMessage.gateway.id
+        gatewayIdDto.id
       ).orElseGet(() -> {
-        referenceInfoDtoBuilder.setGatewayExternalId(measurementMessage.gateway.id);
+        referenceInfoDtoBuilder.setGatewayExternalId(gatewayIdDto.id);
         return new Gateway(
           randomUUID(),
           organisation.id,
-          measurementMessage.gateway.id,
+          gatewayIdDto.id,
           "Unknown",
           singletonList(logicalMeter),
           emptyList() // TODO Save gateway status
         );
       }));
     }
+
     List<Measurement> measurements = measurementMessage.values
       .stream()
       .map(value -> measurementUseCases

@@ -1,12 +1,13 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
   @Nullable
-  public final GatewayIdDto gateway;
+  private final GatewayIdDto gateway;
   public final MeterIdDto meter;
   public final FacilityIdDto facility;
   public final String organisationId;
@@ -41,5 +42,9 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
       sourceSystemId,
       values
     );
+  }
+
+  public Optional<GatewayIdDto> gateway() {
+    return Optional.ofNullable(gateway).filter(gatewayIdDto -> gatewayIdDto.id != null);
   }
 }
