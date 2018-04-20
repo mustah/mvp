@@ -4,6 +4,7 @@ import ListItem from 'material-ui/List/ListItem';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
+import './SavedSelectionsContainer.scss';
 import {
   dividerStyle,
   listItemStyle,
@@ -48,8 +49,11 @@ interface State {
 class SavedSelections extends React.Component<StateToProps & DispatchToProps, State> {
 
   state: State = {isDeleteDialogOpen: false};
+
   openDialog = (id: uuid) => this.setState({isDeleteDialogOpen: true, selectionToDelete: id});
+
   closeDialog = () => this.setState({isDeleteDialogOpen: false});
+
   deleteSelectedUser = () => this.props.deleteUserSelection(this.state.selectionToDelete!);
 
   componentDidMount() {
@@ -79,11 +83,11 @@ class SavedSelections extends React.Component<StateToProps & DispatchToProps, St
           key={item.id}
         >
           <Row className="space-between">
-            <Row style={{paddingTop: '6px'}} className="flex-1" onClick={onSelectSelection}>
+            <Row className="UserSelectionName flex-1" onClick={onSelectSelection}>
               {item.name}
             </Row>
-            <Row style={{transform: 'scale(0.8)', paddingRight: '13px'}}>
-              <SavedSelectionActionsDropdown id={item.id} confirmDelete={this.openDialog}/>
+            <Row className="UserSelectionAction">
+              <SavedSelectionActionsDropdown id={item.id} openConfirmDialog={this.openDialog}/>
             </Row>
           </Row>
         </ListItem>

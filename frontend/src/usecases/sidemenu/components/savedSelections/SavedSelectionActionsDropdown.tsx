@@ -6,16 +6,14 @@ import {OnClick, OnClickWithId, RenderFunction, uuid} from '../../../../types/Ty
 
 interface Props {
   id: uuid;
-  confirmDelete: OnClickWithId;
+  openConfirmDialog: OnClickWithId;
 }
 
-export const SavedSelectionActionsDropdown = ({id, confirmDelete}: Props) => {
-  const openAlert = () => confirmDelete(id);
-
+export const SavedSelectionActionsDropdown = ({id, openConfirmDialog}: Props) => {
   const renderPopoverContent: RenderFunction<OnClick> = (onClick: OnClick) => {
     const onClickDelete = () => {
       onClick();
-      openAlert();
+      openConfirmDialog(id);
     };
     return <ActionMenuItem name={translate('delete user selection')} onClick={onClickDelete} key={`1-${id}`}/>;
   };
