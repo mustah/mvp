@@ -245,10 +245,10 @@ test:upgrade:
   stage: test
   dependencies:
     - gradle:build
-  after_script:
-    - docker-compose down -v
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  after_script:
+      - docker-compose down -v
   services:
     - name: docker:dind
   script:
