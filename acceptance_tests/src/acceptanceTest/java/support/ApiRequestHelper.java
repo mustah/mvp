@@ -37,11 +37,11 @@ public class ApiRequestHelper {
     return jsonResponse.getBody();
   }
 
-  public JsonNode createUser(String username, String email, String password, JsonNode organisation)
+  public JsonNode createUser(String userName, String email, String password, JsonNode organisation)
     throws UnirestException {
     String urlEndpoint = "/api/" + apiVersion + "/users";
     JsonNode data = new JsonNode(null);
-    data.getObject().put("name", username)
+    data.getObject().put("name", userName)
       .put("email", email)
       .put("organisation", organisation.getObject())
       .put("roles", new JsonNode("[\"USER\"]").getArray())

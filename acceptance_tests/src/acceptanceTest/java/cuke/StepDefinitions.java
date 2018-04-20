@@ -107,7 +107,7 @@ public class StepDefinitions {
   public void givenTheFollowingUsersExist(DataTable table) throws UnirestException {
     List<Map<String,String>> data = table.asMaps(String.class, String.class);
     for (Map<String, String> row: data) {
-      api.createUser(row.get("username"),
+      api.createUser(row.get("name"),
         row.get("email"),
         row.get("password"),
         api.findOrganisationByName(row.get("organisation"), organisations));
@@ -121,10 +121,10 @@ public class StepDefinitions {
   }
 
   @When("I login as user '(.*)' and password '(.*)'")
-  public void whenILoginAsUserWithPassword(String username, String password) {
+  public void whenILoginAsUserWithPassword(String email, String password) {
     WebElement emailElement = driver.findElement(By.id("email"));
     emailElement.clear();
-    emailElement.sendKeys(username);
+    emailElement.sendKeys(email);
 
     WebElement passwordElement = driver.findElement(By.id("password"));
     passwordElement.clear();
