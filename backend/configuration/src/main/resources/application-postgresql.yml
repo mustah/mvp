@@ -6,9 +6,11 @@ spring:
     name: MVP
   datasource:
     url: jdbc:postgresql://postgresql:5432/mvp
+    driverClassName: org.postgresql.Driver
     username: appuser
     password: 'RWZ8tKUzDdbncg2J'
   jpa:
+    hibernate.ddl-auto: validate
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpPostgreSqlDialect
       hibernate.show_sql: false
@@ -16,7 +18,6 @@ spring:
       hibernate.format_sql: true
       hibernate.type: trace
       hibernate.jdbc.batch_size: 300
-      hibernate.ddl-auto: validate
 
 ehcache:
   heap-entries: 1000
@@ -24,7 +25,7 @@ ehcache:
 
 liquibase:
   enabled: true
-  change-log: classpath:/db/changelog/db.changelog.json
+  change-log: classpath:/db/changelog/db.changelog.xml
   # super user credentials
   user: mvp
   password: mvp

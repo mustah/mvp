@@ -1,0 +1,18 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="Add series display mode column to quantity table" author="Anton Löfgren"
+               logicalFilePath="classpath:/db/changelog/db.changelog.json">
+        <validCheckSum>7:dc468e2159a2106e45bd0e7a618f0cbc</validCheckSum>
+        <addColumn tableName="quantity">
+            <column name="series_display_mode" type="INTEGER" defaultValue="0"/>
+        </addColumn>
+        <update tableName="quantity">
+            <column name="series_display_mode"
+                    valueComputed="case when name in ('Eenergy','Volume') then 2 else 1 end;"/>
+
+        </update>
+    </changeSet>
+</databaseChangeLog>

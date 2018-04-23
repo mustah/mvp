@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <property name="unit_type" value="UNIT" dbms="postgresql"/>
+    <property name="unit_type" value="VARCHAR(255)" dbms="h2"/>
+    <property name="text_type" value="TEXT" dbms="postgresql"/>
+    <property name="text_type" value="VARCHAR(255)" dbms="h2"/>
+    <property name="jsonb_type" value="JSONB" dbms="postgresql"/>
+    <property name="jsonb_type" value="CLOB" dbms="h2"/>
+
+    <include file="xml/initial_db.xml" relativeToChangelogFile="true"/>
+    <include file="xml/disallow_empty_external_ids.xml" relativeToChangelogFile="true"/>
+    <include file="xml/persist_selection.xml" relativeToChangelogFile="true"/>
+    <include file="xml/add_language_to_user.xml" relativeToChangelogFile="true"/>
+    <include file="xml/add_series_display_mode_column_to_quantity.xml" relativeToChangelogFile="true"/>
+    <include file="xml/rename_data_column_to_selection_parameters.xml" relativeToChangelogFile="true"/>
+    <include file="xml/rename_external_id_empty_check_constraints.xml" relativeToChangelogFile="true"/>
+    <include file="xml/change_meter_definition_type_id_to_integer.xml" relativeToChangelogFile="true"/>
+    <changeSet id="Grant mvp db user privileges" author="Daniel Svensson" runAlways="true">
+        <validCheckSum>7:122fd1cfa95d7f3cc65e81a6e64263e2</validCheckSum>
+        <sqlFile path="sql/postgresql/db_privileges.sql"
+                 dbms="postgresql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 stripComments="true"/>
+    </changeSet>
+
+</databaseChangeLog>

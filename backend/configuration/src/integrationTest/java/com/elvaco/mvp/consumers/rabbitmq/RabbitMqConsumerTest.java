@@ -122,6 +122,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     gatewayJpaRepository.deleteAll();
     organisations.findBySlug("some-organisation")
       .ifPresent(organisation -> organisations.deleteById(organisation.id));
+    organisations.findBySlug("organisation-123")
+      .ifPresent(organisation -> organisations.deleteById(organisation.id));
   }
 
   @Test
