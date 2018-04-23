@@ -49,7 +49,7 @@ const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
   value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
 const renderCreated = ({created}: RenderableMeasurement): Children =>
   created
-    ? formatLabelTimeStamp(created)
+    ? formatLabelTimeStamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
 const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
