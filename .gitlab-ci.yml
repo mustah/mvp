@@ -1,3 +1,4 @@
+# === Global ===
 image:
   name: gradle:jdk8
 
@@ -24,6 +25,11 @@ variables:
   DOCKER_REGISTRY_HOST: gitlab.elvaco.se:4567
   DOCKER_REGISTRY_URL: gitlab.elvaco.se:4567/elvaco/mvp
 
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export YARN_CACHE_FOLDER=`pwd`/.yarn
+
+# === Templates ===
 .no_cache: &no_cache
   cache:
     key: "$CI_COMMIT_REF_NAME-no_cache"
@@ -46,90 +52,21 @@ variables:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
 
-publish:mvp_artifactory:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  dependencies:
-    - gradle:build
+.acceptance_test: &acceptance_test
+  <<: *cache_gradle_read_only
+  services:
+    - name: selenium/standalone-chrome
+      alias: selenium_chrome_container_url
+  artifacts:
+    name: "${CI_COMMIT_REF_NAME}-cucumber"
+    when: always
+    paths:
+      - acceptance_tests/target/cucumber
+    expire_in: 7 days
   script:
-    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
-    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+    - gradle cucumber '-Pno-docker'
 
-publish:geoservice_artifactory:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  dependencies:
-    - gradle:build
-  script:
-    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
-    - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
-    - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
-    - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
-    - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
-
-publish:update_salt:
-  <<: *no_cache
-  image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: publish
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  script:
-    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
-    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
-
-deploy:staging:
-  <<: *auto_deploy
-  stage: deploy-staging
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  environment:
-    name: staging
-    url: https://mvpstaging.elvaco.se
-  script:
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-
-
-deploy:production:
-  <<: *auto_deploy
-  stage: deploy-prod
-  only:
-    - schedules
-    - tags
-  environment:
-    name: production
-    url: https://mvp.elvaco.se
-  script:
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
-    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-
-before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
-  - export YARN_CACHE_FOLDER=`pwd`/.yarn
-
+# === Jobs ===
 gradle:clean:
   <<: *cache_gradle
   stage: prepare
@@ -234,48 +171,6 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-.acceptance_test: &acceptance_test
-  <<: *cache_gradle_read_only
-  services:
-    - name: selenium/standalone-chrome
-      alias: selenium_chrome_container_url
-  artifacts:
-    name: "${CI_COMMIT_REF_NAME}-cucumber"
-    when: always
-    paths:
-      - acceptance_tests/target/cucumber
-    expire_in: 7 days
-  script:
-    - gradle cucumber '-Pno-docker'
-
-post-staging:acceptance:
-  <<: *acceptance_test
-  stage: post-staging
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  variables:
-    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
-    MVP_SERVER: "https://mvpstaging.elvaco.se"
-    MVP_WEB_PORT: 443
-    MVP_API_PORT: 443
-    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
-
-post-prod:acceptance:
-  <<: *acceptance_test
-  stage: post-prod
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-  variables:
-    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
-    MVP_SERVER: "https://mvp.elvaco.se"
-    MVP_WEB_PORT: 443
-    MVP_API_PORT: 443
-    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
-
 test:upgrade:
   <<: *no_cache
   image: tmaier/docker-compose
@@ -303,6 +198,113 @@ test:upgrade:
     - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
     - docker-compose logs application
     - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
+
+publish:mvp_artifactory:
+  <<: *no_cache
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
+  stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export MVP_ARTIFACT=$(find ./backend/configuration/build/distributions -name 'mvp*.tar')
+    - export MVP_SHA1SUM=$(sha1sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
+
+publish:geoservice_artifactory:
+  <<: *no_cache
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
+  stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  dependencies:
+    - gradle:build
+  script:
+    - export ARTIFACTORY_URL=http://artifactory2.elvaco.local/artifactory/Elvaco/MVP
+    - export GEOSERVICE_ARTIFACT=$(find ./backend/geoservice/build/distributions/ -name 'geoservice*.tar')
+    - export GEOSERVICE_SHA1SUM=$(sha1sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
+    - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
+
+publish:update_salt:
+  <<: *no_cache
+  image: $DOCKER_REGISTRY_URL/ci-utils:latest
+  stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  script:
+    - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
+    - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
+
+deploy:staging:
+  <<: *auto_deploy
+  stage: deploy-staging
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  environment:
+    name: staging
+    url: https://mvpstaging.elvaco.se
+  script:
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+
+post-staging:acceptance:
+  <<: *acceptance_test
+  stage: post-staging
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  variables:
+    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
+    MVP_SERVER: "https://mvpstaging.elvaco.se"
+    MVP_WEB_PORT: 443
+    MVP_API_PORT: 443
+    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
+
+deploy:production:
+  <<: *auto_deploy
+  stage: deploy-prod
+  only:
+    - schedules
+    - tags
+  environment:
+    name: production
+    url: https://mvp.elvaco.se
+  script:
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
+    - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+
+post-prod:acceptance:
+  <<: *acceptance_test
+  stage: post-prod
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  variables:
+    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
+    MVP_SERVER: "https://mvp.elvaco.se"
+    MVP_WEB_PORT: 443
+    MVP_API_PORT: 443
+    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
 finalize:tag-production-docker:
   <<: *no_cache
