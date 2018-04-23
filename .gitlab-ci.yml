@@ -117,11 +117,11 @@ gradle:clean:
   script:
     - gradle clean
   only:
-    refs:
-      - master
-      - develop
-      - tags
-      - /^release-.*$/
+    - schedules
+    - master
+    - develop
+    - tags
+    - /^release-.*$/
 
 docker:postgresql:
   <<: *no_cache
@@ -235,6 +235,7 @@ post-staging:acceptance:
   <<: *acceptance_test
   stage: post-staging
   only:
+    - schedules
     - /^release-.*$/
     - tags
   variables:
@@ -247,6 +248,7 @@ post-prod:acceptance:
   <<: *acceptance_test
   stage: post-prod
   only:
+    - schedules
     - /^release-.*$/
     - tags
   variables:
@@ -288,30 +290,35 @@ test:upgrade:
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 publish:geoservice_artifactory:
   <<: *publish_geoservice_to_artifactory
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 publish:update_salt:
   <<: *update_salt
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 deploy:staging:
   <<: *deploy_staging
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 deploy:production:
   <<: *deploy_production
   only:
+    - schedules
     - tags
 
 finalize:tag-production-docker:
@@ -322,6 +329,7 @@ finalize:tag-production-docker:
   tags:
     - shell
   only:
+    - schedules
     - tags
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
