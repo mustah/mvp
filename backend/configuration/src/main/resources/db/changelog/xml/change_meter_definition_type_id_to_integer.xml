@@ -1,0 +1,33 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="Change meter_definition_type id to integer in logical_meter" author="Erik Mellegård"
+               dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="bigint">
+                select data_type from information_schema.columns
+                where table_name = 'logical_meter' and column_name='meter_definition_type';
+            </sqlCheck>
+        </preConditions>
+        <sql dbms="postgresql">
+            ALTER TABLE logical_meter
+            ALTER COLUMN meter_definition_type TYPE INT USING meter_definition_type::integer;
+        </sql>
+    </changeSet>
+    <changeSet id="Change meter_definition_type id to integer in meter_definition_quantities" author="Erik Mellegård"
+               dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <dbms type="postgresql"/>
+            <sqlCheck expectedResult="bigint">
+                select data_type from information_schema.columns
+                where table_name = 'meter_definition_quantities' and column_name='meter_definition_type';
+            </sqlCheck>
+        </preConditions>
+        <sql dbms="postgresql">
+            ALTER TABLE meter_definition_quantities
+            ALTER COLUMN meter_definition_type TYPE INT USING meter_definition_type::integer;
+        </sql>
+    </changeSet>
+</databaseChangeLog>
