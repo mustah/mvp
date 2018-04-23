@@ -7,6 +7,7 @@ spring:
     console:
       enabled: true
   jpa:
+    hibernate.ddl-auto: validate
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpH2Dialect
       hibernate.show_sql: false
@@ -14,7 +15,6 @@ spring:
       hibernate.format_sql: true
       hibernate.type: trace
       hibernate.jdbc.batch_size: 300
-    hibernate.ddl-auto: validate
 ehcache:
   heap-entries: 1000
   idle-time: 60
