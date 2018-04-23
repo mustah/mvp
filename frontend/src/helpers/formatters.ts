@@ -17,6 +17,3 @@ export const roundMeasurement = (num: number | string): string =>
 
 export const round = (num: number | string, format: string): string =>
   isNaN(Number(num)) ? num : numeral(num).format(format);
-
-export const unixTimestampMillisecondsToDate = (timestamp: number): string =>
-  formatDate(new Date(timestamp), FORMAT_DATE_FULL_MINUTE);
