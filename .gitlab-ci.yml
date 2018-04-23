@@ -4,11 +4,14 @@ image:
 stages:
   - prepare
   - build
-  - pretest
+  - pre-test
   - test
   - publish
-  - deploy
-  - post-deploy
+  - deploy-staging
+  - post-staging
+  - deploy-prod
+  - post-prod
+  - finalize
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.caching=true"
@@ -42,7 +45,6 @@ variables:
 .deploy:autodeploy: &auto_deploy
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
-  stage: deploy
 
 .publish:mvp_artifactory: &publish_mvp_to_artifactory
   <<: *no_cache
@@ -80,6 +82,7 @@ variables:
 
 .deploy:staging: &deploy_staging
   <<: *auto_deploy
+  stage: deploy-staging
   environment:
     name: staging
     url: https://mvpstaging.elvaco.se
@@ -93,6 +96,7 @@ variables:
 
 .deploy:production: &deploy_production
   <<: *auto_deploy
+  stage: deploy-prod
   environment:
     name: production
     url: https://mvp.elvaco.se
@@ -113,11 +117,11 @@ gradle:clean:
   script:
     - gradle clean
   only:
-    refs:
-      - master
-      - develop
-      - tags
-      - /^release-.*$/
+    - schedules
+    - master
+    - develop
+    - tags
+    - /^release-.*$/
 
 docker:postgresql:
   <<: *no_cache
@@ -168,10 +172,10 @@ gradle:build:
       - .version
     expire_in: 1 week
 
-pretest:docker:
+pre-test:docker:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_SLUG}
-  stage: pretest
+  stage: pre-test
   tags:
     - shell
   dependencies:
@@ -211,21 +215,13 @@ test:unit_and_IT:
   script:
     - gradle check -x systemTest
 
-post-deploy:acceptance:
+.acceptance_test: &acceptance_test
   <<: *cache_gradle_read_only
   services:
     - name: selenium/standalone-chrome
       alias: selenium_chrome_container_url
   variables:
     CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
-    MVP_SERVER: "https://mvpstaging.elvaco.se"
-    MVP_WEB_PORT: 443
-    MVP_API_PORT: 443
-    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
-  stage: post-deploy
-  only:
-    - /^release-.*$/
-    - tags
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-cucumber"
     when: always
@@ -234,6 +230,32 @@ post-deploy:acceptance:
     expire_in: 7 days
   script:
     - gradle cucumber '-Pno-docker'
+
+post-staging:acceptance:
+  <<: *acceptance_test
+  stage: post-staging
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  variables:
+    MVP_SERVER: "https://mvpstaging.elvaco.se"
+    MVP_WEB_PORT: 443
+    MVP_API_PORT: 443
+    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
+
+post-prod:acceptance:
+  <<: *acceptance_test
+  stage: post-prod
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
+  variables:
+    MVP_SERVER: "https://mvp.elvaco.se"
+    MVP_WEB_PORT: 443
+    MVP_API_PORT: 443
+    MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
 test:upgrade:
   <<: *no_cache
@@ -245,10 +267,10 @@ test:upgrade:
   stage: test
   dependencies:
     - gradle:build
-  after_script:
-    - docker-compose down -v
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  after_script:
+      - docker-compose down -v
   services:
     - name: docker:dind
   script:
@@ -268,41 +290,46 @@ test:upgrade:
 publish:mvp_artifactory:
   <<: *publish_mvp_to_artifactory
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 publish:geoservice_artifactory:
   <<: *publish_geoservice_to_artifactory
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 publish:update_salt:
   <<: *update_salt
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 deploy:staging:
   <<: *deploy_staging
   only:
+    - schedules
     - /^release-.*$/
     - tags
 
 deploy:production:
   <<: *deploy_production
-  when: manual
   only:
+    - schedules
     - tags
 
-post-deploy:tag-production-docker:
+finalize:tag-production-docker:
   <<: *no_cache
   dependencies:
     - deploy:production
-  stage: post-deploy
+  stage: finalize
   tags:
     - shell
   only:
+    - schedules
     - tags
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
