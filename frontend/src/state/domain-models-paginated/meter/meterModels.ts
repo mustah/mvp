@@ -15,6 +15,7 @@ export type MetersState = NormalizedPaginatedState<Meter>;
 
 export interface Meter extends Identifiable, LocationHolder {
   sapId?: uuid;
+  address?: string;
   created: string;
   collectionStatus: string;
   readIntervalMinutes: number;

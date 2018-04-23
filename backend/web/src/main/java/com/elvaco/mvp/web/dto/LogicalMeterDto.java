@@ -12,6 +12,9 @@ import lombok.ToString;
 public class LogicalMeterDto {
   public UUID id;
   public String facility;
+  @Nullable
+  public String address;
+  @Nullable
   public String sapId;
   public String alarm;
   public LocationDto location;
