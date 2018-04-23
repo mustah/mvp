@@ -46,10 +46,14 @@ variables:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
 
-.publish:mvp_artifactory: &publish_mvp_to_artifactory
+publish:mvp_artifactory:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
   dependencies:
     - gradle:build
   script:
@@ -59,10 +63,14 @@ variables:
     - export MVP_MD5SUM=$(md5sum $MVP_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $MVP_ARTIFACT -H "X-Checksum-Sha1:$MVP_SHA1SUM" -H "X-Checksum-MD5:$MVP_MD5SUM" $ARTIFACTORY_URL/$(basename $MVP_ARTIFACT)
 
-.publish:geoservice_artifactory: &publish_geoservice_to_artifactory
+publish:geoservice_artifactory:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
   dependencies:
     - gradle:build
   script:
@@ -72,17 +80,25 @@ variables:
     - export GEOSERVICE_MD5SUM=$(md5sum $GEOSERVICE_ARTIFACT|awk '{ print $1 }')
     - curl -i -X PUT -u admin:password -T $GEOSERVICE_ARTIFACT -H "X-Checksum-Sha1:$GEOSERVICE_SHA1SUM" -H "X-Checksum-MD5:$GEOSERVICE_MD5SUM" $ARTIFACTORY_URL/$(basename $GEOSERVICE_ARTIFACT)
 
-.publish:update_salt: &update_salt
+publish:update_salt:
   <<: *no_cache
   image: $DOCKER_REGISTRY_URL/ci-utils:latest
   stage: publish
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
   script:
     - curl -X POST --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" "https://gitlab.elvaco.se/api/v4/projects/$SALTSTACK_GIT_REPO/repository/branches?branch=$CI_COMMIT_REF_NAME&ref=develop"
     - pepper -G 'roles:salt-master' event.fire_master update salt/fileserver/gitfs/update
 
-.deploy:staging: &deploy_staging
+deploy:staging:
   <<: *auto_deploy
   stage: deploy-staging
+  only:
+    - schedules
+    - /^release-.*$/
+    - tags
   environment:
     name: staging
     url: https://mvpstaging.elvaco.se
@@ -94,9 +110,12 @@ variables:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy saltenv="$CI_COMMIT_REF_NAME" pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
 
 
-.deploy:production: &deploy_production
+deploy:production:
   <<: *auto_deploy
   stage: deploy-prod
+  only:
+    - schedules
+    - tags
   environment:
     name: production
     url: https://mvp.elvaco.se
@@ -284,42 +303,6 @@ test:upgrade:
     - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
     - docker-compose logs application
     - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
-
-
-
-publish:mvp_artifactory:
-  <<: *publish_mvp_to_artifactory
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-
-publish:geoservice_artifactory:
-  <<: *publish_geoservice_to_artifactory
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-
-publish:update_salt:
-  <<: *update_salt
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-
-deploy:staging:
-  <<: *deploy_staging
-  only:
-    - schedules
-    - /^release-.*$/
-    - tags
-
-deploy:production:
-  <<: *deploy_production
-  only:
-    - schedules
-    - tags
 
 finalize:tag-production-docker:
   <<: *no_cache
