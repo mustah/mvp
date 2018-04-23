@@ -9,12 +9,16 @@ import javax.persistence.EntityManager;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
+import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
+import com.elvaco.mvp.database.entity.measurement.QMeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.LogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QLocationEntity;
 import com.elvaco.mvp.database.entity.meter.QLogicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -41,6 +45,8 @@ public class LogicalMeterQueryDslJpaRepository
   private static final QPhysicalMeterEntity PHYSICAL_METER =
     QPhysicalMeterEntity.physicalMeterEntity;
 
+  private static final QMeasurementEntity MEASUREMENT = QMeasurementEntity.measurementEntity;
+
   @Autowired
   public LogicalMeterQueryDslJpaRepository(EntityManager entityManager) {
     super(
@@ -51,7 +57,10 @@ public class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate) {
-    return queryOf(queryOfStatusPeriod(parameters, predicate)).fetch();
+    return queryOf(queryOfStatusPeriod(
+      parameters,
+      queryOfMeasurement(parameters, predicate)
+    )).fetch();
   }
 
   @Override
@@ -60,7 +69,13 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate,
     Sort sort
   ) {
-    return querydsl.applySorting(sort, queryOf(queryOfStatusPeriod(parameters, predicate))).fetch();
+    return querydsl.applySorting(
+      sort,
+      queryOf(queryOfStatusPeriod(
+        parameters,
+        queryOfMeasurement(parameters, predicate)
+      ))
+    ).fetch();
   }
 
   @Override
@@ -69,14 +84,20 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate,
     Pageable pageable
   ) {
-    Predicate predicateWithStatusPeriod = queryOfStatusPeriod(parameters, predicate);
+    Predicate withStatusPeriodAndMeasurement = queryOfMeasurement(
+      parameters,
+      queryOfStatusPeriod(
+        parameters,
+        queryOfMeasurement(parameters, predicate)
+      )
+    );
 
-    JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery(predicateWithStatusPeriod)
+    JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery(withStatusPeriodAndMeasurement)
       .select(path);
 
     List<LogicalMeterEntity> all = querydsl.applyPagination(
       pageable,
-      createQuery(predicateWithStatusPeriod).select(path)
+      createQuery(withStatusPeriodAndMeasurement).select(path)
     ).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);
@@ -142,6 +163,57 @@ public class LogicalMeterQueryDslJpaRepository
     } else {
       return predicate;
     }
+  }
+
+  private Predicate queryOfMeasurement(RequestParameters parameters, Predicate predicate) {
+    if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
+        && parameters.hasName("quantity")) {
+
+      String quantity = parameters.getFirst("quantity");
+
+      JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
+        .select(LOGICAL_METER.id).from(path)
+        .innerJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+        .innerJoin(PHYSICAL_METER.measurements, MEASUREMENT)
+        .where(
+          withMeasurementAboveMax(
+            parameters,
+            withMeasurementBelowMin(parameters, MEASUREMENT.quantity.eq(quantity))
+          )
+        );
+
+      return LOGICAL_METER.id.in(queryIds);
+    } else {
+      return predicate;
+    }
+  }
+
+  private Predicate withMeasurementBelowMin(RequestParameters parameters, Predicate predicate) {
+    if (parameters.hasName("minValue")) {
+      MeasurementUnit minValue = MeasurementUnit.from(parameters.getFirst("minValue"));
+
+      return Expressions.booleanOperation(
+        Ops.LT,
+        MEASUREMENT.value,
+        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", minValue)
+      ).and(predicate);
+    }
+
+    return predicate;
+  }
+
+  private Predicate withMeasurementAboveMax(RequestParameters parameters, Predicate predicate) {
+    if (parameters.hasName("maxValue")) {
+      MeasurementUnit maxValue = MeasurementUnit.from(parameters.getFirst("maxValue"));
+
+      return Expressions.booleanOperation(
+        Ops.GT,
+        MEASUREMENT.value,
+        Expressions.simpleTemplate(MeasurementUnit.class, "{0}", maxValue)
+      ).and(predicate);
+    }
+
+    return predicate;
   }
 
   private ZonedDateTime parseDateParam(RequestParameters parameters, String name) {

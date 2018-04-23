@@ -48,10 +48,6 @@ public class LogicalMeterRepository implements LogicalMeters {
   private final MeasurementJpaRepository measurementJpaRepository;
   private final LogicalMeterSortingMapper sortingMapper;
 
-  private static String toSortString(Object sortProperty) {
-    return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
-  }
-
   @Override
   public Optional<LogicalMeter> findById(UUID id) {
     return logicalMeterJpaRepository.findById(id)
@@ -76,6 +72,7 @@ public class LogicalMeterRepository implements LogicalMeters {
           sortingMapper.getAsSpringSort(pageable.getSort())
         )
       );
+
     Iterable<PhysicalMeterStatusLogEntity> statusLogEntities = getStatusesForMeters(
       logicalMeterEntities.getContent(),
       parameters
@@ -240,5 +237,9 @@ public class LogicalMeterRepository implements LogicalMeters {
         .and(q.created.goe(after)) // Roughly filter on date
         .and(q.created.before(before))
     );
+  }
+
+  private static String toSortString(Object sortProperty) {
+    return sortProperty.toString().replaceAll("physicalMeterStatusLogEntity.", "");
   }
 }
