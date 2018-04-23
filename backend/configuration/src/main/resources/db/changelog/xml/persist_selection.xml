@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="Persist selection" author="Daniel Svensson"
+               logicalFilePath="classpath:/db/changelog/db.changelog.json">
+        <validCheckSum>7:fdb5657682fd9dd3e6c73ce86d5c2349</validCheckSum>
+        <createTable tableName="user_selection">
+            <column name="id" type="UUID">
+                <constraints primaryKeyName="user_selection_pkey" primaryKey="true"/>
+            </column>
+            <column name="organisation_id" type="UUID"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="data" type="${jsonb_type}"/>
+            <column name="owner_user_id" type="UUID"/>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="organisation_id,owner_user_id" baseTableName="user_selection"
+                                 constraintName="user_selection_organisation_id_fkey"
+                                 referencedColumnNames="organisation_id,id" referencedTableName="mvp_user"/>
+    </changeSet>
+</databaseChangeLog>

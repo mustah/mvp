@@ -1,0 +1,10 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="Rename data column to selection_parameters" author="Carl Helmertz"
+               logicalFilePath="classpath:/db/changelog/db.changelog.json">
+        <validCheckSum>7:5609d81fea56f4d615a18c18815e0860</validCheckSum>
+        <renameColumn tableName="user_selection" oldColumnName="data" newColumnName="selection_parameters"/>
+    </changeSet>
+</databaseChangeLog>

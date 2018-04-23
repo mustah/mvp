@@ -1,0 +1,293 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="Anton Löfgren" id="Initial DB schema"
+               logicalFilePath="classpath:/db/changelog/db.changelog.json">
+        <validCheckSum>7:2f0ba811c0a9f937fc5942db3758ffb1</validCheckSum>
+        <sqlFile path="../sql/postgresql/units.sql"
+                 dbms="postgresql"
+                 relativeToChangelogFile="true"
+                 splitStatements="false"
+                 stripComments="true"/>
+        <createTable tableName="gateway">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="serial" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_model" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="gateway_status_log">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="gateway_status_log_pkey"/>
+            </column>
+            <column defaultValueComputed="now()" name="start" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stop" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="status" type="${text_type}"/>
+            <column name="gateway_id" type="UUID"/>
+        </createTable>
+        <createTable tableName="gateways_meters">
+            <column name="organisation_id" type="UUID"/>
+            <column name="logical_meter_id" type="UUID"/>
+            <column name="gateway_id" type="UUID"/>
+        </createTable>
+        <createTable tableName="location">
+            <column name="logical_meter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="${text_type}"/>
+            <column name="city" type="${text_type}"/>
+            <column name="street_address" type="${text_type}"/>
+            <column name="latitude" type="FLOAT8"/>
+            <column name="longitude" type="FLOAT8"/>
+            <column name="confidence" type="FLOAT8"/>
+        </createTable>
+        <createTable tableName="logical_meter">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="created" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meter_definition_type" type="INTEGER"/>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="measurement">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="measurement_pkey"/>
+            </column>
+            <column name="physical_meter_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="now()" name="created" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="${unit_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="meter_definition">
+            <column name="type" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="medium" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="system_owned" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="meter_definition_quantities">
+            <column name="quantity_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="meter_definition_type" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="mvp_setting">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="mvp_user">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="organisation">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="${text_type}"/>
+            <column name="slug" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="physical_meter">
+            <column name="id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organisation_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="medium" type="${text_type}"/>
+            <column name="manufacturer" type="VARCHAR(255)"/>
+            <column name="logical_meter_id" type="UUID"/>
+            <column name="read_interval_minutes" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="physical_meter_status_log">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="physical_meter_status_log_pkey"/>
+            </column>
+            <column defaultValueComputed="now()" name="start" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stop" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="status" type="${text_type}"/>
+            <column name="physical_meter_id" type="UUID"/>
+        </createTable>
+        <createTable tableName="quantity">
+            <column autoIncrement="true" name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="quantity_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="role">
+            <column name="role" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="users_roles">
+            <column name="organisation_id" type="UUID"/>
+            <column name="user_id" type="UUID"/>
+            <column name="role_id" type="${text_type}"/>
+        </createTable>
+        <addPrimaryKey columnNames="organisation_id, id" constraintName="gateway_pkey" tableName="gateway"/>
+        <addPrimaryKey columnNames="logical_meter_id" constraintName="location_pkey" tableName="location"/>
+        <addPrimaryKey columnNames="organisation_id, id" constraintName="logical_meter_pkey" tableName="logical_meter"/>
+        <addPrimaryKey columnNames="type" constraintName="meter_definition_pkey" tableName="meter_definition"/>
+        <addPrimaryKey columnNames="id" constraintName="mvp_setting_pkey" tableName="mvp_setting"/>
+        <addPrimaryKey columnNames="organisation_id, id" constraintName="mvp_user_pkey" tableName="mvp_user"/>
+        <addPrimaryKey columnNames="id" constraintName="organisation_pkey" tableName="organisation"/>
+        <addPrimaryKey columnNames="organisation_id, id" constraintName="physical_meter_pkey"
+                       tableName="physical_meter"/>
+        <addPrimaryKey columnNames="role" constraintName="role_pkey" tableName="role"/>
+        <addUniqueConstraint columnNames="id" constraintName="gateway_id_key" tableName="gateway"/>
+        <addUniqueConstraint columnNames="organisation_id, serial, product_model"
+                             constraintName="gateway_organisation_id_serial_product_model_key" tableName="gateway"/>
+        <addUniqueConstraint columnNames="id" constraintName="logical_meter_id_key" tableName="logical_meter"/>
+        <addUniqueConstraint columnNames="organisation_id, external_id"
+                             constraintName="logical_meter_organisation_id_external_id_key" tableName="logical_meter"/>
+        <addUniqueConstraint columnNames="physical_meter_id, created, quantity, value"
+                             constraintName="measurement_physical_meter_id_created_quantity_value_key"
+                             tableName="measurement"/>
+        <addUniqueConstraint columnNames="name" constraintName="mvp_setting_name_key" tableName="mvp_setting"/>
+        <addUniqueConstraint columnNames="email" constraintName="mvp_user_email_key" tableName="mvp_user"/>
+        <addUniqueConstraint columnNames="id" constraintName="mvp_user_id_key" tableName="mvp_user"/>
+        <addUniqueConstraint columnNames="external_id" constraintName="organisation_external_id_key"
+                             tableName="organisation"/>
+        <addUniqueConstraint columnNames="slug" constraintName="organisation_slug_key" tableName="organisation"/>
+        <addUniqueConstraint columnNames="id" constraintName="physical_meter_id_key" tableName="physical_meter"/>
+        <addUniqueConstraint columnNames="organisation_id, external_id, address"
+                             constraintName="physical_meter_organisation_id_external_id_address_key"
+                             tableName="physical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="gateway"
+                                 constraintName="gateway_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="gateway_id" baseTableName="gateway_status_log"
+                                 constraintName="gateway_status_log_gateway_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="gateway"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id,logical_meter_id" baseTableName="gateways_meters"
+                                 constraintName="gateways_meters_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="organisation_id,id" referencedTableName="logical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id,gateway_id" baseTableName="gateways_meters"
+                                 constraintName="gateways_meters_organisation_id_fkey1" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="organisation_id,id" referencedTableName="gateway"/>
+        <addForeignKeyConstraint baseColumnNames="logical_meter_id" baseTableName="location"
+                                 constraintName="location_logical_meter_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="logical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="meter_definition_type" baseTableName="logical_meter"
+                                 constraintName="logical_meter_meter_definition_type_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="type" referencedTableName="meter_definition"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="logical_meter"
+                                 constraintName="logical_meter_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="measurement"
+                                 constraintName="measurement_physical_meter_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                                 referencedColumnNames="id" referencedTableName="physical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="meter_definition_type" baseTableName="meter_definition_quantities"
+                                 constraintName="meter_definition_quantities_meter_definition_type_fkey"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="type" referencedTableName="meter_definition"/>
+        <addForeignKeyConstraint baseColumnNames="quantity_id" baseTableName="meter_definition_quantities"
+                                 constraintName="meter_definition_quantities_quantity_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="quantity"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="mvp_user"
+                                 constraintName="mvp_user_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id" baseTableName="physical_meter"
+                                 constraintName="physical_meter_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="organisation"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id,logical_meter_id" baseTableName="physical_meter"
+                                 constraintName="physical_meter_organisation_id_fkey1" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="organisation_id,id" referencedTableName="logical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="physical_meter_status_log"
+                                 constraintName="physical_meter_status_log_physical_meter_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="physical_meter"/>
+        <addForeignKeyConstraint baseColumnNames="organisation_id,user_id" baseTableName="users_roles"
+                                 constraintName="users_roles_organisation_id_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="organisation_id,id" referencedTableName="mvp_user"/>
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="users_roles"
+                                 constraintName="users_roles_role_id_fkey" deferrable="false" initiallyDeferred="false"
+                                 onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="role"
+                                 referencedTableName="role"/>
+    </changeSet>
+</databaseChangeLog>
