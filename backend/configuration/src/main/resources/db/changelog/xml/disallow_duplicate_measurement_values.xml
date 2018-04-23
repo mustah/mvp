@@ -1,0 +1,24 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="Disallow duplicate measurement values" author="Anton Löfgren">
+        <dropUniqueConstraint tableName="measurement"
+                              constraintName="measurement_physical_meter_id_created_quantity_value_key"
+                              schemaName="public"
+                              uniqueColumns="physical_meter_id, created, quantity, value"
+        />
+        <sqlFile path="../sql/postgresql/delete_duplicate_measurements.sql"
+                 relativeToChangelogFile="true"
+                 encoding="utf8"
+                 dbms="postgresql"
+                 splitStatements="false"
+                 stripComments="true"
+        />
+        <addUniqueConstraint tableName="measurement"
+                             columnNames="physical_meter_id, created, quantity"
+                             schemaName="public"
+        />
+    </changeSet>
+</databaseChangeLog>
