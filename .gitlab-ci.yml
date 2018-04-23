@@ -220,8 +220,6 @@ test:unit_and_IT:
   services:
     - name: selenium/standalone-chrome
       alias: selenium_chrome_container_url
-  variables:
-    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
   artifacts:
     name: "${CI_COMMIT_REF_NAME}-cucumber"
     when: always
@@ -239,6 +237,7 @@ post-staging:acceptance:
     - /^release-.*$/
     - tags
   variables:
+    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
     MVP_SERVER: "https://mvpstaging.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
@@ -252,6 +251,7 @@ post-prod:acceptance:
     - /^release-.*$/
     - tags
   variables:
+    CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
     MVP_SERVER: "https://mvp.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
