@@ -88,18 +88,6 @@ export class PeriodSelection extends React.Component<Props, State> {
         onClick: (event) => this.onSelectPeriod(event, Period.latest),
       },
       {
-        value: Period.currentMonth,
-        chosen: prettyRange({now: now(), period: Period.currentMonth, customDateRange}),
-        alternative: translate('current month'),
-        onClick: (event) => this.onSelectPeriod(event, Period.currentMonth),
-      },
-      {
-        value: Period.previousMonth,
-        chosen: prettyRange({now: now(), period: Period.previousMonth, customDateRange}),
-        alternative: translate('previous month'),
-        onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
-      },
-      {
         value: Period.currentWeek,
         chosen: prettyRange({now: now(), period: Period.currentWeek, customDateRange}),
         alternative: translate('current week'),
@@ -110,6 +98,18 @@ export class PeriodSelection extends React.Component<Props, State> {
         chosen: prettyRange({now: now(), period: Period.previous7Days, customDateRange}),
         alternative: translate('last 7 days'),
         onClick: (event) => this.onSelectPeriod(event, Period.previous7Days),
+      },
+      {
+        value: Period.currentMonth,
+        chosen: prettyRange({now: now(), period: Period.currentMonth, customDateRange}),
+        alternative: translate('current month'),
+        onClick: (event) => this.onSelectPeriod(event, Period.currentMonth),
+      },
+      {
+        value: Period.previousMonth,
+        chosen: prettyRange({now: now(), period: Period.previousMonth, customDateRange}),
+        alternative: translate('previous month'),
+        onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
       },
       {
         value: Period.custom,
