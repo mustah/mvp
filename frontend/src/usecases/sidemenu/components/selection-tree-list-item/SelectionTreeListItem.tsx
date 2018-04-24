@@ -21,7 +21,7 @@ export const renderSelectionTreeCities = ({id, selectionTree, ...other}: RenderP
   return renderSelectableListItem({
     ...other,
     id,
-    selectable: true,
+    selectable: false,
     primaryText: locationNameTranslation(city.name),
     nestedItems: clusters,
   });
@@ -45,7 +45,7 @@ const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps
   return renderSelectableListItem({
     ...other,
     id,
-    selectable: true,
+    selectable: false,
     primaryText: locationNameTranslation(address.name),
     nestedItems: meters,
   });
