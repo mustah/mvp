@@ -43,7 +43,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
     const renderStatusCell = (meter: Meter) => <Status name={meter.status.name}/>;
     const renderFacility = ({facility}: Meter) => facility;
-    const renderMeterId = ({id}: Meter) => id;
+    const renderMeterAddress = ({address}: Meter) => address ? address : firstUpperTranslated('unknown');
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderMedium = ({medium}: Meter) => medium;
     const hasConfidentPosition: boolean = gatewayMapMarker.filter(isGeoPositionWithinThreshold).isJust();
@@ -65,7 +65,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
               />
               <TableColumn
                 header={<TableHead>{translate('meter')}</TableHead>}
-                renderCell={renderMeterId}
+                renderCell={renderMeterAddress}
               />
               <TableColumn
                 header={<TableHead>{translate('manufacturer')}</TableHead>}

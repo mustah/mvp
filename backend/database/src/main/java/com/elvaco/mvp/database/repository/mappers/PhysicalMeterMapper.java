@@ -19,7 +19,8 @@ public class PhysicalMeterMapper {
   }
 
   public static PhysicalMeter toDomainModel(
-    PhysicalMeterEntity entity, @Nullable Long measurementCount
+    PhysicalMeterEntity entity,
+    @Nullable Long measurementCount
   ) {
     return toDomainModel(entity, measurementCount, entity.statusLogs);
   }

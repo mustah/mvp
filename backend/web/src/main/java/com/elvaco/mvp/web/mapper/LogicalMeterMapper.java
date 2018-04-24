@@ -67,6 +67,9 @@ public class LogicalMeterMapper {
       .map(Dates::formatUtc)
       .orElse(created);
     meterDto.facility = logicalMeter.externalId;
+    meterDto.address = logicalMeter.activePhysicalMeter()
+      .map(m -> m.address)
+      .orElse(null);
 
     meterDto.collectionStatus = logicalMeter.getCollectionPercentage()
       .map(val -> String.valueOf(val * 100))
