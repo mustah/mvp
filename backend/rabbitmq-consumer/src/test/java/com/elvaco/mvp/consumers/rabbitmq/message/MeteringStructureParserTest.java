@@ -1,7 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class MeteringStructureParserTest {
       + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n";
 
-    MeteringMeterStructureMessageDto parsedMessage =
+    MeteringStructureMessageDto parsedMessage =
       messageParser.parseStructureMessage(jsonMessage).orElse(null);
 
     assertThat(parsedMessage).isNotNull();

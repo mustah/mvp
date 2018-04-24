@@ -1,8 +1,12 @@
 package com.elvaco.mvp.configuration.config;
 
-import com.elvaco.mvp.consumers.rabbitmq.MeteringMessageReceiver;
-import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHandler;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeteringStructureMessageConsumer;
+import com.elvaco.mvp.consumers.rabbitmq.message.StructureMessageConsumer;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
@@ -25,6 +29,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 class RabbitMqConfig {
 
   private final RabbitConsumerProperties consumerProperties;
+  private final LogicalMeterUseCases logicalMeterUseCases;
+  private final PhysicalMeterUseCases physicalMeterUseCases;
+  private final OrganisationUseCases organisationUseCases;
+  private final MeasurementUseCases measurementUseCases;
+  private final GatewayUseCases gatewayUseCases;
+  private final GeocodeService geocodeService;
 
   @Bean
   Queue queue() {
@@ -32,27 +42,42 @@ class RabbitMqConfig {
   }
 
   @Bean
-  MessageHandler meteringMessageHandler(
-    LogicalMeterUseCases logicalMeterUseCases,
-    PhysicalMeterUseCases physicalMeterUseCases,
-    OrganisationUseCases organisationUseCases,
-    MeasurementUseCases measurementUseCases,
-    GatewayUseCases gatewayUseCases,
-    GeocodeService geocodeService
-  ) {
-    return new MeteringMessageHandler(
+  MeasurementMessageConsumer measurementMessageConsumer() {
+    return new MeteringMeasurementMessageConsumer(
       logicalMeterUseCases,
       physicalMeterUseCases,
       organisationUseCases,
       measurementUseCases,
+      gatewayUseCases
+    );
+  }
+
+  @Bean
+  StructureMessageConsumer structureMessageConsumer() {
+    return new MeteringStructureMessageConsumer(
+      logicalMeterUseCases,
+      physicalMeterUseCases,
+      organisationUseCases,
       gatewayUseCases,
       geocodeService
     );
   }
 
   @Bean
-  MeteringMessageReceiver meteringMessageReceiver(MessageHandler messageHandler) {
-    return new MeteringMessageReceiver(messageHandler);
+  MessageListener messageListener(
+    MeasurementMessageConsumer measurementMessageConsumer,
+    StructureMessageConsumer structureMessageConsumer
+  ) {
+    return new MeteringMessageListener(
+      new MeteringMessageParser(),
+      measurementMessageConsumer,
+      structureMessageConsumer
+    );
+  }
+
+  @Bean
+  MessageListenerAdapter listenerAdapter(MessageListener messageListener) {
+    return new MessageListenerAdapter(new AuthenticatedMessageListener(messageListener));
   }
 
   @Bean
@@ -63,20 +88,14 @@ class RabbitMqConfig {
   ) {
     SimpleMessageListenerContainer container =
       new SimpleMessageListenerContainer(connectionFactory);
-    container.setQueueNames(consumerProperties.getQueueName());
     listenerAdapter.setResponseExchange(consumerProperties.getResponseExchange());
     listenerAdapter.setResponseRoutingKey(consumerProperties.getResponseRoutingKey());
+    container.setQueueNames(consumerProperties.getQueueName());
     container.setDefaultRequeueRejected(consumerProperties.getRequeueRejected());
     container.setMessageListener(listenerAdapter);
-    container.setChannelTransacted(true);
     container.setTransactionManager(transactionManager);
+    container.setChannelTransacted(true);
     container.setAlwaysRequeueWithTxManagerRollback(consumerProperties.getRequeueRejected());
     return container;
-  }
-
-  @Bean
-  MessageListenerAdapter listenerAdapter(MeteringMessageReceiver meteringMessageReceiver) {
-    return new MessageListenerAdapter(new AuthenticatingMeteringMessageReceiver(
-      meteringMessageReceiver), "receiveMessage");
   }
 }

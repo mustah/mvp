@@ -1,9 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
-public class GatewayIdDto {
-  public final String id;
+import lombok.RequiredArgsConstructor;
 
-  public GatewayIdDto(String id) {
-    this.id = id;
-  }
+@RequiredArgsConstructor
+public class GatewayIdDto {
+
+  public final String id;
 }

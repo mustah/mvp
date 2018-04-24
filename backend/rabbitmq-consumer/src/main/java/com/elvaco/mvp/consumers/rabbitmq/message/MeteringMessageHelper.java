@@ -20,10 +20,8 @@ class MeteringMessageHelper {
   }
 
   private static int quantityTimestampComparator(ValueDto o1, ValueDto o2) {
-    if (o1.quantity.equals(o2.quantity)
-      && o1.timestamp.equals(o2.timestamp)) {
-      return 0;
-    }
-    return -1;
+    return o1.quantity.equals(o2.quantity) && o1.timestamp.equals(o2.timestamp)
+      ? 0
+      : -1;
   }
 }

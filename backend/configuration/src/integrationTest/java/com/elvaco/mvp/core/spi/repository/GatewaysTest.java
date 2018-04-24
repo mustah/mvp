@@ -22,13 +22,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GatewaysTest extends IntegrationTest {
 
   @Autowired
-  Gateways gateways;
+  private Gateways gateways;
 
   @Autowired
-  GatewayJpaRepository gatewayJpaRepository;
+  private GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
-  GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
+  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
   @After
   public void tearDown() {
@@ -51,5 +51,4 @@ public class GatewaysTest extends IntegrationTest {
     assertThat(found.statusLogs.get(0).start).isEqualTo(start);
     assertThat(found.statusLogs.get(0).status).isEqualTo(StatusType.ERROR);
   }
-
 }

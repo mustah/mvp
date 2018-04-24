@@ -9,7 +9,7 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MessageHandler;
+import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
@@ -23,13 +23,13 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
-public class MessageHandlerTest extends IntegrationTest {
+public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   @Autowired
-  MessageHandler messageHandler;
+  private MeasurementMessageConsumer measurementMessageConsumer;
 
   @Autowired
-  MeasurementJpaRepository measurementJpaRepository;
+  private MeasurementJpaRepository measurementJpaRepository;
 
   @Before
   public void setUp() {
@@ -39,11 +39,12 @@ public class MessageHandlerTest extends IntegrationTest {
   @Test
   public void lastReceivedDuplicateMeasurementIsUsed() {
     LocalDateTime when = LocalDateTime.now();
-    messageHandler.handle(newMeasurementMessage(singletonList(newValueDto(when, 1.0))));
-    messageHandler.handle(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
+    measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 1.0))));
+    measurementMessageConsumer.accept(newMeasurementMessage(singletonList(newValueDto(when, 2.0))));
 
-    assertThat(measurementJpaRepository.findAll()).hasSize(1);
-    MeasurementEntity found = measurementJpaRepository.findAll().get(0);
+    List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    MeasurementEntity found = all.get(0);
+    assertThat(all).hasSize(1);
     assertThat(found.created.toLocalDateTime()).isEqualTo(when);
     assertThat(found.value.getValue()).isEqualTo(2.0);
   }
@@ -56,10 +57,11 @@ public class MessageHandlerTest extends IntegrationTest {
       newValueDto(when, 2.0)
     ));
 
-    messageHandler.handle(measurementMessage);
+    measurementMessageConsumer.accept(measurementMessage);
 
-    assertThat(measurementJpaRepository.findAll()).hasSize(1);
-    MeasurementEntity found = measurementJpaRepository.findAll().get(0);
+    List<MeasurementEntity> all = measurementJpaRepository.findAll();
+    MeasurementEntity found = all.get(0);
+    assertThat(all).hasSize(1);
     assertThat(found.created.toLocalDateTime()).isEqualTo(when);
     assertThat(found.value.getValue()).isEqualTo(2.0);
   }

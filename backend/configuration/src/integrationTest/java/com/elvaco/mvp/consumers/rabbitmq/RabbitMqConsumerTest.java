@@ -18,13 +18,10 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeterStructureMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.consumers.rabbitmq.message.MessageSerializer;
 import com.elvaco.mvp.core.spi.repository.Gateways;
-import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -43,9 +40,8 @@ import org.springframework.amqp.AmqpConnectException;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 
-import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageSerializer.serialize;
+import static com.elvaco.mvp.consumers.rabbitmq.message.MessageSerializer.toJson;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,40 +51,31 @@ import static org.junit.Assume.assumeNoException;
 public class RabbitMqConsumerTest extends IntegrationTest {
 
   @Autowired
-  Organisations organisations;
+  private Organisations organisations;
 
   @Autowired
-  PhysicalMeters physicalMeters;
+  private Gateways gateways;
 
   @Autowired
-  Gateways gateways;
+  private ConnectionFactory connectionFactory;
 
   @Autowired
-  RabbitProperties rabbitProperties;
+  private PhysicalMeterJpaRepository physicalMeterJpaRepository;
 
   @Autowired
-  ConnectionFactory connectionFactory;
+  private PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
 
   @Autowired
-  PhysicalMeterJpaRepository physicalMeterJpaRepository;
+  private LogicalMeterJpaRepository logicalMeterJpaRepository;
 
   @Autowired
-  PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
+  private GatewayJpaRepository gatewayJpaRepository;
 
   @Autowired
-  LogicalMeterJpaRepository logicalMeterJpaRepository;
+  private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
   @Autowired
-  GatewayJpaRepository gatewayJpaRepository;
-
-  @Autowired
-  GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
-
-  @Autowired
-  LogicalMeters logicalMeters;
-
-  @Autowired
-  RabbitConsumerProperties consumerProperties;
+  private RabbitConsumerProperties consumerProperties;
 
   private Connection connection;
   private Channel channel;
@@ -127,9 +114,8 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   }
 
   @Test
-  public void messagesSentToRabbitAreReceivedAndProcessed() throws InterruptedException,
-                                                                   IOException {
-    MeteringMeterStructureMessageDto messageDto = new MeteringMeterStructureMessageDto(
+  public void messagesSentToRabbitAreReceivedAndProcessed() throws Exception {
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
       MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
@@ -138,7 +124,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       new GatewayStatusDto("123987", "Gateway 2000", "OK")
     );
 
-    publishMessage(serializeDto(messageDto));
+    publishMessage(toJson(message).getBytes());
 
     assertOrganisationWithSlugWasCreated("some-organisation");
 
@@ -149,8 +135,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   }
 
   @Test
-  public void responseMessagesForMeasurementMessagesArePublished() throws IOException,
-                                                                          InterruptedException {
+  public void responseMessagesForMeasurementMessagesArePublished() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("GATEWAY-123"),
@@ -162,11 +147,18 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     );
     TestConsumer consumer = newResponseConsumer();
 
-    publishMessage(serializeDto(message));
+    publishMessage(toJson(message).getBytes());
 
-    GetReferenceInfoDto responseDto = deserialize(consumer.receiveOne(), GetReferenceInfoDto.class);
-    assertThat(responseDto)
-      .isEqualTo(new GetReferenceInfoDto("ORGANISATION-123", "FACILITY-123", "GATEWAY-123"));
+    GetReferenceInfoDto response = consumer.fromJson(GetReferenceInfoDto.class);
+
+    assertThat(response)
+      .isEqualTo(
+        new GetReferenceInfoDto(
+          "ORGANISATION-123",
+          "METER-123",
+          "GATEWAY-123",
+          "FACILITY-123"
+        ));
   }
 
   private TestConsumer newResponseConsumer() throws IOException {
@@ -180,14 +172,6 @@ public class RabbitMqConsumerTest extends IntegrationTest {
     );
     channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
     return consumer;
-  }
-
-  private <T> T deserialize(byte[] responseBytes, Class<T> dtoType) {
-    return MeteringMessageSerializer.deserialize(new String(responseBytes), dtoType);
-  }
-
-  private byte[] serializeDto(MeteringMessageDto dto) {
-    return serialize(dto).getBytes();
   }
 
   private void publishMessage(byte[] message) throws IOException {
@@ -258,6 +242,10 @@ public class RabbitMqConsumerTest extends IntegrationTest {
 
     private byte[] receiveOne() throws InterruptedException {
       return (byte[]) receivedMessages.poll(10, TimeUnit.SECONDS);
+    }
+
+    private <T> T fromJson(Class<T> classOfT) throws InterruptedException {
+      return MessageSerializer.fromJson(new String(receiveOne()), classOfT);
     }
   }
 }

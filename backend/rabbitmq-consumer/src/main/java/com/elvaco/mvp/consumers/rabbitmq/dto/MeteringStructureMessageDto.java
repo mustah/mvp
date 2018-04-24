@@ -1,6 +1,9 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
-public class MeteringMeterStructureMessageDto extends MeteringMessageDto {
+import lombok.ToString;
+
+@ToString(callSuper = true)
+public class MeteringStructureMessageDto extends MeteringMessageDto {
 
   public final MeterDto meter;
   public final FacilityDto facility;
@@ -8,7 +11,7 @@ public class MeteringMeterStructureMessageDto extends MeteringMessageDto {
   public final String organisationId;
   public final GatewayStatusDto gateway;
 
-  public MeteringMeterStructureMessageDto(
+  public MeteringStructureMessageDto(
     MessageType messageType,
     MeterDto meter,
     FacilityDto facility,
