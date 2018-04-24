@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
@@ -385,6 +386,24 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       START_TIME.plus(Duration.ofSeconds(1))
     );
     assertThat(result).isEmpty();
+  }
+
+  @Test
+  public void mixedDimensionsAreRejected() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    newMeasurement(meter, START_TIME.minusMinutes(1), 0.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
+    assertThatThrownBy(() -> newMeasurement(
+      meter,
+      START_TIME.plusMinutes(1),
+      2.0,
+      "m³/s",
+      "Volume"
+    )).hasMessageContaining(
+      "Mixed dimensions for same quantity/meter"
+        + " combination is not allowed (have 1 m^3, got 1 m^3/s)");
+
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {
