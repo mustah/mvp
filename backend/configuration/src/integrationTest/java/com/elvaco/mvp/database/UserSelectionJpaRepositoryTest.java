@@ -7,7 +7,6 @@ import com.elvaco.mvp.database.entity.meter.JsonField;
 import com.elvaco.mvp.database.entity.selection.UserSelectionEntity;
 import com.elvaco.mvp.database.repository.jpa.UserSelectionJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.After;
@@ -19,10 +18,10 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 public class UserSelectionJpaRepositoryTest extends IntegrationTest {
 
-  private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+  private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
   @Autowired
-  UserSelectionJpaRepository userSelectionJpaRepository;
+  private UserSelectionJpaRepository userSelectionJpaRepository;
 
   @After
   public void tearDown() {
@@ -34,7 +33,7 @@ public class UserSelectionJpaRepositoryTest extends IntegrationTest {
     UUID owner = context().user.id;
     String name = "My selection";
     JsonField originalData = new JsonField((ObjectNode) OBJECT_MAPPER.readTree("{\"city\": "
-      + "\"Höganäs\"}"));
+                                                                               + "\"Höganäs\"}"));
     UUID organisationId = context().user.organisation.id;
 
     UserSelectionEntity entityToSave = new UserSelectionEntity(

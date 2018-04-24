@@ -11,27 +11,21 @@ import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
 import com.elvaco.mvp.core.security.Permission;
 import com.elvaco.mvp.core.spi.repository.Organisations;
+import lombok.AllArgsConstructor;
 
 import static com.elvaco.mvp.core.security.Permission.CREATE;
 import static com.elvaco.mvp.core.security.Permission.DELETE;
 import static com.elvaco.mvp.core.security.Permission.READ;
 import static com.elvaco.mvp.core.security.Permission.UPDATE;
+import static com.elvaco.mvp.core.util.Slugify.slugify;
+import static java.util.UUID.randomUUID;
 
+@AllArgsConstructor
 public class OrganisationUseCases {
 
   private final AuthenticatedUser currentUser;
   private final Organisations organisations;
   private final OrganisationPermissions organisationPermissions;
-
-  public OrganisationUseCases(
-    AuthenticatedUser currentUser,
-    Organisations organisations,
-    OrganisationPermissions organisationPermissions
-  ) {
-    this.currentUser = currentUser;
-    this.organisations = organisations;
-    this.organisationPermissions = organisationPermissions;
-  }
 
   public List<Organisation> findAll() {
     if (currentUser.isSuperAdmin()) {
@@ -59,8 +53,15 @@ public class OrganisationUseCases {
     }
   }
 
-  public Optional<Organisation> findByExternalId(String externalId) {
-    return organisations.findByExternalId(externalId).filter(this::mayRead);
+  public Organisation findOrCreate(String externalId) {
+    return organisations.findByExternalId(externalId)
+      .filter(this::mayRead)
+      .orElseGet(() -> create(new Organisation(
+        randomUUID(),
+        externalId,
+        slugify(externalId),
+        externalId
+      )));
   }
 
   private boolean mayRead(Organisation organisation) {
@@ -72,7 +73,7 @@ public class OrganisationUseCases {
       return organisations.save(organisation);
     } else {
       throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to save "
-                               + "this organisation");
+                             + "this organisation");
     }
   }
 }

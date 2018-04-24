@@ -17,7 +17,7 @@ public class MeteringMessageDto {
     for (Field field : getClass().getDeclaredFields()) {
       if (field.getAnnotation(Nullable.class) == null && field.get(this) == null) {
         throw new JsonSyntaxException("Field '" + getClass() + "." + field.getName() + "' was not"
-          + " initialized");
+                                      + " initialized");
       }
     }
     return true;

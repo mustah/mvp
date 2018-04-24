@@ -3,9 +3,10 @@ package com.elvaco.mvp.core.domainmodels;
 import java.io.Serializable;
 import java.util.UUID;
 
-import com.elvaco.mvp.core.util.Slugify;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import static com.elvaco.mvp.core.util.Slugify.slugify;
 
 @EqualsAndHashCode
 @ToString
@@ -19,7 +20,7 @@ public class Organisation implements Identifiable<UUID>, Serializable {
   public final String externalId;
 
   public Organisation(UUID id, String name) {
-    this(id, name, Slugify.slugify(name));
+    this(id, name, slugify(name));
   }
 
   public Organisation(UUID id, String name, String slug) {
@@ -36,14 +37,5 @@ public class Organisation implements Identifiable<UUID>, Serializable {
   @Override
   public UUID getId() {
     return id;
-  }
-
-  public Organisation withExternalId(String externalId) {
-    return new Organisation(
-      id,
-      name,
-      slug,
-      externalId
-    );
   }
 }
