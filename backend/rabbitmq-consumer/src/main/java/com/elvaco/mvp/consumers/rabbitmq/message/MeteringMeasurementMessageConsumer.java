@@ -96,7 +96,7 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
           UNKNOWN_MEDIUM.medium,
           "UNKNOWN",
           logicalMeter.id,
-          0L, // TODO add real interval here!
+          0L,
           null
         );
       });
