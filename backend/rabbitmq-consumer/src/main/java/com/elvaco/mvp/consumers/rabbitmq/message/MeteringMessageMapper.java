@@ -43,8 +43,8 @@ class MeteringMessageMapper {
     Map<String, Quantity> map = new HashMap<>();
     map.put("Return temp.", Quantity.RETURN_TEMPERATURE);
     map.put("Difference temp.", Quantity.DIFFERENCE_TEMPERATURE);
-    map.put("Flow temp.", Quantity.VOLUME_FLOW);
-    map.put("Volume flow", Quantity.VOLUME);
+    map.put("Flow temp.", Quantity.FORWARD_TEMPERATURE);
+    map.put("Volume flow", Quantity.VOLUME_FLOW);
     map.put("Power", Quantity.POWER);
     map.put("Volume", Quantity.VOLUME);
     map.put("Energy", Quantity.ENERGY);
