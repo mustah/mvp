@@ -11,6 +11,7 @@ import {Tabs} from '../../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../../components/tabs/components/TabTopBar';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {GatewayDetailsContainer} from '../../../containers/dialogs/GatewayDetailsContainer';
+import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -113,12 +114,15 @@ const mapStateToProps = ({
   ui: {pagination, tabs},
   map,
   domainModels: {gatewayMapMarkers},
-  userSelection,
+  userSelection: {userSelection},
 }: RootState): StateToProps => {
   return {
     selectedTab: getSelectedTab(tabs.collection),
     gatewayMapMarkers: getDomainModel(gatewayMapMarkers),
-    parameters: getGatewayParameters(userSelection),
+    parameters: getGatewayParameters({
+      userSelection,
+      now: now(),
+    }),
     selectedMarker: getSelectedMapMarker(map),
     isFetching: gatewayMapMarkers.isFetching,
     error: getError(gatewayMapMarkers),

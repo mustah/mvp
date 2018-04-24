@@ -9,6 +9,7 @@ import {MainTitle} from '../../../components/texts/Titles';
 import {MvpPageContainer} from '../../../containers/MvpPageContainer';
 import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
+import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
@@ -77,11 +78,14 @@ class DashboardContainerComponent extends React.Component<Props> {
 
 const mapStateToProps = ({
   dashboard,
-  userSelection,
+  userSelection: {userSelection},
   domainModels: {meterMapMarkers},
 }: RootState): StateToProps => ({
   dashboard: dashboard.record,
-  parameters: getMeterParameters(userSelection),
+  parameters: getMeterParameters({
+    userSelection,
+    now: now(),
+  }),
   meterMapMarkers: getDomainModel(meterMapMarkers),
   isFetching: dashboard.isFetching || meterMapMarkers.isFetching,
   error: getError(meterMapMarkers),

@@ -8,9 +8,10 @@ import {
 } from 'recharts';
 import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../components/content/HasContent';
-import {Period} from '../../../components/dates/dateModels';
+import {DateRange, Period} from '../../../components/dates/dateModels';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {
@@ -19,6 +20,7 @@ import {
   selectQuantities,
 } from '../../../state/ui/graph/measurement/measurementActions';
 import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, uuid} from '../../../types/Types';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
@@ -27,6 +29,7 @@ import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
 
 interface StateToProps {
   period: Period;
+  customDateRange: Maybe<DateRange>;
   selectedListItems: uuid[];
   selectedQuantities: Quantity[];
 }
@@ -109,8 +112,8 @@ class GraphComponent extends React.Component<Props, State> {
   changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
   async componentDidMount() {
-    const {selectedListItems, period, selectedQuantities} = this.props;
-    const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
+    const {selectedListItems, period, customDateRange, selectedQuantities} = this.props;
+    const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange);
 
     this.setState({
       ...this.state,
@@ -119,10 +122,10 @@ class GraphComponent extends React.Component<Props, State> {
     });
   }
 
-  async componentWillReceiveProps({selectedListItems, period, selectedQuantities}: Props) {
+  async componentWillReceiveProps({selectedListItems, period, customDateRange, selectedQuantities}: Props) {
     const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
     if (somethingChanged) {
-      const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period);
+      const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange);
       this.setState({
         ...this.state,
         graphContents: mapApiResponseToGraphData(graphData),
@@ -235,12 +238,12 @@ class GraphComponent extends React.Component<Props, State> {
 const mapStateToProps = (
   {
     report: {selectedListItems},
-    userSelection: {userSelection: {selectionParameters: {period}}},
+    userSelection: {userSelection},
     ui: {measurements: {selectedQuantities}},
   }: RootState): StateToProps =>
   ({
+    ...getSelectedPeriod(userSelection),
     selectedListItems,
-    period,
     selectedQuantities,
   });
 

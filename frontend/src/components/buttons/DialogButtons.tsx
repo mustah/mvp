@@ -3,9 +3,11 @@ import * as React from 'react';
 import {translate} from '../../services/translationService';
 import './DialogButtons.scss';
 import {OnClick} from '../../types/Types';
+import * as classNames from 'classnames';
 
 interface DialogButtonProps {
   onClick: OnClick;
+  disabled?: boolean;
 }
 
 export const ButtonClose = ({onClick}: DialogButtonProps) => (
@@ -16,11 +18,12 @@ export const ButtonClose = ({onClick}: DialogButtonProps) => (
   />
 );
 
-export const ButtonConfirm = ({onClick}: DialogButtonProps) => (
+export const ButtonConfirm = ({onClick, disabled}: DialogButtonProps) => (
   <FlatButton
     label={translate('confirm')}
     onClick={onClick}
-    className="FlatButton"
+    disabled={disabled}
+    className={classNames('FlatButton', {disabled})}
   />
   );
 

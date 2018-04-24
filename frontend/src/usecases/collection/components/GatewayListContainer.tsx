@@ -10,6 +10,7 @@ import {Status} from '../../../components/status/Status';
 import {Table, TableColumn} from '../../../components/table/Table';
 import {TableHead} from '../../../components/table/TableHead';
 import {MissingDataTitle} from '../../../components/texts/Titles';
+import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
@@ -155,6 +156,7 @@ const mapStateToProps = (
     encodedUriParametersForGateways: getPaginatedGatewayParameters({
       pagination: paginationData,
       ...userSelection,
+      now: now(),
     }),
     isFetching: getPageIsFetching(gateways, page),
     pagination: paginationData,

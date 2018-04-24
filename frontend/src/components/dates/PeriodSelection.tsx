@@ -1,12 +1,16 @@
 import {DropDownMenu, MenuItem} from 'material-ui';
+import {Moment} from 'moment-timezone';
 import * as React from 'react';
 import {colors, fontSizeNormal, listItemStyle} from '../../app/themes';
-import {prettyRange} from '../../helpers/dateHelpers';
+import {momentWithTimeZone, now, prettyRange} from '../../helpers/dateHelpers';
+import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
+import {OnSelectCustomDateRange, OnSelectPeriod} from '../../state/user-selection/userSelectionModels';
+import {OnClick} from '../../types/Types';
+import {PeriodConfirmDialog} from '../dialog/PeriodConfirmDialog';
 import {IconCalendar} from '../icons/IconCalendar';
 import {Row} from '../layouts/row/Row';
-import {Period} from './dateModels';
+import {DateRange, Period} from './dateModels';
 import './PeriodSelection.scss';
 
 const height = 32;
@@ -49,50 +53,73 @@ const selectedMenuItemStyle: React.CSSProperties = {color: colors.blue};
 interface Props {
   period: Period;
   selectPeriod: OnSelectPeriod;
+  customDateRange: Maybe<DateRange>;
+  setCustomDateRange: OnSelectCustomDateRange;
 }
 
-interface TimePeriods {
+interface State {
+  periodSelectorOpen: boolean;
+}
+
+interface TimePeriod {
   value: Period;
   chosen: string;
   alternative: string;
+  onClick: OnClick;
 }
 
-export class PeriodSelection extends React.Component<Props> {
+interface NullableDateRange {
+  start: Moment | null;
+  end: Moment | null;
+}
+
+export class PeriodSelection extends React.Component<Props, State> {
+
+  state: State = {periodSelectorOpen: false};
 
   render() {
-    const {period, selectPeriod} = this.props;
+    const {period, customDateRange} = this.props;
 
-    const onSelectPeriod = (event, index: number, period: Period) => selectPeriod(period);
-
-    const timePeriods: TimePeriods[] = [
+    const timePeriods: TimePeriod[] = [
       {
         value: Period.latest,
         chosen: firstUpperTranslated('last 24h'),
         alternative: translate('last 24h'),
+        onClick: (event) => this.onSelectPeriod(event, Period.latest),
       },
       {
         value: Period.currentMonth,
-        chosen: prettyRange(Period.currentMonth),
+        chosen: prettyRange({now: now(), period: Period.currentMonth, customDateRange}),
         alternative: translate('current month'),
+        onClick: (event) => this.onSelectPeriod(event, Period.currentMonth),
       },
       {
         value: Period.previousMonth,
-        chosen: prettyRange(Period.previousMonth),
+        chosen: prettyRange({now: now(), period: Period.previousMonth, customDateRange}),
         alternative: translate('previous month'),
+        onClick: (event) => this.onSelectPeriod(event, Period.previousMonth),
       },
       {
         value: Period.currentWeek,
-        chosen: prettyRange(Period.currentWeek),
+        chosen: prettyRange({now: now(), period: Period.currentWeek, customDateRange}),
         alternative: translate('current week'),
+        onClick: (event) => this.onSelectPeriod(event, Period.currentWeek),
       },
       {
         value: Period.previous7Days,
-        chosen: prettyRange(Period.previous7Days),
+        chosen: prettyRange({now: now(), period: Period.previous7Days, customDateRange}),
         alternative: translate('last 7 days'),
+        onClick: (event) => this.onSelectPeriod(event, Period.previous7Days),
+      },
+      {
+        value: Period.custom,
+        chosen: prettyRange({now: now(), period: Period.custom, customDateRange}),
+        alternative: translate('custom period'),
+        onClick: this.openPeriodSelector,
       },
     ];
 
-    const timePeriodComponents = timePeriods.map(({alternative, chosen, value}: TimePeriods) => (
+    const timePeriodComponents = timePeriods.map(({alternative, chosen, value, onClick}: TimePeriod) => (
       <MenuItem
         className="TimePeriod"
         key={alternative}
@@ -100,8 +127,14 @@ export class PeriodSelection extends React.Component<Props> {
         primaryText={alternative}
         style={listItemStyle}
         value={value}
+        onClick={onClick}
       />
     ));
+
+    const {start, end} = customDateRange.map<NullableDateRange>(({start, end}) => ({
+      start: momentWithTimeZone(start),
+      end: momentWithTimeZone(end),
+    })).orElse({start: null, end: null});
 
     return (
       <Row className="PeriodSelection">
@@ -113,13 +146,30 @@ export class PeriodSelection extends React.Component<Props> {
           iconStyle={iconStyle}
           style={style}
           value={period}
-          onChange={onSelectPeriod}
           iconButton={<IconCalendar className="IconCalendar"/>}
           selectedMenuItemStyle={selectedMenuItemStyle}
         >
           {timePeriodComponents}
         </DropDownMenu>
+        <PeriodConfirmDialog
+          isOpen={this.state.periodSelectorOpen}
+          confirm={this.confirmCustomPeriod}
+          close={this.closePeriodSelector}
+          startDate={start}
+          endDate={end}
+        />
       </Row>
     );
   }
+
+  openPeriodSelector = () => this.setState({periodSelectorOpen: true});
+
+  closePeriodSelector = () => this.setState({periodSelectorOpen: false});
+
+  confirmCustomPeriod = (dateRange: DateRange) => {
+    this.setState({periodSelectorOpen: false});
+    this.props.setCustomDateRange(dateRange);
+  }
+
+  onSelectPeriod = (event, period: Period) => this.props.selectPeriod(period);
 }

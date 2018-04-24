@@ -3,9 +3,9 @@ import axios from 'axios';
 import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import {Period} from '../../../components/dates/dateModels';
+import {momentWithTimeZone} from '../../../helpers/dateHelpers';
 import {authenticate} from '../../../services/restClient';
-import {UserSelectionState} from '../../../state/user-selection/userSelectionModels';
-import {getMeterParameters} from '../../../state/user-selection/userSelectionSelectors';
+import {getMeterParameters, UriLookupState} from '../../../state/user-selection/userSelectionSelectors';
 import {EncodedUriParameters} from '../../../types/Types';
 import {DASHBOARD_SUCCESS, dashboardRequest, fetchDashboard} from '../dashboardActions';
 import {initialDashboardState} from '../dashboardReducer';
@@ -28,15 +28,16 @@ describe('dashboardActions', () => {
 
   it('fetches dashboard with date parameters', async () => {
     const getSelectionWithResponseOk = async () => {
-      const parameters: UserSelectionState = {
+      const parameters: UriLookupState = {
         userSelection: {
           selectionParameters: {
-            period: Period.currentMonth,
+            dateRange: {period: Period.currentMonth},
           },
           isChanged: false,
           id: -1,
           name: '',
         },
+        now:  momentWithTimeZone('2018-04-23T00:00:00Z').toDate(),
       };
       const encoded: EncodedUriParameters = getMeterParameters(parameters);
 

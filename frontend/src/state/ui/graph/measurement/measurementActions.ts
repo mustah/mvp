@@ -1,6 +1,7 @@
 import {createPayloadAction} from 'react-redux-typescript';
-import {Period} from '../../../../components/dates/dateModels';
-import {currentDateRange, toApiParameters} from '../../../../helpers/dateHelpers';
+import {DateRange, Period} from '../../../../components/dates/dateModels';
+import {now, toPeriodApiParameters} from '../../../../helpers/dateHelpers';
+import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
@@ -139,18 +140,24 @@ export const mapApiResponseToGraphData =
     });
 
     graphContents.data = Object.keys(byDate).map((created) => ({
-        ...byDate[created],
-        name: Number(created),
-      })).sort(({name: createdA}, {name: createdB}) => createdA - createdB);
+      ...byDate[created],
+      name: Number(created),
+    })).sort(({name: createdA}, {name: createdB}) => createdA - createdB);
 
     graphContents.legend = Object.keys(legends).map((legend) => legends[legend]);
     return graphContents;
   };
 
-const measurementUri = (quantities: Quantity[], meters: uuid[], timePeriod: Period, resolution: Resolution): string =>
+const measurementUri = (
+  quantities: Quantity[],
+  meters: uuid[],
+  timePeriod: Period,
+  customDateRange: Maybe<DateRange>,
+  resolution: Resolution,
+): string =>
   `quantities=${quantities.join(',')}` +
   `&meters=${meters.join(',')}` +
-  `&${toApiParameters(currentDateRange(timePeriod)).join('&')}` +
+  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}` +
   `&resolution=${resolution}`;
 
 export const fetchMeasurements =
@@ -158,6 +165,7 @@ export const fetchMeasurements =
     quantities: Quantity[],
     selectedListItems: uuid[],
     timePeriod: Period,
+    customDateRange: Maybe<DateRange>,
   ): Promise<MeasurementResponses> => {
     let averageData: AverageApiResponse = [];
 
@@ -171,7 +179,7 @@ export const fetchMeasurements =
     if (selectedListItems.length > 1) {
       const averageUrl = makeUrl(
         EndPoints.measurements.concat('/average'),
-        measurementUri(quantities, selectedListItems, timePeriod, Resolution.hour),
+        measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
       );
 
       try {
@@ -187,7 +195,7 @@ export const fetchMeasurements =
 
     const measurement = makeUrl(
       EndPoints.measurements,
-      measurementUri(quantities, selectedListItems, timePeriod, Resolution.hour),
+      measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
     );
     try {
       const response = await restClient.get(measurement);

@@ -1,8 +1,8 @@
 import {normalize} from 'normalizr';
 import {testData} from '../../../__tests__/testDataFactory';
 import {Period} from '../../../components/dates/dateModels';
-import {dateRange, momentWithTimeZone, toApiParameters} from '../../../helpers/dateHelpers';
-import {encodedUriParametersForMeters, ParameterCallbacks} from '../../../helpers/urlFactory';
+import {momentWithTimeZone} from '../../../helpers/dateHelpers';
+import {Maybe} from '../../../helpers/Maybe';
 import {EndPoints} from '../../../services/endPoints';
 import {EncodedUriParameters, IdNamed} from '../../../types/Types';
 import {DomainModelsState, Normalized, SelectionEntity} from '../../domain-models/domainModels';
@@ -30,7 +30,10 @@ import {
   UserSelectionState,
 } from '../userSelectionModels';
 import {initialState, userSelection} from '../userSelectionReducer';
-import {composePaginatedCombiner, getCities, getSelection, UriLookupStatePaginated} from '../userSelectionSelectors';
+import {
+  getCities, getPaginatedMeterParameters, getSelectedPeriod, getSelection,
+  UriLookupStatePaginated,
+} from '../userSelectionSelectors';
 
 describe('userSelectionSelectors', () => {
 
@@ -42,6 +45,7 @@ describe('userSelectionSelectors', () => {
 
   const selectionsRequest = getRequestOf<Normalized<IdNamed>>(EndPoints.selections);
   const initialUserSelectionState: UserSelectionState = {...initialState};
+  const now: Date = momentWithTimeZone('2018-02-02T00:00:00Z').toDate();
   const initialUriLookupState: UriLookupStatePaginated = {
     ...initialUserSelectionState,
     pagination: getPagination({
@@ -49,21 +53,12 @@ describe('userSelectionSelectors', () => {
       componentId: 'test',
       pagination: initialPaginationState,
     }),
-  };
-
-  const mockParameterCallbacks: ParameterCallbacks = {
-    period: (parameter: string) => toApiParameters(dateRange(
-      momentWithTimeZone('2018-02-02T00:00:00Z').toDate(),
-      parameter as Period,
-    )),
+    now,
   };
 
   const latestUrlParameters = 'after=2018-02-01T00%3A00%3A00.000Z&before=2018-02-02T00%3A00%3A00.000Z';
 
-  const initialEncodedParameters = composePaginatedCombiner(
-    encodedUriParametersForMeters,
-    mockParameterCallbacks,
-  )(initialUriLookupState);
+  const initialEncodedParameters = getPaginatedMeterParameters(initialUriLookupState);
 
   const initialDomainModelState = initialDomain<SelectionEntity>();
 
@@ -88,7 +83,7 @@ describe('userSelectionSelectors', () => {
   });
 
   it('encode the initial, empty, selection', () => {
-    expect(initialEncodedParameters).toEqual(`size=${limit}&page=0&${latestUrlParameters}`);
+    expect(initialEncodedParameters).toEqual(`${latestUrlParameters}&size=${limit}&page=0`);
   });
 
   it('gets entities for type city', () => {
@@ -131,19 +126,17 @@ describe('userSelectionSelectors', () => {
       const payload: SelectionParameter = {...stockholm, parameter: ParameterName.cities};
       const state: UserSelectionState = userSelection(initialState, {type: ADD_PARAMETER_TO_SELECTION, payload});
 
-      const uriParameters: EncodedUriParameters = composePaginatedCombiner(
-        encodedUriParametersForMeters,
-        mockParameterCallbacks,
-      )({
-        ...state,
+      const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
+        userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
           pagination: initialPaginationState,
         }),
+        now,
       });
 
-      expect(uriParameters).toEqual(`size=${limit}&page=0&city=sweden%2Cstockholm&${latestUrlParameters}`);
+      expect(uriParameters).toEqual(`city=sweden%2Cstockholm&${latestUrlParameters}&size=${limit}&page=0`);
     });
 
     it('has two selected cities', () => {
@@ -158,21 +151,19 @@ describe('userSelectionSelectors', () => {
         {type: ADD_PARAMETER_TO_SELECTION, payload: payloadSto},
       );
 
-      const uriParameters: EncodedUriParameters = composePaginatedCombiner(
-        encodedUriParametersForMeters,
-        mockParameterCallbacks,
-      )({
-        ...state,
+      const uriParameters: EncodedUriParameters = getPaginatedMeterParameters({
+        userSelection: state.userSelection,
         pagination: getPagination({
           entityType: 'meters',
           componentId: 'test',
           pagination: initialPaginationState,
         }),
+        now,
       });
 
       expect(uriParameters).toEqual(
-        `size=${limit}&page=0&city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm` +
-        `&${latestUrlParameters}`,
+        `city=sweden%2Cg%C3%B6teborg&city=sweden%2Cstockholm` +
+        `&${latestUrlParameters}&size=${limit}&page=0`,
       );
     });
   });
@@ -180,8 +171,8 @@ describe('userSelectionSelectors', () => {
   describe('get selected period', () => {
 
     it('there is a default period', () => {
-      expect(initialState.userSelection.selectionParameters.period)
-        .toEqual(Period.latest);
+      expect(initialState.userSelection.selectionParameters.dateRange)
+        .toEqual({period: Period.latest});
     });
 
     it('get selected period', () => {
@@ -190,7 +181,8 @@ describe('userSelectionSelectors', () => {
         {type: SELECT_PERIOD, payload: Period.currentWeek},
       );
 
-      expect(state.userSelection.selectionParameters.period).toBe(Period.currentWeek);
+      expect(getSelectedPeriod(state.userSelection))
+        .toEqual({period: Period.currentWeek, customDateRange: Maybe.nothing()});
     });
   });
 

@@ -4,14 +4,17 @@ import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {
-  ADD_PARAMETER_TO_SELECTION,
-  DESELECT_SELECTION,
-  RESET_SELECTION,
-  SELECT_PERIOD,
-  SELECT_SAVED_SELECTION,
+  ADD_PARAMETER_TO_SELECTION, DESELECT_SELECTION, RESET_SELECTION, SELECT_PERIOD,
+  SELECT_SAVED_SELECTION, SET_CUSTOM_DATE_RANGE,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
+import {
+  DomainModelsState,
+  Normalized,
+  NormalizedState,
+  ObjectsById,
+  SelectionEntity,
+} from './domainModels';
 import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
@@ -159,6 +162,7 @@ export const selectionWasChanged = (actionType: string) => [
   DESELECT_SELECTION,
   RESET_SELECTION,
   SELECT_PERIOD,
+  SET_CUSTOM_DATE_RANGE,
 ].includes(actionType);
 
 const resetStateReducer = <T extends Identifiable>(

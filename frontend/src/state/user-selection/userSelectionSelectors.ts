@@ -1,20 +1,20 @@
 import {createSelector, OutputSelector} from 'reselect';
+import {DateRange, Period} from '../../components/dates/dateModels';
+import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
+import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
-  encodedUriParametersForAllGateways,
-  encodedUriParametersForAllMeters,
-  encodedUriParametersForGateways,
-  encodedUriParametersForMeters,
-  PaginatedParametersCombiner,
-  ParameterCallbacks,
+  encodedUriParametersFrom, toEntityApiParametersGateways, toEntityApiParametersMeters,
+  toPaginationApiParameters,
 } from '../../helpers/urlFactory';
+
 import {EncodedUriParameters, uuid} from '../../types/Types';
 import {DomainModel, SelectionEntity} from '../domain-models/domainModels';
 import {Pagination} from '../ui/pagination/paginationModels';
 import {
   LookupState,
   ParameterName,
-  SelectedParameters,
+  SelectedParameters, SelectionInterval,
   SelectionListItem,
   UserSelection,
   UserSelectionState,
@@ -95,44 +95,80 @@ const getList = (entityType: ParameterName): ListSelector =>
 const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
   (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
-const getSelectedParameters = (state: UserSelectionState): SelectedParameters =>
-  state.userSelection.selectionParameters;
-
 export const getCities = getList(ParameterName.cities);
 export const getAddresses = getList(ParameterName.addresses);
-export const getAlarms = getList(ParameterName.alarms);
 export const getMeterStatuses = getList(ParameterName.meterStatuses);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
 
-export interface UriLookupStatePaginated extends UserSelectionState {
+export interface UriLookupState extends UserSelectionState {
+  now: Date;
+}
+
+export interface UriLookupStatePaginated extends UriLookupState {
   pagination: Pagination;
 }
 
-export const composePaginatedCombiner =
-  (combiner: PaginatedParametersCombiner, callbacks?: ParameterCallbacks) =>
-    createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, EncodedUriParameters>(
-      ({pagination}: UriLookupStatePaginated) => pagination,
-      getSelectedParameters,
-      (pagination: Pagination, selectedParameters: SelectedParameters) =>
-        combiner(pagination, selectedParameters, callbacks),
-    );
+const getSelectedParameters = (state: UserSelectionState): SelectedParameters =>
+  state.userSelection.selectionParameters;
+
+const getCurrentPeriod = (state: UriLookupStatePaginated): CurrentPeriod => {
+  const {now} = state;
+  const {dateRange: {period, customDateRange}} = getSelectedParameters(state);
+  return ({now, period, customDateRange: Maybe.maybe(customDateRange)});
+};
 
 export const getPaginatedMeterParameters =
-  composePaginatedCombiner(encodedUriParametersForMeters);
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+    ({pagination}) => pagination,
+    getSelectedParameters,
+    getCurrentPeriod,
+    (pagination, {dateRange, ...rest}, currentPeriod) => {
+      return encodedUriParametersFrom([
+        ...toEntityApiParametersMeters(rest),
+        ...toPeriodApiParameters(currentPeriod),
+        ...toPaginationApiParameters(pagination),
+      ]);
+    });
 
 export const getPaginatedGatewayParameters =
-  composePaginatedCombiner(encodedUriParametersForGateways);
+  createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
+    ({pagination}) => pagination,
+    getSelectedParameters,
+    getCurrentPeriod,
+    (pagination, {dateRange, ...rest}, currentPeriod) => {
+      return encodedUriParametersFrom([
+        ...toEntityApiParametersGateways(rest),
+        ...toPeriodApiParameters(currentPeriod),
+        ...toPaginationApiParameters(pagination),
+      ]);
+    });
 
 export const getMeterParameters =
-  createSelector<UserSelectionState, SelectedParameters, EncodedUriParameters>(
+  createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
     getSelectedParameters,
-    encodedUriParametersForAllMeters,
-  );
+    getCurrentPeriod,
+    ({dateRange, ...rest}, currentPeriod) => {
+      return encodedUriParametersFrom([
+        ...toEntityApiParametersMeters(rest),
+        ...toPeriodApiParameters(currentPeriod),
+      ]);
+    });
 
 export const getGatewayParameters =
-  createSelector<UserSelectionState, SelectedParameters, EncodedUriParameters>(
+  createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
     getSelectedParameters,
-    encodedUriParametersForAllGateways,
+    getCurrentPeriod,
+    ({dateRange, ...rest}, currentPeriod) => {
+      return encodedUriParametersFrom([
+        ...toEntityApiParametersGateways(rest),
+        ...toPeriodApiParameters(currentPeriod),
+      ]);
+    });
+
+export const getSelectedPeriod =
+  createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(
+    ({selectionParameters: {dateRange}}: UserSelection) => dateRange,
+    ({period, customDateRange}: SelectionInterval) => ({period, customDateRange: Maybe.maybe(customDateRange)}),
   );
 
 export const getSelection = (state: UserSelectionState): UserSelection => state.userSelection;

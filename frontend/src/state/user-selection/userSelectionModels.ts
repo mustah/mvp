@@ -1,4 +1,4 @@
-import {Period} from '../../components/dates/dateModels';
+import {DateRange, Period} from '../../components/dates/dateModels';
 import {IdNamed, ItemOrArray, uuid} from '../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../domain-models/domainModels';
 
@@ -38,8 +38,13 @@ export interface SelectedParameters {
   manufacturers?: uuid[];
   meterIds?: uuid[];
   meterStatuses?: uuid[];
-  period: Period;
+  dateRange: SelectionInterval;
   productModels?: uuid[];
+}
+
+export interface SelectionInterval {
+  period: Period;
+  customDateRange?: DateRange;
 }
 
 export interface UserSelection extends IdNamed {
@@ -57,6 +62,7 @@ export interface LookupState {
 }
 
 export type OnSelectPeriod = (period: Period) => void;
+export type OnSelectCustomDateRange = (dateRange: DateRange) => void;
 
 export type OnSelectSelection = (selection: UserSelection) => void;
 

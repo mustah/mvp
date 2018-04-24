@@ -68,6 +68,9 @@ msgstr "denna vecka"
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
 
+msgid "custom period"
+msgstr "anpassad period"
+
 msgid "are you sure you want to delete this item"
 msgstr "är du säker på att du vill ta bort detta objekt"
 
