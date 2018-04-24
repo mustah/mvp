@@ -3,9 +3,8 @@ package com.elvaco.mvp.database;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.Period;
-import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
@@ -20,6 +19,7 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -317,14 +317,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       .allMatch(m -> m.physicalMeter.id.equals(meter.id))
       .noneMatch(m -> m.physicalMeter.id.equals(irrelevantMeter.id));
 
-    Comparator<ZonedDateTime> timeZoneInsensitive = (o1, o2) -> o1.isEqual(o2) ? 0 : 1;
-    assertThat(measurements.get(0).created)
-      .usingComparator(timeZoneInsensitive)
-      .isEqualTo(energyTime.toZonedDateTime());
+    Optional<MeasurementEntity> power = measurements.stream()
+      .filter(measurementEntity -> measurementEntity.quantity.equals("Power"))
+      .findFirst();
+    assertThat(power.get().created).isEqualTo(powerTime.toZonedDateTime());
 
-    assertThat(measurements.get(1).created)
-      .usingComparator(timeZoneInsensitive)
-      .isEqualTo(powerTime.toZonedDateTime());
+    Optional<MeasurementEntity> energy = measurements.stream()
+      .filter(measurementEntity -> measurementEntity.quantity.equals("Energy"))
+      .findFirst();
+    assertThat(energy.get().created).isEqualTo(energyTime.toZonedDateTime());
   }
 
   @Test
@@ -391,19 +392,11 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   @Test
   public void mixedDimensionsAreRejected() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
-
-    newMeasurement(meter, START_TIME.minusMinutes(1), 0.0, "m³", "Volume");
     newMeasurement(meter, START_TIME, 1.0, "m³", "Volume");
-    assertThatThrownBy(() -> newMeasurement(
-      meter,
-      START_TIME.plusMinutes(1),
-      2.0,
-      "m³/s",
-      "Volume"
-    )).hasMessageContaining(
-      "Mixed dimensions for same quantity/meter"
-        + " combination is not allowed (have 1 m^3, got 1 m^3/s)");
 
+    assertThatThrownBy(() ->
+      newMeasurement(meter, START_TIME.plusMinutes(1), 2.0, "m³/s", "Volume")
+    ).isInstanceOf(DataIntegrityViolationException.class);
   }
 
   private PhysicalMeterEntity newPhysicalMeterEntity() {

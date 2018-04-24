@@ -1,4 +1,5 @@
-delete from measurement where quantity = 'Volume' and dimension(value) = '1 m^3/s';
+delete from measurement
+where quantity = 'Volume' and dimension(value) = '1 m^3/s';
 
 create or replace function ensure_no_mixed_dimensions()
   returns trigger as $$
@@ -16,7 +17,8 @@ begin
                          limit 1);
   if (existing_dimension is not null and new_dimension != existing_dimension)
   then
-    raise exception 'Mixed dimensions for same quantity/meter combination is not allowed (have %, got %)', existing_dimension, new_dimension;
+    raise exception 'Mixed dimensions for same quantity/meter combination is not allowed (have %, got %)', existing_dimension, new_dimension
+    using errcode = 'integrity_constraint_violation';
   end if;
   return NEW;
 end

@@ -17,7 +17,6 @@ import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.JDBCException;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static java.util.stream.Collectors.toList;
@@ -35,11 +34,15 @@ public class MeasurementRepository implements Measurements {
 
   @Override
   public Measurement save(Measurement measurement) {
-    return MeasurementMapper.toDomainModel(
-      measurementJpaRepository.save(
-        MeasurementMapper.toEntity(measurement)
-      )
-    );
+    try {
+      return MeasurementMapper.toDomainModel(
+        measurementJpaRepository.save(
+          MeasurementMapper.toEntity(measurement)
+        )
+      );
+    } catch (DataIntegrityViolationException ex) {
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex);
+    }
   }
 
   @Override
@@ -47,11 +50,14 @@ public class MeasurementRepository implements Measurements {
     List<MeasurementEntity> measurementEntities = measurements.stream()
       .map(MeasurementMapper::toEntity)
       .collect(toList());
-    return
-      measurementJpaRepository.save(measurementEntities)
+    try {
+      return measurementJpaRepository.save(measurementEntities)
         .stream()
         .map(MeasurementMapper::toDomainModel)
         .collect(toList());
+    } catch (DataIntegrityViolationException ex) {
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex);
+    }
   }
 
   @Override
@@ -103,15 +109,7 @@ public class MeasurementRepository implements Measurements {
         ))
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
-      Throwable cause = ex.getCause();
-      if (cause instanceof JDBCException) {
-        String sqlErrorMessage = ((JDBCException) cause).getSQLException().getMessage();
-        throw SqlErrorMapper.mapScalingError(
-          unit,
-          sqlErrorMessage
-        ).orElse(ex);
-      }
-      throw ex;
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex, unit);
     }
   }
 

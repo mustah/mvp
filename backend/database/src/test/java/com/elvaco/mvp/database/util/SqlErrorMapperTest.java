@@ -1,9 +1,12 @@
 package com.elvaco.mvp.database.util;
 
-import java.util.Optional;
+import java.sql.SQLException;
 
+import com.elvaco.mvp.core.exception.MixedDimensionForMeterQuantity;
 import com.elvaco.mvp.core.exception.UnitConversionError;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,28 +14,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SqlErrorMapperTest {
 
   @Test
-  public void mapsDimensionMismatchError() {
-    Optional<RuntimeException> exc = SqlErrorMapper.mapScalingError("K", "ERROR: "
-      + "dimension mismatch in \"@\" operation: \"285.589999999999975 K\", \"3.59999999999999964 "
-      + "MJ\"");
-
-    assertThat(exc).isPresent();
-    assertThat(exc.get()).isInstanceOf(UnitConversionError.class);
+  public void mapsDataIntegrityViolationException_unmapped() {
+    DataIntegrityViolationException exc = newDataIntegrityViolationException("blah");
+    assertThat(SqlErrorMapper.mapDataIntegrityViolation(exc)).isEqualTo(exc);
   }
 
   @Test
-  public void mapsUnknownUnitError() {
-    Optional<RuntimeException> exc = SqlErrorMapper.mapScalingError("K", "ERROR:  unit "
-      + "\"UnscalableUnit\" is not known");
+  public void mapsDataIntegrityViolationException_mixedDimensionError_multiline() {
+    String message = "ERROR: Mixed dimensions for same quantity/meter combination is not allowed "
+      + "(have "
+      + "1 J, got 1 m^3)\n"
+      + "  Where: PL/pgSQL function ensure_no_mixed_dimensions() line 16 at RAISE";
 
-    assertThat(exc).isPresent();
-    assertThat(exc.get()).isInstanceOf(UnitConversionError.class);
+    DataIntegrityViolationException exc = newDataIntegrityViolationException(message);
+
+    assertThat(SqlErrorMapper.mapDataIntegrityViolation(exc))
+      .isInstanceOf(MixedDimensionForMeterQuantity.class);
   }
 
   @Test
-  public void unknownSqlErrorIsMappedToEmptyOptional() {
-    assertThat(
-      SqlErrorMapper.mapScalingError("", "ERROR: Terror error!")
-    ).isEmpty();
+  public void mapsDataIntegrityViolationException_mixedDimensionError() {
+    String message = "ERROR: Mixed dimensions for same quantity/meter combination is not allowed "
+      + "(have 1 J, got 1 m^3).*";
+    DataIntegrityViolationException exc = newDataIntegrityViolationException(message);
+
+    assertThat(SqlErrorMapper.mapDataIntegrityViolation(exc))
+      .isInstanceOf(MixedDimensionForMeterQuantity.class);
+  }
+
+  @Test
+  public void mapsDataIntegrityViolationException_scalingError() {
+    String message = "ERROR: dimension mismatch in \"@\" operation: \"285.589999999999975 "
+      + "K\", \"3.59999999999999964 MJ\"";
+    DataIntegrityViolationException exc = newDataIntegrityViolationException(message);
+
+    assertThat(SqlErrorMapper.mapDataIntegrityViolation(exc))
+      .isInstanceOf(UnitConversionError.class);
+  }
+
+  @Test
+  public void mapsDataIntegrityViolationException_unknownUnitError() {
+    String message = "ERROR:  unit \"Whatever\" is not known";
+    DataIntegrityViolationException exc = newDataIntegrityViolationException(message);
+
+    assertThat(SqlErrorMapper.mapDataIntegrityViolation(exc))
+      .isInstanceOf(UnitConversionError.class);
+  }
+
+  private DataIntegrityViolationException newDataIntegrityViolationException(
+    String sqlExceptionMessage
+  ) {
+    return new DataIntegrityViolationException(
+      "test",
+      new ConstraintViolationException("test", new SQLException(sqlExceptionMessage), "test")
+    );
   }
 }
