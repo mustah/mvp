@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assume.assumeTrue;
 
 @Transactional
 public class MeasurementMessageConsumerTest extends IntegrationTest {
@@ -66,6 +68,19 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
     assertThat(found.value.getValue()).isEqualTo(2.0);
   }
 
+  @Test
+  public void mixedDimensionsForMeterQuantity() {
+    assumeTrue(isPostgresDialect());
+    LocalDateTime when = LocalDateTime.now();
+    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(asList(
+      newValueDto(when, 2.0, "kWh"),
+      newValueDto(when.plusMinutes(1), 1.0, "m³")
+    ));
+
+    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage))
+      .hasMessageContaining("Mixing dimensions for meter quantity is not allowed");
+  }
+
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
@@ -79,6 +94,10 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
   }
 
   private ValueDto newValueDto(LocalDateTime when, double value) {
-    return new ValueDto(when, value, "kWh", "Energy");
+    return newValueDto(when, value, "kWh");
+  }
+
+  private ValueDto newValueDto(LocalDateTime when, double value, String unit) {
+    return new ValueDto(when, value, unit, "Energy");
   }
 }
