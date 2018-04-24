@@ -43,10 +43,13 @@ export const Map = ({
 
   const style = {height, width};
 
-  const centerProps: MapProps = {};
+  const centerProps: MapProps = {
+    zoom: defaultZoom,
+  };
 
   if (viewCenter) {
     centerProps.center = [viewCenter.latitude, viewCenter.longitude];
+    centerProps.zoom = 14;
   } else if (children && children.props && children.props.markers) {
     const bounds = boundsFromMarkers(children.props.markers);
     if (bounds) {
@@ -72,7 +75,6 @@ export const Map = ({
       <LeafletMap
         maxZoom={18}
         minZoom={0}
-        zoom={defaultZoom}
         className="Map"
         scrollWheelZoom={false}
         onclick={toggleScrollWheelZoom}
