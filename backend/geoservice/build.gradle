@@ -1,7 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'application'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
+dependencyManagement {
+  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
+}
+
+mainClassName = "com.elvaco.mvp.GeoServiceApplication"
 jar {
   baseName = 'geoservice'
   version = '0.1.0'
@@ -24,3 +29,28 @@ dependencies {
   testCompile 'org.assertj:assertj-core:3.9.0'
   testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
+idea {
+  module {
+    testSourceDirs += file('src/integrationTest/java')
+  }
+}
+sourceSets {
+  integrationTest {
+    java {
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+      srcDir file('src/integrationTest/java')
+    }
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+task integrationTest(type: Test, dependsOn: 'test', group: 'verification') {
+  testClassesDir = sourceSets.integrationTest.output.classesDir
+  classpath = sourceSets.integrationTest.runtimeClasspath
+}
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+check.dependsOn([integrationTest])
