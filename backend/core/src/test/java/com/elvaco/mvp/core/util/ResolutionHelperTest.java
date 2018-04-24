@@ -20,17 +20,17 @@ public class ResolutionHelperTest {
   }
 
   @Test
-  public void exactlyADayResolvesToDayResolution() {
+  public void exactlyTwoDaysResolvesToDayResolution() {
     ZonedDateTime start = ZonedDateTime.parse("2018-03-26T02:10:45Z");
-    ZonedDateTime end = start.plusDays(1);
+    ZonedDateTime end = start.plusDays(2);
     assertThat(defaultResolutionFor(Duration.between(start, end)))
       .isEqualTo(TemporalResolution.day);
   }
 
   @Test
-  public void moreThanADayResolvesToDayResolution() {
+  public void moreThanTwoDaysResolvesToDayResolution() {
     ZonedDateTime start = ZonedDateTime.parse("2018-03-26T02:10:45Z");
-    ZonedDateTime end = start.plusDays(1);
+    ZonedDateTime end = start.plusDays(2).plusMinutes(1);
     assertThat(defaultResolutionFor(Duration.between(start, end)))
       .isEqualTo(TemporalResolution.day);
   }

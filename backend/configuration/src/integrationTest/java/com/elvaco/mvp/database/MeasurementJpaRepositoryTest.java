@@ -276,19 +276,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(resultsWithHourResolution).hasSize(1);
     assertThat(resultsWithHourResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
+                 .getWhen()
+                 .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithDayResolution).hasSize(1);
     assertThat(resultsWithDayResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
+                 .getWhen()
+                 .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithMonthResolution).hasSize(1);
     assertThat(resultsWithMonthResolution.get(0)
-      .getWhen()
-      .toInstant()).isEqualTo(START_TIME.toInstant());
-
+                 .getWhen()
+                 .toInstant()).isEqualTo(START_TIME.toInstant());
   }
 
   @Test
@@ -359,7 +358,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "MWh",
       "default",
       START_TIME,
-      START_TIME.plusMinutes(1)
+      START_TIME.plusMinutes(1),
+      "minute"
     );
 
     assertThat(result).hasSize(2);
@@ -383,7 +383,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "MWh",
       "consumption",
       START_TIME.minusMinutes(1),
-      START_TIME.plusMinutes(1)
+      START_TIME.plusMinutes(1),
+      "minute"
     );
 
     assertThat(result).hasSize(3);
@@ -402,7 +403,8 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
       "MW",
       "default",
       START_TIME,
-      START_TIME.plus(Duration.ofSeconds(1))
+      START_TIME.plus(Duration.ofSeconds(1)),
+      "minute"
     );
     assertThat(result).isEmpty();
   }

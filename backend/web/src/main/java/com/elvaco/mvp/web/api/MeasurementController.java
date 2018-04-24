@@ -80,9 +80,8 @@ public class MeasurementController {
       before = ZonedDateTime.now();
     }
 
-    if (resolution == null) {
-      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
-    }
+    //TODO respect requested resolution
+    resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
 
     Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
       mapMeterQuantitiesToPhysicalMeters(
@@ -120,7 +119,8 @@ public class MeasurementController {
     @RequestParam List<UUID> meters,
     @RequestParam(name = "quantities") Optional<List<String>> quantityUnits,
     @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime after,
-    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before
+    @RequestParam(required = false) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime before,
+    @RequestParam(required = false) TemporalResolution resolution
   ) {
     //TODO: We need to limit the amount of measurements here. Even if we're only fetching
     // measurements for one meter, we might be fetching them over long period. E.g, measurements
@@ -135,6 +135,9 @@ public class MeasurementController {
     if (after == null) {
       after = ZonedDateTime.parse("1970-01-01T00:00:00Z");
     }
+
+    //TODO respect requested resolution
+    resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
 
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
       .orElseGet(() -> logicalMeters.stream()
@@ -152,15 +155,16 @@ public class MeasurementController {
           meter.id,
           entry.getKey(),
           after,
-          before
+          before,
+          resolution
         );
         foundMeasurements.addAll(series.stream()
-          .map(measurementValue -> new LabeledMeasurementValue(
-            meter.externalId,
-            measurementValue.when,
-            measurementValue.value,
-            entry.getKey()
-          )).collect(toList()));
+                                   .map(measurementValue -> new LabeledMeasurementValue(
+                                     meter.externalId,
+                                     measurementValue.when,
+                                     measurementValue.value,
+                                     entry.getKey()
+                                   )).collect(toList()));
       }
     }
     return measurementMapper.toSeries(foundMeasurements);

@@ -24,18 +24,6 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
   }
 
   @Override
-  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
-    UUID physicalMeterId,
-    String quantity,
-    ZonedDateTime created
-  ) {
-    return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
-      .filter(measurement -> measurement.quantity.equals(quantity))
-      .filter(measurement -> measurement.created.equals(created))
-      .findAny();
-  }
-
-  @Override
   public Measurement save(Measurement measurement) {
     return saveMock(measurement);
   }
@@ -63,9 +51,22 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     UUID meterId,
     Quantity seriesQuantity,
     ZonedDateTime from,
-    ZonedDateTime to
+    ZonedDateTime to,
+    TemporalResolution resolution
   ) {
     return emptyList();
+  }
+
+  @Override
+  public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
+    UUID physicalMeterId,
+    String quantity,
+    ZonedDateTime created
+  ) {
+    return filter(measurement -> measurement.physicalMeter.id.equals(physicalMeterId))
+      .filter(measurement -> measurement.quantity.equals(quantity))
+      .filter(measurement -> measurement.created.equals(created))
+      .findAny();
   }
 
   @Override
