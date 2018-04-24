@@ -688,6 +688,76 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void findAllMetersPaged_WithMeasurementAboveMax() {
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = createPhysicalMeter(firstLogicalMeter.id, "meter-one");
+
+    addMeasurementsForMeter(
+      firstMeter,
+      Collections.singleton(Quantity.POWER),
+      ZonedDateTime.now().minusHours(2),
+      Duration.ofHours(3),
+      60L,
+      2.0,
+      1.0
+    );
+
+    LogicalMeter secondLogicalMeter = createLogicalMeter();
+    PhysicalMeter secondMeter = createPhysicalMeter(secondLogicalMeter.id, "meter-two");
+
+    addMeasurementsForMeter(
+      secondMeter,
+      Collections.singleton(Quantity.POWER),
+      ZonedDateTime.now().minusHours(2),
+      Duration.ofHours(3),
+      60L,
+      3.0,
+      1.0
+    );
+
+    Page<LogicalMeterDto> page = asTestUser()
+      .getPage("/meters?quantity=Power&maxValue=4.0 W", LogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getContent().get(0).id).isEqualTo(secondLogicalMeter.id);
+  }
+
+  @Test
+  public void findAllMetersPaged_WithMeasurementBelowMin() {
+    LogicalMeter firstLogicalMeter = createLogicalMeter();
+    PhysicalMeter firstMeter = createPhysicalMeter(firstLogicalMeter.id, "meter-one");
+
+    addMeasurementsForMeter(
+      firstMeter,
+      Collections.singleton(Quantity.POWER),
+      ZonedDateTime.now().minusHours(2),
+      Duration.ofHours(3),
+      60L,
+      2.0,
+      1.0
+    );
+
+    LogicalMeter secondLogicalMeter = createLogicalMeter();
+    PhysicalMeter secondMeter = createPhysicalMeter(secondLogicalMeter.id, "meter-two");
+
+    addMeasurementsForMeter(
+      secondMeter,
+      Collections.singleton(Quantity.POWER),
+      ZonedDateTime.now().minusHours(2),
+      Duration.ofHours(3),
+      60L,
+      3.0,
+      1.0
+    );
+
+    Page<LogicalMeterDto> page = asTestUser()
+      .getPage("/meters?quantity=Power&minValue=3.0 W", LogicalMeterDto.class);
+
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getContent().get(0).id).isEqualTo(firstLogicalMeter.id);
+  }
+
+  @Test
   public void pagedLogicalMeterContainsLatestMeasurements() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
     PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
@@ -826,10 +896,32 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     Long minuteInterval,
     double value
   ) {
+    addMeasurementsForMeter(
+      physicalMeter,
+      quantities,
+      start,
+      periodDuration,
+      minuteInterval,
+      value,
+      0
+    );
+  }
+
+  private void addMeasurementsForMeter(
+    PhysicalMeter physicalMeter,
+    Set<Quantity> quantities,
+    ZonedDateTime start,
+    Duration periodDuration,
+    Long minuteInterval,
+    double value,
+    double valueIncrementation
+  ) {
     ZonedDateTime now = start;
+    double incrementedValue = value;
     while (now.isBefore(start.plus(periodDuration))) {
-      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, value);
+      addMeasurementsForMeterQuantities(physicalMeter, quantities, now, incrementedValue);
       now = now.plusMinutes(minuteInterval);
+      incrementedValue += valueIncrementation;
     }
   }
 

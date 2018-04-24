@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
-
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
@@ -23,16 +22,16 @@ public abstract class MeasurementUnitType implements UserType {
   }
 
   @Override
+  public boolean equals(Object x, Object y) throws HibernateException {
+    return ObjectUtils.nullSafeEquals(x, y);
+  }
+
+  @Override
   public int hashCode(Object x) throws HibernateException {
     if (x == null) {
       return 0;
     }
     return x.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object x, Object y) throws HibernateException {
-    return ObjectUtils.nullSafeEquals(x, y);
   }
 
   @Override
