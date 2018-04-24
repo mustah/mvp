@@ -43,7 +43,6 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
               label={translate('collection')}
               value={<Status name={status.name}/>}
             />
-            <Info label={translate('interval')} value={'24h'}/>
           </Row>
         </Column>
       </Row>

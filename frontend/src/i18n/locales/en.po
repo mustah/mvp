@@ -437,6 +437,12 @@ msgctxt "°plural"
 msgid "{{count}} meters are not displayed in the map due to low accuracy°"
 msgstr "{{count}} meters are not displayed in the map due to low accuracy"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 #~ msgid "export to Excel (.csv)"
 #~ msgstr "export to Excel (.csv)"
 

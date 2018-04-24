@@ -16,6 +16,14 @@ export const MeterDetailsInfo = ({meter}: Props) => {
     ? <Info label={translate('alarm')} value={meter.alarm}/>
     : null;
 
+  const renderReadInterval = () => {
+    if (meter.readIntervalMinutes >= 60) {
+      return (meter.readIntervalMinutes / 60) + translate('hour in short');
+    }
+
+    return meter.readIntervalMinutes + translate('minute in short');
+  };
+
   return (
     <Row>
       <Column className="OverView">
@@ -37,8 +45,7 @@ export const MeterDetailsInfo = ({meter}: Props) => {
               <Subtitle>{translate('collection')}</Subtitle>
             </Row>
           </Column>
-          <Info label={translate('interval')} value="24h"/>
-          <Info label={translate('resolution')} value="1h"/>
+          <Info label={translate('resolution')} value={renderReadInterval()}/>
         </Row>
         <Row>
           <Column>
