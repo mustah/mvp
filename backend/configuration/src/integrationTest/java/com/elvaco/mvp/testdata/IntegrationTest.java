@@ -4,9 +4,13 @@ import java.util.function.BooleanSupplier;
 import javax.persistence.EntityManagerFactory;
 
 import com.elvaco.mvp.core.domainmodels.User;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Users;
+import com.elvaco.mvp.core.spi.security.TokenFactory;
+import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.database.repository.jpa.OrganisationJpaRepository;
-
+import com.elvaco.mvp.web.security.AuthenticationToken;
+import com.elvaco.mvp.web.security.MvpUserDetails;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.junit.After;
@@ -15,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -35,6 +40,12 @@ public abstract class IntegrationTest {
 
   @Autowired
   private EntityManagerFactory factory;
+
+  @Autowired
+  private TokenFactory tokenFactory;
+
+  @Autowired
+  private TokenService tokenService;
 
   private IntegrationTestFixtureContextFactory integrationTestFixtureContextFactory;
 
@@ -68,6 +79,17 @@ public abstract class IntegrationTest {
       context = newContext(getCallerClassName());
     }
     return context;
+  }
+
+  protected void authenticate(User user) {
+    AuthenticatedUser authenticatedUser = new MvpUserDetails(
+      user,
+      tokenFactory.newToken()
+    );
+    tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
+    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+
   }
 
   protected RestClient restClient() {

@@ -30,10 +30,10 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageHelper.removeSimultaneousQuantityValues;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.DISTRICT_HEATING_METER_QUANTITIES;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METER_TO_MVP_QUANTITIES;
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -191,7 +191,7 @@ public class MeteringMessageHandler implements MessageHandler {
       }));
     }
 
-    List<Measurement> measurements = measurementMessage.values
+    List<Measurement> measurements = removeSimultaneousQuantityValues(measurementMessage.values)
       .stream()
       .map(value -> measurementUseCases
         .findForMeterCreatedAt(
@@ -212,8 +212,7 @@ public class MeteringMessageHandler implements MessageHandler {
         ).withValue(value.value)
         .withUnit(value.unit)
         .withQuantity(mappedQuantity(value.quantity).name)
-      )
-      .collect(toList());
+      ).collect(toList());
 
     if (optionalGateway.isPresent()) {
       gatewayUseCases.save(optionalGateway.get());

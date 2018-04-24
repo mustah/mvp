@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
@@ -21,7 +22,10 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "measurement")
+@Table(
+  name = "measurement",
+  uniqueConstraints = @UniqueConstraint(columnNames = {"created", "quantity", "physical_meter_id"})
+)
 @ToString(exclude = "physicalMeter")
 public class MeasurementEntity extends EntityType<Long> {
 

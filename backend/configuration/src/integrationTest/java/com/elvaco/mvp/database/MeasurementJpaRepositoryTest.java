@@ -165,15 +165,15 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   public void averageValueIsCorrectForPeriod() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
     newMeasurement(meter, START_TIME, 2.0, "W");
-    newMeasurement(meter, START_TIME, 100.0, "W");
+    newMeasurement(meter, START_TIME.plusMinutes(1), 100.0, "W");
 
     OffsetDateTime oneHourLater = START_TIME.plus(Duration.ofHours(1));
     newMeasurement(meter, oneHourLater, 1.0, "W");
-    newMeasurement(meter, oneHourLater, 9.0, "W");
+    newMeasurement(meter, oneHourLater.plusMinutes(1), 9.0, "W");
 
     List<MeasurementValueProjection> results = measurementJpaRepository
       .getAverageForPeriod(
-        singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater);
+        singletonList(meter.id), "hour", "Energy", "W", START_TIME, oneHourLater.plusMinutes(1));
 
     assertThat(results).hasSize(2);
     assertThat(results.get(0).getValue()).isEqualTo("51 W");
