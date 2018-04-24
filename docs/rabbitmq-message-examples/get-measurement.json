@@ -1,0 +1,17 @@
+{
+  "message_type": "Elvaco MVP MQ Get Measurement Message 1.0",
+  "organisation_id": "Sundsvall",
+  "source_system_id": "Elvaco Metering",
+  "jobId": "590168",
+  "timespan": {
+    "from": "2018-01-01T09:00:00",
+    "to": "2018-01-02T09:00:00"
+  },
+  "facility": {
+    "id": "42160"
+  },
+  "meter": {
+    "id": "40000",
+    "cron": "0 * * * *"
+  }
+}

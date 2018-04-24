@@ -1,0 +1,15 @@
+{
+  "message_type": "Elvaco MVP MQ Get Reference Info Message 1.0",
+  "organisation_id": "Sundsvall",
+  "source_system_id": "Elvaco Metering",
+  "jobId": "445006",
+  "facility": {
+    "id": "42160"
+  },
+  "meter": {
+    "id": "40000"
+  },
+  "gateway": {
+    "id": "12005347"
+  }
+}
