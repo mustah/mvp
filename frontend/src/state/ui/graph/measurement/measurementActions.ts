@@ -6,14 +6,15 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient} from '../../../../services/restClient';
 import {Dictionary, uuid} from '../../../../types/Types';
-import {GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponse,
   AverageApiResponsePart,
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
-  RenderableQuantity, Resolution,
+  RenderableQuantity,
+  Resolution,
 } from './measurementModels';
 
 const colorize =
@@ -42,6 +43,16 @@ const colorizeMeters = colorize({
 });
 
 const thickStroke: number = 2;
+
+const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
+  if (axes.left === unit) {
+    return 'left';
+  }
+  if (axes.right === unit) {
+    return 'right';
+  }
+  return undefined;
+};
 
 export const mapApiResponseToGraphData =
   ({measurement, average}: MeasurementResponses): GraphContents => {
@@ -85,18 +96,6 @@ export const mapApiResponseToGraphData =
 
     measurement.forEach(({quantity, label, values, unit}: MeasurementApiResponsePart) => {
       const dataKey: string = `${quantity} ${label}`;
-      if (!uniqueMeters.has(dataKey)) {
-        uniqueMeters.add(dataKey);
-        const props: LineProps = {
-          dataKey,
-          key: `line-${dataKey}`,
-          name: dataKey,
-          stroke: colorizeMeters(quantity as RenderableQuantity),
-          strokeWidth: average.length > 0 ? 1 : thickStroke,
-        };
-        graphContents.lines.push(props);
-
-      }
 
       values.forEach(({when, value}) => {
         const created: number = when * 1000;
@@ -114,9 +113,28 @@ export const mapApiResponseToGraphData =
       } else if (graphContents.axes.left !== unit && !graphContents.axes.right) {
         graphContents.axes.right = unit;
       }
+
+      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+
+      if (!uniqueMeters.has(dataKey) && yAxisId) {
+        uniqueMeters.add(dataKey);
+        const props: LineProps = {
+          dataKey,
+          key: `line-${dataKey}`,
+          name: dataKey,
+          stroke: colorizeMeters(quantity as RenderableQuantity),
+          strokeWidth: average.length > 0 ? 1 : thickStroke,
+          yAxisId,
+        };
+        graphContents.lines.push(props);
+      }
     });
 
-    average.forEach(({quantity, values}: AverageApiResponsePart) => {
+    average.forEach(({quantity, values, unit}: AverageApiResponsePart) => {
+      const yAxisId = yAxisIdLookup(graphContents.axes, unit);
+      if (!yAxisId) {
+        return;
+      }
       const dataKey: string = `Average ${quantity}`;
       const props: LineProps = {
         dataKey,
@@ -124,6 +142,7 @@ export const mapApiResponseToGraphData =
         name: dataKey,
         stroke: colorizeAverage(quantity as RenderableQuantity),
         strokeWidth: thickStroke,
+        yAxisId,
       };
       graphContents.lines.push(props);
 

@@ -6,7 +6,7 @@ export interface ReportState {
   selectedListItems: uuid[];
 }
 
-interface Axes {
+export interface Axes {
   left?: string;
   right?: string;
 }
@@ -17,6 +17,7 @@ export interface LineProps {
   name: string;
   stroke: string;
   strokeWidth?: number;
+  yAxisId: string;
 }
 
 export interface ProprietaryLegendProps extends LegendPayload {

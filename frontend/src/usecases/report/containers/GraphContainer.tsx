@@ -49,7 +49,6 @@ interface MouseOverProps {
   chartY: number;
   activeTooltipIndex: number;
   activePayload: ActiveDataPoint[];
-
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -61,12 +60,12 @@ const renderGraphContents = (
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
 ): Children[] => {
+
   const components: Children[] = lines.map((props: LineProps, index: number) => {
     const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
     return (
       <Line
         key={index}
-        yAxisId="left"
         type="monotone"
         connectNulls={true}
         {...props}
@@ -150,13 +149,19 @@ class GraphComponent extends React.Component<Props, State> {
 
   setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
     if (isTooltipActive) {
-      this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
-      this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
+      const closestLine = this.findClosestLine(activeTooltipIndex, chartY);
+      if (closestLine !== undefined) {
+        this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
+        this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
+      }
     }
   }
 
-  findClosestLine = (index: number, mouseY: number): uuid => {
+  findClosestLine = (index: number, mouseY: number): uuid | undefined => {
     const activeDots = this.dots[index];
+    if (activeDots === undefined) {
+      return undefined;
+    }
     const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
       .filter(({cy}) => cy || cy === 0)
       .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
