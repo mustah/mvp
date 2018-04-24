@@ -10,6 +10,6 @@ public class CollectionStats {
   }
 
   public double getCollectionPercentage() {
-    return actual / expected;
+    return expected == 0 ? 0 : actual / expected;
   }
 }

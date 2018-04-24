@@ -104,8 +104,8 @@ class MeterList extends React.Component<Props> {
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
     const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
     const renderMedium = ({medium}: Meter) => medium;
-    const renderCollectionStatus = ({collectionStatus}: Meter) =>
-      roundCollectionPercentage(collectionStatus);
+    const renderCollectionStatus = ({collectionStatus, readIntervalMinutes}: Meter) =>
+      readIntervalMinutes === 0 ? '-' : roundCollectionPercentage(collectionStatus);
 
     const collectionPercentageHeader = (
       <TableHead

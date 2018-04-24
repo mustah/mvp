@@ -109,6 +109,54 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void collectionStatusZeroPercentWhenNoInterval() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
+    PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
+      districtHeatingMeter.id,
+      0
+    );
+
+    addMeasurementsForMeterQuantities(
+      physicalMeter,
+      districtHeatingMeter.getQuantities(),
+      start,
+      1.0
+    );
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(
+        "/meters"
+        + "?after=2001-01-01T00:00:00.00Z"
+        + "&before=2001-01-01T01:00:00.00Z",
+        LogicalMeterDto.class
+      ).getContent().get(0);
+
+    assertThat(logicalMeterDto.collectionStatus).isEqualTo("0.0");
+  }
+
+  @Test
+  public void collectionStatusZeroPercentWhenNoMeasurements() {
+    LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
+
+    createPhysicalMeterWithInterval(
+      districtHeatingMeter.id,
+      30
+    );
+
+    LogicalMeterDto logicalMeterDto = asTestUser()
+      .getPage(
+        "/meters"
+        + "?after=2001-01-01T00:00:00.00Z"
+        + "&before=2001-01-01T01:00:00.00Z",
+        LogicalMeterDto.class
+      ).getContent().get(0);
+
+    assertThat(logicalMeterDto.collectionStatus).isEqualTo("0.0");
+  }
+
+  @Test
   public void collectionStatusFiftyPercent() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
