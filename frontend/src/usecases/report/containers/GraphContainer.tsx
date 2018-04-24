@@ -49,7 +49,6 @@ interface MouseOverProps {
   chartY: number;
   activeTooltipIndex: number;
   activePayload: ActiveDataPoint[];
-
 }
 
 type Props = StateToProps & DispatchToProps;
@@ -61,12 +60,12 @@ const renderGraphContents = (
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
 ): Children[] => {
+
   const components: Children[] = lines.map((props: LineProps, index: number) => {
     const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
     return (
       <Line
         key={index}
-        yAxisId="left"
         type="monotone"
         connectNulls={true}
         {...props}
