@@ -1,6 +1,6 @@
 import {Pathname} from 'history';
 import {RouterState} from 'react-router-redux';
-import {getPathname, isSelectionPage} from '../routerSelectors';
+import {getPathname, isReportPage, isSelectionPage} from '../routerSelectors';
 
 describe('routerSelectors', () => {
 
@@ -29,6 +29,20 @@ describe('routerSelectors', () => {
 
     it('is selection page when matching exactly', () => {
       expect(isSelectionPage(stateWith('/selection'))).toBe(true);
+    });
+  });
+
+  describe('isReportPage', () => {
+
+    it('is not report page', () => {
+      expect(isReportPage(stateWith('report'))).toBe(false);
+      expect(isReportPage(stateWith('/ report'))).toBe(false);
+      expect(isReportPage(stateWith('/report  '))).toBe(false);
+      expect(isReportPage(stateWith('/home'))).toBe(false);
+    });
+
+    it('is report page when matching exactly', () => {
+      expect(isReportPage(stateWith('/report'))).toBe(true);
     });
   });
 

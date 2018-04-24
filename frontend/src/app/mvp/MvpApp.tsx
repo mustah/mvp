@@ -9,6 +9,7 @@ import {Layout} from '../../components/layouts/layout/Layout';
 import {Row} from '../../components/layouts/row/Row';
 import {MessageContainer} from '../../containers/message/MessageContainer';
 import {RootState} from '../../reducers/rootReducer';
+import {isReportPage} from '../../selectors/routerSelectors';
 import {translate} from '../../services/translationService';
 import {isSideMenuOpen} from '../../state/ui/uiSelectors';
 import {OnClick} from '../../types/Types';
@@ -22,6 +23,7 @@ import {MvpPages} from './MvpPages';
 
 interface StateToProps {
   isSideMenuOpen: boolean;
+  isReportPage: boolean;
 }
 
 interface DispatchToProps {
@@ -30,7 +32,7 @@ interface DispatchToProps {
 
 type Props = StateToProps & DispatchToProps & InjectedAuthRouterProps;
 
-const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
+const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu, isReportPage}: Props) => {
 
   return (
     <Row className="MvpApp">
@@ -44,7 +46,7 @@ const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
             showMenuIconButton={false}
           />
           <SavedSelectionsContainer/>
-          <SelectionTreeContainer/>
+          {isReportPage && <SelectionTreeContainer/>}
         </SideMenuContainer>
       </Layout>
       <MainMenuToggleIcon onClick={toggleShowHideSideMenu} isSideMenuOpen={isSideMenuOpen}/>
@@ -55,8 +57,9 @@ const MvpApp = ({isSideMenuOpen, toggleShowHideSideMenu}: Props) => {
   );
 };
 
-const mapStateToProps = ({ui}: RootState): StateToProps => ({
+const mapStateToProps = ({routing, ui}: RootState): StateToProps => ({
   isSideMenuOpen: isSideMenuOpen(ui),
+  isReportPage: isReportPage(routing),
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
