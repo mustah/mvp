@@ -441,6 +441,12 @@ msgid "{{count}} meters are not displayed in the map due to low accuracy°"
 msgstr ""
 "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 #~ msgid "export to Excel (.csv)"
 #~ msgstr "exportera till Excel (.csv)"
 
