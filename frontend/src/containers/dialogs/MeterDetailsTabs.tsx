@@ -1,6 +1,4 @@
-import Checkbox from 'material-ui/Checkbox';
 import * as React from 'react';
-import {checkbox, checkboxLabel} from '../../app/themes';
 import {HasContent} from '../../components/content/HasContent';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
@@ -106,13 +104,6 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
             </Table>
           </TabContent>
           <TabContent tab={TabName.log} selectedTab={selectedTab}>
-            <Row>
-              <Checkbox
-                iconStyle={checkbox}
-                labelStyle={checkboxLabel}
-                label={translate('show only changes')}
-              />
-            </Row>
             <Table {...statusChangelog}>
               <TableColumn
                 header={<TableHead>{translate('date')}</TableHead>}
