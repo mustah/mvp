@@ -23,6 +23,7 @@ public interface Measurements {
     List<UUID> meterIds,
     String quantity,
     String unit,
+    SeriesDisplayMode seriesDisplayMode,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution

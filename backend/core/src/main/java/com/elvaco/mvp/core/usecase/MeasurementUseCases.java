@@ -51,11 +51,12 @@ public class MeasurementUseCases {
     List<UUID> meterIds,
     String quantity,
     String unit,
+    SeriesDisplayMode seriesDisplayMode,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurements.findAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
+    return measurements.findAverageForPeriod(meterIds, quantity, unit, seriesDisplayMode, from, to, resolution);
   }
 
   public List<MeasurementValue> seriesForPeriod(

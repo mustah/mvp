@@ -52,7 +52,7 @@ public class MockMeasurements extends MockRepository<Long, Measurement> implemen
     List<UUID> meterIds,
     String quantity,
     String unit,
-    ZonedDateTime from,
+    SeriesDisplayMode seriesDisplayMode, ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
   ) {

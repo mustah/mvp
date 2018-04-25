@@ -101,6 +101,7 @@ public class MeasurementController {
         entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
         quantity.name,
         quantity.presentationUnit(),
+        quantity.seriesDisplayMode(),
         after,
         before,
         resolution

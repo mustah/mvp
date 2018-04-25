@@ -65,6 +65,7 @@ public class MeasurementRepository implements Measurements {
     List<UUID> meterIds,
     String quantity,
     String unit,
+    SeriesDisplayMode seriesDisplayMode,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
@@ -75,7 +76,7 @@ public class MeasurementRepository implements Measurements {
       resolution.toString(),
       quantity,
       unit,
-      "default",
+      seriesDisplayMode.toString(),
       OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
       OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
     ).stream()
