@@ -1,5 +1,5 @@
+import {EmptyAction} from 'react-redux-typescript';
 import {TOGGLE_SHOW_HIDE_SIDE_MENU} from './sideMenuActions';
-import {EmptyAction} from 'ts-redux-actions';
 
 export interface SideMenuState {
   isOpen: boolean;

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {createEmptyAction, createPayloadAction, PayloadAction} from 'react-redux-typescript';
-import {EmptyAction} from 'ts-redux-actions';
+import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {Maybe} from '../helpers/Maybe';
 import {HasPageNumber} from '../state/domain-models-paginated/paginatedDomainModels';
 

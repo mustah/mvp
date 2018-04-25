@@ -1,6 +1,5 @@
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, createPayloadAction} from 'react-redux-typescript';
-import {EmptyAction, PayloadAction} from 'ts-redux-actions';
+import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';

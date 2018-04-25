@@ -39,7 +39,6 @@ const logoutUser = (state: AuthState, {payload}: Action<Unauthorized>): AuthStat
 });
 
 export const auth = (state: AuthState = initialAuthState, action: ActionTypes): AuthState => {
-
   switch (action.type) {
     case LOGIN_REQUEST:
       return {

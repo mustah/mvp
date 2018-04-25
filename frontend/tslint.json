@@ -20,7 +20,8 @@
       "moment-timezone",
       "leaflet",
       "leaflet.markercluster",
-      "react-dates"
+      "react-dates",
+      "redux-persist"
     ],
     "no-shadowed-variable": false,
     "no-implicit-dependencies": [
