@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 
 public interface Measurements {
@@ -21,8 +21,7 @@ public interface Measurements {
 
   List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
-    String quantity,
-    String unit,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
@@ -30,9 +29,7 @@ public interface Measurements {
 
   List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
-    String quantity,
-    String unit,
-    SeriesDisplayMode mode,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to
   );

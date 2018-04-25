@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
@@ -63,8 +63,7 @@ public class MeasurementRepository implements Measurements {
   @Override
   public List<MeasurementValue> findAverageForPeriod(
     List<UUID> meterIds,
-    String quantity,
-    String unit,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
@@ -73,8 +72,9 @@ public class MeasurementRepository implements Measurements {
     return measurementJpaRepository.getAverageForPeriod(
       meterIds,
       resolution.toString(),
-      quantity,
-      unit,
+      seriesQuantity.name,
+      seriesQuantity.presentationUnit(),
+      seriesQuantity.seriesDisplayMode().toString(),
       OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
       OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
     ).stream()
@@ -88,18 +88,16 @@ public class MeasurementRepository implements Measurements {
   @Override
   public List<MeasurementValue> findSeriesForPeriod(
     UUID meterId,
-    String quantity,
-    String unit,
-    SeriesDisplayMode mode,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to
   ) {
     try {
       return measurementJpaRepository.getSeriesForPeriod(
         meterId,
-        quantity,
-        unit,
-        mode.toString(),
+        seriesQuantity.name,
+        seriesQuantity.presentationUnit(),
+        seriesQuantity.seriesDisplayMode().toString(),
         OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
         OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
       ).stream()
@@ -109,7 +107,7 @@ public class MeasurementRepository implements Measurements {
         ))
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(ex, unit);
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
     }
   }
 

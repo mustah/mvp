@@ -9,7 +9,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeasurementValue;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.repository.Measurements;
@@ -49,24 +49,21 @@ public class MeasurementUseCases {
 
   public List<MeasurementValue> averageForPeriod(
     List<UUID> meterIds,
-    String quantity,
-    String unit,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to,
     TemporalResolution resolution
   ) {
-    return measurements.findAverageForPeriod(meterIds, quantity, unit, from, to, resolution);
+    return measurements.findAverageForPeriod(meterIds, seriesQuantity, from, to, resolution);
   }
 
   public List<MeasurementValue> seriesForPeriod(
     UUID meterId,
-    String quantity,
-    String unit,
-    SeriesDisplayMode mode,
+    Quantity seriesQuantity,
     ZonedDateTime from,
     ZonedDateTime to
   ) {
-    return measurements.findSeriesForPeriod(meterId, quantity, unit, mode, from, to);
+    return measurements.findSeriesForPeriod(meterId, seriesQuantity, from, to);
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {

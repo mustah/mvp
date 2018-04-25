@@ -551,6 +551,51 @@ public class MeasurementControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void averageOfConsumptionSeries() {
+    LogicalMeterEntity logicalMeter1 = newLogicalMeterEntity(MeterDefinition
+      .DISTRICT_HEATING_METER);
+    PhysicalMeterEntity meter1 = newPhysicalMeterEntity(logicalMeter1.id);
+    newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Energy", 1.0, "kWh");
+    newMeasurement(meter1, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Energy", 12.0, "kWh");
+
+    LogicalMeterEntity logicalMeter2 = newLogicalMeterEntity(MeterDefinition
+      .DISTRICT_HEATING_METER);
+    PhysicalMeterEntity meter2 = newPhysicalMeterEntity(logicalMeter2.id);
+    newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T05:00:01Z"), "Energy", 3.0, "kWh");
+    newMeasurement(meter2, ZonedDateTime.parse("2018-03-06T06:00:01Z"), "Energy", 8.0, "kWh");
+
+    ResponseEntity<List<MeasurementSeriesDto>> response = asTestUser().getList(
+      String.format(
+        "/measurements/average"
+          + "?after=2018-03-06T05:00:00.000Z"
+          + "&before=2018-03-06T06:59:59.999Z"
+          + "&quantities=" + Quantity.ENERGY.name + ":kWh"
+          + "&meters=%s"
+          + "&resolution=hour",
+        String.join(",", asList(logicalMeter1.id.toString(), logicalMeter2.id.toString()))
+      ), MeasurementSeriesDto.class);
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo(
+      singletonList(
+        new MeasurementSeriesDto(
+          Quantity.ENERGY.name,
+          Quantity.ENERGY.presentationUnit(),
+          "average",
+          asList(
+            new MeasurementValueDto(
+              Instant.parse("2018-03-06T05:00:00Z"),
+              null
+            ),
+            new MeasurementValueDto(
+              Instant.parse("2018-03-06T06:00:00Z"),
+              8.0
+            )
+          )
+        )));
+  }
+
+  @Test
   public void averageForMultipleQuantities() {
     LogicalMeterEntity logicalMeter = newLogicalMeterEntity(
       MeterDefinition.DISTRICT_HEATING_METER
