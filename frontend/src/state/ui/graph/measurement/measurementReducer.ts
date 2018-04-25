@@ -3,7 +3,6 @@ import {SAVE_SELECTED_QUANTITIES} from './measurementActions';
 import {MeasurementState, Quantity} from './measurementModels';
 
 export const initialMeasurementState: MeasurementState = {
-  isFetching: false,
   selectedQuantities: [],
 };
 

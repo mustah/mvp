@@ -1,4 +1,5 @@
 import {Identifiable} from '../../../../types/Types';
+import {GraphContents} from '../../../../usecases/report/reportModels';
 import {Organisation} from '../../../domain-models/organisation/organisationModels';
 
 interface PhysicalMeter extends Identifiable {
@@ -28,6 +29,13 @@ export interface MeasurementApiResponsePart {
   }>;
 }
 
+export const emptyGraphContents: GraphContents = {
+  axes: {},
+  data: [],
+  legend: [],
+  lines: [],
+};
+
 export interface AverageApiResponsePart {
   quantity: Quantity;
   unit: string;
@@ -48,7 +56,6 @@ export interface MeasurementResponses {
 }
 
 export interface MeasurementState {
-  isFetching: boolean;
   selectedQuantities: Quantity[];
 }
 

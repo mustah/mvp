@@ -3,25 +3,31 @@ import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {
-  CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, TooltipProps, XAxis,
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  TooltipProps,
+  XAxis,
   YAxis,
 } from 'recharts';
 import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../components/content/HasContent';
 import {DateRange, Period} from '../../../components/dates/dateModels';
+import {Loader} from '../../../components/loading/Loader';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
-import {
-  fetchMeasurements,
-  mapApiResponseToGraphData,
-  selectQuantities,
-} from '../../../state/ui/graph/measurement/measurementActions';
-import {allQuantities, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {fetchMeasurements, selectQuantities} from '../../../state/ui/graph/measurement/measurementActions';
+import {allQuantities, emptyGraphContents, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
-import {Children, Dictionary, uuid} from '../../../types/Types';
+import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
+import {logout} from '../../auth/authActions';
+import {OnLogout} from '../../auth/authModels';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
@@ -34,13 +40,15 @@ interface StateToProps {
   selectedQuantities: Quantity[];
 }
 
-interface State {
+export interface GraphContainerState {
   graphContents: GraphContents;
-  selectedQuantities: string[];
+  isFetching: boolean;
+  error: Maybe<ErrorResponse>;
 }
 
 interface DispatchToProps {
   selectQuantities: (quantities: Quantity[]) => void;
+  logout: OnLogout;
 }
 
 interface MouseOverProps {
@@ -51,6 +59,8 @@ interface MouseOverProps {
   activePayload: ActiveDataPoint[];
 }
 
+export type OnUpdateGraph = (state: GraphContainerState) => void;
+
 type Props = StateToProps & DispatchToProps;
 
 const margin: React.CSSProperties = {top: 40, right: 0, bottom: 0, left: 0};
@@ -60,7 +70,6 @@ const renderGraphContents = (
   renderDot: (props) => React.ReactNode,
   renderActiveDot: (props) => React.ReactNode,
 ): Children[] => {
-
   const components: Children[] = lines.map((props: LineProps, index: number) => {
     const newDot = (apiDotProps) => renderDot({...apiDotProps, dataKey: props.dataKey});
     return (
@@ -90,83 +99,31 @@ const renderGraphContents = (
   return components;
 };
 
-const emptyGraphContents: GraphContents = {
-  axes: {},
-  data: [],
-  legend: [],
-  lines: [],
-};
+class GraphComponent extends React.Component<Props, GraphContainerState> {
 
-class GraphComponent extends React.Component<Props, State> {
-
-  state: State = {
+  state: GraphContainerState = {
     graphContents: emptyGraphContents,
-    selectedQuantities: [],
+    isFetching: false,
+    error: Maybe.nothing(),
   };
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
   private tooltipPayload: ActiveDataPoint;
   private activeDataKey;
 
-  changeQuantities = (event, index, values) => this.props.selectQuantities(values);
-
   async componentDidMount() {
-    const {selectedListItems, period, customDateRange, selectedQuantities} = this.props;
-    const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange);
-
-    this.setState({
-      ...this.state,
-      graphContents: mapApiResponseToGraphData(graphData),
-      selectedQuantities,
-    });
+    const {selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    this.setState({isFetching: true});
+    await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
   }
 
-  async componentWillReceiveProps({selectedListItems, period, customDateRange, selectedQuantities}: Props) {
+  async componentWillReceiveProps({selectedListItems, period, customDateRange, selectedQuantities, logout}: Props) {
     const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
     if (somethingChanged) {
-      const graphData = await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange);
-      this.setState({
-        ...this.state,
-        graphContents: mapApiResponseToGraphData(graphData),
-        selectedQuantities,
-      });
+      this.setState({isFetching: true});
       this.resetDots();
+      await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
     }
-  }
-
-  renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
-  renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
-  renderAndStoreDot = ({dataKey, ...rest}: DotReChartProps & {dataKey: uuid}) => {
-    const {index, cy} = rest;
-    this.dots = {
-      ...this.dots,
-      [index]: {...this.dots[index], [dataKey]: {dataKey, cy}},
-    };
-    return (<Dot {...rest} />);
-  }
-
-  resetDots = () => this.dots = {};
-
-  setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
-    if (isTooltipActive) {
-      const closestLine = this.findClosestLine(activeTooltipIndex, chartY);
-      if (closestLine !== undefined) {
-        this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
-        this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
-      }
-    }
-  }
-
-  findClosestLine = (index: number, mouseY: number): uuid | undefined => {
-    const activeDots = this.dots[index];
-    if (activeDots === undefined) {
-      return undefined;
-    }
-    const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
-      .filter(({cy}) => cy || cy === 0)
-      .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
-      .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
-    return sortedActiveDots[0].dataKey;
   }
 
   render() {
@@ -207,36 +164,86 @@ class GraphComponent extends React.Component<Props, State> {
             {allQuantities.heat.map(quantityMenuItem)}
           </SelectField>
         </div>
-        <HasContent
-          hasContent={data.length > 0}
-          fallbackContent={missingData}
-        >
-          <div>
-            <ResponsiveContainer width="90%" aspect={2.5}>
-              <LineChart
-                width={10}
-                height={50}
-                data={data}
-                margin={margin}
-                onMouseMove={this.setTooltipPayload}
-              >
-                <XAxis
-                  dataKey="name"
-                  domain={['dataMin', 'dataMax']}
-                  scale="time"
-                  tickFormatter={formatLabelTimeStamp}
-                  type="number"
-                />
-                <CartesianGrid strokeDasharray="3 3"/>
-                <Tooltip content={this.renderToolTip}/>
-                <Legend payload={legend}/>
-                {lines}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </HasContent>
+        <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
+          <HasContent
+            hasContent={data.length > 0}
+            fallbackContent={missingData}
+          >
+            <div>
+              <ResponsiveContainer width="90%" aspect={2.5}>
+                <LineChart
+                  width={10}
+                  height={50}
+                  data={data}
+                  margin={margin}
+                  onMouseMove={this.setTooltipPayload}
+                >
+                  <XAxis
+                    dataKey="name"
+                    domain={['dataMin', 'dataMax']}
+                    scale="time"
+                    tickFormatter={formatLabelTimeStamp}
+                    type="number"
+                  />
+                  <CartesianGrid strokeDasharray="3 3"/>
+                  <Tooltip content={this.renderToolTip}/>
+                  <Legend payload={legend}/>
+                  {lines}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </HasContent>
+        </Loader>
       </div>
     );
+  }
+
+  updateState = (state: GraphContainerState) => this.setState({...state});
+
+  clearError = async () => {
+    const {selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    this.setState({error: Maybe.nothing(), isFetching: true});
+    this.resetDots();
+    await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
+  }
+
+  changeQuantities = (event, index, values) => this.props.selectQuantities(values);
+
+  renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
+
+  renderToolTip = (props: TooltipProps) => (this.tooltipPayload) ? <CustomizedTooltip {...this.tooltipPayload}/> : null;
+
+  renderAndStoreDot = ({dataKey, ...rest}: DotReChartProps & {dataKey: uuid}) => {
+    const {index, cy} = rest;
+    this.dots = {
+      ...this.dots,
+      [index]: {...this.dots[index], [dataKey]: {dataKey, cy}},
+    };
+    return (<Dot {...rest} />);
+  }
+
+  resetDots = () => this.dots = {};
+
+  setTooltipPayload = ({isTooltipActive, chartY, activeTooltipIndex, activePayload}: MouseOverProps) => {
+    if (isTooltipActive) {
+      const closestLine = this.findClosestLine(activeTooltipIndex, chartY);
+      if (closestLine !== undefined) {
+        this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
+        this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
+      }
+    }
+  }
+
+  findClosestLine = (index: number, mouseY: number): uuid | undefined => {
+    const activeDots = this.dots[index];
+    if (activeDots === undefined) {
+      return undefined;
+    }
+    const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
+      .filter(({cy}) => cy || cy === 0)
+      .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
+      .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
+    return sortedActiveDots[0].dataKey;
   }
 }
 
@@ -254,6 +261,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
   selectQuantities,
+  logout,
 }, dispatch);
 
 export const GraphContainer =

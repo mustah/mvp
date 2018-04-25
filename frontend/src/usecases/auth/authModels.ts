@@ -21,4 +21,4 @@ export interface AuthState {
   error?: Unauthorized;
 }
 
-export type OnLogout = () => void;
+export type OnLogout = (error?: Unauthorized) => void;
