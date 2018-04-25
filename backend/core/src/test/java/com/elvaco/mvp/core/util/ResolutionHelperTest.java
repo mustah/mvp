@@ -36,9 +36,9 @@ public class ResolutionHelperTest {
   }
 
   @Test
-  public void moreThanThirtyDaysResolvesToMonthResolution() {
+  public void moreThanSixtyDaysResolvesToMonthResolution() {
     ZonedDateTime start = ZonedDateTime.parse("2018-03-26T02:10:45Z");
-    ZonedDateTime end = start.plusMonths(1);
+    ZonedDateTime end = start.plusMonths(2);
     assertThat(defaultResolutionFor(Duration.between(start, end)))
       .isEqualTo(TemporalResolution.month);
   }
