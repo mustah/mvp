@@ -92,7 +92,8 @@ export const enum UseCases {
 
 const status = {
   ok: Status.ok,
-  active: Status.ok,
+  active: Status.active,
+  error: Status.error,
   info: Status.info,
   warning: Status.warning,
   critical: Status.critical,
