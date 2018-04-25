@@ -75,6 +75,7 @@ export const enum Status {
   alarm = 'alarm',
   active = 'active',
   info = 'info',
+  error = 'error',
   warning = 'warning',
   critical = 'critical',
   unknown = 'unknown',
