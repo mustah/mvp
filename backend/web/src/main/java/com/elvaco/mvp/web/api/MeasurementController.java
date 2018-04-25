@@ -80,8 +80,9 @@ public class MeasurementController {
       before = ZonedDateTime.now();
     }
 
-    //TODO respect requested resolution
-    resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+    if (resolution == null) {
+      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+    }
 
     Map<Quantity, List<PhysicalMeter>> quantityToPhysicalMeterIdMap =
       mapMeterQuantitiesToPhysicalMeters(
@@ -136,8 +137,9 @@ public class MeasurementController {
       after = ZonedDateTime.parse("1970-01-01T00:00:00Z");
     }
 
-    //TODO respect requested resolution
-    resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+    if (resolution == null) {
+      resolution = ResolutionHelper.defaultResolutionFor(Duration.between(after, before));
+    }
 
     Set<Quantity> quantities = quantityUnits.map(this::getQuantitiesFromQuantityUnitList)
       .orElseGet(() -> logicalMeters.stream()
