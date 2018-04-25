@@ -6,4 +6,5 @@ export const config: AppConfig = {
     baseURL: `//${location.hostname}:8080/api/v1`,
     timeout: 30000,
   },
+  frontendVersion: 'FRONTEND_VERSION',
 };

@@ -7,13 +7,14 @@ const {
   PostCSSPlugin,
   QuantumPlugin,
   SassPlugin,
-  TypeScriptHelpers,
+  ReplacePlugin,
   WebIndexPlugin,
   Sparky,
 } = require('fuse-box');
 
 const {createPotFile} = require('./fuse-extract-translations');
 const {convertPoToJson} = require('./fuse-convert-po-to-json');
+const {gitVersion} = require('./fuse-git-version');
 
 const autoprefixer = require('autoprefixer');
 const TypeHelper = require('fuse-box-typechecker').TypeHelper;
@@ -61,7 +62,6 @@ Sparky.task('config', ['convert-po-to-json'], () => {
     target: 'browser',
     output: `${distDir}/$name.js`,
     plugins: [
-      TypeScriptHelpers(),
       SVGPlugin(),
       JSONPlugin(),
       [
@@ -78,6 +78,9 @@ Sparky.task('config', ['convert-po-to-json'], () => {
         }),
         CSSPlugin(),
       ],
+      ReplacePlugin({
+        'FRONTEND_VERSION': gitVersion(),
+      }),
       WebIndexPlugin({template: `${homeDir}/index.html`}),
       isProduction && QuantumPlugin({
         removeExportsInterop: false,
