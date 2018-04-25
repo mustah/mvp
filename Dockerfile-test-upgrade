@@ -1,0 +1,2 @@
+FROM tmaier/docker-compose:latest
+RUN apk add --no-cache curl jq rabbitmq-c-utils rabbitmq-c bash strace nmap

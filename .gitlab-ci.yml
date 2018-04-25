@@ -89,6 +89,16 @@ docker:postgresql:
     - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f Dockerfile-postgresql .
     - docker push $DOCKER_REGISTRY_URL/postgresql:latest
 
+docker:test-upgrade:
+  <<: *no_cache
+  stage: prepare
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f Dockerfile-test-upgrade .
+    - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
+
 docker:ci-utils:
   <<: *no_cache
   stage: prepare
