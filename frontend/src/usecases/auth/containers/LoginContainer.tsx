@@ -8,6 +8,7 @@ import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {getLogoPath} from '../../../app/routes';
 import {ButtonLogin} from '../../../components/buttons/ButtonLogin';
 import {ErrorMessage} from '../../../components/error-message/ErrorMessage';
+import {Footer} from '../../../components/footer/Footer';
 import {TextFieldInput} from '../../../components/inputs/InputText';
 import {ColumnCenter} from '../../../components/layouts/column/Column';
 import {RowCenter} from '../../../components/layouts/row/Row';
@@ -78,6 +79,7 @@ class LoginContainerComponent extends React.Component<Props, LoginState> {
             {<ErrorMessage {...error}/>}
           </form>
         </Paper>
+        <Footer/>
       </ColumnCenter>
     );
   }
