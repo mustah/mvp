@@ -6,7 +6,7 @@ dependencyManagement {
   imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
 }
 
-mainClassName = "com.elvaco.mvp.GeoServiceApplication"
+mainClassName = "com.elvaco.geoservice.GeoServiceApplication"
 jar {
   baseName = 'geoservice'
   version = '0.1.0'
