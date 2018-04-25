@@ -210,7 +210,7 @@ msgid "status change"
 msgstr "statusförändring"
 
 msgid "collection percentage"
-msgstr "collection"
+msgstr "insamling"
 
 msgid "unknown"
 msgstr "okänd"
