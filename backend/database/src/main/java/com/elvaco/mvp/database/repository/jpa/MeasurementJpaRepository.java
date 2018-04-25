@@ -25,13 +25,17 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     + " ) x"
     + " LEFT JOIN ("
     + "   SELECT"
-    + "     value,"
+    + "     case when :mode = 'consumption'"
+    + "     then"
+    + "       value - lag(value) over (partition by physical_meter_id order by created)"
+    + "     else value"
+    + "     end as value,"
     + "     date_trunc(:resolution, created AT TIME ZONE 'UTC') AT TIME ZONE 'UTC' AS "
     + "interval_start FROM "
     + "measurement WHERE"
     + "     physical_meter_id IN :meter_ids"
     + "     AND quantity = :quantity"
-    + "     AND created >= cast(:from AS TIMESTAMPTZ)"
+    + "     AND created >= cast(:from AS TIMESTAMPTZ) - cast('1 ' || :resolution as interval)"
     + "     AND created <= cast(:to AS TIMESTAMPTZ)"
     + ") y"
     + "   USING (interval_start)"
@@ -42,6 +46,7 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("resolution") String resolution,
     @Param("quantity") String quantity,
     @Param("unit") String unit,
+    @Param("mode") String mode,
     @Param("from") OffsetDateTime from,
     @Param("to") OffsetDateTime to
   );

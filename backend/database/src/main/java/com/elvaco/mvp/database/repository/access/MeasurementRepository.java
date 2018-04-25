@@ -75,6 +75,7 @@ public class MeasurementRepository implements Measurements {
       resolution.toString(),
       quantity,
       unit,
+      "default",
       OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
       OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
     ).stream()
