@@ -3,9 +3,9 @@ services:
   application:
     image: "gitlab.elvaco.se:4567/elvaco/mvp/mvp:${MVP_TAG:-production}"
     environment:
-      MVP_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.datasource.url=jdbc:postgresql://postgresql:5432/mvp
+      MVP_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.datasource.url=jdbc:postgresql://postgresql:5432/mvp -Dspring.rabbitmq.host=rabbitmq -Dspring.rabbitmq.username=guest -Dspring.rabbitmq.password=guest
     ports:
-      - "80"
+      - "8080:80"
     links:
       - postgresql
   postgresql:

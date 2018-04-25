@@ -1,0 +1,34 @@
+{
+  "message_type": "Elvaco MVP MQ Measurement Message 1.0",
+  "gateway": {
+    "id": "gateway-1"
+  },
+  "meter": {
+    "id": "meter-1"
+  },
+  "facility": {
+    "id": "facility-1"
+  },
+  "organisation_id": "Upgrade Test Organisation",
+  "source_system_id": "CI Upgrade Test",
+  "values": [
+    {
+      "timestamp": "2018-03-16T13:07:01",
+      "value": 0.659,
+      "unit": "°C",
+      "quantity": "Return temp."
+    },
+    {
+      "timestamp": "2018-03-16T14:07:01",
+      "value": 0.759,
+      "unit": "°C",
+      "quantity": "Return temp."
+    },
+    {
+      "timestamp": "2018-03-16T15:07:01",
+      "value": 37.4,
+      "unit": "Celsius",
+      "quantity": "Return temp."
+    }
+  ]
+}
