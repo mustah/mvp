@@ -4,7 +4,9 @@ import {CurrentPeriod, toPeriodApiParameters} from '../../helpers/dateHelpers';
 import {Maybe} from '../../helpers/Maybe';
 import {getTranslationOrName} from '../../helpers/translations';
 import {
-  encodedUriParametersFrom, toEntityApiParametersGateways, toEntityApiParametersMeters,
+  encodedUriParametersFrom,
+  toEntityApiParametersGateways,
+  toEntityApiParametersMeters,
   toPaginationApiParameters,
 } from '../../helpers/urlFactory';
 
@@ -14,7 +16,8 @@ import {Pagination} from '../ui/pagination/paginationModels';
 import {
   LookupState,
   ParameterName,
-  SelectedParameters, SelectionInterval,
+  SelectedParameters,
+  SelectionInterval,
   SelectionListItem,
   UserSelection,
   UserSelectionState,
@@ -78,15 +81,15 @@ const getList = (entityType: ParameterName): ListSelector =>
     (selected: SelectionEntity[], deselected: SelectionEntity[]): SelectionListItem[] => {
       const selectedEntities: SelectionListItem[] =
         selected
-          .sort(comparatorByNameAsc)
           .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: true}));
+            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: true}))
+          .sort(comparatorByNameAsc);
 
       const deselectedEntities: SelectionListItem[] =
         deselected
-          .sort(comparatorByNameAsc)
           .map(({id, name, ...extra}: SelectionEntity) =>
-            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: false}));
+            ({id, name: getTranslationOrName(name, entityType), ...extra, selected: false}))
+          .sort(comparatorByNameAsc);
 
       return [...selectedEntities, ...deselectedEntities];
     },
@@ -128,7 +131,8 @@ export const getPaginatedMeterParameters =
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
       ]);
-    });
+    },
+  );
 
 export const getPaginatedGatewayParameters =
   createSelector<UriLookupStatePaginated, Pagination, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
@@ -141,7 +145,8 @@ export const getPaginatedGatewayParameters =
         ...toPeriodApiParameters(currentPeriod),
         ...toPaginationApiParameters(pagination),
       ]);
-    });
+    },
+  );
 
 export const getMeterParameters =
   createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
@@ -152,7 +157,8 @@ export const getMeterParameters =
         ...toEntityApiParametersMeters(rest),
         ...toPeriodApiParameters(currentPeriod),
       ]);
-    });
+    },
+  );
 
 export const getGatewayParameters =
   createSelector<UriLookupState, SelectedParameters, CurrentPeriod, EncodedUriParameters>(
@@ -163,7 +169,8 @@ export const getGatewayParameters =
         ...toEntityApiParametersGateways(rest),
         ...toPeriodApiParameters(currentPeriod),
       ]);
-    });
+    },
+  );
 
 export const getSelectedPeriod =
   createSelector<UserSelection, SelectionInterval, {period: Period, customDateRange: Maybe<DateRange>}>(

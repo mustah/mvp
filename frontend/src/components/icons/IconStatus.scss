@@ -8,29 +8,25 @@
   padding: 2px 8px;
   text-align: center;
   text-transform: uppercase;
+  color: $white;
 
-  &.ok {
+  &.ok, &.active {
     background: $dark-green;
-    color: $white;
   }
 
   &.info {
     background: $dark-blue;
-    color: $white;
   }
 
   &.warning {
     background: $orange;
-    color: $white;
-  }
-
-  &.critical {
-    background: $red;
-    color: $white;
   }
 
   &.unknown {
-    background: $orange;
-    color: $white;
+    background: $lightest-black;
+  }
+
+  &.critical, &.error {
+    background: $red;
   }
 }

@@ -227,6 +227,9 @@ msgstr "active"
 msgid "critical"
 msgstr "critical"
 
+msgid "error"
+msgstr "error"
+
 msgid "info"
 msgstr "info"
 

@@ -26,6 +26,7 @@ export const statusTranslation = (name: string): string => {
     [Status.alarm]: translate('alarm'),
     [Status.active]: translate('active'),
     [Status.critical]: translate('critical'),
+    [Status.error]: translate('error'),
     [Status.info]: translate('info'),
     [Status.unknown]: translate('unknown'),
     [Status.warning]: translate('warning'),

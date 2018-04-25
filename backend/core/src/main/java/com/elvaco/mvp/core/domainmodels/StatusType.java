@@ -10,7 +10,7 @@ public enum StatusType {
   CRITICAL("critical"),
   WARNING("warning"),
   UNKNOWN("unknown"),
-  MAINTENANCE_SCHEDULED("maintenance scheduled"),
+  MAINTENANCE_SCHEDULED("maintenance_scheduled"),
   ERROR("error");
 
   public final String name;
