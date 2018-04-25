@@ -46,7 +46,7 @@ const colorizeMeters = colorize({
   [RenderableQuantity.differenceTemperature as string]: '#0084e6',
 });
 
-const thickStroke: number = 2;
+const thickStroke: number = 4;
 
 const yAxisIdLookup = (axes: Axes, unit: string): 'left' | 'right' | undefined => {
   if (axes.left === unit) {
