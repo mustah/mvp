@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {InjectedAuthRouterProps} from 'redux-auth-wrapper/history4/redirect';
 import {paperStyle} from '../../../app/themes';
-import {HasContent} from '../../../components/content/HasContent';
 import {OnSelectIndicator} from '../../../components/indicators/indicatorWidgetModels';
 import {
   SelectableIndicatorWidgets,
@@ -62,19 +61,10 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
             <TabTopBar>
               <TabHeaders selectedTab={selectedTab} onChangeTab={onChangeTab}>
                 <Tab tab={TabName.graph} title={translate('graph')}/>
-                <Tab tab={TabName.table} title={translate('table')}/>
               </TabHeaders>
             </TabTopBar>
             <TabContent tab={TabName.graph} selectedTab={selectedTab}>
               <GraphContainer/>
-            </TabContent>
-            <TabContent tab={TabName.table} selectedTab={selectedTab}>
-              <HasContent
-                hasContent={false}
-                fallbackContent={<div/>}
-              >
-                <p>TBD</p>
-              </HasContent>
             </TabContent>
           </Tabs>
         </div>
