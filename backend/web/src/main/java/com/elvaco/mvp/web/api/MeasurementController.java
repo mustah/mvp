@@ -99,9 +99,7 @@ public class MeasurementController {
       Quantity quantity = entry.getKey();
       foundMeasurements.addAll(measurementUseCases.averageForPeriod(
         entry.getValue().stream().map(physicalMeter -> physicalMeter.id).collect(toList()),
-        quantity.name,
-        quantity.presentationUnit(),
-        quantity.seriesDisplayMode(),
+        quantity,
         after,
         before,
         resolution
@@ -152,9 +150,7 @@ public class MeasurementController {
       for (PhysicalMeter meter : entry.getValue()) {
         List<MeasurementValue> series = measurementUseCases.seriesForPeriod(
           meter.id,
-          entry.getKey().name,
-          entry.getKey().presentationUnit(),
-          entry.getKey().seriesDisplayMode(),
+          entry.getKey(),
           after,
           before
         );
