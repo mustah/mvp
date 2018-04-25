@@ -10,7 +10,7 @@ import {IconTemperature} from '../icons/IconTemperature';
 import {IconValidation} from '../icons/IconValidation';
 import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
-import {Bold, Normal, Xlarge} from '../texts/Texts';
+import {Bold} from '../texts/Texts';
 import './IndicatorWidget.scss';
 import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
@@ -33,6 +33,11 @@ const indicatorIconFor: IndicatorComponentType = {
 export const iconComponentFor =
   (type: IndicatorType): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
 
+const style: React.CSSProperties = {
+  width: '48px',
+  height: '48px',
+};
+
 interface IndicatorProps {
   indicator: Indicator;
   select: OnSelectIndicator;
@@ -40,27 +45,21 @@ interface IndicatorProps {
 }
 
 export const SelectableIndicatorWidget = ({select, indicator, isSelected}: IndicatorProps) => {
-  const {state, title, value, unit, subtitle, type} = indicator;
+  const {state, title, type} = indicator;
 
-  const selectWidget = () => select(type);
-  const isEnabled = type === IndicatorType.districtHeating;
+  const isEnabled: boolean = type === IndicatorType.districtHeating;
 
   const IndicatorIcon = iconComponentFor(type);
 
   return (
-    <div onClick={selectWidget}>
+    <div>
       <Column className="Indicator-wrapper">
         <ColumnCenter className={classNames('Indicator', state)}>
           <Row className="Indicator-name Row-center">
             <Bold>{title}</Bold>
           </Row>
           <Row className="Row-center Row-bottom">
-            <Xlarge className="Indicator-value">{(isEnabled && value) || '-'}</Xlarge>
-            <Normal className="Indicator-unit">{isEnabled && unit}</Normal>
-          </Row>
-          <Row className="Indicator-subtitle Row-center">
-            <IndicatorIcon className="Indicator-icon" color={isEnabled ? colors.white : colors.black}/>
-            <Bold>{subtitle}</Bold>
+            <IndicatorIcon style={style} className="Indicator-icon" color={isEnabled ? colors.white : colors.black}/>
           </Row>
         </ColumnCenter>
 
