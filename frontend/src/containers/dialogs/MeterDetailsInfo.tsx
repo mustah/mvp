@@ -17,7 +17,9 @@ export const MeterDetailsInfo = ({meter}: Props) => {
     : null;
 
   const renderReadInterval = () => {
-    if (meter.readIntervalMinutes >= 60) {
+    if (meter.readIntervalMinutes === 0) {
+      return translate('unknown');
+    } else if (meter.readIntervalMinutes >= 60) {
       return (meter.readIntervalMinutes / 60) + translate('hour in short');
     }
 
