@@ -1,15 +1,19 @@
 import {createPayloadAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
+import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {now, toPeriodApiParameters} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
 import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
-import {restClient} from '../../../../services/restClient';
-import {Dictionary, uuid} from '../../../../types/Types';
+import {restClient, wasRequestCanceled} from '../../../../services/restClient';
+import {firstUpperTranslated} from '../../../../services/translationService';
+import {Dictionary, ErrorResponse, uuid} from '../../../../types/Types';
+import {OnLogout} from '../../../../usecases/auth/authModels';
+import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
 import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
-  AverageApiResponse,
   AverageApiResponsePart,
+  emptyGraphContents,
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
@@ -185,52 +189,64 @@ export const fetchMeasurements =
     selectedListItems: uuid[],
     timePeriod: Period,
     customDateRange: Maybe<DateRange>,
-  ): Promise<MeasurementResponses> => {
-    let averageData: AverageApiResponse = [];
+    updateState: OnUpdateGraph,
+    logout: OnLogout,
+  ): Promise<void> => {
 
     if (selectedListItems.length === 0 || quantities.length === 0) {
-      return {
-        measurement: [],
-        average: [],
-      };
+      updateState({
+        graphContents: emptyGraphContents,
+        isFetching: false,
+        error: Maybe.nothing(),
+      });
+      return;
     }
 
-    if (selectedListItems.length > 1) {
-      const averageUrl = makeUrl(
-        EndPoints.measurements.concat('/average'),
-        measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
-      );
+    const averageUrl = makeUrl(
+      EndPoints.measurements.concat('/average'),
+      measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
+    );
+    const averageRequest = selectedListItems.length > 1 ?
+      () => restClient.get(averageUrl)
+      : () => new Promise<{data: any[]}>((resolve) => (resolve({data: []})));
 
-      try {
-        const averageResponse = await restClient.get(averageUrl);
-        averageData = averageResponse.data;
-      } catch (error) {
-        return {
-          measurement: [],
-          average: [],
-        };
-      }
-    }
-
-    const measurement = makeUrl(
+    const measurementUrl = makeUrl(
       EndPoints.measurements,
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
     );
+    const measurementsRequest = () => restClient.get(measurementUrl);
+
     try {
-      const response = await restClient.get(measurement);
-      return {
-        measurement: response.data,
-        average: averageData.map((averageEntity) => ({
+      const response = await Promise.all([measurementsRequest(), averageRequest()]);
+      const graphData = {
+        measurement: response[0].data,
+        average: response[1].data.map((averageEntity) => ({
           ...averageEntity,
           values: averageEntity.values.filter(({value}) => value),
         })),
       };
+      updateState({
+        graphContents: mapApiResponseToGraphData(graphData),
+        isFetching: false,
+        error: Maybe.nothing(),
+      });
     } catch (error) {
-      return {
-        measurement: [],
-        average: [],
-      };
+      if (error instanceof InvalidToken) {
+        await logout(error);
+      } else if (wasRequestCanceled(error)) {
+        return;
+      } else {
+        const {response} = error;
+        const data: ErrorResponse = response && response.data ||
+          {message: firstUpperTranslated('an unexpected error occurred')};
+        updateState({
+          graphContents: emptyGraphContents,
+          isFetching: false,
+          error: Maybe.maybe(data),
+        });
+      }
     }
+
   };
 
 export const SAVE_SELECTED_QUANTITIES = 'SAVE_SELECTED_QUANTITIES';

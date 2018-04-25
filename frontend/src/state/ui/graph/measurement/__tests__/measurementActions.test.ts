@@ -1,10 +1,13 @@
 import axios from 'axios';
 import {Period} from '../../../../../components/dates/dateModels';
 import {Maybe} from '../../../../../helpers/Maybe';
+import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
+import {Unauthorized} from '../../../../../usecases/auth/authModels';
+import {GraphContainerState} from '../../../../../usecases/report/containers/GraphContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {AverageApiResponse, MeasurementApiResponse, MeasurementResponses} from '../measurementModels';
+import {AverageApiResponse, emptyGraphContents, MeasurementApiResponse} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
@@ -205,19 +208,44 @@ describe('measurementActions', () => {
   });
 
   describe('fetchMeasurements', () => {
-    const emptyResponses: MeasurementResponses = Object.freeze({
-      measurement: [],
-      average: [],
+
+    initTranslations({
+      code: 'en',
+      translation: {
+        test: 'no translations will default to key',
+      },
     });
 
-    it('returns empty data if no quantities are not provided', async () => {
-      const response = await fetchMeasurements([], ['123abc'], Period.currentMonth, Maybe.nothing());
-      expect(response).toEqual(emptyResponses);
+    let state: GraphContainerState;
+    let loggedOut: string;
+    const updateState = (updatedState: GraphContainerState) => state = {...updatedState};
+    const logout = (error?: Unauthorized) => error ? loggedOut = error.message : 'logged out';
+
+    const initialState: GraphContainerState = {
+      graphContents: emptyGraphContents,
+      isFetching: false,
+      error: Maybe.nothing(),
+    };
+
+    beforeEach(() => {
+      state = initialState;
+      loggedOut = 'not logged out';
+    });
+
+    it('sets default state if no quantities are provided', async () => {
+      updateState({...initialState, isFetching: true});
+      expect(state).not.toEqual({...initialState});
+
+      await fetchMeasurements([], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
+      expect(state).toEqual({...initialState});
     });
 
     it('returns empty data if no meter ids are provided', async () => {
-      const response = await fetchMeasurements(['Power'], [], Period.currentMonth, Maybe.nothing());
-      expect(response).toEqual(emptyResponses);
+      updateState({...initialState, isFetching: true});
+      expect(state).not.toEqual({...initialState});
+
+      await fetchMeasurements(['Power'], [], Period.currentMonth, Maybe.nothing(), updateState, logout);
+      expect(state).toEqual({...initialState});
     });
 
     it('does not include average endpoint when asking for measurements for single meter', async () => {
@@ -230,7 +258,7 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth, Maybe.nothing());
+      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
       expect(requestedUrls.length).toEqual(1);
       expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
     });
@@ -245,12 +273,19 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth, Maybe.nothing());
-      expect(requestedUrls.length).toEqual(2);
-      expect(requestedUrls[0]).toMatch(
-        /\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
-      expect(requestedUrls[1]).toMatch(
-        /\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+      await fetchMeasurements(
+        ['Power'],
+        ['123abc', '345def', '456ghi'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout);
+      expect(requestedUrls).toHaveProperty('length', 2);
+      requestedUrls.sort();
+      expect(requestedUrls[0])
+        .toMatch(/\/measurements\/average\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
+      expect(requestedUrls[1])
+        .toMatch(/\/measurements\?quantities=Power&meters=123abc,345def,456ghi&after=20.+Z&before=20.+Z/);
     });
 
     it('provides a result suitable for parsing by mapApiResponseToGraphData', async () => {
@@ -312,14 +347,18 @@ describe('measurementActions', () => {
         }
       });
 
-      const responses =
-        await fetchMeasurements(['Power'], ['123abc', '345def', '456ghi'], Period.currentMonth, Maybe.nothing());
+      await fetchMeasurements(
+        ['Power'],
+        ['123abc', '345def', '456ghi'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout);
       expect(requestedUrls.length).toEqual(2);
 
-      const graphData = mapApiResponseToGraphData(responses);
-      expect(graphData.axes.left).toEqual('mW');
-      expect(graphData.data).toHaveLength(2);
-      expect(graphData.lines).toHaveLength(3);
+      expect(state.graphContents.axes.left).toEqual('mW');
+      expect(state.graphContents.data).toHaveLength(2);
+      expect(state.graphContents.lines).toHaveLength(3);
     });
   });
 });

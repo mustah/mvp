@@ -16,7 +16,6 @@ describe('indicatorSelector', () => {
       isOpen: false,
     },
     measurements: {
-      isFetching: false,
       selectedQuantities: [],
     },
     pagination: initialPaginationState,
