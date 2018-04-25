@@ -67,6 +67,7 @@ public abstract class IntegrationTest {
 
   protected boolean isPostgresDialect() {
     return ((SessionFactoryImplementor) factory.unwrap(SessionFactory.class))
+      .getJdbcServices()
       .getDialect()
       .getClass()
       .getName()
