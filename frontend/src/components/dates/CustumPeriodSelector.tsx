@@ -29,5 +29,6 @@ export const CustomPeriodSelector = (
     minimumNights={0}
     hideKeyboardShortcutsPanel={true}
     isOutsideRange={makeAllDaysSelectable}
+    displayFormat={'YYYY-MM-DD'}
   />
 );

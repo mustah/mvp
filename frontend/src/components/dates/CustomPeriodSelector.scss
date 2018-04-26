@@ -1,4 +1,94 @@
-.DateRangePicker_picker {
-  position: inherit !important;
-  margin-top: 6px;
+@import '../../app/variables';
+
+// The style classes are overriding the classes in react-dates/lib/css/_datepicker.css
+.DateRangePicker {
+
+  .DateRangePicker_picker {
+    position: inherit !important;
+    margin-top: 6px;
+
+    .CalendarDay__default {
+      border: 1px solid #e4e7e7 !important;
+      color: #565a5c !important;
+      background: #fff !important;
+    }
+
+    .CalendarDay__hovered_offset {
+      background: #f4f5f5 !important;
+      border: 1px double #e4e7e7 !important;
+      color: inherit !important;
+    }
+
+    .CalendarDay__default:hover {
+      background: $grey !important;
+      border: 1px solid inherit !important;
+      color: inherit !important;
+    }
+
+    .CalendarDay__selected_span {
+      background: $blue !important;
+      border: 1px solid ($blue - #0A0A0A) !important;
+      color: #fff !important;
+    }
+
+    .CalendarDay__selected,
+    .CalendarDay__selected:active,
+    .CalendarDay__selected:hover {
+      background: $dark-blue !important;
+      border: 1px solid $dark-blue !important;
+      color: #fff !important;
+    }
+
+    .CalendarDay__selected_span:active,
+    .CalendarDay__selected_span:hover {
+      background: ($blue - #0A0A0A) !important;
+      border: 1px solid ($blue - #0A0A0A) !important;
+      color: #fff !important;
+    }
+
+    .CalendarDay__hovered_span,
+    .CalendarDay__hovered_span:hover {
+      background: ($blue - #0A0A0A) !important;
+      border: 1px solid ($blue - #0F0F0F) !important;
+      color: #fff !important;
+    }
+
+    .CalendarDay__hovered_span:active {
+      background: $dark-blue !important;
+      border: 1px solid $dark-blue !important;
+      color: #fff !important;
+    }
+  }
+
+  .DateRangePickerInput__withBorder {
+    border: 1px solid #cacccd !important;
+    border-radius: 3px !important;
+
+    .DateInput {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      position: relative;
+      display: inline-block;
+      width: 130px;
+      border-radius: 3px;
+      vertical-align: middle;
+
+      .DateInput_input {
+        font-size: 18px !important;
+        font-family: inherit !important;
+        width: 80% !important;
+        height: inherit !important;
+        border-top: 0 !important;
+        border-right: 0 !important;
+        border-bottom: 2px solid transparent !important;
+        border-left: 0 !important;
+        border-radius: 3px;
+      }
+
+      .DateInput_fang {
+        top: 47px !important;
+      }
+    }
+  }
 }
