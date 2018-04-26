@@ -89,6 +89,16 @@ docker:postgresql:
     - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f Dockerfile-postgresql .
     - docker push $DOCKER_REGISTRY_URL/postgresql:latest
 
+docker:test-upgrade:
+  <<: *no_cache
+  stage: prepare
+  tags:
+    - shell
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f Dockerfile-test-upgrade .
+    - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
+
 docker:ci-utils:
   <<: *no_cache
   stage: prepare
@@ -173,31 +183,24 @@ test:unit_and_IT:
 
 test:upgrade:
   <<: *no_cache
-  image: tmaier/docker-compose
+  image: $DOCKER_REGISTRY_URL/test-upgrade:latest
   variables:
     DOCKER_DRIVER: overlay2
     MVP_UPGRADE_FROM_TAG: production
     MVP_UPGRADE_TO_TAG: ${CI_COMMIT_REF_SLUG}
+    TEST_HOST: docker-host
   stage: test
   dependencies:
     - gradle:build
   before_script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
   after_script:
-      - docker-compose down -v
+    - docker-compose down -v
   services:
     - name: docker:dind
+      alias: docker-host
   script:
-    - MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d application postgresql
-    - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
-    - docker-compose logs application
-    - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
-    - docker-compose stop application
-
-    - MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application postgresql
-    - while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do sleep 1; done;
-    - docker-compose logs application
-    - test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
+    - ./scripts/upgrade-test.sh $MVP_UPGRADE_FROM_TAG $MVP_UPGRADE_TO_TAG $TEST_HOST
 
 publish:mvp_artifactory:
   <<: *no_cache
