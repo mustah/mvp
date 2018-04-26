@@ -31,7 +31,8 @@ public interface Measurements {
     UUID meterId,
     Quantity seriesQuantity,
     ZonedDateTime from,
-    ZonedDateTime to
+    ZonedDateTime to,
+    TemporalResolution resolution
   );
 
   Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
@@ -43,5 +44,4 @@ public interface Measurements {
   List<Measurement> findLatestValues(
     UUID physicalMeterId
   );
-
 }

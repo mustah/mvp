@@ -10,7 +10,12 @@ import {firstUpperTranslated} from '../../../../services/translationService';
 import {Dictionary, ErrorResponse, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
-import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
+import {
+  Axes,
+  GraphContents,
+  LineProps,
+  ProprietaryLegendProps,
+} from '../../../../usecases/report/reportModels';
 import {
   AverageApiResponsePart,
   emptyGraphContents,
@@ -18,7 +23,6 @@ import {
   MeasurementResponses,
   Quantity,
   RenderableQuantity,
-  Resolution,
 } from './measurementModels';
 
 const colorize =
@@ -74,9 +78,11 @@ export const mapApiResponseToGraphData =
     const uniqueMeters = new Set<string>();
     let firstTimestamp;
 
-    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurement.reduce((prev, {quantity}) => (
-      prev[quantity] ?
-        prev
+    const legendsMeters: Dictionary<ProprietaryLegendProps> = measurement.reduce((
+      prev,
+      {quantity},
+    ) => (
+      prev[quantity] ? prev
         : {
           ...prev,
           [quantity]: {
@@ -85,9 +91,11 @@ export const mapApiResponseToGraphData =
             value: quantity,
           },
         }), {});
-    const legendsAverage: Dictionary<ProprietaryLegendProps> = average.reduce((prev, {quantity}) => (
-      prev[quantity] ?
-        prev
+    const legendsAverage: Dictionary<ProprietaryLegendProps> = average.reduce((
+      prev,
+      {quantity},
+    ) => (
+      prev[quantity] ? prev
         : {
           ...prev,
           [`average-${quantity}`]: {
@@ -176,12 +184,10 @@ const measurementUri = (
   meters: uuid[],
   timePeriod: Period,
   customDateRange: Maybe<DateRange>,
-  resolution: Resolution,
 ): string =>
   `quantities=${quantities.join(',')}` +
   `&meters=${meters.join(',')}` +
-  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}` +
-  `&resolution=${resolution}`;
+  `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
 
 export const fetchMeasurements =
   async (
@@ -204,15 +210,14 @@ export const fetchMeasurements =
 
     const averageUrl = makeUrl(
       EndPoints.measurements.concat('/average'),
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
+      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
-    const averageRequest = selectedListItems.length > 1 ?
-      () => restClient.get(averageUrl)
+    const averageRequest = selectedListItems.length > 1 ? () => restClient.get(averageUrl)
       : () => new Promise<{data: any[]}>((resolve) => (resolve({data: []})));
 
     const measurementUrl = makeUrl(
       EndPoints.measurements,
-      measurementUri(quantities, selectedListItems, timePeriod, customDateRange, Resolution.hour),
+      measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
     const measurementsRequest = () => restClient.get(measurementUrl);
 

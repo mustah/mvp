@@ -7,9 +7,9 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 public final class ResolutionHelper {
 
   public static TemporalResolution defaultResolutionFor(Duration duration) {
-    if (duration.minusDays(1).isNegative()) {
+    if (duration.toDays() < 2) {
       return TemporalResolution.hour;
-    } else if (duration.minusDays(30).isNegative()) {
+    } else if (duration.toDays() < 60) {
       return TemporalResolution.day;
     } else {
       return TemporalResolution.month;

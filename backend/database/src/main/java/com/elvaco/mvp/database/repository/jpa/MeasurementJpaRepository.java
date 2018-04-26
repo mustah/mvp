@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntity, Long>,
-  MeasurementJpaRepositoryCustom {
+                                                  MeasurementJpaRepositoryCustom {
 
   @Query(nativeQuery = true, value = "SELECT "
     + "cast(unit_at(avg(value), :unit) AS TEXT) AS value,"
@@ -58,43 +58,50 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
   );
 
   @Query(nativeQuery = true, value = "SELECT m1.*"
-    + " FROM measurement m1"
-    + " INNER JOIN ("
-    + "     SELECT"
-    + "       MAX(created) as latest,"
-    + "       quantity,"
-    + "       physical_meter_id"
-    + "     FROM measurement"
-    + "     WHERE physical_meter_id = :physical_meter_id"
-    + "     GROUP by physical_meter_id, quantity"
-    + " ) m2"
-    + " ON m1.created = latest"
-    + " AND m1.physical_meter_id = m2.physical_meter_id"
-    + " AND m1.quantity = m2.quantity")
+     + " FROM measurement m1"
+     + " INNER JOIN ("
+     + "     SELECT"
+     + "       MAX(created) as latest,"
+     + "       quantity,"
+     + "       physical_meter_id"
+     + "     FROM measurement"
+     + "     WHERE physical_meter_id = :physical_meter_id"
+     + "     GROUP by physical_meter_id, quantity"
+     + " ) m2"
+     + " ON m1.created = latest"
+     + " AND m1.physical_meter_id = m2.physical_meter_id"
+     + " AND m1.quantity = m2.quantity")
   List<MeasurementEntity> findLatestForPhysicalMeter(@Param("physical_meter_id") UUID id);
 
   @Query(nativeQuery = true, value = "select"
-    + "  cast (unit_at("
-    + "    case when :mode = 'consumption'"
-    + "    then"
-    + "      value - coalesce("
-    // If we have a previous value, diff against that ...
-    + "        lag(value) over (order by created),"
-    // ... Otherwise, pick the latest value in the series _before_ this period, and diff against
-    // _that_, to avoid surprising null consumptions at the beginning of a period
-    + "        (select value from measurement"
-    + "          where quantity = :quantity and"
-    + "          physical_meter_id = :meter_id and"
-    + "          created < cast(:from AS TIMESTAMPTZ)"
-    + "          order by created desc limit 1))"
-    + "    else value"
-    + "    end, :unit) as TEXT) as value,"
-    + "  created as when"
-    + "  from measurement"
-    + "  where created >= cast(:from AS TIMESTAMPTZ)"
-    + "  and created <= cast(:to AS TIMESTAMPTZ)"
-    + "  and physical_meter_id = :meter_id"
-    + "  and quantity = :quantity"
+     + "  cast (unit_at("
+     + "    case when :mode = 'consumption'"
+     + "    then"
+     + "      value - coalesce("
+     // If we have a previous value, diff against that ...
+     + "        lag(value) over (order by created),"
+     // ... Otherwise, pick the latest value in the series _before_ this period, and diff against
+     // _that_, to avoid surprising null consumptions at the beginning of a period
+     + "        (select value from measurement"
+     + "          where quantity = :quantity and"
+     + "          physical_meter_id = :meter_id and"
+     + "          created < cast(:from AS TIMESTAMPTZ)"
+     + "          order by created desc limit 1))"
+     + "    else value"
+     + "    end, :unit) as TEXT) as value,"
+     + "  created as when"
+     + "  from measurement"
+     + "  where created >= cast(:from AS TIMESTAMPTZ)"
+     + "  and created <= cast(:to AS TIMESTAMPTZ)"
+     + "  and created in ("
+     + "   SELECT generate_series("
+     + "     date_trunc(:resolution, cast(:from AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+     + "     date_trunc(:resolution, cast(:to AS TIMESTAMPTZ) AT TIME ZONE 'UTC'),"
+     + "     cast('1 ' || :resolution AS INTERVAL)) AT TIME ZONE 'UTC' AS interval_start"
+     + "  )"
+     + "  and physical_meter_id = :meter_id"
+     + "  and quantity = :quantity"
+     + "  ORDER BY created ASC"
   )
   List<MeasurementValueProjection> getSeriesForPeriod(
     @Param("meter_id") UUID physicalMeterId,
@@ -102,7 +109,7 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("unit") String unit,
     @Param("mode") String mode,
     @Param("from") OffsetDateTime from,
-    @Param("to") OffsetDateTime to
+    @Param("to") OffsetDateTime to,
+    @Param("resolution") String resolution
   );
-
 }

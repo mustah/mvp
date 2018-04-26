@@ -3,12 +3,13 @@ package com.elvaco.mvp.web.util;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.experimental.UtilityClass;
+
 import static com.elvaco.mvp.web.util.Constants.AUTHORIZATION;
 import static com.elvaco.mvp.web.util.Constants.BEARER;
 
-public final class RequestHelper {
-
-  private RequestHelper() {}
+@UtilityClass
+public class RequestHelper {
 
   public static Optional<String> bearerTokenFrom(String requestHeader) {
     return Optional.ofNullable(requestHeader)

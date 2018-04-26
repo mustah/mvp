@@ -61,9 +61,10 @@ public class MeasurementUseCases {
     UUID meterId,
     Quantity seriesQuantity,
     ZonedDateTime from,
-    ZonedDateTime to
+    ZonedDateTime to,
+    TemporalResolution resolution
   ) {
-    return measurements.findSeriesForPeriod(meterId, seriesQuantity, from, to);
+    return measurements.findSeriesForPeriod(meterId, seriesQuantity, from, to, resolution);
   }
 
   private boolean isWithinOrganisation(PhysicalMeter physicalMeter) {

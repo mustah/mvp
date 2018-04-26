@@ -86,32 +86,6 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<MeasurementValue> findSeriesForPeriod(
-    UUID meterId,
-    Quantity seriesQuantity,
-    ZonedDateTime from,
-    ZonedDateTime to
-  ) {
-    try {
-      return measurementJpaRepository.getSeriesForPeriod(
-        meterId,
-        seriesQuantity.name,
-        seriesQuantity.presentationUnit(),
-        seriesQuantity.seriesDisplayMode().toString(),
-        OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
-        OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
-      ).stream()
-        .map(projection -> new MeasurementValue(
-          projection.getDoubleValue(),
-          projection.getInstant()
-        ))
-        .collect(toList());
-    } catch (DataIntegrityViolationException ex) {
-      throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
-    }
-  }
-
-  @Override
   public Optional<Measurement> findByPhysicalMeterIdAndQuantityAndCreated(
     UUID physicalMeterId,
     String quantity,
@@ -128,5 +102,33 @@ public class MeasurementRepository implements Measurements {
       .stream()
       .map(MeasurementMapper::toDomainModel)
       .collect(toList());
+  }
+
+  @Override
+  public List<MeasurementValue> findSeriesForPeriod(
+    UUID meterId,
+    Quantity seriesQuantity,
+    ZonedDateTime from,
+    ZonedDateTime to,
+    TemporalResolution resolution
+  ) {
+    try {
+      return measurementJpaRepository.getSeriesForPeriod(
+        meterId,
+        seriesQuantity.name,
+        seriesQuantity.presentationUnit(),
+        seriesQuantity.seriesDisplayMode().toString(),
+        OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
+        OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
+        resolution.toString()
+      ).stream()
+        .map(projection -> new MeasurementValue(
+          projection.getDoubleValue(),
+          projection.getInstant()
+        ))
+        .collect(toList());
+    } catch (DataIntegrityViolationException ex) {
+      throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
+    }
   }
 }
