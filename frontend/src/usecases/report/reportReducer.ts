@@ -1,19 +1,24 @@
+import {selectionWasChanged} from '../../state/domain-models/domainModelsReducer';
 import {Action, uuid} from '../../types/Types';
-import {ReportState} from './reportModels';
 import {SET_SELECTED_ENTRIES} from './reportActions';
+import {ReportState} from './reportModels';
 
-const initialState: ReportState = {
+export const initialState: ReportState = {
   selectedListItems: [],
 };
 
-type ActionTypes = Action<uuid[]>;
+type ActionTypes = Action<uuid[]> | Action<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
+  if (selectionWasChanged(action.type)) {
+    return {...initialState};
+  }
+
   switch (action.type) {
     case SET_SELECTED_ENTRIES:
       return {
         ...state,
-        selectedListItems: action.payload,
+        selectedListItems: (action as Action<uuid[]>).payload,
       };
     default:
       return state;
