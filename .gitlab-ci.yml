@@ -257,7 +257,7 @@ deploy:staging:
     - tags
   environment:
     name: staging
-    url: https://mvpstaging.elvaco.se
+    url: https://evo-staging.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
   script:
@@ -277,7 +277,7 @@ post-staging:acceptance:
     - tags
   variables:
     CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
-    MVP_SERVER: "https://mvpstaging.elvaco.se"
+    MVP_SERVER: "https://evo-staging.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
@@ -290,7 +290,7 @@ deploy:production:
     - tags
   environment:
     name: production
-    url: https://mvp.elvaco.se
+    url: https://evo.elvaco.se
   before_script:
     - test "$CI_COMMIT_REF_NAME" != "develop" && export SALTENV="saltenv=\"$CI_COMMIT_REF_NAME\""
   script:
@@ -310,7 +310,7 @@ post-prod:acceptance:
     - tags
   variables:
     CHROME_URL: "http://selenium_chrome_container_url:4444/wd/hub"
-    MVP_SERVER: "https://mvp.elvaco.se"
+    MVP_SERVER: "https://evo.elvaco.se"
     MVP_WEB_PORT: 443
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
