@@ -1,7 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {selectionWasChanged} from '../domain-models/domainModelsReducer';
+import {isSelectionChanged} from '../domain-models/domainModelsReducer';
 import {failureAction, requestAction, successAction} from '../summary/summaryApiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 
@@ -24,7 +24,7 @@ type ActionTypes =
   | Action<ErrorResponse>;
 
 const resetReducer = (state: SelectionTreeState, action: ActionTypes): SelectionTreeState => {
-  if (selectionWasChanged(action.type)) {
+  if (isSelectionChanged(action.type)) {
     return {...initialState};
   }
   return state;

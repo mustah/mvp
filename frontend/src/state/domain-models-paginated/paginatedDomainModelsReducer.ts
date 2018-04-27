@@ -2,7 +2,7 @@ import {combineReducers} from 'redux';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
-import {selectionWasChanged} from '../domain-models/domainModelsReducer';
+import {isSelectionChanged} from '../domain-models/domainModelsReducer';
 import {Meter} from './meter/meterModels';
 import {
   HasPageNumber,
@@ -130,7 +130,7 @@ const reducerFor = <T extends Identifiable>(
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> => {
 
-    if (selectionWasChanged(action.type)) {
+    if (isSelectionChanged(action.type)) {
       return {...initialPaginatedDomain<T>()};
     }
 

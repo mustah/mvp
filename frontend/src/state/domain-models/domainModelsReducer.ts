@@ -156,7 +156,7 @@ const reducerFor = <T extends Identifiable>(
 
 const identity = (state, action, endPoint) => state;
 
-export const selectionWasChanged = (actionType: string) => [
+export const isSelectionChanged = (actionType: string) => [
   SELECT_SAVED_SELECTION,
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -169,7 +169,7 @@ const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
-  if (selectionWasChanged(action.type)) {
+  if (isSelectionChanged(action.type)) {
     return {...initialDomain<T>()};
   }
   return state;
