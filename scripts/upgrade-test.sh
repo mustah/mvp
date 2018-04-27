@@ -6,7 +6,7 @@ TEST_HOST=localhost
 
 # Values in seconds
 MAX_WAIT_FOR_MVP_APPLICATION=60
-MAX_WAIT_FOR_AMQP_MESSAGES=30
+MAX_WAIT_FOR_AMQP_MESSAGES=60
 
 if [ ! -z "$3" ]; then
 	TEST_HOST=$3
