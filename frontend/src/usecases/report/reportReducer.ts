@@ -1,4 +1,4 @@
-import {selectionWasChanged} from '../../state/domain-models/domainModelsReducer';
+import {isSelectionChanged} from '../../state/domain-models/domainModelsReducer';
 import {Action, uuid} from '../../types/Types';
 import {SET_SELECTED_ENTRIES} from './reportActions';
 import {ReportState} from './reportModels';
@@ -10,7 +10,7 @@ export const initialState: ReportState = {
 type ActionTypes = Action<uuid[]> | Action<string>;
 
 export const report = (state: ReportState = initialState, action: ActionTypes): ReportState => {
-  if (selectionWasChanged(action.type)) {
+  if (isSelectionChanged(action.type)) {
     return {...initialState};
   }
 

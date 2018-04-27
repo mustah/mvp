@@ -1,7 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
-import {selectionWasChanged} from '../domain-models/domainModelsReducer';
+import {isSelectionChanged} from '../domain-models/domainModelsReducer';
 import {failureAction, requestAction, successAction} from './summaryApiActions';
 import {SelectionSummary, SummaryState} from './summaryModels';
 
@@ -17,7 +17,7 @@ type ActionTypes =
   | Action<ErrorResponse>;
 
 const resetReducer = (state: SummaryState, action: ActionTypes): SummaryState => {
-  if (selectionWasChanged(action.type)) {
+  if (isSelectionChanged(action.type)) {
     return {...initialState};
   }
   return state;
