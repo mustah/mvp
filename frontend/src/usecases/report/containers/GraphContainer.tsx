@@ -16,6 +16,7 @@ import {
 import {bindActionCreators} from 'redux';
 import {HasContent} from '../../../components/content/HasContent';
 import {DateRange, Period} from '../../../components/dates/dateModels';
+import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
@@ -32,6 +33,7 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
 import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
+import 'GraphContainer.scss';
 
 interface StateToProps {
   period: Period;
@@ -169,29 +171,31 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
             hasContent={data.length > 0}
             fallbackContent={missingData}
           >
-            <div>
-              <ResponsiveContainer width="90%" aspect={2.5}>
-                <LineChart
-                  width={10}
-                  height={50}
-                  data={data}
-                  margin={margin}
-                  onMouseMove={this.setTooltipPayload}
-                >
-                  <XAxis
-                    dataKey="name"
-                    domain={['dataMin', 'dataMax']}
-                    scale="time"
-                    tickFormatter={formatLabelTimeStamp}
-                    type="number"
-                  />
-                  <CartesianGrid strokeDasharray="3 3"/>
-                  <Tooltip content={this.renderToolTip}/>
-                  <Legend payload={legend}/>
-                  {lines}
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            <Row className="GraphContainer">
+              <Row className="Graph">
+                <ResponsiveContainer aspect={2.5}>
+                  <LineChart
+                    width={10}
+                    height={50}
+                    data={data}
+                    margin={margin}
+                    onMouseMove={this.setTooltipPayload}
+                  >
+                    <XAxis
+                      dataKey="name"
+                      domain={['dataMin', 'dataMax']}
+                      scale="time"
+                      tickFormatter={formatLabelTimeStamp}
+                      type="number"
+                    />
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <Tooltip content={this.renderToolTip}/>
+                    <Legend payload={legend}/>
+                    {lines}
+                  </LineChart>
+                </ResponsiveContainer>
+              </Row>
+            </Row>
           </HasContent>
         </Loader>
       </div>
