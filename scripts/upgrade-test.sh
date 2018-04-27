@@ -35,7 +35,8 @@ function check_application_startup () {
 
 function check_rabbitmq_startup () {
 	slept=0
-	while [[ "$(curl -u guest:guest -sL -w '%{http_code}' http://$TEST_HOST:15672/api/whoami -o /dev/null)" != "200" ]]; do
+	CMD="curl -u guest:guest -sL -w %{http_code}\\n http://$TEST_HOST:15672/api/aliveness-test/%2F -o /dev/null"
+	while [[ "$($CMD)" != "200" ]]; do
 		slept=$((slept+1))
 		echo -n "."
 		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
