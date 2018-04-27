@@ -1,7 +1,13 @@
 import * as moment from 'moment-timezone';
+import 'moment/locale/en-gb';
+import 'moment/locale/sv';
 import {DateRange, Period} from '../components/dates/dateModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
+
+/**
+ * We work with Date and Period, to not expose moment() to our application.
+ */
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
 const timezoneUtc = 'UTC';
@@ -10,10 +16,10 @@ const timezoneUtc = 'UTC';
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
   moment(input).tz(timezoneUtc);
 
+export const changeMomentLocale = (language: string) => moment.locale(language);
+
 /**
- * Calculate absolute start- and end dates based on an input date and a relative time period.
- *
- * We work with Date and Period, to not expose moment() to our application.
+ * Calculate absolute start- and end dates based on an input date and a relative time period.*
  */
 const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
   const zonedDate = momentWithTimeZone(now);

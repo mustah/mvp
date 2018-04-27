@@ -200,6 +200,12 @@ msgstr "show only changes"
 msgid "date"
 msgstr "date"
 
+msgid "start date"
+msgstr "start date"
+
+msgid "end date"
+msgstr "end date"
+
 msgid "no meters"
 msgstr "no meters"
 
