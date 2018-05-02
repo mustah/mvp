@@ -81,6 +81,16 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
       .hasMessageContaining("Mixing dimensions for meter quantity is not allowed");
   }
 
+  @Test
+  public void emptyUnitMeasurementIsDiscarded() {
+    MeteringMeasurementMessageDto measurementMessage = newMeasurementMessage(
+      singletonList(new ValueDto(LocalDateTime.now(), 1.0, "", "Volume"))
+    );
+
+    assertThatThrownBy(() -> measurementMessageConsumer.accept(measurementMessage)).isInstanceOf(
+      IllegalArgumentException.class);
+  }
+
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
