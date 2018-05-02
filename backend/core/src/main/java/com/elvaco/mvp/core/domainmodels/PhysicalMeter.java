@@ -49,7 +49,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     this.medium = medium;
     this.manufacturer = manufacturer;
     this.logicalMeterId = logicalMeterId;
-    measurements = new ArrayList<>();
+    this.measurements = new ArrayList<>();
     this.readIntervalMinutes = readIntervalMinutes;
     this.measurementCount = measurementCount;
     this.statuses = statuses;

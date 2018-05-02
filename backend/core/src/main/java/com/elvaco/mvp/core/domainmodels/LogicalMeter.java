@@ -53,7 +53,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     this.meterDefinition = meterDefinition;
     this.gateways = unmodifiableList(gateways);
     this.collectionPercentage = collectionPercentage;
-    this.readIntervalMinutes = this.activePhysicalMeter()
+    this.readIntervalMinutes = activePhysicalMeter()
       .map(pm -> pm.readIntervalMinutes)
       .orElse(null);
     this.measurements = measurements;
