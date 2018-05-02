@@ -22,6 +22,7 @@ dependencies {
   compile 'com.h2database:h2'
   compile 'org.postgresql:postgresql'
   compile 'commons-io:commons-io:2.6'
+  compile 'org.springframework.boot:spring-boot-starter-actuator'
 
   compileOnly 'org.projectlombok:lombok:1.16.20'
 
