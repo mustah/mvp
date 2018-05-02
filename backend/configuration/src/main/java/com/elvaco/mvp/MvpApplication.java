@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 
+import com.elvaco.mvp.configuration.config.WebSecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -34,16 +36,49 @@ import static java.util.Collections.singletonList;
 @SpringBootApplication(exclude = RepositoryRestMvcAutoConfiguration.class)
 public class MvpApplication extends WebMvcConfigurerAdapter {
 
+  private static final String SWAGGER_BASE_PATH = WebSecurityConfig.apiPath() + "/docs";
+
   public static void main(String[] args) {
     SpringApplication.run(MvpApplication.class, args);
   }
 
   @Override
   public void addResourceHandlers(ResourceHandlerRegistry registry) {
-    registry.addResourceHandler("/**")
+    registry.addResourceHandler("/**") //TODO: should this be "/" ?
       .addResourceLocations("classpath:/static/")
       .resourceChain(false)
       .addResolver(new PushStateResourceResolver());
+
+    registry.addResourceHandler(SWAGGER_BASE_PATH + "/**")
+      .addResourceLocations("classpath:/META-INF/resources/");
+
+    registry.addResourceHandler(SWAGGER_BASE_PATH + "/webjars/**")
+      .addResourceLocations("classpath:/META-INF/resources/webjars/");
+  }
+
+  @Override
+  public void addViewControllers(ViewControllerRegistry registry) {
+    registry.addRedirectViewController(SWAGGER_BASE_PATH + "/swagger", "/swagger");
+    registry.addRedirectViewController(
+      SWAGGER_BASE_PATH + "/swagger-resources/configuration/ui",
+      "/swagger-resources/configuration/ui"
+    );
+    registry.addRedirectViewController(
+      SWAGGER_BASE_PATH + "/swagger-resources/configuration/security",
+      "/swagger-resources/configuration/security"
+    );
+    registry.addRedirectViewController(
+      SWAGGER_BASE_PATH + "/swagger-resources",
+      "/swagger-resources"
+    );
+    registry.addRedirectViewController(
+      SWAGGER_BASE_PATH,
+      SWAGGER_BASE_PATH + "/swagger-ui.html"
+    );
+    registry.addRedirectViewController(
+      SWAGGER_BASE_PATH + "/",
+      SWAGGER_BASE_PATH + "/swagger-ui.html"
+    );
   }
 
   /**
@@ -98,6 +133,7 @@ public class MvpApplication extends WebMvcConfigurerAdapter {
   }
 
   private static class PushStateResourceResolver implements ResourceResolver {
+
     private final Resource index = new ClassPathResource("/static/index.html");
     private final List<String> handledExtensions = Arrays.asList(
       "html",
