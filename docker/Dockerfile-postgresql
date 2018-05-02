@@ -1,5 +1,4 @@
 FROM postgres:10
 ENV POSTGRES_USER mvp
 ENV POSTGRES_PASSWORD mvp
-RUN apt-get update -y
-RUN apt-get install -y postgresql-10-unit
+RUN apt-get update -y && apt-get install -y postgresql-10-unit

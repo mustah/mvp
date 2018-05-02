@@ -86,7 +86,7 @@ docker:postgresql:
     - shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f Dockerfile-postgresql .
+    - docker build -t $DOCKER_REGISTRY_URL/postgresql:latest -f docker/Dockerfile-postgresql .
     - docker push $DOCKER_REGISTRY_URL/postgresql:latest
 
 docker:test-upgrade:
@@ -96,7 +96,7 @@ docker:test-upgrade:
     - shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f Dockerfile-test-upgrade .
+    - docker build -t $DOCKER_REGISTRY_URL/test-upgrade:latest -f docker/Dockerfile-test-upgrade .
     - docker push $DOCKER_REGISTRY_URL/test-upgrade:latest
 
 docker:ci-utils:
@@ -106,7 +106,7 @@ docker:ci-utils:
     - shell
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
-    - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f Dockerfile-ci-utils .
+    - docker build -t $DOCKER_REGISTRY_URL/ci-utils:latest -f docker/Dockerfile-ci-utils .
     - docker push $DOCKER_REGISTRY_URL/ci-utils:latest
 
 prepare:version:
@@ -138,7 +138,7 @@ gradle:build:
       - .version
     expire_in: 1 week
 
-pre-test:docker:
+pre-test:docker-mvp-app:
   variables:
     DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/mvp:${CI_COMMIT_REF_SLUG}
   stage: pre-test
@@ -148,7 +148,21 @@ pre-test:docker:
     - gradle:build
     - prepare:version
   script:
-    - docker build --build-arg MVP_APPVER=$(cat .version) -t ${DOCKER_IMAGE_NAME} -f Dockerfile .
+    - docker build --build-arg MVP_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+    - docker push ${DOCKER_IMAGE_NAME}
+
+pre-test:docker-geoservice-app:
+  variables:
+    DOCKER_IMAGE_NAME: $DOCKER_REGISTRY_URL/geoservice:${CI_COMMIT_REF_SLUG}
+  stage: pre-test
+  tags:
+    - shell
+  dependencies:
+    - gradle:build
+    - prepare:version
+  script:
+    - docker build --build-arg GEOSERVICE_APPVER=$(cat ./.version) -t ${DOCKER_IMAGE_NAME} -f docker/Dockerfile-geoservice .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
     - docker push ${DOCKER_IMAGE_NAME}
 
@@ -315,7 +329,7 @@ post-prod:acceptance:
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
-finalize:tag-production-docker:
+finalize:tag-production-mvp-docker:
   <<: *no_cache
   dependencies:
     - deploy:production
@@ -331,3 +345,20 @@ finalize:tag-production-docker:
     - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG}
     - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
+
+finalize:tag-production-geoservice-docker:
+  <<: *no_cache
+  dependencies:
+    - deploy:production
+  stage: finalize
+  tags:
+    - shell
+  only:
+    - schedules
+    - tags
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  script:
+    - docker pull ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG}
+    - docker tag ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/geoservice:production
+    - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
