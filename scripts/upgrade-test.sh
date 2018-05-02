@@ -18,19 +18,21 @@ echo "Test Host   : $TEST_HOST"
 echo ""
 
 function check_application_startup () {
+	APPLICATION=$1
 	slept=0
-	while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_application_1)" != 'exited' ]]; do
+	while [[ "$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)" = 'starting' &&  "$(docker inspect --format='{{.State.Status}}' mvp_${APPLICATION}_1)" != 'exited' ]]; do
 		slept=$((slept+1))
 		echo -n "."
 		if [ $slept -gt $MAX_WAIT_FOR_MVP_APPLICATION ]; then
 			echo ""
+			docker-compose logs ${APPLICATION}
 			echo ":: Bailing out after $MAX_WAIT_FOR_MVP_APPLICATION seconds.."
 			exit 1
 		fi
 		sleep 1
 	done
-	docker-compose logs application
-	test "$(docker inspect --format='{{.State.Health.Status}}' mvp_application_1)" = 'healthy' || exit 1
+	docker-compose logs ${APPLICATION}
+	test "$(docker inspect --format='{{.State.Health.Status}}' mvp_${APPLICATION}_1)" = 'healthy' || exit 1
 }
 
 function check_rabbitmq_startup () {
@@ -67,9 +69,12 @@ function send_amqp_message () {
 }
 
 # === Main application ===
-MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d postgresql rabbitmq application
+MVP_TAG=$MVP_UPGRADE_FROM_TAG docker-compose up -d rabbitmq application geoservice
+echo -n ":: Waiting for GEOSERVICE application to start up"
+check_application_startup geoservice
+
 echo -n ":: Waiting for MVP application to start up"
-check_application_startup
+check_application_startup application
 
 echo -n ":: Waiting for RabbitMQ application to start up"
 check_rabbitmq_startup
@@ -89,6 +94,13 @@ docker-compose stop application
 
 MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d application
 echo -n ":: Waiting for new instance of MVP application to start up"
-check_application_startup
+check_application_startup application
+
+echo ":: Stopping old GEOSERVICE application"
+docker-compose stop geoservice
+
+MVP_TAG=$MVP_UPGRADE_TO_TAG docker-compose up -d geoservice
+echo -n ":: Waiting for new instance of GEOSERVICE application to start up"
+check_application_startup geoservice
 
 echo ":: Upgrade successfully completed!"

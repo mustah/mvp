@@ -8,6 +8,14 @@ services:
       - "8080:80"
     links:
       - postgresql
+  geoservice:
+    image: "gitlab.elvaco.se:4567/elvaco/mvp/geoservice:${MVP_TAG:-production}"
+    environment:
+      GEOSERVICE_OPTS: -Dspring.profiles.active=postgresql -Dliquibase.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dspring.datasource.url=jdbc:postgresql://geoservice-db:5432/geoservice -Dliquibase.user=geoservice -Dliquibase.password=geoservice
+    ports:
+      - "8081:8081"
+    links:
+      - geoservice-db
   postgresql:
     image: gitlab.elvaco.se:4567/elvaco/mvp/postgresql:latest
     environment:
@@ -21,7 +29,7 @@ services:
       POSTGRES_USER: geoservice
       POSTGRES_PASSWORD: geoservice
     ports:
-      - "${DOCKER_GEOSERVICE_DB_PORT:-5432:5432}"
+      - "${DOCKER_GEOSERVICE_DB_PORT:-5433:5432}"
   rabbitmq:
     image: rabbitmq:management
     ports:

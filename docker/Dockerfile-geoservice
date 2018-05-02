@@ -4,5 +4,5 @@ RUN apt-get -y update && apt-get -y install curl
 ARG GEOSERVICE_APPVER
 COPY ./backend/geoservice/build/distributions/geoservice-$GEOSERVICE_APPVER.tar /app/geoservice.tar
 RUN cd /app/ && tar -m -xf geoservice.tar --strip-components=1
-HEALTHCHECK CMD curl -v --fail http://localhost:80/ || exit 1
+HEALTHCHECK CMD curl -v --fail http://localhost:8081/health || exit 1
 CMD ["/app/bin/geoservice"]
