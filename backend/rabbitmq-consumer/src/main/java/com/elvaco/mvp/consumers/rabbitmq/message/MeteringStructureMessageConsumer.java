@@ -78,7 +78,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
       ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id)
-      .withReadInterval(structureMessage.meter.expectedInterval)
+      .withReadIntervalMinutes(structureMessage.meter.expectedInterval)
       .replaceActiveStatus(StatusType.from(structureMessage.meter.status));
 
     Gateway gateway = findOrCreateGateway(

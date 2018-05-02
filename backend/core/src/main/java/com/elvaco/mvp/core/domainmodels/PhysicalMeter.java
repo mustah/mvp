@@ -112,7 +112,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     );
   }
 
-  public PhysicalMeter withReadInterval(int readIntervalMinutes) {
+  public PhysicalMeter withReadIntervalMinutes(int readIntervalMinutes) {
     return new PhysicalMeter(
       id,
       organisation,
