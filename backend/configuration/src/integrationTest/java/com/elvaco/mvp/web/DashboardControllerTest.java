@@ -147,9 +147,9 @@ public class DashboardControllerTest extends IntegrationTest {
         new PhysicalMeterStatusLogEntity(
           null,
           physicalMeterEntity.id,
+          statusEntity,
           startDate,
-          null,
-          statusEntity
+          null
         )).collect(
         toList());
 

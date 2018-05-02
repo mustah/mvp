@@ -194,8 +194,9 @@ public class LogicalMeter implements Identifiable<UUID> {
   }
 
   public LogicalMeter withPhysicalMeter(PhysicalMeter physicalMeter) {
-    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(singletonList(physicalMeter));
-    newPhysicalMeters.addAll(physicalMeters);
+    List<PhysicalMeter> newPhysicalMeters = new ArrayList<>(physicalMeters);
+    newPhysicalMeters.removeIf(physicalMeter1 -> physicalMeter1.id.equals(physicalMeter.id));
+    newPhysicalMeters.add(physicalMeter);
 
     return new LogicalMeter(
       id,
