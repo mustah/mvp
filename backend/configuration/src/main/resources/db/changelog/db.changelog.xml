@@ -21,6 +21,7 @@
     <include file="xml/disallow_duplicate_measurement_values.xml" relativeToChangelogFile="true"/>
     <include file="xml/disallow_mixed_measurement_dimensions_in_series.xml" relativeToChangelogFile="true"/>
     <include file="xml/migrate_flow_to_forward_temperature_measurements.xml" relativeToChangelogFile="true"/>
+    <include file="xml/delete_empty_unit_measurements.xml" relativeToChangelogFile="true"/>
     <changeSet id="Grant mvp db user privileges" author="Daniel Svensson" runAlways="true">
         <validCheckSum>7:122fd1cfa95d7f3cc65e81a6e64263e2</validCheckSum>
         <sqlFile path="sql/postgresql/db_privileges.sql"
