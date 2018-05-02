@@ -1,0 +1,80 @@
+{
+  "message_type": "Elvaco MVP MQ Measurement Message 1.0",
+  "organisation_id": "Elvaco AB",
+  "source_system_id": "Elvaco Metering",
+  "jobId": "",
+  "facility": {
+    "id": "43108"
+  },
+  "gateway": {
+    "id": "12001058"
+  },
+  "meter": {
+    "id": "28253"
+  },
+  "values": [
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 98.721,
+      "unit": "MWh",
+      "quantity": "Energy",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 3089.2,
+      "unit": "m^3",
+      "quantity": "Volume",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 4.2,
+      "unit": "kW",
+      "quantity": "Power",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 0.135,
+      "unit": "m^3/h",
+      "quantity": "Volume flow",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 82,
+      "unit": "Celsius",
+      "quantity": "Flow temp.",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 55,
+      "unit": "Celsius",
+      "quantity": "Return temp.",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 27.1,
+      "unit": "Kelvin",
+      "quantity": "Difference temp.",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 99,
+      "unit": "m3",
+      "quantity": "Volume",
+      "status": "OK"
+    },
+    {
+      "timestamp": "2018-03-28T00:00:00",
+      "value": 16,
+      "unit": "m3/h",
+      "quantity": "Volume Flow",
+      "status": "OK"
+    }
+  ]
+}

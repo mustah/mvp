@@ -6,10 +6,12 @@ import java.util.stream.Stream;
 
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.DISTRICT_COOLING_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.DISTRICT_HEATING_METER_TYPE;
+import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.GAS_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.HOT_WATER_METER_TYPE;
 import static com.elvaco.mvp.core.domainmodels.MeterDefinitionType.UNKNOWN_METER_TYPE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableSet;
 
 public enum Medium {
@@ -47,6 +49,13 @@ public enum Medium {
     protected Set<Quantity> quantities() {
       return emptySet();
     }
+  },
+
+  GAS("Gas", GAS_METER_TYPE) {
+    @Override
+    protected Set<Quantity> quantities() {
+      return GAS_QUANTITIES;
+    }
   };
 
   private static final Set<Quantity> DISTRICT_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
@@ -58,6 +67,8 @@ public enum Medium {
     Quantity.RETURN_TEMPERATURE,
     Quantity.DIFFERENCE_TEMPERATURE
   )));
+
+  private static final Set<Quantity> GAS_QUANTITIES = singleton(Quantity.VOLUME);
 
   private static final Set<Quantity> HEAT_WATER_QUANTITIES = unmodifiableSet(new HashSet<>(asList(
     Quantity.VOLUME,
@@ -73,12 +84,12 @@ public enum Medium {
     this.meterDefinitionType = meterDefinitionType;
   }
 
-  protected abstract Set<Quantity> quantities();
-
   public static Medium from(String medium) {
     return Stream.of(values())
       .filter(m -> m.medium.equalsIgnoreCase(medium))
       .findFirst()
       .orElse(UNKNOWN_MEDIUM);
   }
+
+  protected abstract Set<Quantity> quantities();
 }

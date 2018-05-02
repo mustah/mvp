@@ -18,31 +18,8 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
-  public void meteringStructureMessageIsParsedCorrectly() {
-    String jsonMessage =
-      "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
-      + "  \"facility\": {\n"
-      + "    \"id\": \"ABC-123\",\n"
-      + "    \"country\": \"Sweden\",\n"
-      + "    \"city\": \"Perstorp\",\n"
-      + "    \"address\": \"Duvstigen 8C\"\n"
-      + "  },\n"
-      + "  \"gateway\": {\n"
-      + "    \"id\": \"12031925\",\n"
-      + "    \"product_model\": \"CMi2110\",\n"
-      + "    \"status\": \"OK\"\n"
-      + "  },\n"
-      + "  \"meter\": {\n"
-      + "    \"id\": \"1\",\n"
-      + "    \"medium\": \"Heat, Return temp\",\n"
-      + "    \"manufacturer\": \"ELV\",\n"
-      + "    \"status\": \"OK\",\n"
-      + "    \"expected_interval\": 15\n"
-      + "  },\n"
-      + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-      + "  \"source_system_id\": \"The Source System\"\n"
-      + "}\n";
+  public void meteringStructureHeatMeterMessageIsParsedCorrectly() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-heat-meter.json");
 
     MeteringStructureMessageDto parsedMessage =
       messageParser.parseStructureMessage(jsonMessage).orElse(null);
@@ -65,30 +42,37 @@ public class MeteringStructureMessageParserTest {
   }
 
   @Test
+  public void meteringStructureGasMeterMessageIsParsedCorrectly() {
+    String jsonMessage = parseJsonFile("messages/reference-info-valid-gas-meter.json");
+
+    MeteringStructureMessageDto parsedMessage =
+      messageParser.parseStructureMessage(jsonMessage).orElse(null);
+
+    assertThat(parsedMessage).isNotNull();
+    assertThat(parsedMessage.messageType).isEqualTo(MessageType.METERING_METER_STRUCTURE_V_1_0);
+    assertThat(parsedMessage.facility.id).isEqualTo("ABC-121");
+    assertThat(parsedMessage.facility.country).isEqualTo("Sweden");
+    assertThat(parsedMessage.facility.city).isEqualTo("Älmhult");
+    assertThat(parsedMessage.facility.address).isEqualTo("I lived here");
+    assertThat(parsedMessage.gateway).isNotNull();
+    assertThat(parsedMessage.gateway.id).isEqualTo("12031928");
+    assertThat(parsedMessage.gateway.productModel).isEqualTo("CMi2110");
+    assertThat(parsedMessage.meter.id).isEqualTo("3");
+    assertThat(parsedMessage.meter.medium).isEqualTo("Gas");
+    assertThat(parsedMessage.meter.manufacturer).isEqualTo("ELV");
+    assertThat(parsedMessage.meter.expectedInterval).isEqualTo(15);
+    assertThat(parsedMessage.organisationId).isEqualTo("Bromölla bikers");
+    assertThat(parsedMessage.sourceSystemId).isEqualTo("The flipside");
+  }
+
+  @Test
   public void parseMalformedStructureMessage() {
     assertThat(messageParser.parseStructureMessage("")).isEmpty();
     assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
-    String jsonMessageMissingGateway =
-      "{\n"
-      + "  \"message_type\": \"Elvaco MVP MQ Reference Info Message 1.0\",\n"
-      + "  \"facility\": {\n"
-      + "    \"id\": \"ABC-123\",\n"
-      + "    \"country\": \"Sweden\",\n"
-      + "    \"city\": \"Perstorp\",\n"
-      + "    \"address\": \"Duvstigen 8C\"\n"
-      + "  },\n"
-      + "  \"meter\": {\n"
-      + "    \"id\": \"1\",\n"
-      + "    \"medium\": \"Heat, Return temp\",\n"
-      + "    \"manufacturer\": \"ELV\",\n"
-      + "    \"status\": \"OK\",\n"
-      + "    \"expected_interval\": 15\n"
-      + "  },\n"
-      + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
-      + "  \"source_system_id\": \"The Source System\"\n"
-      + "}\n";
-    assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
+
+    String missingGateway = parseJsonFile("messages/reference-info-missing-gateway.json");
+    assertThat(messageParser.parseStructureMessage(missingGateway)).isEmpty();
   }
 
   @Test

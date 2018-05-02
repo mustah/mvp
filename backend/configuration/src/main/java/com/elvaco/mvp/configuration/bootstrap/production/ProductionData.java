@@ -35,7 +35,8 @@ public class ProductionData implements ProductionDataProvider {
       MeterDefinition.UNKNOWN_METER,
       MeterDefinition.HOT_WATER_METER,
       MeterDefinition.DISTRICT_HEATING_METER,
-      MeterDefinition.DISTRICT_COOLING_METER
+      MeterDefinition.DISTRICT_COOLING_METER,
+      MeterDefinition.GAS_METER
     ));
   }
 

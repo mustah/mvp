@@ -1,0 +1,23 @@
+{
+  "message_type": "Elvaco MVP MQ Reference Info Message 1.0",
+  "facility": {
+    "id": "ABC-121",
+    "country": "Sweden",
+    "city": "Älmhult",
+    "address": "I lived here"
+  },
+  "gateway": {
+    "id": "12031928",
+    "product_model": "CMi2110",
+    "status": "OK"
+  },
+  "meter": {
+    "id": "3",
+    "medium": "Gas",
+    "manufacturer": "ELV",
+    "status": "OK",
+    "expected_interval": 15
+  },
+  "organisation_id": "Bromölla bikers",
+  "source_system_id": "The flipside"
+}

@@ -8,8 +8,10 @@ import java.util.Map;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+
 import lombok.experimental.UtilityClass;
 
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
@@ -22,17 +24,25 @@ class MeteringMessageMapper {
   private static final List<String> DISTRICT_HEATING_METER_QUANTITIES =
     unmodifiableList(new ArrayList<>(mapMeterQuantities().keySet()));
 
+  private static final List<String> GAS_METER_QUANTITIES = singletonList("Volume");
+
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = mapMeterQuantities();
 
   static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
-    boolean isDistrictHeatingMeter = values
+    List<String> quantities = values
       .stream()
       .map(valueDto -> valueDto.quantity)
-      .collect(toList())
-      .containsAll(DISTRICT_HEATING_METER_QUANTITIES);
-    return isDistrictHeatingMeter
-      ? MeterDefinition.DISTRICT_HEATING_METER
-      : MeterDefinition.UNKNOWN_METER;
+      .collect(toList());
+
+    if (quantities.containsAll(DISTRICT_HEATING_METER_QUANTITIES)) {
+      return MeterDefinition.DISTRICT_HEATING_METER;
+    }
+
+    if (quantities.containsAll(GAS_METER_QUANTITIES)) {
+      return MeterDefinition.GAS_METER;
+    }
+
+    return MeterDefinition.UNKNOWN_METER;
   }
 
   static String mappedQuantityName(String quantity) {
