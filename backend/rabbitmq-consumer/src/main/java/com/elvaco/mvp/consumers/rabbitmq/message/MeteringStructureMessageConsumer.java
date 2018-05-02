@@ -92,8 +92,6 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
 
     logicalMeterUseCases.save(meter);
 
-    physicalMeterUseCases.save(physicalMeter);
-
     geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
   }
 

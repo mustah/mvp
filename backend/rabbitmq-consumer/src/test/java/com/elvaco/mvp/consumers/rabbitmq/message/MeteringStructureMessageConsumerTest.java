@@ -35,7 +35,7 @@ import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.geocode.MockGeocodeService;
 import com.elvaco.mvp.testing.repository.MockGateways;
-import com.elvaco.mvp.testing.repository.MockLogicalMeters;
+import com.elvaco.mvp.testing.repository.MockLogicalMetersWithCascading;
 import com.elvaco.mvp.testing.repository.MockMeasurements;
 import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
@@ -98,7 +98,7 @@ public class MeteringStructureMessageConsumerTest {
     );
     physicalMeters = new MockPhysicalMeters();
     organisations = new MockOrganisations();
-    logicalMeters = new MockLogicalMeters();
+    logicalMeters = new MockLogicalMetersWithCascading(physicalMeters);
     gateways = new MockGateways();
     geocodeService = new MockGeocodeService();
 
