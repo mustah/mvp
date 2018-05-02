@@ -20,6 +20,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.security.OrganisationPermissions;
@@ -231,7 +232,10 @@ public class MeteringMeasurementMessageConsumerTest {
     Organisation organisation = saveDefaultOrganisation();
 
     PhysicalMeter expectedPhysicalMeter = physicalMeters.save(
-      newPhysicalMeter(organisation, "Electricity")
+      physicalMeter()
+        .organisation(organisation)
+        .medium("Electricity")
+        .build()
     );
 
     messageConsumer.accept(measurementMessageWithUnit("kWh"));
@@ -285,15 +289,16 @@ public class MeteringMeasurementMessageConsumerTest {
       QUANTITY,
       1.0,
       "kWh",
-      new PhysicalMeter(
-        physicalMeter.id,
-        organisation,
-        ADDRESS,
-        EXTERNAL_ID,
-        "Unknown medium",
-        "UNKNOWN",
-        0
-      ).withLogicalMeterId(logicalMeter.id)
+      PhysicalMeter.builder()
+        .id(physicalMeter.id)
+        .organisation(organisation)
+        .address(ADDRESS)
+        .externalId(EXTERNAL_ID)
+        .medium("Unknown medium")
+        .manufacturer("UNKNOWN")
+        .logicalMeterId(logicalMeter.id)
+        .readIntervalMinutes(0)
+        .build()
     ));
   }
 
@@ -422,7 +427,7 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueForExistingEntities_CreateNoNewEntities() {
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(newGateway(organisation.id));
-    physicalMeters.save(newPhysicalMeter(organisation, "Hot water"));
+    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
     logicalMeters.save(
       new LogicalMeter(
         randomUUID(),
@@ -441,21 +446,6 @@ public class MeteringMeasurementMessageConsumerTest {
 
   private Organisation saveDefaultOrganisation() {
     return organisations.save(newOrganisation());
-  }
-
-  private PhysicalMeter newPhysicalMeter(
-    Organisation organisation,
-    String defaultMedium
-  ) {
-    return new PhysicalMeter(
-      randomUUID(),
-      ADDRESS,
-      EXTERNAL_ID,
-      defaultMedium,
-      "ELV",
-      organisation,
-      15
-    );
   }
 
   private MeteringMeasurementMessageDto newMeasurementMessage(double value) {
@@ -511,5 +501,13 @@ public class MeteringMeasurementMessageConsumerTest {
 
   private Organisation newOrganisation() {
     return new Organisation(randomUUID(), "", ORGANISATION_SLUG);
+  }
+
+  private static PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .address(ADDRESS)
+      .externalId(EXTERNAL_ID)
+      .manufacturer("ELV")
+      .readIntervalMinutes(15);
   }
 }

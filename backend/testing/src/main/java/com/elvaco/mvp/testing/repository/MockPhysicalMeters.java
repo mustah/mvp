@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 
 public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
@@ -23,7 +24,8 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
       entity.manufacturer,
       entity.logicalMeterId,
       entity.readIntervalMinutes,
-      entity.measurementCount
+      entity.measurementCount,
+      emptyList()
     );
   }
 
@@ -34,7 +36,7 @@ public class MockPhysicalMeters extends MockRepository<UUID, PhysicalMeter>
 
   @Override
   public List<PhysicalMeter> findByMedium(String medium) {
-    return null;
+    return emptyList();
   }
 
   @Override

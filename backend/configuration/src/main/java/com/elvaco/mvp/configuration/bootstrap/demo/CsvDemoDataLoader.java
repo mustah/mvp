@@ -83,19 +83,13 @@ class CsvDemoDataLoader implements CommandLineRunner {
     Map<String, Location> locationMap,
     MeterDefinition meterDefinition
   ) throws IOException {
-    AtomicInteger physicalMetersToSaveMeasurementDataFor = new AtomicInteger(0);
+    AtomicInteger counter = new AtomicInteger(0);
 
     CsvParser.separator(';')
       .mapWith(csvMapper(MeterData.class))
       .stream(getFile(filePath), stream ->
         stream
           .map(csvData -> {
-            Gateway gateway = new Gateway(
-              randomUUID(),
-              ELVACO.id,
-              csvData.gatewayId,
-              csvData.gatewayProductModel
-            );
             LogicalMeter logicalMeter = new LogicalMeter(
               randomUUID(),
               csvData.facilityId,
@@ -106,35 +100,28 @@ class CsvDemoDataLoader implements CommandLineRunner {
               meterDefinition,
               emptyList()
             );
-            PhysicalMeter physicalMeter = new PhysicalMeter(
+            PhysicalMeter physicalMeter = PhysicalMeter.builder()
+              .address(csvData.meterId)
+              .externalId(csvData.facilityId)
+              .medium(csvData.medium)
+              .manufacturer(csvData.meterManufacturer)
+              .organisation(ELVACO)
+              .readIntervalMinutes(counter.incrementAndGet() > 10 ? 1440 : 60)
+              .build();
+            Gateway gateway = new Gateway(
               randomUUID(),
-              csvData.meterId,
-              csvData.facilityId,
-              csvData.medium,
-              csvData.meterManufacturer,
-              ELVACO,
-              physicalMetersToSaveMeasurementDataFor.incrementAndGet() > 10 ? 1440 : 60
-            );
+              ELVACO.id,
+              csvData.gatewayId,
+              csvData.gatewayProductModel
 
+            );
             return new Parameters(logicalMeter, physicalMeter, gateway);
           })
       )
       .forEach(p -> {
         Gateway gateway = gateways.save(p.gateway);
         LogicalMeter logicalMeter = logicalMeters.save(p.logicalMeter.withGateway(gateway));
-        PhysicalMeter physicalMeter = p.physicalMeter;
-        physicalMeters.save(
-          new PhysicalMeter(
-            physicalMeter.id,
-            physicalMeter.organisation,
-            physicalMeter.address,
-            physicalMeter.externalId,
-            physicalMeter.medium,
-            physicalMeter.manufacturer,
-            logicalMeter.id,
-            physicalMeter.readIntervalMinutes,
-            null
-          ));
+        physicalMeters.save(p.physicalMeter.withLogicalMeterId(logicalMeter.id));
       });
   }
 

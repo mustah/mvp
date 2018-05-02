@@ -15,6 +15,7 @@ import org.junit.Test;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MeasurementMapperTest {
@@ -33,7 +34,7 @@ public class MeasurementMapperTest {
 
   @Test
   public void oneMeasurementMappedToSeries() {
-    UUID physicalMeterId = UUID.randomUUID();
+    UUID physicalMeterId = randomUUID();
     Measurement measurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
 
     List<MeasurementSeriesDto> expected = singletonList(
@@ -54,7 +55,7 @@ public class MeasurementMapperTest {
 
   @Test
   public void twoMeasurementsMappedToSameSeries() {
-    UUID physicalMeterId = UUID.randomUUID();
+    UUID physicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
 
@@ -78,7 +79,7 @@ public class MeasurementMapperTest {
 
   @Test
   public void twoSeriesFromSameMeter() {
-    UUID physicalMeterId = UUID.randomUUID();
+    UUID physicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondMeasurement = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
 
@@ -109,8 +110,8 @@ public class MeasurementMapperTest {
 
   @Test
   public void sameQuantityDifferentMeters() {
-    UUID firstPhysicalMeterId = UUID.randomUUID();
-    UUID secondPhysicalMeterId = UUID.randomUUID();
+    UUID firstPhysicalMeterId = randomUUID();
+    UUID secondPhysicalMeterId = randomUUID();
     Measurement firstMeasurement = newMeasurement(
       firstPhysicalMeterId,
       new Quantity("Cheese", "pcs")
@@ -146,7 +147,7 @@ public class MeasurementMapperTest {
 
   @Test
   public void differentlySizedSeries() {
-    UUID physicalMeterId = UUID.randomUUID();
+    UUID physicalMeterId = randomUUID();
     Measurement firstCheese = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement secondCheese = newMeasurement(physicalMeterId, new Quantity("Cheese", "pcs"));
     Measurement firstMilk = newMeasurement(physicalMeterId, new Quantity("Milk", "l"));
@@ -184,23 +185,19 @@ public class MeasurementMapperTest {
     return new Measurement(
       quantity,
       3.0,
-      newPhysicalMeter(physicalMeterId)
-    );
-  }
-
-  private PhysicalMeter newPhysicalMeter(UUID physicalMeterId) {
-    return new PhysicalMeter(
-      physicalMeterId,
-      new Organisation(
-        UUID.randomUUID(),
-        "An organisation",
-        "an-organisation"
-      ),
-      "1234",
-      physicalMeterId.toString(),
-      "a medium",
-      "a manufacturer",
-      0
+      PhysicalMeter.builder()
+        .id(physicalMeterId)
+        .organisation(new Organisation(
+          randomUUID(),
+          "An organisation",
+          "an-organisation"
+        ))
+        .externalId(physicalMeterId.toString())
+        .address("1234")
+        .medium("Heat")
+        .manufacturer("ELV")
+        .readIntervalMinutes(15)
+        .build()
     );
   }
 }

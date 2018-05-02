@@ -18,6 +18,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -303,10 +304,12 @@ public class MeteringStructureMessageConsumerTest {
     );
     ZonedDateTime now = ZonedDateTime.now();
     UUID logicalMeterId = randomUUID();
-    PhysicalMeter existingPhysicalMeter = physicalMeters.save(newPhysicalMeter(
-      organisation,
-      HOT_WATER_MEDIUM
-    ).withLogicalMeterId(logicalMeterId));
+    PhysicalMeter existingPhysicalMeter = physicalMeters.save(
+      physicalMeter()
+        .organisation(organisation)
+        .logicalMeterId(logicalMeterId)
+        .build()
+    );
 
     logicalMeters.save(new LogicalMeter(
       logicalMeterId,
@@ -333,7 +336,7 @@ public class MeteringStructureMessageConsumerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
-    physicalMeters.save(newPhysicalMeter(organisation, HOT_WATER_MEDIUM));
+    physicalMeters.save(physicalMeter().organisation(organisation).build());
 
     messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
 
@@ -456,19 +459,13 @@ public class MeteringStructureMessageConsumerTest {
     return organisations.save(newOrganisation(ORGANISATION_SLUG));
   }
 
-  private PhysicalMeter newPhysicalMeter(
-    Organisation organisation,
-    String defaultMedium
-  ) {
-    return new PhysicalMeter(
-      randomUUID(),
-      ADDRESS,
-      EXTERNAL_ID,
-      defaultMedium,
-      MANUFACTURER,
-      organisation,
-      EXPECTED_INTERVAL
-    );
+  private static PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .address(ADDRESS)
+      .externalId(EXTERNAL_ID)
+      .medium(HOT_WATER_MEDIUM)
+      .manufacturer(MANUFACTURER)
+      .readIntervalMinutes(EXPECTED_INTERVAL);
   }
 
   private LogicalMeter findLogicalMeter() {

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -130,18 +131,16 @@ public class LogicalMeterTest {
     UUID logicalMeterId,
     String manufacturer
   ) {
-    return new PhysicalMeter(
-      randomUUID(),
-      new Organisation(organisationId, "an-organisation", "an-organisation"),
-      "12341234",
-      "an-external-id",
-      "Hot water",
-      manufacturer,
-      logicalMeterId,
-      0L,
-      0L,
-      Collections.emptyList()
-    );
+    return PhysicalMeter.builder()
+      .logicalMeterId(logicalMeterId)
+      .organisation(new Organisation(organisationId, "an-organisation", "an-organisation"))
+      .address("12341234")
+      .externalId("an-external-id")
+      .medium("Hot water")
+      .manufacturer(manufacturer)
+      .measurementCount(0L)
+      .statuses(emptyList())
+      .build();
   }
 
   private LogicalMeter newLogicalMeter(

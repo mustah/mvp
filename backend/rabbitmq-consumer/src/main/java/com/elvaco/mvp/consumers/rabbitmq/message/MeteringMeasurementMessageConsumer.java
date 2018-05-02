@@ -88,17 +88,15 @@ public class MeteringMeasurementMessageConsumer implements MeasurementMessageCon
       ).orElseGet(() -> {
         responseBuilder.setFacilityId(facilityId);
         responseBuilder.setMeterExternalId(measurementMessage.meter.id);
-        return new PhysicalMeter(
-          randomUUID(),
-          organisation,
-          measurementMessage.meter.id,
-          facilityId,
-          UNKNOWN_MEDIUM.medium,
-          "UNKNOWN",
-          logicalMeter.id,
-          0L,
-          null
-        );
+        return PhysicalMeter.builder()
+          .organisation(organisation)
+          .address(measurementMessage.meter.id)
+          .externalId(facilityId)
+          .medium(UNKNOWN_MEDIUM.medium)
+          .manufacturer("UNKNOWN")
+          .logicalMeterId(logicalMeter.id)
+          .readIntervalMinutes(0)
+          .build();
       });
 
     Optional<Gateway> optionalGateway = Optional.empty();

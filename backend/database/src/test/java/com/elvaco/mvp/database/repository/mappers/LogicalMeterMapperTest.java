@@ -37,15 +37,14 @@ public class LogicalMeterMapperTest {
       randomUUID(),
       MeterDefinition.DISTRICT_HEATING_METER,
       UNKNOWN_LOCATION,
-      singletonList(new PhysicalMeter(
-        randomUUID(),
-        "1234",
-        "an-external-ID",
-        "My medium",
-        "ELV",
-        ELVACO,
-        15
-      ))
+      singletonList(PhysicalMeter.builder()
+        .organisation(ELVACO)
+        .address("1234")
+        .externalId("an-external-ID")
+        .medium("My medium")
+        .manufacturer("ELV")
+        .readIntervalMinutes(15)
+        .build())
     );
 
     LogicalMeterEntity logicalMeterEntity = LogicalMeterMapper.toEntity(logicalMeter);
