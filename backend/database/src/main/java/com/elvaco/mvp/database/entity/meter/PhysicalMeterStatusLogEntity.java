@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.EntityType;
@@ -23,7 +24,9 @@ import lombok.ToString;
 @ToString
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "physical_meter_status_log")
+@Table(name = "physical_meter_status_log",
+  uniqueConstraints = @UniqueConstraint(columnNames = {"physicalMeterId", "start", "status"})
+)
 public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -365050103321687201L;
@@ -56,20 +59,6 @@ public class PhysicalMeterStatusLogEntity extends EntityType<Long> {
     this.status = status;
     this.start = start;
     this.stop = stop;
-  }
-
-  public PhysicalMeterStatusLogEntity(
-    Long id,
-    UUID physicalMeterId,
-    ZonedDateTime start,
-    @Nullable ZonedDateTime stop,
-    StatusType status
-  ) {
-    this.id = id;
-    this.physicalMeterId = physicalMeterId;
-    this.start = start;
-    this.stop = stop;
-    this.status = status;
   }
 
   @Override

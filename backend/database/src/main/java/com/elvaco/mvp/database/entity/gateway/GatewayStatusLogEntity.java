@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.entity.EntityType;
@@ -23,7 +24,9 @@ import lombok.ToString;
 @ToString
 @Entity
 @Access(AccessType.FIELD)
-@Table(name = "gateway_status_log")
+@Table(name = "gateway_status_log",
+  uniqueConstraints = @UniqueConstraint(columnNames = {"gatewayId", "start", "status"})
+)
 public class GatewayStatusLogEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -365050443321687201L;

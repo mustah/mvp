@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="Disallow duplicate status logs" author="Anton Löfgren">
+        <sqlFile path="../sql/postgresql/delete_duplicate_status_logs.sql"
+                 relativeToChangelogFile="true"
+                 encoding="utf8"
+                 dbms="postgresql"
+                 splitStatements="false"
+                 stripComments="true"
+        />
+        <addUniqueConstraint tableName="physical_meter_status_log"
+                             columnNames="physical_meter_id, start, status"
+                             schemaName="public"
+        />
+        <addUniqueConstraint tableName="gateway_status_log"
+                             columnNames="gateway_id, start, status"
+                             schemaName="public"
+        />
+    </changeSet>
+</databaseChangeLog>
