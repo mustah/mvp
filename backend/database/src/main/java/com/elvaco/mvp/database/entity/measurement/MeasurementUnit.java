@@ -20,6 +20,9 @@ public class MeasurementUnit implements Serializable {
   public MeasurementUnit() {}
 
   public MeasurementUnit(String unit, double value) {
+    if (unit.trim().isEmpty()) {
+      throw new IllegalArgumentException(String.format("Empty unit for value '%f'", value));
+    }
     this.unit = superscriptExponent(unit);
     this.value = value;
   }
@@ -27,7 +30,7 @@ public class MeasurementUnit implements Serializable {
   public static MeasurementUnit from(String valueUnit) {
     int i = valueUnit.lastIndexOf(' ');
     if (i < 0) {
-      throw new IllegalArgumentException(valueUnit);
+      throw new IllegalArgumentException(String.format("Missing unit in '%s'", valueUnit));
     }
     String[] parts = {valueUnit.substring(0, i), valueUnit.substring(i + 1)};
     double value;

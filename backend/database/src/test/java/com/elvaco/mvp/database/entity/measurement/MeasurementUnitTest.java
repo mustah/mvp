@@ -3,6 +3,7 @@ package com.elvaco.mvp.database.entity.measurement;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MeasurementUnitTest {
 
@@ -32,5 +33,19 @@ public class MeasurementUnitTest {
   public void doesntSuperscriptNonExponent() {
     assertThat(new MeasurementUnit("^.^", 1.0).toString()).isEqualTo("1 ^.^");
     assertThat(new MeasurementUnit("^tak", 1.0).toString()).isEqualTo("1 ^tak");
+  }
+
+  @Test
+  public void fromEmptyUnit() {
+    assertThatThrownBy(() -> MeasurementUnit.from("1"))
+      .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> MeasurementUnit.from("1 "))
+      .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> MeasurementUnit.from("1.0"))
+      .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> MeasurementUnit.from("1.0 "))
+      .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> MeasurementUnit.from(" 1.0 "))
+      .isInstanceOf(IllegalArgumentException.class);
   }
 }
