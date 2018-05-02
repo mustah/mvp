@@ -7,6 +7,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
@@ -17,6 +18,7 @@ import static java.util.UUID.randomUUID;
 
 @Builder
 @EqualsAndHashCode
+@AllArgsConstructor
 @ToString
 public class PhysicalMeter implements Identifiable<UUID> {
 
@@ -33,30 +35,6 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final Long measurementCount;
   @Default
   public List<StatusLogEntry<UUID>> statuses = new ArrayList<>();
-
-  public PhysicalMeter(
-    UUID id,
-    Organisation organisation,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer,
-    @Nullable UUID logicalMeterId,
-    long readIntervalMinutes,
-    @Nullable Long measurementCount,
-    List<StatusLogEntry<UUID>> statuses
-  ) {
-    this.id = id;
-    this.organisation = organisation;
-    this.address = address;
-    this.externalId = externalId;
-    this.medium = medium;
-    this.manufacturer = manufacturer;
-    this.logicalMeterId = logicalMeterId;
-    this.readIntervalMinutes = readIntervalMinutes;
-    this.measurementCount = measurementCount;
-    this.statuses = statuses;
-  }
 
   @Override
   public UUID getId() {
