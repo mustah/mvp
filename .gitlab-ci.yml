@@ -329,7 +329,7 @@ post-prod:acceptance:
     MVP_API_PORT: 443
     MVP_ADMIN_PASSWORD: PmpQnaFaAFD0b867fyZoGFSyb32Z1BFr
 
-finalize:tag-production-docker:
+finalize:tag-production-mvp-docker:
   <<: *no_cache
   dependencies:
     - deploy:production
@@ -345,3 +345,20 @@ finalize:tag-production-docker:
     - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG}
     - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
+
+finalize:tag-production-geoservice-docker:
+  <<: *no_cache
+  dependencies:
+    - deploy:production
+  stage: finalize
+  tags:
+    - shell
+  only:
+    - schedules
+    - tags
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $DOCKER_REGISTRY_HOST
+  script:
+    - docker pull ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG}
+    - docker tag ${DOCKER_REGISTRY_URL}/geoservice:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/geoservice:production
+    - docker push ${DOCKER_REGISTRY_URL}/geoservice:production
