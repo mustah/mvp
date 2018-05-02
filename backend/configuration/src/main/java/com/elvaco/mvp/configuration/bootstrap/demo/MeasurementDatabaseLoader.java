@@ -80,7 +80,8 @@ public class MeasurementDatabaseLoader implements CommandLineRunner {
     long values,
     boolean isFailing
   ) {
-    PhysicalMeterEntity meter = new PhysicalMeterEntity(physicalMeter.id);
+    PhysicalMeterEntity meter = new PhysicalMeterEntity();
+    meter.id = physicalMeter.id;
 
     List<MeasurementEntity> measurementEntities = new ArrayList<>();
     for (int i = 0; i < values; i++) {
