@@ -1,4 +1,5 @@
-import {FORMAT_DATE_DAY_MONTH, FORMAT_DATE_FULL_MINUTE, formatDate, round, roundMeasurement} from '../formatters';
+import {momentWithTimeZone} from '../dateHelpers';
+import {FORMAT_DATE_FULL_MINUTE, formatDate, round, roundMeasurement} from '../formatters';
 
 describe('formatters', () => {
 
@@ -43,21 +44,21 @@ describe('formatters', () => {
   describe('Format dates', () => {
 
     test('Without specifying format, result defaults to FORMAT_DATE_DAY_MONTH', () => {
-      const now = new Date();
+      const date = momentWithTimeZone('2017-03-21T22:00:00Z').toDate();
 
-      expect(formatDate(now)).toEqual(formatDate(now, FORMAT_DATE_DAY_MONTH));
+      expect(formatDate(date)).toEqual('21/03');
     });
 
     test('Custom format', () => {
-      const date = new Date('21 march 2017 11:00');
+      const date = momentWithTimeZone('2017-03-21T00:00:00Z').toDate();
 
       expect(formatDate(date, 'DD/MM/YYYY')).toEqual('21/03/2017');
     });
 
     test('UNIX timestamp in millisecond precision, to formatted date string', () => {
-      const date = new Date('21 march 2017 10:00');
+      const date = momentWithTimeZone('2017-03-21T11:00:00Z').toDate();
 
-      expect(formatDate(date, FORMAT_DATE_FULL_MINUTE)).toEqual('17-03-21 09:00');
+      expect(formatDate(date, FORMAT_DATE_FULL_MINUTE)).toEqual('17-03-21 11:00');
     });
   });
 

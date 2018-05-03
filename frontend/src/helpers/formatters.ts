@@ -2,7 +2,7 @@ import * as numeral from 'numeral';
 import {momentWithTimeZone} from './dateHelpers';
 
 export const FORMAT_DATE_DAY_MONTH = 'DD/MM';
-export const FORMAT_DATE_FULL_MINUTE = 'YY-MM-DD hh:mm';
+export const FORMAT_DATE_FULL_MINUTE = 'YY-MM-DD HH:mm';
 export const FORMAT_COLLECTION_PERCENT = '0.0';
 const FORMAT_MEASUREMENT = '0.000';
 
