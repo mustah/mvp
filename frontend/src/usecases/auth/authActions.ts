@@ -60,5 +60,5 @@ export const logout = (error?: Unauthorized) => {
         // tslint:disable
       }
     }
-  }
+  };
 };

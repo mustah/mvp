@@ -4,42 +4,30 @@ import createHashHistory from 'history/createHashHistory';
 import {InitOptions} from 'i18next';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import * as React from 'react';
+import 'react-dates/initialize'; // Needs to be imported in beginning of application in order for styling to work.
+import 'react-dates/lib/css/_datepicker.css';
 import * as ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import {ConnectedRouter} from 'react-router-redux';
-import {Store} from 'redux';
-import {persistStore} from 'redux-persist';
+import {PersistGate} from 'redux-persist/integration/react';
 import {App} from './app/App';
 import {mvpTheme} from './app/themes';
-import {initLanguage} from './i18n/i18n';
-import {AppState, RootState} from './reducers/rootReducer';
-import {restClientWith} from './services/restClient';
+import {Loading} from './components/loading/Loading';
 import {onTranslationInitialized} from './services/translationService';
-import {storeFactory} from './store/configureStore';
-import 'react-dates/initialize'; // Needs to be imported in beginning of application in order for styling to work.
-import 'react-dates/lib/css/_datepicker.css';
+import {persistor, store} from './store/configureStore';
 
 export const history: History = createHashHistory();
 
-const appStore: Store<AppState> = storeFactory(history);
-
-const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection'];
-persistStore<AppState>(appStore, {whitelist}, (error?: any) => {
-  if (!error) {
-    const {auth: {token}, language: {language}}: RootState = appStore.getState()!;
-    restClientWith(token);
-    initLanguage(language.code);
-  }
-});
-
 onTranslationInitialized((options: InitOptions) => {
   ReactDOM.render(
-    <Provider store={appStore}>
-      <ConnectedRouter history={history}>
-        <MuiThemeProvider muiTheme={mvpTheme}>
-          <App/>
-        </MuiThemeProvider>
-      </ConnectedRouter>
+    <Provider store={store}>
+      <MuiThemeProvider muiTheme={mvpTheme}>
+        <PersistGate loading={<Loading/>} persistor={persistor}>
+          <ConnectedRouter history={history}>
+            <App/>
+          </ConnectedRouter>
+        </PersistGate>
+      </MuiThemeProvider>
     </Provider>,
     document.getElementById('app'),
   );

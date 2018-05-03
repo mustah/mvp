@@ -1,19 +1,21 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
-import {AnyAction, combineReducers} from 'redux';
+import {Reducer} from 'redux';
+import {persistCombineReducers} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import {PersistConfig, PersistedState} from 'redux-persist/lib/types';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
 import {paginatedDomainModels} from '../state/domain-models-paginated/paginatedDomainModelsReducer';
 import {DomainModelsState} from '../state/domain-models/domainModels';
 import {domainModels} from '../state/domain-models/domainModelsReducer';
 import {LanguageState} from '../state/language/languageModels';
 import {language} from '../state/language/languageReducer';
-import {UserSelectionState} from '../state/user-selection/userSelectionModels';
-import {userSelection} from '../state/user-selection/userSelectionReducer';
 import {SelectionTreeState} from '../state/selection-tree/selectionTreeModels';
 import {selectionTree} from '../state/selection-tree/selectionTreeReducer';
 import {SummaryState} from '../state/summary/summaryModels';
 import {summary} from '../state/summary/summaryReducer';
 import {ui, UiState} from '../state/ui/uiReducer';
-import {LOGOUT_USER} from '../usecases/auth/authActions';
+import {UserSelectionState} from '../state/user-selection/userSelectionModels';
+import {userSelection} from '../state/user-selection/userSelectionReducer';
 import {AuthState} from '../usecases/auth/authModels';
 import {auth} from '../usecases/auth/authReducer';
 import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer';
@@ -40,24 +42,26 @@ export type AppState = RootState | undefined;
 
 export type GetState = () => RootState;
 
-const appReducer = combineReducers<AppState>({
-  auth,
-  domainModels,
-  paginatedDomainModels,
-  dashboard,
-  routing,
-  report,
-  language,
-  userSelection,
-  summary,
-  selectionTree,
-  ui,
-  map,
-});
+const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection'];
 
-export const rootReducer = (state: AppState, action: AnyAction) => {
-  if (action.type === LOGOUT_USER) {
-    return appReducer(undefined, action);
-  }
-  return appReducer(state, action);
+const persistConfig: PersistConfig = {
+  key: 'primary',
+  storage,
+  whitelist,
 };
+
+export const rootReducer: Reducer<undefined | ((AppState | undefined) & PersistedState)> =
+  persistCombineReducers<AppState>(persistConfig, {
+    auth,
+    domainModels,
+    paginatedDomainModels,
+    dashboard,
+    routing,
+    report,
+    language,
+    userSelection,
+    summary,
+    selectionTree,
+    ui,
+    map,
+  });
