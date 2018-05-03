@@ -19,6 +19,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 class LogicalMeterSpecification {
 
@@ -73,17 +74,18 @@ class LogicalMeterSpecification {
   }
 
   GeneratedData create() {
-    UUID logicalMeterUuid = UUID.randomUUID();
-    String externalId = meterDefinition.medium + "-" + logicalMeterUuid;
-    PhysicalMeter physicalMeter = new PhysicalMeter(
-      UUID.randomUUID(),
-      organisation,
-      generateAddress(),
-      externalId,
-      meterDefinition.medium,
-      "ELV",
-      intervalDuration.toMinutes()
-    ).withLogicalMeterId(logicalMeterUuid);
+    UUID logicalMeterId = UUID.randomUUID();
+    String externalId = meterDefinition.medium + "-" + logicalMeterId;
+
+    PhysicalMeter physicalMeter = PhysicalMeter.builder()
+      .logicalMeterId(logicalMeterId)
+      .organisation(organisation)
+      .address(generateAddress())
+      .externalId(externalId)
+      .medium(meterDefinition.medium)
+      .manufacturer("ELV")
+      .readIntervalMinutes(intervalDuration.toMinutes())
+      .build();
 
     List<Measurement> measurements = new ArrayList<>();
     for (Quantity quantity : meterDefinition.quantities) {
@@ -102,16 +104,15 @@ class LogicalMeterSpecification {
     );
 
     return new GeneratedData(new LogicalMeter(
-      logicalMeterUuid,
+      logicalMeterId,
       externalId,
       organisation.id,
       Location.UNKNOWN_LOCATION,
       measurements.get(0).created,
-      Collections.singletonList(physicalMeter),
+      singletonList(physicalMeter),
       meterDefinition,
-      Collections.singletonList(gateway)
+      singletonList(gateway)
     ), measurements, physicalMeter, gateway);
-
   }
 
   private String pickProductModel() {
@@ -121,11 +122,10 @@ class LogicalMeterSpecification {
   }
 
   private String generateSerial() {
-    return String.format("0016%012d",random.nextInt(Integer.MAX_VALUE));
+    return String.format("0016%012d", random.nextInt(Integer.MAX_VALUE));
   }
 
   private String generateAddress() {
     return String.format("%d", random.nextInt(99_999_999));
   }
-
 }

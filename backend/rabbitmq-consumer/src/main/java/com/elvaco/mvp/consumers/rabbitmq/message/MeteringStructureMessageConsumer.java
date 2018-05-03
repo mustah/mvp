@@ -1,6 +1,6 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.util.UUID;
+import java.util.Optional;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
@@ -63,17 +63,25 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
           location
         )).withLocation(location);
 
-    PhysicalMeter physicalMeter = findOrCreatePhysicalMeter(
-      facility.id,
-      structureMessage.meter.id,
-      structureMessage.meter.medium,
-      structureMessage.meter.manufacturer,
-      logicalMeter.id,
-      organisation
-    ).withMedium(structureMessage.meter.medium)
+    String address = structureMessage.meter.id;
+    Integer expectedInterval = structureMessage.meter.expectedInterval;
+
+    PhysicalMeter physicalMeter = physicalMeterUseCases
+      .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
+      .orElseGet(() ->
+        PhysicalMeter.builder()
+          .organisation(organisation)
+          .address(address)
+          .externalId(facility.id)
+          .medium(structureMessage.meter.medium)
+          .manufacturer(structureMessage.meter.manufacturer)
+          .logicalMeterId(logicalMeter.id)
+          .readIntervalMinutes(Optional.ofNullable(expectedInterval).orElse(0))
+          .build()
+      ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id)
-      .withReadInterval(structureMessage.meter.expectedInterval)
+      .withReadIntervalMinutes(expectedInterval)
       .replaceActiveStatus(StatusType.from(structureMessage.meter.status));
 
     Gateway gateway = findOrCreateGateway(
@@ -93,33 +101,6 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     logicalMeterUseCases.save(meter);
 
     geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
-  }
-
-  private PhysicalMeter findOrCreatePhysicalMeter(
-    String facilityId,
-    String meterId,
-    String medium,
-    String manufacturer,
-    UUID logicalMeterId,
-    Organisation organisation
-  ) {
-    return physicalMeterUseCases.findByOrganisationIdAndExternalIdAndAddress(
-      organisation.id,
-      facilityId,
-      meterId
-    ).orElseGet(() ->
-      new PhysicalMeter(
-        randomUUID(),
-        organisation,
-        meterId,
-        facilityId,
-        medium,
-        manufacturer,
-        logicalMeterId,
-        0L,
-        null
-      )
-    );
   }
 
   private Gateway findOrCreateGateway(

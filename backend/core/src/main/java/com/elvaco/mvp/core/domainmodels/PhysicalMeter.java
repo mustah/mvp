@@ -7,112 +7,34 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.core.util.StatusLogEntryHelper;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.UUID.randomUUID;
 
+@Builder
 @EqualsAndHashCode
+@AllArgsConstructor
 @ToString
 public class PhysicalMeter implements Identifiable<UUID> {
 
-  public final UUID id;
+  @Default
+  public UUID id = randomUUID();
   public final Organisation organisation;
   public final String address;
   public final String externalId;
   public final String medium;
+  public final String manufacturer;
   @Nullable
   public final UUID logicalMeterId;
-  public final String manufacturer;
   public final long readIntervalMinutes;
   public final Long measurementCount;
-  public final List<StatusLogEntry<UUID>> statuses;
-  private final List<Measurement> measurements;
-
-  public PhysicalMeter(
-    UUID id,
-    Organisation organisation,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer,
-    @Nullable UUID logicalMeterId,
-    long readIntervalMinutes,
-    @Nullable Long measurementCount,
-    List<StatusLogEntry<UUID>> statuses
-  ) {
-    this.id = id;
-    this.organisation = organisation;
-    this.address = address;
-    this.externalId = externalId;
-    this.medium = medium;
-    this.manufacturer = manufacturer;
-    this.logicalMeterId = logicalMeterId;
-    this.measurements = new ArrayList<>();
-    this.readIntervalMinutes = readIntervalMinutes;
-    this.measurementCount = measurementCount;
-    this.statuses = statuses;
-  }
-
-  public PhysicalMeter(
-    UUID id,
-    Organisation organisation,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer,
-    @Nullable UUID logicalMeterId,
-    long readIntervalMinutes,
-    Long measurementCount
-  ) {
-    this(
-      id,
-      organisation,
-      address,
-      externalId,
-      medium,
-      manufacturer,
-      logicalMeterId,
-      readIntervalMinutes,
-      measurementCount,
-      emptyList()
-    );
-  }
-
-  public PhysicalMeter(
-    UUID id,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer,
-    Organisation organisation,
-    long readIntervalMinutes
-  ) {
-    this(
-      id,
-      organisation,
-      address,
-      externalId,
-      medium,
-      manufacturer,
-      null,
-      readIntervalMinutes,
-      null
-    );
-  }
-
-  public PhysicalMeter(
-    UUID id,
-    Organisation organisation,
-    String address,
-    String externalId,
-    String medium,
-    String manufacturer,
-    long readIntervalMinutes
-  ) {
-    this(id, address, externalId, medium, manufacturer, organisation, readIntervalMinutes);
-  }
+  @Default
+  public List<StatusLogEntry<UUID>> statuses = new ArrayList<>();
 
   @Override
   public UUID getId() {
@@ -168,7 +90,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     );
   }
 
-  public PhysicalMeter withReadInterval(int readIntervalMinutes) {
+  public PhysicalMeter withReadIntervalMinutes(@Nullable Integer readIntervalMinutes) {
     return new PhysicalMeter(
       id,
       organisation,
@@ -177,7 +99,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       logicalMeterId,
-      readIntervalMinutes,
+      readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
       measurementCount,
       statuses
     );

@@ -3,6 +3,7 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
@@ -18,6 +19,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.domainmodels.User;
@@ -57,7 +59,7 @@ public class MeteringStructureMessageConsumerTest {
   private static final String MANUFACTURER = "ELV";
   private static final String PRODUCT_MODEL = "CMi2110";
   private static final String GATEWAY_EXTERNAL_ID = "123";
-  private static final int EXPECTED_INTERVAL = 15;
+  private static final Integer READ_INTERVAL_IN_MINUTES = 15;
   private static final String HOT_WATER_MEDIUM = "Hot water";
   private static final String ADDRESS = "1234";
   private static final String ORGANISATION_SLUG = "some-organisation";
@@ -130,11 +132,7 @@ public class MeteringStructureMessageConsumerTest {
       EXTERNAL_ID
     ).get();
 
-    PhysicalMeter savedPhysicalMeter = physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
-      organisation.id,
-      EXTERNAL_ID,
-      ADDRESS
-    ).get();
+    PhysicalMeter savedPhysicalMeter = findPhysicalMeterByOrganisationId(organisation);
 
     LogicalMeter expectedLogicalMeter = new LogicalMeter(
       logicalMeter.id,
@@ -160,7 +158,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       logicalMeter.id,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       null,
       savedPhysicalMeter.statuses
     ));
@@ -303,10 +301,12 @@ public class MeteringStructureMessageConsumerTest {
     );
     ZonedDateTime now = ZonedDateTime.now();
     UUID logicalMeterId = randomUUID();
-    PhysicalMeter existingPhysicalMeter = physicalMeters.save(newPhysicalMeter(
-      organisation,
-      HOT_WATER_MEDIUM
-    ).withLogicalMeterId(logicalMeterId));
+    PhysicalMeter existingPhysicalMeter = physicalMeters.save(
+      physicalMeter()
+        .organisation(organisation)
+        .logicalMeterId(logicalMeterId)
+        .build()
+    );
 
     logicalMeters.save(new LogicalMeter(
       logicalMeterId,
@@ -333,7 +333,7 @@ public class MeteringStructureMessageConsumerTest {
   @Test
   public void duplicateIdentityAndExternalIdentityForOtherOrganisation() {
     Organisation organisation = organisations.save(newOrganisation("An existing organisation"));
-    physicalMeters.save(newPhysicalMeter(organisation, HOT_WATER_MEDIUM));
+    physicalMeters.save(physicalMeter().organisation(organisation).build());
 
     messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
 
@@ -452,23 +452,73 @@ public class MeteringStructureMessageConsumerTest {
     assertThat(statuses.get(1).stop).isNull();
   }
 
-  private Organisation saveDefaultOrganisation() {
-    return organisations.save(newOrganisation(ORGANISATION_SLUG));
+  @Test
+  public void createMeterWithoutReadInterval_UseFallback() {
+    messageHandler.accept(newStructureMessage((Integer) null));
+
+    Organisation organisation = findOrganisation();
+
+    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
   }
 
-  private PhysicalMeter newPhysicalMeter(
-    Organisation organisation,
-    String defaultMedium
-  ) {
-    return new PhysicalMeter(
-      randomUUID(),
-      ADDRESS,
+  @Test
+  public void readIntervalShouldNotBeReset_WhenSecondStructureMessageHasNoReadInterval() {
+    messageHandler.accept(newStructureMessage(15));
+    messageHandler.accept(newStructureMessage((Integer) null));
+
+    Organisation organisation = findOrganisation();
+
+    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(15);
+  }
+
+  @Test
+  public void readIntervalShouldBeUpdated_WhenSecondStructureMessageHasReadInterval() {
+    messageHandler.accept(newStructureMessage((Integer) null));
+
+    Organisation organisation = findOrganisation();
+
+    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+
+    messageHandler.accept(newStructureMessage(60));
+
+    physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(60);
+  }
+
+  @Test
+  public void readIntervalShouldUseFallback_WhenConsecutiveReadIntervalsAreMissing() {
+    messageHandler.accept(newStructureMessage((Integer) null));
+
+    Organisation organisation = findOrganisation();
+
+    PhysicalMeter physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+
+    messageHandler.accept(newStructureMessage((Integer) null));
+
+    physicalMeter = findPhysicalMeterByOrganisationId(organisation);
+
+    assertThat(physicalMeter.readIntervalMinutes).isEqualTo(0);
+  }
+
+  private PhysicalMeter findPhysicalMeterByOrganisationId(Organisation organisation) {
+    return physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
+      organisation.id,
       EXTERNAL_ID,
-      defaultMedium,
-      MANUFACTURER,
-      organisation,
-      EXPECTED_INTERVAL
-    );
+      ADDRESS
+    ).get();
+  }
+
+  private Organisation saveDefaultOrganisation() {
+    return organisations.save(newOrganisation(ORGANISATION_SLUG));
   }
 
   private LogicalMeter findLogicalMeter() {
@@ -488,7 +538,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       StatusType.OK,
@@ -503,7 +553,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       LOCATION_KUNGSBACKA,
       EXTERNAL_ID,
       meterStatus,
@@ -519,7 +569,7 @@ public class MeteringStructureMessageConsumerTest {
       medium,
       "KAM",
       physicalMeterId,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       LOCATION_KUNGSBACKA
     );
   }
@@ -529,7 +579,7 @@ public class MeteringStructureMessageConsumerTest {
       HOT_WATER_MEDIUM,
       MANUFACTURER,
       ADDRESS,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       location
     );
   }
@@ -541,14 +591,12 @@ public class MeteringStructureMessageConsumerTest {
       medium,
       MANUFACTURER,
       ADDRESS,
-      EXPECTED_INTERVAL,
+      READ_INTERVAL_IN_MINUTES,
       LOCATION_KUNGSBACKA
     );
   }
 
-  private MeteringStructureMessageDto newStructureMessage(
-    int expectedInterval
-  ) {
+  private MeteringStructureMessageDto newStructureMessage(@Nullable Integer expectedInterval) {
     return newStructureMessage(
       HOT_WATER_MEDIUM,
       MANUFACTURER,
@@ -562,7 +610,7 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    int expectedInterval,
+    @Nullable Integer expectedInterval,
     Location location
   ) {
     return newStructureMessage(
@@ -579,7 +627,7 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    int expectedInterval,
+    @Nullable Integer expectedInterval,
     Location location,
     String externalId
   ) {
@@ -599,7 +647,7 @@ public class MeteringStructureMessageConsumerTest {
     String medium,
     String manufacturer,
     String physicalMeterId,
-    int expectedInterval,
+    @Nullable Integer expectedInterval,
     Location location,
     String externalId,
     StatusType meterStatus,
@@ -630,5 +678,14 @@ public class MeteringStructureMessageConsumerTest {
 
   private Organisation newOrganisation(String name, String code) {
     return new Organisation(randomUUID(), name, code);
+  }
+
+  private static PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .address(ADDRESS)
+      .externalId(EXTERNAL_ID)
+      .medium(HOT_WATER_MEDIUM)
+      .manufacturer(MANUFACTURER)
+      .readIntervalMinutes(READ_INTERVAL_IN_MINUTES);
   }
 }

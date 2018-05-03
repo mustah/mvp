@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
@@ -39,43 +40,26 @@ public class PhysicalMetersTest extends IntegrationTest {
   @Test
   public void createNew() {
     UUID id = randomUUID();
-    PhysicalMeter saved = physicalMeters.save(new PhysicalMeter(
-      id,
-      "someId",
-      "an-external-id",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
+
+    PhysicalMeter saved = physicalMeters.save(physicalMeter().id(id).build());
 
     assertThat(saved.id).isEqualTo(id);
   }
 
   @Test
-  public void update() {
-    PhysicalMeter saved = physicalMeters.save(
-      new PhysicalMeter(
-        randomUUID(),
-        "something-else",
-        "an-external-id",
-        "unknown",
-        "ELV",
-        context().organisation(),
-        15
-      ));
+  public void updateMedium() {
+    PhysicalMeterBuilder physicalMeter = physicalMeter().medium("unknown");
+
+    PhysicalMeter saved = physicalMeters.save(physicalMeter.build());
 
     assertThat(saved.medium).isEqualTo("unknown");
 
-    PhysicalMeter updated = physicalMeters.save(new PhysicalMeter(
-      saved.id,
-      saved.organisation,
-      saved.address,
-      "an-external-id",
-      "Heat",
-      "ELV",
-      15
-    ));
+    PhysicalMeter updated = physicalMeters.save(
+      physicalMeter
+        .id(saved.id)
+        .medium("Heat")
+        .build()
+    );
 
     assertThat(updated.id).isEqualTo(saved.id);
     assertThat(updated.medium).isEqualTo("Heat");
@@ -83,48 +67,31 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void findAll() {
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "test12",
-      "external-id-1",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "test13",
-      "external-id-2",
-      "Vacuum",
-      "ELV",
-      context().organisation(),
-      15
-    ));
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "test14",
-      "external-id-3",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
+    physicalMeters.save(physicalMeter()
+      .address("test12")
+      .externalId("external-id-1")
+      .medium("Heat")
+      .build());
+    physicalMeters.save(physicalMeter()
+      .address("test13")
+      .externalId("external-id-2")
+      .medium("Vacuum")
+      .build());
+    physicalMeters.save(physicalMeter()
+      .address("test14")
+      .externalId("external-id-3")
+      .medium("Heat")
+      .build());
 
     assertThat(physicalMeters.findAll()).hasSize(3);
   }
 
   @Test
   public void findByOrganisationAndExternalIdAndAddress() {
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "123456789",
-      "12",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
+    physicalMeters.save(physicalMeter()
+      .externalId("12")
+      .address("123456789")
+      .build());
 
     assertThat(
       physicalMeters.findByOrganisationIdAndExternalIdAndAddress(
@@ -137,33 +104,22 @@ public class PhysicalMetersTest extends IntegrationTest {
 
   @Test
   public void findByMedium() {
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "abc123",
-      "AAA",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "cvb123",
-      "BBB",
-      "Vacuum",
-      "ELV",
-      context().organisation(),
-      15
-    ));
-    physicalMeters.save(new PhysicalMeter(
-      randomUUID(),
-      "oiu876",
-      "CCC",
-      "Heat",
-      "ELV",
-      context().organisation(),
-      15
-    ));
+    physicalMeters.save(physicalMeter()
+      .address("abc123")
+      .externalId("AAA")
+      .medium("Heat")
+      .build());
+    physicalMeters.save(physicalMeter()
+      .address("cvb123")
+      .externalId("BBB")
+      .medium("Vacuum")
+      .build());
+    physicalMeters.save(
+      physicalMeter()
+        .address("oiu876")
+        .externalId("CCC")
+        .medium("Heat")
+        .build());
 
     assertThat(physicalMeters.findByMedium("Heat")).hasSize(2);
   }
@@ -173,30 +129,31 @@ public class PhysicalMetersTest extends IntegrationTest {
     UUID meterId = randomUUID();
     ZonedDateTime start = ZonedDateTime.now();
 
-    physicalMeters.save(
-      new PhysicalMeter(
-        meterId,
-        context().organisation(),
-        "address",
-        "external-id",
-        "",
-        "",
-        null,
-        0,
-        0L,
+    physicalMeters.save(physicalMeter()
+      .id(meterId)
+      .statuses(
         singletonList(new StatusLogEntry<>(
-            meterId,
-            StatusType.ERROR,
-            start
-          )
-        )
+          meterId,
+          StatusType.ERROR,
+          start
+        ))
       )
-    );
+      .build());
 
     PhysicalMeter found = physicalMeters.findAll().get(0);
 
     assertThat(found.statuses).hasSize(1);
     assertThat(found.statuses.get(0).start).isEqualTo(start);
     assertThat(found.statuses.get(0).status).isEqualTo(StatusType.ERROR);
+  }
+
+  private PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("someId")
+      .externalId("an-external-id")
+      .medium("Heat")
+      .manufacturer("ELV")
+      .readIntervalMinutes(15);
   }
 }

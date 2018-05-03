@@ -17,6 +17,7 @@ import com.elvaco.mvp.core.domainmodels.Measurement;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
+import com.elvaco.mvp.core.domainmodels.PhysicalMeter.PhysicalMeterBuilder;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.StatusLogEntry;
 import com.elvaco.mvp.core.domainmodels.StatusType;
@@ -113,9 +114,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-    PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
-      districtHeatingMeter.id,
-      0
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(0)
+      .build()
     );
 
     addMeasurementsForMeterQuantities(
@@ -140,9 +143,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   public void collectionStatusZeroPercentWhenNoMeasurements() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
-    createPhysicalMeterWithInterval(
-      districtHeatingMeter.id,
-      30
+    physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(30)
+      .build()
     );
 
     LogicalMeterDto logicalMeterDto = asTestUser()
@@ -161,9 +166,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-    PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
-      districtHeatingMeter.id,
-      30
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(30)
+      .build()
     );
 
     addMeasurementsForMeterQuantities(
@@ -189,9 +196,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T00:00:00.00Z");
-    PhysicalMeter physicalMeter = createPhysicalMeterWithInterval(
-      districtHeatingMeter.id,
-      15
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId(randomUUID().toString())
+      .readIntervalMinutes(15)
+      .build()
     );
 
     addMeasurementsForMeterQuantities(
@@ -218,9 +227,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     ZonedDateTime start = ZonedDateTime.parse("2001-01-01T01:00:00.00Z");
     addMeasurementsForMeter(
-      createPhysicalMeterWithInterval(
-        districtHeatingMeter.id,
-        60
+      physicalMeters.save(physicalMeter()
+        .logicalMeterId(districtHeatingMeter.id)
+        .externalId(randomUUID().toString())
+        .readIntervalMinutes(60)
+        .build()
       ),
       districtHeatingMeter.getQuantities(),
       start,
@@ -259,17 +270,18 @@ public class LogicalMeterControllerTest extends IntegrationTest {
 
     UUID physicalMeterId = randomUUID();
     physicalMeters.save(new PhysicalMeter(
-      physicalMeterId,
-      context().organisation(),
-      "address",
-      "external-id",
-      "medium",
-      "manufacturer",
-      logicalMeter.id,
-      0,
-      0L,
-      emptyList()
-    ));
+        physicalMeterId,
+        context().organisation(),
+        "address",
+        "external-id",
+        "medium",
+        "manufacturer",
+        logicalMeter.id,
+        0,
+        0L,
+        emptyList()
+      )
+    );
     StatusLogEntry<UUID> logEntry = createStatusLogForMeter(
       physicalMeterId,
       StatusType.OK,
@@ -369,9 +381,24 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     LogicalMeter secondLogicalMeter = createLogicalMeter();
     LogicalMeter thirdLogicalMeter = createLogicalMeter();
 
-    PhysicalMeter firstMeter = createPhysicalMeter(firstLogicalMeter.id, "meter-one");
-    PhysicalMeter secondMeter = createPhysicalMeter(secondLogicalMeter.id, "meter-two");
-    PhysicalMeter thirdMeter = createPhysicalMeter(thirdLogicalMeter.id, "meter-three");
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
+    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(secondLogicalMeter.id)
+      .externalId("meter-two")
+      .readIntervalMinutes(15)
+      .build()
+    );
+    PhysicalMeter thirdMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(thirdLogicalMeter.id)
+      .externalId("meter-three")
+      .readIntervalMinutes(15)
+      .build()
+    );
 
     // status is active within period, should be included
     createStatusLogForMeter(
@@ -690,7 +717,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllMetersPaged_WithMeasurementAboveMax() {
     LogicalMeter firstLogicalMeter = createLogicalMeter();
-    PhysicalMeter firstMeter = createPhysicalMeter(firstLogicalMeter.id, "meter-one");
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
 
     addMeasurementsForMeter(
       firstMeter,
@@ -703,7 +735,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeter secondLogicalMeter = createLogicalMeter();
-    PhysicalMeter secondMeter = createPhysicalMeter(secondLogicalMeter.id, "meter-two");
+    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(secondLogicalMeter.id)
+      .externalId("meter-two")
+      .readIntervalMinutes(15)
+      .build()
+    );
 
     addMeasurementsForMeter(
       secondMeter,
@@ -725,7 +762,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void findAllMetersPaged_WithMeasurementBelowMin() {
     LogicalMeter firstLogicalMeter = createLogicalMeter();
-    PhysicalMeter firstMeter = createPhysicalMeter(firstLogicalMeter.id, "meter-one");
+    PhysicalMeter firstMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(firstLogicalMeter.id)
+      .externalId("meter-one")
+      .readIntervalMinutes(15)
+      .build()
+    );
 
     addMeasurementsForMeter(
       firstMeter,
@@ -738,7 +780,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
     );
 
     LogicalMeter secondLogicalMeter = createLogicalMeter();
-    PhysicalMeter secondMeter = createPhysicalMeter(secondLogicalMeter.id, "meter-two");
+    PhysicalMeter secondMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(secondLogicalMeter.id)
+      .externalId("meter-two")
+      .readIntervalMinutes(15)
+      .build()
+    );
 
     addMeasurementsForMeter(
       secondMeter,
@@ -760,7 +807,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void pagedLogicalMeterContainsLatestMeasurements() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
-    PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId("bowie")
+      .readIntervalMinutes(15)
+      .build()
+    );
     ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
 
     Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
@@ -825,7 +877,12 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   @Test
   public void singleLogicalMeterContainsLatestMeasurements() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
-    PhysicalMeter physicalMeter = createPhysicalMeter(districtHeatingMeter.id, "bowie");
+    PhysicalMeter physicalMeter = physicalMeters.save(physicalMeter()
+      .logicalMeterId(districtHeatingMeter.id)
+      .externalId("bowie")
+      .readIntervalMinutes(15)
+      .build()
+    );
     ZonedDateTime someDaysAgo = ZonedDateTime.now().minusDays(3);
 
     Set<Quantity> quantitiesWithoutDiffTemperature = new HashSet<>(asList(
@@ -1013,36 +1070,11 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .isEqualTo(expected);
   }
 
-  private PhysicalMeter createPhysicalMeterWithInterval(UUID logicalMeterId, long interval) {
-    UUID meterId = randomUUID();
-    return physicalMeters.save(
-      new PhysicalMeter(
-        meterId,
-        context().organisation(),
-        "111-222-333-444-1",
-        meterId.toString(),
-        "Some device specific medium name",
-        "ELV1",
-        logicalMeterId,
-        interval,
-        null
-      )
-    );
-  }
-
-  private PhysicalMeter createPhysicalMeter(UUID logicalMeterId, String externalId) {
-    return physicalMeters.save(
-      new PhysicalMeter(
-        randomUUID(),
-        context().organisation(),
-        "111-222-333-444-1",
-        externalId,
-        "Some device specific medium name",
-        "ELV1",
-        logicalMeterId,
-        15,
-        null
-      )
-    );
+  private PhysicalMeterBuilder physicalMeter() {
+    return PhysicalMeter.builder()
+      .organisation(context().organisation())
+      .address("111-222-333-444-1")
+      .medium("Heat")
+      .manufacturer("ELV1");
   }
 }

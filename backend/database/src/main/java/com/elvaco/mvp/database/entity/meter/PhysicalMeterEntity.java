@@ -56,10 +56,6 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
 
   public long readIntervalMinutes;
 
-  public PhysicalMeterEntity(UUID id) {
-    this.id = id;
-  }
-
   public PhysicalMeterEntity(
     UUID id,
     OrganisationEntity organisation,

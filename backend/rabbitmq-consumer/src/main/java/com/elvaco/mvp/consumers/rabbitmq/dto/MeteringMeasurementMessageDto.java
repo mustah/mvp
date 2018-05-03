@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import static java.util.Objects.nonNull;
+
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
   @Nullable
@@ -45,6 +47,6 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
   }
 
   public Optional<GatewayIdDto> gateway() {
-    return Optional.ofNullable(gateway).filter(gatewayIdDto -> gatewayIdDto.id != null);
+    return Optional.ofNullable(gateway).filter(gatewayIdDto -> nonNull(gatewayIdDto.id));
   }
 }

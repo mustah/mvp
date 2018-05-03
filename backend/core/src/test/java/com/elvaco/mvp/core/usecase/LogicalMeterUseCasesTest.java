@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
 import static com.elvaco.mvp.core.util.LogicalMeterHelper.calculateExpectedReadOuts;
-import static com.elvaco.mvp.core.util.LogicalMeterHelper.getFirstDateMatchingInterval;
+import static com.elvaco.mvp.core.util.LogicalMeterHelper.getNextReadoutDate;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -240,7 +240,7 @@ public class LogicalMeterUseCasesTest {
   }
 
   private ZonedDateTime getFirstMatching(String date, long interval) {
-    return getFirstDateMatchingInterval(ZonedDateTime.parse(date), interval);
+    return getNextReadoutDate(ZonedDateTime.parse(date), interval);
   }
 
   private LogicalMeter newMeter(UUID meterId, UUID organisationId) {

@@ -209,19 +209,14 @@ public class LogicalMeterHelperTest {
       organisationId,
       meterDefinition,
       UNKNOWN_LOCATION,
-      singletonList(
-        new PhysicalMeter(
-          randomUUID(),
-          null,
-          "address",
-          "external-id",
-          meterDefinition.medium,
-          "manufacturer",
-          meterId,
-          15,
-          0L
-        )
-      )
+      singletonList(PhysicalMeter.builder()
+        .address("address")
+        .externalId("external-id")
+        .medium(meterDefinition.medium)
+        .manufacturer("ELV")
+        .readIntervalMinutes(15)
+        .measurementCount(0L)
+        .build())
     );
   }
 }

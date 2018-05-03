@@ -16,13 +16,12 @@ public class PhysicalMeterTest {
   @Test
   public void firstStatus() {
     ZonedDateTime now = ZonedDateTime.now();
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(emptyList());
+
+    PhysicalMeter meter = newPhysicalMeterWithStatuses(randomUUID(), emptyList());
 
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.OK, now).statuses;
 
-    assertThat(statuses).containsExactly(
-      new StatusLogEntry<>(meter.id, StatusType.OK, now)
-    );
+    assertThat(statuses).containsExactly(new StatusLogEntry<>(meter.id, StatusType.OK, now));
   }
 
   @Test
@@ -33,9 +32,7 @@ public class PhysicalMeterTest {
       StatusType.OK,
       ZonedDateTime.now()
     );
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(
-      previousStatus
-    ));
+    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
     ZonedDateTime now = ZonedDateTime.now();
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(StatusType.ERROR, now).statuses;
@@ -54,18 +51,14 @@ public class PhysicalMeterTest {
       StatusType.OK,
       ZonedDateTime.now()
     );
-    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(
-      previousStatus
-    ));
+    PhysicalMeter meter = newPhysicalMeterWithStatuses(meterId, singletonList(previousStatus));
 
     List<StatusLogEntry<UUID>> statuses = meter.replaceActiveStatus(
       StatusType.OK,
       ZonedDateTime.now()
     ).statuses;
 
-    assertThat(statuses).containsExactly(
-      previousStatus
-    );
+    assertThat(statuses).containsExactly(previousStatus);
   }
 
   private PhysicalMeter newPhysicalMeterWithStatuses(
@@ -84,12 +77,5 @@ public class PhysicalMeterTest {
       0L,
       statusLogs
     );
-  }
-
-  private PhysicalMeter newPhysicalMeterWithStatuses(
-    List<StatusLogEntry<UUID>> statusLogs
-  ) {
-    return newPhysicalMeterWithStatuses(randomUUID(), statusLogs);
-
   }
 }
