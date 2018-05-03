@@ -9,7 +9,11 @@ import {firstUpperTranslated} from '../../services/translationService';
 import {ErrorResponse, Identifiable, uuid} from '../../types/Types';
 import {logout} from '../../usecases/auth/authActions';
 import {RequestCallbacks} from '../domain-models/domainModelsActions';
-import {NormalizedPaginatedState, PaginatedDomainModelsState, SingleEntityFailure} from './paginatedDomainModels';
+import {
+  NormalizedPaginatedState,
+  PaginatedDomainModelsState,
+  SingleEntityFailure,
+} from './paginatedDomainModels';
 
 export const domainModelsPaginatedEntityRequest = (endPoint: EndPoints) =>
   `DOMAIN_MODELS_PAGINATED_ENTITY_REQUEST${endPoint}`;
@@ -34,7 +38,8 @@ interface AsyncRequestEntity<DATA> extends PaginatedRequestEntityHandler<DATA>, 
 export const makeEntityRequestActionsOf = <T>(endPoint: EndPoints): PaginatedRequestEntityHandler<T> => ({
   request: createEmptyAction<string>(domainModelsPaginatedEntityRequest(endPoint)),
   success: createPayloadAction<string, T>(domainModelsPaginatedEntitySuccess(endPoint)),
-  failure: createPayloadAction<string, SingleEntityFailure>(domainModelsPaginatedEntityFailure(endPoint)),
+  failure: createPayloadAction<string, SingleEntityFailure>(domainModelsPaginatedEntityFailure(
+    endPoint)),
 });
 
 const asyncRequestEntities = async <DAT>(
@@ -120,13 +125,14 @@ export const fetchEntitiesIfNeeded = <T>(
   entityType: keyof PaginatedDomainModelsState,
   formatData: (values: T[]) => any = (identity) => identity,
 ) =>
-  (ids: uuid[]) =>
+  (ids: uuid[], size?: number) =>
     (dispatch, getState: GetState) => {
+      const sizeParam: string = size ? '&size=' + size : '';
       const {paginatedDomainModels} = getState();
 
       if (shouldFetchEntities(ids, paginatedDomainModels[entityType])) {
         const requestFunc = () =>
-          restClient.get(makeUrl(`${endPoint}`, idRequestParams(ids)));
+          restClient.get(makeUrl(`${endPoint}`, idRequestParams(ids) + sizeParam));
         return asyncRequestEntities<T[]>({
           ...makeEntityRequestActionsOf<T[]>(endPoint),
           formatData: (data) => formatData(data.content),

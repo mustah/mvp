@@ -23,7 +23,7 @@ interface OwnProps {
 
 interface DispatchToProps {
   fetchGateway: CallbackWithId;
-  fetchMeterEntities: (ids: uuid[]) => void;
+  fetchMeterEntities: (ids: uuid[], size?: number) => void;
 }
 
 interface StateToProps {
@@ -39,12 +39,12 @@ class GatewayDetails extends React.Component<Props> {
   componentDidMount() {
     const {fetchGateway, gatewayId, gateway, fetchMeterEntities} = this.props;
     fetchGateway(gatewayId);
-    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds));
+    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds, gateway.meterIds.length));
   }
 
   componentWillReceiveProps({fetchGateway, gatewayId, gateway, fetchMeterEntities}: Props) {
     fetchGateway(gatewayId);
-    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds));
+    gateway.map((gateway) => fetchMeterEntities(gateway.meterIds, gateway.meterIds.length));
   }
 
   render() {
