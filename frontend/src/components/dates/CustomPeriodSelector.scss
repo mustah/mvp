@@ -110,10 +110,11 @@
       vertical-align: middle;
 
       .DateInput_input {
-        font-size: 18px !important;
+        font-size: $normal !important;
         font-family: inherit !important;
         width: 80% !important;
         height: inherit !important;
+        line-height: 16px !important;
         border-top: 0 !important;
         border-right: 0 !important;
         border-bottom: 2px solid transparent !important;
