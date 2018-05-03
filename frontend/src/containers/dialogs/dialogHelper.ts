@@ -32,8 +32,11 @@ export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Norm
 const orderedQuantities = (medium: string): string[] => {
   const translationTable = {
     'District heating': 'heat',
+    'Gas': 'gas',
   };
-  return medium in translationTable ? allQuantities[translationTable[medium]] : [];
+  return medium in translationTable && translationTable[medium] in allQuantities
+    ? allQuantities[translationTable[medium]]
+    : [];
 };
 
 export const meterMeasurementsForTable = (meter: Meter): DomainModel<RenderableMeasurement> => {
