@@ -16,7 +16,7 @@ const timezoneUtc = 'UTC';
 export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
   moment(input).tz(timezoneUtc);
 
-export const changeMomentLocale = (language: string) => moment.locale(language);
+export const changeLocale = (language: string): string => moment.locale(language);
 
 /**
  * Calculate absolute start- and end dates based on an input date and a relative time period.*

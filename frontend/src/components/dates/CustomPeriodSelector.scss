@@ -4,13 +4,19 @@
 .DateRangePicker {
 
   .DateRangePicker_picker {
-    position: inherit !important;
+    position: static !important;
     margin-top: 6px;
 
+    $day-width-height: 39px;
+    $range-bg-color: rgba($blue, 0.7);
+
     .CalendarDay__default {
-      border: 1px solid #e4e7e7 !important;
-      color: #565a5c !important;
-      background: #fff !important;
+      width: $day-width-height !important;
+      height: $day-width-height !important;
+      border: none;
+      color: $black !important;
+      background: $white !important;
+      border-radius: $day-width-height / 2;
     }
 
     .CalendarDay__hovered_offset {
@@ -21,42 +27,71 @@
 
     .CalendarDay__default:hover {
       background: $grey !important;
-      border: 1px solid inherit !important;
+      border: none;
       color: inherit !important;
     }
 
     .CalendarDay__selected_span {
-      background: $blue !important;
-      border: 1px solid ($blue - #0A0A0A) !important;
-      color: #fff !important;
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
     }
 
     .CalendarDay__selected,
     .CalendarDay__selected:active,
     .CalendarDay__selected:hover {
       background: $dark-blue !important;
-      border: 1px solid $dark-blue !important;
-      color: #fff !important;
+      border: none;
+      color: $white !important;
     }
 
     .CalendarDay__selected_span:active,
     .CalendarDay__selected_span:hover {
-      background: ($blue - #0A0A0A) !important;
-      border: 1px solid ($blue - #0A0A0A) !important;
-      color: #fff !important;
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
     }
 
     .CalendarDay__hovered_span,
     .CalendarDay__hovered_span:hover {
-      background: ($blue - #0A0A0A) !important;
-      border: 1px solid ($blue - #0F0F0F) !important;
-      color: #fff !important;
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
     }
 
     .CalendarDay__hovered_span:active {
       background: $dark-blue !important;
-      border: 1px solid $dark-blue !important;
-      color: #fff !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .DayPicker__withBorder {
+      box-shadow: none !important;
+    }
+  }
+
+  .DayPicker_transitionContainer {
+    width: 660px !important;
+  }
+
+  .DayPickerNavigation_button__horizontal {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    top: 10px;
+    border-radius: 20px;
+
+    &:hover {
+      border: 1px solid $blue;
+
+      .DayPickerNavigation_svg__horizontal {
+        fill: $blue;
+      }
+    }
+
+    &:active {
+      outline: none;
+      background: $primary-bg-hover;
     }
   }
 
@@ -67,7 +102,7 @@
     .DateInput {
       margin: 0;
       padding: 0;
-      background: #fff;
+      background: $white;
       position: relative;
       display: inline-block;
       width: 130px;
@@ -87,8 +122,16 @@
       }
 
       .DateInput_fang {
-        top: 47px !important;
+        display: none !important;
       }
     }
   }
 }
+
+.Dialog {
+  &.PeriodConfirmDialog {
+    width: 660px !important;
+  }
+}
+
+

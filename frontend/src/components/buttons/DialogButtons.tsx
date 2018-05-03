@@ -1,9 +1,9 @@
+import * as classNames from 'classnames';
 import FlatButton from 'material-ui/FlatButton';
 import * as React from 'react';
 import {translate} from '../../services/translationService';
-import './DialogButtons.scss';
 import {OnClick} from '../../types/Types';
-import * as classNames from 'classnames';
+import './DialogButtons.scss';
 
 interface DialogButtonProps {
   onClick: OnClick;
@@ -25,7 +25,7 @@ export const ButtonConfirm = ({onClick, disabled}: DialogButtonProps) => (
     disabled={disabled}
     className={classNames('FlatButton', {disabled})}
   />
-  );
+);
 
 export const ButtonCancel = ({onClick}: DialogButtonProps) => (
   <FlatButton
@@ -33,4 +33,4 @@ export const ButtonCancel = ({onClick}: DialogButtonProps) => (
     onClick={onClick}
     className="FlatButton"
   />
-  );
+);
