@@ -1,6 +1,7 @@
 import 'CustomPeriodSelector.scss';
 import * as React from 'react';
 import {DateRangePicker, DateRangePickerShape} from 'react-dates';
+import {yyyymmdd} from '../../helpers/dateHelpers';
 import {firstUpperTranslated} from '../../services/translationService';
 
 type MappedProps = 'startDate' | 'endDate' | 'focusedInput';
@@ -32,6 +33,6 @@ export const CustomPeriodSelector = (
     minimumNights={0}
     hideKeyboardShortcutsPanel={true}
     isOutsideRange={makeAllDaysSelectable}
-    displayFormat={'YYYY-MM-DD'}
+    displayFormat={yyyymmdd}
   />
 );

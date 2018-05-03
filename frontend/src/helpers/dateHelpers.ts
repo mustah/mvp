@@ -10,11 +10,12 @@ import {Maybe} from './Maybe';
  */
 
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
+
 const timezoneUtc = 'UTC';
 
-// TODO: This should more general or change name to momentWithTimeZoneStockholm
-export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
-  moment(input).tz(timezoneUtc);
+export const momentWithTimeZone =
+  (input: moment.MomentInput, timezone: string = timezoneUtc): moment.Moment =>
+    moment(input).tz(timezone);
 
 export const changeLocale = (language: string): string => moment.locale(language);
 
@@ -89,7 +90,7 @@ export const toPeriodApiParameters = (
   }: CurrentPeriod): EncodedUriParameters[] =>
   toApiParameters(currentDateRange(now, period, customDateRange));
 
-const yyyymmdd = 'YYYY-MM-DD';
+export const yyyymmdd = 'YYYY-MM-DD';
 
 const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentWithTimeZone(start).format(yyyymmdd)} - ${momentWithTimeZone(end).format(yyyymmdd)}`;
