@@ -1,19 +1,26 @@
 import * as moment from 'moment-timezone';
+import 'moment/locale/en-gb';
+import 'moment/locale/sv';
 import {DateRange, Period} from '../components/dates/dateModels';
 import {EncodedUriParameters} from '../types/Types';
 import {Maybe} from './Maybe';
 
+/**
+ * We work with Date and Period, to not expose moment() to our application.
+ */
+
 moment.tz.load(require('moment-timezone/data/packed/latest.json'));
+
 const timezoneUtc = 'UTC';
 
-// TODO: This should more general or change name to momentWithTimeZoneStockholm
-export const momentWithTimeZone = (input: moment.MomentInput): moment.Moment =>
-  moment(input).tz(timezoneUtc);
+export const momentWithTimeZone =
+  (input: moment.MomentInput, timezone: string = timezoneUtc): moment.Moment =>
+    moment(input).tz(timezone);
+
+export const changeLocale = (language: string): string => moment.locale(language);
 
 /**
- * Calculate absolute start- and end dates based on an input date and a relative time period.
- *
- * We work with Date and Period, to not expose moment() to our application.
+ * Calculate absolute start- and end dates based on an input date and a relative time period.*
  */
 const dateRange = (now: Date, period: Period, customDateRange: Maybe<DateRange>): DateRange => {
   const zonedDate = momentWithTimeZone(now);
@@ -83,7 +90,7 @@ export const toPeriodApiParameters = (
   }: CurrentPeriod): EncodedUriParameters[] =>
   toApiParameters(currentDateRange(now, period, customDateRange));
 
-const yyyymmdd = 'YYYY-MM-DD';
+export const yyyymmdd = 'YYYY-MM-DD';
 
 const toFriendlyIso8601 = ({start, end}: DateRange): string =>
   `${momentWithTimeZone(start).format(yyyymmdd)} - ${momentWithTimeZone(end).format(yyyymmdd)}`;

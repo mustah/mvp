@@ -1,13 +1,13 @@
-import * as moment from 'moment';
 import * as numeral from 'numeral';
+import {momentWithTimeZone} from './dateHelpers';
 
 export const FORMAT_DATE_DAY_MONTH = 'DD/MM';
-export const FORMAT_DATE_FULL_MINUTE = 'YY-MM-DD hh:mm';
+export const FORMAT_DATE_FULL_MINUTE = 'YY-MM-DD HH:mm';
 export const FORMAT_COLLECTION_PERCENT = '0.0';
 const FORMAT_MEASUREMENT = '0.000';
 
-export const formatDate = (date: Date, format?: string): string =>
-  moment(date).format(format || FORMAT_DATE_DAY_MONTH);
+export const formatDate = (date: Date, format: string = FORMAT_DATE_DAY_MONTH): string =>
+  momentWithTimeZone(date).format(format);
 
 export const roundCollectionPercentage = (num: number | string): string =>
   round(num, FORMAT_COLLECTION_PERCENT) + '%';

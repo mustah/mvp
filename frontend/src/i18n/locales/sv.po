@@ -200,6 +200,12 @@ msgstr "visa bara ändringar"
 msgid "date"
 msgstr "datum"
 
+msgid "start date"
+msgstr "startdatum"
+
+msgid "end date"
+msgstr "slutdatum"
+
 msgid "no meters"
 msgstr "inga mätare"
 

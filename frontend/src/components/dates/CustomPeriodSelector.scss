@@ -1,4 +1,138 @@
-.DateRangePicker_picker {
-  position: inherit !important;
-  margin-top: 6px;
+@import '../../app/variables';
+
+// The style classes are overriding the classes in react-dates/lib/css/_datepicker.css
+.DateRangePicker {
+
+  .DateRangePicker_picker {
+    position: static !important;
+    margin-top: 6px;
+
+    $day-width-height: 39px;
+    $range-bg-color: rgba($blue, 0.7);
+
+    .CalendarDay__default {
+      width: $day-width-height !important;
+      height: $day-width-height !important;
+      border: none;
+      color: $black !important;
+      background: $white !important;
+      border-radius: $day-width-height / 2;
+    }
+
+    .CalendarDay__hovered_offset {
+      background: #f4f5f5 !important;
+      border: 1px double #e4e7e7 !important;
+      color: inherit !important;
+    }
+
+    .CalendarDay__default:hover {
+      background: $grey !important;
+      border: none;
+      color: inherit !important;
+    }
+
+    .CalendarDay__selected_span {
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .CalendarDay__selected,
+    .CalendarDay__selected:active,
+    .CalendarDay__selected:hover {
+      background: $dark-blue !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .CalendarDay__selected_span:active,
+    .CalendarDay__selected_span:hover {
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .CalendarDay__hovered_span,
+    .CalendarDay__hovered_span:hover {
+      background: $range-bg-color !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .CalendarDay__hovered_span:active {
+      background: $dark-blue !important;
+      border: none;
+      color: $white !important;
+    }
+
+    .DayPicker__withBorder {
+      box-shadow: none !important;
+    }
+  }
+
+  .DayPicker_transitionContainer {
+    width: 660px !important;
+  }
+
+  .DayPickerNavigation_button__horizontal {
+    padding: 0;
+    height: 40px;
+    width: 40px;
+    top: 10px;
+    border-radius: 20px;
+
+    &:hover {
+      border: 1px solid $blue;
+
+      .DayPickerNavigation_svg__horizontal {
+        fill: $blue;
+      }
+    }
+
+    &:active {
+      outline: none;
+      background: $primary-bg-hover;
+    }
+  }
+
+  .DateRangePickerInput__withBorder {
+    border: 1px solid #cacccd !important;
+    border-radius: 3px !important;
+
+    .DateInput {
+      margin: 0;
+      padding: 0;
+      background: $white;
+      position: relative;
+      display: inline-block;
+      width: 130px;
+      border-radius: 3px;
+      vertical-align: middle;
+
+      .DateInput_input {
+        font-size: $normal !important;
+        font-family: inherit !important;
+        width: 80% !important;
+        height: inherit !important;
+        line-height: 16px !important;
+        border-top: 0 !important;
+        border-right: 0 !important;
+        border-bottom: 2px solid transparent !important;
+        border-left: 0 !important;
+        border-radius: 3px;
+      }
+
+      .DateInput_fang {
+        display: none !important;
+      }
+    }
+  }
 }
+
+.Dialog {
+  &.PeriodConfirmDialog {
+    width: 660px !important;
+  }
+}
+
+

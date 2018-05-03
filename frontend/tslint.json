@@ -21,11 +21,15 @@
       "leaflet",
       "leaflet.markercluster",
       "react-dates",
-      "redux-persist"
+      "redux-persist",
+      "moment"
     ],
     "no-shadowed-variable": false,
     "no-implicit-dependencies": [
-      [true, "dev"]
+      [
+        true,
+        "dev"
+      ]
     ],
     "object-literal-sort-keys": false,
     "no-var-requires": false,
