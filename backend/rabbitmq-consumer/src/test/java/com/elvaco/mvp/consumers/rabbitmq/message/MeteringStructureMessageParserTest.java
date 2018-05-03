@@ -5,9 +5,10 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import org.junit.Before;
 import org.junit.Test;
 
+import static com.elvaco.mvp.consumers.rabbitmq.message.JsonFileReader.parseJsonFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MeteringStructureParserTest {
+public class MeteringStructureMessageParserTest {
 
   private MeteringMessageParser messageParser;
 
@@ -88,5 +89,14 @@ public class MeteringStructureParserTest {
       + "  \"source_system_id\": \"The Source System\"\n"
       + "}\n";
     assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
+  }
+
+  @Test
+  public void readIntervalCanBeNull() {
+    String message = parseJsonFile("messages/metering-structure-message-no-interval.json");
+
+    MeteringStructureMessageDto parsedMessage = messageParser.parseStructureMessage(message).get();
+
+    assertThat(parsedMessage.meter.expectedInterval).isNull();
   }
 }

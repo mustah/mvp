@@ -1,5 +1,7 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
+import java.util.Optional;
+
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -62,6 +64,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
         )).withLocation(location);
 
     String address = structureMessage.meter.id;
+    Integer expectedInterval = structureMessage.meter.expectedInterval;
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
       .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
@@ -73,12 +76,12 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
           .medium(structureMessage.meter.medium)
           .manufacturer(structureMessage.meter.manufacturer)
           .logicalMeterId(logicalMeter.id)
-          .readIntervalMinutes(structureMessage.meter.expectedInterval)
+          .readIntervalMinutes(Optional.ofNullable(expectedInterval).orElse(0))
           .build()
       ).withMedium(structureMessage.meter.medium)
       .withManufacturer(structureMessage.meter.manufacturer)
       .withLogicalMeterId(logicalMeter.id)
-      .withReadIntervalMinutes(structureMessage.meter.expectedInterval)
+      .withReadIntervalMinutes(expectedInterval)
       .replaceActiveStatus(StatusType.from(structureMessage.meter.status));
 
     Gateway gateway = findOrCreateGateway(

@@ -20,7 +20,8 @@ public class MeteringAlarmParserTest {
 
   @Test
   public void meteringAlarmMessageIsParsedCorrectly() {
-    String jsonMessage = "{\n"
+    String jsonMessage =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Alarm Message 1.0\",\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
       + "  \"source_system_id\": \"The Source System\",\n"
@@ -63,10 +64,11 @@ public class MeteringAlarmParserTest {
 
   @Test
   public void parseMalformedStructureMessage() {
-    assertThat(messageParser.parseStructureMessage("")).isEmpty();
-    assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
-    assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
-    String jsonMessageMissingGateway = "{\n"
+    assertThat(messageParser.parseAlarmMessage("")).isEmpty();
+    assertThat(messageParser.parseAlarmMessage("{\"foo\": 1999}")).isEmpty();
+    assertThat(messageParser.parseAlarmMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
+    String jsonMessageMissingGateway =
+      "{\n"
       + "  \"message_type\": \"Elvaco MVP MQ Alarm Message 1.0\",\n"
       + "  \"organisation_id\": \"Organisation, Incorporated\",\n"
       + "  \"source_system_id\": \"The Source System\",\n"
@@ -83,7 +85,6 @@ public class MeteringAlarmParserTest {
       + "   }\n"
       + "  ]\n"
       + " }\n";
-    assertThat(messageParser.parseStructureMessage(jsonMessageMissingGateway)).isEmpty();
+    assertThat(messageParser.parseAlarmMessage(jsonMessageMissingGateway)).isEmpty();
   }
-
 }

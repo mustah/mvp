@@ -90,7 +90,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
     );
   }
 
-  public PhysicalMeter withReadIntervalMinutes(int readIntervalMinutes) {
+  public PhysicalMeter withReadIntervalMinutes(@Nullable Integer readIntervalMinutes) {
     return new PhysicalMeter(
       id,
       organisation,
@@ -99,7 +99,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
       medium,
       manufacturer,
       logicalMeterId,
-      readIntervalMinutes,
+      readIntervalMinutes != null ? readIntervalMinutes : this.readIntervalMinutes,
       measurementCount,
       statuses
     );
