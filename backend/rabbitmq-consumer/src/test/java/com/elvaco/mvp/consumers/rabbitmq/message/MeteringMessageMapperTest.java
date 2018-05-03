@@ -30,6 +30,16 @@ public class MeteringMessageMapperTest {
   }
 
   @Test
+  public void bothUnknownAndKnownQuantitiesAreMappedToUnknownMedium() {
+    List<ValueDto> values = asList(
+      newValueDto("Volume"),
+      newValueDto("Bluahe")
+    );
+
+    assertThat(resolveMeterDefinition(values)).isEqualTo(MeterDefinition.UNKNOWN_METER);
+  }
+
+  @Test
   public void districtHeatingMeterIsMappedFromValueQuantities() {
     List<ValueDto> values = asList(
       newValueDto("Return temp."),
