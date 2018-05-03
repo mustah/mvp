@@ -1,3 +1,9 @@
 .GraphContainer {
-  padding: 0 16px;
+  display: flex;
+}
+
+.Graph {
+  flex-grow: 1;
+  width: 0;
+  display: flex;
 }
