@@ -97,6 +97,96 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   }
 
   @Test
+  public void processMessageWithMissingMeter() throws Exception {
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
+      MessageType.METERING_METER_STRUCTURE_V_1_0,
+      new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      "test",
+      "Some organisation",
+      new GatewayStatusDto("123987", "Gateway 2000", "OK")
+    );
+
+    publishMessage(toJson(message).getBytes());
+
+    MeteringStructureMessageDto newMessage = new MeteringStructureMessageDto(
+      MessageType.METERING_METER_STRUCTURE_V_1_0,
+      null,
+      new FacilityDto("facility-id", "Sweden", "Varberg", "Drottninggatan 1"),
+      "test",
+      "Some organisation",
+      new GatewayStatusDto("123987", "Gateway 3100", "OK")
+    );
+
+    publishMessage(toJson(newMessage).getBytes());
+
+    assertOrganisationWithSlugWasCreated("some-organisation");
+
+    UUID organisationId = organisations.findBySlug("some-organisation").get().id;
+    assertLogicalMeterLocation(
+      organisationId,
+      "facility-id",
+      "Sweden",
+      "Varberg",
+      "Drottninggatan 1"
+    );
+
+    assertGatewayModel(
+      organisationId,
+      "123987", "Gateway 3100"
+    );
+
+    //    assertOrganisationWithSlugWasCreated("some-organisation");
+    //
+    //    UUID organisationId = organisations.findBySlug("some-organisation").get().id;
+    //    assertLogicalMeterWasCreated(organisationId, "facility-id");
+    //    assertPhysicalMeterIsCreated(organisationId, "1234", "facility-id");
+    //    assertGatewayWasCreated(organisationId, "123987");
+  }
+
+  @Test
+  public void processMessageWithMissingGateway() throws Exception {
+    MeteringStructureMessageDto message = new MeteringStructureMessageDto(
+      MessageType.METERING_METER_STRUCTURE_V_1_0,
+      new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      "test",
+      "Some organisation",
+      new GatewayStatusDto("123987", "Gateway 2000", "OK")
+    );
+
+    publishMessage(toJson(message).getBytes());
+
+    MeteringStructureMessageDto newMessage = new MeteringStructureMessageDto(
+      MessageType.METERING_METER_STRUCTURE_V_1_0,
+      new MeterDto("1234", "Some medium", "OK", "Acme", 15),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      "test",
+      "Some organisation",
+      null
+    );
+
+    publishMessage(toJson(newMessage).getBytes());
+
+    assertOrganisationWithSlugWasCreated("some-organisation");
+
+    UUID organisationId = organisations.findBySlug("some-organisation").get().id;
+    assertPhysicalMeterManufacturer(
+      organisationId,
+      "facility-id",
+      "1234",
+      "Acme"
+    );
+
+    //    assertOrganisationWithSlugWasCreated("some-organisation");
+    //
+    //    UUID organisationId = organisations.findBySlug("some-organisation").get().id;
+    //    assertLogicalMeterWasCreated(organisationId, "facility-id");
+    //    assertPhysicalMeterIsCreated(organisationId, "1234", "facility-id");
+    //    assertGatewayWasCreated(organisationId, "123987");
+  }
+
+  @Test
   public void responseMessagesForMeasurementMessagesArePublished() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
       MessageType.METERING_MEASUREMENT_V_1_0,
@@ -133,6 +223,54 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
     ).isPresent())).as("Logical meter '" + externalId + "' was created").isTrue();
   }
 
+  private void assertPhysicalMeterManufacturer(
+    UUID organisationId,
+    String externalId,
+    String meterId,
+    String manufacturer
+  ) throws InterruptedException {
+    assertThat(waitForCondition(() -> physicalMeterJpaRepository
+      .findByOrganisationIdAndExternalIdAndAddress(organisationId, externalId, meterId)
+      .filter(meter -> meter.manufacturer.equalsIgnoreCase(manufacturer))
+      .isPresent()
+    )).as("Physical meter '" + externalId + "' has manufacturer" + manufacturer)
+      .isTrue();
+  }
+
+  private void assertLogicalMeterLocation(
+    UUID organisationId,
+    String externalId,
+    String country,
+    String city,
+    String address
+  ) throws InterruptedException {
+    assertThat(waitForCondition(() -> hasMeterAddress(
+      organisationId,
+      externalId,
+      country,
+      city,
+      address
+    ))).as("Logical meter '" + externalId + "' has address").isTrue();
+  }
+
+  private boolean hasMeterAddress(
+    UUID organisationId,
+    String externalId,
+    String country,
+    String city,
+    String address
+  ) {
+    return logicalMeterJpaRepository.findBy(
+      organisationId,
+      externalId
+    )
+      .filter(meter ->
+                meter.location.country.equalsIgnoreCase(country) &&
+                meter.location.city.equalsIgnoreCase(city) &&
+                meter.location.streetAddress.equalsIgnoreCase(address))
+      .isPresent();
+  }
+
   private void assertGatewayWasCreated(
     UUID organisationId,
     String serial
@@ -141,6 +279,18 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       .stream()
       .anyMatch(gateway -> gateway.serial.equals(serial))
     )).as("Gateway '" + serial + "' was created").isTrue();
+  }
+
+  private void assertGatewayModel(
+    UUID organisationId,
+    String serial,
+    String model
+  ) throws InterruptedException {
+    assertThat(waitForCondition(() -> gateways.findAllByOrganisationId(organisationId)
+      .stream()
+      .anyMatch(gateway -> gateway.serial.equals(serial) && gateway.productModel.equalsIgnoreCase(
+        model))
+    )).as("Gateway '" + serial + "' has model" + model).isTrue();
   }
 
   private void assertPhysicalMeterIsCreated(
