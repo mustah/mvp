@@ -96,7 +96,19 @@ public class LogicalMeterTest {
       randomUUID(),
       MeterDefinition.HOT_WATER_METER
     );
-    assertThat(logicalMeter.getManufacturer()).isEqualTo("Unknown manufacturer");
+    assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
+  }
+
+  @Test
+  public void getManufacturerUnknown() {
+    UUID organisationId = randomUUID();
+    UUID logicalMeterId = randomUUID();
+    LogicalMeter logicalMeter = newLogicalMeter(
+      logicalMeterId,
+      organisationId,
+      Collections.singletonList(newPhysicalMeter(organisationId, logicalMeterId, null))
+    );
+    assertThat(logicalMeter.getManufacturer()).isEqualTo("UNKNOWN");
   }
 
   @Test

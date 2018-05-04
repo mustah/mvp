@@ -28,6 +28,7 @@ public class PhysicalMeter implements Identifiable<UUID> {
   public final String address;
   public final String externalId;
   public final String medium;
+  @Nullable
   public final String manufacturer;
   @Nullable
   public final UUID logicalMeterId;

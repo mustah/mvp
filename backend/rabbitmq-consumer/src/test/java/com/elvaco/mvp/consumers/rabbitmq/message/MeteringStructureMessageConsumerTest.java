@@ -165,14 +165,14 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
-  public void updatesExistingGatewayWithUnknownManufacturer() {
+  public void updatesExistingGatewayWithNewProductModel() {
     UUID gatewayId = randomUUID();
     Organisation organisation = saveDefaultOrganisation();
     gateways.save(new Gateway(
       gatewayId,
       organisation.id,
       GATEWAY_EXTERNAL_ID,
-      "Unknown"
+      "OldValue"
     ));
 
     messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));

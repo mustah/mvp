@@ -178,7 +178,7 @@ public class LogicalMeter implements Identifiable<UUID> {
     );
   }
 
-  LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
+  public LogicalMeter withMeterDefinition(MeterDefinition meterDefinition) {
     return new LogicalMeter(
       id,
       externalId,
@@ -291,7 +291,7 @@ public class LogicalMeter implements Identifiable<UUID> {
   public String getManufacturer() {
     return activePhysicalMeter()
       .map(physicalMeter -> physicalMeter.manufacturer)
-      .orElse("Unknown manufacturer");
+      .orElse("UNKNOWN");
   }
 
   public Optional<Quantity> getQuantity(String quantityName) {
