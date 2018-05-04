@@ -1,0 +1,23 @@
+{
+  "message_type": "Elvaco MVP MQ Reference Info Message 1.0",
+  "facility": {
+    "id": "ABC-123",
+    "country": "Sweden",
+    "city": "Perstorp",
+    "address": "Duvstigen 8C"
+  },
+  "gateway": {
+    "id": "12031925",
+    "product_model": "CMi2110",
+    "status": "OK"
+  },
+  "meter": {
+    "id": "1",
+    "medium": "Heat, Return temp",
+    "manufacturer": "ELV",
+    "status": "OK",
+    "expected_interval": 15
+  },
+  "organisation_id": "Organisation, Incorporated",
+  "source_system_id": "The Source System"
+}

@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_COOLING;
 import static com.elvaco.mvp.core.domainmodels.Medium.DISTRICT_HEATING;
+import static com.elvaco.mvp.core.domainmodels.Medium.GAS;
 import static com.elvaco.mvp.core.domainmodels.Medium.HOT_WATER;
 import static com.elvaco.mvp.core.domainmodels.Medium.UNKNOWN_MEDIUM;
 import static java.util.Collections.unmodifiableSet;
@@ -15,17 +16,15 @@ import static java.util.Collections.unmodifiableSet;
 @ToString
 public class MeterDefinition implements Identifiable<MeterDefinitionType> {
 
-  public static final MeterDefinition UNKNOWN_METER =
-    MeterDefinition.fromMedium(Medium.from(UNKNOWN_MEDIUM.medium));
+  public static final MeterDefinition UNKNOWN_METER = fromMedium(UNKNOWN_MEDIUM);
 
-  public static final MeterDefinition HOT_WATER_METER =
-    MeterDefinition.fromMedium(Medium.from(HOT_WATER.medium));
+  public static final MeterDefinition HOT_WATER_METER = fromMedium(HOT_WATER);
 
-  public static final MeterDefinition DISTRICT_COOLING_METER =
-    MeterDefinition.fromMedium(Medium.from(DISTRICT_COOLING.medium));
+  public static final MeterDefinition DISTRICT_COOLING_METER = fromMedium(DISTRICT_COOLING);
 
-  public static final MeterDefinition DISTRICT_HEATING_METER =
-    MeterDefinition.fromMedium(Medium.from(DISTRICT_HEATING.medium));
+  public static final MeterDefinition DISTRICT_HEATING_METER = fromMedium(DISTRICT_HEATING);
+
+  public static final MeterDefinition GAS_METER = fromMedium(GAS);
 
   public final MeterDefinitionType type;
   public final String medium;

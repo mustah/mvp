@@ -14,6 +14,9 @@ public class MeterDefinitionTest {
     assertThat(MeterDefinition.fromMedium(Medium.from("District heating")))
       .isEqualTo(MeterDefinition.DISTRICT_HEATING_METER);
 
+    assertThat(MeterDefinition.fromMedium(Medium.from("Gas")))
+      .isEqualTo(MeterDefinition.GAS_METER);
+
     assertThat(MeterDefinition.fromMedium(Medium.from("Heat, Return temp")))
       .isEqualTo(MeterDefinition.systemOwned(
         MeterDefinitionType.DISTRICT_HEATING_METER_TYPE,

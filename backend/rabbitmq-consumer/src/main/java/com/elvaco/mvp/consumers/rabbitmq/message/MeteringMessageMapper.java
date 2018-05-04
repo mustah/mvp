@@ -1,38 +1,58 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Quantity;
+
 import lombok.experimental.UtilityClass;
 
-import static java.util.Collections.unmodifiableList;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableMap;
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toSet;
 
 @UtilityClass
 class MeteringMessageMapper {
 
   static final Map<String, String> METERING_TO_MVP_UNITS = meteringUnitTranslationsMap();
 
-  private static final List<String> DISTRICT_HEATING_METER_QUANTITIES =
-    unmodifiableList(new ArrayList<>(mapMeterQuantities().keySet()));
+  private static final Set<String> DISTRICT_HEATING_METER_QUANTITIES =
+    unmodifiableSet(new HashSet<>(asList(
+      "Return temp.",
+      "Difference temp.",
+      "Flow temp.",
+      "Volume flow",
+      "Power",
+      "Volume",
+      "Energy"
+    )));
+
+  private static final Set<String> GAS_METER_QUANTITIES = singleton("Volume");
 
   private static final Map<String, Quantity> METER_TO_MVP_QUANTITIES = mapMeterQuantities();
 
   static MeterDefinition resolveMeterDefinition(List<ValueDto> values) {
-    boolean isDistrictHeatingMeter = values
+    Set<String> quantities = values
       .stream()
       .map(valueDto -> valueDto.quantity)
-      .collect(toList())
-      .containsAll(DISTRICT_HEATING_METER_QUANTITIES);
-    return isDistrictHeatingMeter
-      ? MeterDefinition.DISTRICT_HEATING_METER
-      : MeterDefinition.UNKNOWN_METER;
+      .collect(toSet());
+
+    if (quantities.equals(DISTRICT_HEATING_METER_QUANTITIES)) {
+      return MeterDefinition.DISTRICT_HEATING_METER;
+    }
+
+    if (quantities.equals(GAS_METER_QUANTITIES)) {
+      return MeterDefinition.GAS_METER;
+    }
+
+    return MeterDefinition.UNKNOWN_METER;
   }
 
   static String mappedQuantityName(String quantity) {
