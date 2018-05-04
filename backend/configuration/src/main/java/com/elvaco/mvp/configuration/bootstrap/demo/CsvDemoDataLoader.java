@@ -66,12 +66,14 @@ class CsvDemoDataLoader implements CommandLineRunner {
       return;
     }
 
-    MeterDefinition meterDefinition = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
+    MeterDefinition districtHeating = meterDefinitions.save(MeterDefinition.DISTRICT_HEATING_METER);
+    MeterDefinition gas = meterDefinitions.save(MeterDefinition.GAS_METER);
 
     Map<String, Location> locationMap = mapAddressToLocation();
 
-    importFrom("data/meters_perstorp.csv", locationMap, meterDefinition);
-    importFrom("data/meters_almhult.csv", locationMap, meterDefinition);
+    importFrom("data/meters_fictive_hoganas.csv", locationMap, gas);
+    importFrom("data/meters_perstorp.csv", locationMap, districtHeating);
+    importFrom("data/meters_almhult.csv", locationMap, districtHeating);
 
     statusLogsDataLoader.loadMockData();
 

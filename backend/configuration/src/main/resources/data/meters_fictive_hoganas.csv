@@ -1,0 +1,4 @@
+facility_id;address;city;medium;meter_id;meter_manufacturer;gateway_id;gateway_product_model;phone;ip;port;gateway_status;meter_status
+3000;Hasselgatan 4;Höganäs;Gas;1003000;ELV;10003000;CMi2110;06190000355115;NULL;NULL;OK;OK
+3001;Storgatan 5;Höganäs;Gas;1003001;ELV;10003001;CMi2110;06190000388838;NULL;NULL;OK;OK
+3002;Väpnaregatan 10;Höganäs;Gas;1003002;ELV;10003002;CMi2110;0067282172804;NULL;NULL;OK;OK

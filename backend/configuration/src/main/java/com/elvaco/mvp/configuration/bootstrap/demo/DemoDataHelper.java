@@ -8,22 +8,33 @@ import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.meter.PhysicalMeterEntity;
 
+import lombok.experimental.UtilityClass;
+
 import static java.util.Arrays.asList;
 
+@UtilityClass
 public class DemoDataHelper {
   private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
-  private DemoDataHelper() {}
+  public static List<MeasurementEntity> gasMeasurement(
+    ZonedDateTime created,
+    PhysicalMeterEntity meter,
+    double previousMeterReading
+  ) {
+    double value = RANDOM.nextDouble(previousMeterReading, previousMeterReading + 2);
 
-  /**
-   * Get measurements representing a single read of a District Heating Meter.
-   *
-   * @param created Date of reading
-   * @param meter   Meter
-   *
-   * @return
-   */
-  public static List<MeasurementEntity> getDistrictHeatingMeterReading(
+    return asList(
+      new MeasurementEntity(
+        created,
+        Quantity.VOLUME.name,
+        value,
+        Quantity.VOLUME.presentationUnit(),
+        meter
+      )
+    );
+  }
+
+  public static List<MeasurementEntity> heatMeasurement(
     ZonedDateTime created,
     PhysicalMeterEntity meter
   ) {
