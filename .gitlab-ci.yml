@@ -183,6 +183,17 @@ test:system:
       - backend/configuration/build/reports/tests/systemTestCI/*
     expire_in: 7 days
 
+test:jira_script:
+  <<: *no_cache
+  image: frolvlad/alpine-python3
+  stage: test
+  before_script:
+    - cd scripts/jira/
+    - pip install -r requirements.txt
+  script:
+    - flake8
+    - nose2 --with-coverage --verbose
+
 test:unit_and_IT:
   <<: *cache_gradle_read_only
   stage: test
