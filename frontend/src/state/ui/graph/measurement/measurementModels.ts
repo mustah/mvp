@@ -85,4 +85,7 @@ export const allQuantities = {
     RenderableQuantity.returnTemperature,
     RenderableQuantity.differenceTemperature,
   ],
+  gas: [
+    RenderableQuantity.volume,
+  ],
 };
