@@ -189,7 +189,7 @@ public class DashboardControllerTest extends IntegrationTest {
       ZonedDateTime created = measurementDate.plusMinutes(x * interval);
 
       measurementEntities.addAll(
-        DemoDataHelper.getDistrictHeatingMeterReading(created, physicalMeterEntity)
+        DemoDataHelper.heatMeasurement(created, physicalMeterEntity)
       );
 
       measurementCount = measurementCount + 7;

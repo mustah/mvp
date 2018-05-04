@@ -19,6 +19,7 @@ import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.entity.user.OrganisationEntity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -28,6 +29,7 @@ import static java.util.Collections.unmodifiableSet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
+@ToString(exclude = {"measurements", "statusLogs"})
 public class PhysicalMeterEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = 1100904291210178685L;
