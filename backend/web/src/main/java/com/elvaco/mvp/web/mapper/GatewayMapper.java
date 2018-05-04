@@ -49,15 +49,6 @@ public class GatewayMapper {
     );
   }
 
-  public Gateway toDomainModel(GatewayDto gatewayDto, UUID organisationId) {
-    return new Gateway(
-      gatewayDto.id != null ? gatewayDto.id : randomUUID(),
-      organisationId,
-      gatewayDto.serial,
-      gatewayDto.productModel
-    );
-  }
-
   public MapMarkerDto toMapMarkerDto(Gateway gateway) {
     MapMarkerDto mapMarkerDto = new MapMarkerDto();
     mapMarkerDto.id = gateway.id;

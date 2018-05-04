@@ -39,7 +39,6 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
@@ -194,28 +193,6 @@ public class GatewayControllerTest extends IntegrationTest {
     assertThat(response.getTotalElements()).isEqualTo(3);
     assertThat(response.getNumberOfElements()).isEqualTo(3);
     assertThat(response.getTotalPages()).isEqualTo(1);
-  }
-
-  @Test
-  public void createNewGateway() {
-    GatewayDto requestModel = new GatewayDto(
-      null,
-      "123",
-      "2100",
-      OK.name,
-      "2018-04-09 07:45:12",
-      new LocationDto(),
-      emptyList()
-    );
-
-    ResponseEntity<GatewayDto> response = asSuperAdmin()
-      .post("/gateways", requestModel, GatewayDto.class);
-
-    GatewayDto created = response.getBody();
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(created.id).isNotNull();
-    assertThat(created.serial).isEqualTo("123");
-    assertThat(created.productModel).isEqualTo("2100");
   }
 
   @Test
