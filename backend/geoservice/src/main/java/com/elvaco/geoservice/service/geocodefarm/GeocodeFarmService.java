@@ -18,15 +18,15 @@ public class GeocodeFarmService implements AddressToGeoService {
   @Value("${geocodeFarm.url}")
   private String url;
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
   @Value("${geocodeFarm.quota:250}")
   private Integer quota;
 
   @Value("${geocodeFarm.maxrate:4}")
   private Integer maxRate;
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
   @Override
   public GeoLocation getGeoByAddress(Address address) {
@@ -38,22 +38,6 @@ public class GeocodeFarmService implements AddressToGeoService {
       );
 
     return convert(result);
-  }
-
-  private GeoLocation convert(GeocodingFarmResult source) {
-    GeoLocation target = null;
-    if (source.getGeocodingResults().getResults() != null
-        && source.getGeocodingResults().getStatus().getResultCount() >= 1) {
-      target = new GeoLocation();
-      Result result = source.getGeocodingResults().getResults().get(0);
-      target.setLatitude(result.getCoordinates().getLatitude());
-      target.setLongitude(result.getCoordinates().getLongitude());
-      target.setConfidence(Accuracy.from(result.getAccuracy()).value);
-      target.setSource(getId());
-    }
-    this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())
-                 - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
-    return target;
   }
 
   @Override
@@ -78,5 +62,21 @@ public class GeocodeFarmService implements AddressToGeoService {
   @Scheduled(zone = "GMT-5", cron = "0 00 00 * * *")
   public void resetQuota() {
     this.quota = 250;
+  }
+
+  private GeoLocation convert(GeocodingFarmResult source) {
+    GeoLocation target = null;
+    if (source.getGeocodingResults().getResults() != null
+        && source.getGeocodingResults().getStatus().getResultCount() >= 1) {
+      target = new GeoLocation();
+      Result result = source.getGeocodingResults().getResults().get(0);
+      target.setLatitude(result.getCoordinates().getLatitude());
+      target.setLongitude(result.getCoordinates().getLongitude());
+      target.setConfidence(Accuracy.from(result.getAccuracy()).value);
+      target.setSource(getId());
+    }
+    this.quota = Integer.parseInt(source.getGeocodingResults().getAccount().getUsageLimit())
+                 - Integer.parseInt(source.getGeocodingResults().getAccount().getUsedToday());
+    return target;
   }
 }

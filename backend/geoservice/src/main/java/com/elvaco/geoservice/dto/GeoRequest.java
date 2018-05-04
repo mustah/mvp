@@ -3,9 +3,13 @@ package com.elvaco.geoservice.dto;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import com.elvaco.geoservice.UriUtils;
 import lombok.Getter;
+import lombok.ToString;
 
+import static com.elvaco.geoservice.UriUtils.asDecodedUri;
+import static com.elvaco.geoservice.UriUtils.decode;
+
+@ToString
 @Getter
 public class GeoRequest {
 
@@ -21,22 +25,34 @@ public class GeoRequest {
   private String country;
 
   public void setCallbackUrl(String encodedCallbackUrl) throws URISyntaxException {
-    this.callbackUrl = UriUtils.asDecoded(encodedCallbackUrl);
+    this.callbackUrl = asDecodedUri(encodedCallbackUrl);
   }
 
   public void setErrorCallbackUrl(String encodedErrorCallbackUrl) throws URISyntaxException {
-    this.errorCallbackUrl = UriUtils.asDecoded(encodedErrorCallbackUrl);
+    this.errorCallbackUrl = asDecodedUri(encodedErrorCallbackUrl);
   }
 
   public void setStreet(String street) {
-    this.street = UriUtils.decode(street);
+    this.street = decode(street);
   }
 
   public void setCity(String city) {
-    this.city = UriUtils.decode(city);
+    this.city = decode(city);
   }
 
   public void setCountry(String country) {
-    this.country = UriUtils.decode(country);
+    this.country = decode(country);
+  }
+
+  public boolean isValid() {
+    return isTrimmedNotEmpty(street)
+           && isTrimmedNotEmpty(city)
+           && isTrimmedNotEmpty(country)
+           && callbackUrl != null
+           && errorCallbackUrl != null;
+  }
+
+  private static boolean isTrimmedNotEmpty(String str) {
+    return str != null && !str.trim().isEmpty();
   }
 }

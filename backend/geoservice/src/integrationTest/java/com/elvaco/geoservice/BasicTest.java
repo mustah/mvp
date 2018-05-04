@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -65,6 +67,7 @@ public class BasicTest {
     request.setCity("Kungsbacka");
     request.setCountry("Sweden");
     request.setCallbackUrl(getEncodedCallbackUrl());
+    request.setErrorCallbackUrl(getEncodedCallbackUrl());
 
     geoController.requestByAddress(request);
 
@@ -88,20 +91,27 @@ public class BasicTest {
     request.setCity("Växjö");
     request.setCountry("Sweden");
     request.setCallbackUrl(getEncodedCallbackUrl());
+    request.setErrorCallbackUrl("/testing");
 
-    geoController.requestByAddress(request);
+    ResponseEntity<String> response = geoController.requestByAddress(request);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isEqualTo("OK");
 
     sleep();
 
-    GeoResponse response = (GeoResponse) callbackController.getLastResponse();
+    GeoResponse lastResponse = (GeoResponse) callbackController.getLastResponse();
 
-    assertThat(response.geoData).isEqualTo(new GeoDataDto(
+    assertThat(lastResponse.geoData).isEqualTo(new GeoDataDto(
       Double.valueOf("14.8917824398705"),
       Double.valueOf("57.0294993437130"),
       0.5
     ));
 
-    assertThat(response.address).isEqualTo(new AddressDto("Drottningvägen 1", "Växjö", "Sweden"));
+    assertThat(lastResponse.address).isEqualTo(new AddressDto(
+      "Drottningvägen 1",
+      "Växjö",
+      "Sweden"
+    ));
   }
 
   @Test
@@ -116,11 +126,26 @@ public class BasicTest {
     geoController.requestByAddress(request);
 
     sleep();
+
     ErrorDto response = (ErrorDto) callbackController.getLastResponse();
 
     assertThat(response.message)
       .as("Error message differ")
       .isEqualTo("No geolocation found");
+  }
+
+  @Test
+  public void requestByAddress_WithIncompleteAddressParameters() throws URISyntaxException {
+    GeoRequest request = new GeoRequest();
+    request.setCountry("Sverige");
+    request.setCallbackUrl(getEncodedCallbackUrl());
+    request.setErrorCallbackUrl(urlOf("/error"));
+
+    ResponseEntity<String> response = geoController.requestByAddress(request);
+    String status = response.getBody();
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(status).isNull();
   }
 
   private String getEncodedCallbackUrl() {
