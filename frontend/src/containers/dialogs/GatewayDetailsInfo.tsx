@@ -4,6 +4,7 @@ import {Column, ColumnCenter} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle} from '../../components/texts/Titles';
+import {locationNameTranslation} from '../../helpers/translations';
 import {translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Info} from './Info';
@@ -24,8 +25,8 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
         </Column>
         <ColumnCenter>
           <Row className="Address">
-            <Info label={translate('city')} value={city.name}/>
-            <Info label={translate('address')} value={address.name}/>
+            <Info label={translate('city')} value={locationNameTranslation(city.name)}/>
+            <Info label={translate('address')} value={locationNameTranslation(address.name)}/>
           </Row>
         </ColumnCenter>
       </Row>
@@ -33,7 +34,7 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
         <Column>
           <img src={gatewayImage} width={100}/>
         </Column>
-        <Column className="OverView">
+        <Column className="Overview">
           <Row>
             <Info label={translate('gateway serial')} value={serial}/>
             <Info label={translate('product model')} value={productModel}/>

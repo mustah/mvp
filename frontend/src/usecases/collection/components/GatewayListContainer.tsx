@@ -12,6 +12,7 @@ import {TableHead} from '../../../components/table/TableHead';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
+import {locationNameTranslation} from '../../../helpers/translations';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {clearErrorGateways, fetchGateways} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
@@ -23,10 +24,10 @@ import {
   getPaginatedEntities,
 } from '../../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../../state/domain-models/domainModels';
-import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../../state/ui/pagination/paginationSelectors';
+import {getPaginatedGatewayParameters} from '../../../state/user-selection/userSelectionSelectors';
 import {ClearErrorPaginated, ErrorResponse, FetchPaginated, OnClickWithId, uuid} from '../../../types/Types';
 import {selectEntryAdd} from '../../report/reportActions';
 import {GatewayListItem} from './GatewayListItem';
@@ -82,8 +83,8 @@ class GatewayList extends React.Component<Props> {
 
     const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
     const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
-    const renderCity = ({location: {city}}: Gateway) => city.name;
-    const renderAddress = ({location: {address}}: Gateway) => address.name;
+    const renderCity = ({location: {city}}: Gateway) => locationNameTranslation(city.name);
+    const renderAddress = ({location: {address}}: Gateway) => locationNameTranslation(address.name);
     const renderActionDropdown = ({id, productModel}: Gateway) =>
       <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
     const renderStatusChanged = ({statusChanged}: Gateway) => statusChanged || <Separator/>;
