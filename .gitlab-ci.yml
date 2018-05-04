@@ -183,6 +183,17 @@ test:system:
       - backend/configuration/build/reports/tests/systemTestCI/*
     expire_in: 7 days
 
+test:jira_script:
+  <<: *no_cache
+  image: frolvlad/alpine-python3
+  stage: test
+  before_script:
+    - cd scripts/jira/
+    - pip install -r requirements.txt
+  script:
+    - flake8
+    - nose2 --with-coverage --verbose
+
 test:unit_and_IT:
   <<: *cache_gradle_read_only
   stage: test
@@ -345,6 +356,22 @@ finalize:tag-production-mvp-docker:
     - docker pull ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG}
     - docker tag ${DOCKER_REGISTRY_URL}/mvp:${CI_COMMIT_REF_SLUG} ${DOCKER_REGISTRY_URL}/mvp:production
     - docker push ${DOCKER_REGISTRY_URL}/mvp:production
+
+finalize:create-jira-version:
+  <<: *no_cache
+  image: frolvlad/alpine-python3
+  dependencies:
+    - prepare:version
+  stage: finalize
+  only:
+    - schedules
+    - tags
+  allow_failure: true
+  before_script:
+    - cd scripts/jira/
+    - pip install -r requirements.txt
+  script:
+    - ./fixversion.py --version $(cat ../../.version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
