@@ -232,7 +232,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     if (isTooltipActive) {
       const closestLine = this.findClosestLine(activeTooltipIndex, chartY);
       if (closestLine !== undefined) {
-        this.activeDataKey = this.findClosestLine(activeTooltipIndex, chartY);
+        this.activeDataKey = closestLine;
         this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
       }
     }
@@ -243,11 +243,12 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     if (activeDots === undefined) {
       return undefined;
     }
-    const sortedActiveDots = Object.keys(activeDots).map((id) => activeDots[id])
+    const sortedActiveDots = Object.keys(activeDots)
+      .map((id) => activeDots[id])
       .filter(({cy}) => cy || cy === 0)
       .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
       .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
-    return sortedActiveDots[0].dataKey;
+    return sortedActiveDots.length ? sortedActiveDots[0].dataKey : undefined;
   }
 }
 
