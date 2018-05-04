@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {listItemStyle, nestedListItemStyle, sideBarStyles} from '../../../../app/themes';
-import {locationNameTranslation} from '../../../../helpers/translations';
+import {orUnknown} from '../../../../helpers/translations';
 import {SelectionTree} from '../../../../state/selection-tree/selectionTreeModels';
 import {OnClickWithId, uuid} from '../../../../types/Types';
 import {SelectableListItem} from './SelectableListItem';
@@ -22,7 +22,7 @@ export const renderSelectionTreeCities = ({id, selectionTree, ...other}: RenderP
     ...other,
     id,
     selectable: false,
-    primaryText: locationNameTranslation(city.name),
+    primaryText: orUnknown(city.name),
     nestedItems: clusters,
   });
 };
@@ -46,7 +46,7 @@ const renderSelectionTreeAddresses = ({id, selectionTree, ...other}: RenderProps
     ...other,
     id,
     selectable: false,
-    primaryText: locationNameTranslation(address.name),
+    primaryText: orUnknown(address.name),
     nestedItems: meters,
   });
 };

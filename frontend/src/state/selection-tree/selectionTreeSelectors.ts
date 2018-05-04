@@ -1,5 +1,5 @@
 import {createSelector} from 'reselect';
-import {locationNameTranslation} from '../../helpers/translations';
+import {orUnknown} from '../../helpers/translations';
 import {uuid} from '../../types/Types';
 import {ObjectsById} from '../domain-models/domainModels';
 import {
@@ -18,7 +18,7 @@ const addOrInitialCluster = (
   cityClusters: ObjectsById<ClusterWithAddresses>,
 ): ObjectsById<ClusterWithAddresses> => {
 
-  const translatedName = locationNameTranslation(address.name);
+  const translatedName = orUnknown(address.name);
   const firstLetter = translatedName[0];
   const clusterId = `${cityId}:${firstLetter}`;
   const cityClusterName = `${firstLetter.toUpperCase()}...`;

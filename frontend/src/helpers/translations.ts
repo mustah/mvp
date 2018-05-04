@@ -5,7 +5,7 @@ import {ParameterName} from '../state/user-selection/userSelectionModels';
 import {Status} from '../types/Types';
 import {texts} from './texts';
 
-export const locationNameTranslation = (name: string) => name === 'unknown' ? translate('unknown') : name;
+export const orUnknown = (name: string) => name === 'unknown' ? translate('unknown') : name;
 
 export const getTranslationOrName = (name: string, domainModelName: ParameterName): string => {
   switch (domainModelName) {
@@ -14,7 +14,7 @@ export const getTranslationOrName = (name: string, domainModelName: ParameterNam
       return statusTranslation(name);
     case ParameterName.cities:
     case ParameterName.addresses:
-      return locationNameTranslation(name);
+      return orUnknown(name);
     default:
       return name;
   }

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import {imagePathFor} from '../../app/routes';
-import {Column, ColumnCenter} from '../../components/layouts/column/Column';
+import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle} from '../../components/texts/Titles';
+import {orUnknown} from '../../helpers/translations';
 import {translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Info} from './Info';
@@ -17,35 +18,25 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
   const gatewayImage = imagePathFor('cme2110.jpg');
 
   return (
-    <div className="GatewayDetailsInfo">
-      <Row className="space-between">
-        <Column>
+    <Column className="GatewayDetailsInfo">
+      <Column className="Overview">
+        <Row>
           <MainTitle>{translate('gateway details')}</MainTitle>
-        </Column>
-        <ColumnCenter>
-          <Row className="Address">
-            <Info label={translate('city')} value={city.name}/>
-            <Info label={translate('address')} value={address.name}/>
-          </Row>
-        </ColumnCenter>
-      </Row>
+          <Info label={translate('gateway serial')} value={serial}/>
+          <Info label={translate('product model')} value={productModel}/>
+          <Info label={translate('city')} value={orUnknown(city.name)}/>
+          <Info label={translate('address')} value={orUnknown(address.name)}/>
+        </Row>
+      </Column>
       <Row>
         <Column>
-          <img src={gatewayImage} width={100}/>
+          <img src={gatewayImage} width={120}/>
         </Column>
-        <Column className="OverView">
-          <Row>
-            <Info label={translate('gateway serial')} value={serial}/>
-            <Info label={translate('product model')} value={productModel}/>
-          </Row>
-          <Row>
-            <Info
-              label={translate('collection')}
-              value={<Status name={status.name}/>}
-            />
-          </Row>
-        </Column>
+        <Info
+          label={translate('collection')}
+          value={<Status name={status.name}/>}
+        />
       </Row>
-    </div>
+    </Column>
   );
 };

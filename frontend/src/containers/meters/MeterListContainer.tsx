@@ -14,12 +14,10 @@ import {MissingDataTitle} from '../../components/texts/Titles';
 import {now} from '../../helpers/dateHelpers';
 import {roundCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
+import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
-import {
-  clearErrorMeters,
-  fetchMeters,
-} from '../../state/domain-models-paginated/meter/meterApiActions';
+import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {
   getPageError,
@@ -28,10 +26,10 @@ import {
   getPaginatedEntities,
 } from '../../state/domain-models-paginated/paginatedDomainModelsSelectors';
 import {ObjectsById} from '../../state/domain-models/domainModels';
-import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {changePaginationPage} from '../../state/ui/pagination/paginationActions';
 import {EntityTypes, OnChangePage, Pagination} from '../../state/ui/pagination/paginationModels';
 import {getPagination} from '../../state/ui/pagination/paginationSelectors';
+import {getPaginatedMeterParameters} from '../../state/user-selection/userSelectionSelectors';
 import {
   ClearErrorPaginated,
   EncodedUriParameters,
@@ -96,8 +94,8 @@ class MeterList extends React.Component<Props> {
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
-    const renderCityName = ({location: {city}}: Meter) => city ? city.name : null;
-    const renderAddressName = ({location: {address}}: Meter) => address ? address.name : null;
+    const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
+    const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;

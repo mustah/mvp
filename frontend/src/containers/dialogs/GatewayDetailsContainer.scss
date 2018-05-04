@@ -2,15 +2,9 @@
 @import '../../app/flex';
 
 .GatewayDetailsInfo {
-  .OverView {
+  .Overview {
     .Column {
       margin: 0 $xl-space $lg-space $xl-space;
-    }
-  }
-
-  .Address {
-    .Column:first-child {
-      margin-right: $space;
     }
   }
 }
