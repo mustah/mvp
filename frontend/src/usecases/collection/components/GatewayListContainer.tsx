@@ -12,7 +12,7 @@ import {TableHead} from '../../../components/table/TableHead';
 import {MissingDataTitle} from '../../../components/texts/Titles';
 import {now} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
-import {locationNameTranslation} from '../../../helpers/translations';
+import {orUnknown} from '../../../helpers/translations';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../../services/translationService';
 import {clearErrorGateways, fetchGateways} from '../../../state/domain-models-paginated/gateway/gatewayApiActions';
@@ -83,8 +83,8 @@ class GatewayList extends React.Component<Props> {
 
     const renderGatewayListItem = (gateway: Gateway) => <GatewayListItem gateway={gateway}/>;
     const renderStatusCell = ({status: {name}}: Gateway) => <Status name={name}/>;
-    const renderCity = ({location: {city}}: Gateway) => locationNameTranslation(city.name);
-    const renderAddress = ({location: {address}}: Gateway) => locationNameTranslation(address.name);
+    const renderCity = ({location: {city}}: Gateway) => orUnknown(city.name);
+    const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
     const renderActionDropdown = ({id, productModel}: Gateway) =>
       <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
     const renderStatusChanged = ({statusChanged}: Gateway) => statusChanged || <Separator/>;

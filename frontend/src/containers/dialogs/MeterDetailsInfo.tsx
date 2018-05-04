@@ -3,7 +3,7 @@ import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle, Subtitle} from '../../components/texts/Titles';
-import {locationNameTranslation} from '../../helpers/translations';
+import {orUnknown} from '../../helpers/translations';
 import {translate} from '../../services/translationService';
 import {Meter} from '../../state/domain-models-paginated/meter/meterModels';
 import {Info} from './Info';
@@ -41,8 +41,8 @@ export const MeterDetailsInfo = ({meter}: Props) => {
           </Column>
           <Info label={translate('product model')} value={meter.manufacturer}/>
           <Info label={translate('medium')} value={meter.medium}/>
-          <Info label={translate('city')} value={locationNameTranslation(city.name)}/>
-          <Info label={translate('address')} value={locationNameTranslation(address.name)}/>
+          <Info label={translate('city')} value={orUnknown(city.name)}/>
+          <Info label={translate('address')} value={orUnknown(address.name)}/>
         </Row>
         <Row>
           <Column>

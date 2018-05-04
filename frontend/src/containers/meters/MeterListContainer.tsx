@@ -14,7 +14,7 @@ import {MissingDataTitle} from '../../components/texts/Titles';
 import {now} from '../../helpers/dateHelpers';
 import {roundCollectionPercentage} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
-import {locationNameTranslation} from '../../helpers/translations';
+import {orUnknown} from '../../helpers/translations';
 import {RootState} from '../../reducers/rootReducer';
 import {firstUpperTranslated, translate} from '../../services/translationService';
 import {clearErrorMeters, fetchMeters} from '../../state/domain-models-paginated/meter/meterApiActions';
@@ -94,8 +94,8 @@ class MeterList extends React.Component<Props> {
 
     const renderMeterListItem = (meter: Meter) => <MeterListItem meter={meter}/>;
     const renderStatusCell = ({status: {name}}: Meter) => <Status name={name}/>;
-    const renderCityName = ({location: {city}}: Meter) => locationNameTranslation(city.name);
-    const renderAddressName = ({location: {address}}: Meter) => locationNameTranslation(address.name);
+    const renderCityName = ({location: {city}}: Meter) => orUnknown(city.name);
+    const renderAddressName = ({location: {address}}: Meter) => orUnknown(address.name);
     const renderActionDropdown = ({id, manufacturer}: Meter) =>
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;

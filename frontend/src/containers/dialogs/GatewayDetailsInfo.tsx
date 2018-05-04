@@ -4,7 +4,7 @@ import {Column} from '../../components/layouts/column/Column';
 import {Row} from '../../components/layouts/row/Row';
 import {Status} from '../../components/status/Status';
 import {MainTitle} from '../../components/texts/Titles';
-import {locationNameTranslation} from '../../helpers/translations';
+import {orUnknown} from '../../helpers/translations';
 import {translate} from '../../services/translationService';
 import {Gateway} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {Info} from './Info';
@@ -24,8 +24,8 @@ export const GatewayDetailsInfo = ({gateway}: Props) => {
           <MainTitle>{translate('gateway details')}</MainTitle>
           <Info label={translate('gateway serial')} value={serial}/>
           <Info label={translate('product model')} value={productModel}/>
-          <Info label={translate('city')} value={locationNameTranslation(city.name)}/>
-          <Info label={translate('address')} value={locationNameTranslation(address.name)}/>
+          <Info label={translate('city')} value={orUnknown(city.name)}/>
+          <Info label={translate('address')} value={orUnknown(address.name)}/>
         </Row>
       </Column>
       <Row>
