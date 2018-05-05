@@ -368,10 +368,9 @@ finalize:create-jira-version:
     - tags
   allow_failure: true
   before_script:
-    - cd scripts/jira/
-    - pip install -r requirements.txt
+    - pip install -r scripts/jira/requirements.txt
   script:
-    - ./fixversion.py --version $(cat ../../.version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
+    - ./scripts/jira/fixversion.py --version $(cat .version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
