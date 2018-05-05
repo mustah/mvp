@@ -27,6 +27,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
 
 import static java.util.Collections.emptySet;
 import static javax.persistence.CascadeType.ALL;
@@ -38,6 +39,7 @@ import static javax.persistence.CascadeType.ALL;
 @Table(name = "logical_meter",
   uniqueConstraints = {@UniqueConstraint(columnNames = {"organisationId", "externalId"})}
 )
+@Audited
 public class LogicalMeterEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = 5528298891965340483L;

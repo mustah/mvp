@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.security.TokenService;
 import com.elvaco.mvp.web.exception.InvalidToken;
 import lombok.extern.slf4j.Slf4j;
@@ -54,8 +53,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private boolean shouldNotAuthenticateRequest(HttpServletRequest request, String header) {
     return header == null
-           || HttpMethod.OPTIONS.matches(request.getMethod())
-           || !header.startsWith(BEARER);
+      || HttpMethod.OPTIONS.matches(request.getMethod())
+      || !header.startsWith(BEARER);
   }
 
   private void setAuthentication(Authentication authentication) {
@@ -65,8 +64,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   private Authentication getAuthenticationTokenFrom(String requestHeader) {
     return bearerTokenFrom(requestHeader)
       .flatMap(tokenService::getToken)
-      .map(AuthenticatedUser::getToken)
-      .map(AuthenticationToken::new)
+      .map(user -> {
+        return new AuthenticationToken(user.getToken(), user);
+      })
       .orElseThrow(InvalidToken::new);
   }
 }

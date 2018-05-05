@@ -17,11 +17,13 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.MeterDefinitionType;
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "meter_definition")
 @NoArgsConstructor
+@Audited
 public class MeterDefinitionEntity extends EntityType<MeterDefinitionType> {
 
   private static final long serialVersionUID = -8819531921424251045L;

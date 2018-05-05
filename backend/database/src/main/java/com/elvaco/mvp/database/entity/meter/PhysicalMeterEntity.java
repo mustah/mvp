@@ -22,6 +22,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import static java.util.Collections.unmodifiableSet;
 
@@ -30,6 +32,7 @@ import static java.util.Collections.unmodifiableSet;
 @Access(AccessType.FIELD)
 @Table(name = "physical_meter")
 @ToString(exclude = {"measurements", "statusLogs"})
+@Audited
 public class PhysicalMeterEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = 1100904291210178685L;
@@ -49,11 +52,13 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
 
   @JsonManagedReference
   @OneToMany(mappedBy = "physicalMeter", fetch = FetchType.LAZY)
+  @NotAudited
   public List<MeasurementEntity> measurements;
 
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "physicalMeterId", fetch = FetchType.LAZY)
   @Cascade(value = CascadeType.MERGE)
+  @NotAudited
   public Set<PhysicalMeterStatusLogEntity> statusLogs;
 
   public UUID logicalMeterId;

@@ -10,6 +10,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
+import org.hibernate.envers.Audited;
 
 import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
@@ -18,6 +19,7 @@ import static com.elvaco.mvp.core.domainmodels.Role.USER;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "role")
+@Audited
 public class RoleEntity extends EntityType<String> {
 
   @Id

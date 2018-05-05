@@ -36,7 +36,6 @@ import org.springframework.http.ResponseEntity;
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
-import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -69,7 +68,7 @@ public class GatewayControllerTest extends IntegrationTest {
 
   @Before
   public void setUp() {
-    dailyPlanet = organisations.save(DAILY_PLANET);
+    dailyPlanet = context().organisation2();
   }
 
   @After

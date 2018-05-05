@@ -18,8 +18,6 @@ import com.elvaco.mvp.web.dto.UserTokenDto;
 import com.elvaco.mvp.web.dto.UserWithPasswordDto;
 import com.elvaco.mvp.web.mapper.OrganisationMapper;
 import com.elvaco.mvp.web.mapper.UserMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +27,6 @@ import static com.elvaco.mvp.core.domainmodels.Role.ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.SUPER_ADMIN;
 import static com.elvaco.mvp.core.domainmodels.Role.USER;
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static com.elvaco.mvp.testdata.RestClient.apiPathOf;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -44,16 +41,6 @@ public class UserControllerTest extends IntegrationTest {
 
   @Autowired
   private Organisations organisations;
-
-  @Before
-  public void setUp() {
-    organisations.save(WAYNE_INDUSTRIES);
-  }
-
-  @After
-  public void tearDown() {
-    organisations.deleteById(WAYNE_INDUSTRIES.id);
-  }
 
   @Test
   public void findUserById() {
@@ -301,7 +288,7 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void adminCannotCreateUserOfDifferentOrganisation() {
-    UserDto user = createUserDto("50@blessings.hm", WAYNE_INDUSTRIES);
+    UserDto user = createUserDto("50@blessings.hm", context().organisation2());
 
     ResponseEntity<UserDto> response = asTestAdmin().post("/users", user, UserDto.class);
 
@@ -311,7 +298,7 @@ public class UserControllerTest extends IntegrationTest {
   @Test
   public void adminCannotSeeUsersOfDifferentOrganisation() {
     UserDto batman = asSuperAdmin()
-      .post("/users", createUserDto("b@tm.an", WAYNE_INDUSTRIES), UserDto.class)
+      .post("/users", createUserDto("b@tm.an", context().organisation2()), UserDto.class)
       .getBody();
 
     UserDto colleague = asSuperAdmin()
@@ -327,7 +314,8 @@ public class UserControllerTest extends IntegrationTest {
 
   @Test
   public void invalidateUserWhenSuperAdminUpdatedThatUsersCredentials() {
-    UserWithPasswordDto userWithPassword = createUserDto("batman@batty.com", WAYNE_INDUSTRIES);
+    UserWithPasswordDto userWithPassword = createUserDto("batman@batty.com",
+      context().organisation2());
 
     ResponseEntity<UserDto> postResponse = asSuperAdmin()
       .post("/users", userWithPassword, UserDto.class);

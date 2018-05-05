@@ -13,13 +13,11 @@ import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import com.elvaco.mvp.web.dto.MeterSummaryDto;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static com.elvaco.mvp.core.fixture.DomainModels.WAYNE_INDUSTRIES;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,15 +32,9 @@ public class SummaryControllerTest extends IntegrationTest {
   @Autowired
   private Organisations organisations;
 
-  @Before
-  public void setUp() {
-    organisations.save(WAYNE_INDUSTRIES);
-  }
-
   @After
   public void tearDown() {
     logicalMeterJpaRepository.deleteAll();
-    organisations.deleteById(WAYNE_INDUSTRIES.id);
   }
 
   @Test

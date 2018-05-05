@@ -11,7 +11,9 @@ dependencies {
 
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
   compile 'org.springframework.boot:spring-boot-starter-jdbc'
+  compile 'org.springframework.security:spring-security-core'
   compile 'org.hibernate:hibernate-validator'
+  compile 'org.hibernate:hibernate-envers'
   compile 'org.postgresql:postgresql'
   compile 'tec.uom:uom-se:1.0.8'
   compile 'com.fasterxml.jackson.core:jackson-databind:2.8.9'

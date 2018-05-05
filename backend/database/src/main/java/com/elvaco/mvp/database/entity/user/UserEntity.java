@@ -19,12 +19,15 @@ import javax.persistence.Table;
 import com.elvaco.mvp.core.domainmodels.Language;
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.validator.constraints.Email;
 
 @ToString
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "mvp_user")
+@Audited
 public class UserEntity extends EntityType<UUID> {
 
   @Id
@@ -37,6 +40,7 @@ public class UserEntity extends EntityType<UUID> {
   @Column(unique = true, nullable = false)
   public String email;
 
+  @NotAudited
   @Column(nullable = false)
   public String password;
 

@@ -8,9 +8,10 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
   private final String token;
 
-  public AuthenticationToken(String token) {
+  public AuthenticationToken(String token, Object details) {
     super(null);
     this.token = requireNonNull(token, "Token cannot be null");
+    this.setDetails(details);
   }
 
   public String getToken() {

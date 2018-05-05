@@ -14,12 +14,14 @@ import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "quantity")
+@Audited
 public class QuantityEntity extends EntityType<Long> {
 
   private static final long serialVersionUID = -8628799320716504900L;

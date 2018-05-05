@@ -72,11 +72,59 @@ class IntegrationTestFixtureContextFactory {
       .build();
     users.create(superAdmin);
 
+    UUID contextUuid2 = randomUUID();
+    OrganisationEntity organisation2 = organisationJpaRepository.save(
+      new OrganisationEntity(
+        contextUuid2,
+        callSiteIdentifier + "-organisation",
+        contextUuid2.toString(),
+        contextUuid2.toString()
+      )
+    );
+
+    User user2 = new UserBuilder()
+      .name("integration-test-user2")
+      .email(contextUuid2.toString() + "@test.com")
+      .password("password")
+      .language(Language.en)
+      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .id(randomUUID())
+      .asUser()
+      .build();
+    users.create(user2);
+
+    User admin2 = new UserBuilder()
+      .name("integration-test-admin2")
+      .email(contextUuid2.toString() + "-admin2@test.com")
+      .password("password")
+      .language(Language.en)
+      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .id(randomUUID())
+      .asAdmin()
+      .build();
+    users.create(admin2);
+
+    User superAdmin2 = new UserBuilder()
+      .name("integration-test-super-admin2")
+      .email(contextUuid.toString() + "-super-admin2@test.com")
+      .password("password")
+      .language(Language.en)
+      .organisation(OrganisationMapper.toDomainModel(organisation2))
+      .id(randomUUID())
+      .asSuperAdmin()
+      .build();
+    users.create(superAdmin2);
+
+
     return new IntegrationTestFixtureContext(
       organisation,
       user,
       admin,
-      superAdmin
+      superAdmin,
+      organisation2,
+      user2,
+      admin2,
+      superAdmin2
     );
   }
 
@@ -84,6 +132,11 @@ class IntegrationTestFixtureContextFactory {
   public void destroy(IntegrationTestFixtureContext context) {
     try {
       organisationJpaRepository.delete(context.organisationEntity.id);
+    } catch (EmptyResultDataAccessException ignore) {
+      // The test case probably removed it already
+    }
+    try {
+      organisationJpaRepository.delete(context.organisationEntity2.id);
     } catch (EmptyResultDataAccessException ignore) {
       // The test case probably removed it already
     }

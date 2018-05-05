@@ -78,7 +78,8 @@ class UserDatabaseLoader implements CommandLineRunner {
     );
 
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
+    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken(),
+      authenticatedUser);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     List<User> users = asList(

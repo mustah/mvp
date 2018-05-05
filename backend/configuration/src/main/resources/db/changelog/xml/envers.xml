@@ -1,0 +1,725 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet id="create envers schema" author="erimel">
+        <sqlFile path="../sql/init_envers_schema.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+
+    <changeSet author="erimel (generated)" id="1525247317321-16">
+        <createTable tableName="REVISION_ENTITY" schemaName="evoaudit">
+            <column autoIncrement="true" name="ID" type="BIGSERIAL">
+                <constraints primaryKey="true" primaryKeyName="revision_entity_pkey"/>
+            </column>
+            <column name="TIMESTAMP" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ENTITY_ID" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-1">
+        <createTable tableName="GATEWAYS_METERS_AUD" schemaName="evoaudit">
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LOGICAL_METER_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="GATEWAY_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-2">
+        <createTable tableName="GATEWAY_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="ORGANISATION_ID" type="UUID"/>
+            <column name="ORGANISATION_ID_MOD" type="BOOLEAN"/>
+            <column name="PRODUCT_MODEL" type="${text_type}"/>
+            <column name="PRODUCT_MODEL_MOD" type="BOOLEAN"/>
+            <column name="SERIAL" type="${text_type}"/>
+            <column name="SERIAL_MOD" type="BOOLEAN"/>
+            <column name="METERS_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-3">
+        <createTable tableName="LOCATION_AUD" schemaName="evoaudit">
+            <column name="LOGICAL_METER_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="CITY" type="${text_type}"/>
+            <column name="CITY_MOD" type="BOOLEAN"/>
+            <column name="CONFIDENCE" type="FLOAT8"/>
+            <column name="CONFIDENCE_MOD" type="BOOLEAN"/>
+            <column name="COUNTRY" type="${text_type}"/>
+            <column name="COUNTRY_MOD" type="BOOLEAN"/>
+            <column name="LATITUDE" type="FLOAT8"/>
+            <column name="LATITUDE_MOD" type="BOOLEAN"/>
+            <column name="LONGITUDE" type="FLOAT8"/>
+            <column name="LONGITUDE_MOD" type="BOOLEAN"/>
+            <column name="STREET_ADDRESS" type="${text_type}"/>
+            <column name="STREET_ADDRESS_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-4">
+        <createTable tableName="LOGICAL_METER_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="CREATED" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="CREATED_MOD" type="BOOLEAN"/>
+            <column name="EXTERNAL_ID" type="${text_type}"/>
+            <column name="EXTERNAL_ID_MOD" type="BOOLEAN"/>
+            <column name="ORGANISATION_ID" type="UUID"/>
+            <column name="ORGANISATION_ID_MOD" type="BOOLEAN"/>
+            <column name="GATEWAYS_MOD" type="BOOLEAN"/>
+            <column name="METER_DEFINITION_TYPE" type="INTEGER"/>
+            <column name="METER_DEFINITION_MOD" type="BOOLEAN"/>
+            <column name="PHYSICAL_METERS_MOD" type="BOOLEAN"/>
+            <column name="LOCATION_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-5">
+        <createTable tableName="METER_DEFINITION_AUD" schemaName="evoaudit">
+            <column name="TYPE" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="MEDIUM" type="${text_type}"/>
+            <column name="MEDIUM_MOD" type="BOOLEAN"/>
+            <column name="SYSTEM_OWNED" type="BOOLEAN"/>
+            <column name="SYSTEM_OWNED_MOD" type="BOOLEAN"/>
+            <column name="QUANTITIES_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-6">
+        <createTable tableName="METER_DEFINITION_QUANTITIES_AUD" schemaName="evoaudit">
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="METER_DEFINITION_TYPE" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="QUANTITY_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-7">
+        <createTable tableName="MVP_SETTING_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="NAME" type="${text_type}"/>
+            <column name="NAME_MOD" type="BOOLEAN"/>
+            <column name="VALUE" type="${text_type}"/>
+            <column name="VALUE_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-8">
+        <createTable tableName="MVP_USER_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="EMAIL" type="${text_type}"/>
+            <column name="EMAIL_MOD" type="BOOLEAN"/>
+            <column name="LANGUAGE" type="${text_type}"/>
+            <column name="LANGUAGE_MOD" type="BOOLEAN"/>
+            <column name="NAME" type="${text_type}"/>
+            <column name="NAME_MOD" type="BOOLEAN"/>
+            <column name="ORGANISATION_ID" type="UUID"/>
+            <column name="ORGANISATION_MOD" type="BOOLEAN"/>
+            <column name="ROLES_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-9">
+        <createTable tableName="ORGANISATION_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="EXTERNAL_ID" type="${text_type}"/>
+            <column name="EXTERNAL_ID_MOD" type="BOOLEAN"/>
+            <column name="NAME" type="${text_type}"/>
+            <column name="NAME_MOD" type="BOOLEAN"/>
+            <column name="SLUG" type="${text_type}"/>
+            <column name="SLUG_MOD" type="BOOLEAN"/>
+            <column name="USERS_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-10">
+        <createTable tableName="PHYSICAL_METER_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="ADDRESS" type="${text_type}"/>
+            <column name="ADDRESS_MOD" type="BOOLEAN"/>
+            <column name="EXTERNAL_ID" type="${text_type}"/>
+            <column name="EXTERNAL_ID_MOD" type="BOOLEAN"/>
+            <column name="LOGICAL_METER_ID" type="UUID"/>
+            <column name="LOGICAL_METER_ID_MOD" type="BOOLEAN"/>
+            <column name="MANUFACTURER" type="${text_type}"/>
+            <column name="MANUFACTURER_MOD" type="BOOLEAN"/>
+            <column name="MEDIUM" type="${text_type}"/>
+            <column name="MEDIUM_MOD" type="BOOLEAN"/>
+            <column name="READ_INTERVAL_MINUTES" type="BIGINT"/>
+            <column name="READ_INTERVAL_MINUTES_MOD" type="BOOLEAN"/>
+            <column name="ORGANISATION_ID" type="UUID"/>
+            <column name="ORGANISATION_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-11">
+        <createTable tableName="QUANTITY_AUD" schemaName="evoaudit">
+            <column name="ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="NAME" type="${text_type}"/>
+            <column name="NAME_MOD" type="BOOLEAN"/>
+            <column name="SERIES_DISPLAY_MODE" type="INTEGER"/>
+            <column name="SERIES_DISPLAY_MODE_MOD" type="BOOLEAN"/>
+            <column name="UNIT" type="${text_type}"/>
+            <column name="UNIT_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-12">
+        <createTable tableName="ROLE_AUD" schemaName="evoaudit">
+            <column name="ROLE" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="USERS_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-13">
+        <createTable tableName="USERS_ROLES_AUD" schemaName="evoaudit">
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ROLE_ID" type="${text_type}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-14">
+        <createTable tableName="USER_SELECTION_AUD" schemaName="evoaudit">
+            <column name="ID" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REV" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REVTYPE" type="TINYINT(3)"/>
+            <column name="REVEND" type="BIGINT"/>
+            <column name="REVEND_TSTMP" type="TIMESTAMP"/>
+            <column name="NAME" type="${text_type}"/>
+            <column name="NAME_MOD" type="BOOLEAN"/>
+            <column name="ORGANISATION_ID" type="UUID"/>
+            <column name="ORGANISATION_ID_MOD" type="BOOLEAN"/>
+            <column name="OWNER_USER_ID" type="UUID"/>
+            <column name="OWNER_USER_ID_MOD" type="BOOLEAN"/>
+            <column name="SELECTION_PARAMETERS" type="${jsonb_type}"/>
+            <column name="SELECTION_PARAMETERS_MOD" type="BOOLEAN"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-15">
+        <addPrimaryKey columnNames="REV, LOGICAL_METER_ID, GATEWAY_ID" constraintName="gateway_meters_aud_pkey"
+                       tableName="GATEWAYS_METERS_AUD" schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-16">
+        <addPrimaryKey columnNames="REV, METER_DEFINITION_TYPE, QUANTITY_ID"
+                       constraintName="METER_DEFINITION_QUANTITIES_AUD_pkey"
+                       tableName="METER_DEFINITION_QUANTITIES_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-17">
+        <addPrimaryKey columnNames="ROLE, REV" constraintName="ROLE_AUD_pkey" tableName="ROLE_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-18">
+        <addPrimaryKey columnNames="TYPE, REV" constraintName="METER_DEFINITION_AUD_pkey"
+                       tableName="METER_DEFINITION_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-19">
+        <addPrimaryKey columnNames="ID, REV" constraintName="GATEWAY_AUD_pkey" tableName="GATEWAY_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-20">
+        <addPrimaryKey columnNames="REV, USER_ID, ROLE_ID" constraintName="USERS_ROLES_AUD_pkey"
+                       tableName="USERS_ROLES_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-21">
+        <addPrimaryKey columnNames="LOGICAL_METER_ID, REV" constraintName="LOCATION_AUD_pkey" tableName="LOCATION_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-22">
+        <addPrimaryKey columnNames="ID, REV" constraintName="LOGICAL_METER_AUD_pkey" tableName="LOGICAL_METER_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-23">
+        <addPrimaryKey columnNames="ID, REV" constraintName="PHYSICAL_METER_AUD_pkey" tableName="PHYSICAL_METER_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-24">
+        <addPrimaryKey columnNames="ID, REV" constraintName="MVP_SETTING_AUD_pkey" tableName="MVP_SETTING_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-25">
+        <addPrimaryKey columnNames="ID, REV" constraintName="USER_SELECTION_AUD_pkey" tableName="USER_SELECTION_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-26">
+        <addPrimaryKey columnNames="ID, REV" constraintName="MVP_USER_AUD_pkey" tableName="MVP_USER_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-27">
+        <addPrimaryKey columnNames="ID, REV" constraintName="QUANTITY_AUD_pkey" tableName="QUANTITY_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-28">
+        <addPrimaryKey columnNames="ID, REV" constraintName="ORGANISATION_AUD_pkey" tableName="ORGANISATION_AUD"
+                       schemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-29">
+        <createIndex indexName="FK2QAD8CR4GL1AAP3BD1G9MQRSA_INDEX_3" tableName="METER_DEFINITION_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-30">
+        <createIndex indexName="LOCATION_AUD_REVEND_index" tableName="LOCATION_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-31">
+        <createIndex indexName="GATEWAY_AUD_REVEND_index" tableName="GATEWAY_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-32">
+        <createIndex indexName="QUANTITY_AUD_REVEND_index" tableName="QUANTITY_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-33">
+        <createIndex indexName="MVP_USER_AUD_REVEND_index" tableName="MVP_USER_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-34">
+        <createIndex indexName="GATEWAYS_METERS_AUD_REV_index" tableName="GATEWAYS_METERS_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-35">
+        <createIndex indexName="MVP_SETTING_AUD_REV_index" tableName="MVP_SETTING_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-36">
+        <createIndex indexName="MVP_USER_AUD_REV_index" tableName="MVP_USER_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-37">
+        <createIndex indexName="ORGANISATION_AUD_REV_index" tableName="ORGANISATION_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-38">
+        <createIndex indexName="PHYSICAL_METER_AUD_REV_index" tableName="PHYSICAL_METER_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-39">
+        <createIndex indexName="MVP_SETTING_AUD_REVEND_index" tableName="MVP_SETTING_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-40">
+        <createIndex indexName="LOGICAL_METER_AUD_REVEND_index" tableName="LOGICAL_METER_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-41">
+        <createIndex indexName="METER_DEFINITION_QUANTITIES_AUD_REV_index" tableName="METER_DEFINITION_QUANTITIES_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-42">
+        <createIndex indexName="PHYSICAL_METER_AUD_REVEND_index" tableName="PHYSICAL_METER_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-43">
+        <createIndex indexName="ROLE_AUD_REVEND_index" tableName="ROLE_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-44">
+        <createIndex indexName="LOCATION_AUD_REV_index" tableName="LOCATION_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-45">
+        <createIndex indexName="ROLE_AUD_REV_index" tableName="ROLE_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-46">
+        <createIndex indexName="USER_SELECTION_AUD_REVEND_index" tableName="USER_SELECTION_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-47">
+        <createIndex indexName="GATEWAYS_METERS_AUD_REVEND_index" tableName="GATEWAYS_METERS_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-48">
+        <createIndex indexName="METER_DEFINITION_QUANTITIES_AUD_REVEND_index"
+                     tableName="METER_DEFINITION_QUANTITIES_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-49">
+        <createIndex indexName="USER_SELECTION_AUD_REV_index" tableName="USER_SELECTION_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-50">
+        <createIndex indexName="ORGANISATION_AUD_REVEND_index" tableName="ORGANISATION_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-51">
+        <createIndex indexName="USERS_ROLES_AUD_REV_index" tableName="USERS_ROLES_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-52">
+        <createIndex indexName="GATEWAY_AUD_REV_index" tableName="GATEWAY_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-53">
+        <createIndex indexName="LOGICAL_METER_AUD_REV_index" tableName="LOGICAL_METER_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-54">
+        <createIndex indexName="QUANTITY_AUD_REV_index" tableName="QUANTITY_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-55">
+        <createIndex indexName="USERS_ROLES_AUD_REVEND_index" tableName="USERS_ROLES_AUD"
+                     schemaName="evoaudit">
+            <column name="REVEND"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-56">
+        <createIndex indexName="METER_DEFINITION_AUD_REV_index" tableName="METER_DEFINITION_AUD"
+                     schemaName="evoaudit">
+            <column name="REV"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-57">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="METER_DEFINITION_AUD"
+                                 constraintName="METER_DEFINITION_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-58">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="LOCATION_AUD"
+                                 constraintName="LOCATION_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-59">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="GATEWAY_AUD"
+                                 constraintName="GATEWAY_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-60">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="QUANTITY_AUD"
+                                 constraintName="QUANTITY_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-61">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="MVP_USER_AUD"
+                                 constraintName="MVP_USER_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-62">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="GATEWAYS_METERS_AUD"
+                                 constraintName="GATEWAYS_METERS_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-63">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="MVP_SETTING_AUD"
+                                 constraintName="MVP_SETTING_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-64">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="MVP_USER_AUD"
+                                 constraintName="MVP_USER_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-65">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="ORGANISATION_AUD"
+                                 constraintName="ORGANISATION_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-66">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="PHYSICAL_METER_AUD"
+                                 constraintName="PHYSICAL_METER_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-67">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="MVP_SETTING_AUD"
+                                 constraintName="MVP_SETTING_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-68">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="LOGICAL_METER_AUD"
+                                 constraintName="LOGICAL_METER_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-69">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="METER_DEFINITION_QUANTITIES_AUD"
+                                 constraintName="METER_DEFINITION_QUANTITIES_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-70">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="PHYSICAL_METER_AUD"
+                                 constraintName="PHYSICAL_METER_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-71">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="ROLE_AUD"
+                                 constraintName="ROLE_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-72">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="LOCATION_AUD"
+                                 constraintName="LOCATION_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-73">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="ROLE_AUD"
+                                 constraintName="ROLE_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-74">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="USER_SELECTION_AUD"
+                                 constraintName="USER_SELECTION_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-75">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="GATEWAYS_METERS_AUD"
+                                 constraintName="GATEWAYS_METERS_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-76">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="METER_DEFINITION_QUANTITIES_AUD"
+                                 constraintName="METER_DEFINITION_QUANTITIES_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-77">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="USER_SELECTION_AUD"
+                                 constraintName="USER_SELECTION_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-78">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="ORGANISATION_AUD"
+                                 constraintName="ORGANISATION_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-79">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="USERS_ROLES_AUD"
+                                 constraintName="USERS_ROLES_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-80">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="GATEWAY_AUD"
+                                 constraintName="GATEWAY_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-81">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="LOGICAL_METER_AUD"
+                                 constraintName="LOGICAL_METER_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-82">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="QUANTITY_AUD"
+                                 constraintName="QUANTITY_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-83">
+        <addForeignKeyConstraint baseColumnNames="REVEND" baseTableName="USERS_ROLES_AUD"
+                                 constraintName="USERS_ROLES_AUD_REVEND_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+    <changeSet author="erimel (generated)" id="1524820884701-84">
+        <addForeignKeyConstraint baseColumnNames="REV" baseTableName="METER_DEFINITION_AUD"
+                                 constraintName="METER_DEFINITION_AUD_REV_fkey" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                                 referencedColumnNames="ID" referencedTableName="REVISION_ENTITY"
+                                 baseTableSchemaName="evoaudit" referencedTableSchemaName="evoaudit"/>
+    </changeSet>
+
+    <changeSet id="envers_initial_revision" author="erimel">
+        <sqlFile path="../sql/initial_envers_revision.sql" relativeToChangelogFile="true"/>
+    </changeSet>
+</databaseChangeLog>
