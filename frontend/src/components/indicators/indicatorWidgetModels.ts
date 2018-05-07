@@ -1,14 +1,15 @@
 import {Status} from '../../types/Types';
 
 export const enum IndicatorType {
-  collection = 'collection',
-  measurementQuality = 'measurementQuality',
-  current = 'current',
   coldWater = 'coldWater',
-  warmWater = 'warmWater',
+  collection = 'collection',
+  current = 'current',
   districtHeating = 'districtHeating',
+  gas = 'gas',
+  measurementQuality = 'measurementQuality',
   temperatureInside = 'temperatureInside',
   temperatureOutside = 'temperatureOutside',
+  warmWater = 'warmWater',
 }
 
 export interface WidgetModel {

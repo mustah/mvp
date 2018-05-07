@@ -1,5 +1,5 @@
 import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
-import {selectIndicatorWidget} from '../indicator/indicatorActions';
+import {toggleIndicatorWidget} from '../indicator/indicatorActions';
 import {indicator, IndicatorState, initialState} from '../indicator/indicatorReducer';
 
 describe('uiReducer', () => {
@@ -7,7 +7,7 @@ describe('uiReducer', () => {
   describe('indicators -> selectedIndicators', () => {
 
     it('will have dashboard indicator state after initial state', () => {
-      const action = selectIndicatorWidget({dashboard: IndicatorType.collection});
+      const action = toggleIndicatorWidget({dashboard: IndicatorType.collection});
       const state: IndicatorState = indicator(initialState, action);
 
       const selectedIndicators = {
@@ -18,7 +18,7 @@ describe('uiReducer', () => {
     });
 
     it('will have report indicator state after initial state', () => {
-      const action = selectIndicatorWidget({report: IndicatorType.districtHeating});
+      const action = toggleIndicatorWidget({report: IndicatorType.districtHeating});
       const state: IndicatorState = indicator(initialState, action);
 
       const selectedIndicators = {
@@ -30,9 +30,9 @@ describe('uiReducer', () => {
 
     it('updates indicator state after many action dispatches', () => {
       const oldState: IndicatorState =
-        indicator(initialState, selectIndicatorWidget({report: IndicatorType.districtHeating}));
+        indicator(initialState, toggleIndicatorWidget({report: IndicatorType.districtHeating}));
       const state: IndicatorState =
-        indicator(oldState, selectIndicatorWidget({dashboard: IndicatorType.measurementQuality}));
+        indicator(oldState, toggleIndicatorWidget({dashboard: IndicatorType.measurementQuality}));
 
       const selectedIndicators = {
         dashboard: IndicatorType.measurementQuality,

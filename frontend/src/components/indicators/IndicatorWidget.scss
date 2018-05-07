@@ -26,6 +26,7 @@
   .Indicator {
     border-radius: 3px;
     box-shadow: $box-shadow;
+    cursor: pointer;
     height: $status-box-height;
     justify-content: space-around;
     width: $status-box-width;

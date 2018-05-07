@@ -21,14 +21,14 @@ import {PeriodContainer} from '../../../containers/PeriodContainer';
 import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
-import {selectReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
+import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
 import {getSelectedIndicatorTypeForReport} from '../../../state/ui/indicator/indicatorSelectors';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {indicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
 
 interface DispatchToProps {
-  selectIndicatorWidget: OnSelectIndicator;
+  toggleReportIndicatorWidget: OnSelectIndicator;
 }
 
 type Props = SelectedIndicatorWidgetProps & DispatchToProps & InjectedAuthRouterProps;
@@ -37,7 +37,7 @@ const style: React.CSSProperties = {width: '100%', height: '100%'};
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 const selectedTab: TabName = TabName.graph;
 
-const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) => {
+const ReportComponent = ({selectedIndicatorType, toggleReportIndicatorWidget}: Props) => {
   const onChangeTab = () => void(0);
   return (
     <MvpPageContainer>
@@ -52,7 +52,7 @@ const ReportComponent = ({selectedIndicatorType, selectIndicatorWidget}: Props) 
       <SelectableIndicatorWidgets
         indicators={indicators}
         selectedIndicatorType={selectedIndicatorType}
-        selectIndicatorWidget={selectIndicatorWidget}
+        onClick={toggleReportIndicatorWidget}
       />
 
       <Paper style={contentStyle}>
@@ -78,7 +78,7 @@ const mapStateToProps = ({ui}: RootState): SelectedIndicatorWidgetProps => ({
 });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  selectIndicatorWidget: selectReportIndicatorWidget,
+  toggleReportIndicatorWidget
 }, dispatch);
 
 export const ReportContainer =

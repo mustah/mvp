@@ -26,6 +26,7 @@ const indicatorIconFor: IndicatorComponentType = {
   [IndicatorType.coldWater]: IconColdWater,
   [IndicatorType.warmWater]: IconColdWater,
   [IndicatorType.districtHeating]: IconDistrictHeating,
+  [IndicatorType.gas]: IconDistrictHeating,
   [IndicatorType.temperatureInside]: IconTemperature,
   [IndicatorType.temperatureOutside]: IconTemperature,
 };
@@ -40,19 +41,20 @@ const style: React.CSSProperties = {
 
 interface IndicatorProps {
   indicator: Indicator;
-  select: OnSelectIndicator;
+  onClick: OnSelectIndicator;
   isSelected?: boolean;
 }
 
-export const SelectableIndicatorWidget = ({select, indicator, isSelected}: IndicatorProps) => {
+export const SelectableIndicatorWidget = ({onClick, indicator, isSelected}: IndicatorProps) => {
   const {state, title, type} = indicator;
 
+  const selectWidget = () => onClick(type);
   const isEnabled: boolean = type === IndicatorType.districtHeating;
 
   const IndicatorIcon = iconComponentFor(type);
 
   return (
-    <div>
+    <div onClick={selectWidget}>
       <Column className="Indicator-wrapper">
         <ColumnCenter className={classNames('Indicator', state)}>
           <Row className="Indicator-name Row-center">

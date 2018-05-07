@@ -10,7 +10,7 @@ export interface SelectedIndicatorWidgetProps {
 }
 
 export interface IndicatorWidgetsDispatchProps {
-  selectIndicatorWidget: OnSelectIndicator;
+  onClick: OnSelectIndicator;
 }
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {
@@ -20,14 +20,14 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
 }
 
 export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {className, children, indicators, selectedIndicatorType, selectIndicatorWidget} = props;
+  const {className, children, indicators, selectedIndicatorType, onClick} = props;
 
   const indicatorWidgets = indicators.map((indicator: Indicator) => (
     <SelectableIndicatorWidget
       key={indicator.type}
       indicator={indicator}
       isSelected={indicator.type === selectedIndicatorType}
-      select={selectIndicatorWidget}
+      onClick={onClick}
     />
   ));
 

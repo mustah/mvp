@@ -87,6 +87,14 @@ export const indicators: Indicator[] = [
     subtitle: '(-2)',
   },
   {
+    type: IndicatorType.gas,
+    title: 'Gas',
+    state: Status.ok,
+    value: 1.1,
+    unit: 'kWh/m2',
+    subtitle: '(-2)',
+  },
+  {
     type: IndicatorType.temperatureInside,
     title: 'Temp Inomhus',
     state: Status.info,
