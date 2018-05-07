@@ -62,42 +62,41 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
       location
     );
 
-    String address = structureMessage.meter != null ? structureMessage.meter.id : null;
-    Integer expectedInterval = structureMessage.meter != null
-      ? structureMessage.meter.expectedInterval
-      : 0;
-
-    Optional<PhysicalMeter> physicalMeter = findOrCreatePhysicalMeter(
-      structureMessage.meter,
-      organisation,
-      facility,
-      logicalMeter,
-      address,
-      expectedInterval
-    );
+    Optional<PhysicalMeter> physicalMeter = Optional.empty();
+    if (structureMessage.meter != null) {
+      physicalMeter = Optional.of(findOrCreatePhysicalMeter(
+        structureMessage.meter,
+        organisation,
+        facility,
+        logicalMeter.orElse(null)
+      ));
+    }
 
     Optional<Gateway> gateway = findOrCreateGateway(
       structureMessage.gateway,
       organisation,
-      logicalMeter
+      logicalMeter.orElse(null)
     );
-
-    LogicalMeter meter = logicalMeter.get();
-    if (physicalMeter.isPresent()) {
-      meter = logicalMeter.get().withPhysicalMeter(physicalMeter.get());
-    }
 
     if (gateway.isPresent()) {
       gatewayUseCases.save(gateway.get());
-
-      if (meter != null) {
-        meter = meter.withGateway(gateway.get());
-      }
     }
 
-    if (meter != null) {
+    if (logicalMeter.isPresent()) {
+      LogicalMeter meter = logicalMeter.get();
+
+      if (physicalMeter.isPresent() && meter != null) {
+        meter = meter.withPhysicalMeter(physicalMeter.get());
+      }
+
+      if (gateway.isPresent()) {
+        meter = meter.withGateway(gateway.get());
+      }
+
       logicalMeterUseCases.save(meter);
-      geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
+      if (meter != null) {
+        geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
+      }
     }
   }
 
@@ -107,69 +106,52 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     FacilityDto facility,
     Location location
   ) {
-    Optional<LogicalMeter> logicalMeter = logicalMeterUseCases
-      .findByOrganisationIdAndExternalId(organisation.id, facility.id);
+    LogicalMeter logicalMeter = logicalMeterUseCases
+      .findByOrganisationIdAndExternalId(organisation.id, facility.id).orElse(null);
 
-    if (meterDto != null && !logicalMeter.isPresent()) {
-      logicalMeter = Optional.of(
-        new LogicalMeter(
-          randomUUID(),
-          facility.id,
-          organisation.id,
-          MeterDefinition.fromMedium(Medium.from(meterDto.medium)),
-          location
-        ));
+    if (meterDto != null && logicalMeter == null) {
+      logicalMeter = new LogicalMeter(
+        randomUUID(),
+        facility.id,
+        organisation.id,
+        MeterDefinition.fromMedium(Medium.from(meterDto.medium)),
+        location
+      );
     }
 
-    if (logicalMeter.isPresent()) {
-      return Optional.of(logicalMeter.get().withLocation(location));
+    if (logicalMeter != null) {
+      return Optional.of(logicalMeter.withLocation(location));
     }
 
     return Optional.empty();
   }
 
-  private Optional<PhysicalMeter> findOrCreatePhysicalMeter(
-    @Nullable MeterDto meterDto,
+  private PhysicalMeter findOrCreatePhysicalMeter(
+    MeterDto meterDto,
     Organisation organisation,
     FacilityDto facility,
-    Optional<LogicalMeter> logicalMeter,
-    String address,
-    Integer expectedInterval
+    @Nullable LogicalMeter logicalMeter
   ) {
-    Optional<PhysicalMeter> physicalMeter = physicalMeterUseCases
-      .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address);
+    String address = meterDto.id;
+    Integer expectedInterval = meterDto.expectedInterval;
 
-    if (meterDto != null && !physicalMeter.isPresent()) {
-      physicalMeter = Optional.of(
+    PhysicalMeter physicalMeter = physicalMeterUseCases
+      .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
+      .orElse(
         PhysicalMeter.builder()
           .organisation(organisation)
           .address(address)
           .externalId(facility.id)
-          .medium(meterDto.medium)
-          .manufacturer(meterDto.manufacturer)
-          .readIntervalMinutes(Optional.ofNullable(expectedInterval).orElse(0))
-          .build());
-    }
-
-    if (meterDto != null) {
-      physicalMeter = Optional.of(
-        physicalMeter.get().withMedium(meterDto.medium)
-          .withManufacturer(meterDto.manufacturer)
-          .replaceActiveStatus(StatusType.from(meterDto.status))
+          .build()
       );
-    }
 
-    if (physicalMeter.isPresent()) {
-      if (logicalMeter.isPresent()) {
-        physicalMeter = Optional.of(
-          physicalMeter.get().withLogicalMeterId(logicalMeter.get().id)
-        );
-      }
+    physicalMeter = physicalMeter.withMedium(meterDto.medium)
+      .withManufacturer(meterDto.manufacturer)
+      .replaceActiveStatus(StatusType.from(meterDto.status))
+      .withReadIntervalMinutes(expectedInterval);
 
-      physicalMeter = Optional.of(
-        physicalMeter.get()
-          .withReadIntervalMinutes(expectedInterval)
-      );
+    if (logicalMeter != null) {
+      physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);
     }
 
     return physicalMeter;
@@ -178,13 +160,12 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
   private Optional<Gateway> findOrCreateGateway(
     @Nullable GatewayStatusDto gatewayStatusDto,
     Organisation organisation,
-    Optional<LogicalMeter> logicalMeter
+    @Nullable LogicalMeter logicalMeter
   ) {
-    //TODO  logicalMeter.isPresent()
-    if (gatewayStatusDto != null && logicalMeter.isPresent()) {
+    if (gatewayStatusDto != null && logicalMeter != null) {
       return Optional.of(findOrCreateGateway(
         organisation,
-        logicalMeter.get(),
+        logicalMeter,
         gatewayStatusDto.id,
         gatewayStatusDto.productModel
       ).withProductModel(gatewayStatusDto.productModel)

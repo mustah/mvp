@@ -1,11 +1,8 @@
 package com.elvaco.mvp.consumers.rabbitmq.dto;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 import lombok.ToString;
-
-import static java.util.Objects.nonNull;
 
 @ToString(callSuper = true)
 public class MeteringStructureMessageDto extends MeteringMessageDto {
@@ -38,15 +35,36 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
     this.gateway = gateway;
   }
 
-  public Optional<GatewayStatusDto> getGateway() {
-    return Optional.ofNullable(gateway).filter(gatewayStatusDto -> nonNull(gatewayStatusDto.id));
+  public MeteringStructureMessageDto withFacility(FacilityDto facilityDto) {
+    return new MeteringStructureMessageDto(
+      messageType,
+      meter,
+      facilityDto,
+      sourceSystemId,
+      organisationId,
+      gateway
+    );
   }
 
-  public Optional<MeterDto> getMeter() {
-    return Optional.ofNullable(meter).filter(meterDto -> nonNull(meterDto.id));
+  public MeteringStructureMessageDto withMeter(MeterDto meterDto) {
+    return new MeteringStructureMessageDto(
+      messageType,
+      meterDto,
+      facility,
+      sourceSystemId,
+      organisationId,
+      gateway
+    );
   }
 
-  public Optional<FacilityDto> getFacility() {
-    return Optional.ofNullable(facility).filter(facilityDto -> nonNull(facilityDto.id));
+  public MeteringStructureMessageDto withGatewayStatus(GatewayStatusDto gatewayStatusDto) {
+    return new MeteringStructureMessageDto(
+      messageType,
+      meter,
+      facility,
+      sourceSystemId,
+      organisationId,
+      gatewayStatusDto
+    );
   }
 }
