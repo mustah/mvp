@@ -16,7 +16,6 @@ import com.elvaco.mvp.web.dto.MapMarkerDto;
 
 import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.web.mapper.LocationMapper.UNKNOWN_LOCATION;
-import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -30,7 +29,7 @@ public class GatewayMapper {
     return new GatewayDto(
       gateway.id,
       gateway.serial,
-      gateway.productModel,
+      formatProductModel(gateway.productModel),
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start),
       new LocationDto(toCity(logicalMeter), toAddress(logicalMeter), toGeoPosition(logicalMeter)),
@@ -42,19 +41,10 @@ public class GatewayMapper {
     StatusLogEntry<UUID> gatewayStatusLog = gateway.currentStatus();
     return new GatewayMandatoryDto(
       gateway.id,
-      gateway.productModel,
+      formatProductModel(gateway.productModel),
       gateway.serial,
       gatewayStatusLog.status.name,
       formatUtc(gatewayStatusLog.start)
-    );
-  }
-
-  public Gateway toDomainModel(GatewayDto gatewayDto, UUID organisationId) {
-    return new Gateway(
-      gatewayDto.id != null ? gatewayDto.id : randomUUID(),
-      organisationId,
-      gatewayDto.serial,
-      gatewayDto.productModel
     );
   }
 
@@ -74,6 +64,10 @@ public class GatewayMapper {
         return coordinate;
       });
     return mapMarkerDto;
+  }
+
+  private static String formatProductModel(String productModel) {
+    return productModel == null || productModel.trim().isEmpty() ? "Unknown" : productModel.trim();
   }
 
   private List<UUID> connectedMeterIds(Gateway gateway) {

@@ -43,6 +43,8 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
   public String address;
   public String externalId;
   public String medium;
+
+  @Nullable
   public String manufacturer;
 
   @JsonManagedReference
@@ -64,6 +66,7 @@ public class PhysicalMeterEntity extends EntityType<UUID> {
     String address,
     String externalId,
     String medium,
+    @Nullable
     String manufacturer,
     @Nullable UUID logicalMeterId,
     long readIntervalMinutes,

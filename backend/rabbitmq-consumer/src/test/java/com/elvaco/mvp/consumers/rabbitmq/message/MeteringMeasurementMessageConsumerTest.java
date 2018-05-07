@@ -15,8 +15,10 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Language;
+import com.elvaco.mvp.core.domainmodels.LocationBuilder;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
@@ -294,8 +296,7 @@ public class MeteringMeasurementMessageConsumerTest {
         .organisation(organisation)
         .address(ADDRESS)
         .externalId(EXTERNAL_ID)
-        .medium("Unknown medium")
-        .manufacturer("UNKNOWN")
+        .medium(Medium.UNKNOWN_MEDIUM.medium)
         .logicalMeterId(logicalMeter.id)
         .readIntervalMinutes(0)
         .build()
@@ -434,7 +435,11 @@ public class MeteringMeasurementMessageConsumerTest {
         EXTERNAL_ID,
         organisation.id,
         MeterDefinition.HOT_WATER_METER,
-        UNKNOWN_LOCATION
+        new LocationBuilder()
+          .country("Sweden")
+          .city("Kungsbacka")
+          .address("Gatan")
+          .build()
       )
     );
 
@@ -442,6 +447,89 @@ public class MeteringMeasurementMessageConsumerTest {
       messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     assertThat(response.isPresent()).isFalse();
+  }
+
+  @Test
+  public void measurementValueForExistingEntities_CreateNewPhysicalMeter() {
+    Organisation organisation = saveDefaultOrganisation();
+    gateways.save(newGateway(organisation.id));
+    physicalMeters.save(physicalMeter().organisation(organisation).build());
+    logicalMeters.save(
+      new LogicalMeter(
+        randomUUID(),
+        EXTERNAL_ID,
+        organisation.id,
+        MeterDefinition.HOT_WATER_METER,
+        new LocationBuilder()
+          .country("Sweden")
+          .city("Kungsbacka")
+          .address("Gatan")
+          .build()
+      )
+    );
+
+    Optional<GetReferenceInfoDto> response =
+      messageConsumer.accept(measurementMessageWithUnit("kWh"));
+
+    assertThat(response.isPresent()).isTrue();
+    assertThat(response.get().meterExternalId).isEqualTo(ADDRESS);
+    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
+  }
+
+  @Test
+  public void measurementValueForExistingEntities_CreateNewLogicalMeter() {
+    Organisation organisation = saveDefaultOrganisation();
+    gateways.save(newGateway(organisation.id));
+    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
+    logicalMeters.save(
+      new LogicalMeter(
+        randomUUID(),
+        EXTERNAL_ID,
+        organisation.id,
+        MeterDefinition.HOT_WATER_METER,
+        UNKNOWN_LOCATION
+      )
+    );
+
+    Optional<GetReferenceInfoDto> response =
+      messageConsumer.accept(measurementMessageWithUnit("kWh"));
+
+    assertThat(response.isPresent()).isTrue();
+    assertThat(response.get().meterExternalId).isEqualTo(ADDRESS);
+    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
+  }
+
+  @Test
+  public void measurementValueForExistingEntities_CreateNewGateway() {
+    Organisation organisation = saveDefaultOrganisation();
+    gateways.save(new Gateway(
+      randomUUID(),
+      organisation.id,
+      GATEWAY_EXTERNAL_ID,
+      ""
+    ));
+
+    physicalMeters.save(physicalMeter().organisation(organisation).medium("Hot water").build());
+    logicalMeters.save(
+      new LogicalMeter(
+        randomUUID(),
+        EXTERNAL_ID,
+        organisation.id,
+        MeterDefinition.HOT_WATER_METER,
+        new LocationBuilder()
+          .country("Sweden")
+          .city("Kungsbacka")
+          .address("Gatan")
+          .build()
+      )
+    );
+
+    Optional<GetReferenceInfoDto> response =
+      messageConsumer.accept(measurementMessageWithUnit("kWh"));
+
+    assertThat(response.isPresent()).isTrue();
+    assertThat(response.get().gatewayExternalId).isEqualTo(GATEWAY_EXTERNAL_ID);
+    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
   }
 
   private Organisation saveDefaultOrganisation() {
@@ -508,6 +596,7 @@ public class MeteringMeasurementMessageConsumerTest {
       .address(ADDRESS)
       .externalId(EXTERNAL_ID)
       .manufacturer("ELV")
+      .medium(Medium.UNKNOWN_MEDIUM.medium)
       .readIntervalMinutes(15);
   }
 }
