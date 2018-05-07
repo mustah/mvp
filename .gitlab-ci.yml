@@ -370,7 +370,7 @@ finalize:create-jira-version:
   before_script:
     - pip install -r scripts/jira/requirements.txt
   script:
-    - ./scripts/jira/fixversion.py --version $(cat .version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
+    - python3 scripts/jira/fixversion.py --version $(cat .version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
