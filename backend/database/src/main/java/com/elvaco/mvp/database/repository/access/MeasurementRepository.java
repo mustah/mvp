@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.TemporalResolution;
 import com.elvaco.mvp.core.spi.repository.Measurements;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.MeasurementValueProjection;
 import com.elvaco.mvp.database.repository.mappers.MeasurementMapper;
 import com.elvaco.mvp.database.util.SqlErrorMapper;
 import lombok.RequiredArgsConstructor;
@@ -78,10 +79,7 @@ public class MeasurementRepository implements Measurements {
       OffsetDateTime.ofInstant(from.toInstant(), from.getZone()),
       OffsetDateTime.ofInstant(to.toInstant(), from.getZone())
     ).stream()
-      .map(projection -> new MeasurementValue(
-        projection.getDoubleValue(),
-        projection.getInstant()
-      ))
+      .map(this::projectionToMeasurementValue)
       .collect(toList());
   }
 
@@ -97,11 +95,12 @@ public class MeasurementRepository implements Measurements {
   }
 
   @Override
-  public List<Measurement> findLatestValues(UUID physicalMeterId) {
-    return measurementJpaRepository.findLatestForPhysicalMeter(physicalMeterId)
-      .stream()
-      .map(MeasurementMapper::toDomainModel)
-      .collect(toList());
+  public Optional<Measurement> findLatestReadout(UUID meterId, Quantity quantity) {
+    return measurementJpaRepository.findLatestReadout(
+      meterId,
+      quantity.name,
+      quantity.presentationUnit()
+    ).map(MeasurementMapper::toDomainModel);
   }
 
   @Override
@@ -122,13 +121,15 @@ public class MeasurementRepository implements Measurements {
         OffsetDateTime.ofInstant(to.toInstant(), from.getZone()),
         resolution.toString()
       ).stream()
-        .map(projection -> new MeasurementValue(
-          projection.getDoubleValue(),
-          projection.getInstant()
-        ))
+        .map(this::projectionToMeasurementValue)
         .collect(toList());
     } catch (DataIntegrityViolationException ex) {
       throw SqlErrorMapper.mapDataIntegrityViolation(ex, seriesQuantity.presentationUnit());
     }
   }
+
+  private MeasurementValue projectionToMeasurementValue(MeasurementValueProjection projection) {
+    return new MeasurementValue(projection.getDoubleValue(), projection.getInstant());
+  }
+
 }

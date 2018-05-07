@@ -1,11 +1,14 @@
 package com.elvaco.mvp.core.usecase;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
+import com.elvaco.mvp.core.domainmodels.Measurement;
+import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.data.Page;
@@ -52,14 +55,7 @@ public class LogicalMeterUseCases {
   ) {
     return logicalMeters.findAll(setCurrentUsersOrganisationId(currentUser, parameters), pageable)
       .map(logicalMeter -> withCollectionPercentage(logicalMeter, parameters))
-      .map(logicalMeter -> {
-        if (!logicalMeter.activePhysicalMeter().isPresent()) {
-          return logicalMeter;
-        }
-        return logicalMeter.withMeasurements(measurements.findLatestValues(
-          logicalMeter.activePhysicalMeter().get().id
-        ));
-      });
+      .map(this::withLatestReadouts);
   }
 
   public LogicalMeter save(LogicalMeter logicalMeter) {
@@ -79,14 +75,7 @@ public class LogicalMeterUseCases {
   }
 
   public Optional<LogicalMeter> findByIdWithMeasurements(UUID id) {
-    return findById(id).map(logicalMeter -> {
-      if (!logicalMeter.activePhysicalMeter().isPresent()) {
-        return logicalMeter;
-      }
-      return logicalMeter.withMeasurements(measurements.findLatestValues(
-        logicalMeter.activePhysicalMeter().get().id
-      ));
-    });
+    return findById(id).map(this::withLatestReadouts);
   }
 
   public Optional<LogicalMeter> findByOrganisationIdAndExternalId(
@@ -100,6 +89,21 @@ public class LogicalMeterUseCases {
       );
     }
     return Optional.empty();
+  }
+
+  private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter) {
+    if (!logicalMeter.activePhysicalMeter().isPresent()) {
+      return logicalMeter;
+    }
+
+    List<Measurement> latestMeasurements = new ArrayList<>();
+    UUID physicalMeterId = logicalMeter.activePhysicalMeter().get().id;
+
+    for (Quantity quantity : logicalMeter.getQuantities()) {
+      measurements.findLatestReadout(physicalMeterId, quantity).ifPresent(latestMeasurements::add);
+    }
+
+    return logicalMeter.withMeasurements(latestMeasurements);
   }
 
   private LogicalMeter withCollectionPercentage(

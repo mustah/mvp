@@ -276,18 +276,18 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
 
     assertThat(resultsWithHourResolution).hasSize(1);
     assertThat(resultsWithHourResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithDayResolution).hasSize(1);
     assertThat(resultsWithDayResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
 
     assertThat(resultsWithMonthResolution).hasSize(1);
     assertThat(resultsWithMonthResolution.get(0)
-                 .getWhen()
-                 .toInstant()).isEqualTo(START_TIME.toInstant());
+      .getWhen()
+      .toInstant()).isEqualTo(START_TIME.toInstant());
   }
 
   @Test
@@ -311,38 +311,56 @@ public class MeasurementJpaRepositoryTest extends IntegrationTest {
   }
 
   @Test
-  public void findLatestMeasurementsForPhysicalMeter() {
+  public void findLatestReadoutWithDisplayInformation() {
     PhysicalMeterEntity meter = newPhysicalMeterEntity();
-    PhysicalMeterEntity irrelevantMeter = newPhysicalMeterEntity();
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(2), 3.0, "kWh", "Energy");
 
-    OffsetDateTime olderEnergyTime = OffsetDateTime.parse("2018-01-01T00:00:00+00:00");
-    OffsetDateTime energyTime = OffsetDateTime.parse("2018-02-01T00:00:00+00:00");
-    OffsetDateTime powerTime = OffsetDateTime.parse("2018-03-01T00:00:00+00:00");
+    MeasurementEntity latestEnergy = measurementJpaRepository
+      .findLatestReadout(meter.id, "Energy", "kWh").get();
 
-    newMeasurement(meter, olderEnergyTime, 1.0, "kWh", "Energy");
-    newMeasurement(meter, energyTime, 2.0, "kWh", "Energy");
-    newMeasurement(meter, powerTime, 3.0, "W", "Power");
-    newMeasurement(irrelevantMeter, energyTime, 4.0, "kWh", "Energy");
-    newMeasurement(irrelevantMeter, powerTime, 5.0, "W", "Power");
+    assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.plusHours(2).toInstant());
+    assertThat(latestEnergy.value.getValue()).isEqualTo(3.0);
+  }
 
-    List<MeasurementEntity> measurements = measurementJpaRepository
-      .findLatestForPhysicalMeter(meter.id);
+  @Test
+  public void findLatestReadoutWithUnitAdjusted() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
 
-    assertThat(measurements)
-      .as("Measurements are filtered by physical meter")
-      .hasSize(2)
-      .allMatch(m -> m.physicalMeter.id.equals(meter.id))
-      .noneMatch(m -> m.physicalMeter.id.equals(irrelevantMeter.id));
+    MeasurementEntity latestEnergy = measurementJpaRepository
+      .findLatestReadout(meter.id, "Energy", "MWh").get();
 
-    Optional<MeasurementEntity> power = measurements.stream()
-      .filter(measurementEntity -> measurementEntity.quantity.equals("Power"))
-      .findFirst();
-    assertThat(power.get().created).isEqualTo(powerTime.toZonedDateTime());
+    assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.toInstant());
+    assertThat(latestEnergy.value.getValue()).isEqualTo(0.001);
+    assertThat(latestEnergy.value.getUnit()).isEqualTo("MWh");
+  }
 
-    Optional<MeasurementEntity> energy = measurements.stream()
-      .filter(measurementEntity -> measurementEntity.quantity.equals("Energy"))
-      .findFirst();
-    assertThat(energy.get().created).isEqualTo(energyTime.toZonedDateTime());
+  @Test
+  public void findLatestReadout_None() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+
+    Optional<MeasurementEntity> latestEnergy = measurementJpaRepository
+      .findLatestReadout(meter.id, "Energy", "MWh");
+
+    assertThat(latestEnergy.isPresent()).isFalse();
+  }
+
+  @Test
+  public void findLatestReadout_MultipleQuantities() {
+    PhysicalMeterEntity meter = newPhysicalMeterEntity();
+    newMeasurement(meter, START_TIME, 1.0, "kWh", "Energy");
+    newMeasurement(meter, START_TIME.plusHours(1), 2.0, "kWh", "Energy");
+
+    newMeasurement(meter, START_TIME, 10.0, "m³", "Volume");
+    newMeasurement(meter, START_TIME.plusHours(1), 20.0, "m³", "Volume");
+
+    MeasurementEntity latestEnergy = measurementJpaRepository
+      .findLatestReadout(meter.id, "Energy", "kWh").get();
+
+    assertThat(latestEnergy.created.toInstant()).isEqualTo(START_TIME.plusHours(1).toInstant());
+    assertThat(latestEnergy.value.getValue()).isEqualTo(2.0);
   }
 
   @Test
