@@ -41,7 +41,5 @@ public interface Measurements {
     ZonedDateTime when
   );
 
-  List<Measurement> findLatestValues(
-    UUID physicalMeterId
-  );
+  Optional<Measurement> findLatestReadout(UUID physicalMeterId, Quantity quantity);
 }

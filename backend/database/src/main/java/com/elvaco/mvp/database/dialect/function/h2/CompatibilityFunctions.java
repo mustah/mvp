@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
+import javax.measure.quantity.Energy;
 
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,7 +15,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import tec.uom.se.format.SimpleUnitFormat;
+import tec.uom.se.function.RationalConverter;
 import tec.uom.se.quantity.Quantities;
+import tec.uom.se.unit.MetricPrefix;
+import tec.uom.se.unit.TransformedUnit;
 import tec.uom.se.unit.Units;
 
 import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
@@ -25,6 +29,8 @@ import static com.elvaco.mvp.database.util.Json.OBJECT_MAPPER;
 public final class CompatibilityFunctions {
 
   private static final Map<String, Unit<?>> CUSTOM_TYPES = new HashMap<>();
+  private static final Unit<Energy> WATTHOUR =
+    new TransformedUnit<Energy>("Wh", Units.JOULE, new RationalConverter(3600, 1));
 
   public static MeasurementUnit toMeasurementUnit(String valueAndUnit, String target) {
     Quantity<?> sourceQuantity;
@@ -118,7 +124,7 @@ public final class CompatibilityFunctions {
       boolean foundContainer = false;
       for (JsonNode containingElement : container) {
         if (containingElement.equals(el)
-            || (el.isContainerNode() && jsonNodeContains(containingElement, el))) {
+          || (el.isContainerNode() && jsonNodeContains(containingElement, el))) {
           foundContainer = true;
           break;
         }
@@ -141,13 +147,16 @@ public final class CompatibilityFunctions {
 
     throw new UnsupportedOperationException(
       "left type: " + lhs.getNodeType().toString()
-      + ", right type:" + rhs.getNodeType().toString()
+        + ", right type:" + rhs.getNodeType().toString()
     );
   }
 
   static {
     SimpleUnitFormat.getInstance().alias(Units.CELSIUS, "Celsius");
     SimpleUnitFormat.getInstance().alias(Units.KELVIN, "Kelvin");
+    SimpleUnitFormat.getInstance().alias(WATTHOUR, "Wh");
+    SimpleUnitFormat.getInstance().alias(MetricPrefix.KILO(WATTHOUR), "kWh");
+    SimpleUnitFormat.getInstance().alias(MetricPrefix.MEGA(WATTHOUR), "MWh");
     /* Necessary hack, because UOM's unit parser doesn't approve of
     this unit format.*/
     CUSTOM_TYPES.put("m3", Units.CUBIC_METRE);
