@@ -1,25 +1,40 @@
 package com.elvaco.geoservice.dto;
 
 import java.net.URISyntaxException;
+import java.util.List;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class GeoRequestTest {
 
   private GeoRequest request;
+  private Validator validator;
 
   @Before
   public void setUp() {
+    validator = Validation.buildDefaultValidatorFactory().getValidator();
     request = new GeoRequest();
   }
 
   @Test
   public void isNotValid_WhenNoAddressInfoIsSet() {
-    assertThat(request.isValid()).isFalse();
+    List<String> violations = validate(request);
+
+    assertThat(violations).containsExactlyInAnyOrder(
+      "Error callback URL must be provided.",
+      "Callback URL must be provided.",
+      "Country must be provided.",
+      "City must be provided.",
+      "Street must be provided."
+    );
   }
 
   @Test
@@ -27,7 +42,13 @@ public class GeoRequestTest {
     request.setCity("kungsbacka");
     request.setCountry("sverige");
 
-    assertThat(request.isValid()).isFalse();
+    List<String> violations = validate(request);
+
+    assertThat(violations).containsExactlyInAnyOrder(
+      "Error callback URL must be provided.",
+      "Callback URL must be provided.",
+      "Street must be provided."
+    );
   }
 
   @Test
@@ -35,7 +56,13 @@ public class GeoRequestTest {
     request.setStreet("street 1");
     request.setCountry("sverige");
 
-    assertThat(request.isValid()).isFalse();
+    List<String> violations = validate(request);
+
+    assertThat(violations).containsExactlyInAnyOrder(
+      "Error callback URL must be provided.",
+      "Callback URL must be provided.",
+      "City must be provided."
+    );
   }
 
   @Test
@@ -43,7 +70,13 @@ public class GeoRequestTest {
     request.setCity("kungsbacka");
     request.setStreet("street 1");
 
-    assertThat(request.isValid()).isFalse();
+    List<String> violations = validate(request);
+
+    assertThat(violations).containsExactlyInAnyOrder(
+      "Error callback URL must be provided.",
+      "Callback URL must be provided.",
+      "Country must be provided."
+    );
   }
 
   @Test
@@ -52,7 +85,12 @@ public class GeoRequestTest {
     request.setCity("kungsbacka");
     request.setCountry("sverige");
 
-    assertThat(request.isValid()).isFalse();
+    List<String> violations = validate(request);
+
+    assertThat(violations).containsExactlyInAnyOrder(
+      "Error callback URL must be provided.",
+      "Callback URL must be provided."
+    );
   }
 
   @Test
@@ -63,7 +101,15 @@ public class GeoRequestTest {
     request.setCallbackUrl("/callback");
     request.setErrorCallbackUrl("/error");
 
-    assertThat(request.isValid()).isTrue();
+    List<String> violations = validate(request);
+
+    assertThat(violations).isEmpty();
+  }
+
+  @Test
+  public void isNotValid_WhenCityIsBlack() {
+    assertThatThrownBy(() -> request.setCity(" "))
+      .isInstanceOf(NullPointerException.class);
   }
 
   @Test
@@ -76,5 +122,12 @@ public class GeoRequestTest {
   public void isNotValid_WhenErrorCallbackUrlIsEmpty() {
     assertThatThrownBy(() -> request.setErrorCallbackUrl(""))
       .isInstanceOf(NullPointerException.class);
+  }
+
+  private List<String> validate(GeoRequest request) {
+    return validator.validate(request)
+      .stream()
+      .map(ConstraintViolation::getMessage)
+      .collect(toList());
   }
 }

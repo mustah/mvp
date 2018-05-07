@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
-  imports { mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}" }
+  imports {mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"}
 }
 
 mainClassName = "com.elvaco.geoservice.GeoServiceApplication"
@@ -19,6 +19,9 @@ dependencies {
   compile 'org.springframework.boot:spring-boot-starter-data-jpa'
   compile 'org.liquibase:liquibase-core'
   compile 'org.hibernate:hibernate-java8'
+  compile 'org.hibernate.validator:hibernate-validator:6.0.9.Final'
+  compile 'org.hibernate.validator:hibernate-validator-annotation-processor:6.0.9.Final'
+  compile 'javax.validation:validation-api:2.0.1.Final'
   compile 'com.h2database:h2'
   compile 'org.postgresql:postgresql'
   compile 'commons-io:commons-io:2.6'

@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import com.elvaco.geoservice.controller.GeoController;
 import com.elvaco.geoservice.dto.AddressDto;
 import com.elvaco.geoservice.dto.ErrorDto;
+import com.elvaco.geoservice.dto.FieldErrorsDto;
 import com.elvaco.geoservice.dto.GeoDataDto;
 import com.elvaco.geoservice.dto.GeoRequest;
 import com.elvaco.geoservice.dto.GeoResponse;
@@ -18,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -66,8 +68,8 @@ public class BasicTest {
     request.setStreet("Kabelgatan 2T");
     request.setCity("Kungsbacka");
     request.setCountry("Sweden");
-    request.setCallbackUrl(getEncodedCallbackUrl());
-    request.setErrorCallbackUrl(getEncodedCallbackUrl());
+    request.setCallbackUrl(callbackUrl());
+    request.setErrorCallbackUrl(callbackUrl());
 
     geoController.requestByAddress(request);
 
@@ -90,8 +92,8 @@ public class BasicTest {
     request.setStreet("Drottningvägen 1");
     request.setCity("Växjö");
     request.setCountry("Sweden");
-    request.setCallbackUrl(getEncodedCallbackUrl());
-    request.setErrorCallbackUrl("/testing");
+    request.setCallbackUrl(callbackUrl());
+    request.setErrorCallbackUrl(errorCallbackUrl());
 
     ResponseEntity<String> response = geoController.requestByAddress(request);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -115,40 +117,48 @@ public class BasicTest {
   }
 
   @Test
-  public void notFound() throws URISyntaxException {
-    GeoRequest request = new GeoRequest();
-    request.setStreet("Eriksgatan 435");
-    request.setCity("Kungsbacka");
-    request.setCountry("Sweden");
-    request.setCallbackUrl(getEncodedCallbackUrl());
-    request.setErrorCallbackUrl(urlOf("/error"));
-
-    geoController.requestByAddress(request);
+  public void notFound() {
+    ResponseEntity<String> response = new TestRestTemplate()
+      .getForEntity(
+        urlOf("/address?city=kungsbacka&country=sverige&street=Eriksgatan 435&callbackUrl="
+              + callbackUrl()
+              + "&errorCallbackUrl=" + errorCallbackUrl()),
+        String.class
+      );
 
     sleep();
 
-    ErrorDto response = (ErrorDto) callbackController.getLastResponse();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertThat(response.message)
+    ErrorDto lastResponse = (ErrorDto) callbackController.getLastResponse();
+
+    assertThat(lastResponse.message)
       .as("Error message differ")
       .isEqualTo("No geolocation found");
   }
 
-  @Test
-  public void requestByAddress_WithIncompleteAddressParameters() throws URISyntaxException {
-    GeoRequest request = new GeoRequest();
-    request.setCountry("Sverige");
-    request.setCallbackUrl(getEncodedCallbackUrl());
-    request.setErrorCallbackUrl(urlOf("/error"));
-
-    ResponseEntity<String> response = geoController.requestByAddress(request);
-    String status = response.getBody();
-
-    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    assertThat(status).isNull();
+  private String errorCallbackUrl() {
+    return urlOf("/error");
   }
 
-  private String getEncodedCallbackUrl() {
+  @Test
+  public void requestByAddress_WithIncompleteAddressParameters() {
+    ResponseEntity<FieldErrorsDto> response = new TestRestTemplate()
+      .getForEntity(
+        urlOf("/address?city=sverige"),
+        FieldErrorsDto.class
+      );
+
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(response.getBody().fieldErrors).containsExactlyInAnyOrder(
+      "Callback URL must be provided.",
+      "Street must be provided.",
+      "Error callback URL must be provided.",
+      "Country must be provided."
+    );
+  }
+
+  private String callbackUrl() {
     return urlOf("/callback");
   }
 

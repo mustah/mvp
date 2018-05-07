@@ -2,6 +2,8 @@ package com.elvaco.geoservice.dto;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -18,10 +20,19 @@ public class GeoRequest {
    * is responsible to provide the details needed to connect the supplied geo-location and address
    * the gateway/meter to the location.
    */
+  @NotNull(message = "Callback URL must be provided.")
   private URI callbackUrl;
+
+  @NotNull(message = "Error callback URL must be provided.")
   private URI errorCallbackUrl;
+
+  @NotBlank(message = "Street must be provided.")
   private String street;
+
+  @NotBlank(message = "City must be provided.")
   private String city;
+
+  @NotBlank(message = "Country must be provided.")
   private String country;
 
   public void setCallbackUrl(String encodedCallbackUrl) throws URISyntaxException {
@@ -42,17 +53,5 @@ public class GeoRequest {
 
   public void setCountry(String country) {
     this.country = decode(country);
-  }
-
-  public boolean isValid() {
-    return isTrimmedNotEmpty(street)
-           && isTrimmedNotEmpty(city)
-           && isTrimmedNotEmpty(country)
-           && callbackUrl != null
-           && errorCallbackUrl != null;
-  }
-
-  private static boolean isTrimmedNotEmpty(String str) {
-    return str != null && !str.trim().isEmpty();
   }
 }
