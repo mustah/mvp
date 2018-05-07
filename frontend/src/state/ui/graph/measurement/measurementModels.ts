@@ -19,6 +19,13 @@ export interface Measurement extends Identifiable {
 
 export type Quantity = string;
 
+export const emptyGraphContents: GraphContents = {
+  axes: {},
+  data: [],
+  legend: [],
+  lines: [],
+};
+
 export interface MeasurementApiResponsePart {
   quantity: Quantity;
   unit: string;
@@ -29,30 +36,11 @@ export interface MeasurementApiResponsePart {
   }>;
 }
 
-export const emptyGraphContents: GraphContents = {
-  axes: {},
-  data: [],
-  legend: [],
-  lines: [],
-};
-
-export interface AverageApiResponsePart {
-  quantity: Quantity;
-  unit: string;
-  label: string;
-  values: Array<{
-    when: number;
-    value: number;
-  }>;
-}
-
-// TODO: Redundant types?
-export type AverageApiResponse = AverageApiResponsePart[];
 export type MeasurementApiResponse = MeasurementApiResponsePart[];
 
 export interface MeasurementResponses {
   measurement: MeasurementApiResponse;
-  average: AverageApiResponse;
+  average: MeasurementApiResponse;
 }
 
 export interface MeasurementState {

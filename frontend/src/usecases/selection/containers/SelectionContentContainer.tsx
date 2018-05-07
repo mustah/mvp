@@ -88,7 +88,6 @@ class SelectionContent extends React.Component<Props> {
     const addressSelectionText = translate('address') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
-
     const mediumStatusSelectionText = translate('medium') + ': ';
 
     return (

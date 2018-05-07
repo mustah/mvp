@@ -1,3 +1,4 @@
+import {AxiosPromise, AxiosResponse} from 'axios';
 import {createPayloadAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
@@ -7,18 +8,13 @@ import {makeUrl} from '../../../../helpers/urlFactory';
 import {EndPoints} from '../../../../services/endPoints';
 import {restClient, wasRequestCanceled} from '../../../../services/restClient';
 import {firstUpperTranslated} from '../../../../services/translationService';
-import {Dictionary, ErrorResponse, uuid} from '../../../../types/Types';
+import {Dictionary, EncodedUriParameters, ErrorResponse, uuid} from '../../../../types/Types';
 import {OnLogout} from '../../../../usecases/auth/authModels';
 import {OnUpdateGraph} from '../../../../usecases/report/containers/GraphContainer';
+import {Axes, GraphContents, LineProps, ProprietaryLegendProps} from '../../../../usecases/report/reportModels';
 import {
-  Axes,
-  GraphContents,
-  LineProps,
-  ProprietaryLegendProps,
-} from '../../../../usecases/report/reportModels';
-import {
-  AverageApiResponsePart,
   emptyGraphContents,
+  MeasurementApiResponse,
   MeasurementApiResponsePart,
   MeasurementResponses,
   Quantity,
@@ -91,6 +87,7 @@ export const mapApiResponseToGraphData =
             value: quantity,
           },
         }), {});
+
     const legendsAverage: Dictionary<ProprietaryLegendProps> = average.reduce((
       prev,
       {quantity},
@@ -104,6 +101,7 @@ export const mapApiResponseToGraphData =
             value: `Average ${quantity}`,
           },
         }), {});
+
     const legends: Dictionary<ProprietaryLegendProps> = {...legendsMeters, ...legendsAverage};
 
     measurement.forEach(({quantity, label, values, unit}: MeasurementApiResponsePart) => {
@@ -142,7 +140,7 @@ export const mapApiResponseToGraphData =
       }
     });
 
-    average.forEach(({quantity, values, unit}: AverageApiResponsePart) => {
+    average.forEach(({quantity, values, unit}: MeasurementApiResponsePart) => {
       const yAxisId = yAxisIdLookup(graphContents.axes, unit);
       if (!yAxisId) {
         return;
@@ -189,6 +187,10 @@ const measurementUri = (
   `&meters=${meters.join(',')}` +
   `&${toPeriodApiParameters({now: now(), period: timePeriod, customDateRange}).join('&')}`;
 
+interface GraphDataResponse {
+  data: MeasurementApiResponse;
+}
+
 export const fetchMeasurements =
   async (
     quantities: Quantity[],
@@ -208,28 +210,33 @@ export const fetchMeasurements =
       return;
     }
 
-    const averageUrl = makeUrl(
+    const averageUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements.concat('/average'),
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
-    const averageRequest = selectedListItems.length > 1 ? () => restClient.get(averageUrl)
-      : () => new Promise<{data: any[]}>((resolve) => (resolve({data: []})));
+    const averageRequest: () => Promise<GraphDataResponse> =
+      selectedListItems.length > 1
+        ? () => restClient.get(averageUrl)
+        : () => new Promise<GraphDataResponse>((resolve) => resolve({data: []}));
 
-    const measurementUrl = makeUrl(
+    const measurementUrl: EncodedUriParameters = makeUrl(
       EndPoints.measurements,
       measurementUri(quantities, selectedListItems, timePeriod, customDateRange),
     );
-    const measurementsRequest = () => restClient.get(measurementUrl);
+    const measurementsRequest = (): AxiosPromise<MeasurementApiResponse> => restClient.get(measurementUrl);
 
     try {
-      const response = await Promise.all([measurementsRequest(), averageRequest()]);
-      const graphData = {
+      const response: [AxiosResponse<MeasurementApiResponse>, GraphDataResponse] =
+        await Promise.all([measurementsRequest(), averageRequest()]);
+
+      const graphData: MeasurementResponses = {
         measurement: response[0].data,
         average: response[1].data.map((averageEntity) => ({
           ...averageEntity,
           values: averageEntity.values.filter(({value}) => value),
         })),
       };
+
       updateState({
         graphContents: mapApiResponseToGraphData(graphData),
         isFetching: false,
