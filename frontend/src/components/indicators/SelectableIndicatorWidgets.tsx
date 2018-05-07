@@ -6,7 +6,7 @@ import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedIndicatorType: IndicatorType;
+  selectedIndicatorTypes: IndicatorType[];
 }
 
 export interface IndicatorWidgetsDispatchProps {
@@ -20,13 +20,13 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
 }
 
 export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {className, children, indicators, selectedIndicatorType, onClick} = props;
+  const {className, children, indicators, selectedIndicatorTypes, onClick} = props;
 
   const indicatorWidgets = indicators.map((indicator: Indicator) => (
     <SelectableIndicatorWidget
       key={indicator.type}
       indicator={indicator}
-      isSelected={indicator.type === selectedIndicatorType}
+      isSelected={selectedIndicatorTypes.includes(indicator.type)}
       onClick={onClick}
     />
   ));

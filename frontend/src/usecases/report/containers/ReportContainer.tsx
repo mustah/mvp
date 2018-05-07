@@ -22,7 +22,6 @@ import {SummaryContainer} from '../../../containers/SummaryContainer';
 import {RootState} from '../../../reducers/rootReducer';
 import {translate} from '../../../services/translationService';
 import {toggleReportIndicatorWidget} from '../../../state/ui/indicator/indicatorActions';
-import {getSelectedIndicatorTypeForReport} from '../../../state/ui/indicator/indicatorSelectors';
 import {TabName} from '../../../state/ui/tabs/tabsModels';
 import {indicators} from '../reportModels';
 import {GraphContainer} from './GraphContainer';
@@ -37,7 +36,7 @@ const style: React.CSSProperties = {width: '100%', height: '100%'};
 const contentStyle: React.CSSProperties = {...paperStyle, marginTop: 24};
 const selectedTab: TabName = TabName.graph;
 
-const ReportComponent = ({selectedIndicatorType, toggleReportIndicatorWidget}: Props) => {
+const ReportComponent = ({selectedIndicatorTypes, toggleReportIndicatorWidget}: Props) => {
   const onChangeTab = () => void(0);
   return (
     <MvpPageContainer>
@@ -51,7 +50,7 @@ const ReportComponent = ({selectedIndicatorType, toggleReportIndicatorWidget}: P
 
       <SelectableIndicatorWidgets
         indicators={indicators}
-        selectedIndicatorType={selectedIndicatorType}
+        selectedIndicatorTypes={selectedIndicatorTypes}
         onClick={toggleReportIndicatorWidget}
       />
 
@@ -73,12 +72,13 @@ const ReportComponent = ({selectedIndicatorType, toggleReportIndicatorWidget}: P
   );
 };
 
-const mapStateToProps = ({ui}: RootState): SelectedIndicatorWidgetProps => ({
-  selectedIndicatorType: getSelectedIndicatorTypeForReport(ui),
-});
+const mapStateToProps =
+  ({ui: {indicator: {selectedIndicators: {report}}}}: RootState): SelectedIndicatorWidgetProps => ({
+    selectedIndicatorTypes: report,
+  });
 
 const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
-  toggleReportIndicatorWidget
+  toggleReportIndicatorWidget,
 }, dispatch);
 
 export const ReportContainer =
