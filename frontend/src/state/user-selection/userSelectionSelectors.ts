@@ -62,7 +62,9 @@ const getSelectedEntities = (entityType: string) =>
     getSelectedEntityIdsSelector(entityType),
     getSelectionGroup(entityType),
     (ids: uuid[], {entities}: DomainModel<SelectionEntity>) =>
-      ids.map((id: uuid) => entities[id]).filter((item) => item),
+      ids
+        .map((id: uuid) => entities[id])
+        .filter((item) => item),
   );
 
 export const getCitiesSelection = getSelectionGroup(ParameterName.cities);
@@ -98,10 +100,11 @@ const getList = (entityType: ParameterName): ListSelector =>
 const comparatorByNameAsc = (objA: SelectionEntity, objB: SelectionEntity) =>
   (objA.name > objB.name) ? 1 : ((objB.name > objA.name) ? -1 : 0);
 
-export const getCities = getList(ParameterName.cities);
 export const getAddresses = getList(ParameterName.addresses);
-export const getMeterStatuses = getList(ParameterName.meterStatuses);
+export const getCities = getList(ParameterName.cities);
 export const getGatewayStatuses = getList(ParameterName.gatewayStatuses);
+export const getMedia = getList(ParameterName.media);
+export const getMeterStatuses = getList(ParameterName.meterStatuses);
 
 export interface UriLookupState extends UserSelectionState {
   now: Date;

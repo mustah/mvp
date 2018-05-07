@@ -33,17 +33,18 @@ export type SelectionEntity = IdNamed | Address;
 export type SelectionEntityState = NormalizedState<SelectionEntity>;
 
 export interface DomainModelsState {
-  countries: SelectionEntityState;
-  cities: SelectionEntityState;
   addresses: SelectionEntityState;
   alarms: SelectionEntityState;
-  gatewayStatuses: SelectionEntityState;
-  meterStatuses: SelectionEntityState;
-  meterMapMarkers: NormalizedState<MapMarker>;
+  cities: SelectionEntityState;
+  countries: SelectionEntityState;
   gatewayMapMarkers: NormalizedState<MapMarker>;
-  users: UserState;
+  gatewayStatuses: SelectionEntityState;
+  media: NormalizedState<IdNamed>;
+  meterMapMarkers: NormalizedState<MapMarker>;
+  meterStatuses: SelectionEntityState;
   organisations: NormalizedState<Organisation>;
   userSelections: NormalizedState<UserSelection>;
+  users: UserState;
 }
 
 export const enum RequestType {
