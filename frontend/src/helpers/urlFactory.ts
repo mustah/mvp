@@ -8,11 +8,12 @@ interface ParameterNames {
 }
 
 const baseParameterNames: ParameterNames = {
-  cities: 'city',
   addresses: 'address',
   alarms: 'alarm',
-  productModels: 'productModel',
+  cities: 'city',
   manufacturers: 'manufacturer',
+  media: 'medium',
+  productModels: 'productModel',
 };
 
 const gatewayParameterNames: ParameterNames = {
@@ -43,23 +44,19 @@ export const toEntityApiParametersMeters = (selectionParameters: Omit<SelectedPa
 export const toEntityApiParametersGateways = (selectionParameters: Omit<SelectedParameters, 'dateRange'>) =>
   toEntityApiParameters(selectionParameters, gatewayParameterNames);
 
-const toEntityApiParameters = (
+const toEntityApiParameters =
   // TODO: perhaps make sure it could handle if dateRange is included, as it is now the function would most likely fail.
-  selectionParameters: Omit<SelectedParameters, 'dateRange'>,
-  parameterNames: ParameterNames,
-): EncodedUriParameters[] =>
-  Object.keys(selectionParameters)
-    .reduce((prev: EncodedUriParameters[], parameter: string) =>
-      [...prev,
-        ...selectionParameters[parameter]
-          .map((value: uuid) => `${parameterNames[parameter]}=${encodeURIComponent(value.toString())}`),
-      ], []);
+  (
+    selectionParameters: Omit<SelectedParameters, 'dateRange'>,
+    parameterNames: ParameterNames,
+  ): EncodedUriParameters[] =>
+    Object.keys(selectionParameters)
+      .reduce((prev: EncodedUriParameters[], parameter: string) =>
+        [...prev,
+          ...selectionParameters[parameter]
+            .map((value: uuid) => `${parameterNames[parameter]}=${encodeURIComponent(value.toString())}`),
+        ], []);
 
 export const makeUrl =
-  (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters => {
-    if (parameters && parameters.length) {
-      return endpoint + '?' + parameters;
-    } else {
-      return endpoint;
-    }
-  };
+  (endpoint: string, parameters?: EncodedUriParameters): EncodedUriParameters =>
+    parameters && parameters.length ? endpoint + '?' + parameters : endpoint;

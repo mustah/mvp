@@ -16,8 +16,9 @@ const processStrategyCityAddress: schema.StrategyFunction = (entity, parent, key
 const processStrategyCountry: schema.StrategyFunction = (entity) => ({...entity, id: entity.name});
 
 const alarm = new schema.Entity('alarms');
-const meterStatus = new schema.Entity('meterStatuses');
 const gatewayStatus = new schema.Entity('gatewayStatuses');
+const media = new schema.Entity('media');
+const meterStatus = new schema.Entity('meterStatuses');
 
 const options: schema.EntityOptions = {
   idAttribute: createId,
@@ -32,8 +33,9 @@ const country = new schema.Entity('countries', {cities: [city]}, {
 });
 
 export const selectionsSchema: Schema = {
-  locations: {countries: [country]},
   alarms: [alarm],
-  meterStatuses: [meterStatus],
   gatewayStatuses: [gatewayStatus],
+  locations: {countries: [country]},
+  media: [media],
+  meterStatuses: [meterStatus],
 };

@@ -1,16 +1,17 @@
 package com.elvaco.mvp.web.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.elvaco.mvp.core.domainmodels.Location;
+import com.elvaco.mvp.core.domainmodels.Medium;
 import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.web.dto.IdNamedDto;
 import com.elvaco.mvp.web.dto.SelectionsDto;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 public class SelectionsMapper {
 
@@ -24,7 +25,7 @@ public class SelectionsMapper {
     Stream.of(StatusType.values())
       .map(value -> value.name)
       .map(IdNamedDto::new)
-      .collect(Collectors.toList()));
+      .collect(toList()));
 
   public static final List<IdNamedDto> METER_ALARMS = unmodifiableList(asList(
     new IdNamedDto("no error"),
@@ -44,6 +45,14 @@ public class SelectionsMapper {
     new IdNamedDto("time for battery change"),
     new IdNamedDto("internal meter error")
   ));
+
+  public static final List<IdNamedDto> MEDIA = unmodifiableList(
+    Stream.of(Medium.values())
+      .map(medium -> medium.medium)
+      .filter(medium -> !medium.equals("Heat, Return temp"))
+      .map(IdNamedDto::new)
+      .collect(toList())
+  );
 
   public void addToDto(Location location, SelectionsDto selectionsDto) {
     selectionsDto.addLocation(

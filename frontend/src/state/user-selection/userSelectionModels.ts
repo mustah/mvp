@@ -3,12 +3,13 @@ import {IdNamed, ItemOrArray, uuid} from '../../types/Types';
 import {DomainModelsState, SelectionEntity} from '../domain-models/domainModels';
 
 export const enum ParameterName {
-  countries = 'countries',
-  cities = 'cities',
   addresses = 'addresses',
   alarms = 'alarms',
+  cities = 'cities',
+  countries = 'countries',
   gatewayStatuses = 'gatewayStatuses',
   manufacturers = 'manufacturers',
+  media = 'media',
   meterStatuses = 'meterStatuses',
   period = 'period',
   productModels = 'productModels',
@@ -34,11 +35,12 @@ export interface SelectedParameters {
   addresses?: uuid[];
   alarms?: uuid[];
   cities?: uuid[];
+  dateRange: SelectionInterval;
   gatewayStatuses?: uuid[];
   manufacturers?: uuid[];
+  media?: uuid[];
   meterIds?: uuid[];
   meterStatuses?: uuid[];
-  dateRange: SelectionInterval;
   productModels?: uuid[];
 }
 

@@ -302,30 +302,32 @@ describe('domainModelsReducer', () => {
   describe('clear domainModels', () => {
     it('resets all domain models except the ones related to selection drop downs', () => {
       const initialState: DomainModelsState = {
-        countries: initialDomain(),
-        cities: initialDomain(),
         addresses: initialDomain(),
         alarms: initialDomain(),
-        gatewayStatuses: initialDomain(),
-        meterStatuses: initialDomain(),
+        cities: initialDomain(),
+        countries: initialDomain(),
         gatewayMapMarkers: initialDomain(),
+        gatewayStatuses: initialDomain(),
+        media: initialDomain(),
         meterMapMarkers: initialDomain(),
-        users: initialDomain(),
+        meterStatuses: initialDomain(),
         organisations: initialDomain(),
         userSelections: initialDomain(),
+        users: initialDomain(),
       };
       const nonInitialState: DomainModelsState = {
-        countries: {...initialState.countries, isFetching: true},
-        cities: {...initialState.cities, isFetching: true},
         addresses: {...initialState.addresses, isFetching: true},
         alarms: {...initialState.alarms, isFetching: true},
-        gatewayStatuses: {...initialState.gatewayStatuses, isFetching: true},
-        meterStatuses: {...initialState.meterStatuses, isFetching: true},
+        cities: {...initialState.cities, isFetching: true},
+        countries: {...initialState.countries, isFetching: true},
         gatewayMapMarkers: {...initialState.gatewayMapMarkers, isFetching: true},
+        gatewayStatuses: {...initialState.gatewayStatuses, isFetching: true},
+        media: {...initialState.media, isFetching: true},
         meterMapMarkers: {...initialState.meterMapMarkers, isFetching: true},
-        users: {...initialState.users, isFetching: true},
+        meterStatuses: {...initialState.meterStatuses, isFetching: true},
         organisations: {...initialState.organisations, isFetching: true},
         userSelections: initialDomain(),
+        users: {...initialState.users, isFetching: true},
       };
 
       expect(domainModels(nonInitialState, mockSelectionAction)).toEqual({
@@ -335,6 +337,7 @@ describe('domainModelsReducer', () => {
         addresses: {...nonInitialState.addresses},
         alarms: {...nonInitialState.alarms},
         gatewayStatuses: {...nonInitialState.gatewayStatuses},
+        media: {...nonInitialState.media},
         meterStatuses: {...nonInitialState.meterStatuses},
       });
     });

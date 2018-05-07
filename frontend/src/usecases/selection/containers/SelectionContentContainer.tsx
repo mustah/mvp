@@ -26,19 +26,21 @@ import {
   getCities,
   getCitiesSelection,
   getGatewayStatuses,
+  getMedia,
   getMeterStatuses,
 } from '../../../state/user-selection/userSelectionSelectors';
 import {Callback, ClearError, ErrorResponse, IdNamed} from '../../../types/Types';
 import {SearchResultList} from '../components/SelectionResultList';
 
 interface StateToProps {
-  cities: SelectionListItem[];
   addresses: SelectionListItem[];
-  meterStatuses: SelectionListItem[];
-  gatewayStatuses: SelectionListItem[];
+  cities: SelectionListItem[];
   citiesSelection: ObjectsById<IdNamed>;
-  isFetching: boolean;
   error: Maybe<ErrorResponse>;
+  gatewayStatuses: SelectionListItem[];
+  isFetching: boolean;
+  media: SelectionListItem[];
+  meterStatuses: SelectionListItem[];
 }
 
 interface DispatchToProps {
@@ -61,15 +63,16 @@ class SelectionContent extends React.Component<Props> {
 
   render() {
     const {
-      toggleSelection,
-      cities,
       addresses,
-      meterStatuses,
-      gatewayStatuses,
+      cities,
       citiesSelection,
-      isFetching,
-      error,
       clearError,
+      error,
+      gatewayStatuses,
+      isFetching,
+      media,
+      meterStatuses,
+      toggleSelection,
     } = this.props;
 
     const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
@@ -78,11 +81,15 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection({...selection, parameter: ParameterName.meterStatuses});
     const selectGatewayStatus = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.gatewayStatuses});
+    const selectMedia = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.media});
 
     const citySelectionText = translate('city') + ': ';
     const addressSelectionText = translate('address') + ': ';
     const meterStatusSelectionText = translate('meter status') + ': ';
     const gatewayStatusSelectionText = translate('gateway status') + ': ';
+
+    const mediumStatusSelectionText = translate('medium') + ': ';
 
     return (
 
@@ -113,6 +120,11 @@ class SelectionContent extends React.Component<Props> {
               selectionText={gatewayStatusSelectionText}
               select={selectGatewayStatus}
             />
+            <SimpleDropdownSelector
+              list={media}
+              selectionText={mediumStatusSelectionText}
+              select={selectMedia}
+            />
           </Row>
           <SearchResultList/>
         </Column>
@@ -129,13 +141,14 @@ const mapStateToProps = ({userSelection, domainModels}: RootState): StateToProps
   const {cities, addresses, alarms} = domainModels;
 
   return {
+    addresses: getAddresses(lookupState),
     cities: getCities(lookupState),
     citiesSelection: getCitiesSelection(lookupState).entities,
-    addresses: getAddresses(lookupState),
-    meterStatuses: getMeterStatuses(lookupState),
+    error: getError(cities),
     gatewayStatuses: getGatewayStatuses(lookupState),
     isFetching: cities.isFetching || addresses.isFetching || alarms.isFetching,
-    error: getError(cities),
+    media: getMedia(lookupState),
+    meterStatuses: getMeterStatuses(lookupState),
   };
 };
 
