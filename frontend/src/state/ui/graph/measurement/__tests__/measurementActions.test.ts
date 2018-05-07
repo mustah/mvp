@@ -7,7 +7,7 @@ import {Unauthorized} from '../../../../../usecases/auth/authModels';
 import {GraphContainerState} from '../../../../../usecases/report/containers/GraphContainer';
 import {GraphContents} from '../../../../../usecases/report/reportModels';
 import {fetchMeasurements, mapApiResponseToGraphData} from '../measurementActions';
-import {AverageApiResponse, emptyGraphContents, MeasurementApiResponse} from '../measurementModels';
+import {emptyGraphContents, MeasurementApiResponse} from '../measurementModels';
 import MockAdapter = require('axios-mock-adapter');
 
 describe('measurementActions', () => {
@@ -164,7 +164,7 @@ describe('measurementActions', () => {
           },
         ];
 
-        const average: AverageApiResponse = [
+        const average: MeasurementApiResponse = [
           {
             quantity: 'Power',
             values: [
@@ -279,7 +279,8 @@ describe('measurementActions', () => {
         Period.currentMonth,
         Maybe.nothing(),
         updateState,
-        logout);
+        logout,
+      );
       expect(requestedUrls).toHaveProperty('length', 2);
       requestedUrls.sort();
       expect(requestedUrls[0])
@@ -322,7 +323,7 @@ describe('measurementActions', () => {
           },
         ];
 
-        const average: AverageApiResponse = [
+        const average: MeasurementApiResponse = [
           {
             quantity: 'Power',
             unit: 'mW',
@@ -353,7 +354,8 @@ describe('measurementActions', () => {
         Period.currentMonth,
         Maybe.nothing(),
         updateState,
-        logout);
+        logout,
+      );
       expect(requestedUrls.length).toEqual(2);
 
       expect(state.graphContents.axes.left).toEqual('mW');
