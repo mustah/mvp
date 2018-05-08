@@ -62,8 +62,9 @@ public class LogicalMeterUseCases {
     if (hasTenantAccess(logicalMeter.organisationId)) {
       return logicalMeters.save(logicalMeter);
     }
-    throw new Unauthorized("User '" + currentUser.getUsername() + "' is not allowed to "
-      + "create this meter.");
+    throw new Unauthorized(
+      "User '" + currentUser.getUsername() + "' is not allowed to create this meter."
+    );
   }
 
   public Optional<LogicalMeter> findById(UUID id) {
@@ -89,6 +90,21 @@ public class LogicalMeterUseCases {
       );
     }
     return Optional.empty();
+  }
+
+  public Optional<LogicalMeter> deleteById(UUID id) {
+    if (!currentUser.isSuperAdmin()) {
+      throw new Unauthorized(
+        "User '"
+        + currentUser.getUsername()
+        + "' is not allowed to "
+        + "delete this meter."
+      );
+    }
+    Optional<LogicalMeter> logicalMeter = findById(id);
+    logicalMeter.ifPresent(logicalMeters::delete);
+
+    return logicalMeter;
   }
 
   private LogicalMeter withLatestReadouts(LogicalMeter logicalMeter) {

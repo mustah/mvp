@@ -26,4 +26,6 @@ public interface LogicalMeters {
   List<LogicalMeter> findByOrganisationId(UUID organisationId);
 
   List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters);
+
+  void delete(LogicalMeter logicalMeter);
 }

@@ -110,4 +110,5 @@ public interface MeasurementJpaRepository extends JpaRepository<MeasurementEntit
     @Param("quantity") String quantity,
     @Param("unit") String unit
   );
+
 }

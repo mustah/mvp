@@ -22,6 +22,7 @@ import com.elvaco.mvp.database.entity.meter.PhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.entity.meter.QPhysicalMeterStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterMapper;
 import com.elvaco.mvp.database.repository.mappers.LogicalMeterSortingMapper;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -44,6 +46,7 @@ public class LogicalMeterRepository implements LogicalMeters {
     QPhysicalMeterStatusLogEntity.physicalMeterStatusLogEntity;
 
   private final LogicalMeterJpaRepository logicalMeterJpaRepository;
+  private final PhysicalMeterJpaRepository physicalMeterJpaRepository;
   private final PhysicalMeterStatusLogJpaRepository physicalMeterStatusLogJpaRepository;
   private final MeasurementJpaRepository measurementJpaRepository;
   private final LogicalMeterSortingMapper sortingMapper;
@@ -135,6 +138,15 @@ public class LogicalMeterRepository implements LogicalMeters {
       .stream()
       .map(LogicalMeterMapper::justLocationModel)
       .collect(toList());
+  }
+
+  @Transactional
+  @Override
+  public void delete(LogicalMeter logicalMeter) {
+    logicalMeterJpaRepository.delete(
+      logicalMeter.id,
+      logicalMeter.organisationId
+    );
   }
 
   private Predicate toPredicate(RequestParameters parameters) {

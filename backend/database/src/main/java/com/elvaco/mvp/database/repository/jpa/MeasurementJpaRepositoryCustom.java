@@ -8,7 +8,7 @@ import com.querydsl.core.types.Predicate;
 import org.springframework.data.querydsl.QueryDslPredicateExecutor;
 
 public interface MeasurementJpaRepositoryCustom extends
-  QueryDslPredicateExecutor<MeasurementEntity> {
+                                                QueryDslPredicateExecutor<MeasurementEntity> {
 
   Map<UUID, Long> countGroupedByPhysicalMeterId(Predicate predicate);
 }

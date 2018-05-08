@@ -36,4 +36,6 @@ public interface LogicalMeterJpaRepository {
   Optional<LogicalMeterEntity> findBy(UUID organisationId, UUID id);
 
   void deleteAll();
+
+  void delete(UUID id, UUID organisationId);
 }

@@ -222,7 +222,7 @@ public class GatewayControllerTest extends IntegrationTest {
   }
 
   @Test
-  public void superUserCanGetSingleGateway() {
+  public void superAdminCanGetSingleGateway() {
     UUID gatewayId = saveGateway(dailyPlanet.id).id;
 
     ResponseEntity<GatewayDto> response = asTestSuperAdmin()
