@@ -1,7 +1,11 @@
 package com.elvaco.mvp.testing.security;
 
+import java.util.List;
 import java.util.UUID;
 
+import com.elvaco.mvp.core.domainmodels.Language;
+import com.elvaco.mvp.core.domainmodels.Organisation;
+import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.domainmodels.User;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 
@@ -11,6 +15,21 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
 
   private final transient User user;
   private final String token;
+
+  public MockAuthenticatedUser(List<Role> roles) {
+    this(
+      new User(
+        UUID.randomUUID(),
+        "test-user",
+        "test@test.test",
+        "password",
+        Language.en,
+        new Organisation(UUID.randomUUID(), "test-organisation"),
+        roles
+      ),
+      "testing-token"
+    );
+  }
 
   public MockAuthenticatedUser(User user, String token) {
     this.user = user;
@@ -35,6 +54,11 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   @Override
   public UUID getOrganisationId() {
     return user.organisation.id;
+  }
+
+  @Override
+  public String getOrganisationExternalId() {
+    return user.organisation.externalId;
   }
 
   @Override

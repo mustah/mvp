@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeasurementMessageResponseBuilder;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -21,6 +20,7 @@ import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
 import com.elvaco.mvp.core.util.CompletenessValidators;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

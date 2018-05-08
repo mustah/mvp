@@ -2,6 +2,8 @@ package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.util.Optional;
 
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+
 public class MeasurementMessageResponseBuilder {
 
   private final String organisationIdExternal;
