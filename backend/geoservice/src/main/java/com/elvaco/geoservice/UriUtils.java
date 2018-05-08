@@ -14,7 +14,7 @@ import static java.util.Objects.requireNonNull;
 @UtilityClass
 public class UriUtils {
 
-  public static URI asDecoded(String encodedUrl) throws URISyntaxException {
+  public static URI asDecodedUri(String encodedUrl) throws URISyntaxException {
     try {
       return new URI(requireNonNull(decode(encodedUrl)));
     } catch (URISyntaxException e) {
@@ -25,10 +25,19 @@ public class UriUtils {
 
   public static String decode(String encodedUrlParameter) {
     try {
-      return URLDecoder.decode(encodedUrlParameter, "UTF-8");
+      return URLDecoder.decode(requireNonNull(trimOrNull(encodedUrlParameter)), "UTF-8");
     } catch (UnsupportedEncodingException ignore) {
       // cannot happen since we always provide encoding
     }
     return encodedUrlParameter;
+  }
+
+  private static String trimOrNull(String str) {
+    if (str != null) {
+      String trimmed = str.trim();
+      return trimmed.isEmpty() ? null : trimmed;
+    } else {
+      return null;
+    }
   }
 }

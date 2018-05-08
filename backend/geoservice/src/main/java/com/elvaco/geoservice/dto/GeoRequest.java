@@ -2,10 +2,16 @@ package com.elvaco.geoservice.dto;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
-import com.elvaco.geoservice.UriUtils;
 import lombok.Getter;
+import lombok.ToString;
 
+import static com.elvaco.geoservice.UriUtils.asDecodedUri;
+import static com.elvaco.geoservice.UriUtils.decode;
+
+@ToString
 @Getter
 public class GeoRequest {
 
@@ -14,29 +20,38 @@ public class GeoRequest {
    * is responsible to provide the details needed to connect the supplied geo-location and address
    * the gateway/meter to the location.
    */
+  @NotNull(message = "Callback URL must be provided.")
   private URI callbackUrl;
+
+  @NotNull(message = "Error callback URL must be provided.")
   private URI errorCallbackUrl;
+
+  @NotBlank(message = "Street must be provided.")
   private String street;
+
+  @NotBlank(message = "City must be provided.")
   private String city;
+
+  @NotBlank(message = "Country must be provided.")
   private String country;
 
   public void setCallbackUrl(String encodedCallbackUrl) throws URISyntaxException {
-    this.callbackUrl = UriUtils.asDecoded(encodedCallbackUrl);
+    this.callbackUrl = asDecodedUri(encodedCallbackUrl);
   }
 
   public void setErrorCallbackUrl(String encodedErrorCallbackUrl) throws URISyntaxException {
-    this.errorCallbackUrl = UriUtils.asDecoded(encodedErrorCallbackUrl);
+    this.errorCallbackUrl = asDecodedUri(encodedErrorCallbackUrl);
   }
 
   public void setStreet(String street) {
-    this.street = UriUtils.decode(street);
+    this.street = decode(street);
   }
 
   public void setCity(String city) {
-    this.city = UriUtils.decode(city);
+    this.city = decode(city);
   }
 
   public void setCountry(String country) {
-    this.country = UriUtils.decode(country);
+    this.country = decode(country);
   }
 }
