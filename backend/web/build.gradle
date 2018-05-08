@@ -7,6 +7,7 @@ dependencyManagement {
 
 dependencies {
   compile project(':backend:adapters')
+  compile project(':backend:rabbitmq-producer')
 
   compile 'org.springframework.boot:spring-boot-starter-actuator'
   compile 'org.springframework.security:spring-security-web'

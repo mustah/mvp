@@ -2,6 +2,7 @@ package com.elvaco.mvp.producers.rabbitmq;
 
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
@@ -19,7 +20,7 @@ public class MeteringRequestPublisher {
     this.messagePublisher = messagePublisher;
   }
 
-  void request(LogicalMeter logicalMeter) {
+  public void request(LogicalMeter logicalMeter) {
     if (!authenticatedUser.isSuperAdmin()) {
       throw new Unauthorized("User '" + authenticatedUser.getUsername() + "' is not allowed to "
         + "publish synchronization requests");
@@ -33,7 +34,11 @@ public class MeteringRequestPublisher {
         .orElse(null))
       .build();
 
-    messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes());
+    try {
+      messagePublisher.publish(MessageSerializer.toJson(getReferenceInfoDto).getBytes());
+    } catch (Exception exception) {
+      throw new UpstreamServiceUnavailable(exception.getMessage());
+    }
   }
 
 }

@@ -12,6 +12,7 @@ import com.elvaco.mvp.core.domainmodels.MeterDefinition;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.exception.Unauthorized;
+import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
@@ -142,6 +143,26 @@ public class MeteringRequestPublisherTest {
     meteringRequestPublisher.request(logicalMeter);
 
     assertThat(spy.deserialize(0).gatewayExternalId).isEqualTo(null);
+  }
+
+  @Test
+  public void exceptionFromMessagePublisherTriggersUpstreamServiceUnavailable() {
+    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
+      .SUPER_ADMIN));
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      messageBody -> {
+        throw new RuntimeException("Something went horribly wrong!");
+      }
+    );
+    LogicalMeter logicalMeter = newLogicalMeter(
+      user.getOrganisationId(),
+      emptyList(),
+      emptyList()
+    );
+
+    assertThatThrownBy(() -> meteringRequestPublisher.request(logicalMeter)).isInstanceOf(
+      UpstreamServiceUnavailable.class);
   }
 
   private LogicalMeter newLogicalMeter(
