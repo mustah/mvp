@@ -1,0 +1,16 @@
+{
+  "message_type": "Elvaco MVP MQ Reference Info Message 1.0",
+  "facility": {
+    "id": "ABC-123",
+    "country": "Sweden",
+    "city": "Perstorp",
+    "address": "Duvstigen 8C"
+  },
+  "gateway": {
+    "id": "12031928",
+    "product_model": "CMi2110",
+    "status": "OK"
+  },
+  "organisation_id": "Organisation, Incorporated",
+  "source_system_id": "The Source System"
+}
