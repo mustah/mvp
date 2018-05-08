@@ -28,9 +28,6 @@ spring:
     host: localhost
     username: guest
     password: guest
-springfox:
-  documentation:
-    swagger.v2.path: /swagger
 
 ehcache:
   heap-entries: 1000
