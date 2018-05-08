@@ -1,14 +1,8 @@
 package com.elvaco.mvp.consumers.rabbitmq;
 
-import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import com.elvaco.mvp.configuration.config.RabbitConsumerProperties;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
@@ -26,38 +20,27 @@ import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
-import com.elvaco.mvp.producers.rabbitmq.MessageSerializer;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
-import com.elvaco.mvp.testdata.IntegrationTest;
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.elvaco.mvp.testdata.RabbitIntegrationTest;
+import com.elvaco.mvp.testdata.TestRabbitConsumer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.amqp.AmqpConnectException;
-import org.springframework.amqp.rabbit.connection.Connection;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.elvaco.mvp.producers.rabbitmq.MessageSerializer.toJson;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeNoException;
+import static org.junit.Assume.assumeTrue;
 
 @SuppressWarnings("SameParameterValue")
-public class RabbitMqConsumerTest extends IntegrationTest {
+public class RabbitMqConsumerTest extends RabbitIntegrationTest {
 
   @Autowired
   private Organisations organisations;
 
   @Autowired
   private Gateways gateways;
-
-  @Autowired
-  private ConnectionFactory connectionFactory;
 
   @Autowired
   private PhysicalMeterJpaRepository physicalMeterJpaRepository;
@@ -74,34 +57,13 @@ public class RabbitMqConsumerTest extends IntegrationTest {
   @Autowired
   private GatewayStatusLogJpaRepository gatewayStatusLogJpaRepository;
 
-  @Autowired
-  private RabbitConsumerProperties consumerProperties;
-
-  private Connection connection;
-  private Channel channel;
-
   @Before
   public void setUp() {
-    try {
-      connection = connectionFactory.createConnection();
-      channel = connection.createChannel(false);
-    } catch (AmqpConnectException ex) {
-      if (connection != null) {
-        connection.close();
-      }
-      assumeNoException(ex);
-    }
+    assumeTrue(isRabbitConnected());
   }
 
   @After
-  public void tearDown() throws IOException, TimeoutException {
-    if (channel != null) {
-      channel.close();
-    }
-    if (connection != null) {
-      connection.close();
-    }
-
+  public void tearDown() {
     physicalMeterStatusLogJpaRepository.deleteAll();
     physicalMeterJpaRepository.deleteAll();
     logicalMeterJpaRepository.deleteAll();
@@ -145,7 +107,7 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       "test",
       emptyList()
     );
-    TestConsumer consumer = newResponseConsumer();
+    TestRabbitConsumer consumer = newResponseConsumer();
 
     publishMessage(toJson(message).getBytes());
 
@@ -159,23 +121,6 @@ public class RabbitMqConsumerTest extends IntegrationTest {
           "GATEWAY-123",
           "FACILITY-123"
         ));
-  }
-
-  private TestConsumer newResponseConsumer() throws IOException {
-    TestConsumer consumer = new TestConsumer(new LinkedBlockingQueue<>());
-    channel.queueDeclare(
-      consumerProperties.getResponseRoutingKey(),
-      false,
-      true,
-      true,
-      emptyMap()
-    );
-    channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
-    return consumer;
-  }
-
-  private void publishMessage(byte[] message) throws IOException {
-    channel.basicPublish("", consumerProperties.getQueueName(), null, message);
   }
 
   private void assertLogicalMeterWasCreated(
@@ -221,31 +166,4 @@ public class RabbitMqConsumerTest extends IntegrationTest {
       .isPresent())).as("Organisation '" + slug + "' was created").isTrue();
   }
 
-  private class TestConsumer extends DefaultConsumer {
-
-    private final BlockingQueue<Object> receivedMessages;
-
-    private TestConsumer(BlockingQueue<Object> receivedMessages) {
-      super(channel);
-      this.receivedMessages = receivedMessages;
-    }
-
-    @Override
-    public void handleDelivery(
-      String consumerTag,
-      Envelope envelope,
-      AMQP.BasicProperties properties,
-      byte[] body
-    ) {
-      receivedMessages.add(body);
-    }
-
-    private byte[] receiveOne() throws InterruptedException {
-      return (byte[]) receivedMessages.poll(10, TimeUnit.SECONDS);
-    }
-
-    private <T> T fromJson(Class<T> classOfT) throws InterruptedException {
-      return MessageSerializer.fromJson(new String(receiveOne()), classOfT);
-    }
-  }
 }
