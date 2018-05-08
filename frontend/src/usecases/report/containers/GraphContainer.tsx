@@ -1,6 +1,3 @@
-import 'GraphContainer.scss';
-import MenuItem from 'material-ui/MenuItem';
-import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {
@@ -25,7 +22,10 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {fetchMeasurements, selectQuantities} from '../../../state/ui/graph/measurement/measurementActions';
-import {allQuantities, emptyGraphContents, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
+import {
+  emptyGraphContents,
+  Quantity,
+} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
@@ -33,7 +33,9 @@ import {OnLogout} from '../../auth/authModels';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
+import {QuantitySelector} from '../components/QuantitySelector';
 import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
+import 'GraphContainer.scss';
 
 interface StateToProps {
   period: Period;
@@ -129,19 +131,10 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
   }
 
   render() {
-    const {selectedQuantities} = this.props;
+    const {selectedQuantities, selectQuantities} = this.props;
     const {graphContents} = this.state;
     const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
     const {data, legend} = graphContents;
-
-    const quantityMenuItem = (quantity: string) => (
-      <MenuItem
-        key={quantity}
-        checked={selectedQuantities.includes(quantity)}
-        value={quantity}
-        primaryText={quantity}
-      />
-    );
 
     // TODO: [!Carl]
     // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
@@ -156,16 +149,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
     return (
       <div>
-        <div style={{padding: '20px 20px 0px'}}>
-          <SelectField
-            multiple={true}
-            hintText={firstUpperTranslated('select quantities')}
-            value={selectedQuantities}
-            onChange={this.changeQuantities}
-          >
-            {allQuantities.heat.map(quantityMenuItem)}
-          </SelectField>
-        </div>
+        <QuantitySelector selectedQuantities={selectedQuantities} selectQuantities={selectQuantities}/>
         <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
           <HasContent
             hasContent={data.length > 0}
@@ -210,8 +194,6 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     this.resetDots();
     await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
   }
-
-  changeQuantities = (event, index, values) => this.props.selectQuantities(values);
 
   renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
 

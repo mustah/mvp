@@ -49,7 +49,6 @@ export const SelectableIndicatorWidget = ({onClick, indicator, isSelected}: Indi
   const {state, title, type} = indicator;
 
   const selectWidget = () => onClick(type);
-  const isEnabled: boolean = type === IndicatorType.districtHeating;
 
   const IndicatorIcon = iconComponentFor(type);
 
@@ -61,7 +60,7 @@ export const SelectableIndicatorWidget = ({onClick, indicator, isSelected}: Indi
             <Bold>{title}</Bold>
           </Row>
           <Row className="Row-center Row-bottom">
-            <IndicatorIcon style={style} className="Indicator-icon" color={isEnabled ? colors.white : colors.black}/>
+            <IndicatorIcon style={style} className="Indicator-icon" color={isSelected ? colors.white : colors.black}/>
           </Row>
         </ColumnCenter>
 
