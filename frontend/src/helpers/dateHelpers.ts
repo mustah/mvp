@@ -98,5 +98,13 @@ const toFriendlyIso8601 = ({start, end}: DateRange): string =>
 export const prettyRange = ({now, period, customDateRange}: CurrentPeriod): string =>
   toFriendlyIso8601(currentDateRange(now, period, customDateRange));
 
-export const formatLabelTimeStamp = (input: moment.MomentInput): string =>
-  momentWithTimeZone(input).format('MMM D, HH:mm');
+const yyyymmddhhMm = `${yyyymmdd} HH:mm`;
+const utcOffsetHours = 1;
+
+export const displayDate = (input: moment.MomentInput, format: string = yyyymmddhhMm): string => {
+  const date = momentWithTimeZone(input).add(utcOffsetHours, 'hours');
+  return `${date.format(format)} ${timezoneUtc}+${utcOffsetHours}`;
+};
+
+export const timestamp = (input: moment.MomentInput): string =>
+  displayDate(input, 'MMM D, HH:mm');

@@ -13,30 +13,30 @@ interface Props {
   gateway: Gateway;
 }
 
-export const GatewayDetailsInfo = ({gateway}: Props) => {
-  const {location: {city, address}, serial, productModel, status} = gateway;
-  const gatewayImage = imagePathFor('cme2110.jpg');
+export const GatewayDetailsInfo =
+  ({gateway: {location: {city, address}, serial, productModel, status}}: Props) => {
+    const gatewayImage = imagePathFor('cme2110.jpg');
 
-  return (
-    <Column className="GatewayDetailsInfo">
-      <Column className="Overview">
+    return (
+      <Column className="GatewayDetailsInfo">
+        <Column className="Overview">
+          <Row>
+            <MainTitle>{translate('gateway details')}</MainTitle>
+            <Info label={translate('gateway serial')} value={serial}/>
+            <Info label={translate('product model')} value={productModel}/>
+            <Info label={translate('city')} value={orUnknown(city.name)}/>
+            <Info label={translate('address')} value={orUnknown(address.name)}/>
+          </Row>
+        </Column>
         <Row>
-          <MainTitle>{translate('gateway details')}</MainTitle>
-          <Info label={translate('gateway serial')} value={serial}/>
-          <Info label={translate('product model')} value={productModel}/>
-          <Info label={translate('city')} value={orUnknown(city.name)}/>
-          <Info label={translate('address')} value={orUnknown(address.name)}/>
+          <Column>
+            <img src={gatewayImage} width={120}/>
+          </Column>
+          <Info
+            label={translate('collection')}
+            value={<Status name={status.name}/>}
+          />
         </Row>
       </Column>
-      <Row>
-        <Column>
-          <img src={gatewayImage} width={120}/>
-        </Column>
-        <Info
-          label={translate('collection')}
-          value={<Status name={status.name}/>}
-        />
-      </Row>
-    </Column>
-  );
-};
+    );
+  };

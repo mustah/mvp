@@ -293,7 +293,7 @@ public class LogicalMeterControllerTest extends IntegrationTest {
       .get("/meters/" + logicalMeter.id, LogicalMeterDto.class).getBody();
 
     assertThat(logicalMeterDto.statusChangelog).containsExactly(
-      new MeterStatusLogDto(logEntry.id, "ok", "2001-01-01 10:14:00", "2001-01-06 10:14:00")
+      new MeterStatusLogDto(logEntry.id, "ok", "2001-01-01T10:14:00Z", "2001-01-06T10:14:00Z")
     );
   }
 

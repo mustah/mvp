@@ -35,8 +35,6 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
 
   state: TabsState = {selectedTab: TabName.values};
 
-  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
-
   render() {
     const {selectedTab} = this.state;
     const {gateway, meters, gatewayMapMarker} = this.props;
@@ -95,4 +93,7 @@ export class GatewayDetailsTabs extends React.Component<Props, TabsState> {
       </Row>
     );
   }
+
+  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
+
 }

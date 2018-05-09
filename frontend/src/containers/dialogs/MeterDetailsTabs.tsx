@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {HasContent} from '../../components/content/HasContent';
+import {DateTime} from '../../components/dates/DateTime';
 import {Row} from '../../components/layouts/row/Row';
+import {Separator} from '../../components/separators/Separator';
 import {Status} from '../../components/status/Status';
 import {Table, TableColumn} from '../../components/table/Table';
 import {TableHead} from '../../components/table/TableHead';
@@ -10,7 +12,7 @@ import {TabHeaders} from '../../components/tabs/components/TabHeaders';
 import {Tabs} from '../../components/tabs/components/Tabs';
 import {TabTopBar} from '../../components/tabs/components/TabTopBar';
 import {Normal} from '../../components/texts/Texts';
-import {formatLabelTimeStamp} from '../../helpers/dateHelpers';
+import {timestamp} from '../../helpers/dateHelpers';
 import {roundMeasurement} from '../../helpers/formatters';
 import {Maybe} from '../../helpers/Maybe';
 import {firstUpperTranslated, translate} from '../../services/translationService';
@@ -43,21 +45,25 @@ export interface RenderableMeasurement extends Identifiable {
 }
 
 const renderQuantity = ({quantity}: RenderableMeasurement): string => quantity as string;
+
 const renderValue = ({value = null, unit}: RenderableMeasurement): string =>
   value !== null && unit ? `${roundMeasurement(value)} ${unit}` : '';
+
 const renderCreated = ({created}: RenderableMeasurement): Children =>
   created
-    ? formatLabelTimeStamp(created * 1000)
+    ? timestamp(created * 1000)
     : <Normal className="Italic">{firstUpperTranslated('never collected')}</Normal>;
 
 const renderStatusCell = ({name}: MeterStatusChangelog): Children => <Status name={name}/>;
-const renderDate = (item: MeterStatusChangelog): string => item.start;
+
+const renderDate = ({start}: MeterStatusChangelog): Children =>
+  <DateTime date={start} fallbackContent={<Separator/>}/>;
+
 const renderSerial = ({serial}: Gateway): string => serial;
 
 export class MeterDetailsTabs extends React.Component<Props, State> {
 
   state: State = {selectedTab: TabName.values};
-  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
 
   render() {
     const {selectedTab} = this.state;
@@ -136,4 +142,7 @@ export class MeterDetailsTabs extends React.Component<Props, State> {
       </Row>
     );
   }
+
+  changeTab = (selectedTab: TabName) => this.setState({selectedTab});
+
 }

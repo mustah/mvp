@@ -12,7 +12,7 @@ public final class Dates {
   public static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
   private static final DateTimeFormatter UTC_DATE_TIME_FORMATTER =
-    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
       .withZone(UTC.toZoneId());
 
   public static String formatUtc(ZonedDateTime time) {

@@ -1,5 +1,5 @@
 import {Period} from '../../components/dates/dateModels';
-import {momentWithTimeZone, prettyRange, toPeriodApiParameters} from '../dateHelpers';
+import {displayDate, momentWithTimeZone, prettyRange, toPeriodApiParameters} from '../dateHelpers';
 import {Maybe} from '../Maybe';
 
 describe('dateHelper', () => {
@@ -13,7 +13,7 @@ describe('dateHelper', () => {
         period: Period.latest,
         customDateRange: Maybe.nothing(),
       })).toEqual(['after=2018-03-22T00%3A00%3A00.000Z',
-        'before=2018-03-23T00%3A00%3A00.000Z']);
+                   'before=2018-03-23T00%3A00%3A00.000Z']);
     });
   });
 
@@ -104,8 +104,8 @@ describe('dateHelper', () => {
       });
 
       it('knows about a custom time period', () => {
-        const start =  momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
-        const end =  momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
+        const start = momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
+        const end = momentWithTimeZone('2013-03-13T00:00:00Z').toDate();
 
         const currentDayApiParameters = prettyRange({
           now: momentWithTimeZone('2013-03-25T00:00:00Z').toDate(),
@@ -115,5 +115,22 @@ describe('dateHelper', () => {
         expect(currentDayApiParameters).toEqual('2013-03-13 - 2013-03-13');
       });
     });
+  });
+
+  describe('displayDate', () => {
+
+    it('formats in timezone CET', () => {
+      expect(displayDate('2018-01-21T00:00:00Z')).toBe('2018-01-21 01:00 UTC+1');
+      expect(displayDate('2018-04-21T08:00:00Z')).toBe('2018-04-21 09:00 UTC+1');
+    });
+
+    it('formats in timezone with offset +1 from UTC', () => {
+      expect(displayDate('2018-01-21T08:00:00+01:00')).toBe('2018-01-21 08:00 UTC+1');
+    });
+
+    it('formats in timezone in Stockholm (offset +2 from UTC)', () => {
+      expect(displayDate('2018-01-21T08:00:00+02:00')).toBe('2018-01-21 07:00 UTC+1');
+    });
+
   });
 });

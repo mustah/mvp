@@ -19,14 +19,14 @@ public class DatesTest {
 
   @Test
   public void shouldFormatTimeUtcFromStockholmTimeZone() {
-    assertThat(formatUtc(ZONED_DATE_TIME_STOCKHOLM)).isEqualTo("1990-04-09 06:45:12");
+    assertThat(formatUtc(ZONED_DATE_TIME_STOCKHOLM)).isEqualTo("1990-04-09T06:45:12Z");
   }
 
   @Test
   public void addOneHourAndGetUtcTime() {
     ZonedDateTime date = ZONED_DATE_TIME_STOCKHOLM.plusHours(1);
 
-    assertThat(formatUtc(date)).isEqualTo("1990-04-09 07:45:12");
+    assertThat(formatUtc(date)).isEqualTo("1990-04-09T07:45:12Z");
   }
 
   @Test
@@ -38,6 +38,6 @@ public class DatesTest {
   @Test
   public void format() {
     String utcTime = formatUtc(utcZonedDateTimeOf("2018-02-12T14:14:25Z"));
-    assertThat(utcTime).isEqualTo("2018-02-12 14:14:25");
+    assertThat(utcTime).isEqualTo("2018-02-12T14:14:25Z");
   }
 }

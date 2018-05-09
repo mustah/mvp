@@ -15,7 +15,6 @@ import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.util.Dates;
 import com.elvaco.mvp.database.entity.gateway.GatewayStatusLogEntity;
 import com.elvaco.mvp.database.repository.jpa.GatewayJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
@@ -36,6 +35,7 @@ import org.springframework.http.ResponseEntity;
 
 import static com.elvaco.mvp.core.domainmodels.StatusType.OK;
 import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
+import static com.elvaco.mvp.core.util.Dates.formatUtc;
 import static com.elvaco.mvp.testing.fixture.UserTestData.DAILY_PLANET;
 import static com.elvaco.mvp.testing.fixture.UserTestData.dailyPlanetUser;
 import static java.util.Arrays.asList;
@@ -381,13 +381,14 @@ public class GatewayControllerTest extends IntegrationTest {
     LocationBuilder unknownLocation = unknownLocationBuilder();
 
     UUID meterId1 = randomUUID();
+    ZonedDateTime now = ZonedDateTime.now();
     logicalMeters.save(new LogicalMeter(
       meterId1,
       "external-1234",
       dailyPlanet.id,
       unknownLocation.build(),
       singletonList(gateway1),
-      ZonedDateTime.now()
+      now
     ));
 
     Location locationWithLowConfidence = new LocationBuilder()
@@ -406,7 +407,7 @@ public class GatewayControllerTest extends IntegrationTest {
       dailyPlanet.id,
       locationWithLowConfidence,
       singletonList(gateway2),
-      ZonedDateTime.now()
+      now
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
@@ -416,13 +417,13 @@ public class GatewayControllerTest extends IntegrationTest {
     StatusLogEntry<UUID> status2 = gateway2.currentStatus();
 
     assertThat(content.getContent())
-      .isEqualTo(asList(
+      .containsExactlyInAnyOrder(
         new GatewayDto(
           gateway1.id,
           gateway1.serial,
           gateway1.productModel,
           status1.status.name,
-          Dates.formatUtc(status1.start),
+          formatUtc(status1.start),
           new LocationDto(
             new IdNamedDto("unknown"),
             new IdNamedDto("unknown"),
@@ -435,7 +436,7 @@ public class GatewayControllerTest extends IntegrationTest {
           gateway2.serial,
           gateway2.productModel,
           status2.status.name,
-          Dates.formatUtc(status2.start),
+          formatUtc(status2.start),
           new LocationDto(
             new IdNamedDto("kungsbacka"),
             new IdNamedDto("kabelgatan 1"),
@@ -443,7 +444,7 @@ public class GatewayControllerTest extends IntegrationTest {
           ),
           singletonList(meterId2)
         )
-      ));
+      );
   }
 
   @Test
@@ -457,13 +458,14 @@ public class GatewayControllerTest extends IntegrationTest {
       .latitude(1.12345)
       .build();
 
+    ZonedDateTime now = ZonedDateTime.now();
     logicalMeters.save(new LogicalMeter(
       randomUUID(),
       "external-1234",
       dailyPlanet.id,
       unknownAddress,
       singletonList(gateway1),
-      ZonedDateTime.now()
+      now
     ));
 
     logicalMeters.save(new LogicalMeter(
@@ -478,7 +480,7 @@ public class GatewayControllerTest extends IntegrationTest {
         .latitude(1.12345)
         .build(),
       singletonList(gateway2),
-      ZonedDateTime.now()
+      now
     ));
 
     Page<GatewayDto> content = asTestSuperAdmin()
