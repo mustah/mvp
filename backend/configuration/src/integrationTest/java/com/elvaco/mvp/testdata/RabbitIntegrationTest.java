@@ -26,8 +26,8 @@ public abstract class RabbitIntegrationTest extends IntegrationTest {
   private Connection connection;
   private Channel channel;
 
-  private boolean rabbitConnected = false;
-  private String consumerTag = null;
+  private boolean rabbitConnected;
+  private String consumerTag;
 
   @Before
   public void setUp_Rabbit() {

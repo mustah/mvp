@@ -6,24 +6,18 @@ import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class MeteringRequestPublisher {
 
   private final AuthenticatedUser authenticatedUser;
   private final MessagePublisher messagePublisher;
 
-  public MeteringRequestPublisher(
-    AuthenticatedUser authenticatedUser,
-    MessagePublisher messagePublisher
-  ) {
-    this.authenticatedUser = authenticatedUser;
-    this.messagePublisher = messagePublisher;
-  }
-
   public void request(LogicalMeter logicalMeter) {
     if (!authenticatedUser.isSuperAdmin()) {
       throw new Unauthorized("User '" + authenticatedUser.getUsername() + "' is not allowed to "
-        + "publish synchronization requests");
+                             + "publish synchronization requests");
     }
 
     GetReferenceInfoDto getReferenceInfoDto = GetReferenceInfoDto.builder()

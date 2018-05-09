@@ -9,7 +9,7 @@ import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 
 class SpyMessagePublisher implements MessagePublisher {
 
-  private List<byte[]> publishedMessages;
+  private final List<byte[]> publishedMessages;
 
   SpyMessagePublisher() {
     this.publishedMessages = new ArrayList<>();
