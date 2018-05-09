@@ -16,7 +16,6 @@ spring:
     password: ''
     initialize: false
   jpa:
-    hibernate.ddl-auto: validate
     properties:
       hibernate.dialect: com.elvaco.mvp.database.dialect.MvpH2Dialect
       hibernate.show_sql: false
