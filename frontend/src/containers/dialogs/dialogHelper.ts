@@ -1,4 +1,5 @@
 import {normalize} from 'normalizr';
+import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {translate} from '../../services/translationService';
 import {Gateway, GatewayStatusChangelog} from '../../state/domain-models-paginated/gateway/gatewayModels';
 import {statusChangelogSchema} from '../../state/domain-models-paginated/gateway/gatewaySchema';
@@ -30,9 +31,9 @@ export const normalizedStatusChangelogFor = (domainModel: Gateway | Meter): Norm
 };
 
 const orderedQuantities = (medium: string): string[] => {
-  const translationTable = {
-    'District heating': 'heat',
-    'Gas': 'gas',
+  const translationTable: {[key: string]: Medium} = {
+    'District heating': Medium.districtHeating,
+    'Gas': Medium.gas,
   };
   return medium in translationTable && translationTable[medium] in allQuantities
     ? allQuantities[translationTable[medium]]

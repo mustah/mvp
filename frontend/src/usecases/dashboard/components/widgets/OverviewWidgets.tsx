@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Link} from 'react-router-dom';
 import {routes} from '../../../../app/routes';
 import {IndicatorWidget} from '../../../../components/indicators/IndicatorWidget';
-import {IndicatorType, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
+import {Medium, WidgetModel} from '../../../../components/indicators/indicatorWidgetModels';
 import {ColumnContent} from '../../../../components/layouts/column/Column';
 import {Row} from '../../../../components/layouts/row/Row';
 import {translate} from '../../../../services/translationService';
@@ -20,7 +20,7 @@ export const OverviewWidgets = (props: Props) => {
   const collectionWidget: WidgetModel = widgets.length
     ? widgets[0]
     : {
-      type: IndicatorType.collection,
+      type: Medium.collection,
       status: Status.ok,
       total: 0,
       pending: 0,

@@ -1,15 +1,15 @@
-import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {toggleIndicatorWidget} from '../indicator/indicatorActions';
 import {indicator, IndicatorState, initialState} from '../indicator/indicatorReducer';
 
 describe('indicatorReducer', () => {
 
   it('can select an indicator', () => {
-    const state: IndicatorState = indicator(initialState, toggleIndicatorWidget(['report', IndicatorType.gas]));
+    const state: IndicatorState = indicator(initialState, toggleIndicatorWidget(['report', Medium.gas]));
 
     const expected: IndicatorState = {
       selectedIndicators: {
-        report: [IndicatorType.gas],
+        report: [Medium.gas],
       },
     };
 
@@ -18,12 +18,12 @@ describe('indicatorReducer', () => {
 
   it('can have multiple indicators selected at the same time', () => {
     const oneSelectedIndicator: IndicatorState =
-      indicator(initialState, toggleIndicatorWidget(['report', IndicatorType.districtHeating]));
+      indicator(initialState, toggleIndicatorWidget(['report', Medium.districtHeating]));
 
     const expectedOne: IndicatorState = {
       selectedIndicators: {
         report: [
-          IndicatorType.districtHeating,
+          Medium.districtHeating,
         ],
       },
     };
@@ -31,13 +31,13 @@ describe('indicatorReducer', () => {
     expect(oneSelectedIndicator).toEqual(expectedOne);
 
     const twoSelectedIndicators: IndicatorState =
-      indicator(oneSelectedIndicator, toggleIndicatorWidget(['report', IndicatorType.gas]));
+      indicator(oneSelectedIndicator, toggleIndicatorWidget(['report', Medium.gas]));
 
     const expectedTwo: IndicatorState = {
       selectedIndicators: {
         report: [
-          IndicatorType.districtHeating,
-          IndicatorType.gas,
+          Medium.districtHeating,
+          Medium.gas,
         ],
       },
     };
@@ -47,18 +47,18 @@ describe('indicatorReducer', () => {
 
   it('can deselect indicators', () => {
     const selected: IndicatorState =
-      indicator(initialState, toggleIndicatorWidget(['report', IndicatorType.districtHeating]));
+      indicator(initialState, toggleIndicatorWidget(['report', Medium.districtHeating]));
 
     const expectedSelected: IndicatorState = {
       selectedIndicators: {
-        report: [IndicatorType.districtHeating],
+        report: [Medium.districtHeating],
       },
     };
 
     expect(selected).toEqual(expectedSelected);
 
     const deselected: IndicatorState =
-      indicator(selected, toggleIndicatorWidget(['report', IndicatorType.districtHeating]));
+      indicator(selected, toggleIndicatorWidget(['report', Medium.districtHeating]));
 
     const expectedDeselected: IndicatorState = {
       selectedIndicators: {
@@ -68,4 +68,5 @@ describe('indicatorReducer', () => {
 
     expect(deselected).toEqual(expectedDeselected);
   });
+
 });

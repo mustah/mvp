@@ -1,3 +1,4 @@
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {initTranslations} from '../../../i18n/__tests__/i18nMock';
 import {Gateway} from '../../../state/domain-models-paginated/gateway/gatewayModels';
 import {Meter} from '../../../state/domain-models-paginated/meter/meterModels';
@@ -199,9 +200,11 @@ describe('dialogHelper', () => {
 
       const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
-      expect(Object.keys(entities).sort()).toEqual([...allQuantities.heat].sort());
+      const quantities = Object.keys(entities).sort();
+      const expected = [...allQuantities[Medium.districtHeating]].sort();
+      expect(quantities).toEqual(expected);
 
-      expect(result).toEqual(allQuantities.heat);
+      expect(result).toEqual(allQuantities[Medium.districtHeating]);
     });
 
     it('handles meters without any measurements', () => {
@@ -262,9 +265,11 @@ describe('dialogHelper', () => {
 
       const {entities, result}: DomainModel<RenderableMeasurement> = meterMeasurementsForTable(meter);
 
-      expect(Object.keys(entities).sort()).toEqual([...allQuantities.heat].sort());
+      const quantities = Object.keys(entities).sort();
+      const expected = [...allQuantities[Medium.districtHeating]].sort();
+      expect(quantities).toEqual(expected);
 
-      expect(result).toEqual(allQuantities.heat);
+      expect(result).toEqual(allQuantities[Medium.districtHeating]);
     });
 
     it('orders measurements by quantity, in a custom order', () => {

@@ -2,11 +2,11 @@ import * as React from 'react';
 import {Children} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
 import {Row} from '../layouts/row/Row';
-import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
+import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedIndicatorTypes: IndicatorType[];
+  selectedIndicatorTypes: Medium[];
 }
 
 export interface IndicatorWidgetsDispatchProps {

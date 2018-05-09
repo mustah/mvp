@@ -1,10 +1,10 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Action} from '../../../types/Types';
 import {IndicatorWithinUseCase, TOGGLE_INDICATOR_WIDGET} from './indicatorActions';
 
 export interface SelectedIndicators {
-  report: IndicatorType[];
+  report: Medium[];
 }
 
 export interface IndicatorState {
@@ -19,6 +19,7 @@ export const initialState: IndicatorState = {
 
 type ActionTypes = EmptyAction<string> | Action<IndicatorWithinUseCase>;
 
+// TODO include the medium in the action name, so that the graph container can deselect the currently selected quantities
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
     case TOGGLE_INDICATOR_WIDGET:

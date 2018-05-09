@@ -1,6 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import {colors} from '../../app/themes';
+import {OnClick, Status} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
 import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
@@ -12,7 +13,7 @@ import {Column, ColumnCenter} from '../layouts/column/Column';
 import {Row} from '../layouts/row/Row';
 import {Bold} from '../texts/Texts';
 import './IndicatorWidget.scss';
-import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
+import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import SvgIconProps = __MaterialUI.SvgIconProps;
 
 interface IndicatorComponentType {
@@ -20,19 +21,19 @@ interface IndicatorComponentType {
 }
 
 const indicatorIconFor: IndicatorComponentType = {
-  [IndicatorType.collection]: IconCollection,
-  [IndicatorType.measurementQuality]: IconValidation,
-  [IndicatorType.current]: IconCurrent,
-  [IndicatorType.coldWater]: IconColdWater,
-  [IndicatorType.warmWater]: IconColdWater,
-  [IndicatorType.districtHeating]: IconDistrictHeating,
-  [IndicatorType.gas]: IconDistrictHeating,
-  [IndicatorType.temperatureInside]: IconTemperature,
-  [IndicatorType.temperatureOutside]: IconTemperature,
+  [Medium.collection]: IconCollection,
+  [Medium.measurementQuality]: IconValidation,
+  [Medium.current]: IconCurrent,
+  [Medium.coldWater]: IconColdWater,
+  [Medium.warmWater]: IconColdWater,
+  [Medium.districtHeating]: IconDistrictHeating,
+  [Medium.gas]: IconDistrictHeating,
+  [Medium.temperatureInside]: IconTemperature,
+  [Medium.temperatureOutside]: IconTemperature,
 };
 
 export const iconComponentFor =
-  (type: IndicatorType): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
+  (type: Medium): React.ComponentType<SvgIconProps> => indicatorIconFor[type];
 
 const style: React.CSSProperties = {
   width: '48px',
@@ -45,12 +46,15 @@ interface IndicatorProps {
   isSelected?: boolean;
 }
 
-export const SelectableIndicatorWidget = ({onClick, indicator, isSelected}: IndicatorProps) => {
-  const {state, title, type} = indicator;
+export const SelectableIndicatorWidget = ({onClick, indicator: {state, title, type}, isSelected}: IndicatorProps) => {
 
-  const selectWidget = () => onClick(type);
+  const selectWidget: OnClick = () => onClick(type);
 
   const IndicatorIcon = iconComponentFor(type);
+
+  const foreground: string = isSelected && [Status.ok].includes(state)
+    ? colors.white
+    : colors.black;
 
   return (
     <div onClick={selectWidget}>
@@ -60,7 +64,7 @@ export const SelectableIndicatorWidget = ({onClick, indicator, isSelected}: Indi
             <Bold>{title}</Bold>
           </Row>
           <Row className="Row-center Row-bottom">
-            <IndicatorIcon style={style} className="Indicator-icon" color={isSelected ? colors.white : colors.black}/>
+            <IndicatorIcon style={style} className="Indicator-icon" color={foreground}/>
           </Row>
         </ColumnCenter>
 
