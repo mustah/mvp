@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../components/actions-dropdown/ListActionsDropdown';
 import {HasContent} from '../../components/content/HasContent';
+import {DateTime} from '../../components/dates/DateTime';
 import {Loader} from '../../components/loading/Loader';
 import {MeterListItem} from '../../components/meters/MeterListItem';
 import {PaginationControl} from '../../components/pagination-control/PaginationControl';
@@ -100,15 +101,14 @@ class MeterList extends React.Component<Props> {
       <ListActionsDropdown item={{id, name: manufacturer}} selectEntryAdd={selectEntryAdd}/>;
     const renderGatewaySerial = ({gateway: {serial}}: Meter) => serial;
     const renderManufacturer = ({manufacturer}: Meter) => manufacturer;
-    const renderStatusChanged = ({statusChanged}: Meter) => statusChanged || <Separator/>;
+    const renderStatusChanged = ({statusChanged}: Meter) =>
+      <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
     const renderMedium = ({medium}: Meter) => medium;
     const renderCollectionStatus = ({collectionStatus, readIntervalMinutes}: Meter) =>
       readIntervalMinutes === 0 ? '-' : roundCollectionPercentage(collectionStatus);
 
     const collectionPercentageHeader = (
-      <TableHead
-        className="number"
-      >
+      <TableHead className="number">
         {translate('collection percentage')}
       </TableHead>
     );

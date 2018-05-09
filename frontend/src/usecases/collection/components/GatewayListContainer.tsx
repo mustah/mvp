@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ListActionsDropdown} from '../../../components/actions-dropdown/ListActionsDropdown';
 import {HasContent} from '../../../components/content/HasContent';
+import {DateTime} from '../../../components/dates/DateTime';
 import {Loader} from '../../../components/loading/Loader';
 import {PaginationControl} from '../../../components/pagination-control/PaginationControl';
 import {Separator} from '../../../components/separators/Separator';
@@ -87,7 +88,8 @@ class GatewayList extends React.Component<Props> {
     const renderAddress = ({location: {address}}: Gateway) => orUnknown(address.name);
     const renderActionDropdown = ({id, productModel}: Gateway) =>
       <ListActionsDropdown item={{id, name: productModel}} selectEntryAdd={selectEntryAdd}/>;
-    const renderStatusChanged = ({statusChanged}: Gateway) => statusChanged || <Separator/>;
+    const renderStatusChanged = ({statusChanged}: Gateway) =>
+      <DateTime date={statusChanged} fallbackContent={<Separator/>}/>;
     const renderProductModel = ({productModel}: Gateway) => productModel;
 
     const changePage = (page: number) => changePaginationPage({

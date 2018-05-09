@@ -1,5 +1,6 @@
 package com.elvaco.mvp.web.mapper;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -178,14 +179,13 @@ public class MeasurementMapperTest {
       ));
   }
 
-  private Measurement newMeasurement(
-    UUID physicalMeterId,
-    Quantity quantity
-  ) {
-    return new Measurement(
-      quantity,
-      3.0,
-      PhysicalMeter.builder()
+  private Measurement newMeasurement(UUID physicalMeterId, Quantity quantity) {
+    return Measurement.builder()
+      .created(ZonedDateTime.now())
+      .quantity(quantity.name)
+      .unit(quantity.presentationUnit())
+      .value(3.0)
+      .physicalMeter(PhysicalMeter.builder()
         .id(physicalMeterId)
         .organisation(new Organisation(
           randomUUID(),
@@ -198,6 +198,7 @@ public class MeasurementMapperTest {
         .manufacturer("ELV")
         .readIntervalMinutes(15)
         .build()
-    );
+      )
+      .build();
   }
 }

@@ -3,9 +3,11 @@ package com.elvaco.mvp.core.domainmodels;
 import java.time.ZonedDateTime;
 import javax.annotation.Nullable;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+@Builder
 @EqualsAndHashCode(doNotUseGetters = true)
 @ToString
 public class Measurement implements Identifiable<Long> {
@@ -17,21 +19,6 @@ public class Measurement implements Identifiable<Long> {
   public final double value;
   public final String unit;
   public final PhysicalMeter physicalMeter;
-
-  public Measurement(
-    Quantity quantity,
-    double value,
-    PhysicalMeter physicalMeter
-  ) {
-    this(
-      null,
-      ZonedDateTime.now(),
-      quantity.name,
-      value,
-      quantity.presentationUnit(),
-      physicalMeter
-    );
-  }
 
   public Measurement(
     @Nullable Long id,

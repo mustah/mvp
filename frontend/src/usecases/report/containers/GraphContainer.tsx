@@ -1,3 +1,4 @@
+import 'GraphContainer.scss';
 import MenuItem from 'material-ui/MenuItem';
 import SelectField from 'material-ui/SelectField';
 import * as React from 'react';
@@ -19,7 +20,7 @@ import {DateRange, Period} from '../../../components/dates/dateModels';
 import {Row} from '../../../components/layouts/row/Row';
 import {Loader} from '../../../components/loading/Loader';
 import {MissingDataTitle} from '../../../components/texts/Titles';
-import {formatLabelTimeStamp} from '../../../helpers/dateHelpers';
+import {timestamp} from '../../../helpers/dateHelpers';
 import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
@@ -33,7 +34,6 @@ import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
 import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
-import 'GraphContainer.scss';
 
 interface StateToProps {
   period: Period;
@@ -185,7 +185,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
                       dataKey="name"
                       domain={['dataMin', 'dataMax']}
                       scale="time"
-                      tickFormatter={formatLabelTimeStamp}
+                      tickFormatter={timestamp}
                       type="number"
                     />
                     <CartesianGrid strokeDasharray="3 3"/>

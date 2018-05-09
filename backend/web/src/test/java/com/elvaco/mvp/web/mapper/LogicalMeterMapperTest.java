@@ -99,8 +99,8 @@ public class LogicalMeterMapperTest {
     UUID meterId = randomUUID();
     LogicalMeterDto expected = new LogicalMeterDto();
     expected.id = meterId;
-    expected.created = "2018-02-12 14:14:25";
-    expected.statusChanged = "2018-02-12 14:14:25";
+    expected.created = "2018-02-12T14:14:25Z";
+    expected.statusChanged = "2018-02-12T14:14:25Z";
     expected.medium = "Hot water";
     expected.status = StatusType.OK;
     expected.location = new LocationDto(
@@ -116,8 +116,8 @@ public class LogicalMeterMapperTest {
       new MeterStatusLogDto(
         1L,
         StatusType.OK.name,
-        "2018-02-12 14:14:25",
-        "2018-02-13 14:14:25"
+        "2018-02-12T14:14:25Z",
+        "2018-02-13T14:14:25Z"
       )
     );
     ZonedDateTime statusChanged = ZonedDateTime.parse("2018-02-12T14:14:25Z");
@@ -201,6 +201,6 @@ public class LogicalMeterMapperTest {
       ZonedDateTime.parse("2018-02-12T14:14:25Z")
     ));
 
-    assertThat(logicalMeterDto.created).isEqualTo("2018-02-12 14:14:25");
+    assertThat(logicalMeterDto.created).isEqualTo("2018-02-12T14:14:25Z");
   }
 }
