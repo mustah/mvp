@@ -27,6 +27,7 @@ public abstract class RabbitIntegrationTest extends IntegrationTest {
   private Channel channel;
 
   private boolean rabbitConnected = false;
+  private String consumerTag = null;
 
   @Before
   public void setUp_Rabbit() {
@@ -44,6 +45,9 @@ public abstract class RabbitIntegrationTest extends IntegrationTest {
 
   @After
   public void tearDown_Rabbit() throws IOException, TimeoutException {
+    if (consumerTag != null) {
+      channel.basicCancel(consumerTag);
+    }
     if (channel != null) {
       channel.close();
     }
@@ -66,7 +70,7 @@ public abstract class RabbitIntegrationTest extends IntegrationTest {
       true,
       emptyMap()
     );
-    channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
+    consumerTag = channel.basicConsume(consumerProperties.getResponseRoutingKey(), consumer);
     return consumer;
   }
 
