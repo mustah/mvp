@@ -1,5 +1,6 @@
 package com.elvaco.mvp.testdata;
 
+import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +28,9 @@ public class TestRabbitConsumer extends DefaultConsumer {
     Envelope envelope,
     AMQP.BasicProperties properties,
     byte[] body
-  ) {
+  ) throws IOException {
     receivedMessages.add(body);
+    getChannel().basicAck(envelope.getDeliveryTag(), false);
   }
 
   public <T> T fromJson(Class<T> classOfT) throws InterruptedException {
