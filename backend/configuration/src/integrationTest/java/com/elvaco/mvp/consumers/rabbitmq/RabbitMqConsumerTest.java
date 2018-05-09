@@ -170,6 +170,17 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
         ));
   }
 
+  private MeteringStructureMessageDto getMeteringStructureMessageDto() {
+    return new MeteringStructureMessageDto(
+      MessageType.METERING_METER_STRUCTURE_V_1_0,
+      new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
+      new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
+      "test",
+      "Some organisation",
+      new GatewayStatusDto("123987", "Gateway 2000", "OK")
+    );
+  }
+
   private void assertLogicalMeterWasCreated(
     UUID organisationId,
     String externalId
