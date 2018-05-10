@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 
-import com.elvaco.mvp.core.domainmodels.StatusType;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.database.entity.measurement.MeasurementUnit;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaMetamodelEntityInformation;
 import org.springframework.stereotype.Repository;
 
-import static java.util.stream.Collectors.toList;
 import static org.springframework.data.repository.support.PageableExecutionUtils.getPage;
 
 @Repository
@@ -57,10 +55,10 @@ public class LogicalMeterQueryDslJpaRepository
 
   @Override
   public List<LogicalMeterEntity> findAll(RequestParameters parameters, Predicate predicate) {
-    return queryOf(queryOfStatusPeriod(
-      parameters,
-      queryOfMeasurement(parameters, predicate)
-    )).fetch();
+    return applyJoins(
+      createQuery(withMeasurementPredicate(parameters, predicate)),
+      parameters
+    ).fetch();
   }
 
   @Override
@@ -71,10 +69,10 @@ public class LogicalMeterQueryDslJpaRepository
   ) {
     return querydsl.applySorting(
       sort,
-      queryOf(queryOfStatusPeriod(
-        parameters,
-        queryOfMeasurement(parameters, predicate)
-      ))
+      applyJoins(
+        createQuery(withMeasurementPredicate(parameters, predicate)),
+        parameters
+      )
     ).fetch();
   }
 
@@ -84,20 +82,20 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate,
     Pageable pageable
   ) {
-    Predicate withStatusPeriodAndMeasurement = queryOfMeasurement(
-      parameters,
-      queryOfStatusPeriod(
-        parameters,
-        queryOfMeasurement(parameters, predicate)
-      )
+    predicate = withMeasurementPredicate(parameters, predicate);
+    JPQLQuery<LogicalMeterEntity> countQuery = applyJoins(
+      createCountQuery(predicate),
+      parameters
     );
 
-    JPQLQuery<LogicalMeterEntity> countQuery = createCountQuery(withStatusPeriodAndMeasurement)
-      .select(path);
+    JPQLQuery<LogicalMeterEntity> query = applyJoins(
+      createQuery(predicate),
+      parameters
+    );
 
     List<LogicalMeterEntity> all = querydsl.applyPagination(
       pageable,
-      createQuery(withStatusPeriodAndMeasurement).select(path)
+      query
     ).fetch();
 
     return getPage(all, pageable, countQuery::fetchCount);
@@ -133,39 +131,13 @@ public class LogicalMeterQueryDslJpaRepository
     return Optional.ofNullable(fetchOne(predicate));
   }
 
-  private Predicate queryOfStatusPeriod(RequestParameters parameters, Predicate predicate) {
-    JPAQuery<UUID> queryIds = new JPAQueryFactory(entityManager)
-      .select(LOGICAL_METER.id).from(path)
-      .leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
-      .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG)
-      .where(withStatusWithinPeriod(parameters, predicate));
-
-    return LOGICAL_METER.id.in(queryIds);
+  private boolean isStatusQuery(RequestParameters parameters) {
+    return parameters.hasName("before")
+           && parameters.hasName("after")
+           && parameters.hasName("status");
   }
 
-  private Predicate withStatusWithinPeriod(RequestParameters parameters, Predicate predicate) {
-    if (parameters.hasName("before")
-        && parameters.hasName("after")
-        && parameters.hasName("status")) {
-      ZonedDateTime start = parseDateParam(parameters, "after");
-      ZonedDateTime stop = parseDateParam(parameters, "before");
-      List<StatusType> statuses = parameters.getValues("status")
-        .stream()
-        .map(StatusType::from)
-        .collect(toList());
-
-      return (
-        (STATUS_LOG.stop.isNull().or(STATUS_LOG.stop.after(start)))
-          .and(
-            STATUS_LOG.start.before(stop)
-          ).and(STATUS_LOG.status.in(statuses)))
-        .and(predicate);
-    } else {
-      return predicate;
-    }
-  }
-
-  private Predicate queryOfMeasurement(RequestParameters parameters, Predicate predicate) {
+  private Predicate withMeasurementPredicate(RequestParameters parameters, Predicate predicate) {
     if ((parameters.hasName("minValue") || parameters.hasName("maxValue"))
         && parameters.hasName("quantity")) {
 
@@ -231,7 +203,23 @@ public class LogicalMeterQueryDslJpaRepository
   private JPQLQuery<LogicalMeterEntity> queryOf(Predicate predicate) {
     return createQuery(predicate)
       .select(path)
+      .distinct()
+      .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity).fetchJoin();
+  }
+
+  private JPQLQuery<LogicalMeterEntity> applyJoins(
+    JPQLQuery<?> query,
+    RequestParameters parameters
+  ) {
+    JPQLQuery<LogicalMeterEntity> joinQuery = query.select(path).distinct()
       .leftJoin(LOGICAL_METER.location, QLocationEntity.locationEntity)
       .fetchJoin();
+
+    if (isStatusQuery(parameters)) {
+      joinQuery = joinQuery.leftJoin(LOGICAL_METER.physicalMeters, PHYSICAL_METER)
+        .leftJoin(PHYSICAL_METER.statusLogs, STATUS_LOG);
+    }
+
+    return joinQuery;
   }
 }
