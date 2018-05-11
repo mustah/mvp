@@ -134,3 +134,34 @@ To install compose:
     sudo pip install docker-compose
 
 Keeping compose up to date by executing the previous command again.
+
+### Profiling and debugging PostgreSQL in Docker compose
+
+If you're interested in seeing the actual statements run against the database
+as you're running you can set the `command` parameter for the database container, like so:
+
+    command: -c log_statement=all
+
+See https://www.postgresql.org/docs/10/static/runtime-config-logging.html#GUC-LOG-STATEMENT
+for more information on the `log_statement` parameter.
+
+Another neat set of configuration options to set is:
+
+    command: -c shared_preload_libraries='pg_stat_statements' -c pg_stat_statements.max=1000 -c pg_stat_statements.track=all
+
+This causes PostgreSQL to load the pg_stat_statements libraraies and enable tracking of statements. This is great for
+troubleshooting general application performance issues. Note that you need to also create the pg_stat_statements
+extension in order for things to actually be collected properly.
+
+    create extension pg_stat_statements;
+
+Once that's done and you've exercised the application a bit, you'll be able to run various queries against the created
+tables. One that's served me well is the following:
+
+    SELECT query, calls, total_time, rows,
+    100.0 * shared_blks_hit / nullif(shared_blks_hit + shared_blks_read, 0) AS hit_percent
+    FROM pg_stat_statements ORDER BY total_time DESC LIMIT 5;
+
+
+See https://www.postgresql.org/docs/10/static/pgstatstatements.html for more information on the `pg_stat_statements`
+module.
