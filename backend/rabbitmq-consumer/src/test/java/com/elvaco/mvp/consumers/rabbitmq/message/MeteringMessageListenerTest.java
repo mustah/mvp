@@ -3,9 +3,9 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import java.util.Collections;
 import java.util.Optional;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

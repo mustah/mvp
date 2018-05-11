@@ -1,5 +1,6 @@
 package com.elvaco.mvp.configuration.config;
 
+import com.elvaco.mvp.adapters.spring.AmqpMessagePublisher;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.MessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMeasurementMessageConsumer;
@@ -7,15 +8,19 @@ import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageListener;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageParser;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeteringStructureMessageConsumer;
 import com.elvaco.mvp.consumers.rabbitmq.message.StructureMessageConsumer;
+import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -78,6 +83,30 @@ class RabbitMqConfig {
   @Bean
   MessageListenerAdapter listenerAdapter(MessageListener messageListener) {
     return new MessageListenerAdapter(new AuthenticatedMessageListener(messageListener));
+  }
+
+  @Bean
+  RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+    rabbitTemplate.setExchange(consumerProperties.getResponseExchange());
+    rabbitTemplate.setRoutingKey(consumerProperties.getResponseRoutingKey());
+    return rabbitTemplate;
+  }
+
+  @Bean
+  MessagePublisher messagePublisher(RabbitTemplate rabbitTemplate) {
+    return new AmqpMessagePublisher(rabbitTemplate);
+  }
+
+  @Bean
+  MeteringRequestPublisher meteringRequestPublisher(
+    AuthenticatedUser currentUser,
+    MessagePublisher messagePublisher
+  ) {
+    return new MeteringRequestPublisher(
+      currentUser,
+      messagePublisher
+    );
   }
 
   @Bean

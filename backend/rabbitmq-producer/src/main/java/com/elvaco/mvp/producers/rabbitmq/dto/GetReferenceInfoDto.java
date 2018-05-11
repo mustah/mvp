@@ -1,7 +1,8 @@
-package com.elvaco.mvp.consumers.rabbitmq.dto;
+package com.elvaco.mvp.producers.rabbitmq.dto;
 
 import javax.annotation.Nullable;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Builder
 public class GetReferenceInfoDto {
 
   public final String organisationExternalId;

@@ -59,6 +59,11 @@ public class MvpUserDetails implements UserDetails, AuthenticatedUser {
   }
 
   @Override
+  public String getOrganisationExternalId() {
+    return user.organisation.externalId;
+  }
+
+  @Override
   public String getToken() {
     return token;
   }

@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
@@ -35,6 +34,7 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockGateways;

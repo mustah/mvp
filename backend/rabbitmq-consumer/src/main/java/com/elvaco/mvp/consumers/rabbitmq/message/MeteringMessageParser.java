@@ -10,8 +10,8 @@ import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 
-import static com.elvaco.mvp.consumers.rabbitmq.message.MessageSerializer.fromJson;
 import static com.elvaco.mvp.consumers.rabbitmq.message.MeteringMessageMapper.METERING_TO_MVP_UNITS;
+import static com.elvaco.mvp.producers.rabbitmq.MessageSerializer.fromJson;
 import static java.util.stream.Collectors.toList;
 
 @Slf4j

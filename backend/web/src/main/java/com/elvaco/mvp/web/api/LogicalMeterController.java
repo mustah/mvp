@@ -9,6 +9,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
+import com.elvaco.mvp.producers.rabbitmq.MeteringRequestPublisher;
 import com.elvaco.mvp.web.dto.LogicalMeterDto;
 import com.elvaco.mvp.web.dto.MapMarkerDto;
 import com.elvaco.mvp.web.exception.MeterNotFound;
@@ -16,9 +17,12 @@ import com.elvaco.mvp.web.mapper.LogicalMeterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static com.elvaco.mvp.adapters.spring.RequestParametersAdapter.requestParametersOf;
@@ -28,15 +32,18 @@ import static java.util.stream.Collectors.toList;
 public class LogicalMeterController {
 
   private final LogicalMeterUseCases logicalMeterUseCases;
+  private final MeteringRequestPublisher meteringRequestPublisher;
   private final LogicalMeterMapper logicalMeterMapper;
 
   @Autowired
   LogicalMeterController(
     LogicalMeterMapper logicalMeterMapper,
-    LogicalMeterUseCases logicalMeterUseCases
+    LogicalMeterUseCases logicalMeterUseCases,
+    MeteringRequestPublisher meteringRequestPublisher
   ) {
     this.logicalMeterMapper = logicalMeterMapper;
     this.logicalMeterUseCases = logicalMeterUseCases;
+    this.meteringRequestPublisher = meteringRequestPublisher;
   }
 
   @GetMapping("{id}")
@@ -44,6 +51,15 @@ public class LogicalMeterController {
     return logicalMeterUseCases.findByIdWithMeasurements(id)
       .map(logicalMeterMapper::toDto)
       .orElseThrow(() -> new MeterNotFound(id));
+  }
+
+  @PostMapping("{id}/synchronize")
+  public ResponseEntity<Void> synchronizeMeter(@PathVariable UUID id) {
+    LogicalMeter logicalMeter = logicalMeterUseCases.findById(id)
+      .orElseThrow(() -> new MeterNotFound(id));
+
+    meteringRequestPublisher.request(logicalMeter);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
   @GetMapping("/map-markers")
