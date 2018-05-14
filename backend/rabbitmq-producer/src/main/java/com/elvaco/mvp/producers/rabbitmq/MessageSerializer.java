@@ -1,5 +1,6 @@
 package com.elvaco.mvp.producers.rabbitmq;
 
+import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 
 import com.google.gson.FieldNamingPolicy;
@@ -13,6 +14,7 @@ public class MessageSerializer {
 
   private static final Gson GSON = new GsonBuilder()
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+    .excludeFieldsWithModifiers(Modifier.TRANSIENT) // override to include static fields
     .registerTypeAdapter(
       LocalDateTime.class,
       (JsonDeserializer<LocalDateTime>) (json, typeOfT, context) ->

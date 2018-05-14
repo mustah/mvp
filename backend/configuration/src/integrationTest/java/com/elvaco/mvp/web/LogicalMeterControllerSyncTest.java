@@ -13,7 +13,6 @@ import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
 import com.elvaco.mvp.core.spi.repository.Organisations;
-import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
@@ -43,9 +42,6 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
   @Autowired
   private LogicalMeters logicalMeters;
-
-  @Autowired
-  private PhysicalMeters physicalMeters;
 
   @Autowired
   private LogicalMeterJpaRepository logicalMeterJpaRepository;
@@ -196,11 +192,11 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
 
     assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     GetReferenceInfoDto enqueuedMessage = consumer.fromJson(GetReferenceInfoDto.class);
-    assertThat(enqueuedMessage.organisationExternalId)
+    assertThat(enqueuedMessage.organisationId)
       .isEqualTo(context().organisation().externalId);
-    assertThat(enqueuedMessage.gatewayExternalId).isNull();
-    assertThat(enqueuedMessage.meterExternalId).isNull();
-    assertThat(enqueuedMessage.facilityId).isEqualTo(logicalMeter.externalId);
+    assertThat(enqueuedMessage.gateway).isNull();
+    assertThat(enqueuedMessage.meter).isNull();
+    assertThat(enqueuedMessage.facility.id).isEqualTo(logicalMeter.externalId);
   }
 
   private LogicalMeter newLogicalMeter(

@@ -9,14 +9,16 @@ import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.MeterDefinition;
+import com.elvaco.mvp.core.domainmodels.Organisation;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Role;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UpstreamServiceUnavailable;
-import com.elvaco.mvp.core.security.AuthenticatedUser;
+import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.UUID.randomUUID;
@@ -27,9 +29,14 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void regularUserCanNotIssueRequest() {
-    AuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.USER));
+    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.USER));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
@@ -39,9 +46,13 @@ public class MeteringRequestPublisherTest {
 
   @Test
   public void adminCanNotIssueRequest() {
-    AuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.ADMIN));
+    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role.ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     assertThatThrownBy(() -> meteringRequestPublisher.request(null))
       .isInstanceOf(Unauthorized.class)
       .hasMessageContaining("not allowed to publish synchronization requests");
@@ -54,7 +65,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -72,7 +87,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -81,8 +100,29 @@ public class MeteringRequestPublisherTest {
 
     meteringRequestPublisher.request(logicalMeter);
 
-    assertThat(spy.deserialize(0).organisationExternalId).isEqualTo(user
-      .getOrganisationExternalId());
+    assertThat(spy.deserialize(0).organisationId).isEqualTo(user.getOrganisation().externalId);
+  }
+
+  @Test
+  public void meterOrganisationIsUsedInRequest_DifferentFromUserNativeOrganisation() {
+    MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
+      .SUPER_ADMIN));
+    SpyMessagePublisher spy = new SpyMessagePublisher();
+    Organisation otherOrganisation = new Organisation(UUID.randomUUID(), "other-organisation");
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(asList(user.getOrganisation(), otherOrganisation)),
+      spy
+    );
+    LogicalMeter logicalMeter = newLogicalMeter(
+      otherOrganisation.id,
+      emptyList(),
+      emptyList()
+    );
+
+    meteringRequestPublisher.request(logicalMeter);
+
+    assertThat(spy.deserialize(0).organisationId).isEqualTo(otherOrganisation.externalId);
   }
 
   @Test
@@ -90,7 +130,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
       emptyList(),
@@ -99,7 +143,7 @@ public class MeteringRequestPublisherTest {
 
     meteringRequestPublisher.request(logicalMeter);
 
-    assertThat(spy.deserialize(0).facilityId).isEqualTo(logicalMeter.externalId);
+    assertThat(spy.deserialize(0).facility.id).isEqualTo(logicalMeter.externalId);
   }
 
   @Test
@@ -107,7 +151,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     LogicalMeter logicalMeter = newLogicalMeter(
       user.getOrganisationId(),
@@ -117,7 +165,7 @@ public class MeteringRequestPublisherTest {
 
     meteringRequestPublisher.request(logicalMeter);
 
-    assertThat(spy.deserialize(0).meterExternalId).isEqualTo("physical-meter-address");
+    assertThat(spy.deserialize(0).meter.id).isEqualTo("physical-meter-address");
   }
 
   @Test
@@ -125,7 +173,11 @@ public class MeteringRequestPublisherTest {
     MockAuthenticatedUser user = new MockAuthenticatedUser(Collections.singletonList(Role
       .SUPER_ADMIN));
     SpyMessagePublisher spy = new SpyMessagePublisher();
-    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(user, spy);
+    MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
+      user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
+      spy
+    );
     PhysicalMeter physicalMeter = PhysicalMeter.builder().address("physical-meter-address").build();
     Gateway gateway = new Gateway(
       randomUUID(),
@@ -142,7 +194,7 @@ public class MeteringRequestPublisherTest {
 
     meteringRequestPublisher.request(logicalMeter);
 
-    assertThat(spy.deserialize(0).gatewayExternalId).isEqualTo(null);
+    assertThat(spy.deserialize(0).gateway).isEqualTo(null);
   }
 
   @Test
@@ -151,6 +203,7 @@ public class MeteringRequestPublisherTest {
       .SUPER_ADMIN));
     MeteringRequestPublisher meteringRequestPublisher = new MeteringRequestPublisher(
       user,
+      new MockOrganisations(singletonList(user.getOrganisation())),
       messageBody -> {
         throw new RuntimeException("Something went horribly wrong!");
       }

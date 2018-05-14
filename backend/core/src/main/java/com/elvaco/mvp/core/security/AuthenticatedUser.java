@@ -15,8 +15,6 @@ public interface AuthenticatedUser extends Usernamed, Serializable {
 
   UUID getOrganisationId();
 
-  String getOrganisationExternalId();
-
   String getToken();
 
   UUID getUserId();

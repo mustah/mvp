@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -34,7 +30,10 @@ import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
 import com.elvaco.mvp.core.usecase.OrganisationUseCases;
 import com.elvaco.mvp.core.usecase.PhysicalMeterUseCases;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testing.fixture.MockRequestParameters;
 import com.elvaco.mvp.testing.fixture.UserBuilder;
 import com.elvaco.mvp.testing.repository.MockGateways;
@@ -122,7 +121,6 @@ public class MeteringMeasurementMessageConsumerTest {
   @Test
   public void survivesMissingGatewayFieldInMeasurementMessage() {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       null,
       new MeterIdDto(EXTERNAL_ID),
       new FacilityIdDto(EXTERNAL_ID),
@@ -142,7 +140,6 @@ public class MeteringMeasurementMessageConsumerTest {
   @Test
   public void survivesEmptyGatewayFieldInMeasurementMessage() {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto(null),
       new MeterIdDto(EXTERNAL_ID),
       new FacilityIdDto(EXTERNAL_ID),
@@ -191,7 +188,6 @@ public class MeteringMeasurementMessageConsumerTest {
     ));
 
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
       new MeterIdDto(ADDRESS),
       new FacilityIdDto(EXTERNAL_ID),
@@ -377,8 +373,8 @@ public class MeteringMeasurementMessageConsumerTest {
   public void measurementValueForMissingLogicalMeter_CreatesNewLogicalMeter() {
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
-    assertThat(response.facilityId).isEqualTo("ABC-123");
-    assertThat(response.meterExternalId).isEqualTo("1234");
+    assertThat(response.facility.id).isEqualTo("ABC-123");
+    assertThat(response.meter.id).isEqualTo("1234");
   }
 
   @Test
@@ -395,9 +391,9 @@ public class MeteringMeasurementMessageConsumerTest {
 
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
-    assertThat(response.facilityId).isEqualTo("ABC-123");
-    assertThat(response.meterExternalId).isEqualTo("1234");
-    assertThat(response.gatewayExternalId).isEqualTo("123");
+    assertThat(response.facility.id).isEqualTo("ABC-123");
+    assertThat(response.meter.id).isEqualTo("1234");
+    assertThat(response.gateway.id).isEqualTo("123");
   }
 
   @Test
@@ -407,9 +403,9 @@ public class MeteringMeasurementMessageConsumerTest {
 
     GetReferenceInfoDto response = messageConsumer.accept(measurementMessageWithUnit("kWh")).get();
 
-    assertThat(response.gatewayExternalId).isNull();
-    assertThat(response.facilityId).isNotNull();
-    assertThat(response.meterExternalId).isNotNull();
+    assertThat(response.gateway).isNull();
+    assertThat(response.facility).isNotNull();
+    assertThat(response.meter).isNotNull();
   }
 
   @Test
@@ -472,8 +468,8 @@ public class MeteringMeasurementMessageConsumerTest {
       messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     assertThat(response.isPresent()).isTrue();
-    assertThat(response.get().meterExternalId).isEqualTo(ADDRESS);
-    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
+    assertThat(response.get().meter.id).isEqualTo(ADDRESS);
+    assertThat(response.get().facility.id).isEqualTo(EXTERNAL_ID);
   }
 
   @Test
@@ -495,8 +491,8 @@ public class MeteringMeasurementMessageConsumerTest {
       messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     assertThat(response.isPresent()).isTrue();
-    assertThat(response.get().meterExternalId).isEqualTo(ADDRESS);
-    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
+    assertThat(response.get().meter.id).isEqualTo(ADDRESS);
+    assertThat(response.get().facility.id).isEqualTo(EXTERNAL_ID);
   }
 
   @Test
@@ -528,8 +524,8 @@ public class MeteringMeasurementMessageConsumerTest {
       messageConsumer.accept(measurementMessageWithUnit("kWh"));
 
     assertThat(response.isPresent()).isTrue();
-    assertThat(response.get().gatewayExternalId).isEqualTo(GATEWAY_EXTERNAL_ID);
-    assertThat(response.get().facilityId).isEqualTo(EXTERNAL_ID);
+    assertThat(response.get().gateway.id).isEqualTo(GATEWAY_EXTERNAL_ID);
+    assertThat(response.get().facility.id).isEqualTo(EXTERNAL_ID);
   }
 
   private Organisation saveDefaultOrganisation() {
@@ -564,7 +560,6 @@ public class MeteringMeasurementMessageConsumerTest {
     double value
   ) {
     return new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto(GATEWAY_EXTERNAL_ID),
       new MeterIdDto(ADDRESS),
       new FacilityIdDto(EXTERNAL_ID),

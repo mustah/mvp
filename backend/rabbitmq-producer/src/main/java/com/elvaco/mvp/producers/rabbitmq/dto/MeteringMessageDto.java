@@ -1,15 +1,19 @@
-package com.elvaco.mvp.consumers.rabbitmq.dto;
+package com.elvaco.mvp.producers.rabbitmq.dto;
 
 import java.lang.reflect.Field;
 import javax.annotation.Nullable;
 
 import com.google.gson.JsonSyntaxException;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
+@ToString
+@EqualsAndHashCode
 public class MeteringMessageDto {
 
   public final MessageType messageType;
 
-  MeteringMessageDto(MessageType messageType) {
+  public MeteringMessageDto(MessageType messageType) {
     this.messageType = messageType;
   }
 

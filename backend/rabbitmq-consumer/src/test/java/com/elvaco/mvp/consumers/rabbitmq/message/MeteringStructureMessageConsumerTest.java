@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
@@ -654,7 +653,6 @@ public class MeteringStructureMessageConsumerTest {
     StatusType gatewayStatus
   ) {
     return new MeteringStructureMessageDto(
-      MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto(physicalMeterId, medium, meterStatus.name(), manufacturer, expectedInterval),
       new FacilityDto(
         externalId,
