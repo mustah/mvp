@@ -1,6 +1,6 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {Action} from '../../../types/Types';
-import {isSelectionChanged} from '../../domain-models/domainModelsReducer';
+import {resetReducer} from '../../domain-models/domainModelsReducer';
 import {PAGINATION_CHANGE_PAGE, PAGINATION_UPDATE_METADATA} from './paginationActions';
 import {
   PaginationChangePayload,
@@ -51,16 +51,12 @@ export const pagination = (
   state: PaginationState = initialPaginationState,
   action: ActionTypes,
 ) => {
-  if (isSelectionChanged(action.type)) {
-    return {...initialPaginationState};
-  }
-
   switch (action.type) {
     case PAGINATION_CHANGE_PAGE:
       return requestPage(state, action as Action<PaginationChangePayload>);
     case PAGINATION_UPDATE_METADATA:
       return updateMetaData(state, action as Action<PaginationMetadataPayload>);
     default:
-      return state;
+      return resetReducer<PaginationState>(state, action, {...initialPaginationState});
   }
 };
