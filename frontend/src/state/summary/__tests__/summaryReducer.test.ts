@@ -1,4 +1,5 @@
 import {EndPoints} from '../../../services/endPoints';
+import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -139,6 +140,19 @@ describe('summaryReducer', () => {
           payload,
           error,
         });
+    });
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: SummaryState = summary(initialState, actions.request());
+      state = summary(state, actions.success({numCities: 1, numAddresses: 2, numMeters: 2}));
+      state = summary(state, actions.failure({message: 'failed for some reason'}));
+
+      state = summary(state, {type: LOGOUT_USER});
+
+      expect(state).toEqual({...initialState});
     });
   });
 

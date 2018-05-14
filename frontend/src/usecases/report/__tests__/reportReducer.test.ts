@@ -1,5 +1,6 @@
 import {mockSelectionAction} from '../../../__tests__/testActions';
 import {Action, uuid} from '../../../types/Types';
+import {LOGOUT_USER} from '../../auth/authActions';
 import {SET_SELECTED_ENTRIES} from '../reportActions';
 import {ReportState} from '../reportModels';
 import {initialState, report} from '../reportReducer';
@@ -26,6 +27,16 @@ describe('reportReducer', () => {
       ...initialState,
     };
     expect(report(state, selectionRelatedAction)).toEqual(expectedState);
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: ReportState = {selectedListItems: [1, 2, 3]};
+      state = report(state, {type: LOGOUT_USER});
+
+      expect(state).toEqual({...initialState});
+    });
   });
 
 });

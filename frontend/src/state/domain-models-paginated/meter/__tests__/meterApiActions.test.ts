@@ -10,25 +10,28 @@ import {authenticate} from '../../../../services/restClient';
 import {ErrorResponse, uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {HasPageNumber, NormalizedPaginated} from '../../paginatedDomainModels';
-import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
+import {
+  domainModelPaginatedClearError,
+  makeRequestActionsOf,
+} from '../../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
-import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
+import {makeInitialState} from '../../paginatedDomainModelsReducer';
 import {clearErrorMeters, fetchMeter, fetchMeterEntities, fetchMeters} from '../meterApiActions';
 import {Meter, MetersState} from '../meterModels';
 import {meterSchema} from '../meterSchema';
 import MockAdapter = require('axios-mock-adapter');
 
-initTranslations({
-  code: 'en',
-  translation: {
-    test: 'no translations will default to key',
-  },
-});
-const configureMockStore = configureStore([thunk]);
-let store;
-let mockRestClient;
-
 describe('meterApiActions', () => {
+
+  initTranslations({
+    code: 'en',
+    translation: {
+      test: 'no translations will default to key',
+    },
+  });
+  const configureMockStore = configureStore([thunk]);
+  let store;
+  let mockRestClient;
 
   const initialRootState: Partial<RootState> = {
     paginatedDomainModels: {
@@ -123,7 +126,7 @@ describe('meterApiActions', () => {
       ]);
     });
 
-    it('dont fetch data if already existing', async () => {
+    it('do not fetch data if already existing', async () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
@@ -148,7 +151,7 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
-    it('dont fetch data if already fetching', async () => {
+    it('do not fetch data if already fetching', async () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
@@ -173,7 +176,7 @@ describe('meterApiActions', () => {
       expect(store.getActions()).toEqual([]);
     });
 
-    it('dont fetch data if received an error', async () => {
+    it('do not fetch data if received an error', async () => {
       const existingPage = 1;
       const initialState: Partial<RootState> = {
         paginatedDomainModels: {
@@ -228,7 +231,7 @@ describe('meterApiActions', () => {
     });
 
     it('does not fetch if already fetching entity', async () => {
-      const initialState: MetersState = {...initialPaginatedDomain(), isFetchingSingle: true};
+      const initialState: MetersState = {...makeInitialState(), isFetchingSingle: true};
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
 
       await fetchMeterWithResponseOk(meter.id as uuid);
@@ -237,7 +240,7 @@ describe('meterApiActions', () => {
     });
 
     it('does not fetch is entity already exist in state', async () => {
-      const initialState: MetersState = {...initialPaginatedDomain(), entities: {1: meter as Meter}};
+      const initialState: MetersState = {...makeInitialState(), entities: {1: meter as Meter}};
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
 
       await fetchMeterWithResponseOk(meter.id as uuid);
@@ -247,7 +250,7 @@ describe('meterApiActions', () => {
 
     it('does not fetch if entity have been attempted to be fetched but failed', async () => {
       const initialState: MetersState = {
-        ...initialPaginatedDomain(),
+        ...makeInitialState(),
         nonExistingSingles: {1: {id: 1, message: 'meter does not exist'}},
       };
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
@@ -289,7 +292,7 @@ describe('meterApiActions', () => {
       ]);
     });
     it('does not fetch if already fetching', async () => {
-      const initialState: MetersState = {...initialPaginatedDomain(), isFetchingSingle: true};
+      const initialState: MetersState = {...makeInitialState(), isFetchingSingle: true};
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
 
       await fetchMeterEntitiesWithResponseOk(meterIds);
@@ -299,7 +302,7 @@ describe('meterApiActions', () => {
 
     it('fetches even if a fraction of the requested entities already exist in state', async () => {
       const initialState: MetersState = {
-        ...initialPaginatedDomain(),
+        ...makeInitialState(),
         entities: {1: meter1 as Meter, 2: meter2 as Meter},
       };
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});
@@ -314,7 +317,7 @@ describe('meterApiActions', () => {
 
     it('does not fetch is all entities already exist in state', async () => {
       const initialState: MetersState = {
-        ...initialPaginatedDomain(),
+        ...makeInitialState(),
         entities: {1: meter1 as Meter, 2: meter2 as Meter, 3: meter3 as Meter},
       };
       store = configureMockStore({paginatedDomainModels: {meters: initialState}});

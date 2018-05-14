@@ -2,6 +2,7 @@ import {EmptyAction} from 'react-redux-typescript';
 import {combineReducers} from 'redux';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {MapMarker} from '../../usecases/map/mapModels';
 import {
   ADD_PARAMETER_TO_SELECTION,
@@ -12,7 +13,13 @@ import {
   SET_CUSTOM_DATE_RANGE,
 } from '../user-selection/userSelectionActions';
 import {UserSelection} from '../user-selection/userSelectionModels';
-import {DomainModelsState, Normalized, NormalizedState, ObjectsById, SelectionEntity} from './domainModels';
+import {
+  DomainModelsState,
+  Normalized,
+  NormalizedState,
+  ObjectsById,
+  SelectionEntity,
+} from './domainModels';
 import {
   domainModelsClearError,
   domainModelsDeleteSuccess,
@@ -134,7 +141,6 @@ const reducerFor = <T extends Identifiable>(
         };
       case domainModelsGetSuccess(endPoint):
         return setEntities<T>(entity, state, action as Action<Normalized<T>>);
-      // TODO: Add tests
       case domainModelsGetEntitySuccess(endPoint):
         return addEntity<T>(state, action as Action<T>);
       case domainModelsPostSuccess(endPoint):
@@ -146,6 +152,7 @@ const reducerFor = <T extends Identifiable>(
       case domainModelsFailure(endPoint):
         return setError(state, action as Action<ErrorResponse>);
       case domainModelsClearError(endPoint):
+      case LOGOUT_USER:
         return {...initialDomain<T>()};
       default:
         return resetState(state, action, endPoint);
@@ -167,10 +174,7 @@ const resetStateReducer = <T extends Identifiable>(
   state: NormalizedState<T> = initialDomain<T>(),
   action: ActionTypes<T>,
 ): NormalizedState<T> => {
-  if (isSelectionChanged(action.type)) {
-    return {...initialDomain<T>()};
-  }
-  return state;
+  return isSelectionChanged(action.type) ? {...initialDomain<T>()} : state;
 };
 
 export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);

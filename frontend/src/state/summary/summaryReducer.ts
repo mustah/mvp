@@ -1,6 +1,7 @@
 import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
+import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {isSelectionChanged} from '../domain-models/domainModelsReducer';
 import {failureAction, requestAction, successAction} from './summaryApiActions';
 import {SelectionSummary, SummaryState} from './summaryModels';
@@ -44,6 +45,8 @@ export const summary = (state: SummaryState = initialState, action: ActionTypes)
         isSuccessfullyFetched: false,
         error: (action as Action<ErrorResponse>).payload,
       };
+    case LOGOUT_USER:
+      return {...initialState};
     default:
       return resetReducer(state, action);
   }

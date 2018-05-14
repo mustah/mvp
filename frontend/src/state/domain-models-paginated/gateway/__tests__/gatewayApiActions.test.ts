@@ -9,9 +9,12 @@ import {authenticate} from '../../../../services/restClient';
 import {uuid} from '../../../../types/Types';
 import {paginationUpdateMetaData} from '../../../ui/pagination/paginationActions';
 import {NormalizedPaginated, PaginatedDomainModelsState} from '../../paginatedDomainModels';
-import {domainModelPaginatedClearError, makeRequestActionsOf} from '../../paginatedDomainModelsActions';
+import {
+  domainModelPaginatedClearError,
+  makeRequestActionsOf,
+} from '../../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../../paginatedDomainModelsEntityActions';
-import {initialPaginatedDomain} from '../../paginatedDomainModelsReducer';
+import {makeInitialState} from '../../paginatedDomainModelsReducer';
 import {clearErrorGateways, fetchGateway, fetchGateways} from '../gatewayApiActions';
 import {Gateway, GatewaysState} from '../gatewayModels';
 import {gatewaySchema} from '../gatewaySchema';
@@ -35,7 +38,7 @@ describe('gatewayApiActions', () => {
 
   beforeEach(() => {
     const initialState: Partial<PaginatedDomainModelsState> = {
-      gateways: {...initialPaginatedDomain()},
+      gateways: {...makeInitialState()},
     };
     store = configureMockStore({paginatedDomainModels: initialState});
     mockRestClient = new MockAdapter(axios);
@@ -97,7 +100,7 @@ describe('gatewayApiActions', () => {
       ]);
     });
     it('does not fetch data if already fetching an entity', async () => {
-      const initialState: Partial<GatewaysState> = {...initialPaginatedDomain(), isFetchingSingle: true};
+      const initialState: Partial<GatewaysState> = {...makeInitialState(), isFetchingSingle: true};
       store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
 
       await fetchGatewayWithResponseOk(gateway.id as uuid);
@@ -107,18 +110,9 @@ describe('gatewayApiActions', () => {
     });
 
     it('does not fetch if entity already already exists in state', async () => {
-      const initialState: Partial<GatewaysState> = {...initialPaginatedDomain(), entities: {1: gateway as Gateway}};
-      store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
-
-      await fetchGatewayWithResponseOk(gateway.id as uuid);
-
-      expect(store.getActions()).toEqual([]);
-    });
-
-    it('does not fetch if entity already have been attempted to be fetched but failed', async () => {
       const initialState: Partial<GatewaysState> = {
-        ...initialPaginatedDomain(),
-        nonExistingSingles: {1: {id: 1, message: 'gateway not found'}},
+        ...makeInitialState(),
+        entities: {1: gateway as Gateway},
       };
       store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
 
@@ -126,6 +120,21 @@ describe('gatewayApiActions', () => {
 
       expect(store.getActions()).toEqual([]);
     });
+
+    it(
+      'does not fetch if entity already have been attempted to be fetched but failed',
+      async () => {
+        const initialState: Partial<GatewaysState> = {
+          ...makeInitialState(),
+          nonExistingSingles: {1: {id: 1, message: 'gateway not found'}},
+        };
+        store = configureMockStore({paginatedDomainModels: {gateways: initialState}});
+
+        await fetchGatewayWithResponseOk(gateway.id as uuid);
+
+        expect(store.getActions()).toEqual([]);
+      },
+    );
   });
 
   describe('clear error', () => {

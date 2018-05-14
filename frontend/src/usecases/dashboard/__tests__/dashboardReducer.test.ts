@@ -1,5 +1,6 @@
 import {IndicatorType, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Status} from '../../../types/Types';
+import {LOGOUT_USER} from '../../auth/authActions';
 import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
 import {DashboardModel} from '../dashboardModels';
 import {dashboard, DashboardState, initialDashboardState} from '../dashboardReducer';
@@ -33,7 +34,10 @@ describe('dashboardReducer', () => {
       widgets: [...widgets],
     };
 
-    const state: DashboardState = dashboard(initialDashboardState, dashboardSuccess(capturedApiResponse));
+    const state: DashboardState = dashboard(
+      initialDashboardState,
+      dashboardSuccess(capturedApiResponse),
+    );
 
     const expected = {
       isFetching: false,
@@ -54,9 +58,26 @@ describe('dashboardReducer', () => {
   });
 
   it('fails with error response', () => {
-    const state: DashboardState = dashboard(initialDashboardState, dashboardFailure({message: 'error'}));
+    const state: DashboardState = dashboard(
+      initialDashboardState,
+      dashboardFailure({message: 'error'}),
+    );
 
     expect(state).toEqual({isFetching: false, error: {message: 'error'}});
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: DashboardState = dashboard(
+        initialDashboardState,
+        dashboardFailure({message: 'error'}),
+      );
+
+      state = dashboard(state, {type: LOGOUT_USER});
+
+      expect(state).toEqual({isFetching: false});
+    });
   });
 
 });

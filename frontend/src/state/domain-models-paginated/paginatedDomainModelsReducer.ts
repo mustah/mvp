@@ -1,6 +1,7 @@
 import {combineReducers} from 'redux';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse, Identifiable, uuid} from '../../types/Types';
+import {LOGOUT_USER} from '../../usecases/auth/authActions';
 import {ObjectsById} from '../domain-models/domainModels';
 import {isSelectionChanged} from '../domain-models/domainModelsReducer';
 import {Meter} from './meter/meterModels';
@@ -23,7 +24,7 @@ import {
   domainModelsPaginatedEntitySuccess,
 } from './paginatedDomainModelsEntityActions';
 
-export const initialPaginatedDomain = <T extends Identifiable>(): NormalizedPaginatedState<T> => ({
+export const makeInitialState = <T extends Identifiable>(): NormalizedPaginatedState<T> => ({
   isFetchingSingle: false,
   nonExistingSingles: {},
   result: {},
@@ -126,12 +127,12 @@ const reducerFor = <T extends Identifiable>(
   endPoint: EndPoints,
 ) =>
   (
-    state: NormalizedPaginatedState<T> = initialPaginatedDomain<T>(),
+    state: NormalizedPaginatedState<T> = makeInitialState<T>(),
     action: ActionTypes<T>,
   ): NormalizedPaginatedState<T> => {
 
     if (isSelectionChanged(action.type)) {
-      return {...initialPaginatedDomain<T>()};
+      return {...makeInitialState<T>()};
     }
 
     switch (action.type) {
@@ -149,6 +150,8 @@ const reducerFor = <T extends Identifiable>(
         return addEntities(state, action as Action<T | T[]>);
       case domainModelsPaginatedEntityFailure(endPoint):
         return entityFailure(state, action as Action<SingleEntityFailure>);
+      case LOGOUT_USER:
+        return {...makeInitialState()};
       default:
         return state;
     }
