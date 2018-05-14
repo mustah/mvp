@@ -14,7 +14,7 @@ interface QuantitySelectorProps {
 
 const style: React.CSSProperties = {padding: '20px 20px 0px'};
 
-export const QuantitySelector = ({selectedIndicators, selectedQuantities, selectQuantities}: QuantitySelectorProps) => {
+export const QuantityDropdown = ({selectedIndicators, selectedQuantities, selectQuantities}: QuantitySelectorProps) => {
   const quantities: Set<Quantity> = new Set();
   selectedIndicators.forEach((indicator) =>
     indicator in allQuantities && allQuantities[indicator].forEach((q) => quantities.add(q)),

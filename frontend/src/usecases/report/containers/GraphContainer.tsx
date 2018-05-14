@@ -32,7 +32,7 @@ import {OnLogout} from '../../auth/authModels';
 import {ActiveDot, ActiveDotReChartProps} from '../components/ActiveDot';
 import {CustomizedTooltip} from '../components/CustomizedTooltip';
 import {Dot, DotReChartProps} from '../components/Dot';
-import {QuantitySelector} from '../components/QuantitySelector';
+import {QuantityDropdown} from '../components/QuantityDropdown';
 import {ActiveDataPoint, GraphContents, LineProps} from '../reportModels';
 
 interface StateToProps {
@@ -163,7 +163,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
     return (
       <div>
-        <QuantitySelector
+        <QuantityDropdown
           selectedIndicators={selectedIndicators}
           selectedQuantities={selectedQuantities}
           selectQuantities={selectQuantities}
