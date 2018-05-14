@@ -11,6 +11,7 @@ import com.elvaco.mvp.core.spi.data.Page;
 import com.elvaco.mvp.core.spi.data.Pageable;
 import com.elvaco.mvp.core.spi.data.RequestParameters;
 import com.elvaco.mvp.core.spi.repository.LogicalMeters;
+import com.elvaco.mvp.testing.exception.NotImplementedYet;
 
 import static java.util.Collections.emptyList;
 import static java.util.UUID.randomUUID;
@@ -75,6 +76,11 @@ public class MockLogicalMeters extends MockRepository<UUID, LogicalMeter> implem
   @Override
   public List<LogicalMeter> findAllForSummaryInfo(RequestParameters parameters) {
     return allMocks();
+  }
+
+  @Override
+  public void delete(LogicalMeter logicalMeter) {
+    throw new NotImplementedYet();
   }
 
   @Override

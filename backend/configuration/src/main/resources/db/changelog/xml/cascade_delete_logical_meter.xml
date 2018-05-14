@@ -1,0 +1,29 @@
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+  <changeSet author="Daniel Svensson" id="cascade_delete_logical_meter">
+    <dropUniqueConstraint constraintName="physical_meter_status_log_physical_meter_id_fkey"
+                          tableName="physical_meter_status_log"
+    />
+    <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="physical_meter_status_log"
+                             constraintName="physical_meter_status_log_physical_meter_id_fkey" deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                             referencedColumnNames="id" referencedTableName="physical_meter"/>
+
+    <dropUniqueConstraint constraintName="measurement_physical_meter_id_fkey"
+                          tableName="measurement"
+    />
+    <addForeignKeyConstraint baseColumnNames="physical_meter_id" baseTableName="measurement"
+                             constraintName="measurement_physical_meter_id_fkey" deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="CASCADE"
+                             referencedColumnNames="id" referencedTableName="physical_meter"/>
+
+    <dropUniqueConstraint constraintName="physical_meter_organisation_id_fkey1"
+                          tableName="physical_meter"
+    />
+    <addForeignKeyConstraint baseColumnNames="organisation_id,logical_meter_id" baseTableName="physical_meter"
+                             constraintName="physical_meter_organisation_id_fkey1" deferrable="false"
+                             initiallyDeferred="false" onDelete="CASCADE" onUpdate="NO ACTION"
+                             referencedColumnNames="organisation_id,id" referencedTableName="logical_meter"/>
+  </changeSet>
+</databaseChangeLog>

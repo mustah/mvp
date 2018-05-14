@@ -19,6 +19,7 @@ import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
+import com.querydsl.jpa.impl.JPADeleteClause;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,13 @@ public class LogicalMeterQueryDslJpaRepository
     Predicate predicate = LOGICAL_METER.organisationId.eq(organisationId)
       .and(LOGICAL_METER.id.eq(id));
     return Optional.ofNullable(fetchOne(predicate));
+  }
+
+  @Override
+  public void delete(UUID id, UUID organisationId) {
+    JPADeleteClause query = new JPADeleteClause(entityManager, LOGICAL_METER);
+    query.where(LOGICAL_METER.id.eq(id).and(LOGICAL_METER.organisationId.eq(organisationId)))
+      .execute();
   }
 
   private boolean isStatusQuery(RequestParameters parameters) {
