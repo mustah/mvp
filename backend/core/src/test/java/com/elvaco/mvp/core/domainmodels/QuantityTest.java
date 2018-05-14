@@ -45,4 +45,48 @@ public class QuantityTest {
     assertThat(Quantity.of("Energy"))
       .isEqualTo(new Quantity("Energy"));
   }
+
+  @Test
+  public void complementComplete() {
+    assertThat(Quantity.POWER.complementedBy(
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+    )).isEqualTo(Quantity.POWER);
+  }
+
+  @Test
+  public void complementMissingUnit() {
+    Quantity quantity = new Quantity(
+      "a",
+      new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
+    );
+    assertThat(quantity.complementedBy(
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+    )).isEqualTo(
+      new Quantity("a", new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT))
+    );
+  }
+
+  @Test
+  public void complementUnknownMode() {
+    Quantity quantity = new Quantity(
+      "a",
+      new QuantityPresentationInformation("W", SeriesDisplayMode.UNKNOWN)
+    );
+    assertThat(quantity.complementedBy(
+      new QuantityPresentationInformation("kW", SeriesDisplayMode.READOUT)
+    )).isEqualTo(
+      new Quantity("a", new QuantityPresentationInformation("W", SeriesDisplayMode.READOUT))
+    );
+  }
+
+  @Test
+  public void complementMissingUnitWithNoUnitRaisesException() {
+    Quantity quantity = new Quantity(
+      "a",
+      new QuantityPresentationInformation(null, SeriesDisplayMode.UNKNOWN)
+    );
+    assertThatThrownBy(() -> quantity.complementedBy(
+      new QuantityPresentationInformation(null, SeriesDisplayMode.READOUT)
+    )).isInstanceOf(IllegalArgumentException.class);
+  }
 }

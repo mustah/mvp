@@ -90,21 +90,30 @@ public class Quantity {
     }
   }
 
+  public QuantityPresentationInformation getPresentationInformation() {
+    return presentationInformation;
+  }
+
   @Nullable
   public String presentationUnit() {
     return presentationInformation.getUnit().orElse(null);
-  }
-
-  public Quantity withUnit(String unit) {
-    return new Quantity(id, name, presentationInformation.withUnit(unit));
   }
 
   public SeriesDisplayMode seriesDisplayMode() {
     return presentationInformation.getSeriesDisplayMode();
   }
 
-  public Quantity withSeriesDisplayMode(SeriesDisplayMode seriesDisplayMode) {
-    return new Quantity(id, name, presentationInformation.withSeriesDisplayMode(seriesDisplayMode));
+  public Quantity complementedBy(QuantityPresentationInformation presentationInformation) {
+    return new Quantity(
+      name,
+      new QuantityPresentationInformation(
+        this.presentationInformation.getUnit()
+          .orElse(presentationInformation.getUnit().orElseThrow(IllegalArgumentException::new)),
+        seriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)
+          ? presentationInformation.getSeriesDisplayMode()
+          : seriesDisplayMode()
+      )
+    );
   }
 
   private Quantity withDefaultPresentation(String unit, SeriesDisplayMode displayMode) {

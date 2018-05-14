@@ -78,7 +78,7 @@ public class LogicalMeterHelperTest {
       mapMeterQuantitiesToPhysicalMeters(
         emptyList(),
         singleton(Quantity.ENERGY)
-      )).isEqualTo(singletonMap(Quantity.ENERGY, emptyList()));
+      )).isEqualTo(emptyMap());
   }
 
   @Test
