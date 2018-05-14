@@ -291,7 +291,7 @@ deploy:staging:
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.web $SALTENV
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-staging' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-staging' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
@@ -327,7 +327,7 @@ deploy:production:
   script:
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.web $SALTENV
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.geoservice.create $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
-    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\"}"
+    - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.geoservice.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' cmd.run 'systemctl stop elvaco-mvp.service'
     - pepper -C 'G@roles:postgresql-server and G@env:mvp-prod' state.apply mvp.db.mvp.create $SALTENV
     - pepper -C 'G@roles:mvp-app and G@env:mvp-prod' state.apply mvp.app.mvp.deploy $SALTENV pillar="{\"mvp-branch\":\"$CI_COMMIT_REF_NAME\", \"mvp_version\":\"$MVP_VERSION\"}"
