@@ -1,20 +1,11 @@
 import {Identifiable} from '../../../../types/Types';
 import {GraphContents} from '../../../../usecases/report/reportModels';
-import {Organisation} from '../../../domain-models/organisation/organisationModels';
 
-interface PhysicalMeter extends Identifiable {
-  organisation: Organisation;
-  identity: string;
-  medium: string;
-}
-
-// TODO there's no physicalMeter any longer, remove it.. where is this interface used really?
 export interface Measurement extends Identifiable {
   created: number;
   value: number;
   quantity: Quantity;
   unit: string;
-  physicalMeter: PhysicalMeter;
 }
 
 export type Quantity = string;
