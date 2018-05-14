@@ -37,7 +37,7 @@ export interface Indicator {
   state: Status;
   subtitle: string;
   value: number;
-  unit: string; // Unit is what we are measuring the value in, like "kWh", "m^3"
+  unit: string;
 }
 
 export interface ActiveDataPoint {

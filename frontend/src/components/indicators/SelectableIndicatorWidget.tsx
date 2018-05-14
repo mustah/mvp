@@ -7,6 +7,7 @@ import {IconColdWater} from '../icons/IconColdWater';
 import {IconCollection} from '../icons/IconCollection';
 import {IconCurrent} from '../icons/IconCurrent';
 import {IconDistrictHeating} from '../icons/IconDistrictHeating';
+import {IconGas} from '../icons/IconGas';
 import {IconTemperature} from '../icons/IconTemperature';
 import {IconValidation} from '../icons/IconValidation';
 import {Column, ColumnCenter} from '../layouts/column/Column';
@@ -27,7 +28,7 @@ const indicatorIconFor: IndicatorComponentType = {
   [Medium.coldWater]: IconColdWater,
   [Medium.warmWater]: IconColdWater,
   [Medium.districtHeating]: IconDistrictHeating,
-  [Medium.gas]: IconDistrictHeating,
+  [Medium.gas]: IconGas,
   [Medium.temperatureInside]: IconTemperature,
   [Medium.temperatureOutside]: IconTemperature,
 };
