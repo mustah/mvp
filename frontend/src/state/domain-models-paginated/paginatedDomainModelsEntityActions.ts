@@ -117,7 +117,6 @@ const shouldFetchEntities = (
   return isMissingEntity && !isFetchingSingle;
 };
 
-// TODO: Move this to url-factory and write tests
 const idRequestParams = (ids: uuid[]): string => ids.map((id) => `id=${id.toString()}`).join('&');
 
 export const fetchEntitiesIfNeeded = <T>(
