@@ -21,6 +21,7 @@ describe('reportActions', () => {
     ]);
 
   });
+
   it('makes sure selectEntryToggle dispatch action to REMOVE "id" from selected entries if already selected', () => {
     const initialState: ReportState = {selectedListItems: [1, 2, 3]};
     const store = configureMockStore({report: {...initialState}});
@@ -34,6 +35,7 @@ describe('reportActions', () => {
       },
     ]);
   });
+
   it('test that selectEntryAdd adds "id" to selected if not there', () => {
     const initialState: ReportState = {selectedListItems: [1, 2]};
     const store = configureMockStore({report: {...initialState}});
@@ -47,17 +49,13 @@ describe('reportActions', () => {
       },
     ]);
   });
-  it('test that selectEntryAdd do nothing when "id" already exist in selected', () => {
+
+  it('test that selectEntryAdd does not dispatch when "id" already exist in selected', () => {
     const initialState: ReportState = {selectedListItems: [1, 2, 3]};
     const store = configureMockStore({report: {...initialState}});
 
     store.dispatch(selectEntryAdd(3));
 
-    expect(store.getActions()).toEqual([
-      {
-        type: SET_SELECTED_ENTRIES,
-        payload: [1, 2, 3],
-      },
-    ]);
+    expect(store.getActions()).toEqual([]);
   });
 });

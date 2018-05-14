@@ -11,10 +11,13 @@ export const selectEntryToggle = (id: uuid) =>
   (dispatch, getState: GetState): void =>
     dispatch(setSelectedEntries(toggle(id, getState().report.selectedListItems)));
 
-// TODO: Don't dispatch if already in selected
 export const selectEntryAdd = (id: uuid) =>
   (dispatch, getState: GetState): void => {
     const {selectedListItems} = getState().report;
     const newSelectedListItems = new Set<uuid>(selectedListItems);
-    dispatch(setSelectedEntries(Array.from(newSelectedListItems.add(id))));
+    const originalLength = newSelectedListItems.size;
+    newSelectedListItems.add(id);
+    if (newSelectedListItems.size > originalLength) {
+      dispatch(setSelectedEntries(Array.from(newSelectedListItems)));
+    }
   };
