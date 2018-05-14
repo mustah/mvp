@@ -1,6 +1,5 @@
 import {Schema, schema} from 'normalizr';
 
-// TODO: Add typing to these entities
 const createId: schema.SchemaFunction = (
   {name: entityName},
   {id: parentId},
