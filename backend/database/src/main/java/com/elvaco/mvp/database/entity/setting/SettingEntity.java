@@ -9,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
+import org.hibernate.envers.Audited;
 
 @Access(AccessType.FIELD)
 @Entity
 @Table(name = "mvp_setting")
+@Audited
 public class SettingEntity extends EntityType<UUID> {
 
   @Id

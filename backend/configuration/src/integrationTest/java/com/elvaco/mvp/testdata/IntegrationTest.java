@@ -24,7 +24,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.elvaco.mvp.core.fixture.DomainModels.ELVACO_SUPER_ADMIN_USER;
-import static com.elvaco.mvp.core.fixture.DomainModels.OTHER_USER;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -88,7 +87,8 @@ public abstract class IntegrationTest {
       tokenFactory.newToken()
     );
     tokenService.saveToken(authenticatedUser.getToken(), authenticatedUser);
-    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken());
+    Authentication authentication = new AuthenticationToken(authenticatedUser.getToken(),
+      authenticatedUser);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
   }
@@ -105,7 +105,7 @@ public abstract class IntegrationTest {
   }
 
   protected RestClient asOtherUser() {
-    return restAsUser(OTHER_USER);
+    return restAsUser(context().user2);
   }
 
   protected RestClient asTestUser() {

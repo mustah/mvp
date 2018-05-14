@@ -13,6 +13,7 @@ import com.elvaco.mvp.database.entity.meter.JsonField;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.envers.Audited;
 
 @ToString
 @NoArgsConstructor
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "user_selection")
 @Access(AccessType.FIELD)
+@Audited
 public class UserSelectionEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -64835523791321552L;

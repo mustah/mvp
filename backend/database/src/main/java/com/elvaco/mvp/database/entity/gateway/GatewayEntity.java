@@ -21,6 +21,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableSet;
@@ -30,6 +32,7 @@ import static java.util.Collections.unmodifiableSet;
 @Entity
 @Access(AccessType.FIELD)
 @Table(name = "gateway")
+@Audited
 public class GatewayEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -2132372383987246715L;
@@ -53,6 +56,7 @@ public class GatewayEntity extends EntityType<UUID> {
   @OrderBy("stop desc, start desc")
   @OneToMany(mappedBy = "gatewayId", fetch = FetchType.LAZY)
   @Cascade(value = CascadeType.MERGE)
+  @NotAudited
   public Set<GatewayStatusLogEntity> statusLogs;
 
   public GatewayEntity(

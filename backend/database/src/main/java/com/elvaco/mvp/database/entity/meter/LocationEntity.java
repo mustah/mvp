@@ -10,11 +10,13 @@ import javax.persistence.Table;
 
 import com.elvaco.mvp.database.entity.EntityType;
 import lombok.NoArgsConstructor;
+import org.hibernate.envers.Audited;
 
 @NoArgsConstructor
 @Entity
 @Table(name = "location")
 @Access(AccessType.FIELD)
+@Audited
 public class LocationEntity extends EntityType<UUID> {
 
   private static final long serialVersionUID = -6244183552379157552L;
