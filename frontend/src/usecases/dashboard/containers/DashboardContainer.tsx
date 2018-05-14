@@ -20,7 +20,7 @@ import {ClearError, EncodedUriParameters, ErrorResponse, Fetch} from '../../../t
 import {MapMarker} from '../../map/mapModels';
 import {clearErrorMeterMapMarkers, fetchMeterMapMarkers} from '../../map/meterMapMarkerApiActions';
 import {OverviewWidgets} from '../components/widgets/OverviewWidgets';
-import {fetchDashboard} from '../dashboardActions';
+import {fetchDashboard} from '../dashboardApiActions';
 import {DashboardModel} from '../dashboardModels';
 import {MapWidgetContainer} from './MapWidgetContainer';
 

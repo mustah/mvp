@@ -177,6 +177,24 @@ const resetStateReducer = <T extends Identifiable>(
   return isSelectionChanged(action.type) ? {...initialDomain<T>()} : state;
 };
 
+export const resetReducer = <S>(
+  state: S,
+  {type}: EmptyAction<string>,
+  initialState: S,
+): S => {
+  switch (type) {
+    case SELECT_SAVED_SELECTION:
+    case ADD_PARAMETER_TO_SELECTION:
+    case DESELECT_SELECTION:
+    case RESET_SELECTION:
+    case SELECT_PERIOD:
+    case SET_CUSTOM_DATE_RANGE:
+      return initialState;
+    default:
+      return state;
+  }
+};
+
 export const countries = reducerFor<SelectionEntity>('countries', EndPoints.selections);
 export const cities = reducerFor<SelectionEntity>('cities', EndPoints.selections);
 export const addresses = reducerFor<SelectionEntity>('addresses', EndPoints.selections);

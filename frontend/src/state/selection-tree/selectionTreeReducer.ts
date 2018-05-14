@@ -2,8 +2,8 @@ import {EmptyAction} from 'react-redux-typescript';
 import {EndPoints} from '../../services/endPoints';
 import {Action, ErrorResponse} from '../../types/Types';
 import {LOGOUT_USER} from '../../usecases/auth/authActions';
+import {failureAction, requestAction, successAction} from '../common/apiActions';
 import {isSelectionChanged} from '../domain-models/domainModelsReducer';
-import {failureAction, requestAction, successAction} from '../summary/summaryApiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from './selectionTreeModels';
 
 export const initialState: SelectionTreeState = {
