@@ -13,6 +13,7 @@ import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.QuantityPresentationInformation;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import org.junit.Test;
 
 import static com.elvaco.mvp.core.domainmodels.Location.UNKNOWN_LOCATION;
@@ -29,6 +30,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class LogicalMeterHelperTest {
 
@@ -136,22 +138,12 @@ public class LogicalMeterHelperTest {
     LogicalMeter meterOne = newMeter(randomUUID(), DISTRICT_HEATING_METER);
     LogicalMeter meterTwo = newMeter(randomUUID(), HOT_WATER_METER);
 
-    Map<Quantity, List<PhysicalMeter>> expected = new HashMap<>();
-    expected.put(
-      Quantity.TEMPERATURE,
-      singletonList(meterTwo.physicalMeters.get(0))
-    );
-    expected.put(
-      Quantity.VOLUME,
-      asList(meterOne.physicalMeters.get(0), meterTwo.physicalMeters.get(0))
-    );
-
-    assertThat(
+    assertThatThrownBy(() ->
       mapMeterQuantitiesToPhysicalMeters(
         asList(meterOne, meterTwo),
         new HashSet<>(asList(Quantity.TEMPERATURE, Quantity.VOLUME))
-      )).isEqualTo(
-      expected
+      )).isInstanceOf(
+      InvalidQuantityForMeterType.class
     );
   }
 

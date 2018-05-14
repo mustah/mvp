@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -32,7 +33,7 @@ public final class LogicalMeterHelper {
       List<PhysicalMeter> physicalMeters = new ArrayList<>();
       for (LogicalMeter meter : logicalMeters) {
         if (!meter.getQuantity(quantity.name).isPresent()) {
-          continue;
+          throw new InvalidQuantityForMeterType(quantity.name, meter.meterDefinition.medium);
         }
         Quantity meterQuantity = meter.getQuantity(quantity.name).get();
         if (quantity.presentationUnit() == null && meterQuantity.presentationUnit() != null) {

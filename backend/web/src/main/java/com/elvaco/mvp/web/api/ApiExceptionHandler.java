@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
+import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UnitConversionError;
@@ -90,6 +91,11 @@ public class ApiExceptionHandler {
 
   @ExceptionHandler(UnitConversionError.class)
   public ResponseEntity<ErrorMessageDto> handle(UnitConversionError exception) {
+    return badRequest(exception.getMessage());
+  }
+
+  @ExceptionHandler(InvalidQuantityForMeterType.class)
+  public ResponseEntity<ErrorMessageDto> handle(InvalidQuantityForMeterType exception) {
     return badRequest(exception.getMessage());
   }
 
