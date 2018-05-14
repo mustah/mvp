@@ -1,9 +1,7 @@
 {% set module = "geoservice" %}
 {% set systemd_unit = "elvaco-" + module + ".service" %}
 {% set mvp_branch = salt['pillar.get']('mvp-branch', 'master') %}
-{% set remote_git_describe = '/usr/bin/remote-git-describe.sh' %}
-{% set git_repository = 'git@gitlab.elvaco.se:elvaco/mvp.git' %}
-{% set module_version = salt['cmd.run'](remote_git_describe + " " + git_repository  + " " + mvp_branch) %}
+{% set module_version = salt['pillar.get']('mvp_version', 'UNKNOWN') %}
 {% set artifact = module + "-" + module_version + ".tar" %}
 
 include:
