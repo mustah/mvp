@@ -161,7 +161,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
 
   private tooltipPayload: ActiveDataPoint;
 
-  private activeDataKey;
+  private activeDataKey: uuid;
 
   async componentDidMount() {
     const {selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
