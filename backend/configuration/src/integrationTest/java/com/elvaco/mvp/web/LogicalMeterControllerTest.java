@@ -981,6 +981,16 @@ public class LogicalMeterControllerTest extends IntegrationTest {
   }
 
   @Test
+  public void removingLogicalMeter_ShouldNotLeakInformation() {
+    ResponseEntity<ErrorMessageDto> response = asTestUser()
+      .delete("/meters/" + UUID.randomUUID(), ErrorMessageDto.class);
+
+    assertThat(response.getStatusCode())
+      .as("Test that we don't leak \"Meter not found\"")
+      .isEqualTo(HttpStatus.FORBIDDEN);
+  }
+
+  @Test
   public void adminCanNotRemoveLogicalMeter() {
     LogicalMeter districtHeatingMeter = createLogicalMeter(DISTRICT_HEATING_METER);
     PhysicalMeter physicalMeter = physicalMeters.save(
