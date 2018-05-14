@@ -9,7 +9,7 @@ import lombok.ToString;
 
 import static java.util.Collections.emptyList;
 
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class GatewayDto extends GatewayMandatoryDto {
