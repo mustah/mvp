@@ -17,7 +17,7 @@ const style: React.CSSProperties = {padding: '20px 20px 0px'};
 export const QuantitySelector = ({selectedIndicators, selectedQuantities, selectQuantities}: QuantitySelectorProps) => {
   const quantities: Set<Quantity> = new Set();
   selectedIndicators.forEach((indicator) =>
-    allQuantities[indicator].forEach((q) => quantities.add(q))
+    indicator in allQuantities && allQuantities[indicator].forEach((q) => quantities.add(q)),
   );
 
   const changeQuantities = (event, index, values) => selectQuantities(values);
@@ -31,15 +31,16 @@ export const QuantitySelector = ({selectedIndicators, selectedQuantities, select
     />
   );
   const options = Array.from(quantities.values()).map(quantityMenuItem);
-  if(!options.length) {
+  if (!options.length && selectedQuantities.length) {
     selectQuantities([]);
   }
 
+  const noMediumSelected: string = firstUpperTranslated('select medium');
   const hint: string = firstUpperTranslated('select quantities');
 
   return (
     <div style={style}>
-      <HasContent fallbackContent={<p>{hint}</p>} hasContent={options.length > 0}>
+      <HasContent fallbackContent={<p>{noMediumSelected}</p>} hasContent={options.length > 0}>
         <SelectField
           multiple={true}
           hintText={hint}

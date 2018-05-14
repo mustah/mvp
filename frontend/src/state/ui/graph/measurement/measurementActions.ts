@@ -1,6 +1,7 @@
 import {AxiosPromise, AxiosResponse} from 'axios';
 import {createPayloadAction} from 'react-redux-typescript';
 import {DateRange, Period} from '../../../../components/dates/dateModels';
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {InvalidToken} from '../../../../exceptions/InvalidToken';
 import {now, toPeriodApiParameters} from '../../../../helpers/dateHelpers';
 import {Maybe} from '../../../../helpers/Maybe';
@@ -193,6 +194,7 @@ interface GraphDataResponse {
 
 export const fetchMeasurements =
   async (
+    selectedIndicators: Medium[],
     quantities: Quantity[],
     selectedListItems: uuid[],
     timePeriod: Period,
@@ -201,7 +203,7 @@ export const fetchMeasurements =
     logout: OnLogout,
   ): Promise<void> => {
 
-    if (selectedListItems.length === 0 || quantities.length === 0) {
+    if (selectedIndicators.length === 0 || selectedListItems.length === 0 || quantities.length === 0) {
       updateState({
         graphContents: emptyGraphContents,
         isFetching: false,

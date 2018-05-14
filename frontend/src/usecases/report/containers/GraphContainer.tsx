@@ -24,7 +24,7 @@ import {Maybe} from '../../../helpers/Maybe';
 import {RootState} from '../../../reducers/rootReducer';
 import {firstUpperTranslated} from '../../../services/translationService';
 import {fetchMeasurements, selectQuantities} from '../../../state/ui/graph/measurement/measurementActions';
-import {emptyGraphContents, Quantity,} from '../../../state/ui/graph/measurement/measurementModels';
+import {emptyGraphContents, Quantity} from '../../../state/ui/graph/measurement/measurementModels';
 import {getSelectedPeriod} from '../../../state/user-selection/userSelectionSelectors';
 import {Children, Dictionary, ErrorResponse, uuid} from '../../../types/Types';
 import {logout} from '../../auth/authActions';
@@ -113,11 +113,19 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
   updateState = (state: GraphContainerState) => this.setState({...state});
 
   clearError = async () => {
-    const {selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    const {selectedIndicators, selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
     this.setState({error: Maybe.nothing(), isFetching: true});
     this.resetDots();
-    await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
-  };
+    await fetchMeasurements(
+      selectedIndicators,
+      selectedQuantities,
+      selectedListItems,
+      period,
+      customDateRange,
+      this.updateState,
+      logout,
+    );
+  }
 
   renderActiveDot = (props: ActiveDotReChartProps) => (<ActiveDot {...props} activeDataKey={this.activeDataKey}/>);
 
@@ -130,7 +138,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
       [index]: {...this.dots[index], [dataKey]: {dataKey, cy}},
     };
     return (<Dot {...rest} />);
-  };
+  }
 
   resetDots = () => this.dots = {};
 
@@ -142,7 +150,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
         this.tooltipPayload = activePayload.filter(({dataKey}) => this.activeDataKey === dataKey)[0];
       }
     }
-  };
+  }
 
   findClosestLine = (index: number, mouseY: number): uuid | undefined => {
     const activeDots = this.dots[index];
@@ -155,7 +163,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
       .map(({dataKey, cy}) => ({dataKey, yDistanceFromMouse: Math.abs(cy - mouseY)}))
       .sort(({yDistanceFromMouse: distA}, {yDistanceFromMouse: distB}) => distA - distB);
     return sortedActiveDots.length ? sortedActiveDots[0].dataKey : undefined;
-  };
+  }
 
   private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
 
@@ -164,17 +172,35 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
   private activeDataKey: uuid;
 
   async componentDidMount() {
-    const {selectedListItems, period, customDateRange, selectedQuantities, logout} = this.props;
+    const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
     this.setState({isFetching: true});
-    await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
+    await fetchMeasurements(
+      selectedIndicators,
+      selectedQuantities,
+      selectedListItems,
+      period,
+      customDateRange,
+      this.updateState,
+      logout,
+    );
   }
 
-  async componentWillReceiveProps({selectedListItems, period, customDateRange, selectedQuantities, logout}: Props) {
+  async componentWillReceiveProps({
+    selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
+  }: Props) {
     const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
     if (somethingChanged) {
       this.setState({isFetching: true});
       this.resetDots();
-      await fetchMeasurements(selectedQuantities, selectedListItems, period, customDateRange, this.updateState, logout);
+      await fetchMeasurements(
+        selectedIndicators,
+        selectedQuantities,
+        selectedListItems,
+        period,
+        customDateRange,
+        this.updateState,
+        logout,
+      );
     }
   }
 
@@ -183,11 +209,6 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     const {graphContents} = this.state;
     const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
     const {data, legend} = graphContents;
-
-    // TODO: [!Carl]
-    // ResponsiveContainer is a bit weird, if we leave out the dimensions of the containing <div>,
-    // it breaks. Setting width of ResponsiveContainer to 100% will cause the menu to overlap when
-    // toggled
 
     const missingData = (
       <MissingDataTitle

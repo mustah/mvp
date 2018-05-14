@@ -81,7 +81,7 @@ export const indicators: Indicator[] = [
   {
     type: Medium.districtHeating,
     title: 'Fjärrvärme',
-    state: Status.ok,
+    state: Status.info,
     value: 1.1,
     unit: 'kWh/m2',
     subtitle: '(-2)',
@@ -89,7 +89,7 @@ export const indicators: Indicator[] = [
   {
     type: Medium.gas,
     title: 'Gas',
-    state: Status.ok,
+    state: Status.info,
     value: 1.1,
     unit: 'kWh/m2',
     subtitle: '(-2)',

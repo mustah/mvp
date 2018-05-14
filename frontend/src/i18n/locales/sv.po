@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-24 01:20+0200\n"
+"POT-Creation-Date: 2018-05-14 09:56+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,20 +53,26 @@ msgstr "bekräfta"
 msgid "cancel"
 msgstr "avbryt"
 
+msgid "start date"
+msgstr "startdatum"
+
+msgid "end date"
+msgstr "slutdatum"
+
 msgid "last 24h"
 msgstr "senaste dygnet"
-
-msgid "current month"
-msgstr "denna månad"
-
-msgid "previous month"
-msgstr "förra månaden"
 
 msgid "current week"
 msgstr "denna vecka"
 
 msgid "last 7 days"
 msgstr "senaste 7 dagarna"
+
+msgid "current month"
+msgstr "denna månad"
+
+msgid "previous month"
+msgstr "förra månaden"
 
 msgid "custom period"
 msgstr "anpassad period"
@@ -119,29 +125,32 @@ msgstr "nej"
 msgid "gateway details"
 msgstr "gateway"
 
-msgid "city"
-msgstr "stad"
-
-msgid "address"
-msgstr "adress"
-
 msgid "gateway serial"
 msgstr "serienummer"
 
 msgid "product model"
 msgstr "modell"
 
+msgid "city"
+msgstr "stad"
+
+msgid "address"
+msgstr "adress"
+
 msgid "collection"
 msgstr "insamling"
 
-msgid "interval"
-msgstr "intervall"
+msgid "unknown"
+msgstr "okänd"
 
 msgid "meter"
 msgstr "mätare"
 
 msgid "map"
 msgstr "karta"
+
+msgid "facility id"
+msgstr "anläggnings-ID"
 
 msgid "manufacturer"
 msgstr "tillverkare"
@@ -158,6 +167,12 @@ msgstr "ingen tillförlitlig position"
 msgid "alarm"
 msgstr "larm"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 msgid "resolution"
 msgstr "upplösning"
 
@@ -169,9 +184,6 @@ msgstr "etiketter"
 
 msgid "sap id"
 msgstr "sap-ID"
-
-msgid "facility id"
-msgstr "anläggnings-ID"
 
 msgid "never collected"
 msgstr "ej insamlad"
@@ -194,17 +206,11 @@ msgstr "värde"
 msgid "collected at"
 msgstr "insamlades"
 
-msgid "show only changes"
-msgstr "visa bara ändringar"
-
 msgid "date"
 msgstr "datum"
 
-msgid "start date"
-msgstr "startdatum"
-
-msgid "end date"
-msgstr "slutdatum"
+msgid "collection percentage"
+msgstr "insamling"
 
 msgid "no meters"
 msgstr "inga mätare"
@@ -217,12 +223,6 @@ msgstr "gateway"
 
 msgid "status change"
 msgstr "statusförändring"
-
-msgid "collection percentage"
-msgstr "insamling"
-
-msgid "unknown"
-msgstr "okänd"
 
 msgid "ok"
 msgstr "ok"
@@ -280,9 +280,6 @@ msgstr "skapade användaren {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "misslyckades med att skapa användare: {{error}}"
 
-msgid "email address already exists"
-msgstr "e-postadressen finns redan"
-
 msgid "successfully updated user {{name}} ({{email}})"
 msgstr "uppdaterade användare {{name}} ({{email}}"
 
@@ -312,9 +309,6 @@ msgstr "kunde inte skapa urval: {{error}}"
 
 msgid "failed to update selection: {{error}}"
 msgstr "kunde inte uppdatera urval: {{error}}"
-
-msgid "deleted selection"
-msgstr "tog bort urval"
 
 msgid "failed to delete selection: {{error}}"
 msgstr "kunde inte ta bort urval: {{error}}"
@@ -349,33 +343,29 @@ msgstr "produktmodeller"
 msgid "no gateways"
 msgstr "inga gateways"
 
-msgid "{{count}} gateways are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
-
 msgid "list"
 msgstr "lista"
-
-msgid "all meters in selection"
-msgstr "alla mätare i urvalet"
 
 msgid "dashboard"
 msgstr "dashboard"
 
+msgid "all meters in selection"
+msgstr "alla mätare i urvalet"
+
 msgid "report"
 msgstr "rapport"
 
-msgid "select meters to include in graph"
-msgstr "välj mätare för att inkludera dem i grafen"
+msgid "select medium"
+msgstr "välj mätartyp"
 
 msgid "select quantities"
 msgstr "välj storheter"
 
+msgid "select meters to include in graph"
+msgstr "välj mätare för att inkludera dem i grafen"
+
 msgid "graph"
 msgstr "graf"
-
-msgid "table"
-msgstr "tabell"
 
 msgid "save as"
 msgstr "spara som"
@@ -419,10 +409,6 @@ msgstr "profil"
 msgid "logout"
 msgstr "logga ut"
 
-msgid "{{count}} meters are not displayed in the map due to low accuracy"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
-
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "av {{count}} mätpunkter"
@@ -440,24 +426,41 @@ msgid "meter°"
 msgstr "mätare"
 
 msgctxt "°plural"
-msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
-
-msgctxt "°plural"
 msgid "alarm°"
 msgstr "larm"
 
-msgctxt "°plural"
-msgid "{{count}} meters are not displayed in the map due to low accuracy°"
-msgstr ""
-"{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+#~ msgid "interval"
+#~ msgstr "intervall"
 
-msgid "hour in short"
-msgstr "h"
+#~ msgid "show only changes"
+#~ msgstr "visa bara ändringar"
 
-msgid "minute in short"
-msgstr "m"
+#~ msgid "email address already exists"
+#~ msgstr "e-postadressen finns redan"
+
+#~ msgid "deleted selection"
+#~ msgstr "tog bort urval"
+
+#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy"
+#~ msgstr ""
+#~ "{{count}} gateway visas inte på kartan, på grund av låg tillförlitlighet"
+
+#~ msgid "table"
+#~ msgstr "tabell"
+
+#~ msgid "{{count}} meters are not displayed in the map due to low accuracy"
+#~ msgstr ""
+#~ "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
+#~ msgstr ""
+#~ "{{count}} gateways visas inte på kartan, på grund av låg tillförlitlighet"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} meters are not displayed in the map due to low accuracy°"
+#~ msgstr ""
+#~ "{{count}} mätare visas inte på kartan, på grund av låg tillförlitlighet"
 
 #~ msgid "export to Excel (.csv)"
 #~ msgstr "exportera till Excel (.csv)"

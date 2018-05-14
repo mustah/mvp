@@ -19,7 +19,6 @@ export const initialState: IndicatorState = {
 
 type ActionTypes = EmptyAction<string> | Action<IndicatorWithinUseCase>;
 
-// TODO include the medium in the action name, so that the graph container can deselect the currently selected quantities
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
     case TOGGLE_INDICATOR_WIDGET:

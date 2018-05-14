@@ -67,7 +67,7 @@
       }
 
       &.info {
-        @extend .info;
+        background-color: $blue;
       }
 
       &.warning {
