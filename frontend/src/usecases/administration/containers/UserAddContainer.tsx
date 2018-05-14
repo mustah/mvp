@@ -69,7 +69,6 @@ class UserAdd extends React.Component<Props> {
   }
 }
 
-// TODO get organisations and roles from backend
 const mapStateToProps = ({domainModels: {organisations}, auth: {user}}: RootState): StateToProps => ({
   organisations: getOrganisations(organisations),
   roles: getRoles(user!),
