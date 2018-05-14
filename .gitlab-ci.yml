@@ -373,10 +373,13 @@ finalize:create-jira-version:
     - schedules
     - tags
   allow_failure: true
+  variables:
+     JIRA_USER: "app.jira.evo@elvaco.se"
+     JIRA_TOKEN: "xR5ABiHwbEWrOiEY71BW9E99"
   before_script:
     - pip install -r scripts/jira/requirements.txt
   script:
-    - python3 scripts/jira/fixversion.py --version $(cat .version) --jira_user mattias.ryrlen@elvaco.se --jira_token QouvoU7HCFQJ0ohWYyrL5FD1
+    - python3 scripts/jira/fixversion.py --version $(cat .version) --jira_user $JIRA_USER --jira_token $JIRA_TOKEN
 
 finalize:tag-production-geoservice-docker:
   <<: *no_cache
