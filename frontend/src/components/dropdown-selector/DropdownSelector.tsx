@@ -40,7 +40,8 @@ const filterBy = (list: SelectionListItem[], exp: string) => {
   return list.filter(({name}: IdNamed) => regExp.test(name));
 };
 
-const selectedOptions = (list: SelectionListItem[]) => list.filter((item: SelectionListItem) => item.selected).length;
+const selectedOptions = (list: SelectionListItem[]): number =>
+    list.filter((item: SelectionListItem) => item.selected).length;
 
 const replaceAtIndex = (array: SelectionListItem[], newItem: SelectionListItem, index: number): SelectionListItem[] =>
   ([...array.slice(0, index), newItem, ...array.slice(index + 1)]);
@@ -67,8 +68,8 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
     const visibleItems = this.props.visibleItems;
     const numEntries = filteredList.length;
 
-    const selected = selectedOptions(list);
-    const selectedOverview = selected && selected + ' / ' + list.length || firstUpperTranslated('all');
+    const selected: number = selectedOptions(list);
+    const selectedOverview: string = selected && selected + ' / ' + list.length || firstUpperTranslated('all');
 
     return (
       <Row className="DropdownSelector">
@@ -154,4 +155,5 @@ export class DropdownSelector extends React.PureComponent<GenericDropdownProps, 
       />
     );
   }
+
 }

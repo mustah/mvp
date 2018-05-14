@@ -59,9 +59,14 @@ export const selectSavedSelection = (selectedId: uuid) =>
 export const toggleParameterInSelection = (selectionParameter: SelectionParameter) =>
   (dispatch, getState: GetState) => {
     const {parameter, id} = selectionParameter;
-    const selected = getSelection(getState().userSelection).selectionParameters[parameter];
+    const selected: UserSelection = getSelection(getState().userSelection);
 
-    Maybe.maybe<Period | FilterParam[]>(selected)
+    if (!(parameter in selected.selectionParameters)) {
+      return;
+    }
+    const selectedSection = selected.selectionParameters[parameter];
+
+    Maybe.maybe<Period | FilterParam[]>(selectedSection)
       .filter((value: Period | FilterParam[]) => Array.isArray(value) && value.includes(id as FilterParam))
       .map(() => dispatch(deselectParameterInSelection(selectionParameter)))
       .orElseGet(() => dispatch(addParameterToSelection(selectionParameter)));

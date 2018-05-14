@@ -75,8 +75,10 @@ class SelectionContent extends React.Component<Props> {
       toggleSelection,
     } = this.props;
 
-    const selectCity = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.cities});
-    const selectAddress = (selection: IdNamed) => toggleSelection({...selection, parameter: ParameterName.addresses});
+    const selectCity = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.cities});
+    const selectAddress = (selection: IdNamed) =>
+      toggleSelection({...selection, parameter: ParameterName.addresses});
     const selectMeterStatus = (selection: IdNamed) =>
       toggleSelection({...selection, parameter: ParameterName.meterStatuses});
     const selectGatewayStatus = (selection: IdNamed) =>
