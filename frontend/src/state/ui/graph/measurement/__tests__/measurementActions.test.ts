@@ -255,7 +255,7 @@ describe('measurementActions', () => {
         Period.currentMonth,
         Maybe.nothing(),
         updateState,
-        logout
+        logout,
       );
       const expected: GraphContainerState = {...initialState};
       expect(state).toEqual(expected);
@@ -278,7 +278,7 @@ describe('measurementActions', () => {
         Period.currentMonth,
         Maybe.nothing(),
         updateState,
-        logout
+        logout,
       );
       expect(requestedUrls.length).toEqual(1);
       expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);

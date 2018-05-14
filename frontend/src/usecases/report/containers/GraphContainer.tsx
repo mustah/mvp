@@ -110,6 +110,100 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     error: Maybe.nothing(),
   };
 
+  private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
+
+  private tooltipPayload: ActiveDataPoint;
+
+  private activeDataKey: uuid;
+
+  async componentDidMount() {
+    const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
+    this.setState({isFetching: true});
+    await fetchMeasurements(
+      selectedIndicators,
+      selectedQuantities,
+      selectedListItems,
+      period,
+      customDateRange,
+      this.updateState,
+      logout,
+    );
+  }
+
+  async componentWillReceiveProps({
+    selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
+  }: Props) {
+    const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
+    if (somethingChanged) {
+      this.setState({isFetching: true});
+      this.resetDots();
+      await fetchMeasurements(
+        selectedIndicators,
+        selectedQuantities,
+        selectedListItems,
+        period,
+        customDateRange,
+        this.updateState,
+        logout,
+      );
+    }
+  }
+
+  render() {
+    const {selectedListItems, selectedQuantities, selectQuantities, selectedIndicators} = this.props;
+    const {graphContents} = this.state;
+    const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
+    const {data, legend} = graphContents;
+
+    const missingData = (
+      <MissingDataTitle
+        title={firstUpperTranslated('select meters to include in graph')}
+      />
+    );
+
+    return (
+      <div>
+        <QuantitySelector
+          selectedIndicators={selectedIndicators}
+          selectedQuantities={selectedQuantities}
+          selectQuantities={selectQuantities}
+        />
+        <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
+          <HasContent
+            hasContent={selectedListItems.length > 0}
+            fallbackContent={missingData}
+          >
+            <Row className="GraphContainer">
+              <Row className="Graph">
+                <ResponsiveContainer aspect={2.5}>
+                  <LineChart
+                    width={10}
+                    height={50}
+                    data={data}
+                    margin={margin}
+                    onMouseMove={this.setTooltipPayload}
+                  >
+                    <XAxis
+                      dataKey="name"
+                      domain={['dataMin', 'dataMax']}
+                      scale="time"
+                      tickFormatter={timestamp}
+                      type="number"
+                    />
+                    <CartesianGrid strokeDasharray="3 3"/>
+                    <Tooltip content={this.renderToolTip}/>
+                    <Legend payload={legend}/>
+                    {lines}
+                  </LineChart>
+                </ResponsiveContainer>
+              </Row>
+            </Row>
+          </HasContent>
+        </Loader>
+      </div>
+    );
+  }
+
   updateState = (state: GraphContainerState) => this.setState({...state});
 
   clearError = async () => {
@@ -165,99 +259,6 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
     return sortedActiveDots.length ? sortedActiveDots[0].dataKey : undefined;
   }
 
-  private dots: Dictionary<Dictionary<{dataKey: uuid; cy: number}>> = {};
-
-  private tooltipPayload: ActiveDataPoint;
-
-  private activeDataKey: uuid;
-
-  async componentDidMount() {
-    const {selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators} = this.props;
-    this.setState({isFetching: true});
-    await fetchMeasurements(
-      selectedIndicators,
-      selectedQuantities,
-      selectedListItems,
-      period,
-      customDateRange,
-      this.updateState,
-      logout,
-    );
-  }
-
-  async componentWillReceiveProps({
-    selectedListItems, period, customDateRange, selectedQuantities, logout, selectedIndicators,
-  }: Props) {
-    const somethingChanged = true || period !== this.props.period; // TODO: Should not always return "true"
-    if (somethingChanged) {
-      this.setState({isFetching: true});
-      this.resetDots();
-      await fetchMeasurements(
-        selectedIndicators,
-        selectedQuantities,
-        selectedListItems,
-        period,
-        customDateRange,
-        this.updateState,
-        logout,
-      );
-    }
-  }
-
-  render() {
-    const {selectedQuantities, selectQuantities, selectedIndicators} = this.props;
-    const {graphContents} = this.state;
-    const lines = renderGraphContents(graphContents, this.renderAndStoreDot, this.renderActiveDot);
-    const {data, legend} = graphContents;
-
-    const missingData = (
-      <MissingDataTitle
-        title={firstUpperTranslated('select meters to include in graph')}
-      />
-    );
-
-    return (
-      <div>
-        <QuantitySelector
-          selectedIndicators={selectedIndicators}
-          selectedQuantities={selectedQuantities}
-          selectQuantities={selectQuantities}
-        />
-        <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
-          <HasContent
-            hasContent={selectedListItems.length > 0}
-            fallbackContent={missingData}
-          >
-            <Row className="GraphContainer">
-              <Row className="Graph">
-                <ResponsiveContainer aspect={2.5}>
-                  <LineChart
-                    width={10}
-                    height={50}
-                    data={data}
-                    margin={margin}
-                    onMouseMove={this.setTooltipPayload}
-                  >
-                    <XAxis
-                      dataKey="name"
-                      domain={['dataMin', 'dataMax']}
-                      scale="time"
-                      tickFormatter={timestamp}
-                      type="number"
-                    />
-                    <CartesianGrid strokeDasharray="3 3"/>
-                    <Tooltip content={this.renderToolTip}/>
-                    <Legend payload={legend}/>
-                    {lines}
-                  </LineChart>
-                </ResponsiveContainer>
-              </Row>
-            </Row>
-          </HasContent>
-        </Loader>
-      </div>
-    );
-  }
 }
 
 const mapStateToProps = (
