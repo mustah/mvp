@@ -1,5 +1,7 @@
 import {normalize} from 'normalizr';
 import {EndPoints} from '../../../services/endPoints';
+import {LOGOUT_USER} from '../../../usecases/auth/authActions';
+import {makeActionsOf, RequestHandler} from '../../summary/summaryApiActions';
 import {
   ADD_PARAMETER_TO_SELECTION,
   DESELECT_SELECTION,
@@ -7,7 +9,6 @@ import {
   SELECT_PERIOD,
   SELECT_SAVED_SELECTION,
 } from '../../user-selection/userSelectionActions';
-import {makeActionsOf, RequestHandler} from '../../summary/summaryApiActions';
 import {NormalizedSelectionTree, SelectionTreeState} from '../selectionTreeModels';
 import {initialState, selectionTree} from '../selectionTreeReducer';
 import {selectionTreeSchema} from '../selectionTreeSchemas';
@@ -162,6 +163,17 @@ describe('selectionTreeReducer', () => {
           ...payload,
           error,
         });
+    });
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: SelectionTreeState = selectionTree(initialState, actions.request());
+
+      state = selectionTree(state, {type: LOGOUT_USER});
+
+      expect(state).toEqual(initialState);
     });
   });
 

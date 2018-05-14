@@ -1,6 +1,11 @@
 import {normalize, Schema} from 'normalizr';
 import {Dispatch} from 'react-redux';
-import {createEmptyAction, createPayloadAction, EmptyAction, PayloadAction} from 'react-redux-typescript';
+import {
+  createEmptyAction,
+  createPayloadAction,
+  EmptyAction,
+  PayloadAction,
+} from 'react-redux-typescript';
 import {InvalidToken} from '../../exceptions/InvalidToken';
 import {makeUrl} from '../../helpers/urlFactory';
 import {GetState, RootState} from '../../reducers/rootReducer';
@@ -47,7 +52,8 @@ interface AsyncRequest<REQUEST_MODEL, DATA> extends RequestHandler<DATA>, Reques
   dispatch: Dispatch<RootState>;
 }
 
-// TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same try-catch?
+// TODO: Add tests for this function? yes. what about not wrapping afterSuccess() in the same
+// try-catch?
 const asyncRequest = async <REQUEST_MODEL, DATA>(
   {
     request,
@@ -104,14 +110,10 @@ export const fetchIfNeeded = <T extends Identifiable>(
     (dispatch, getState: GetState) => {
       const {domainModels} = getState();
       if (shouldFetch(domainModels[entityType])) {
-        const formatData = (data) => {
-          return normalize(data, schema);
-        };
-
         const requestFunc = (requestData: string) => restClient.get(makeUrl(endPoint, requestData));
         return asyncRequest<string, Normalized<T>>({
           ...getRequestOf<Normalized<T>>(endPoint),
-          formatData,
+          formatData: (data) => normalize(data, schema),
           requestFunc,
           requestData,
           ...requestCallbacks,

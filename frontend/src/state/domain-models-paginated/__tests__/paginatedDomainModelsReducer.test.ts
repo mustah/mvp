@@ -2,6 +2,7 @@ import {mockSelectionAction} from '../../../__tests__/testActions';
 import {makeMeter} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {ErrorResponse, Identifiable, IdNamed, Status} from '../../../types/Types';
+import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {Gateway} from '../gateway/gatewayModels';
 import {clearErrorMeters} from '../meter/meterApiActions';
 import {Meter, MetersState} from '../meter/meterModels';
@@ -9,17 +10,14 @@ import {
   HasPageNumber,
   NormalizedPaginated,
   NormalizedPaginatedState,
+  PaginatedDomainModelsState,
 } from '../paginatedDomainModels';
 import {makeRequestActionsOf} from '../paginatedDomainModelsActions';
 import {makeEntityRequestActionsOf} from '../paginatedDomainModelsEntityActions';
-import {
-  initialPaginatedDomain,
-  meters,
-  paginatedDomainModels,
-} from '../paginatedDomainModelsReducer';
+import {makeInitialState, meters, paginatedDomainModels} from '../paginatedDomainModelsReducer';
 
 describe('paginatedDomainModelsReducer', () => {
-  const initialState: MetersState = initialPaginatedDomain<Meter>();
+  const initialState: MetersState = makeInitialState<Meter>();
 
   describe('meters, paginated', () => {
 
@@ -235,24 +233,50 @@ describe('paginatedDomainModelsReducer', () => {
         result: {[payload.page]: {isFetching: false, isSuccessfullyFetched: false}},
       };
       expect(meters(errorState, clearErrorMeters(payload))).toEqual(expected);
-
     });
   });
 
   describe('clear paginatedDomainModels', () => {
+
     it('clears a cached data', () => {
       expect(paginatedDomainModels(
         {
           meters: {
-            ...initialPaginatedDomain<Meter>(),
+            ...makeInitialState<Meter>(),
             entities: {1: {...makeMeter(1, {id: 1, name: 'Mo'}, {id: 1, name: 'b'})}},
           },
           gateways: {
-            ...initialPaginatedDomain<Gateway>(),
+            ...makeInitialState<Gateway>(),
           },
         },
         mockSelectionAction,
-      )).toEqual({meters: initialPaginatedDomain(), gateways: initialPaginatedDomain()});
+      )).toEqual({meters: makeInitialState<Meter>(), gateways: makeInitialState<Gateway>()});
+    });
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: PaginatedDomainModelsState = {
+        meters: {
+          ...makeInitialState<Meter>(),
+          isFetchingSingle: true,
+        },
+        gateways: {
+          ...makeInitialState<Gateway>(),
+          isFetchingSingle: true,
+
+        },
+      };
+
+      const expected: PaginatedDomainModelsState = {
+        meters: {...makeInitialState<Meter>()},
+        gateways: {...makeInitialState<Gateway>()},
+      };
+
+      state = paginatedDomainModels(state, {type: LOGOUT_USER});
+
+      expect(state).toEqual(expected);
     });
   });
 });

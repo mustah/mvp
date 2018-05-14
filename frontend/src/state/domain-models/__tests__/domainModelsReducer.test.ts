@@ -3,6 +3,7 @@ import {mockSelectionAction} from '../../../__tests__/testActions';
 import {testData} from '../../../__tests__/testDataFactory';
 import {EndPoints} from '../../../services/endPoints';
 import {Action, IdNamed} from '../../../types/Types';
+import {LOGOUT_USER} from '../../../usecases/auth/authActions';
 import {clearErrorGatewayMapMarkers} from '../../../usecases/map/gatewayMapMarkerApiActions';
 import {MapMarker} from '../../../usecases/map/mapModels';
 import {Gateway} from '../../domain-models-paginated/gateway/gatewayModels';
@@ -296,6 +297,23 @@ describe('domainModelsReducer', () => {
       expect(gatewayMapMarkers(errorState, clearErrorGatewayMapMarkers())).toEqual({
         ...initialDomain<Gateway>(),
       });
+    });
+  });
+
+  describe('logout user', () => {
+
+    it('resets state to initial state', () => {
+      let state: NormalizedState<MapMarker> = {
+        ...initialDomain<MapMarker>(),
+        isSuccessfullyFetched: true,
+        error: {message: 'an error'},
+      };
+
+      state = gatewayMapMarkers(state, {type: LOGOUT_USER});
+
+      const expected: NormalizedState<MapMarker> = {...initialDomain<MapMarker>()};
+
+      expect(state).toEqual(expected);
     });
   });
 
