@@ -25,4 +25,5 @@ describe('rootReducer', () => {
     expect(state).not.toEqual(initialState);
     expect(rootReducer(state, logoutUser(undefined))).toEqual(initialState);
   });
+
 });

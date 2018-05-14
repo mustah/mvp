@@ -1,6 +1,6 @@
 import {routerReducer as routing, RouterState} from 'react-router-redux';
 import {Reducer} from 'redux';
-import {persistCombineReducers} from 'redux-persist';
+import {createMigrate, MigrationDispatch, persistCombineReducers} from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import {PersistConfig, PersistedState} from 'redux-persist/lib/types';
 import {PaginatedDomainModelsState} from '../state/domain-models-paginated/paginatedDomainModels';
@@ -22,6 +22,7 @@ import {dashboard, DashboardState} from '../usecases/dashboard/dashboardReducer'
 import {map, MapState} from '../usecases/map/mapReducer';
 import {ReportState} from '../usecases/report/reportModels';
 import {report} from '../usecases/report/reportReducer';
+import {currentVersion, migrations} from './stateMigrations';
 
 export interface RootState {
   auth: AuthState;
@@ -44,10 +45,14 @@ export type GetState = () => RootState;
 
 const whitelist: Array<keyof RootState> = ['auth', 'language', 'ui', 'userSelection'];
 
+const migrate: MigrationDispatch = createMigrate(migrations);
+
 const persistConfig: PersistConfig = {
   key: 'primary',
   storage,
   whitelist,
+  migrate,
+  version: currentVersion,
 };
 
 export const rootReducer: Reducer<undefined | ((AppState | undefined) & PersistedState)> =
