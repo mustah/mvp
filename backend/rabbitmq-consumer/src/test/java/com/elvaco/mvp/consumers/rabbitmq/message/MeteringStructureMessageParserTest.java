@@ -70,9 +70,18 @@ public class MeteringStructureMessageParserTest {
     assertThat(messageParser.parseStructureMessage("")).isEmpty();
     assertThat(messageParser.parseStructureMessage("{\"foo\": 1999}")).isEmpty();
     assertThat(messageParser.parseStructureMessage("}}}}}}}}}}}}[]]}}}}}}}}}}¡")).isEmpty();
+  }
 
+  @Test
+  public void parseStructureMessageMissingGateway() {
     String missingGateway = parseJsonFile("messages/reference-info-missing-gateway.json");
-    assertThat(messageParser.parseStructureMessage(missingGateway)).isEmpty();
+    assertThat(messageParser.parseStructureMessage(missingGateway)).isPresent();
+  }
+
+  @Test
+  public void parseStructureMessageMissingMeter() {
+    String missingMeter = parseJsonFile("messages/reference-info-missing-meter.json");
+    assertThat(messageParser.parseStructureMessage(missingMeter)).isPresent();
   }
 
   @Test

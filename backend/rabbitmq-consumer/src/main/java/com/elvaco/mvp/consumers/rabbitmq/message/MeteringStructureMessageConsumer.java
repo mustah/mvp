@@ -1,8 +1,12 @@
 package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.util.Optional;
+import java.util.UUID;
+import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
+import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.core.domainmodels.Gateway;
 import com.elvaco.mvp.core.domainmodels.Location;
@@ -41,7 +45,7 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
     Organisation organisation = organisationUseCases.findOrCreate(structureMessage.organisationId);
     FacilityDto facility = structureMessage.facility;
 
-    if (facility.id.trim().isEmpty()) {
+    if (facility == null || facility.id.trim().isEmpty()) {
       log.warn("Discarding message with invalid facility id: '{}'", structureMessage);
       return;
     }
@@ -52,19 +56,67 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
       .address(facility.address)
       .build();
 
-    LogicalMeter logicalMeter = logicalMeterUseCases
-      .findByOrganisationIdAndExternalId(organisation.id, facility.id)
-      .orElseGet(() ->
-        new LogicalMeter(
-          randomUUID(),
-          facility.id,
-          organisation.id,
-          MeterDefinition.fromMedium(Medium.from(structureMessage.meter.medium)),
-          location
-        )).withLocation(location);
+    LogicalMeter logicalMeter = findOrCreateLogicalMeter(
+      structureMessage.meter,
+      location,
+      organisation.id,
+      facility.id
+    );
 
-    String address = structureMessage.meter.id;
-    Integer expectedInterval = structureMessage.meter.expectedInterval;
+    Optional<PhysicalMeter> physicalMeter = Optional.ofNullable(structureMessage.meter)
+      .map(meter ->
+        findOrCreatePhysicalMeter(
+          meter,
+          organisation,
+          facility,
+          logicalMeter
+        ));
+
+    Optional<Gateway> gateway = Optional.ofNullable(findOrCreateGateway(
+      structureMessage.gateway,
+      logicalMeter,
+      organisation.id
+    ));
+
+    gateway.ifPresent(gatewayUseCases::save);
+
+    Optional.ofNullable(logicalMeter)
+      .map(meter -> physicalMeter.map(meter::withPhysicalMeter).orElse(meter))
+      .map(meter -> gateway.map(meter::withGateway).orElse(meter))
+      .map(logicalMeterUseCases::save)
+      .ifPresent(meter -> geocodeService.fetchCoordinates(
+        LocationWithId.of(meter.location, meter.id))
+      );
+  }
+
+  @Nullable
+  private LogicalMeter findOrCreateLogicalMeter(
+    @Nullable MeterDto meterDto,
+    Location location,
+    UUID organisationId,
+    String facilityId
+  ) {
+    return logicalMeterUseCases.findByOrganisationIdAndExternalId(organisationId, facilityId)
+      .map(logicalMeter -> logicalMeter.withLocation(location))
+      .orElseGet(() ->
+        Optional.ofNullable(meterDto)
+          .map(meter -> new LogicalMeter(
+            randomUUID(),
+            facilityId,
+            organisationId,
+            MeterDefinition.fromMedium(Medium.from(meter.medium)),
+            location
+          ))
+          .orElse(null));
+  }
+
+  private PhysicalMeter findOrCreatePhysicalMeter(
+    MeterDto meterDto,
+    Organisation organisation,
+    FacilityDto facility,
+    @Nullable LogicalMeter logicalMeter
+  ) {
+    String address = meterDto.id;
 
     PhysicalMeter physicalMeter = physicalMeterUseCases
       .findByOrganisationIdAndExternalIdAndAddress(organisation.id, facility.id, address)
@@ -73,53 +125,47 @@ public class MeteringStructureMessageConsumer implements StructureMessageConsume
           .organisation(organisation)
           .address(address)
           .externalId(facility.id)
-          .medium(structureMessage.meter.medium)
-          .manufacturer(structureMessage.meter.manufacturer)
-          .logicalMeterId(logicalMeter.id)
-          .readIntervalMinutes(Optional.ofNullable(expectedInterval).orElse(0))
-          .build()
-      ).withMedium(structureMessage.meter.medium)
-      .withManufacturer(structureMessage.meter.manufacturer)
-      .withLogicalMeterId(logicalMeter.id)
-      .withReadIntervalMinutes(expectedInterval)
-      .replaceActiveStatus(StatusType.from(structureMessage.meter.status));
+          .build());
 
-    Gateway gateway = findOrCreateGateway(
-      organisation,
-      logicalMeter,
-      structureMessage.gateway.id,
-      structureMessage.gateway.productModel
-    ).withProductModel(structureMessage.gateway.productModel)
-      .replaceActiveStatus(StatusType.from(structureMessage.gateway.status));
+    physicalMeter = physicalMeter.withMedium(meterDto.medium)
+      .withManufacturer(meterDto.manufacturer)
+      .replaceActiveStatus(StatusType.from(meterDto.status))
+      .withReadIntervalMinutes(meterDto.expectedInterval);
 
-    gatewayUseCases.save(gateway);
+    if (logicalMeter != null) {
+      physicalMeter = physicalMeter.withLogicalMeterId(logicalMeter.id);
+    }
 
-    LogicalMeter meter = logicalMeter
-      .withGateway(gateway)
-      .withPhysicalMeter(physicalMeter);
-
-    logicalMeterUseCases.save(meter);
-
-    geocodeService.fetchCoordinates(LocationWithId.of(meter.location, meter.id));
+    return physicalMeter;
   }
 
+  @Nullable
   private Gateway findOrCreateGateway(
-    Organisation organisation,
-    LogicalMeter logicalMeter,
-    String serial,
-    String productModel
+    @Nullable GatewayStatusDto gatewayStatusDto,
+    @Nullable LogicalMeter logicalMeter,
+    UUID organisationId
   ) {
-    return gatewayUseCases.findBy(organisation.id, productModel, serial)
-      .orElseGet(() ->
-        gatewayUseCases.findBy(organisation.id, serial)
+    if (gatewayStatusDto != null && logicalMeter != null) {
+      return gatewayUseCases.findBy(
+        organisationId,
+        gatewayStatusDto.productModel,
+        gatewayStatusDto.id
+      ).orElseGet(() ->
+        gatewayUseCases.findBy(organisationId, gatewayStatusDto.id)
           .orElseGet(() ->
             new Gateway(
               randomUUID(),
-              organisation.id,
-              serial,
-              productModel,
+              organisationId,
+              gatewayStatusDto.id,
+              gatewayStatusDto.productModel,
               singletonList(logicalMeter),
               emptyList() // TODO Save gateway status
-            )));
+            ))
+      )
+        .withProductModel(gatewayStatusDto.productModel)
+        .replaceActiveStatus(StatusType.from(gatewayStatusDto.status));
+    } else {
+      return null;
+    }
   }
 }
