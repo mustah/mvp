@@ -225,7 +225,7 @@ class GraphComponent extends React.Component<Props, GraphContainerState> {
         />
         <Loader isFetching={this.state.isFetching} error={this.state.error} clearError={this.clearError}>
           <HasContent
-            hasContent={data.length > 0}
+            hasContent={selectedListItems.length > 0}
             fallbackContent={missingData}
           >
             <Row className="GraphContainer">
