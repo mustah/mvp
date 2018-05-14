@@ -14,6 +14,7 @@ import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -45,7 +46,13 @@ public final class LogicalMeterHelper {
       );
 
       List<PhysicalMeter> physicalMeters = new ArrayList<>();
-      logicalMeters.forEach(logicalMeter -> physicalMeters.addAll(logicalMeter.physicalMeters));
+      logicalMeters.forEach(logicalMeter -> {
+          if (logicalMeter.physicalMeters.isEmpty()) {
+            throw new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId);
+          }
+          physicalMeters.addAll(logicalMeter.physicalMeters);
+        }
+      );
       physicalMeterQuantityMap.put(complementedQuantity, physicalMeters);
     });
     return physicalMeterQuantityMap;

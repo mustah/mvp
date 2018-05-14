@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.elvaco.mvp.core.exception.EmailAddressAlreadyExists;
 import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 import com.elvaco.mvp.core.exception.PredicateConstructionFailure;
 import com.elvaco.mvp.core.exception.Unauthorized;
 import com.elvaco.mvp.core.exception.UnitConversionError;
@@ -104,6 +105,11 @@ public class ApiExceptionHandler {
     return forbidden(exception);
   }
 
+  @ExceptionHandler(NoPhysicalMeters.class)
+  public ResponseEntity<ErrorMessageDto> handle(NoPhysicalMeters exception) {
+    return notFound(exception);
+  }
+
   @ExceptionHandler(UpstreamServiceUnavailable.class)
   public ResponseEntity<ErrorMessageDto> handle(UpstreamServiceUnavailable exception) {
     ErrorMessageDto dto = new ErrorMessageDto(
@@ -128,13 +134,20 @@ public class ApiExceptionHandler {
   }
 
   private static ResponseEntity<ErrorMessageDto> badRequest(String message) {
-    ErrorMessageDto dto = new ErrorMessageDto(message, HttpStatus.BAD_REQUEST.value());
-    return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+    return httpError(message, HttpStatus.BAD_REQUEST);
   }
 
   private static ResponseEntity<ErrorMessageDto> forbidden(Exception exception) {
-    ErrorMessageDto dto = new ErrorMessageDto(exception.getMessage(), HttpStatus.FORBIDDEN.value());
-    return new ResponseEntity<>(dto, HttpStatus.FORBIDDEN);
+    return httpError(exception.getMessage(), HttpStatus.FORBIDDEN);
+  }
+
+  private static ResponseEntity<ErrorMessageDto> notFound(Exception exception) {
+    return httpError(exception.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  private static ResponseEntity<ErrorMessageDto> httpError(String message, HttpStatus status) {
+    ErrorMessageDto dto = new ErrorMessageDto(message, status.value());
+    return new ResponseEntity<>(dto, status);
   }
 
   private static class ApiExceptionInformation {
