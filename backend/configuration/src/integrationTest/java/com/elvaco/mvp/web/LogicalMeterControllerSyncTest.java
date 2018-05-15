@@ -55,6 +55,8 @@ public class LogicalMeterControllerSyncTest extends RabbitIntegrationTest {
   public void setUp() {
     otherOrganisation = organisations.save(new Organisation(
       randomUUID(),
+      "Other Organisation",
+      "other-organisation",
       "Other Organisation"
     ));
   }

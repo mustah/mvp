@@ -190,7 +190,8 @@ public class MeasurementMapperTest {
         .organisation(new Organisation(
           randomUUID(),
           "An organisation",
-          "an-organisation"
+          "an-organisation",
+          "An organisation"
         ))
         .externalId(physicalMeterId.toString())
         .address("1234")

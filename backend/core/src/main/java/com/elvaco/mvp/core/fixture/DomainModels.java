@@ -14,13 +14,19 @@ import static java.util.UUID.randomUUID;
 @UtilityClass
 public class DomainModels {
 
-  public static final Organisation ELVACO = new Organisation(randomUUID(), "Elvaco", "elvaco");
+  public static final Organisation ELVACO = new Organisation(
+    randomUUID(),
+    "Elvaco",
+    "elvaco",
+    "Elvaco"
+  );
 
   public static final Organisation WAYNE_INDUSTRIES =
     new Organisation(
       randomUUID(),
       "Wayne Industries",
-      "wayne-industries"
+      "wayne-industries",
+      "Wayne Industries"
     );
 
   public static final String ELVACO_SUPER_ADMIN_USER_PASSWORD = "admin123";

@@ -24,7 +24,12 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
         "test@test.test",
         "password",
         Language.en,
-        new Organisation(UUID.randomUUID(), "test-organisation"),
+        new Organisation(
+          UUID.randomUUID(),
+          "Test Organisation",
+          "test-organisation",
+          "Test Organisation"
+        ),
         roles
       ),
       "testing-token"

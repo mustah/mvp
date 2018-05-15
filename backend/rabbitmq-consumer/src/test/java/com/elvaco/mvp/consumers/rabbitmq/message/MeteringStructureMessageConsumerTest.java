@@ -42,6 +42,7 @@ import com.elvaco.mvp.testing.repository.MockOrganisations;
 import com.elvaco.mvp.testing.repository.MockPhysicalMeters;
 import com.elvaco.mvp.testing.repository.MockUsers;
 import com.elvaco.mvp.testing.security.MockAuthenticatedUser;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -61,6 +62,7 @@ public class MeteringStructureMessageConsumerTest {
   private static final Integer READ_INTERVAL_IN_MINUTES = 15;
   private static final String HOT_WATER_MEDIUM = "Hot water";
   private static final String ADDRESS = "1234";
+  private static final String ORGANISATION_EXTERNAL_ID = "Some Organisation";
   private static final String ORGANISATION_SLUG = "some-organisation";
   private static final String EXTERNAL_ID = "ABC-123";
   private static final Location LOCATION_KUNGSBACKA = new LocationBuilder()
@@ -92,7 +94,12 @@ public class MeteringStructureMessageConsumerTest {
         .email("mock@somemail.nu")
         .password("P@$$w0rD")
         .language(Language.en)
-        .organisation(new Organisation(randomUUID(), "some organisation", ORGANISATION_SLUG))
+        .organisation(new Organisation(
+          randomUUID(),
+          ORGANISATION_EXTERNAL_ID,
+          ORGANISATION_SLUG,
+          ORGANISATION_EXTERNAL_ID
+        ))
         .asSuperAdmin()
         .build(),
       randomUUID().toString()
@@ -205,12 +212,12 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   @Test
-  public void createsOrganisationWithSameNameAsCode() {
+  public void createsOrganisationWithSameNameAsExternalId() {
     messageHandler.accept(newStructureMessage(HOT_WATER_MEDIUM));
 
     Organisation organisation = findOrganisation();
 
-    assertThat(organisation.name).isEqualTo(ORGANISATION_SLUG);
+    assertThat(organisation.name).isEqualTo(ORGANISATION_EXTERNAL_ID);
   }
 
   @Test
@@ -296,7 +303,7 @@ public class MeteringStructureMessageConsumerTest {
   @Test
   public void addsSecondPhysicalMeterToExistingLogicalMeter() {
     Organisation organisation = organisations.save(
-      newOrganisation("An existing organisation", ORGANISATION_SLUG)
+      newOrganisation(ORGANISATION_EXTERNAL_ID, ORGANISATION_SLUG)
     );
     ZonedDateTime now = ZonedDateTime.now();
     UUID logicalMeterId = randomUUID();
@@ -517,7 +524,7 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   private Organisation saveDefaultOrganisation() {
-    return organisations.save(newOrganisation(ORGANISATION_SLUG));
+    return organisations.save(newOrganisation(ORGANISATION_EXTERNAL_ID, ORGANISATION_SLUG));
   }
 
   private LogicalMeter findLogicalMeter() {
@@ -661,7 +668,7 @@ public class MeteringStructureMessageConsumerTest {
         location.getAddress()
       ),
       "Test source system",
-      ORGANISATION_SLUG,
+      ORGANISATION_EXTERNAL_ID,
       new GatewayStatusDto(
         GATEWAY_EXTERNAL_ID,
         PRODUCT_MODEL,
@@ -675,7 +682,7 @@ public class MeteringStructureMessageConsumerTest {
   }
 
   private Organisation newOrganisation(String name, String code) {
-    return new Organisation(randomUUID(), name, code);
+    return new Organisation(randomUUID(), name, code, name);
   }
 
   private static PhysicalMeterBuilder physicalMeter() {

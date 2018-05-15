@@ -9,7 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class OrganisationTest {
   @Test
   public void nameIsUsedAsExternalId() {
-    Organisation organisation = new Organisation(UUID.randomUUID(),"Räksmörgås C/O", "raksmorgas-co");
+    Organisation organisation = new Organisation(
+      UUID.randomUUID(),
+      "Räksmörgås C/O",
+      "raksmorgas-co",
+      "Räksmörgås C/O"
+    );
     assertThat(organisation.externalId).isEqualTo("Räksmörgås C/O");
   }
 }
