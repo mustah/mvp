@@ -109,4 +109,7 @@ const mapDispatchToProps = (dispatch): DispatchToProps => bindActionCreators({
 }, dispatch);
 
 export const LoginContainer =
-  connect<StateToProps, DispatchToProps>(mapStateToProps, mapDispatchToProps)(LoginContainerComponent);
+  connect<StateToProps, DispatchToProps>(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(LoginContainerComponent);
