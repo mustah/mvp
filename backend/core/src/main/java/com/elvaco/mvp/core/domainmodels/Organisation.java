@@ -24,7 +24,7 @@ public class Organisation implements Identifiable<UUID>, Serializable {
   }
 
   public Organisation(UUID id, String name, String slug) {
-    this(id, name, slug, slug);
+    this(id, name, slug, name);
   }
 
   public Organisation(UUID id, String name, String slug, String externalId) {
