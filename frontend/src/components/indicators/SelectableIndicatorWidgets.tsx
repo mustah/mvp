@@ -2,15 +2,15 @@ import * as React from 'react';
 import {Children} from '../../types/Types';
 import {Indicator} from '../../usecases/report/reportModels';
 import {Row} from '../layouts/row/Row';
-import {IndicatorType, OnSelectIndicator} from './indicatorWidgetModels';
+import {Medium, OnSelectIndicator} from './indicatorWidgetModels';
 import {SelectableIndicatorWidget} from './SelectableIndicatorWidget';
 
 export interface SelectedIndicatorWidgetProps {
-  selectedIndicatorType: IndicatorType;
+  selectedIndicatorTypes: Medium[];
 }
 
 export interface IndicatorWidgetsDispatchProps {
-  selectIndicatorWidget: OnSelectIndicator;
+  onClick: OnSelectIndicator;
 }
 
 export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, IndicatorWidgetsDispatchProps {
@@ -20,14 +20,14 @@ export interface IndicatorWidgetProps extends SelectedIndicatorWidgetProps, Indi
 }
 
 export const SelectableIndicatorWidgets = (props: IndicatorWidgetProps) => {
-  const {className, children, indicators, selectedIndicatorType, selectIndicatorWidget} = props;
+  const {className, children, indicators, selectedIndicatorTypes, onClick} = props;
 
   const indicatorWidgets = indicators.map((indicator: Indicator) => (
     <SelectableIndicatorWidget
       key={indicator.type}
       indicator={indicator}
-      isSelected={indicator.type === selectedIndicatorType}
-      select={selectIndicatorWidget}
+      isSelected={selectedIndicatorTypes.includes(indicator.type)}
+      onClick={onClick}
     />
   ));
 

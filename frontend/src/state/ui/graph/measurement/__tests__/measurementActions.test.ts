@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {Period} from '../../../../../components/dates/dateModels';
+import {Medium} from '../../../../../components/indicators/indicatorWidgetModels';
 import {Maybe} from '../../../../../helpers/Maybe';
 import {initTranslations} from '../../../../../i18n/__tests__/i18nMock';
 import {authenticate} from '../../../../../services/restClient';
@@ -234,18 +235,30 @@ describe('measurementActions', () => {
 
     it('sets default state if no quantities are provided', async () => {
       updateState({...initialState, isFetching: true});
-      expect(state).not.toEqual({...initialState});
+      const fetching: GraphContainerState = {...initialState};
+      expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements([], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
-      expect(state).toEqual({...initialState});
+      await fetchMeasurements([], [], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
+      const expected: GraphContainerState = {...initialState};
+      expect(state).toEqual(expected);
     });
 
     it('returns empty data if no meter ids are provided', async () => {
       updateState({...initialState, isFetching: true});
-      expect(state).not.toEqual({...initialState});
+      const fetching: GraphContainerState = {...initialState};
+      expect(state).not.toEqual(fetching);
 
-      await fetchMeasurements(['Power'], [], Period.currentMonth, Maybe.nothing(), updateState, logout);
-      expect(state).toEqual({...initialState});
+      await fetchMeasurements(
+        [Medium.districtHeating],
+        ['Power'],
+        [],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout,
+      );
+      const expected: GraphContainerState = {...initialState};
+      expect(state).toEqual(expected);
     });
 
     it('does not include average endpoint when asking for measurements for single meter', async () => {
@@ -258,7 +271,15 @@ describe('measurementActions', () => {
         return [200, 'some data'];
       });
 
-      await fetchMeasurements(['Power'], ['123abc'], Period.currentMonth, Maybe.nothing(), updateState, logout);
+      await fetchMeasurements(
+        [Medium.districtHeating],
+        ['Power'],
+        ['123abc'],
+        Period.currentMonth,
+        Maybe.nothing(),
+        updateState,
+        logout,
+      );
       expect(requestedUrls.length).toEqual(1);
       expect(requestedUrls[0]).toMatch(/\/measurements\?quantities=Power&meters=123abc&after=20.+Z&before=20.+Z/);
     });
@@ -274,6 +295,7 @@ describe('measurementActions', () => {
       });
 
       await fetchMeasurements(
+        [Medium.districtHeating],
         ['Power'],
         ['123abc', '345def', '456ghi'],
         Period.currentMonth,
@@ -349,6 +371,7 @@ describe('measurementActions', () => {
       });
 
       await fetchMeasurements(
+        [Medium.districtHeating],
         ['Power'],
         ['123abc', '345def', '456ghi'],
         Period.currentMonth,

@@ -1,3 +1,4 @@
+import {Medium} from '../../../../components/indicators/indicatorWidgetModels';
 import {Identifiable} from '../../../../types/Types';
 import {GraphContents} from '../../../../usecases/report/reportModels';
 
@@ -55,7 +56,7 @@ export const enum Resolution {
 }
 
 export const allQuantities = {
-  heat: [
+  [Medium.districtHeating]: [
     RenderableQuantity.energy,
     RenderableQuantity.volume,
     RenderableQuantity.power,
@@ -64,7 +65,7 @@ export const allQuantities = {
     RenderableQuantity.returnTemperature,
     RenderableQuantity.differenceTemperature,
   ],
-  gas: [
+  [Medium.gas]: [
     RenderableQuantity.volume,
   ],
 };

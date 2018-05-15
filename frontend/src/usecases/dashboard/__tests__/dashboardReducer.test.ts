@@ -1,4 +1,4 @@
-import {IndicatorType, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium, WidgetModel} from '../../../components/indicators/indicatorWidgetModels';
 import {Status} from '../../../types/Types';
 import {LOGOUT_USER} from '../../auth/authActions';
 import {dashboardFailure, dashboardRequest, dashboardSuccess} from '../dashboardActions';
@@ -10,19 +10,19 @@ describe('dashboardReducer', () => {
   it('extracts valid widgets from JSON response', () => {
     const widgets: WidgetModel[] = [
       {
-        type: IndicatorType.coldWater,
+        type: Medium.coldWater,
         status: Status.warning,
         total: 1000,
         pending: 20,
       },
       {
-        type: IndicatorType.current,
+        type: Medium.current,
         status: Status.ok,
         total: 3000,
         pending: 17,
       },
       {
-        type: IndicatorType.districtHeating,
+        type: Medium.districtHeating,
         status: Status.critical,
         total: 1000,
         pending: 122,

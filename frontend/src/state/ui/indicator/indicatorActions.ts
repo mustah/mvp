@@ -1,10 +1,13 @@
 import {createPayloadAction} from 'react-redux-typescript';
-import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {SelectedIndicators} from './indicatorReducer';
 
-export const SELECT_INDICATOR_WIDGET = 'SELECT_INDICATOR_WIDGET';
+export const TOGGLE_INDICATOR_WIDGET = 'TOGGLE_INDICATOR_WIDGET';
 
-export const selectIndicatorWidget = createPayloadAction<string, SelectedIndicators>(SELECT_INDICATOR_WIDGET);
+export type IndicatorWithinUseCase = [keyof SelectedIndicators, Medium];
 
-export const selectReportIndicatorWidget =
-  (type: IndicatorType) => (dispatch) => dispatch(selectIndicatorWidget({report: type}));
+export const toggleIndicatorWidget = createPayloadAction<string, IndicatorWithinUseCase>(TOGGLE_INDICATOR_WIDGET);
+
+export const toggleReportIndicatorWidget =
+  (type: Medium) =>
+    (dispatch) => dispatch(toggleIndicatorWidget(['report', type]));

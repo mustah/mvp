@@ -14,7 +14,8 @@ import com.elvaco.mvp.core.spi.repository.GatewayStatusLogs;
 import com.elvaco.mvp.core.spi.repository.Gateways;
 import com.elvaco.mvp.core.spi.repository.MeterStatusLogs;
 import com.elvaco.mvp.core.spi.repository.PhysicalMeters;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ import static com.elvaco.mvp.core.domainmodels.StatusType.WARNING;
 
 @Profile("demo")
 @Component
+@RequiredArgsConstructor
 class StatusLogsDataLoader {
 
   private static final Random RANDOM = new Random();
@@ -44,19 +46,6 @@ class StatusLogsDataLoader {
   private final MeterStatusLogs meterStatusLogs;
   private final Gateways gateways;
   private final GatewayStatusLogs gatewayStatusLogs;
-
-  @Autowired
-  StatusLogsDataLoader(
-    PhysicalMeters physicalMeters,
-    MeterStatusLogs meterStatusLogs,
-    Gateways gateways,
-    GatewayStatusLogs gatewayStatusLogs
-  ) {
-    this.physicalMeters = physicalMeters;
-    this.meterStatusLogs = meterStatusLogs;
-    this.gateways = gateways;
-    this.gatewayStatusLogs = gatewayStatusLogs;
-  }
 
   void loadMockData() {
     createMeterStatusLogMockData();

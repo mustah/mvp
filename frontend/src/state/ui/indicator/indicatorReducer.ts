@@ -1,29 +1,43 @@
 import {EmptyAction} from 'react-redux-typescript';
-import {IndicatorType} from '../../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../../components/indicators/indicatorWidgetModels';
 import {Action} from '../../../types/Types';
-import {SELECT_INDICATOR_WIDGET} from './indicatorActions';
+import {IndicatorWithinUseCase, TOGGLE_INDICATOR_WIDGET} from './indicatorActions';
 
 export interface SelectedIndicators {
-  dashboard?: IndicatorType;
-  report?: IndicatorType;
+  report: Medium[];
 }
 
 export interface IndicatorState {
   selectedIndicators: SelectedIndicators;
 }
 
-export const initialState = {selectedIndicators: {}};
+export const initialState: IndicatorState = {
+  selectedIndicators: {
+    report: [],
+  },
+};
 
-type ActionTypes = EmptyAction<string> | Action<SelectedIndicators>;
+type ActionTypes = EmptyAction<string> | Action<IndicatorWithinUseCase>;
 
 export const indicator = (state: IndicatorState = initialState, action: ActionTypes): IndicatorState => {
   switch (action.type) {
-    case SELECT_INDICATOR_WIDGET:
+    case TOGGLE_INDICATOR_WIDGET:
+      const [section, indicatorTypeToToggle] = (action as Action<IndicatorWithinUseCase>).payload;
+      let selectedInSection = [...state.selectedIndicators[section]];
+
+      if (selectedInSection.includes(indicatorTypeToToggle)) {
+        selectedInSection = selectedInSection.filter(
+          (indicatorType) => indicatorType !== indicatorTypeToToggle,
+        );
+      } else {
+        selectedInSection.push(indicatorTypeToToggle);
+      }
+
       return {
         ...state,
         selectedIndicators: {
           ...state.selectedIndicators,
-          ...(action as Action<SelectedIndicators>).payload,
+          [section]: selectedInSection,
         },
       };
     default:

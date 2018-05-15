@@ -1,5 +1,5 @@
 import {LegendPayload} from 'recharts';
-import {IndicatorType} from '../../components/indicators/indicatorWidgetModels';
+import {Medium} from '../../components/indicators/indicatorWidgetModels';
 import {Status, uuid} from '../../types/Types';
 
 export interface ReportState {
@@ -32,12 +32,12 @@ export interface GraphContents {
 }
 
 export interface Indicator {
-  type: IndicatorType;
+  type: Medium;
   title: string;
   state: Status;
   subtitle: string;
   value: number;
-  unit: string; // Unit is what we are measuring the value in, like "kWh", "m^3"
+  unit: string;
 }
 
 export interface ActiveDataPoint {
@@ -55,7 +55,7 @@ export interface ActiveDataPoint {
 // TODO[!must!] create this in redux later!
 export const indicators: Indicator[] = [
   {
-    type: IndicatorType.current,
+    type: Medium.current,
     title: 'El',
     state: Status.info,
     value: 0,
@@ -63,7 +63,7 @@ export const indicators: Indicator[] = [
     subtitle: '',
   },
   {
-    type: IndicatorType.coldWater,
+    type: Medium.coldWater,
     title: 'Kallvatten',
     state: Status.info,
     value: 0,
@@ -71,7 +71,7 @@ export const indicators: Indicator[] = [
     subtitle: '',
   },
   {
-    type: IndicatorType.warmWater,
+    type: Medium.warmWater,
     title: 'Varmvatten',
     state: Status.info,
     value: 0,
@@ -79,15 +79,23 @@ export const indicators: Indicator[] = [
     subtitle: '',
   },
   {
-    type: IndicatorType.districtHeating,
+    type: Medium.districtHeating,
     title: 'Fjärrvärme',
-    state: Status.ok,
+    state: Status.info,
     value: 1.1,
     unit: 'kWh/m2',
     subtitle: '(-2)',
   },
   {
-    type: IndicatorType.temperatureInside,
+    type: Medium.gas,
+    title: 'Gas',
+    state: Status.info,
+    value: 1.1,
+    unit: 'kWh/m2',
+    subtitle: '(-2)',
+  },
+  {
+    type: Medium.temperatureInside,
     title: 'Temp Inomhus',
     state: Status.info,
     value: 0,
@@ -95,7 +103,7 @@ export const indicators: Indicator[] = [
     subtitle: '',
   },
   {
-    type: IndicatorType.temperatureOutside,
+    type: Medium.temperatureOutside,
     title: 'Temp Utomhus',
     state: Status.info,
     value: 0,

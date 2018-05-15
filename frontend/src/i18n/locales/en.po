@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2018-04-24 01:19+0200\n"
+"POT-Creation-Date: 2018-05-14 09:56+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -53,20 +53,26 @@ msgstr "confirm"
 msgid "cancel"
 msgstr "cancel"
 
+msgid "start date"
+msgstr "start date"
+
+msgid "end date"
+msgstr "end date"
+
 msgid "last 24h"
 msgstr "last 24h"
-
-msgid "current month"
-msgstr "current month"
-
-msgid "previous month"
-msgstr "previous month"
 
 msgid "current week"
 msgstr "current week"
 
 msgid "last 7 days"
 msgstr "last 7 days"
+
+msgid "current month"
+msgstr "current month"
+
+msgid "previous month"
+msgstr "previous month"
 
 msgid "custom period"
 msgstr "custom period"
@@ -119,29 +125,32 @@ msgstr "no"
 msgid "gateway details"
 msgstr "gateway"
 
-msgid "city"
-msgstr "city"
-
-msgid "address"
-msgstr "address"
-
 msgid "gateway serial"
 msgstr "gateway serial"
 
 msgid "product model"
 msgstr "product model"
 
+msgid "city"
+msgstr "city"
+
+msgid "address"
+msgstr "address"
+
 msgid "collection"
 msgstr "collection"
 
-msgid "interval"
-msgstr "interval"
+msgid "unknown"
+msgstr "unknown"
 
 msgid "meter"
 msgstr "meter"
 
 msgid "map"
 msgstr "map"
+
+msgid "facility id"
+msgstr "facility ID"
 
 msgid "manufacturer"
 msgstr "manufacturer"
@@ -158,6 +167,12 @@ msgstr "no reliable position"
 msgid "alarm"
 msgstr "alarm"
 
+msgid "hour in short"
+msgstr "h"
+
+msgid "minute in short"
+msgstr "m"
+
 msgid "resolution"
 msgstr "resolution"
 
@@ -169,9 +184,6 @@ msgstr "labels"
 
 msgid "sap id"
 msgstr "sap ID"
-
-msgid "facility id"
-msgstr "facility ID"
 
 msgid "never collected"
 msgstr "never collected"
@@ -194,17 +206,11 @@ msgstr "value"
 msgid "collected at"
 msgstr "collected at"
 
-msgid "show only changes"
-msgstr "show only changes"
-
 msgid "date"
 msgstr "date"
 
-msgid "start date"
-msgstr "start date"
-
-msgid "end date"
-msgstr "end date"
+msgid "collection percentage"
+msgstr "collection"
 
 msgid "no meters"
 msgstr "no meters"
@@ -217,12 +223,6 @@ msgstr "gateway"
 
 msgid "status change"
 msgstr "status change"
-
-msgid "collection percentage"
-msgstr "collection"
-
-msgid "unknown"
-msgstr "unknown"
 
 msgid "ok"
 msgstr "OK"
@@ -280,9 +280,6 @@ msgstr "successfully created the user {{name}} ({{email}})"
 msgid "failed to create user: {{error}}"
 msgstr "failed to create user: {{error}}"
 
-msgid "email address already exists"
-msgstr "email address already exists"
-
 msgid "successfully updated user {{name}} ({{email}})"
 msgstr "successfully updated user {{name}} ({{email}})"
 
@@ -312,9 +309,6 @@ msgstr "failed to create selection: {{error}}"
 
 msgid "failed to update selection: {{error}}"
 msgstr "failed to update selection: {{error}}"
-
-msgid "deleted selection"
-msgstr "deleted selection"
 
 msgid "failed to delete selection: {{error}}"
 msgstr "failed to delete selection: {{error}}"
@@ -349,32 +343,29 @@ msgstr "product models"
 msgid "no gateways"
 msgstr "no gateways"
 
-msgid "{{count}} gateways are not displayed in the map due to low accuracy"
-msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
-
 msgid "list"
 msgstr "list"
-
-msgid "all meters in selection"
-msgstr "all meters in selection"
 
 msgid "dashboard"
 msgstr "dashboard"
 
+msgid "all meters in selection"
+msgstr "all meters in selection"
+
 msgid "report"
 msgstr "report"
 
-msgid "select meters to include in graph"
-msgstr "select meters to include in graph"
+msgid "select medium"
+msgstr "select medium"
 
 msgid "select quantities"
 msgstr "select quantities"
 
+msgid "select meters to include in graph"
+msgstr "select meters to include in graph"
+
 msgid "graph"
 msgstr "graph"
-
-msgid "table"
-msgstr "table"
 
 msgid "save as"
 msgstr "save as"
@@ -418,9 +409,6 @@ msgstr "profile"
 msgid "logout"
 msgstr "logout"
 
-msgid "{{count}} meters are not displayed in the map due to low accuracy"
-msgstr "{{count}} meter is not displayed in the map due to low accuracy"
-
 msgctxt "°plural"
 msgid "of {{count}} metering point°"
 msgstr "of {{count}} metering points"
@@ -438,22 +426,37 @@ msgid "meter°"
 msgstr "meters"
 
 msgctxt "°plural"
-msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
-msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
-
-msgctxt "°plural"
 msgid "alarm°"
 msgstr "alarms"
 
-msgctxt "°plural"
-msgid "{{count}} meters are not displayed in the map due to low accuracy°"
-msgstr "{{count}} meters are not displayed in the map due to low accuracy"
+#~ msgid "interval"
+#~ msgstr "interval"
 
-msgid "hour in short"
-msgstr "h"
+#~ msgid "show only changes"
+#~ msgstr "show only changes"
 
-msgid "minute in short"
-msgstr "m"
+#~ msgid "email address already exists"
+#~ msgstr "email address already exists"
+
+#~ msgid "deleted selection"
+#~ msgstr "deleted selection"
+
+#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy"
+#~ msgstr "{{count}} gateway is not displayed in the map due to low accuracy"
+
+#~ msgid "table"
+#~ msgstr "table"
+
+#~ msgid "{{count}} meters are not displayed in the map due to low accuracy"
+#~ msgstr "{{count}} meter is not displayed in the map due to low accuracy"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} gateways are not displayed in the map due to low accuracy°"
+#~ msgstr "{{count}} gateways are not displayed in the map due to low accuracy"
+
+#~ msgctxt "°plural"
+#~ msgid "{{count}} meters are not displayed in the map due to low accuracy°"
+#~ msgstr "{{count}} meters are not displayed in the map due to low accuracy"
 
 #~ msgid "export to Excel (.csv)"
 #~ msgstr "export to Excel (.csv)"

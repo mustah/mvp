@@ -1,21 +1,22 @@
 import {Status} from '../../types/Types';
 
-export const enum IndicatorType {
-  collection = 'collection',
-  measurementQuality = 'measurementQuality',
-  current = 'current',
+export const enum Medium {
   coldWater = 'coldWater',
-  warmWater = 'warmWater',
+  collection = 'collection',
+  current = 'current',
   districtHeating = 'districtHeating',
+  gas = 'gas',
+  measurementQuality = 'measurementQuality',
   temperatureInside = 'temperatureInside',
   temperatureOutside = 'temperatureOutside',
+  warmWater = 'warmWater',
 }
 
 export interface WidgetModel {
-  type: IndicatorType;
+  type: Medium;
   total: number;
   status: Status;
   pending: number;
 }
 
-export type OnSelectIndicator = (type: IndicatorType) => void;
+export type OnSelectIndicator = (type: Medium) => void;
