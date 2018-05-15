@@ -13,9 +13,12 @@ import com.elvaco.mvp.core.domainmodels.CollectionStats;
 import com.elvaco.mvp.core.domainmodels.LogicalMeter;
 import com.elvaco.mvp.core.domainmodels.PhysicalMeter;
 import com.elvaco.mvp.core.domainmodels.Quantity;
-import com.elvaco.mvp.core.domainmodels.SeriesDisplayMode;
+import com.elvaco.mvp.core.exception.InvalidQuantityForMeterType;
+import com.elvaco.mvp.core.exception.NoPhysicalMeters;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import static java.util.Collections.emptyMap;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class LogicalMeterHelper {
@@ -27,23 +30,30 @@ public final class LogicalMeterHelper {
     List<LogicalMeter> logicalMeters,
     Set<Quantity> quantities
   ) {
+    if (logicalMeters.isEmpty()) {
+      return emptyMap();
+    }
+
     Map<Quantity, List<PhysicalMeter>> physicalMeterQuantityMap = new HashMap<>();
     quantities.forEach((quantity) -> {
+      LogicalMeter firstMeter = logicalMeters.get(0);
+      Quantity complementedQuantity = quantity.complementedBy(
+        firstMeter.getQuantity(quantity.name)
+          .orElseThrow(() -> new InvalidQuantityForMeterType(
+            quantity.name,
+            firstMeter.meterDefinition.medium
+          )).getPresentationInformation()
+      );
+
       List<PhysicalMeter> physicalMeters = new ArrayList<>();
-      for (LogicalMeter meter : logicalMeters) {
-        if (!meter.getQuantity(quantity.name).isPresent()) {
-          continue;
+      logicalMeters.forEach(logicalMeter -> {
+          if (logicalMeter.physicalMeters.isEmpty()) {
+            throw new NoPhysicalMeters(logicalMeter.id, logicalMeter.externalId);
+          }
+          physicalMeters.addAll(logicalMeter.physicalMeters);
         }
-        Quantity meterQuantity = meter.getQuantity(quantity.name).get();
-        if (quantity.presentationUnit() == null && meterQuantity.presentationUnit() != null) {
-          quantity = quantity.withUnit(meterQuantity.presentationUnit());
-        }
-        if (quantity.seriesDisplayMode().equals(SeriesDisplayMode.UNKNOWN)) {
-          quantity = quantity.withSeriesDisplayMode(meterQuantity.seriesDisplayMode());
-        }
-        physicalMeters.addAll(meter.physicalMeters);
-      }
-      physicalMeterQuantityMap.put(quantity, physicalMeters);
+      );
+      physicalMeterQuantityMap.put(complementedQuantity, physicalMeters);
     });
     return physicalMeterQuantityMap;
   }

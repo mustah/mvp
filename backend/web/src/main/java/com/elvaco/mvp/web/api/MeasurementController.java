@@ -90,10 +90,6 @@ public class MeasurementController {
         quantities
       );
 
-    if (quantityToPhysicalMeterIdMap.values().stream().allMatch(List::isEmpty)) {
-      throw new QuantityNotFound(quantities.stream().findAny().get().name);
-    }
-
     List<LabeledMeasurementValue> foundMeasurements = new ArrayList<>();
     for (Map.Entry<Quantity, List<PhysicalMeter>> entry : quantityToPhysicalMeterIdMap.entrySet()) {
       Quantity quantity = entry.getKey();
