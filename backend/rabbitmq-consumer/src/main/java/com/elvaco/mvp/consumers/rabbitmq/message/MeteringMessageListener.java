@@ -3,9 +3,9 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 import javax.annotation.Nullable;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.producers.rabbitmq.MessageSerializer;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

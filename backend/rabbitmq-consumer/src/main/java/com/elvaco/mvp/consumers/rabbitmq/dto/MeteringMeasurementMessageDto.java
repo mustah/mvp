@@ -4,20 +4,27 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
+import lombok.EqualsAndHashCode;
+
 import static java.util.Objects.nonNull;
 
+@EqualsAndHashCode(callSuper = true)
 public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
-  @Nullable
-  private final GatewayIdDto gateway;
   public final MeterIdDto meter;
   public final FacilityIdDto facility;
   public final String organisationId;
   public final String sourceSystemId;
   public final List<ValueDto> values;
+  @Nullable
+  private final GatewayIdDto gateway;
 
   public MeteringMeasurementMessageDto(
-    MessageType messageType,
     @Nullable GatewayIdDto gateway,
     MeterIdDto meter,
     FacilityIdDto facility,
@@ -25,7 +32,7 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
     String sourceSystemId,
     List<ValueDto> values
   ) {
-    super(messageType);
+    super(MessageType.METERING_MEASUREMENT_V_1_0);
     this.gateway = gateway;
     this.meter = meter;
     this.facility = facility;
@@ -36,7 +43,6 @@ public class MeteringMeasurementMessageDto extends MeteringMessageDto {
 
   public MeteringMeasurementMessageDto withValues(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
-      messageType,
       gateway,
       meter,
       facility,

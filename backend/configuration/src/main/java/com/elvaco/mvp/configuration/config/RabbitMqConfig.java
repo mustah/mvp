@@ -11,6 +11,7 @@ import com.elvaco.mvp.consumers.rabbitmq.message.StructureMessageConsumer;
 import com.elvaco.mvp.core.security.AuthenticatedUser;
 import com.elvaco.mvp.core.spi.amqp.MessagePublisher;
 import com.elvaco.mvp.core.spi.geocode.GeocodeService;
+import com.elvaco.mvp.core.spi.repository.Organisations;
 import com.elvaco.mvp.core.usecase.GatewayUseCases;
 import com.elvaco.mvp.core.usecase.LogicalMeterUseCases;
 import com.elvaco.mvp.core.usecase.MeasurementUseCases;
@@ -101,10 +102,12 @@ class RabbitMqConfig {
   @Bean
   MeteringRequestPublisher meteringRequestPublisher(
     AuthenticatedUser currentUser,
+    Organisations organisations,
     MessagePublisher messagePublisher
   ) {
     return new MeteringRequestPublisher(
       currentUser,
+      organisations,
       messagePublisher
     );
   }

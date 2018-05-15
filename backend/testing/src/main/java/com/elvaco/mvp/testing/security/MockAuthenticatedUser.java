@@ -57,11 +57,6 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   }
 
   @Override
-  public String getOrganisationExternalId() {
-    return user.organisation.externalId;
-  }
-
-  @Override
   public String getToken() {
     return token;
   }
@@ -75,4 +70,9 @@ public class MockAuthenticatedUser implements AuthenticatedUser {
   public String getUsername() {
     return user.getUsername();
   }
+
+  public Organisation getOrganisation() {
+    return user.organisation;
+  }
+
 }

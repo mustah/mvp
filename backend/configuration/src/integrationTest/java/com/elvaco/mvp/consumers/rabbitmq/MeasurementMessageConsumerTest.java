@@ -3,15 +3,14 @@ package com.elvaco.mvp.consumers.rabbitmq;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.ValueDto;
 import com.elvaco.mvp.consumers.rabbitmq.message.MeasurementMessageConsumer;
 import com.elvaco.mvp.database.entity.measurement.MeasurementEntity;
 import com.elvaco.mvp.database.repository.jpa.MeasurementJpaRepository;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.IntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +92,6 @@ public class MeasurementMessageConsumerTest extends IntegrationTest {
 
   private MeteringMeasurementMessageDto newMeasurementMessage(List<ValueDto> values) {
     return new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("gateway-id"),
       new MeterIdDto("meter-id"),
       new FacilityIdDto("facility-id"),

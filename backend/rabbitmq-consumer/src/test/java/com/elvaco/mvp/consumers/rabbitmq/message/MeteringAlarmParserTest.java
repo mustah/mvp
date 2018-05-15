@@ -2,8 +2,8 @@ package com.elvaco.mvp.consumers.rabbitmq.message;
 
 import java.time.LocalDateTime;
 
-import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringAlarmMessageDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
 import org.junit.Before;
 import org.junit.Test;
 

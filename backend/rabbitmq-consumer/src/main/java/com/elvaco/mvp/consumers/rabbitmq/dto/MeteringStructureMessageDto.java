@@ -2,9 +2,13 @@ package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import javax.annotation.Nullable;
 
+import com.elvaco.mvp.producers.rabbitmq.dto.MessageType;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeteringMessageDto;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class MeteringStructureMessageDto extends MeteringMessageDto {
 
   @Nullable
@@ -20,14 +24,13 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
   public final GatewayStatusDto gateway;
 
   public MeteringStructureMessageDto(
-    MessageType messageType,
     @Nullable MeterDto meter,
     @Nullable FacilityDto facility,
     String sourceSystemId,
     String organisationId,
     @Nullable GatewayStatusDto gateway
   ) {
-    super(messageType);
+    super(MessageType.METERING_METER_STRUCTURE_V_1_0);
     this.meter = meter;
     this.facility = facility;
     this.sourceSystemId = sourceSystemId;
@@ -37,7 +40,6 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
 
   public MeteringStructureMessageDto withFacility(FacilityDto facilityDto) {
     return new MeteringStructureMessageDto(
-      messageType,
       meter,
       facilityDto,
       sourceSystemId,
@@ -48,7 +50,6 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
 
   public MeteringStructureMessageDto withMeter(MeterDto meterDto) {
     return new MeteringStructureMessageDto(
-      messageType,
       meterDto,
       facility,
       sourceSystemId,
@@ -59,7 +60,6 @@ public class MeteringStructureMessageDto extends MeteringMessageDto {
 
   public MeteringStructureMessageDto withGatewayStatus(GatewayStatusDto gatewayStatusDto) {
     return new MeteringStructureMessageDto(
-      messageType,
       meter,
       facility,
       sourceSystemId,

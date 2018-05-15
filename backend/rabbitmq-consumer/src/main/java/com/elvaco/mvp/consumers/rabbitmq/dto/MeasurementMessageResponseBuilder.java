@@ -2,7 +2,10 @@ package com.elvaco.mvp.consumers.rabbitmq.dto;
 
 import java.util.Optional;
 
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 
 public class MeasurementMessageResponseBuilder {
 
@@ -34,10 +37,12 @@ public class MeasurementMessageResponseBuilder {
     } else {
       return Optional.of(new GetReferenceInfoDto(
         organisationIdExternal,
-        meterExternalId,
-        gatewayExternalId,
-        facilityId
+        null,
+        meterExternalId != null ? new MeterIdDto(meterExternalId) : null,
+        gatewayExternalId != null ? new GatewayIdDto(gatewayExternalId) : null,
+        facilityId != null ? new FacilityIdDto(facilityId) : null
       ));
     }
   }
+
 }

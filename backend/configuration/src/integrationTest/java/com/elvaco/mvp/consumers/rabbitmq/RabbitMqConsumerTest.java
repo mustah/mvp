@@ -4,12 +4,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.FacilityIdDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.GatewayStatusDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MessageType;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeterDto;
-import com.elvaco.mvp.consumers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringMeasurementMessageDto;
 import com.elvaco.mvp.consumers.rabbitmq.dto.MeteringStructureMessageDto;
 import com.elvaco.mvp.core.spi.repository.Gateways;
@@ -20,7 +16,10 @@ import com.elvaco.mvp.database.repository.jpa.GatewayStatusLogJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.LogicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterJpaRepository;
 import com.elvaco.mvp.database.repository.jpa.PhysicalMeterStatusLogJpaRepository;
+import com.elvaco.mvp.producers.rabbitmq.dto.FacilityIdDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.GatewayIdDto;
 import com.elvaco.mvp.producers.rabbitmq.dto.GetReferenceInfoDto;
+import com.elvaco.mvp.producers.rabbitmq.dto.MeterIdDto;
 import com.elvaco.mvp.testdata.RabbitIntegrationTest;
 import com.elvaco.mvp.testdata.TestRabbitConsumer;
 import org.junit.After;
@@ -146,7 +145,6 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
   @Test
   public void responseMessagesForMeasurementMessagesArePublished() throws Exception {
     MeteringMeasurementMessageDto message = new MeteringMeasurementMessageDto(
-      MessageType.METERING_MEASUREMENT_V_1_0,
       new GatewayIdDto("GATEWAY-123"),
       new MeterIdDto("METER-123"),
       new FacilityIdDto("FACILITY-123"),
@@ -164,15 +162,14 @@ public class RabbitMqConsumerTest extends RabbitIntegrationTest {
       .isEqualTo(
         new GetReferenceInfoDto(
           "ORGANISATION-123",
-          "METER-123",
-          "GATEWAY-123",
-          "FACILITY-123"
+          null, new MeterIdDto("METER-123"),
+          new GatewayIdDto("GATEWAY-123"),
+          new FacilityIdDto("FACILITY-123")
         ));
   }
 
   private MeteringStructureMessageDto getMeteringStructureMessageDto() {
     return new MeteringStructureMessageDto(
-      MessageType.METERING_METER_STRUCTURE_V_1_0,
       new MeterDto("1234", "Some medium", "OK", "A manufacturer", 15),
       new FacilityDto("facility-id", "Sweden", "Kungsbacka", "Kabelgatan 2T"),
       "test",
