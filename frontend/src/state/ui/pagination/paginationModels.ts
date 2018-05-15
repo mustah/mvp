@@ -33,16 +33,14 @@ export interface PaginationModel extends PaginationMetadata {
   useCases: {[component: string]: HasPageNumber};
 }
 
-/* TODO: check usages of "keyof PaginatedDomainModelsState" if it instead should be
- "keyof PaginatedDomainModelsState & keyof DomainModelsState". */
 export type PaginationState = Paginated & Pageable;
 
 type Paginated = {
-  [entityType in keyof PaginatedDomainModelsState] : PaginationModel;
-  };
+  [entityType in keyof PaginatedDomainModelsState]: PaginationModel;
+};
 type Pageable = {
   [entityType in keyof DomainModelsState]?: PaginationModel;
-  };
+};
 
 export interface SortingOptions {
   direction: 'ASC' | 'DESC';

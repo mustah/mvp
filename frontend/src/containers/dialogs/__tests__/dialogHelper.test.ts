@@ -120,17 +120,6 @@ describe('dialogHelper', () => {
   describe('meterMeasurementsForTable', () => {
 
     it('adds missing quantities to meter\'s measurements', () => {
-      const pm = {
-        organisation: {
-          slug: '',
-          name: '',
-          id: '',
-        },
-        identity: '',
-        id: '',
-        medium: 'District heating',
-      };
-
       const meter: Meter = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         alarm: '',
@@ -180,7 +169,6 @@ describe('dialogHelper', () => {
             value: 309.14353148037117,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 2,
@@ -188,7 +176,6 @@ describe('dialogHelper', () => {
             value: 306.59347679223913,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 3,
@@ -196,7 +183,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
         ],
         readIntervalMinutes: 60,
@@ -282,17 +268,6 @@ describe('dialogHelper', () => {
     });
 
     it('orders measurements by quantity, in a custom order', () => {
-      const pm = {
-        organisation: {
-          slug: '',
-          name: '',
-          id: '',
-        },
-        identity: '',
-        id: '',
-        medium: 'District heating',
-      };
-
       const meterWithMeasurementsInDifferentOrder: Meter = {
         id: '2a162298-55cd-414e-8e46-156f9ad9b32f',
         alarm: '',
@@ -342,7 +317,6 @@ describe('dialogHelper', () => {
             value: 309.14353148037117,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 2,
@@ -350,7 +324,6 @@ describe('dialogHelper', () => {
             value: 306.59347679223913,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 3,
@@ -358,7 +331,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 4,
@@ -366,7 +338,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 5,
@@ -374,7 +345,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 6,
@@ -382,7 +352,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
           {
             id: 7,
@@ -390,7 +359,6 @@ describe('dialogHelper', () => {
             value: 2.550054688132022,
             unit: 'K',
             created: 1523016000,
-            physicalMeter: pm,
           },
         ],
         readIntervalMinutes: 60,

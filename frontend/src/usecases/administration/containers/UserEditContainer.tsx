@@ -103,7 +103,6 @@ class UserEdit extends React.Component<Props, {}> {
   }
 }
 
-// TODO get organisations and roles from backend
 const mapStateToProps = ({auth: {user}, domainModels: {users, organisations}}: RootState): StateToProps => ({
   users: getEntitiesDomainModels(users),
   isFetching: users.isFetching,
