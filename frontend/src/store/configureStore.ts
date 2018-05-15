@@ -23,7 +23,7 @@ export const persistor: Persistor = persistStore(store, {}, () => {
   const {auth: {token, error}, language: {language: {code}}}: RootState = store.getState()!;
   if (!error) {
     restClientWith(token);
-    initLanguage(code);
-    changeLocale(code);
   }
+  initLanguage(code);
+  changeLocale(code);
 });

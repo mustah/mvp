@@ -20,7 +20,6 @@ const AdminPage = adminIsAuthenticated(AdminAppContainer);
  * for HMR (hot module reloading) to work properly. Otherwise, prefer
  * functional components.
  */
-
 class AppComponent extends React.Component {
 
   render() {
